@@ -160,9 +160,9 @@ Edita el archivo `.env` con tus credenciales:
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=api_db
-DB_USERNAME=nuevo_usuario
-DB_PASSWORD=nueva_contraseña
+DB_DATABASE=####
+DB_USERNAME=####
+DB_PASSWORD=####
 ```
 
 ### 5. Ejecutar Migraciones
