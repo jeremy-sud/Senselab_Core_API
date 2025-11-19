@@ -14,6 +14,11 @@ use App\Http\Controllers\API\CategoriaProductoController;
 use App\Http\Controllers\API\MarcaController;
 use App\Http\Controllers\API\UnidadMedidaController;
 use App\Http\Controllers\API\InventarioController;
+use App\Http\Controllers\API\RolController;
+use App\Http\Controllers\API\PermisoController;
+use App\Http\Controllers\API\UsuarioController;
+use App\Http\Controllers\API\FormaPagoController;
+use App\Http\Controllers\API\CargoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -79,4 +84,23 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/inventario/salidas', [InventarioController::class, 'storeSalida']);
     Route::get('/inventario/salidas/{id}', [InventarioController::class, 'showSalida']);
     Route::post('/inventario/salidas/{id}/cancelar', [InventarioController::class, 'cancelarSalida']);
+
+    // Roles (RBAC)
+    Route::apiResource('roles', RolController::class);
+    Route::post('/roles/{id}/permisos', [RolController::class, 'asignarPermisos']);
+
+    // Permisos (RBAC)
+    Route::apiResource('permisos', PermisoController::class);
+    Route::get('/permisos/modulos/list', [PermisoController::class, 'modulos']);
+
+    // Usuarios
+    Route::apiResource('usuarios', UsuarioController::class);
+    Route::post('/usuarios/{id}/roles', [UsuarioController::class, 'asignarRoles']);
+    Route::post('/usuarios/{id}/cambiar-password', [UsuarioController::class, 'cambiarPassword']);
+
+    // Formas de Pago
+    Route::apiResource('formas-pago', FormaPagoController::class);
+
+    // Cargos
+    Route::apiResource('cargos', CargoController::class);
 });
