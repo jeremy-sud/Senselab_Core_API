@@ -19,6 +19,11 @@ use App\Http\Controllers\API\PermisoController;
 use App\Http\Controllers\API\UsuarioController;
 use App\Http\Controllers\API\FormaPagoController;
 use App\Http\Controllers\API\CargoController;
+use App\Http\Controllers\API\CuentaPorCobrarController;
+use App\Http\Controllers\API\CuentaPorPagarController;
+use App\Http\Controllers\API\CabyController;
+use App\Http\Controllers\API\TipoImpuestoController;
+use App\Http\Controllers\API\CuentaContableController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -103,4 +108,27 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Cargos
     Route::apiResource('cargos', CargoController::class);
+
+    // Cuentas por Cobrar
+    Route::apiResource('cuentas-por-cobrar', CuentaPorCobrarController::class);
+    Route::get('/cuentas-por-cobrar/vencidas/list', [CuentaPorCobrarController::class, 'vencidas']);
+    Route::get('/cuentas-por-cobrar/resumen/general', [CuentaPorCobrarController::class, 'resumen']);
+
+    // Cuentas por Pagar
+    Route::apiResource('cuentas-por-pagar', CuentaPorPagarController::class);
+    Route::get('/cuentas-por-pagar/vencidas/list', [CuentaPorPagarController::class, 'vencidas']);
+    Route::get('/cuentas-por-pagar/resumen/general', [CuentaPorPagarController::class, 'resumen']);
+
+    // CAByS (Catálogo de Bienes y Servicios)
+    Route::apiResource('cabys', CabyController::class);
+    Route::post('/cabys/buscar', [CabyController::class, 'buscar']);
+
+    // Tipos de Impuesto
+    Route::apiResource('tipos-impuesto', TipoImpuestoController::class);
+    Route::get('/tipos-impuesto/activos/list', [TipoImpuestoController::class, 'activos']);
+
+    // Cuentas Contables
+    Route::apiResource('cuentas-contables', CuentaContableController::class);
+    Route::get('/cuentas-contables/arbol/jerarquia', [CuentaContableController::class, 'arbol']);
+    Route::get('/cuentas-contables/movimientos/list', [CuentaContableController::class, 'paraMovimientos']);
 });
