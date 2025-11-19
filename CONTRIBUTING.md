@@ -1,5 +1,9 @@
 # Guía de Contribución - Ursol CAST API
 
+<p align="center">
+  <img src="./public/assets/logos/ursol-icon.webp" width="100" alt="Sistemas Ursol Icon">
+</p>
+
 ¡Gracias por tu interés en contribuir al proyecto Ursol CAST API desarrollado por **Sistemas Ursol S.A.**!
 
 ## 🏢 Sobre Sistemas Ursol S.A.

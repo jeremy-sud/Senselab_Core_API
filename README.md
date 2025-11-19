@@ -1,7 +1,11 @@
 # Ursol CAST API
 
 <p align="center">
-  <img src="https://ursol.com/assets/img/logo-ursol.png" width="400" alt="Sistemas Ursol Logo">
+  <img src="./public/assets/logos/ursol-cast-api-logo.png" width="600" alt="Ursol CAST API Logo">
+</p>
+
+<p align="center">
+  <img src="./public/assets/logos/ursol-icon.webp" width="80" alt="Sistemas Ursol Icon">
 </p>
 
 <p align="center">
