@@ -22,11 +22,14 @@ class UpdateCajaChicaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'fecha' => 'sometimes|date',
-            'descripcion' => 'sometimes|nullable|string',
-            'monto' => 'sometimes|numeric|min:0|max:99999999.99',
-            'tipo' => 'sometimes|string|in:Ingreso,Egreso',
-            'responsable_id' => 'sometimes|integer|exists:usuarios,id',
+            'nombre' => 'sometimes|string|max:255',
+            'monto_inicial' => 'sometimes|numeric|min:0|max:99999999.99',
+            'saldo_actual' => 'sometimes|numeric|max:99999999.99',
+            'responsable_id' => 'sometimes|integer|exists:empleados,id',
+            'fecha_apertura' => 'sometimes|date',
+            'fecha_cierre' => 'nullable|date',
+            'estado' => 'sometimes|string|in:Abierta,Cerrada,Liquidada',
+            'observaciones' => 'nullable|string',
         ];
     }
 
@@ -36,12 +39,16 @@ class UpdateCajaChicaRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'fecha.date' => 'La fecha debe ser una fecha válida',
-            'monto.numeric' => 'El monto debe ser un valor numérico',
-            'monto.min' => 'El monto debe ser mayor o igual a 0',
-            'monto.max' => 'El monto no puede superar 99,999,999.99',
-            'tipo.in' => 'El tipo debe ser Ingreso o Egreso',
-            'responsable_id.exists' => 'El responsable especificado no existe',
+            'nombre.max' => 'El nombre no puede exceder 255 caracteres',
+            'monto_inicial.numeric' => 'El monto inicial debe ser un valor numérico',
+            'monto_inicial.min' => 'El monto inicial debe ser mayor o igual a 0',
+            'monto_inicial.max' => 'El monto inicial no puede superar 99,999,999.99',
+            'saldo_actual.numeric' => 'El saldo actual debe ser un valor numérico',
+            'saldo_actual.max' => 'El saldo actual no puede superar 99,999,999.99',
+            'responsable_id.exists' => 'El empleado responsable especificado no existe',
+            'fecha_apertura.date' => 'La fecha de apertura debe ser una fecha válida',
+            'fecha_cierre.date' => 'La fecha de cierre debe ser una fecha válida',
+            'estado.in' => 'El estado debe ser Abierta, Cerrada o Liquidada',
         ];
     }
 }

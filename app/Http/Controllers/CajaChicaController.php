@@ -8,7 +8,6 @@ use App\Http\Requests\UpdateCajaChicaRequest;
 use App\Http\Resources\CajaChicaResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 
 class CajaChicaController extends Controller
 {
@@ -21,24 +20,16 @@ class CajaChicaController extends Controller
             ->where('eliminado', 0);
 
         // Filtros
-        if ($request->filled('tipo')) {
-            $query->where('tipo', $request->tipo);
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
         }
 
         if ($request->filled('responsable_id')) {
             $query->where('responsable_id', $request->responsable_id);
         }
 
-        if ($request->filled('fecha_desde')) {
-            $query->where('fecha', '>=', $request->fecha_desde);
-        }
-
-        if ($request->filled('fecha_hasta')) {
-            $query->where('fecha', '<=', $request->fecha_hasta);
-        }
-
-        // Ordenamiento por fecha descendente
-        $query->orderBy('fecha', 'desc');
+        // Ordenamiento por fecha de apertura descendente
+        $query->orderBy('fecha_apertura', 'desc');
 
         $cajasChica = $query->paginate($request->get('per_page', 15));
 
@@ -61,16 +52,18 @@ class CajaChicaController extends Controller
     {
         $cajaChica = CajaChica::create([
             'empresa_id' => auth()->user()->empresa_id,
-            'fecha' => $request->fecha,
-            'descripcion' => $request->descripcion,
-            'monto' => $request->monto,
-            'tipo' => $request->tipo,
+            'nombre' => $request->nombre,
+            'monto_inicial' => $request->monto_inicial,
+            'saldo_actual' => $request->monto_inicial, // Inicialmente el saldo es igual al monto inicial
             'responsable_id' => $request->responsable_id,
+            'fecha_apertura' => $request->fecha_apertura,
+            'estado' => $request->estado ?? 'Abierta',
+            'observaciones' => $request->observaciones,
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Movimiento de caja chica registrado exitosamente',
+            'message' => 'Fondo de caja chica creado exitosamente',
             'data' => new CajaChicaResource($cajaChica)
         ], 201);
     }
@@ -109,7 +102,7 @@ class CajaChicaController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Movimiento de caja chica actualizado exitosamente',
+            'message' => 'Fondo de caja chica actualizado exitosamente',
             'data' => new CajaChicaResource($cajaChica)
         ]);
     }
@@ -131,131 +124,148 @@ class CajaChicaController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Movimiento de caja chica eliminado exitosamente'
+            'message' => 'Fondo de caja chica eliminado exitosamente'
         ]);
     }
 
     /**
-     * Listar ingresos de caja chica.
+     * Listar fondos de caja chica abiertos.
      */
-    public function ingresos(Request $request): JsonResponse
+    public function abiertas(): JsonResponse
     {
-        $query = CajaChica::where('empresa_id', auth()->user()->empresa_id)
-            ->where('tipo', 'Ingreso')
-            ->where('eliminado', 0);
-
-        if ($request->filled('fecha_desde')) {
-            $query->where('fecha', '>=', $request->fecha_desde);
-        }
-
-        if ($request->filled('fecha_hasta')) {
-            $query->where('fecha', '<=', $request->fecha_hasta);
-        }
-
-        $ingresos = $query->orderBy('fecha', 'desc')->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => CajaChicaResource::collection($ingresos),
-            'total_ingresos' => $ingresos->sum('monto')
-        ]);
-    }
-
-    /**
-     * Listar egresos de caja chica.
-     */
-    public function egresos(Request $request): JsonResponse
-    {
-        $query = CajaChica::where('empresa_id', auth()->user()->empresa_id)
-            ->where('tipo', 'Egreso')
-            ->where('eliminado', 0);
-
-        if ($request->filled('fecha_desde')) {
-            $query->where('fecha', '>=', $request->fecha_desde);
-        }
-
-        if ($request->filled('fecha_hasta')) {
-            $query->where('fecha', '<=', $request->fecha_hasta);
-        }
-
-        $egresos = $query->orderBy('fecha', 'desc')->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => CajaChicaResource::collection($egresos),
-            'total_egresos' => $egresos->sum('monto')
-        ]);
-    }
-
-    /**
-     * Listar movimientos por responsable.
-     */
-    public function porResponsable(Request $request, int $responsableId): JsonResponse
-    {
-        $movimientos = CajaChica::where('empresa_id', auth()->user()->empresa_id)
-            ->where('responsable_id', $responsableId)
+        $cajasAbiertas = CajaChica::where('empresa_id', auth()->user()->empresa_id)
+            ->where('estado', 'Abierta')
             ->where('eliminado', 0)
-            ->orderBy('fecha', 'desc')
+            ->orderBy('fecha_apertura', 'desc')
             ->get();
 
         return response()->json([
             'success' => true,
-            'data' => CajaChicaResource::collection($movimientos),
-            'total_ingresos' => $movimientos->where('tipo', 'Ingreso')->sum('monto'),
-            'total_egresos' => $movimientos->where('tipo', 'Egreso')->sum('monto'),
+            'data' => CajaChicaResource::collection($cajasAbiertas)
         ]);
     }
 
     /**
-     * Resumen de movimientos por tipo.
+     * Listar fondos por responsable.
      */
-    public function resumenPorTipo(Request $request): JsonResponse
+    public function porResponsable(int $responsableId): JsonResponse
     {
-        $query = CajaChica::where('empresa_id', auth()->user()->empresa_id)
-            ->where('eliminado', 0);
+        $fondos = CajaChica::where('empresa_id', auth()->user()->empresa_id)
+            ->where('responsable_id', $responsableId)
+            ->where('eliminado', 0)
+            ->orderBy('fecha_apertura', 'desc')
+            ->get();
 
-        if ($request->filled('fecha_desde')) {
-            $query->where('fecha', '>=', $request->fecha_desde);
+        return response()->json([
+            'success' => true,
+            'data' => CajaChicaResource::collection($fondos)
+        ]);
+    }
+
+    /**
+     * Cerrar un fondo de caja chica.
+     */
+    public function cerrar(Request $request, CajaChica $cajaChica): JsonResponse
+    {
+        if ($cajaChica->empresa_id !== auth()->user()->empresa_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No autorizado'
+            ], 403);
         }
 
-        if ($request->filled('fecha_hasta')) {
-            $query->where('fecha', '<=', $request->fecha_hasta);
+        if ($cajaChica->estado !== 'Abierta') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Solo se pueden cerrar fondos en estado Abierta'
+            ], 422);
         }
 
-        $resumen = $query->select('tipo', DB::raw('count(*) as total_movimientos'), DB::raw('sum(monto) as total_monto'))
-            ->groupBy('tipo')
+        $cajaChica->update([
+            'estado' => 'Cerrada',
+            'fecha_cierre' => $request->fecha_cierre ?? now()->format('Y-m-d'),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Fondo de caja chica cerrado exitosamente',
+            'data' => new CajaChicaResource($cajaChica)
+        ]);
+    }
+
+    /**
+     * Liquidar un fondo de caja chica.
+     */
+    public function liquidar(CajaChica $cajaChica): JsonResponse
+    {
+        if ($cajaChica->empresa_id !== auth()->user()->empresa_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No autorizado'
+            ], 403);
+        }
+
+        if ($cajaChica->estado !== 'Cerrada') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Solo se pueden liquidar fondos en estado Cerrada'
+            ], 422);
+        }
+
+        $cajaChica->update(['estado' => 'Liquidada']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Fondo de caja chica liquidado exitosamente',
+            'data' => new CajaChicaResource($cajaChica)
+        ]);
+    }
+
+    /**
+     * Reabrir un fondo de caja chica cerrado.
+     */
+    public function reabrir(CajaChica $cajaChica): JsonResponse
+    {
+        if ($cajaChica->empresa_id !== auth()->user()->empresa_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No autorizado'
+            ], 403);
+        }
+
+        if ($cajaChica->estado === 'Liquidada') {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se pueden reabrir fondos liquidados'
+            ], 422);
+        }
+
+        $cajaChica->update([
+            'estado' => 'Abierta',
+            'fecha_cierre' => null,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Fondo de caja chica reabierto exitosamente',
+            'data' => new CajaChicaResource($cajaChica)
+        ]);
+    }
+
+    /**
+     * Resumen de fondos por estado.
+     */
+    public function resumenPorEstado(): JsonResponse
+    {
+        $resumen = CajaChica::where('empresa_id', auth()->user()->empresa_id)
+            ->where('eliminado', 0)
+            ->selectRaw('estado, count(*) as total_fondos, sum(monto_inicial) as total_inicial, sum(saldo_actual) as total_saldo')
+            ->groupBy('estado')
             ->get();
 
         return response()->json([
             'success' => true,
             'data' => $resumen
-        ]);
-    }
-
-    /**
-     * Calcular saldo actual de caja chica.
-     */
-    public function saldoActual(Request $request): JsonResponse
-    {
-        $query = CajaChica::where('empresa_id', auth()->user()->empresa_id)
-            ->where('eliminado', 0);
-
-        if ($request->filled('fecha_hasta')) {
-            $query->where('fecha', '<=', $request->fecha_hasta);
-        }
-
-        $ingresos = $query->clone()->where('tipo', 'Ingreso')->sum('monto');
-        $egresos = $query->clone()->where('tipo', 'Egreso')->sum('monto');
-        $saldo = $ingresos - $egresos;
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'total_ingresos' => $ingresos,
-                'total_egresos' => $egresos,
-                'saldo_actual' => $saldo,
-                'fecha_consulta' => $request->filled('fecha_hasta') ? $request->fecha_hasta : now()->format('Y-m-d H:i:s'),
-            ]
         ]);
     }
 }

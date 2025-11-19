@@ -16,7 +16,7 @@ class RolPermisoController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = RolPermiso::with(['rol', 'permiso']);
+        $query = RolPermiso::query();
 
         // Filtros
         if ($request->filled('rol_id')) {
@@ -25,6 +25,10 @@ class RolPermisoController extends Controller
 
         if ($request->filled('permiso_id')) {
             $query->where('permiso_id', $request->permiso_id);
+        }
+
+        if ($request->filled('activo')) {
+            $query->where('activo', $request->activo);
         }
 
         $rolesPermisos = $query->paginate($request->get('per_page', 15));
@@ -175,7 +179,7 @@ class RolPermisoController extends Controller
     public function permisosPorRol(int $rolId): JsonResponse
     {
         $permisos = RolPermiso::where('rol_id', $rolId)
-            ->with('permiso')
+            ->where('activo', 1)
             ->get();
 
         return response()->json([
@@ -190,7 +194,7 @@ class RolPermisoController extends Controller
     public function rolesPorPermiso(int $permisoId): JsonResponse
     {
         $roles = RolPermiso::where('permiso_id', $permisoId)
-            ->with('rol')
+            ->where('activo', 1)
             ->get();
 
         return response()->json([

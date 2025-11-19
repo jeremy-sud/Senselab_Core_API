@@ -22,11 +22,12 @@ class StoreCajaChicaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'fecha' => 'required|date',
-            'descripcion' => 'nullable|string',
-            'monto' => 'required|numeric|min:0|max:99999999.99',
-            'tipo' => 'required|string|in:Ingreso,Egreso',
-            'responsable_id' => 'required|integer|exists:usuarios,id',
+            'nombre' => 'required|string|max:255',
+            'monto_inicial' => 'required|numeric|min:0|max:99999999.99',
+            'responsable_id' => 'required|integer|exists:empleados,id',
+            'fecha_apertura' => 'required|date',
+            'estado' => 'nullable|string|in:Abierta,Cerrada,Liquidada',
+            'observaciones' => 'nullable|string',
         ];
     }
 
@@ -36,16 +37,17 @@ class StoreCajaChicaRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'fecha.required' => 'La fecha es requerida',
-            'fecha.date' => 'La fecha debe ser una fecha válida',
-            'monto.required' => 'El monto es requerido',
-            'monto.numeric' => 'El monto debe ser un valor numérico',
-            'monto.min' => 'El monto debe ser mayor o igual a 0',
-            'monto.max' => 'El monto no puede superar 99,999,999.99',
-            'tipo.required' => 'El tipo de movimiento es requerido',
-            'tipo.in' => 'El tipo debe ser Ingreso o Egreso',
+            'nombre.required' => 'El nombre del fondo es requerido',
+            'nombre.max' => 'El nombre no puede exceder 255 caracteres',
+            'monto_inicial.required' => 'El monto inicial es requerido',
+            'monto_inicial.numeric' => 'El monto inicial debe ser un valor numérico',
+            'monto_inicial.min' => 'El monto inicial debe ser mayor o igual a 0',
+            'monto_inicial.max' => 'El monto inicial no puede superar 99,999,999.99',
             'responsable_id.required' => 'El responsable es requerido',
-            'responsable_id.exists' => 'El responsable especificado no existe',
+            'responsable_id.exists' => 'El empleado responsable especificado no existe',
+            'fecha_apertura.required' => 'La fecha de apertura es requerida',
+            'fecha_apertura.date' => 'La fecha de apertura debe ser una fecha válida',
+            'estado.in' => 'El estado debe ser Abierta, Cerrada o Liquidada',
         ];
     }
 }
