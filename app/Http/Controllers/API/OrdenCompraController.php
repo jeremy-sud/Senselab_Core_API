@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreOrdenCompraRequest;
 use App\Http\Requests\UpdateOrdenCompraRequest;
+use App\Http\Resources\OrdenCompraResource;
 
 class OrdenCompraController extends Controller
 {
@@ -55,7 +56,7 @@ class OrdenCompraController extends Controller
             $ordenes = $query->orderBy('fecha_orden', 'desc')
                              ->paginate($perPage);
             
-            return response()->json($ordenes);
+            return OrdenCompraResource::collection($ordenes);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener órdenes de compra',
@@ -116,10 +117,10 @@ class OrdenCompraController extends Controller
                 
                 $orden->load(['proveedor', 'detalles.producto']);
                 
-                return response()->json([
-                    'message' => 'Orden de compra creada exitosamente',
-                    'data' => $orden
-                ], 201);
+                return (new OrdenCompraResource($orden))
+                    ->additional(['message' => 'Orden de compra creada exitosamente'])
+                    ->response()
+                    ->setStatusCode(201);
                 
             } catch (\Exception $e) {
                 DB::rollBack();
@@ -155,7 +156,7 @@ class OrdenCompraController extends Controller
             // Calcular saldo pendiente
             $orden->saldo_pendiente = $orden->calcularSaldoPendiente();
             
-            return response()->json($orden);
+            return new OrdenCompraResource($orden);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Orden de compra no encontrada'
@@ -183,10 +184,8 @@ class OrdenCompraController extends Controller
             $orden->update($request->validated());
             $orden->load(['proveedor', 'detalles.producto']);
             
-            return response()->json([
-                'message' => 'Orden de compra actualizada exitosamente',
-                'data' => $orden
-            ]);
+            return (new OrdenCompraResource($orden))
+                ->additional(['message' => 'Orden de compra actualizada exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Orden de compra no encontrada'

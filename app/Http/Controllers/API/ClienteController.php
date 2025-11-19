@@ -7,6 +7,7 @@ use App\Models\Cliente;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreClienteRequest;
 use App\Http\Requests\UpdateClienteRequest;
+use App\Http\Resources\ClienteResource;
 
 class ClienteController extends Controller
 {
@@ -51,7 +52,7 @@ class ClienteController extends Controller
             $clientes = $query->orderBy('nombre', 'asc')
                               ->paginate($perPage);
             
-            return response()->json($clientes);
+            return ClienteResource::collection($clientes);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener clientes',
@@ -72,10 +73,10 @@ class ClienteController extends Controller
             $cliente = Cliente::create($request->validated());
             $cliente->load('empresa');
             
-            return response()->json([
-                'message' => 'Cliente creado exitosamente',
-                'data' => $cliente
-            ], 201);
+            return (new ClienteResource($cliente))
+                ->additional(['message' => 'Cliente creado exitosamente'])
+                ->response()
+                ->setStatusCode(201);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al crear cliente',
@@ -103,7 +104,7 @@ class ClienteController extends Controller
                 }
             ])->findOrFail($id);
             
-            return response()->json($cliente);
+            return new ClienteResource($cliente);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Cliente no encontrado'
@@ -131,10 +132,8 @@ class ClienteController extends Controller
             $cliente->update($request->validated());
             $cliente->load('empresa');
             
-            return response()->json([
-                'message' => 'Cliente actualizado exitosamente',
-                'data' => $cliente
-            ]);
+            return (new ClienteResource($cliente))
+                ->additional(['message' => 'Cliente actualizado exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Cliente no encontrado'

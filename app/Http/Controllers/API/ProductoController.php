@@ -7,6 +7,7 @@ use App\Models\Producto;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreProductoRequest;
 use App\Http\Requests\UpdateProductoRequest;
+use App\Http\Resources\ProductoResource;
 
 class ProductoController extends Controller
 {
@@ -61,7 +62,7 @@ class ProductoController extends Controller
             $productos = $query->orderBy('nombre', 'asc')
                                ->paginate($perPage);
             
-            return response()->json($productos);
+            return ProductoResource::collection($productos);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener productos',
@@ -88,10 +89,10 @@ class ProductoController extends Controller
                 'impuesto'
             ]);
             
-            return response()->json([
-                'message' => 'Producto creado exitosamente',
-                'data' => $producto
-            ], 201);
+            return (new ProductoResource($producto))
+                ->additional(['message' => 'Producto creado exitosamente'])
+                ->response()
+                ->setStatusCode(201);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al crear producto',
@@ -119,7 +120,7 @@ class ProductoController extends Controller
                 'cabys'
             ])->findOrFail($id);
             
-            return response()->json($producto);
+            return new ProductoResource($producto);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Producto no encontrado'
@@ -153,10 +154,8 @@ class ProductoController extends Controller
                 'impuesto'
             ]);
             
-            return response()->json([
-                'message' => 'Producto actualizado exitosamente',
-                'data' => $producto
-            ]);
+            return (new ProductoResource($producto))
+                ->additional(['message' => 'Producto actualizado exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Producto no encontrado'

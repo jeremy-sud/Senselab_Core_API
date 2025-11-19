@@ -7,6 +7,7 @@ use App\Models\Proveedor;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreProveedorRequest;
 use App\Http\Requests\UpdateProveedorRequest;
+use App\Http\Resources\ProveedorResource;
 
 class ProveedorController extends Controller
 {
@@ -45,7 +46,7 @@ class ProveedorController extends Controller
             $proveedores = $query->orderBy('nombre', 'asc')
                                  ->paginate($perPage);
             
-            return response()->json($proveedores);
+            return ProveedorResource::collection($proveedores);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener proveedores',
@@ -66,10 +67,10 @@ class ProveedorController extends Controller
             $proveedor = Proveedor::create($request->validated());
             $proveedor->load('empresa');
             
-            return response()->json([
-                'message' => 'Proveedor creado exitosamente',
-                'data' => $proveedor
-            ], 201);
+            return (new ProveedorResource($proveedor))
+                ->additional(['message' => 'Proveedor creado exitosamente'])
+                ->response()
+                ->setStatusCode(201);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al crear proveedor',
@@ -97,7 +98,7 @@ class ProveedorController extends Controller
                 }
             ])->findOrFail($id);
             
-            return response()->json($proveedor);
+            return new ProveedorResource($proveedor);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Proveedor no encontrado'
@@ -125,10 +126,8 @@ class ProveedorController extends Controller
             $proveedor->update($request->validated());
             $proveedor->load('empresa');
             
-            return response()->json([
-                'message' => 'Proveedor actualizado exitosamente',
-                'data' => $proveedor
-            ]);
+            return (new ProveedorResource($proveedor))
+                ->additional(['message' => 'Proveedor actualizado exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Proveedor no encontrado'
