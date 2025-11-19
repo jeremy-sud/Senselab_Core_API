@@ -23,7 +23,7 @@ class NominaEmpleadoController extends Controller
             $query->where('empleado_id', $request->empleado_id);
         }
 
-        $query->orderBy('created_at', 'desc');
+        $query->orderBy('creado_en', 'desc');
 
         $nominas = $query->paginate($request->get('per_page', 15));
 
@@ -41,15 +41,11 @@ class NominaEmpleadoController extends Controller
 
     public function store(StoreNominaEmpleadoRequest $request): JsonResponse
     {
-        $data = $request->validated();
-        
-        $nomina = new NominaEmpleado($data);
-        $nomina->calcularTotales();
-        $nomina->save();
+        $nomina = NominaEmpleado::create($request->validated());
 
         return response()->json([
             'success' => true,
-            'message' => 'Registro de nómina creado exitosamente',
+            'message' => 'Nómina de empleado creada exitosamente',
             'data' => new NominaEmpleadoResource($nomina)
         ], 201);
     }
@@ -64,13 +60,11 @@ class NominaEmpleadoController extends Controller
 
     public function update(UpdateNominaEmpleadoRequest $request, NominaEmpleado $nominaEmpleado): JsonResponse
     {
-        $nominaEmpleado->fill($request->validated());
-        $nominaEmpleado->calcularTotales();
-        $nominaEmpleado->save();
+        $nominaEmpleado->update($request->validated());
 
         return response()->json([
             'success' => true,
-            'message' => 'Registro de nómina actualizado exitosamente',
+            'message' => 'Nómina de empleado actualizada exitosamente',
             'data' => new NominaEmpleadoResource($nominaEmpleado)
         ]);
     }
@@ -81,7 +75,7 @@ class NominaEmpleadoController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Registro de nómina eliminado exitosamente'
+            'message' => 'Nómina de empleado eliminada exitosamente'
         ]);
     }
 
@@ -93,13 +87,7 @@ class NominaEmpleadoController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => NominaEmpleadoResource::collection($nominas),
-            'resumen' => [
-                'total_empleados' => $nominas->count(),
-                'total_devengado' => $nominas->sum('total_devengado'),
-                'total_deducciones' => $nominas->sum('total_deducciones'),
-                'total_neto' => $nominas->sum('salario_neto')
-            ]
+            'data' => NominaEmpleadoResource::collection($nominas)
         ]);
     }
 
@@ -107,7 +95,7 @@ class NominaEmpleadoController extends Controller
     {
         $nominas = NominaEmpleado::where('empleado_id', $empleadoId)
             ->where('eliminado', 0)
-            ->orderBy('created_at', 'desc')
+            ->orderBy('creado_en', 'desc')
             ->get();
 
         return response()->json([
@@ -116,30 +104,16 @@ class NominaEmpleadoController extends Controller
         ]);
     }
 
-    public function resumenGeneral(Request $request): JsonResponse
+    public function resumenPorPeriodo(int $periodoId): JsonResponse
     {
-        $query = NominaEmpleado::where('eliminado', 0);
-
-        if ($request->filled('periodo_nomina_id')) {
-            $query->where('periodo_nomina_id', $request->periodo_nomina_id);
-        }
-
-        $nominas = $query->get();
+        $resumen = NominaEmpleado::where('periodo_nomina_id', $periodoId)
+            ->where('eliminado', 0)
+            ->selectRaw('count(*) as total_empleados, sum(salario_bruto) as total_bruto, sum(total_deducciones) as total_deducciones, sum(salario_neto) as total_neto')
+            ->first();
 
         return response()->json([
             'success' => true,
-            'data' => [
-                'total_empleados' => $nominas->count(),
-                'total_salario_bruto' => $nominas->sum('salario_bruto'),
-                'total_horas_extras' => $nominas->sum('monto_horas_extras'),
-                'total_bonificaciones' => $nominas->sum('bonificaciones'),
-                'total_devengado' => $nominas->sum('total_devengado'),
-                'total_ccss' => $nominas->sum('deducciones_ccss'),
-                'total_renta' => $nominas->sum('deducciones_impuesto_renta'),
-                'total_otras_deducciones' => $nominas->sum('otras_deducciones'),
-                'total_deducciones' => $nominas->sum('total_deducciones'),
-                'total_neto_pagar' => $nominas->sum('salario_neto')
-            ]
+            'data' => $resumen
         ]);
     }
 }

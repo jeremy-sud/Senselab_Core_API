@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PagoCuentaPagar;
+use App\Models\CuentaPorPagar;
 use App\Http\Requests\StorePagoCuentaPagarRequest;
 use App\Http\Requests\UpdatePagoCuentaPagarRequest;
 use App\Http\Resources\PagoCuentaPagarResource;
@@ -54,7 +55,11 @@ class PagoCuentaPagarController extends Controller
         try {
             $pago = PagoCuentaPagar::create($request->validated());
 
-            $this->actualizarSaldoCuenta($pago->cuenta_por_pagar_id);
+            // Actualizar monto pagado en cuenta por pagar
+            $cuenta = CuentaPorPagar::findOrFail($pago->cuenta_por_pagar_id);
+            $cuenta->monto_pagado += $pago->monto_pago;
+            $cuenta->saldo = $cuenta->monto_total - $cuenta->monto_pagado;
+            $cuenta->save();
 
             DB::commit();
 
@@ -84,9 +89,16 @@ class PagoCuentaPagarController extends Controller
     {
         DB::beginTransaction();
         try {
+            $montoAnterior = $pagoCuentaPagar->monto_pago;
             $pagoCuentaPagar->update($request->validated());
 
-            $this->actualizarSaldoCuenta($pagoCuentaPagar->cuenta_por_pagar_id);
+            // Recalcular saldo de cuenta por pagar
+            if ($request->filled('monto_pago') && $montoAnterior != $pagoCuentaPagar->monto_pago) {
+                $cuenta = CuentaPorPagar::findOrFail($pagoCuentaPagar->cuenta_por_pagar_id);
+                $cuenta->monto_pagado = $cuenta->monto_pagado - $montoAnterior + $pagoCuentaPagar->monto_pago;
+                $cuenta->saldo = $cuenta->monto_total - $cuenta->monto_pagado;
+                $cuenta->save();
+            }
 
             DB::commit();
 
@@ -110,7 +122,11 @@ class PagoCuentaPagarController extends Controller
         try {
             $pagoCuentaPagar->update(['eliminado' => 1, 'activo' => 0]);
 
-            $this->actualizarSaldoCuenta($pagoCuentaPagar->cuenta_por_pagar_id);
+            // Restar el monto del pago de la cuenta por pagar
+            $cuenta = CuentaPorPagar::findOrFail($pagoCuentaPagar->cuenta_por_pagar_id);
+            $cuenta->monto_pagado -= $pagoCuentaPagar->monto_pago;
+            $cuenta->saldo = $cuenta->monto_total - $cuenta->monto_pagado;
+            $cuenta->save();
 
             DB::commit();
 
@@ -155,7 +171,7 @@ class PagoCuentaPagarController extends Controller
         ]);
     }
 
-    public function reportePorFecha(Request $request): JsonResponse
+    public function resumenPorFecha(Request $request): JsonResponse
     {
         $query = PagoCuentaPagar::where('eliminado', 0);
 
@@ -167,33 +183,12 @@ class PagoCuentaPagarController extends Controller
             $query->where('fecha_pago', '<=', $request->fecha_hasta);
         }
 
-        $pagos = $query->get();
+        $resumen = $query->selectRaw('count(*) as total_pagos, sum(monto_pago) as monto_total')
+            ->first();
 
         return response()->json([
             'success' => true,
-            'data' => PagoCuentaPagarResource::collection($pagos),
-            'resumen' => [
-                'total_pagos' => $pagos->count(),
-                'monto_total' => $pagos->sum('monto_pago'),
-                'por_moneda' => $pagos->groupBy('moneda')->map(function ($grupo) {
-                    return [
-                        'cantidad' => $grupo->count(),
-                        'total' => $grupo->sum('monto_pago')
-                    ];
-                })
-            ]
+            'data' => $resumen
         ]);
-    }
-
-    private function actualizarSaldoCuenta(int $cuentaId): void
-    {
-        $totalPagos = PagoCuentaPagar::where('cuenta_por_pagar_id', $cuentaId)
-            ->where('eliminado', 0)
-            ->sum('monto_pago');
-
-        $cuenta = \App\Models\CuentaPorPagar::find($cuentaId);
-        if ($cuenta) {
-            $cuenta->update(['monto_pagado' => $totalPagos]);
-        }
     }
 }

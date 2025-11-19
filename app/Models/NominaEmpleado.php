@@ -52,12 +52,12 @@ class NominaEmpleado extends Model
 
     public function periodoNomina(): BelongsTo
     {
-        return $this->belongsTo(PeriodoNomina::class, 'periodo_nomina_id');
+        return $this->belongsTo(PeriodoNomina::class);
     }
 
     public function empleado(): BelongsTo
     {
-        return $this->belongsTo(Empleado::class, 'empleado_id');
+        return $this->belongsTo(Empleado::class);
     }
 
     public function scopeActivos($query)
@@ -75,10 +75,14 @@ class NominaEmpleado extends Model
         return $query->where('empleado_id', $empleadoId);
     }
 
-    public function calcularTotales(): void
+    protected static function boot()
     {
-        $this->total_devengado = $this->salario_bruto + $this->monto_horas_extras + $this->bonificaciones;
-        $this->total_deducciones = $this->deducciones_ccss + $this->deducciones_impuesto_renta + $this->otras_deducciones;
-        $this->salario_neto = $this->total_devengado - $this->total_deducciones;
+        parent::boot();
+
+        static::saving(function ($nomina) {
+            $nomina->total_devengado = $nomina->salario_bruto + $nomina->monto_horas_extras + $nomina->bonificaciones;
+            $nomina->total_deducciones = $nomina->deducciones_ccss + $nomina->deducciones_impuesto_renta + $nomina->otras_deducciones;
+            $nomina->salario_neto = $nomina->total_devengado - $nomina->total_deducciones;
+        });
     }
 }

@@ -18,16 +18,27 @@ class InventarioProductoResource extends JsonResource
             'stock_minimo' => (float) $this->stock_minimo,
             'stock_maximo' => (float) $this->stock_maximo,
             'ubicacion' => $this->ubicacion,
+            'necesita_reposicion' => $this->necesitaReposicion(),
+            'tiene_exceso' => $this->tieneExceso(),
             'activo' => (bool) $this->activo,
             'eliminado' => (bool) $this->eliminado,
             'creado_en' => $this->creado_en,
             'actualizado_en' => $this->actualizado_en,
             
-            'es_bajo_stock' => $this->esBajoStock(),
-            'es_stock_critico' => $this->esStockCritico(),
+            'almacen' => $this->whenLoaded('almacen', function () {
+                return [
+                    'id' => $this->almacen->id,
+                    'nombre' => $this->almacen->nombre,
+                ];
+            }),
             
-            'almacen' => $this->whenLoaded('almacen'),
-            'producto' => $this->whenLoaded('producto'),
+            'producto' => $this->whenLoaded('producto', function () {
+                return [
+                    'id' => $this->producto->id,
+                    'nombre' => $this->producto->nombre,
+                    'codigo' => $this->producto->codigo ?? null,
+                ];
+            }),
         ];
     }
 }
