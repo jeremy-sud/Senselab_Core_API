@@ -40,6 +40,10 @@ use App\Http\Controllers\API\EntradaInventarioController;
 use App\Http\Controllers\API\DetalleEntradaInventarioController;
 use App\Http\Controllers\API\SalidaInventarioController;
 use App\Http\Controllers\API\DetalleSalidaInventarioController;
+use App\Http\Controllers\API\ComprobanteRecibidoElectronicoController;
+use App\Http\Controllers\API\ConfiguracionController;
+use App\Http\Controllers\API\PresupuestoController;
+use App\Http\Controllers\API\DetallePresupuestoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -254,4 +258,34 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/detalles-salidas-inventario/{id}', [DetalleSalidaInventarioController::class, 'show']);
     Route::put('/detalles-salidas-inventario/{id}', [DetalleSalidaInventarioController::class, 'update']);
     Route::delete('/detalles-salidas-inventario/{id}', [DetalleSalidaInventarioController::class, 'destroy']);
+
+    // GRUPO E: COMPROBANTES ELECTRÓNICOS Y CONFIGURACIONES
+    // Comprobantes Electrónicos Recibidos
+    Route::apiResource('comprobantes-recibidos-electronicos', ComprobanteRecibidoElectronicoController::class);
+    Route::post('/comprobantes-recibidos-electronicos/{id}/confirmar', [ComprobanteRecibidoElectronicoController::class, 'confirmar']);
+    Route::post('/comprobantes-recibidos-electronicos/{id}/rechazar', [ComprobanteRecibidoElectronicoController::class, 'rechazar']);
+    Route::get('/comprobantes-recibidos-electronicos/proveedor/{proveedorId}', [ComprobanteRecibidoElectronicoController::class, 'porProveedor']);
+    Route::get('/comprobantes-recibidos-electronicos/pendientes/list', [ComprobanteRecibidoElectronicoController::class, 'pendientes']);
+    Route::get('/comprobantes-recibidos-electronicos/resumen/por-estado', [ComprobanteRecibidoElectronicoController::class, 'resumenPorEstado']);
+    Route::put('/comprobantes-recibidos-electronicos/{id}/actualizar-respuesta-hacienda', [ComprobanteRecibidoElectronicoController::class, 'actualizarRespuestaHacienda']);
+
+    // Configuraciones del Sistema
+    Route::apiResource('configuraciones', ConfiguracionController::class);
+    Route::get('/configuraciones/clave/{clave}', [ConfiguracionController::class, 'porClave']);
+    Route::get('/configuraciones/valor/{clave}', [ConfiguracionController::class, 'obtenerValor']);
+    Route::put('/configuraciones/actualizar-multiples', [ConfiguracionController::class, 'actualizarMultiples']);
+
+    // Presupuestos Financieros
+    Route::apiResource('presupuestos', PresupuestoController::class);
+    Route::post('/presupuestos/{id}/activar', [PresupuestoController::class, 'activar']);
+    Route::post('/presupuestos/{id}/finalizar', [PresupuestoController::class, 'finalizar']);
+    Route::get('/presupuestos/activos/list', [PresupuestoController::class, 'activos']);
+    Route::get('/presupuestos/{id}/resumen', [PresupuestoController::class, 'resumen']);
+
+    // Detalle de Presupuestos
+    Route::get('/presupuestos/{presupuestoId}/detalles', [DetallePresupuestoController::class, 'index']);
+    Route::post('/detalles-presupuestos', [DetallePresupuestoController::class, 'store']);
+    Route::get('/detalles-presupuestos/{id}', [DetallePresupuestoController::class, 'show']);
+    Route::put('/detalles-presupuestos/{id}', [DetallePresupuestoController::class, 'update']);
+    Route::delete('/detalles-presupuestos/{id}', [DetallePresupuestoController::class, 'destroy']);
 });
