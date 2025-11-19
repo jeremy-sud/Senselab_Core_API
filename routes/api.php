@@ -48,6 +48,10 @@ use App\Http\Controllers\ConsecutivoFEController;
 use App\Http\Controllers\TipoCambioHistorialController;
 use App\Http\Controllers\EtiquetaController;
 use App\Http\Controllers\EntidadEtiquetaController;
+use App\Http\Controllers\CajaController;
+use App\Http\Controllers\CajaChicaController;
+use App\Http\Controllers\RegimenTributarioController;
+use App\Http\Controllers\RolPermisoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -327,4 +331,35 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/entidad-etiquetas/por-entidad', [EntidadEtiquetaController::class, 'porEntidad']);
     Route::get('/entidad-etiquetas/por-etiqueta/{etiquetaId}', [EntidadEtiquetaController::class, 'porEtiqueta']);
     Route::post('/entidad-etiquetas/sincronizar', [EntidadEtiquetaController::class, 'sincronizar']);
+
+    // ========================================
+    // GRUPO G: Cajas, Caja Chica, Regímenes y Roles-Permisos
+    // ========================================
+
+    // Cajas Registradoras
+    Route::apiResource('cajas', CajaController::class)->parameters(['cajas' => 'caja']);
+    Route::get('/cajas/sucursal/{sucursalId}', [CajaController::class, 'porSucursal']);
+    Route::get('/cajas/activas/list', [CajaController::class, 'activas']);
+    Route::post('/cajas/{caja}/toggle-activo', [CajaController::class, 'toggleActivo']);
+
+    // Caja Chica (Fondo de Caja Menor)
+    Route::apiResource('caja-chica', CajaChicaController::class)->parameters(['caja-chica' => 'cajaChica']);
+    Route::get('/caja-chica/ingresos/list', [CajaChicaController::class, 'ingresos']);
+    Route::get('/caja-chica/egresos/list', [CajaChicaController::class, 'egresos']);
+    Route::get('/caja-chica/responsable/{responsableId}', [CajaChicaController::class, 'porResponsable']);
+    Route::get('/caja-chica/resumen/por-tipo', [CajaChicaController::class, 'resumenPorTipo']);
+    Route::get('/caja-chica/saldo/actual', [CajaChicaController::class, 'saldoActual']);
+
+    // Regímenes Tributarios (Catálogo DGT)
+    Route::apiResource('regimenes-tributarios', RegimenTributarioController::class)->parameters(['regimenes-tributarios' => 'regimenTributario']);
+    Route::get('/regimenes-tributarios/todos/list', [RegimenTributarioController::class, 'todos']);
+    Route::get('/regimenes-tributarios/codigo/{codigo}', [RegimenTributarioController::class, 'porCodigo']);
+
+    // Roles-Permisos (Relación Many-to-Many)
+    Route::apiResource('roles-permisos', RolPermisoController::class)->parameters(['roles-permisos' => 'rolPermiso']);
+    Route::post('/roles-permisos/asignar', [RolPermisoController::class, 'asignarPermisos']);
+    Route::post('/roles-permisos/remover', [RolPermisoController::class, 'removerPermisos']);
+    Route::get('/roles-permisos/por-rol/{rolId}', [RolPermisoController::class, 'permisosPorRol']);
+    Route::get('/roles-permisos/por-permiso/{permisoId}', [RolPermisoController::class, 'rolesPorPermiso']);
+    Route::post('/roles-permisos/sincronizar', [RolPermisoController::class, 'sincronizarPermisos']);
 });
