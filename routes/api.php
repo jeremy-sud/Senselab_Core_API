@@ -29,6 +29,8 @@ use App\Http\Controllers\API\DetalleAsientoController;
 use App\Http\Controllers\API\TipoCuentaController;
 use App\Http\Controllers\API\PagoController;
 use App\Http\Controllers\API\TasaImpuestoController;
+use App\Http\Controllers\API\PeriodoNominaController;
+use App\Http\Controllers\API\PagoNominaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -163,4 +165,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/tasas-impuesto/vigente/{tipoImpuestoId}', [TasaImpuestoController::class, 'vigente']);
     Route::get('/tasas-impuesto/vigentes-actuales/list', [TasaImpuestoController::class, 'vigentesActuales']);
     Route::get('/tasas-impuesto/historico/{tipoImpuestoId}', [TasaImpuestoController::class, 'historico']);
+
+    // Períodos de Nómina
+    Route::apiResource('periodos-nomina', PeriodoNominaController::class);
+    Route::post('/periodos-nomina/{id}/cerrar', [PeriodoNominaController::class, 'cerrar']);
+    Route::post('/periodos-nomina/{id}/procesar', [PeriodoNominaController::class, 'procesar']);
+    Route::get('/periodos-nomina/{id}/resumen', [PeriodoNominaController::class, 'resumen']);
+    Route::get('/periodos-nomina/activos/list', [PeriodoNominaController::class, 'activos']);
+
+    // Pagos de Nómina
+    Route::apiResource('pagos-nomina', PagoNominaController::class);
+    Route::post('/pagos-nomina/{id}/marcar-pagado', [PagoNominaController::class, 'marcarPagado']);
+    Route::get('/pagos-nomina/empleado/{empleadoId}', [PagoNominaController::class, 'porEmpleado']);
+    Route::get('/pagos-nomina/resumen/por-metodo-pago', [PagoNominaController::class, 'resumenPorMetodoPago']);
+    Route::get('/pagos-nomina/totales/por-periodo', [PagoNominaController::class, 'totalesPorPeriodo']);
 });
