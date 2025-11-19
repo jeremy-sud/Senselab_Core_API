@@ -1,0 +1,85 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class InventarioProducto extends Model
+{
+    use HasFactory;
+
+    protected $table = 'inventario_productos';
+
+    const CREATED_AT = 'creado_en';
+    const UPDATED_AT = 'actualizado_en';
+
+    protected $fillable = [
+        'almacen_id',
+        'producto_id',
+        'stock_actual',
+        'costo_promedio',
+        'stock_minimo',
+        'stock_maximo',
+        'ubicacion',
+        'activo',
+        'eliminado'
+    ];
+
+    protected $casts = [
+        'stock_actual' => 'decimal:2',
+        'costo_promedio' => 'decimal:2',
+        'stock_minimo' => 'decimal:2',
+        'stock_maximo' => 'decimal:2',
+        'activo' => 'boolean',
+        'eliminado' => 'boolean',
+        'creado_en' => 'datetime',
+        'actualizado_en' => 'datetime'
+    ];
+
+    public function almacen(): BelongsTo
+    {
+        return $this->belongsTo(Almacen::class, 'almacen_id');
+    }
+
+    public function producto(): BelongsTo
+    {
+        return $this->belongsTo(Producto::class, 'producto_id');
+    }
+
+    public function scopeActivos($query)
+    {
+        return $query->where('activo', true)->where('eliminado', false);
+    }
+
+    public function scopePorAlmacen($query, $almacenId)
+    {
+        return $query->where('almacen_id', $almacenId);
+    }
+
+    public function scopePorProducto($query, $productoId)
+    {
+        return $query->where('producto_id', $productoId);
+    }
+
+    public function scopeBajoStock($query)
+    {
+        return $query->whereRaw('stock_actual <= stock_minimo');
+    }
+
+    public function scopeStockCritico($query)
+    {
+        return $query->whereRaw('stock_actual < stock_minimo * 0.5');
+    }
+
+    public function esBajoStock(): bool
+    {
+        return $this->stock_actual <= $this->stock_minimo;
+    }
+
+    public function esStockCritico(): bool
+    {
+        return $this->stock_actual < ($this->stock_minimo * 0.5);
+    }
+}
