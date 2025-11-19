@@ -44,6 +44,10 @@ use App\Http\Controllers\API\ComprobanteRecibidoElectronicoController;
 use App\Http\Controllers\API\ConfiguracionController;
 use App\Http\Controllers\API\PresupuestoController;
 use App\Http\Controllers\API\DetallePresupuestoController;
+use App\Http\Controllers\ConsecutivoFEController;
+use App\Http\Controllers\TipoCambioHistorialController;
+use App\Http\Controllers\EtiquetaController;
+use App\Http\Controllers\EntidadEtiquetaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -288,4 +292,39 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/detalles-presupuestos/{id}', [DetallePresupuestoController::class, 'show']);
     Route::put('/detalles-presupuestos/{id}', [DetallePresupuestoController::class, 'update']);
     Route::delete('/detalles-presupuestos/{id}', [DetallePresupuestoController::class, 'destroy']);
+
+    // ========================================
+    // GRUPO F: Consecutivos FE, Tipos de Cambio y Etiquetas
+    // ========================================
+
+    // Consecutivos de Facturación Electrónica
+    Route::apiResource('consecutivos-fe', ConsecutivoFEController::class)->parameters(['consecutivos-fe' => 'consecutivoFe']);
+    Route::post('/consecutivos-fe/obtener-siguiente', [ConsecutivoFEController::class, 'obtenerSiguiente']);
+    Route::post('/consecutivos-fe/{consecutivoFe}/resetear', [ConsecutivoFEController::class, 'resetear']);
+    Route::get('/consecutivos-fe/tipo/{tipoDocumentoDgt}', [ConsecutivoFEController::class, 'porTipoDocumento']);
+    Route::post('/consecutivos-fe/{consecutivoFe}/marcar-agotado', [ConsecutivoFEController::class, 'marcarAgotado']);
+    Route::post('/consecutivos-fe/{consecutivoFe}/activar', [ConsecutivoFEController::class, 'activar']);
+    Route::get('/consecutivos-fe/resumen/por-estado', [ConsecutivoFEController::class, 'resumenPorEstado']);
+
+    // Tipos de Cambio - Historial
+    Route::apiResource('tipos-cambio-historial', TipoCambioHistorialController::class)->parameters(['tipos-cambio-historial' => 'tipoCambioHistorial']);
+    Route::get('/tipos-cambio/vigente', [TipoCambioHistorialController::class, 'vigente']);
+    Route::post('/tipos-cambio/convertir', [TipoCambioHistorialController::class, 'convertir']);
+    Route::get('/tipos-cambio/moneda', [TipoCambioHistorialController::class, 'porMoneda']);
+    Route::get('/tipos-cambio/fecha/{fecha}', [TipoCambioHistorialController::class, 'porFecha']);
+    Route::get('/tipos-cambio/tendencia', [TipoCambioHistorialController::class, 'tendencia']);
+
+    // Etiquetas (Sistema de Tags)
+    Route::apiResource('etiquetas', EtiquetaController::class)->parameters(['etiquetas' => 'etiqueta']);
+    Route::get('/etiquetas/todas/list', [EtiquetaController::class, 'todas']);
+    Route::get('/etiquetas/estadisticas/uso', [EtiquetaController::class, 'estadisticas']);
+    Route::get('/etiquetas/buscar', [EtiquetaController::class, 'buscar']);
+
+    // Entidades-Etiquetas (Relación Polimórfica)
+    Route::apiResource('entidad-etiquetas', EntidadEtiquetaController::class)->parameters(['entidad-etiquetas' => 'entidadEtiqueta']);
+    Route::post('/entidad-etiquetas/asignar-multiples', [EntidadEtiquetaController::class, 'asignarMultiples']);
+    Route::post('/entidad-etiquetas/remover-multiples', [EntidadEtiquetaController::class, 'removerMultiples']);
+    Route::get('/entidad-etiquetas/por-entidad', [EntidadEtiquetaController::class, 'porEntidad']);
+    Route::get('/entidad-etiquetas/por-etiqueta/{etiquetaId}', [EntidadEtiquetaController::class, 'porEtiqueta']);
+    Route::post('/entidad-etiquetas/sincronizar', [EntidadEtiquetaController::class, 'sincronizar']);
 });
