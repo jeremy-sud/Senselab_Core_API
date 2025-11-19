@@ -7,6 +7,7 @@ use App\Models\Sucursal;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreSucursalRequest;
 use App\Http\Requests\UpdateSucursalRequest;
+use App\Http\Resources\SucursalResource;
 
 class SucursalController extends Controller
 {
@@ -35,7 +36,7 @@ class SucursalController extends Controller
             $sucursales = $query->orderBy('nombre', 'asc')
                                 ->paginate($perPage);
             
-            return response()->json($sucursales);
+            return SucursalResource::collection($sucursales);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener sucursales',
@@ -62,10 +63,10 @@ class SucursalController extends Controller
             $sucursal = Sucursal::create($request->validated());
             $sucursal->load('empresa');
             
-            return response()->json([
-                'message' => 'Sucursal creada exitosamente',
-                'data' => $sucursal
-            ], 201);
+            return (new SucursalResource($sucursal))
+                ->additional(['message' => 'Sucursal creada exitosamente'])
+                ->response()
+                ->setStatusCode(201);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al crear sucursal',
@@ -89,7 +90,7 @@ class SucursalController extends Controller
                 'cajas'
             ])->findOrFail($id);
             
-            return response()->json($sucursal);
+            return new SucursalResource($sucursal);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Sucursal no encontrada'
@@ -124,10 +125,8 @@ class SucursalController extends Controller
             $sucursal->update($request->validated());
             $sucursal->load('empresa');
             
-            return response()->json([
-                'message' => 'Sucursal actualizada exitosamente',
-                'data' => $sucursal
-            ]);
+            return (new SucursalResource($sucursal))
+                ->additional(['message' => 'Sucursal actualizada exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Sucursal no encontrada'

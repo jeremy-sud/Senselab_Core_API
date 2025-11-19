@@ -7,6 +7,7 @@ use App\Models\Empresa;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreEmpresaRequest;
 use App\Http\Requests\UpdateEmpresaRequest;
+use App\Http\Resources\EmpresaResource;
 
 class EmpresaController extends Controller
 {
@@ -40,7 +41,7 @@ class EmpresaController extends Controller
             $empresas = $query->orderBy('creado_en', 'desc')
                               ->paginate($perPage);
             
-            return response()->json($empresas);
+            return EmpresaResource::collection($empresas);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener empresas',
@@ -61,10 +62,10 @@ class EmpresaController extends Controller
             $empresa = Empresa::create($request->validated());
             $empresa->load('regimenTributario');
             
-            return response()->json([
-                'message' => 'Empresa creada exitosamente',
-                'data' => $empresa
-            ], 201);
+            return (new EmpresaResource($empresa))
+                ->additional(['message' => 'Empresa creada exitosamente'])
+                ->response()
+                ->setStatusCode(201);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al crear empresa',
@@ -89,7 +90,7 @@ class EmpresaController extends Controller
                 'configuraciones'
             ])->findOrFail($id);
             
-            return response()->json($empresa);
+            return new EmpresaResource($empresa);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Empresa no encontrada'
@@ -115,10 +116,8 @@ class EmpresaController extends Controller
             $empresa->update($request->validated());
             $empresa->load('regimenTributario');
             
-            return response()->json([
-                'message' => 'Empresa actualizada exitosamente',
-                'data' => $empresa
-            ]);
+            return (new EmpresaResource($empresa))
+                ->additional(['message' => 'Empresa actualizada exitosamente']);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al actualizar empresa',

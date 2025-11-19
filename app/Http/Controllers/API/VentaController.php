@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreVentaRequest;
 use App\Http\Requests\UpdateVentaRequest;
+use App\Http\Resources\VentaResource;
 
 class VentaController extends Controller
 {
@@ -55,7 +56,7 @@ class VentaController extends Controller
             $ventas = $query->orderBy('fecha_venta', 'desc')
                             ->paginate($perPage);
             
-            return response()->json($ventas);
+            return VentaResource::collection($ventas);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener ventas',
@@ -128,10 +129,10 @@ class VentaController extends Controller
                 
                 $venta->load(['cliente', 'detalles.producto']);
                 
-                return response()->json([
-                    'message' => 'Venta creada exitosamente',
-                    'data' => $venta
-                ], 201);
+                return (new VentaResource($venta))
+                    ->additional(['message' => 'Venta creada exitosamente'])
+                    ->response()
+                    ->setStatusCode(201);
                 
             } catch (\Exception $e) {
                 DB::rollBack();
@@ -164,7 +165,7 @@ class VentaController extends Controller
                 'detalles.producto'
             ])->findOrFail($id);
             
-            return response()->json($venta);
+            return new VentaResource($venta);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Venta no encontrada'
@@ -193,10 +194,8 @@ class VentaController extends Controller
             $venta->update($request->validated());
             $venta->load(['cliente', 'detalles.producto']);
             
-            return response()->json([
-                'message' => 'Venta actualizada exitosamente',
-                'data' => $venta
-            ]);
+            return (new VentaResource($venta))
+                ->additional(['message' => 'Venta actualizada exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Venta no encontrada'

@@ -7,6 +7,7 @@ use App\Models\Almacen;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreAlmacenRequest;
 use App\Http\Requests\UpdateAlmacenRequest;
+use App\Http\Resources\AlmacenResource;
 
 class AlmacenController extends Controller
 {
@@ -40,7 +41,7 @@ class AlmacenController extends Controller
             $almacenes = $query->orderBy('nombre', 'asc')
                                ->paginate($perPage);
             
-            return response()->json($almacenes);
+            return AlmacenResource::collection($almacenes);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener almacenes',
@@ -67,10 +68,10 @@ class AlmacenController extends Controller
             $almacen = Almacen::create($request->validated());
             $almacen->load(['empresa', 'sucursal']);
             
-            return response()->json([
-                'message' => 'Almacén creado exitosamente',
-                'data' => $almacen
-            ], 201);
+            return (new AlmacenResource($almacen))
+                ->additional(['message' => 'Almacén creado exitosamente'])
+                ->response()
+                ->setStatusCode(201);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al crear almacén',
@@ -93,7 +94,7 @@ class AlmacenController extends Controller
                 'sucursal'
             ])->findOrFail($id);
             
-            return response()->json($almacen);
+            return new AlmacenResource($almacen);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Almacén no encontrado'
@@ -128,10 +129,8 @@ class AlmacenController extends Controller
             $almacen->update($request->validated());
             $almacen->load(['empresa', 'sucursal']);
             
-            return response()->json([
-                'message' => 'Almacén actualizado exitosamente',
-                'data' => $almacen
-            ]);
+            return (new AlmacenResource($almacen))
+                ->additional(['message' => 'Almacén actualizado exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Almacén no encontrado'
