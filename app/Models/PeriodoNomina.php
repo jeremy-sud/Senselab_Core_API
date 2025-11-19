@@ -17,7 +17,13 @@ class PeriodoNomina extends Model
 
     protected $table = 'periodos_nomina';
 
-    public $timestamps = false;
+    public $timestamps = true;
+
+    /**
+     * Nombres personalizados de las marcas de tiempo.
+     */
+    const CREATED_AT = 'creado_en';
+    const UPDATED_AT = 'actualizado_en';
 
     protected $fillable = [
         'empresa_id',

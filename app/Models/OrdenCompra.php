@@ -21,8 +21,10 @@ class OrdenCompra extends Model
 
     protected $table = 'ordenes_compra';
 
-    // Muchas tablas en este proyecto usan columnas como creado_en/actualizado_en en vez de timestamps de Laravel
-    public $timestamps = false;
+    // Timestamps personalizados
+    public $timestamps = true;
+    const CREATED_AT = 'creado_en';
+    const UPDATED_AT = 'actualizado_en';
 
     protected $fillable = [
         'empresa_id',
@@ -83,6 +85,30 @@ class OrdenCompra extends Model
         // Aquí asumimos una relación simple hasMany; si en el proyecto hay modelos especializados
         // para pagos a cuentas por pagar, ajustar a la relación concreta (p.ej. PagoCuentaPorPagar)
         return $this->hasMany(Pago::class, 'orden_compra_id');
+    }
+
+    /**
+     * Relación con usuario que creó la orden.
+     */
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class, 'usuario_id');
+    }
+
+    /**
+     * Relación con cuentas por pagar generadas.
+     */
+    public function cuentasPorPagar()
+    {
+        return $this->hasMany(CuentaPorPagar::class, 'orden_compra_id');
+    }
+
+    /**
+     * Relación con entradas de inventario.
+     */
+    public function entradasInventario()
+    {
+        return $this->hasMany(EntradaInventario::class, 'orden_compra_id');
     }
 
     /* ------------------------- Scopes útiles ------------------------- */

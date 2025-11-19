@@ -45,6 +45,12 @@ class Empresa extends Tenant
         'actualizado_en' => 'datetime'
     ];
 
+    /**
+     * Nombres personalizados de las marcas de tiempo.
+     */
+    const CREATED_AT = 'creado_en';
+    const UPDATED_AT = 'actualizado_en';
+
     // Relaciones principales
     public function almacenes()
     {
@@ -97,6 +103,72 @@ class Empresa extends Tenant
     public function regimenTributario()
     {
         return $this->belongsTo(RegimenTributario::class);
+    }
+
+    // Relaciones adicionales
+    public function proveedores()
+    {
+        return $this->hasMany(Proveedor::class);
+    }
+
+    public function empleados()
+    {
+        return $this->hasMany(Empleado::class);
+    }
+
+    public function ordenesCompra()
+    {
+        return $this->hasMany(OrdenCompra::class);
+    }
+
+    public function cuentasContables()
+    {
+        return $this->hasMany(CuentaContable::class);
+    }
+
+    public function asientosContables()
+    {
+        return $this->hasMany(AsientoContable::class);
+    }
+
+    public function presupuestos()
+    {
+        return $this->hasMany(Presupuesto::class);
+    }
+
+    public function cajaChica()
+    {
+        return $this->hasMany(CajaChica::class);
+    }
+
+    public function cuentasPorCobrar()
+    {
+        return $this->hasMany(CuentaPorCobrar::class);
+    }
+
+    public function cuentasPorPagar()
+    {
+        return $this->hasMany(CuentaPorPagar::class);
+    }
+
+    public function periodosNomina()
+    {
+        return $this->hasMany(PeriodoNomina::class);
+    }
+
+    public function etiquetas()
+    {
+        return $this->hasMany(Etiqueta::class);
+    }
+
+    public function rutas()
+    {
+        return $this->hasMany(Ruta::class);
+    }
+
+    public function consecutivosFe()
+    {
+        return $this->hasMany(ConsecutivoFe::class);
     }
 
     // Scopes

@@ -1,7 +1,42 @@
 {
     "$schema": "https://json.schemastore.org/package.json",
+    "name": "ursol-cast-api",
+    "version": "1.0.0",
+    "description": "Sistema ERP Multi-Tenant con Facturación Electrónica para Costa Rica - Desarrollado por Sistemas Ursol S.A.",
     "private": true,
     "type": "module",
+    "author": {
+        "name": "Sistemas Ursol S.A.",
+        "email": "sistemas@ursol.com",
+        "url": "https://ursol.com"
+    },
+    "contributors": [
+        {
+            "name": "Jeremy Arias Solano",
+            "email": "deadmooncr@gmail.com",
+            "url": "https://github.com/jeremy-sud"
+        }
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/SistemasUrsol/Ursol-CAST-API.git"
+    },
+    "bugs": {
+        "url": "https://github.com/SistemasUrsol/Ursol-CAST-API/issues",
+        "email": "sistemas@ursol.com"
+    },
+    "homepage": "https://ursol.com",
+    "keywords": [
+        "erp",
+        "facturacion-electronica",
+        "costa-rica",
+        "laravel",
+        "multi-tenant",
+        "inventory",
+        "accounting",
+        "sistemas-ursol"
+    ],
+    "license": "MIT",
     "scripts": {
         "build": "vite build",
         "dev": "vite"

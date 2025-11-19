@@ -80,6 +80,22 @@ class Cliente extends Model
     }
 
     /**
+     * Relación con cuentas por cobrar.
+     */
+    public function cuentasPorCobrar(): HasMany
+    {
+        return $this->hasMany(CuentaPorCobrar::class, 'cliente_id');
+    }
+
+    /**
+     * Relación con salidas de inventario.
+     */
+    public function salidasInventario(): HasMany
+    {
+        return $this->hasMany(SalidaInventario::class, 'cliente_id');
+    }
+
+    /**
      * Scope para obtener clientes activos.
      */
     public function scopeActivos($query)

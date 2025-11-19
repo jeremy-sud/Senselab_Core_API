@@ -2,31 +2,28 @@
 
 namespace App\Models;
 
-use App\Traits\BelongsToTenant;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Cliente;
-use App\Models\Proveedor;
-use App\Models\Venta;
 
 class SalidaInventario extends Model
 {
-    use HasFactory, BelongsToTenant;
-
     /**
-     * La tabla asociada al modelo.
+     * Tabla asociada al modelo.
+     *
+     * @var string
      */
     protected $table = 'salidas_inventario';
 
     /**
-     * Nombre personalizado para los timestamps
+     * Clave primaria de la tabla.
+     *
+     * @var string
      */
-    const CREATED_AT = 'creado_en';
-    const UPDATED_AT = 'actualizado_en';
+    protected $primaryKey = 'id';
 
     /**
-     * Los atributos que son asignables masivamente.
+     * Atributos que se pueden asignar de manera masiva.
+     *
+     * @var array
      */
     protected $fillable = [
         'empresa_id',
@@ -39,92 +36,84 @@ class SalidaInventario extends Model
         'documento_referencia',
         'estado',
         'monto_total',
-        'observaciones'
+        'observaciones',
+        'descripcion',
+        'activo',
+        'eliminado',
     ];
 
     /**
-     * Los atributos que deben ser convertidos.
+     * Atributos que deben ser convertidos a tipos nativos.
+     *
+     * @var array
      */
     protected $casts = [
-        'monto_total' => 'decimal:2',
         'fecha_salida' => 'datetime',
+        'monto_total' => 'float',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
         'creado_en' => 'datetime',
-        'actualizado_en' => 'datetime'
+        'actualizado_en' => 'datetime',
     ];
 
     /**
-     * Relación con la empresa.
+     * Indica si el modelo tiene marcas de tiempo.
+     *
+     * @var bool
      */
-    public function empresa(): BelongsTo
+    public $timestamps = true;
+
+    /**
+     * Nombres personalizados de las marcas de tiempo.
+     */
+    const CREATED_AT = 'creado_en';
+    const UPDATED_AT = 'actualizado_en';
+
+    /**
+     * Relación con el modelo Empresa.
+     */
+    public function empresa()
     {
-        return $this->belongsTo(Empresa::class, 'empresa_id')
-                    ->withoutGlobalScopes();
+        return $this->belongsTo(Empresa::class, 'empresa_id');
     }
 
     /**
-     * Relación con el almacén.
+     * Relación con el modelo Almacen.
      */
-    public function almacen(): BelongsTo
+    public function almacen()
     {
-        return $this->belongsTo(Almacen::class);
+        return $this->belongsTo(Almacen::class, 'almacen_id');
     }
 
     /**
-     * Relación con el cliente.
+     * Relación con el modelo Cliente.
      */
-    public function cliente(): BelongsTo
+    public function cliente()
     {
-        return $this->belongsTo(Cliente::class);
+        return $this->belongsTo(Cliente::class, 'cliente_id');
     }
 
     /**
-     * Relación con el proveedor.
+     * Relación con el modelo Proveedor.
      */
-    public function proveedor(): BelongsTo
+    public function proveedor()
     {
-        return $this->belongsTo(Proveedor::class);
+        return $this->belongsTo(Proveedor::class, 'proveedor_id');
     }
 
     /**
-     * Relación con la venta.
+     * Scope para filtrar solo los registros activos.
      */
-    public function venta(): BelongsTo
+    public function scopeActivos($query)
     {
-        return $this->belongsTo(Venta::class);
+        return $query->where('activo', true);
     }
 
     /**
-     * Scope para filtrar por fecha.
+     * Scope para filtrar solo los registros no eliminados.
      */
-    public function scopeFechaBetween($query, $start, $end)
+    public function scopeNoEliminados($query)
     {
-        return $query->whereBetween('fecha_salida', [$start, $end]);
-    }
-
-    /**
-     * Scope para filtrar por tipo de salida.
-     */
-    public function scopePorTipoSalida($query, $tipo)
-    {
-        return $query->where('tipo_salida', $tipo);
-    }
-
-    /**
-     * Scope para filtrar por estado.
-     */
-    public function scopePorEstado($query, $estado)
-    {
-        return $query->where('estado', $estado);
-    }
-
-    /**
-     * Scope para obtener salidas activas (no eliminadas).
-     */
-    public function scopeActivas($query)
-    {
-        return $query->where('activo', true)
-                    ->where('eliminado', false);
+        return $query->where('eliminado', false);
     }
 }

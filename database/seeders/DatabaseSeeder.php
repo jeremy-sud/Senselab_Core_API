@@ -2,24 +2,26 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     /**
      * Seed the application's database.
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Seeders de datos base del sistema
+        $this->call([
+            RegimenTributarioSeeder::class,
+            CargoSeeder::class,
+            TipoCuentaSeeder::class,
+            RolSeeder::class,
+            FormaPagoSeeder::class,
+            UnidadMedidaSeeder::class,
+            TipoImpuestoSeeder::class,
         ]);
+
+        $this->command->info('Seeders de datos base ejecutados correctamente.');
     }
 }

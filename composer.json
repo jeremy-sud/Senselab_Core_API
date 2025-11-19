@@ -1,10 +1,44 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "sistemasursol/ursol-cast-api",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "Sistema ERP Multi-Tenant con Facturación Electrónica para Costa Rica. Desarrollado por Sistemas Ursol S.A. con casi 30 años de experiencia.",
+    "keywords": [
+        "laravel",
+        "erp",
+        "facturacion-electronica",
+        "costa-rica",
+        "multi-tenant",
+        "sistemas-ursol",
+        "inventory-management",
+        "accounting",
+        "payroll"
+    ],
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Sistemas Ursol S.A.",
+            "email": "sistemas@ursol.com",
+            "homepage": "https://ursol.com",
+            "role": "Company"
+        },
+        {
+            "name": "Jeremy Arias Solano",
+            "email": "deadmooncr@gmail.com",
+            "homepage": "https://github.com/jeremy-sud",
+            "role": "Lead Developer"
+        },
+        {
+            "name": "Eduardo Alberto Ureña Solano",
+            "role": "Founder & Visionary"
+        }
+    ],
+    "support": {
+        "email": "sistemas@ursol.com",
+        "issues": "https://github.com/SistemasUrsol/Ursol-CAST-API/issues",
+        "source": "https://github.com/SistemasUrsol/Ursol-CAST-API",
+        "docs": "https://sites.google.com/view/repdevursol/home/repositorio"
+    },
     "require": {
         "php": "^8.2",
         "laravel/framework": "^12.0",

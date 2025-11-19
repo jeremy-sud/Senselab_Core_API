@@ -2,29 +2,28 @@
 
 namespace App\Models;
 
-use App\Traits\BelongsToTenant;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Sucursal extends Model
 {
-    use HasFactory, BelongsToTenant;
-
     /**
-     * Estructura organizacional de cada empresa (matriz, sucursales, oficinas).
+     * Tabla asociada al modelo.
+     *
+     * @var string
      */
     protected $table = 'sucursales';
 
     /**
-     * Nombre personalizado para los timestamps
+     * Clave primaria de la tabla.
+     *
+     * @var string
      */
-    const CREATED_AT = 'creado_en';
-    const UPDATED_AT = 'actualizado_en';
+    protected $primaryKey = 'id';
 
     /**
-     * Los atributos que son asignables masivamente.
+     * Atributos que se pueden asignar de manera masiva.
+     *
+     * @var array
      */
     protected $fillable = [
         'empresa_id',
@@ -32,42 +31,88 @@ class Sucursal extends Model
         'direccion',
         'telefono',
         'email',
-        'activo'
+        'activo',
+        'eliminado',
     ];
 
     /**
-     * Los atributos que deben ser convertidos.
+     * Atributos que deben ser convertidos a tipos nativos.
+     *
+     * @var array
      */
     protected $casts = [
         'activo' => 'boolean',
         'eliminado' => 'boolean',
         'creado_en' => 'datetime',
-        'actualizado_en' => 'datetime'
+        'actualizado_en' => 'datetime',
     ];
 
     /**
-     * Relación con la empresa propietaria.
+     * Indica si el modelo tiene marcas de tiempo.
+     *
+     * @var bool
      */
-    public function empresa(): BelongsTo
+    public $timestamps = true;
+
+    /**
+     * Nombres personalizados de las marcas de tiempo.
+     */
+    const CREATED_AT = 'creado_en';
+    const UPDATED_AT = 'actualizado_en';
+
+    /**
+     * Relación con el modelo Empresa.
+     */
+    public function empresa()
     {
-        return $this->belongsTo(Empresa::class, 'empresa_id')
-                    ->withoutGlobalScopes();
+        return $this->belongsTo(Empresa::class, 'empresa_id');
     }
 
     /**
-     * Relación con los almacenes de la sucursal.
+     * Relación con almacenes de la sucursal.
      */
-    public function almacenes(): HasMany
+    public function almacenes()
     {
-        return $this->hasMany(Almacen::class);
+        return $this->hasMany(Almacen::class, 'sucursal_id');
     }
 
     /**
-     * Scope para filtrar sucursales activas.
+     * Relación con ventas de la sucursal.
      */
-    public function scopeActivas($query)
+    public function ventas()
     {
-        return $query->where('activo', true)
-                    ->where('eliminado', false);
+        return $this->hasMany(Venta::class, 'sucursal_id');
+    }
+
+    /**
+     * Relación con cajas de la sucursal.
+     */
+    public function cajas()
+    {
+        return $this->hasMany(Caja::class, 'sucursal_id');
+    }
+
+    /**
+     * Relación con consecutivos FE de la sucursal.
+     */
+    public function consecutivosFe()
+    {
+        return $this->hasMany(ConsecutivoFe::class, 'sucursal_id');
+    }
+
+    /**
+     * Scope para filtrar solo los registros activos.
+     */
+    public function scopeActivos($query)
+    {
+        return $query->where('activo', true);
+    }
+
+    /**
+     * Scope para filtrar solo los registros no eliminados.
+     */
+    public function scopeNoEliminados($query)
+    {
+        return $query->where('eliminado', false);
     }
 }
