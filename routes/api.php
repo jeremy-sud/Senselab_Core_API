@@ -36,6 +36,10 @@ use App\Http\Controllers\API\ModeloBusController;
 use App\Http\Controllers\API\RutaController;
 use App\Http\Controllers\API\HorarioRutaController;
 use App\Http\Controllers\API\TiqueteDetalleController;
+use App\Http\Controllers\API\EntradaInventarioController;
+use App\Http\Controllers\API\DetalleEntradaInventarioController;
+use App\Http\Controllers\API\SalidaInventarioController;
+use App\Http\Controllers\API\DetalleSalidaInventarioController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -217,4 +221,37 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/tiquetes-detalle/{id}/marcar-usado', [TiqueteDetalleController::class, 'marcarUsado']);
     Route::get('/tiquetes-detalle/horario-ruta/{horarioRutaId}', [TiqueteDetalleController::class, 'porHorarioRuta']);
     Route::get('/tiquetes-detalle/mapa-asientos/{horarioRutaId}', [TiqueteDetalleController::class, 'mapaAsientos']);
+
+    // GRUPO D: GESTIÓN DE INVENTARIO AVANZADO
+    // Entradas de Inventario
+    Route::apiResource('entradas-inventario', EntradaInventarioController::class);
+    Route::post('/entradas-inventario/{id}/procesar', [EntradaInventarioController::class, 'procesar']);
+    Route::post('/entradas-inventario/{id}/cancelar', [EntradaInventarioController::class, 'cancelar']);
+    Route::get('/entradas-inventario/proveedor/{proveedorId}', [EntradaInventarioController::class, 'porProveedor']);
+    Route::get('/entradas-inventario/almacen/{almacenId}', [EntradaInventarioController::class, 'porAlmacen']);
+    Route::get('/entradas-inventario/resumen/por-tipo', [EntradaInventarioController::class, 'resumenPorTipo']);
+    Route::get('/entradas-inventario/pendientes/list', [EntradaInventarioController::class, 'pendientes']);
+
+    // Detalle de Entradas de Inventario
+    Route::get('/entradas-inventario/{entradaId}/detalles', [DetalleEntradaInventarioController::class, 'index']);
+    Route::post('/detalles-entradas-inventario', [DetalleEntradaInventarioController::class, 'store']);
+    Route::get('/detalles-entradas-inventario/{id}', [DetalleEntradaInventarioController::class, 'show']);
+    Route::put('/detalles-entradas-inventario/{id}', [DetalleEntradaInventarioController::class, 'update']);
+    Route::delete('/detalles-entradas-inventario/{id}', [DetalleEntradaInventarioController::class, 'destroy']);
+
+    // Salidas de Inventario
+    Route::apiResource('salidas-inventario', SalidaInventarioController::class);
+    Route::post('/salidas-inventario/{id}/procesar', [SalidaInventarioController::class, 'procesar']);
+    Route::post('/salidas-inventario/{id}/cancelar', [SalidaInventarioController::class, 'cancelar']);
+    Route::get('/salidas-inventario/cliente/{clienteId}', [SalidaInventarioController::class, 'porCliente']);
+    Route::get('/salidas-inventario/almacen/{almacenId}', [SalidaInventarioController::class, 'porAlmacen']);
+    Route::get('/salidas-inventario/resumen/por-tipo', [SalidaInventarioController::class, 'resumenPorTipo']);
+    Route::get('/salidas-inventario/pendientes/list', [SalidaInventarioController::class, 'pendientes']);
+
+    // Detalle de Salidas de Inventario
+    Route::get('/salidas-inventario/{salidaId}/detalles', [DetalleSalidaInventarioController::class, 'index']);
+    Route::post('/detalles-salidas-inventario', [DetalleSalidaInventarioController::class, 'store']);
+    Route::get('/detalles-salidas-inventario/{id}', [DetalleSalidaInventarioController::class, 'show']);
+    Route::put('/detalles-salidas-inventario/{id}', [DetalleSalidaInventarioController::class, 'update']);
+    Route::delete('/detalles-salidas-inventario/{id}', [DetalleSalidaInventarioController::class, 'destroy']);
 });
