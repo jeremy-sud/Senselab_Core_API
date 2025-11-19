@@ -29,7 +29,7 @@ class NominaEmpleadoResource extends JsonResource
             'creado_en' => $this->creado_en,
             'actualizado_en' => $this->actualizado_en,
             
-            'periodo_nomina' => $this->whenLoaded('periodoNomina'),
+            'periodo' => $this->whenLoaded('periodoNomina'),
             'empleado' => $this->whenLoaded('empleado'),
         ];
     }

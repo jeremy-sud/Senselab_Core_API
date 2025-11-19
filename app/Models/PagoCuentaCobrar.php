@@ -38,12 +38,12 @@ class PagoCuentaCobrar extends Model
 
     public function cuentaPorCobrar(): BelongsTo
     {
-        return $this->belongsTo(CuentaPorCobrar::class, 'cuenta_por_cobrar_id');
+        return $this->belongsTo(CuentaPorCobrar::class);
     }
 
     public function formaPago(): BelongsTo
     {
-        return $this->belongsTo(FormaPago::class, 'forma_pago_id');
+        return $this->belongsTo(FormaPago::class);
     }
 
     public function scopeActivos($query)
@@ -56,8 +56,13 @@ class PagoCuentaCobrar extends Model
         return $query->where('cuenta_por_cobrar_id', $cuentaId);
     }
 
-    public function scopeFechaBetween($query, $start, $end)
+    public function scopePorFormaPago($query, $formaPagoId)
     {
-        return $query->whereBetween('fecha_pago', [$start, $end]);
+        return $query->where('forma_pago_id', $formaPagoId);
+    }
+
+    public function scopeFechaBetween($query, $desde, $hasta)
+    {
+        return $query->whereBetween('fecha_pago', [$desde, $hasta]);
     }
 }

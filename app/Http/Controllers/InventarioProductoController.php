@@ -23,7 +23,7 @@ class InventarioProductoController extends Controller
             $query->where('producto_id', $request->producto_id);
         }
 
-        $query->orderBy('created_at', 'desc');
+        $query->orderBy('stock_actual', 'asc');
 
         $inventarios = $query->paginate($request->get('per_page', 15));
 
@@ -45,7 +45,7 @@ class InventarioProductoController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Inventario creado exitosamente',
+            'message' => 'Inventario de producto creado exitosamente',
             'data' => new InventarioProductoResource($inventario)
         ], 201);
     }
@@ -64,7 +64,7 @@ class InventarioProductoController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Inventario actualizado exitosamente',
+            'message' => 'Inventario de producto actualizado exitosamente',
             'data' => new InventarioProductoResource($inventarioProducto)
         ]);
     }
@@ -75,7 +75,7 @@ class InventarioProductoController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Inventario eliminado exitosamente'
+            'message' => 'Inventario de producto eliminado exitosamente'
         ]);
     }
 
@@ -91,61 +91,42 @@ class InventarioProductoController extends Controller
         ]);
     }
 
-    public function porProducto(int $productoId): JsonResponse
+    public function bajoStockMinimo(): JsonResponse
     {
-        $inventarios = InventarioProducto::where('producto_id', $productoId)
+        $inventarios = InventarioProducto::bajoStockMinimo()
             ->where('eliminado', 0)
             ->get();
 
         return response()->json([
             'success' => true,
             'data' => InventarioProductoResource::collection($inventarios),
-            'stock_total' => $inventarios->sum('stock_actual')
+            'total' => $inventarios->count()
         ]);
     }
 
-    public function bajoStock(): JsonResponse
+    public function sobreStockMaximo(): JsonResponse
     {
-        $inventarios = InventarioProducto::bajoStock()
+        $inventarios = InventarioProducto::sobreStockMaximo()
             ->where('eliminado', 0)
             ->get();
 
         return response()->json([
             'success' => true,
             'data' => InventarioProductoResource::collection($inventarios),
-            'total_productos' => $inventarios->count()
+            'total' => $inventarios->count()
         ]);
     }
 
-    public function stockCritico(): JsonResponse
+    public function resumenPorAlmacen(): JsonResponse
     {
-        $inventarios = InventarioProducto::stockCritico()
-            ->where('eliminado', 0)
+        $resumen = InventarioProducto::where('eliminado', 0)
+            ->selectRaw('almacen_id, count(*) as total_productos, sum(stock_actual) as stock_total, avg(costo_promedio) as costo_promedio')
+            ->groupBy('almacen_id')
             ->get();
 
         return response()->json([
             'success' => true,
-            'data' => InventarioProductoResource::collection($inventarios),
-            'total_productos' => $inventarios->count()
-        ]);
-    }
-
-    public function resumenAlmacen(int $almacenId): JsonResponse
-    {
-        $inventarios = InventarioProducto::where('almacen_id', $almacenId)
-            ->where('eliminado', 0)
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'total_productos' => $inventarios->count(),
-                'valor_total_inventario' => $inventarios->sum(function ($inv) {
-                    return $inv->stock_actual * $inv->costo_promedio;
-                }),
-                'productos_bajo_stock' => $inventarios->filter(fn($inv) => $inv->esBajoStock())->count(),
-                'productos_stock_critico' => $inventarios->filter(fn($inv) => $inv->esStockCritico())->count()
-            ]
+            'data' => $resumen
         ]);
     }
 }

@@ -40,12 +40,12 @@ class InventarioProducto extends Model
 
     public function almacen(): BelongsTo
     {
-        return $this->belongsTo(Almacen::class, 'almacen_id');
+        return $this->belongsTo(Almacen::class);
     }
 
     public function producto(): BelongsTo
     {
-        return $this->belongsTo(Producto::class, 'producto_id');
+        return $this->belongsTo(Producto::class);
     }
 
     public function scopeActivos($query)
@@ -58,28 +58,23 @@ class InventarioProducto extends Model
         return $query->where('almacen_id', $almacenId);
     }
 
-    public function scopePorProducto($query, $productoId)
-    {
-        return $query->where('producto_id', $productoId);
-    }
-
-    public function scopeBajoStock($query)
+    public function scopeBajoStockMinimo($query)
     {
         return $query->whereRaw('stock_actual <= stock_minimo');
     }
 
-    public function scopeStockCritico($query)
+    public function scopeSobreStockMaximo($query)
     {
-        return $query->whereRaw('stock_actual < stock_minimo * 0.5');
+        return $query->whereRaw('stock_actual >= stock_maximo');
     }
 
-    public function esBajoStock(): bool
+    public function necesitaReposicion(): bool
     {
         return $this->stock_actual <= $this->stock_minimo;
     }
 
-    public function esStockCritico(): bool
+    public function tieneExceso(): bool
     {
-        return $this->stock_actual < ($this->stock_minimo * 0.5);
+        return $this->stock_actual >= $this->stock_maximo;
     }
 }

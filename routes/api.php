@@ -53,10 +53,11 @@ use App\Http\Controllers\CajaChicaController;
 use App\Http\Controllers\MovimientoCajaChicaController;
 use App\Http\Controllers\RegimenTributarioController;
 use App\Http\Controllers\RolPermisoController;
+use App\Http\Controllers\InventarioProductoController;
+use App\Http\Controllers\NominaEmpleadoController;
 use App\Http\Controllers\PagoCuentaCobrarController;
 use App\Http\Controllers\PagoCuentaPagarController;
-use App\Http\Controllers\NominaEmpleadoController;
-use App\Http\Controllers\InventarioProductoController;
+use App\Http\Controllers\RolUsuarioController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -375,29 +376,34 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/roles-permisos/por-permiso/{permisoId}', [RolPermisoController::class, 'rolesPorPermiso']);
     Route::post('/roles-permisos/sincronizar', [RolPermisoController::class, 'sincronizarPermisos']);
 
-    // Pagos de Cuentas por Cobrar
-    Route::apiResource('pagos-cuentas-cobrar', PagoCuentaCobrarController::class)->parameters(['pagos-cuentas-cobrar' => 'pagoCuentaCobrar']);
-    Route::get('/pagos-cuentas-cobrar/cuenta/{cuentaId}', [PagoCuentaCobrarController::class, 'porCuenta']);
-    Route::get('/pagos-cuentas-cobrar/forma-pago/{formaPagoId}', [PagoCuentaCobrarController::class, 'porFormaPago']);
-    Route::get('/pagos-cuentas-cobrar/reporte/fecha', [PagoCuentaCobrarController::class, 'reportePorFecha']);
-
-    // Pagos de Cuentas por Pagar
-    Route::apiResource('pagos-cuentas-pagar', PagoCuentaPagarController::class)->parameters(['pagos-cuentas-pagar' => 'pagoCuentaPagar']);
-    Route::get('/pagos-cuentas-pagar/cuenta/{cuentaId}', [PagoCuentaPagarController::class, 'porCuenta']);
-    Route::get('/pagos-cuentas-pagar/forma-pago/{formaPagoId}', [PagoCuentaPagarController::class, 'porFormaPago']);
-    Route::get('/pagos-cuentas-pagar/reporte/fecha', [PagoCuentaPagarController::class, 'reportePorFecha']);
+    // Inventario de Productos (Stock por Almacén)
+    Route::apiResource('inventario-productos', InventarioProductoController::class)->parameters(['inventario-productos' => 'inventarioProducto']);
+    Route::get('/inventario-productos/almacen/{almacenId}', [InventarioProductoController::class, 'porAlmacen']);
+    Route::get('/inventario-productos/alertas/bajo-stock', [InventarioProductoController::class, 'bajoStockMinimo']);
+    Route::get('/inventario-productos/alertas/sobre-stock', [InventarioProductoController::class, 'sobreStockMaximo']);
+    Route::get('/inventario-productos/resumen/por-almacen', [InventarioProductoController::class, 'resumenPorAlmacen']);
 
     // Nómina de Empleados
     Route::apiResource('nomina-empleados', NominaEmpleadoController::class)->parameters(['nomina-empleados' => 'nominaEmpleado']);
     Route::get('/nomina-empleados/periodo/{periodoId}', [NominaEmpleadoController::class, 'porPeriodo']);
     Route::get('/nomina-empleados/empleado/{empleadoId}', [NominaEmpleadoController::class, 'porEmpleado']);
-    Route::get('/nomina-empleados/resumen/general', [NominaEmpleadoController::class, 'resumenGeneral']);
+    Route::get('/nomina-empleados/resumen/periodo/{periodoId}', [NominaEmpleadoController::class, 'resumenPorPeriodo']);
 
-    // Inventario de Productos
-    Route::apiResource('inventario-productos', InventarioProductoController::class)->parameters(['inventario-productos' => 'inventarioProducto']);
-    Route::get('/inventario-productos/almacen/{almacenId}', [InventarioProductoController::class, 'porAlmacen']);
-    Route::get('/inventario-productos/producto/{productoId}', [InventarioProductoController::class, 'porProducto']);
-    Route::get('/inventario-productos/bajo-stock/list', [InventarioProductoController::class, 'bajoStock']);
-    Route::get('/inventario-productos/stock-critico/list', [InventarioProductoController::class, 'stockCritico']);
-    Route::get('/inventario-productos/resumen/almacen/{almacenId}', [InventarioProductoController::class, 'resumenAlmacen']);
+    // Pagos de Cuentas por Cobrar
+    Route::apiResource('pagos-cuentas-cobrar', PagoCuentaCobrarController::class)->parameters(['pagos-cuentas-cobrar' => 'pagoCuentaCobrar']);
+    Route::get('/pagos-cuentas-cobrar/cuenta/{cuentaId}', [PagoCuentaCobrarController::class, 'porCuenta']);
+    Route::get('/pagos-cuentas-cobrar/forma-pago/{formaPagoId}', [PagoCuentaCobrarController::class, 'porFormaPago']);
+    Route::get('/pagos-cuentas-cobrar/resumen/por-fecha', [PagoCuentaCobrarController::class, 'resumenPorFecha']);
+
+    // Pagos de Cuentas por Pagar
+    Route::apiResource('pagos-cuentas-pagar', PagoCuentaPagarController::class)->parameters(['pagos-cuentas-pagar' => 'pagoCuentaPagar']);
+    Route::get('/pagos-cuentas-pagar/cuenta/{cuentaId}', [PagoCuentaPagarController::class, 'porCuenta']);
+    Route::get('/pagos-cuentas-pagar/forma-pago/{formaPagoId}', [PagoCuentaPagarController::class, 'porFormaPago']);
+    Route::get('/pagos-cuentas-pagar/resumen/por-fecha', [PagoCuentaPagarController::class, 'resumenPorFecha']);
+
+    // Rol-Usuario (Asignación de Roles a Usuarios)
+    Route::apiResource('rol-usuario', RolUsuarioController::class)->parameters(['rol-usuario' => 'rolUsuario']);
+    Route::get('/rol-usuario/roles-usuario/{usuarioId}', [RolUsuarioController::class, 'rolesPorUsuario']);
+    Route::get('/rol-usuario/usuarios-rol/{rolId}', [RolUsuarioController::class, 'usuariosPorRol']);
+    Route::post('/rol-usuario/asignar-roles', [RolUsuarioController::class, 'asignarRoles']);
 });
