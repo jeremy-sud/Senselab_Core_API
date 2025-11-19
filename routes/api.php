@@ -9,6 +9,11 @@ use App\Http\Controllers\API\EmpresaController;
 use App\Http\Controllers\API\ProveedorController;
 use App\Http\Controllers\API\SucursalController;
 use App\Http\Controllers\API\OrdenCompraController;
+use App\Http\Controllers\API\EmpleadoController;
+use App\Http\Controllers\API\CategoriaProductoController;
+use App\Http\Controllers\API\MarcaController;
+use App\Http\Controllers\API\UnidadMedidaController;
+use App\Http\Controllers\API\InventarioController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -50,4 +55,28 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Órdenes de Compra
     Route::apiResource('ordenes-compra', OrdenCompraController::class);
+
+    // Empleados
+    Route::apiResource('empleados', EmpleadoController::class);
+
+    // Categorías de Productos
+    Route::apiResource('categorias-productos', CategoriaProductoController::class);
+
+    // Marcas
+    Route::apiResource('marcas', MarcaController::class);
+
+    // Unidades de Medida
+    Route::apiResource('unidades-medida', UnidadMedidaController::class);
+
+    // Inventario - Entradas
+    Route::get('/inventario/entradas', [InventarioController::class, 'indexEntradas']);
+    Route::post('/inventario/entradas', [InventarioController::class, 'storeEntrada']);
+    Route::get('/inventario/entradas/{id}', [InventarioController::class, 'showEntrada']);
+    Route::post('/inventario/entradas/{id}/cancelar', [InventarioController::class, 'cancelarEntrada']);
+
+    // Inventario - Salidas
+    Route::get('/inventario/salidas', [InventarioController::class, 'indexSalidas']);
+    Route::post('/inventario/salidas', [InventarioController::class, 'storeSalida']);
+    Route::get('/inventario/salidas/{id}', [InventarioController::class, 'showSalida']);
+    Route::post('/inventario/salidas/{id}/cancelar', [InventarioController::class, 'cancelarSalida']);
 });
