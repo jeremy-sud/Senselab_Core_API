@@ -24,6 +24,11 @@ use App\Http\Controllers\API\CuentaPorPagarController;
 use App\Http\Controllers\API\CabyController;
 use App\Http\Controllers\API\TipoImpuestoController;
 use App\Http\Controllers\API\CuentaContableController;
+use App\Http\Controllers\API\AsientoContableController;
+use App\Http\Controllers\API\DetalleAsientoController;
+use App\Http\Controllers\API\TipoCuentaController;
+use App\Http\Controllers\API\PagoController;
+use App\Http\Controllers\API\TasaImpuestoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -131,4 +136,31 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('cuentas-contables', CuentaContableController::class);
     Route::get('/cuentas-contables/arbol/jerarquia', [CuentaContableController::class, 'arbol']);
     Route::get('/cuentas-contables/movimientos/list', [CuentaContableController::class, 'paraMovimientos']);
+
+    // Asientos Contables
+    Route::apiResource('asientos-contables', AsientoContableController::class);
+    Route::post('/asientos-contables/{id}/mayorizar', [AsientoContableController::class, 'mayorizar']);
+    Route::get('/asientos-contables/{id}/validar', [AsientoContableController::class, 'validar']);
+
+    // Detalle de Asientos Contables
+    Route::get('/detalle-asientos', [DetalleAsientoController::class, 'index']);
+    Route::get('/detalle-asientos/{id}', [DetalleAsientoController::class, 'show']);
+    Route::get('/detalle-asientos/cuenta/{cuentaContableId}', [DetalleAsientoController::class, 'porCuenta']);
+    Route::get('/detalle-asientos/reportes/libro-mayor', [DetalleAsientoController::class, 'libroMayor']);
+    Route::get('/detalle-asientos/reportes/balance-comprobacion', [DetalleAsientoController::class, 'balanceComprobacion']);
+
+    // Tipos de Cuentas Contables
+    Route::apiResource('tipos-cuentas', TipoCuentaController::class);
+    Route::get('/tipos-cuentas/naturaleza/{naturaleza}', [TipoCuentaController::class, 'porNaturaleza']);
+    Route::get('/tipos-cuentas/activos/list', [TipoCuentaController::class, 'activos']);
+
+    // Pagos
+    Route::apiResource('pagos', PagoController::class);
+    Route::get('/pagos/resumen/por-forma-pago', [PagoController::class, 'resumenPorFormaPago']);
+
+    // Tasas de Impuesto
+    Route::apiResource('tasas-impuesto', TasaImpuestoController::class);
+    Route::get('/tasas-impuesto/vigente/{tipoImpuestoId}', [TasaImpuestoController::class, 'vigente']);
+    Route::get('/tasas-impuesto/vigentes-actuales/list', [TasaImpuestoController::class, 'vigentesActuales']);
+    Route::get('/tasas-impuesto/historico/{tipoImpuestoId}', [TasaImpuestoController::class, 'historico']);
 });

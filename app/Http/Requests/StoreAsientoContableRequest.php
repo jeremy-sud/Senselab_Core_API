@@ -1,0 +1,73 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
+/**
+ * Request de validación para crear Asiento Contable
+ *
+ * @package App\Http\Requests
+ * @author Sistemas Ursol S.A. - Jeremy Arias Solano
+ */
+class StoreAsientoContableRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'fecha' => ['required', 'date'],
+            'descripcion' => ['nullable', 'string'],
+            'estado' => ['nullable', 'string', 'max:50', Rule::in(['Borrador', 'Mayorizado', 'Anulado'])],
+            'detalles' => ['required', 'array', 'min:2'],
+            'detalles.*.cuenta_contable_id' => ['required', 'integer', 'exists:cuentas_contables,id'],
+            'detalles.*.debe' => ['required', 'numeric', 'min:0'],
+            'detalles.*.haber' => ['required', 'numeric', 'min:0'],
+            'detalles.*.descripcion' => ['nullable', 'string'],
+            'activo' => ['nullable', 'boolean']
+        ];
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            // Validar que debe = haber
+            if ($this->has('detalles')) {
+                $totalDebe = collect($this->detalles)->sum('debe');
+                $totalHaber = collect($this->detalles)->sum('haber');
+                
+                if (abs($totalDebe - $totalHaber) > 0.01) {
+                    $validator->errors()->add('detalles', 'El total del debe debe ser igual al total del haber');
+                }
+            }
+        });
+    }
+
+    public function messages(): array
+    {
+        return [
+            'fecha.required' => 'La fecha del asiento es obligatoria',
+            'detalles.required' => 'Debe agregar al menos 2 líneas de detalle',
+            'detalles.min' => 'Un asiento contable debe tener al menos 2 líneas',
+            'detalles.*.cuenta_contable_id.required' => 'Cada línea debe tener una cuenta contable',
+            'detalles.*.cuenta_contable_id.exists' => 'La cuenta contable seleccionada no existe',
+            'detalles.*.debe.required' => 'El monto del debe es obligatorio',
+            'detalles.*.haber.required' => 'El monto del haber es obligatorio'
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'fecha' => 'fecha',
+            'descripcion' => 'descripción',
+            'estado' => 'estado',
+            'detalles' => 'detalles del asiento'
+        ];
+    }
+}
