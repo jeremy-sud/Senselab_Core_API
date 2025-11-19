@@ -31,6 +31,11 @@ use App\Http\Controllers\API\PagoController;
 use App\Http\Controllers\API\TasaImpuestoController;
 use App\Http\Controllers\API\PeriodoNominaController;
 use App\Http\Controllers\API\PagoNominaController;
+use App\Http\Controllers\API\BusUnidadController;
+use App\Http\Controllers\API\ModeloBusController;
+use App\Http\Controllers\API\RutaController;
+use App\Http\Controllers\API\HorarioRutaController;
+use App\Http\Controllers\API\TiqueteDetalleController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -179,4 +184,37 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/pagos-nomina/empleado/{empleadoId}', [PagoNominaController::class, 'porEmpleado']);
     Route::get('/pagos-nomina/resumen/por-metodo-pago', [PagoNominaController::class, 'resumenPorMetodoPago']);
     Route::get('/pagos-nomina/totales/por-periodo', [PagoNominaController::class, 'totalesPorPeriodo']);
+
+    // GRUPO C: TRANSPORTE
+    // Buses/Unidades de Transporte
+    Route::apiResource('buses-unidades', BusUnidadController::class);
+    Route::get('/buses-unidades/disponibles/list', [BusUnidadController::class, 'disponibles']);
+    Route::get('/buses-unidades/resumen/flota', [BusUnidadController::class, 'resumenFlota']);
+    Route::get('/buses-unidades/por-modelo/{modeloId}', [BusUnidadController::class, 'porModelo']);
+
+    // Modelos de Buses
+    Route::apiResource('modelos-buses', ModeloBusController::class);
+    Route::get('/modelos-buses/activos/list', [ModeloBusController::class, 'activos']);
+
+    // Rutas de Transporte
+    Route::apiResource('rutas', RutaController::class);
+    Route::get('/rutas/activas/list', [RutaController::class, 'activas']);
+    Route::post('/rutas/calcular-tarifa', [RutaController::class, 'calcularTarifa']);
+    Route::get('/rutas/{id}/estadisticas', [RutaController::class, 'estadisticas']);
+
+    // Horarios de Ruta (Viajes Programados)
+    Route::apiResource('horarios-ruta', HorarioRutaController::class);
+    Route::post('/horarios-ruta/{id}/iniciar-viaje', [HorarioRutaController::class, 'iniciarViaje']);
+    Route::post('/horarios-ruta/{id}/finalizar-viaje', [HorarioRutaController::class, 'finalizarViaje']);
+    Route::post('/horarios-ruta/{id}/cancelar', [HorarioRutaController::class, 'cancelar']);
+    Route::get('/horarios-ruta/{id}/asientos-disponibles', [HorarioRutaController::class, 'asientosDisponibles']);
+    Route::get('/horarios-ruta/proximos/disponibles', [HorarioRutaController::class, 'proximosDisponibles']);
+
+    // Tiquetes de Transporte
+    Route::get('/tiquetes-detalle', [TiqueteDetalleController::class, 'index']);
+    Route::get('/tiquetes-detalle/{id}', [TiqueteDetalleController::class, 'show']);
+    Route::post('/tiquetes-detalle/{id}/cancelar', [TiqueteDetalleController::class, 'cancelar']);
+    Route::post('/tiquetes-detalle/{id}/marcar-usado', [TiqueteDetalleController::class, 'marcarUsado']);
+    Route::get('/tiquetes-detalle/horario-ruta/{horarioRutaId}', [TiqueteDetalleController::class, 'porHorarioRuta']);
+    Route::get('/tiquetes-detalle/mapa-asientos/{horarioRutaId}', [TiqueteDetalleController::class, 'mapaAsientos']);
 });
