@@ -50,6 +50,7 @@ use App\Http\Controllers\EtiquetaController;
 use App\Http\Controllers\EntidadEtiquetaController;
 use App\Http\Controllers\CajaController;
 use App\Http\Controllers\CajaChicaController;
+use App\Http\Controllers\MovimientoCajaChicaController;
 use App\Http\Controllers\RegimenTributarioController;
 use App\Http\Controllers\RolPermisoController;
 use Illuminate\Support\Facades\Route;
@@ -344,11 +345,18 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Caja Chica (Fondo de Caja Menor)
     Route::apiResource('caja-chica', CajaChicaController::class)->parameters(['caja-chica' => 'cajaChica']);
-    Route::get('/caja-chica/ingresos/list', [CajaChicaController::class, 'ingresos']);
-    Route::get('/caja-chica/egresos/list', [CajaChicaController::class, 'egresos']);
+    Route::get('/caja-chica/abiertas/list', [CajaChicaController::class, 'abiertas']);
     Route::get('/caja-chica/responsable/{responsableId}', [CajaChicaController::class, 'porResponsable']);
-    Route::get('/caja-chica/resumen/por-tipo', [CajaChicaController::class, 'resumenPorTipo']);
-    Route::get('/caja-chica/saldo/actual', [CajaChicaController::class, 'saldoActual']);
+    Route::post('/caja-chica/{cajaChica}/cerrar', [CajaChicaController::class, 'cerrar']);
+    Route::post('/caja-chica/{cajaChica}/liquidar', [CajaChicaController::class, 'liquidar']);
+    Route::post('/caja-chica/{cajaChica}/reabrir', [CajaChicaController::class, 'reabrir']);
+    Route::get('/caja-chica/resumen/por-estado', [CajaChicaController::class, 'resumenPorEstado']);
+
+    // Movimientos de Caja Chica
+    Route::apiResource('movimientos-caja-chica', MovimientoCajaChicaController::class)->parameters(['movimientos-caja-chica' => 'movimientoCajaChica']);
+    Route::get('/movimientos-caja-chica/caja/{cajaChicaId}', [MovimientoCajaChicaController::class, 'porCaja']);
+    Route::get('/movimientos-caja-chica/tipo/{tipo}', [MovimientoCajaChicaController::class, 'porTipo']);
+    Route::get('/movimientos-caja-chica/resumen/totales', [MovimientoCajaChicaController::class, 'totalPorTipo']);
 
     // Regímenes Tributarios (Catálogo DGT)
     Route::apiResource('regimenes-tributarios', RegimenTributarioController::class)->parameters(['regimenes-tributarios' => 'regimenTributario']);

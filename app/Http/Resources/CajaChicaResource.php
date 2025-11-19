@@ -17,11 +17,14 @@ class CajaChicaResource extends JsonResource
         return [
             'id' => $this->id,
             'empresa_id' => $this->empresa_id,
-            'fecha' => $this->fecha,
-            'descripcion' => $this->descripcion,
-            'monto' => (float) $this->monto,
-            'tipo' => $this->tipo,
+            'nombre' => $this->nombre,
+            'monto_inicial' => (float) $this->monto_inicial,
+            'saldo_actual' => (float) $this->saldo_actual,
             'responsable_id' => $this->responsable_id,
+            'fecha_apertura' => $this->fecha_apertura,
+            'fecha_cierre' => $this->fecha_cierre,
+            'estado' => $this->estado,
+            'observaciones' => $this->observaciones,
             'activo' => (bool) $this->activo,
             'eliminado' => (bool) $this->eliminado,
             'creado_en' => $this->creado_en,
@@ -31,8 +34,7 @@ class CajaChicaResource extends JsonResource
             'responsable' => $this->whenLoaded('responsable', function () {
                 return [
                     'id' => $this->responsable->id,
-                    'nombre' => $this->responsable->name,
-                    'email' => $this->responsable->email,
+                    'nombre_completo' => $this->responsable->nombre_completo,
                 ];
             }),
             

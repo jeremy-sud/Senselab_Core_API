@@ -27,19 +27,26 @@ class CajaChica extends Model
      */
     protected $fillable = [
         'empresa_id',
-        'fecha',
-        'descripcion',
-        'monto',
-        'tipo',
-        'responsable_id'
+        'nombre',
+        'monto_inicial',
+        'saldo_actual',
+        'responsable_id',
+        'fecha_apertura',
+        'fecha_cierre',
+        'estado',
+        'observaciones',
+        'activo',
+        'eliminado'
     ];
 
     /**
      * Los atributos que deben ser convertidos.
      */
     protected $casts = [
-        'fecha' => 'datetime',
-        'monto' => 'decimal:2',
+        'monto_inicial' => 'decimal:2',
+        'saldo_actual' => 'decimal:2',
+        'fecha_apertura' => 'date',
+        'fecha_cierre' => 'date',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
         'creado_en' => 'datetime',
@@ -47,10 +54,11 @@ class CajaChica extends Model
     ];
 
     /**
-     * Tipos de movimientos permitidos en caja chica.
+     * Estados permitidos para el fondo de caja chica.
      */
-    const TIPO_INGRESO = 'Ingreso';
-    const TIPO_EGRESO = 'Egreso';
+    const ESTADO_ABIERTA = 'Abierta';
+    const ESTADO_CERRADA = 'Cerrada';
+    const ESTADO_LIQUIDADA = 'Liquidada';
 
     /**
      * Relación con la empresa.
@@ -62,15 +70,23 @@ class CajaChica extends Model
     }
 
     /**
-     * Relación con el usuario responsable.
+     * Relación con el empleado responsable.
      */
     public function responsable(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'responsable_id');
+        return $this->belongsTo(Empleado::class, 'responsable_id');
     }
 
     /**
-     * Scope para obtener movimientos activos.
+     * Relación con los movimientos de caja chica.
+     */
+    public function movimientos()
+    {
+        return $this->hasMany(MovimientoCajaChica::class, 'caja_chica_id');
+    }
+
+    /**
+     * Scope para obtener fondos activos.
      */
     public function scopeActivos($query)
     {
@@ -79,19 +95,19 @@ class CajaChica extends Model
     }
 
     /**
-     * Scope para filtrar por tipo de movimiento.
+     * Scope para filtrar por estado.
      */
-    public function scopePorTipo($query, $tipo)
+    public function scopePorEstado($query, $estado)
     {
-        return $query->where('tipo', $tipo);
+        return $query->where('estado', $estado);
     }
 
     /**
-     * Scope para filtrar por rango de fechas.
+     * Scope para filtrar fondos abiertos.
      */
-    public function scopeFechaBetween($query, $start, $end)
+    public function scopeAbiertas($query)
     {
-        return $query->whereBetween('fecha', [$start, $end]);
+        return $query->where('estado', self::ESTADO_ABIERTA);
     }
 
     /**
@@ -103,40 +119,26 @@ class CajaChica extends Model
     }
 
     /**
-     * Scope para filtrar por rango de monto.
+     * Determina si el fondo está abierto.
      */
-    public function scopePorMonto($query, $minimo, $maximo = null)
+    public function estaAbierta(): bool
     {
-        $query = $query->where('monto', '>=', $minimo);
-        
-        if ($maximo) {
-            $query->where('monto', '<=', $maximo);
-        }
-
-        return $query;
+        return $this->estado === self::ESTADO_ABIERTA;
     }
 
     /**
-     * Determina si el movimiento es un ingreso.
+     * Determina si el fondo está cerrado.
      */
-    public function esIngreso(): bool
+    public function estaCerrada(): bool
     {
-        return $this->tipo === self::TIPO_INGRESO;
+        return $this->estado === self::ESTADO_CERRADA;
     }
 
     /**
-     * Determina si el movimiento es un egreso.
+     * Determina si el fondo está liquidado.
      */
-    public function esEgreso(): bool
+    public function estaLiquidada(): bool
     {
-        return $this->tipo === self::TIPO_EGRESO;
-    }
-
-    /**
-     * Obtiene el monto con signo según el tipo de movimiento.
-     */
-    public function getMontoSignedAttribute(): float
-    {
-        return $this->esEgreso() ? -$this->monto : $this->monto;
+        return $this->estado === self::ESTADO_LIQUIDADA;
     }
 }
