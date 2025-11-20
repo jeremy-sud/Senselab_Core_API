@@ -40,7 +40,35 @@ git checkout -b feature/nombre-descriptivo
 git checkout -b fix/descripcion-del-fix
 ```
 
-### 3. Realizar Cambios
+### 3. Configurar Entorno de Desarrollo
+
+```bash
+# Instalar dependencias
+composer install
+npm install
+
+# Copiar .env y configurar
+cp .env.example .env
+php artisan key:generate
+
+# Configurar base de datos en .env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=ursol_cast_api
+DB_USERNAME=tu_usuario
+DB_PASSWORD=tu_password
+
+# Ejecutar migraciones y seeders (carga 112 registros)
+php artisan migrate:fresh --seed
+
+# Credenciales de prueba después de seeders:
+# Email: admin@ursol.com
+# Password: admin123
+# Permisos: 68 (acceso total)
+```
+
+### 4. Realizar Cambios
 
 Asegúrate de seguir nuestros estándares:
 
@@ -165,10 +193,98 @@ emisión y recepción de comprobantes electrónicos.
 
 Todos los PRs deben incluir tests:
 
+### Ejecutar Tests
+
+```bash
+# Todos los tests
+php artisan test
+
+# Tests específicos
+php artisan test --filter NombreDelTest
+
+# Con cobertura
+php artisan test --coverage
+```
+
+### Autenticación en Tests
+
+Para tests que requieren autenticación:
+
 ```php
 <?php
 
 namespace Tests\Feature;
+
+use App\Models\Usuario;
+use App\Models\Rol;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class VentaControllerTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        
+        // Ejecutar seeders para tener datos base
+        $this->seed();
+    }
+
+    /** @test */
+    public function usuario_autenticado_puede_crear_venta()
+    {
+        // Obtener usuario admin (creado por UsuarioAdminSeeder)
+        $admin = Usuario::where('email', 'admin@ursol.com')->first();
+        
+        // Autenticar con Sanctum
+        $token = $admin->createToken('test-token')->plainTextToken;
+        
+        // Hacer request con token
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            'Accept' => 'application/json',
+        ])->postJson('/api/ventas', [
+            'empresa_id' => 1,
+            'sucursal_id' => 1,
+            'cliente_id' => 1,
+            // ... otros datos
+        ]);
+        
+        $response->assertStatus(201);
+    }
+
+    /** @test */
+    public function usuario_sin_permiso_no_puede_crear_venta()
+    {
+        // Crear usuario sin permisos
+        $usuario = Usuario::factory()->create();
+        $rolUsuario = Rol::where('nombre', 'Usuario')->first();
+        $usuario->assignRoles(['Usuario']);
+        
+        $token = $usuario->createToken('test-token')->plainTextToken;
+        
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            'Accept' => 'application/json',
+        ])->postJson('/api/ventas', [
+            'empresa_id' => 1,
+            // ... datos
+        ]);
+        
+        // Espera 403 Forbidden
+        $response->assertStatus(403);
+        $response->assertJson([
+            'message' => 'No tienes permiso para realizar esta acción'
+        ]);
+    }
+}
+```
+
+### Tests de RBAC
+
+```php
 
 use Tests\TestCase;
 

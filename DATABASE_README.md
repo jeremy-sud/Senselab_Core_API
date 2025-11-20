@@ -12,37 +12,57 @@
 **Base de datos completamente configurada y funcional**
 
 ### Migraciones
-- ✅ **59 migraciones** ejecutadas exitosamente
-- ✅ **59 tablas** creadas en la base de datos
+- ✅ **60 migraciones** ejecutadas exitosamente (59 business + 1 Sanctum)
+- ✅ **60 tablas** creadas en la base de datos
 - ✅ Todas las **foreign keys** configuradas correctamente
 - ✅ Tipos de datos compatibles (INT UNSIGNED)
+- ✅ **personal_access_tokens** (Laravel Sanctum) para autenticación API
 
-### Seeders Implementados
+### Seeders Implementados (9 total)
+
 Se han creado seeders para poblar datos iniciales en las siguientes tablas:
 
-1. **RegimenTributarioSeeder** - 2 registros
+#### Datos Maestros (6 seeders - 96 registros)
+
+1. **RegimenesTributariosSeeder** - 2 registros
    - Régimen Tradicional
    - Régimen Simplificado
 
-2. **CargoSeeder** - 7 registros
-   - Gerente General, Contador, Vendedor, Cajero, Bodeguero, Conductor, Asistente Administrativo
-
-3. **TipoCuentaSeeder** - 8 registros
-   - Activo Corriente, Activo No Corriente, Pasivo Corriente, Pasivo No Corriente, Patrimonio, Ingresos, Costos, Gastos
-
-4. **RolSeeder** - 6 registros
-   - Administrador, Gerente, Contador, Vendedor, Cajero, Bodeguero
-
-5. **FormaPagoSeeder** - 6 registros
+2. **FormasPagoSeeder** - 6 registros
    - Efectivo, Tarjeta, Transferencia, Cheque, Crédito, Otros
 
-6. **UnidadMedidaSeeder** - 11 registros
+3. **TiposCuentasSeeder** - 8 registros
+   - Activo Corriente, Activo No Corriente, Pasivo Corriente, Pasivo No Corriente, Patrimonio, Ingresos, Costos, Gastos
+
+4. **UnidadesMedidaSeeder** - 11 registros
    - Unidad, Kilogramo, Gramo, Litro, Mililitro, Metro, Metro cuadrado, Metro cúbico, Caja, Paquete, Servicio
 
-7. **TipoImpuestoSeeder** - 6 registros
-   - IVA, Impuesto Selectivo de Consumo, Impuesto Único sobre Combustibles, etc.
+5. **PermisosSeeder** - 68 registros
+   - Generación dinámica: 17 módulos × 4 acciones (crear, leer, actualizar, eliminar)
+   - Módulos: empresas, sucursales, almacenes, productos, categorias_producto, clientes, proveedores, ventas, compras, inventario, cuentas_contables, asientos_contables, empleados, nomina, rutas, buses, facturacion_electronica
+
+6. **RolesSeeder** - 7 registros
+   - Administrador, Gerente, Contador, Vendedor, Comprador, Bodeguero, Usuario
+   - El rol Administrador se asigna automáticamente todos los 68 permisos
+
+#### Datos Demo/Test (3 seeders - 16 registros)
+
+7. **CargosSeeder** - 7 registros
+   - Gerente General, Contador, Vendedor, Cajero, Bodeguero, Conductor, Asistente Administrativo
+
+8. **EmpresaDemoSeeder** - 2 registros
+   - 1 Empresa: "Sistemas Ursol S.A." (3-101-123456)
+   - 1 Sucursal: "Oficina Central"
+
+9. **UsuarioAdminSeeder** - 7 registros
+   - 1 Usuario: admin@ursol.com (password: admin123)
+   - 6 Relaciones rol_usuario (usuario con rol Administrador)
+   - Asignación automática de todos los 68 permisos
+
+**Total de registros:** **112** (96 datos maestros + 16 datos demo/test)
 
 ### Factories Implementadas
+
 Se han creado factories para testing de las siguientes entidades:
 
 1. **EmpresaFactory** - Generación de empresas de prueba
@@ -55,30 +75,75 @@ Se han creado factories para testing de las siguientes entidades:
 
 ## 🚀 Comandos Disponibles
 
-### Ejecutar migraciones desde cero
+### Instalación Completa
+
 ```bash
+# Ejecutar migraciones + seeders (fresh install con 112 registros)
 php artisan migrate:fresh --seed
 ```
 
-### Ejecutar solo migraciones
+Este comando:
+1. Elimina todas las tablas existentes
+2. Ejecuta las 60 migraciones (59 business + 1 Sanctum)
+3. Ejecuta los 9 seeders en orden:
+   - RegimenesTributariosSeeder (2)
+   - FormasPagoSeeder (6)
+   - TiposCuentasSeeder (8)
+   - UnidadesMedidaSeeder (11)
+   - PermisosSeeder (68)
+   - RolesSeeder (7 + asignación de permisos)
+   - CargosSeeder (7)
+   - EmpresaDemoSeeder (2)
+   - UsuarioAdminSeeder (7 + 6 relaciones rol_usuario)
+4. **Total insertado: 112 registros**
+
+### Comandos Individuales
+
 ```bash
+# Solo migraciones (sin seeders)
 php artisan migrate
-```
 
-### Ejecutar solo seeders
-```bash
+# Solo seeders (sin recrear tablas)
 php artisan db:seed
-```
 
-### Limpiar base de datos
-```bash
+# Seeder específico
+php artisan db:seed --class=PermisosSeeder
+php artisan db:seed --class=UsuarioAdminSeeder
+
+# Limpiar base de datos (eliminar todas las tablas)
 php artisan db:wipe
+
+# Ver estado de la base de datos con conteos
+php artisan db:show --counts
+
+# Rollback de última migración
+php artisan migrate:rollback
+
+# Rollback de todas las migraciones
+php artisan migrate:reset
 ```
 
-### Ver estado de la base de datos
+### Credenciales de Acceso
+
+Después de ejecutar los seeders, puedes iniciar sesión con:
+
 ```bash
-php artisan db:show --counts
+# Login con cURL
+curl -X POST http://localhost:8000/api/login \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "email": "admin@ursol.com",
+    "password": "admin123"
+  }'
 ```
+
+**Credenciales:**
+- **Email:** admin@ursol.com
+- **Password:** admin123
+- **Rol:** Administrador
+- **Permisos:** 68 (acceso total)
+- **Empresa:** Sistemas Ursol S.A. (ID: 1)
 
 ## 🧪 Testing con Factories
 
@@ -113,12 +178,22 @@ $proveedores = \App\Models\Proveedor::factory()->count(5)->create([
 
 ## 📊 Estructura de la Base de Datos
 
-### Tablas Principales
-- **empresas** - Datos de las empresas
+### Tablas de Sistema
+
+- **migrations** - Historial de migraciones ejecutadas
+- **personal_access_tokens** - Tokens de autenticación (Laravel Sanctum)
+
+### Tablas Principales (Empresas y Usuarios)
+
+- **empresas** - Datos de las empresas (multi-tenancy)
 - **sucursales** - Sucursales por empresa
-- **usuarios** - Usuarios del sistema
-- **roles** / **rol_usuario** - Sistema de roles y permisos
+- **usuarios** - Usuarios del sistema (Authenticatable + HasApiTokens)
+- **roles** - Roles del sistema (7 roles predefinidos)
+- **permisos** - Permisos granulares (68 permisos: 17 módulos × 4 acciones)
+- **rol_usuario** - Relación many-to-many entre usuarios y roles
+- **rol_permiso** - Relación many-to-many entre roles y permisos
 - **empleados** - Empleados de las empresas
+- **cargos** - Cargos/puestos de trabajo (7 cargos predefinidos)
 
 ### Módulo de Ventas
 - **clientes** - Clientes
@@ -202,12 +277,20 @@ Se corrigieron 4 migraciones existentes:
 2. **Soft Deletes personalizados:** Se usa `activo` y `eliminado` en lugar de `deleted_at`
 3. **Multi-tenant:** Todas las tablas operacionales tienen `empresa_id`
 4. **Facturación Electrónica:** Campos preparados para integración con Hacienda Costa Rica
+5. **Autenticación:** Laravel Sanctum con tokens personales por usuario
+6. **RBAC:** Sistema completo de roles y permisos con 68 permisos granulares
+7. **Seeders:** Ejecutar siempre en orden (DatabaseSeeder se encarga automáticamente)
+8. **Credenciales demo:** admin@ursol.com / admin123 (solo en desarrollo)
 
-## 🎯 Próximos Pasos Sugeridos
+## 🎯 Próximos Pasos
 
-1. ✅ Configurar modelos Eloquent con relaciones
-2. ✅ Crear controladores API
-3. ✅ Implementar middleware de autenticación
-4. ✅ Crear validaciones de request
-5. ✅ Implementar tests unitarios y de integración
-6. ✅ Documentar API con Swagger/OpenAPI
+1. ✅ Configurar modelos Eloquent con relaciones → **COMPLETADO**
+2. ✅ Crear controladores API → **COMPLETADO**
+3. ✅ Implementar middleware de autenticación → **COMPLETADO (Sanctum + CheckPermission)**
+4. ✅ Crear validaciones de request → **COMPLETADO (FormRequests)**
+5. ✅ Implementar seeders de datos maestros → **COMPLETADO (9 seeders, 112 registros)**
+6. 🔄 Implementar tests unitarios y de integración → **EN PROGRESO (FASE 4)**
+7. 📝 Documentar API con Swagger/OpenAPI → **PENDIENTE (FASE 5)**
+8. 🚀 Integración con Hacienda (Facturación Electrónica) → **PENDIENTE**
+9. 📊 Dashboard y reportes → **PENDIENTE**
+10. 📱 API versioning → **PENDIENTE**
