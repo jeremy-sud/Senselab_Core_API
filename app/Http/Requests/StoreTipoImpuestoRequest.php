@@ -31,7 +31,7 @@ class StoreTipoImpuestoRequest extends FormRequest
             'codigo_hacienda' => ['required', 'string', 'max:10', 'unique:tipos_impuesto,codigo_hacienda'],
             'nombre' => ['required', 'string', 'max:100'],
             'descripcion' => ['nullable', 'string'],
-            'Comentario' => ['nullable', 'string'],
+            'comentario' => ['nullable', 'string'],
             'activo' => ['nullable', 'boolean']
         ];
     }
@@ -63,7 +63,7 @@ class StoreTipoImpuestoRequest extends FormRequest
             'codigo_hacienda' => 'código de Hacienda',
             'nombre' => 'nombre',
             'descripcion' => 'descripción',
-            'Comentario' => 'comentario',
+            'comentario' => 'comentario',
             'activo' => 'activo'
         ];
     }

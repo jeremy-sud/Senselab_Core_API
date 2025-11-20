@@ -89,13 +89,13 @@ class PagoController extends Controller
             $pago = Pago::create($validated);
 
             // Actualizar saldo de cuenta por pagar si aplica
-            if ($pago->cuenta_por_pagar_id) {
-                $this->actualizarCuentaPorPagar($pago->cuenta_por_pagar_id, $pago->monto);
+            if ($pago->cuenta_pagar_id) {
+                $this->actualizarCuentaPorPagar($pago->cuenta_pagar_id, $pago->monto);
             }
 
             // Actualizar saldo de cuenta por cobrar si aplica
-            if ($pago->cuenta_por_cobrar_id) {
-                $this->actualizarCuentaPorCobrar($pago->cuenta_por_cobrar_id, $pago->monto);
+            if ($pago->cuenta_cobrar_id) {
+                $this->actualizarCuentaPorCobrar($pago->cuenta_cobrar_id, $pago->monto);
             }
 
             $pago->load(['formaPago', 'proveedor', 'cliente', 'cuentaPorPagar', 'cuentaPorCobrar']);
@@ -174,12 +174,12 @@ class PagoController extends Controller
             if ($request->filled('monto') && $request->monto != $montoAnterior) {
                 $diferencia = $request->monto - $montoAnterior;
 
-                if ($pago->cuenta_por_pagar_id) {
-                    $this->actualizarCuentaPorPagar($pago->cuenta_por_pagar_id, $diferencia);
+                if ($pago->cuenta_pagar_id) {
+                    $this->actualizarCuentaPorPagar($pago->cuenta_pagar_id, $diferencia);
                 }
 
-                if ($pago->cuenta_por_cobrar_id) {
-                    $this->actualizarCuentaPorCobrar($pago->cuenta_por_cobrar_id, $diferencia);
+                if ($pago->cuenta_cobrar_id) {
+                    $this->actualizarCuentaPorCobrar($pago->cuenta_cobrar_id, $diferencia);
                 }
             }
 

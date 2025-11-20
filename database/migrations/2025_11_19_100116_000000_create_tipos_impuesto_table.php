@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('codigo_hacienda', 10)->unique();
             $table->string('nombre', 100);
             $table->text('descripcion')->nullable();
-            $table->text('Comentario');
+            $table->text('comentario')->nullable();
             $table->boolean('activo')->default(true);
             $table->boolean('eliminado')->default(false);
             $table->timestamp('creado_en')->useCurrent();
