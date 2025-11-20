@@ -26,48 +26,270 @@
 
 ## 🔐 Autenticación
 
+### Configuración
+
+El sistema utiliza **Laravel Sanctum** para autenticación basada en tokens API.
+
+**Características:**
+- ✅ Autenticación stateless por tokens
+- ✅ Tokens personales por usuario
+- ✅ Revocación de tokens (logout)
+- ✅ Múltiples tokens por usuario (diferentes dispositivos)
+- ✅ Expiración configurable de tokens
+
 ### POST /login
-Iniciar sesión
+Iniciar sesión y obtener token de acceso
 
 **Request:**
 ```json
 {
-  "email": "usuario@example.com",
-  "password": "password123"
+  "email": "admin@ursol.com",
+  "password": "admin123"
 }
 ```
 
 **Response (200):**
 ```json
 {
-  "token": "1|abc123...",
   "user": {
     "id": 1,
-    "nombre": "Juan",
-    "email": "usuario@example.com"
-  }
+    "nombre": "Administrador",
+    "apellidos": "Sistema",
+    "email": "admin@ursol.com",
+    "empresa_id": 1,
+    "cargo_id": 1,
+    "activo": true
+  },
+  "token": "1|dkjf9283hd9fh2938hf9823hf9823hf9823h",
+  "permisos": [
+    "empresas.crear",
+    "empresas.leer",
+    "empresas.actualizar",
+    "empresas.eliminar",
+    "sucursales.crear",
+    "sucursales.leer",
+    ...
+    // Total: 68 permisos
+  ]
 }
 ```
 
-### POST /register
-Registrar nuevo usuario
-
-**Request:**
+**Errores:**
 ```json
+// Credenciales incorrectas (401)
 {
-  "nombre": "Juan Pérez",
-  "email": "juan@example.com",
-  "password": "password123",
-  "password_confirmation": "password123",
-  "empresa_id": 1
+  "message": "Credenciales incorrectas"
+}
+
+// Usuario inactivo (403)
+{
+  "message": "Usuario inactivo"
 }
 ```
 
 ### POST /logout
-Cerrar sesión (requiere autenticación)
+Cerrar sesión y revocar token actual
 
-### GET /user
-Obtener usuario autenticado
+**Headers:**
+```http
+Authorization: Bearer {token}
+Accept: application/json
+```
+
+**Response (200):**
+```json
+{
+  "message": "Sesión cerrada exitosamente"
+}
+```
+
+**Nota:** Solo revoca el token usado en la request. Otros tokens del mismo usuario permanecen activos.
+
+### GET /me
+Obtener información del usuario autenticado
+
+**Headers:**
+```http
+Authorization: Bearer {token}
+Accept: application/json
+```
+
+**Response (200):**
+```json
+{
+  "id": 1,
+  "nombre": "Administrador",
+  "apellidos": "Sistema",
+  "email": "admin@ursol.com",
+  "empresa": {
+    "id": 1,
+    "nombre": "Sistemas Ursol S.A.",
+    "razon_social": "Sistemas Ursol Sociedad Anónima"
+  },
+  "cargo": {
+    "id": 1,
+    "nombre": "Gerente General"
+  },
+  "roles": [
+    {
+      "id": 1,
+      "nombre": "Administrador",
+      "descripcion": "Acceso total al sistema"
+    }
+  ],
+  "permisos": [
+    "empresas.crear",
+    "empresas.leer",
+    ...
+  ]
+}
+```
+
+### ~~POST /register~~ (DESHABILITADO)
+
+Por razones de seguridad, el registro público está **deshabilitado**. Los usuarios se crean mediante:
+1. **Seeders** - Para datos de prueba/desarrollo
+2. **Panel de administración** - Administradores pueden crear usuarios
+3. **Comandos Artisan** - Para usuarios iniciales
+
+---
+
+## 🔒 Autorización (RBAC)
+
+### Sistema de Permisos
+
+El sistema implementa **RBAC (Role-Based Access Control)** con 68 permisos granulares.
+
+**Estructura de permisos:**
+```
+{modulo}.{accion}
+```
+
+**Acciones:**
+- `crear` - Crear nuevos registros
+- `leer` - Ver/listar registros
+- `actualizar` - Modificar registros existentes
+- `eliminar` - Eliminar registros (soft delete)
+
+**Módulos (17 total):**
+1. `empresas` - Gestión de empresas
+2. `sucursales` - Sucursales
+3. `almacenes` - Almacenes
+4. `productos` - Productos y servicios
+5. `categorias_producto` - Categorías
+6. `clientes` - Clientes
+7. `proveedores` - Proveedores
+8. `ventas` - Ventas y facturación
+9. `compras` - Órdenes de compra
+10. `inventario` - Entradas/salidas de inventario
+11. `cuentas_contables` - Plan de cuentas
+12. `asientos_contables` - Asientos contables
+13. `empleados` - Gestión de empleados
+14. `nomina` - Nómina y pagos
+15. `rutas` - Rutas de transporte
+16. `buses` - Flota de buses
+17. `facturacion_electronica` - Facturación electrónica DGT
+
+**Total de permisos:** 17 módulos × 4 acciones = **68 permisos**
+
+### Roles Predefinidos
+
+1. **Administrador** - Todos los permisos (68)
+2. **Gerente** - Gestión completa excepto configuraciones críticas
+3. **Contador** - Módulos contables y financieros
+4. **Vendedor** - Ventas, clientes, productos (solo lectura)
+5. **Comprador** - Compras, proveedores, inventario
+6. **Bodeguero** - Inventario, almacenes, productos
+7. **Usuario** - Permisos básicos de lectura
+
+### Middleware de Permisos
+
+**Uso en rutas:**
+
+```php
+// Requiere un permiso específico
+Route::get('/empresas', [EmpresaController::class, 'index'])
+    ->middleware('permission:empresas.leer');
+
+// Requiere uno de varios permisos (OR)
+Route::post('/ventas', [VentaController::class, 'store'])
+    ->middleware('permission:ventas.crear,administrador');
+```
+
+**Respuesta sin permiso (403):**
+```json
+{
+  "message": "No tienes permiso para realizar esta acción"
+}
+```
+
+### Métodos RBAC en Usuario
+
+El modelo `Usuario` incluye métodos helper para verificar permisos:
+
+```php
+$usuario = auth()->user();
+
+// Verificar un permiso
+if ($usuario->hasPermission('empresas.crear')) {
+    // Usuario puede crear empresas
+}
+
+// Verificar un rol
+if ($usuario->hasRole('Administrador')) {
+    // Usuario es administrador
+}
+
+// Verificar uno de varios roles
+if ($usuario->hasAnyRole(['Administrador', 'Gerente'])) {
+    // Usuario es admin o gerente
+}
+
+// Obtener todos los permisos del usuario
+$permisos = $usuario->getAllPermissions();
+// ['empresas.crear', 'empresas.leer', ...]
+
+// Asignar roles a un usuario
+$usuario->assignRoles(['Vendedor', 'Cajero']);
+```
+
+---
+
+## 📝 Headers Requeridos
+
+### Para todos los endpoints (excepto /login)
+
+```http
+Authorization: Bearer {token}
+Content-Type: application/json
+Accept: application/json
+```
+
+### Ejemplo completo con cURL
+
+```bash
+# 1. Login
+curl -X POST http://localhost:8000/api/login \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "email": "admin@ursol.com",
+    "password": "admin123"
+  }'
+
+# Guardar el token de la respuesta
+TOKEN="1|abc123def456..."
+
+# 2. Usar el token en requests protegidos
+curl -X GET http://localhost:8000/api/empresas \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Accept: application/json"
+
+# 3. Logout
+curl -X POST http://localhost:8000/api/logout \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Accept: application/json"
+```
 
 ---
 
@@ -75,6 +297,8 @@ Obtener usuario autenticado
 
 ### GET /empresas
 Listar empresas con paginación
+
+**Requiere permiso:** `empresas.leer`
 
 **Query Parameters:**
 - `per_page` (int) - Registros por página (default: 15)
@@ -108,6 +332,8 @@ Listar empresas con paginación
 
 ### POST /empresas
 Crear nueva empresa
+
+**Requiere permiso:** `empresas.crear`
 
 **Request:**
 ```json
@@ -143,6 +369,8 @@ Crear nueva empresa
 ### GET /empresas/{id}
 Obtener empresa específica con relaciones
 
+**Requiere permiso:** `empresas.leer`
+
 **Response (200):**
 ```json
 {
@@ -158,8 +386,12 @@ Obtener empresa específica con relaciones
 ### PUT/PATCH /empresas/{id}
 Actualizar empresa
 
+**Requiere permiso:** `empresas.actualizar`
+
 ### DELETE /empresas/{id}
 Eliminar empresa (soft delete)
+
+**Requiere permiso:** `empresas.eliminar`
 
 ---
 
@@ -168,12 +400,16 @@ Eliminar empresa (soft delete)
 ### GET /sucursales
 Listar sucursales
 
+**Requiere permiso:** `sucursales.leer`
+
 **Query Parameters:**
 - `empresa_id` (int) - Filtrar por empresa
 - `activos` (boolean) - Solo activos
 
 ### POST /sucursales
 Crear sucursal
+
+**Requiere permiso:** `sucursales.crear`
 
 **Request:**
 ```json
@@ -213,6 +449,8 @@ Eliminar sucursal (no permite eliminar sucursal principal)
 ### GET /almacenes
 Listar almacenes
 
+**Requiere permiso:** `almacenes.leer`
+
 **Query Parameters:**
 - `empresa_id` (int)
 - `sucursal_id` (int)
@@ -220,6 +458,8 @@ Listar almacenes
 
 ### POST /almacenes
 Crear almacén
+
+**Requiere permiso:** `almacenes.crear`
 
 **Request:**
 ```json
@@ -245,6 +485,8 @@ Crear almacén
 
 ### GET /productos
 Listar productos con filtros avanzados
+
+**Requiere permiso:** `productos.leer`
 
 **Query Parameters:**
 - `per_page` (int)
@@ -289,6 +531,8 @@ Listar productos con filtros avanzados
 
 ### POST /productos
 Crear producto
+
+**Requiere permiso:** `productos.crear`
 
 **Request:**
 ```json
@@ -342,6 +586,8 @@ Eliminar producto (soft delete)
 ### GET /clientes
 Listar clientes
 
+**Requiere permiso:** `clientes.leer`
+
 **Query Parameters:**
 - `search` (string) - Buscar por nombre, apellidos, razón social, identificación, email
 - `empresa_id` (int)
@@ -350,6 +596,8 @@ Listar clientes
 
 ### POST /clientes
 Crear cliente
+
+**Requiere permiso:** `clientes.crear`
 
 **Request:**
 ```json
@@ -408,6 +656,8 @@ Eliminar cliente (soft delete)
 ### GET /proveedores
 Listar proveedores
 
+**Requiere permiso:** `proveedores.leer`
+
 **Query Parameters:**
 - `search` (string)
 - `empresa_id` (int)
@@ -415,6 +665,8 @@ Listar proveedores
 
 ### POST /proveedores
 Crear proveedor
+
+**Requiere permiso:** `proveedores.crear`
 
 **Request:**
 ```json
@@ -455,6 +707,8 @@ Obtener proveedor con últimas 10 órdenes de compra y cuentas por pagar pendien
 ### GET /ventas
 Listar ventas
 
+**Requiere permiso:** `ventas.leer`
+
 **Query Parameters:**
 - `empresa_id` (int)
 - `sucursal_id` (int)
@@ -464,6 +718,8 @@ Listar ventas
 
 ### POST /ventas
 Crear venta con detalles
+
+**Requiere permiso:** `ventas.crear`
 
 **Request:**
 ```json
@@ -547,6 +803,8 @@ Anular venta (marca estado como "anulada" y soft delete)
 ### GET /ordenes-compra
 Listar órdenes de compra
 
+**Requiere permiso:** `compras.leer`
+
 **Query Parameters:**
 - `empresa_id` (int)
 - `proveedor_id` (int)
@@ -563,6 +821,8 @@ Listar órdenes de compra
 
 ### POST /ordenes-compra
 Crear orden de compra
+
+**Requiere permiso:** `compras.crear`
 
 **Request:**
 ```json

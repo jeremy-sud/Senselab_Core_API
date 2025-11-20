@@ -39,6 +39,58 @@
 
 **Ursol CAST API** es un sistema ERP completo desarrollado por **Sistemas Ursol S.A.** con Laravel 11, diseñado específicamente para empresas costarricenses que requieren soluciones tecnológicas robustas y escalables.
 
+### 📊 Estado del Proyecto
+
+**✅ FASE 1 - Correcciones Críticas (COMPLETADA)**
+- Corrección de campos en `AsientoContableController` (debe/haber)
+- Sincronización de campo `comentario` en `TipoImpuesto` con base de datos
+- Actualización de migraciones y FormRequests
+- Commit: `0dd7c39`
+
+**✅ FASE 2 - Datos Maestros (COMPLETADA)**
+- Implementación de 6 seeders principales:
+  - RegimenesTributariosSeeder (2 regímenes)
+  - FormasPagoSeeder (6 formas de pago)
+  - TiposCuentasSeeder (8 tipos de cuentas)
+  - UnidadesMedidaSeeder (11 unidades)
+  - PermisosSeeder (68 permisos = 17 módulos × 4 acciones)
+  - RolesSeeder (7 roles: Administrador, Gerente, Contador, Vendedor, Comprador, Bodeguero, Usuario)
+- Total: **96 registros** de datos maestros cargados
+- Commit: `58e2055`
+
+**✅ FASE 3 - Autenticación y Autorización (COMPLETADA)**
+- Sistema RBAC (Role-Based Access Control) implementado
+- Laravel Sanctum para autenticación por tokens
+- CheckPermission middleware para protección de rutas
+- Usuario model mejorado: Authenticatable + HasApiTokens + 5 métodos RBAC
+- AuthController con endpoints: login, logout, me
+- 3 seeders adicionales:
+  - CargosSeeder (7 cargos)
+  - EmpresaDemoSeeder (1 empresa + 1 sucursal)
+  - UsuarioAdminSeeder (1 usuario admin con 68 permisos)
+- Total adicional: **16 registros** (112 registros totales en BD)
+- Sistema de autenticación **100% funcional y probado**
+- Commit: `e668c64`
+
+**🔄 FASE 4 - Testing (EN PROGRESO)**
+- Implementación de pruebas automatizadas
+- Tests de autenticación, autorización y RBAC
+- Tests de endpoints CRUD principales
+
+**📝 FASE 5 - Documentación API (PENDIENTE)**
+- Swagger/OpenAPI para documentación interactiva
+
+### 🔑 Credenciales de Prueba
+
+Después de ejecutar los seeders, puedes iniciar sesión con:
+
+```
+Email: admin@ursol.com
+Password: admin123
+```
+
+Este usuario tiene acceso completo con **68 permisos** (todos los módulos del sistema).
+
 ### 🏢 Sobre Sistemas Ursol S.A.
 
 Con **casi 30 años de experiencia** en el mercado costarricense, Sistemas Ursol S.A. es una empresa familiar que se distingue por su **ética inquebrantable**, **atención personalizada** y el **"Toque Humano"** en cada proyecto. Fundada y liderada por **Eduardo Alberto Ureña Solano**, quien aporta más de 35 años de experiencia en el sector tecnológico.
@@ -53,6 +105,7 @@ Con **casi 30 años de experiencia** en el mercado costarricense, Sistemas Ursol
 
 Este ERP proporciona gestión integral de:
 
+- **Autenticación y Autorización** (Laravel Sanctum + RBAC con 68 permisos granulares)
 - **Facturación Electrónica** (integración completa con DGT/Hacienda de Costa Rica)
 - **Inventario Multi-Almacén** (control en tiempo real)
 - **Contabilidad** (plan de cuentas, asientos, reportes financieros)
@@ -63,6 +116,14 @@ Este ERP proporciona gestión integral de:
 El sistema está diseñado con las mejores prácticas de desarrollo, siguiendo los estándares de Laravel y con enfoque en escalabilidad, seguridad y facilidad de mantenimiento.
 
 ## ✨ Características Principales
+
+### Autenticación y Autorización
+- ✅ Laravel Sanctum para autenticación por tokens API
+- ✅ Sistema RBAC (Role-Based Access Control) completo
+- ✅ 68 permisos granulares (17 módulos × 4 acciones: crear, leer, actualizar, eliminar)
+- ✅ 7 roles predefinidos con permisos configurables
+- ✅ Middleware `CheckPermission` para protección de rutas
+- ✅ Métodos helper en modelo Usuario: `hasPermission()`, `hasRole()`, `hasAnyRole()`, etc.
 
 ### Facturación Electrónica
 - ✅ Emisión de facturas electrónicas según normativa DGT
@@ -169,15 +230,46 @@ DB_USERNAME=####
 DB_PASSWORD=####
 ```
 
-### 5. Ejecutar Migraciones
+### 5. Ejecutar Migraciones y Seeders
 
 ```bash
-# Migraciones del landlord (sistema central)
-php artisan migrate --path=database/migrations/landlord
-
-# Migraciones de tenants (se ejecutarán automáticamente al crear empresas)
+# Ejecutar migraciones
 php artisan migrate
+
+# Publicar migraciones de Sanctum
+php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+php artisan migrate
+
+# Ejecutar seeders (carga 112 registros: 96 datos maestros + 16 datos demo)
+php artisan db:seed
+
+# O todo junto (fresh install)
+php artisan migrate:fresh --seed
 ```
+
+**Seeders incluidos:**
+- `RegimenesTributariosSeeder` - 2 regímenes tributarios
+- `FormasPagoSeeder` - 6 formas de pago
+- `TiposCuentasSeeder` - 8 tipos de cuentas contables
+- `UnidadesMedidaSeeder` - 11 unidades de medida
+- `PermisosSeeder` - 68 permisos del sistema (17 módulos)
+- `RolesSeeder` - 7 roles (Administrador, Gerente, Contador, etc.)
+- `CargosSeeder` - 7 cargos de empleados
+- `EmpresaDemoSeeder` - Empresa demo "Sistemas Ursol S.A." + sucursal
+- `UsuarioAdminSeeder` - Usuario admin con todos los permisos
+
+**Total de registros:** 112 (96 datos maestros + 16 datos demo/test)
+
+### 6. Credenciales de Acceso
+
+Después de ejecutar los seeders, inicia sesión con:
+
+```
+Email: admin@ursol.com
+Password: admin123
+```
+
+Este usuario tiene acceso completo a todos los módulos (68 permisos).
 
 ### 6. Compilar Assets
 
@@ -196,6 +288,35 @@ php artisan serve
 ```
 
 El sistema estará disponible en `http://localhost:8000`
+
+### 8. Probar la API
+
+```bash
+# Login (obtener token)
+curl -X POST http://localhost:8000/api/login \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "email": "admin@ursol.com",
+    "password": "admin123"
+  }'
+
+# Respuesta incluye token y 68 permisos del usuario
+{
+  "user": {...},
+  "token": "1|abc123...",
+  "permisos": [
+    "empresas.crear",
+    "empresas.leer",
+    ...
+  ]
+}
+
+# Usar el token en requests protegidos
+curl -X GET http://localhost:8000/api/me \
+  -H "Authorization: Bearer 1|abc123..." \
+  -H "Accept: application/json"
+```
 
 ## ⚙️ Configuración
 
@@ -311,33 +432,91 @@ El proyecto sigue el patrón **MVC** (Model-View-Controller) con algunas extensi
 
 El sistema utiliza **Laravel Sanctum** para autenticación de API.
 
+**Endpoints de Autenticación:**
+
 #### Login
 ```http
 POST /api/login
 Content-Type: application/json
 
 {
-  "email": "usuario@ejemplo.com",
-  "password": "contraseña"
+  "email": "admin@ursol.com",
+  "password": "admin123"
 }
 ```
 
-#### Registro
-```http
-POST /api/register
-Content-Type: application/json
-
+**Respuesta:**
+```json
 {
-  "name": "Nombre Usuario",
-  "email": "usuario@ejemplo.com",
-  "password": "contraseña",
-  "password_confirmation": "contraseña"
+  "user": {
+    "id": 1,
+    "nombre": "Administrador",
+    "email": "admin@ursol.com"
+  },
+  "token": "1|abc123def456...",
+  "permisos": [
+    "empresas.crear",
+    "empresas.leer",
+    "empresas.actualizar",
+    "empresas.eliminar",
+    ...
+  ]
 }
 ```
+
+#### Logout
+```http
+POST /api/logout
+Authorization: Bearer {token}
+```
+
+#### Usuario Actual
+```http
+GET /api/me
+Authorization: Bearer {token}
+```
+
+**Respuesta incluye usuario con todos sus permisos y roles**
+
+### Headers Requeridos
+
+Todos los endpoints (excepto `/login`) requieren:
+
+```http
+Authorization: Bearer {token}
+Content-Type: application/json
+Accept: application/json
+```
+
+### Protección por Permisos
+
+Los endpoints están protegidos por el middleware `CheckPermission`. Ejemplos:
+
+```php
+// Requiere permiso específico
+Route::get('/empresas', [EmpresaController::class, 'index'])
+    ->middleware('permission:empresas.leer');
+
+// Requiere uno de varios permisos
+Route::post('/ventas', [VentaController::class, 'store'])
+    ->middleware('permission:ventas.crear,administrador');
+```
+
+**Permisos disponibles (68 total):**
+- `{módulo}.crear` - Crear registros
+- `{módulo}.leer` - Ver/listar registros  
+- `{módulo}.actualizar` - Modificar registros
+- `{módulo}.eliminar` - Eliminar registros
+
+**Módulos:** empresas, sucursales, almacenes, productos, categorias_producto, clientes, proveedores, ventas, compras, inventario, cuentas_contables, asientos_contables, empleados, nomina, rutas, buses, facturacion_electronica
+
+### Registro (Deshabilitado)
+
+Por seguridad, el endpoint `/register` está **comentado**. Los usuarios se crean manualmente por administradores o mediante seeders.
 
 ### Endpoints Principales
 
-Todos los endpoints requieren autenticación excepto login y register.
+Ver documentación completa en [API_DOCUMENTATION.md](API_DOCUMENTATION.md)
 
 #### Almacenes
 ```http

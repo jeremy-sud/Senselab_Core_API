@@ -94,6 +94,20 @@ Trait para soft deletes personalizados usando los campos:
 
 **Tabla:** `usuarios`
 
+**Nota:** Este modelo fue modificado en **FASE 3** para implementar autenticación y RBAC.
+
+**Herencia:**
+```php
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
+
+class Usuario extends Authenticatable
+{
+    use HasApiTokens;
+    // ...
+}
+```
+
 **Relaciones:**
 - `empresa()` → Empresa (belongsTo)
 - `cargo()` → Cargo (belongsTo)
@@ -101,6 +115,128 @@ Trait para soft deletes personalizados usando los campos:
 - `ventas()` → Venta (hasMany)
 - `ordenesCompra()` → OrdenCompra (hasMany)
 - `asientosContables()` → AsientoContable (hasMany)
+
+**Métodos RBAC (nuevos en FASE 3):**
+
+```php
+// Verificar si tiene un permiso específico
+$usuario->hasPermission('empresas.crear'); // bool
+
+// Verificar si tiene un rol específico
+$usuario->hasRole('Administrador'); // bool
+
+// Verificar si tiene uno de varios roles
+$usuario->hasAnyRole(['Administrador', 'Gerente']); // bool
+
+// Obtener todos los permisos del usuario (a través de sus roles)
+$usuario->getAllPermissions(); // Collection
+// ['empresas.crear', 'empresas.leer', 'empresas.actualizar', ...]
+
+// Asignar roles al usuario
+$usuario->assignRoles(['Vendedor', 'Cajero']);
+```
+
+**Autenticación:**
+```php
+// Obtener contraseña para autenticación
+$usuario->getAuthPassword(); // Retorna $this->password_hash
+
+// Campo personalizado para contraseña
+protected $hidden = ['password_hash'];
+```
+
+**Notas:**
+- Campo de contraseña: `password_hash` (no `password`)
+- Soporta tokens Sanctum para API
+- Implementa todos los métodos de `Authenticatable`
+- Compatible con middleware `auth:sanctum`
+
+---
+
+### 🔐 Rol
+
+**Tabla:** `roles`
+
+**Nota:** Modelo mejorado en **FASE 3** para sistema RBAC.
+
+**Relaciones:**
+- `usuarios()` → Usuario (belongsToMany, tabla pivote: `rol_usuario`)
+- `permisos()` → Permiso (belongsToMany, tabla pivote: `rol_permiso`)
+
+**Métodos:**
+```php
+// Asignar permisos a un rol
+$rol->assignPermissions(['empresas.crear', 'empresas.leer', ...]);
+```
+
+**Roles Predefinidos (7):**
+1. **Administrador** - Todos los permisos (68)
+2. **Gerente** - Gestión completa excepto configuraciones críticas
+3. **Contador** - Módulos contables y financieros
+4. **Vendedor** - Ventas, clientes, productos (solo lectura)
+5. **Comprador** - Compras, proveedores, inventario
+6. **Bodeguero** - Inventario, almacenes, productos
+7. **Usuario** - Permisos básicos de lectura
+
+**Uso:**
+```php
+// Obtener usuarios de un rol
+$administradores = Rol::where('nombre', 'Administrador')
+    ->first()
+    ->usuarios;
+
+// Obtener permisos de un rol
+$permisos = Rol::find(1)->permisos;
+```
+
+---
+
+### 🔑 Permiso
+
+**Tabla:** `permisos`
+
+**Nota:** Modelo mejorado en **FASE 3** para sistema RBAC.
+
+**Campos clave:**
+- `slug` - Identificador único del permiso (ej: `empresas.crear`)
+- `nombre` - Nombre descriptivo (ej: "Crear Empresas")
+- `modulo` - Módulo al que pertenece (ej: "empresas")
+- `accion` - Acción permitida (ej: "crear", "leer", "actualizar", "eliminar")
+
+**Relaciones:**
+- `roles()` → Rol (belongsToMany, tabla pivote: `rol_permiso`)
+
+**Estructura de Permisos (68 total):**
+```
+{modulo}.{accion}
+
+Módulos (17): empresas, sucursales, almacenes, productos, 
+              categorias_producto, clientes, proveedores, ventas, 
+              compras, inventario, cuentas_contables, 
+              asientos_contables, empleados, nomina, rutas, 
+              buses, facturacion_electronica
+
+Acciones (4): crear, leer, actualizar, eliminar
+
+Total: 17 × 4 = 68 permisos
+```
+
+**Ejemplos:**
+- `empresas.crear` - Crear empresas
+- `ventas.leer` - Ver/listar ventas
+- `productos.actualizar` - Modificar productos
+- `empleados.eliminar` - Eliminar empleados
+
+**Uso:**
+```php
+// Obtener todos los permisos de un módulo
+$permisosEmpresas = Permiso::where('modulo', 'empresas')->get();
+
+// Obtener roles que tienen un permiso
+$roles = Permiso::where('slug', 'empresas.crear')
+    ->first()
+    ->roles;
+```
 
 ---
 
@@ -376,6 +512,26 @@ $venta = Venta::factory()
 3. **Multi-tenant:** Filtrar siempre por `empresa_id` en contexto multi-tenant
 4. **Eager Loading:** Siempre usar `with()` para evitar problemas N+1
 5. **Scopes:** Usar los scopes definidos para mantener consistencia
+6. **Autenticación (FASE 3):**
+   - Usuario extiende `Authenticatable` (no `Model`)
+   - Usa `HasApiTokens` trait de Laravel Sanctum
+   - Campo de contraseña: `password_hash` (no `password`)
+   - Métodos RBAC disponibles: `hasPermission()`, `hasRole()`, etc.
+7. **RBAC (FASE 3):**
+   - 68 permisos granulares: 17 módulos × 4 acciones
+   - 7 roles predefinidos con permisos configurables
+   - Middleware `CheckPermission` para protección de rutas
+   - Rol Administrador tiene todos los permisos automáticamente
+8. **Middleware de permisos:**
+   ```php
+   // En rutas
+   ->middleware('permission:empresas.crear')
+   
+   // En controladores
+   if (!auth()->user()->hasPermission('ventas.crear')) {
+       abort(403, 'No tienes permiso para realizar esta acción');
+   }
+   ```
 
 ---
 
