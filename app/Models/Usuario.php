@@ -3,9 +3,23 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
-class Usuario extends Model
+class Usuario extends Authenticatable
 {
+    use HasApiTokens;
+
+    /**
+     * Campo de password personalizado
+     *
+     * @return string
+     */
+    public function getAuthPassword()
+    {
+        return $this->password_hash;
+    }
+
     /**
      * Tabla asociada al modelo.
      *
@@ -126,5 +140,98 @@ class Usuario extends Model
     public function scopeNoEliminados($query)
     {
         return $query->where('eliminado', false);
+    }
+
+    /**
+     * Verificar si el usuario tiene un permiso específico.
+     *
+     * @param string $permissionSlug Slug del permiso
+     * @return bool
+     */
+    public function hasPermission(string $permissionSlug): bool
+    {
+        // Obtener todos los roles del usuario con sus permisos
+        return $this->roles()
+            ->whereHas('permisos', function ($query) use ($permissionSlug) {
+                $query->where('slug', $permissionSlug)
+                      ->where('permisos.activo', true)
+                      ->where('permisos.eliminado', false);
+            })
+            ->where('roles.activo', true)
+            ->where('roles.eliminado', false)
+            ->exists();
+    }
+
+    /**
+     * Verificar si el usuario tiene un rol específico.
+     *
+     * @param string $roleName Nombre del rol
+     * @return bool
+     */
+    public function hasRole(string $roleName): bool
+    {
+        return $this->roles()
+            ->where('nombre', $roleName)
+            ->where('activo', true)
+            ->where('eliminado', false)
+            ->exists();
+    }
+
+    /**
+     * Verificar si el usuario tiene alguno de los roles especificados.
+     *
+     * @param array $roleNames Array de nombres de roles
+     * @return bool
+     */
+    public function hasAnyRole(array $roleNames): bool
+    {
+        return $this->roles()
+            ->whereIn('nombre', $roleNames)
+            ->where('activo', true)
+            ->where('eliminado', false)
+            ->exists();
+    }
+
+    /**
+     * Obtener todos los permisos del usuario a través de sus roles.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAllPermissions()
+    {
+        return \App\Models\Permiso::whereHas('roles', function ($query) {
+            $query->whereHas('usuarios', function ($q) {
+                $q->where('usuarios.id', $this->id)
+                  ->where('rol_usuario.activo', true);
+            })
+            ->where('roles.activo', true)
+            ->where('roles.eliminado', false);
+        })
+        ->where('activo', true)
+        ->where('eliminado', false)
+        ->get();
+    }
+
+    /**
+     * Asignar roles al usuario.
+     *
+     * @param array $roleIds Array de IDs de roles
+     * @return void
+     */
+    public function assignRoles(array $roleIds): void
+    {
+        // Primero, desactivar todos los roles actuales
+        \Illuminate\Support\Facades\DB::table('rol_usuario')
+            ->where('usuario_id', $this->id)
+            ->update(['activo' => false]);
+
+        // Luego, asignar o reactivar los nuevos roles
+        foreach ($roleIds as $roleId) {
+            \Illuminate\Support\Facades\DB::table('rol_usuario')
+                ->updateOrInsert(
+                    ['usuario_id' => $this->id, 'rol_id' => $roleId],
+                    ['activo' => true, 'eliminado' => false]
+                );
+        }
     }
 }

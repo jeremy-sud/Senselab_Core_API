@@ -85,4 +85,48 @@ class Rol extends Model
     {
         return $query->where('eliminado', false);
     }
+
+    /**
+     * Relación muchos a muchos con Usuario.
+     */
+    public function usuarios()
+    {
+        return $this->belongsToMany(Usuario::class, 'rol_usuario', 'rol_id', 'usuario_id')
+                    ->wherePivot('activo', true)
+                    ->wherePivot('eliminado', false)
+                    ->withTimestamps();
+    }
+
+    /**
+     * Relación muchos a muchos con Permiso.
+     */
+    public function permisos()
+    {
+        return $this->belongsToMany(Permiso::class, 'roles_permisos', 'rol_id', 'permiso_id')
+                    ->wherePivot('activo', true)
+                    ->withTimestamps();
+    }
+
+    /**
+     * Asignar permisos al rol.
+     *
+     * @param array $permisoIds Array de IDs de permisos
+     * @return void
+     */
+    public function assignPermissions(array $permisoIds): void
+    {
+        // Primero, desactivar todos los permisos actuales
+        \Illuminate\Support\Facades\DB::table('roles_permisos')
+            ->where('rol_id', $this->id)
+            ->update(['activo' => false]);
+
+        // Luego, asignar o reactivar los nuevos permisos
+        foreach ($permisoIds as $permisoId) {
+            \Illuminate\Support\Facades\DB::table('roles_permisos')
+                ->updateOrInsert(
+                    ['rol_id' => $this->id, 'permiso_id' => $permisoId],
+                    ['activo' => true]
+                );
+        }
+    }
 }
