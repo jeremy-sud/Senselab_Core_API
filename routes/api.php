@@ -68,13 +68,12 @@ use Illuminate\Support\Facades\Route;
 
 // Rutas públicas
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/register', [AuthController::class, 'register']);
 
 // Rutas protegidas
 Route::middleware('auth:sanctum')->group(function () {
-    // Perfil de usuario
-    Route::get('/user', [AuthController::class, 'user']);
+    // Autenticación
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/me', [AuthController::class, 'me']);
 
     // Empresas
     Route::apiResource('empresas', EmpresaController::class);

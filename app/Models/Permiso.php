@@ -25,9 +25,9 @@ class Permiso extends Model
 
     protected $fillable = [
         'nombre',
+        'slug',
         'descripcion',
         'modulo',
-        'codigo_unico',
         'activo',
         'eliminado',
         'creado_en',
@@ -41,8 +41,20 @@ class Permiso extends Model
 
     public static $rules = [
         'nombre' => 'required|string|unique:permisos,nombre',
-        'codigo_unico' => 'required|string|unique:permisos,codigo_unico',
+        'slug' => 'required|string|unique:permisos,slug',
     ];
+
+    /* --------------------- Relaciones --------------------- */
+    
+    /**
+     * Relación muchos a muchos con Rol.
+     */
+    public function roles()
+    {
+        return $this->belongsToMany(Rol::class, 'roles_permisos', 'permiso_id', 'rol_id')
+                    ->wherePivot('activo', true)
+                    ->withTimestamps();
+    }
 
     /* --------------------- Scopes --------------------- */
     public function scopeActivos($q)
@@ -64,8 +76,8 @@ class Permiso extends Model
             if (isset($permiso->nombre)) {
                 $permiso->nombre = trim($permiso->nombre);
             }
-            if (isset($permiso->codigo_unico)) {
-                $permiso->codigo_unico = Str::upper(trim($permiso->codigo_unico));
+            if (isset($permiso->slug)) {
+                $permiso->slug = Str::slug(trim($permiso->slug));
             }
             if (isset($permiso->modulo)) {
                 $permiso->modulo = Str::ucfirst(Str::lower(trim($permiso->modulo)));

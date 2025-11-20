@@ -24,5 +24,16 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->command->info('✅ Seeders de datos maestros ejecutados correctamente.');
+
+        $this->command->info('🌱 Iniciando seeders de datos demo...');
+
+        // Seeders de datos demo (empresa, usuario admin)
+        $this->call([
+            CargosSeeder::class,
+            EmpresaDemoSeeder::class,
+            UsuarioAdminSeeder::class,
+        ]);
+
+        $this->command->info('✅ Seeders de datos demo ejecutados correctamente.');
     }
 }
