@@ -11,17 +11,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Seeders de datos base del sistema
+        $this->command->info('🌱 Iniciando seeders de datos maestros...');
+
+        // Seeders de datos maestros del sistema
         $this->call([
-            RegimenTributarioSeeder::class,
-            CargoSeeder::class,
-            TipoCuentaSeeder::class,
-            RolSeeder::class,
-            FormaPagoSeeder::class,
-            UnidadMedidaSeeder::class,
-            TipoImpuestoSeeder::class,
+            RegimenesTributariosSeeder::class,
+            FormasPagoSeeder::class,
+            TiposCuentasSeeder::class,
+            UnidadesMedidaSeeder::class,
+            PermisosSeeder::class,
+            RolesSeeder::class,
         ]);
 
-        $this->command->info('Seeders de datos base ejecutados correctamente.');
+        $this->command->info('✅ Seeders de datos maestros ejecutados correctamente.');
     }
 }
