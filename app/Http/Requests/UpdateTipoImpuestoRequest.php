@@ -32,7 +32,7 @@ class UpdateTipoImpuestoRequest extends FormRequest
             'codigo_hacienda' => ['sometimes', 'string', 'max:10', Rule::unique('tipos_impuesto', 'codigo_hacienda')->ignore($this->route('tipo_impuesto'))],
             'nombre' => ['sometimes', 'string', 'max:100'],
             'descripcion' => ['nullable', 'string'],
-            'Comentario' => ['nullable', 'string'],
+            'comentario' => ['nullable', 'string'],
             'activo' => ['sometimes', 'boolean']
         ];
     }
@@ -62,7 +62,7 @@ class UpdateTipoImpuestoRequest extends FormRequest
             'codigo_hacienda' => 'código de Hacienda',
             'nombre' => 'nombre',
             'descripcion' => 'descripción',
-            'Comentario' => 'comentario',
+            'comentario' => 'comentario',
             'activo' => 'activo'
         ];
     }

@@ -29,7 +29,7 @@ class TipoImpuesto extends Model
         'codigo_hacienda',
         'nombre',
         'descripcion',
-        'Comentario',
+        'comentario',
         'activo',
         'eliminado',
     ];
