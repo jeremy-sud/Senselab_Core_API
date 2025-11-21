@@ -102,6 +102,22 @@ class SalidaInventario extends Model
     }
 
     /**
+     * Relación con el modelo Venta.
+     */
+    public function venta()
+    {
+        return $this->belongsTo(Venta::class, 'venta_id');
+    }
+
+    /**
+     * Relación con los detalles de la salida.
+     */
+    public function detalles()
+    {
+        return $this->hasMany(DetalleSalidaInventario::class, 'salida_inventario_id');
+    }
+
+    /**
      * Scope para filtrar solo los registros activos.
      */
     public function scopeActivos($query)

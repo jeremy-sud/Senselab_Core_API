@@ -34,9 +34,10 @@ class EntradaInventario extends Model
         'orden_compra_id',
         'proveedor_id',
         'documento_referencia',
-        'observaciones',
         'estado',
         'monto_total',
+        'observaciones',
+        'descripcion',
         'activo',
         'eliminado',
     ];
