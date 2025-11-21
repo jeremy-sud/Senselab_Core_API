@@ -21,14 +21,14 @@ class UpdateVentaRequest extends FormRequest
     {
         return [
             'observaciones' => ['nullable', 'string'],
-            'estado' => ['sometimes', 'required', 'in:pendiente,pagada,anulada'],
+            'estado_venta' => ['sometimes', 'required', 'in:pendiente,pagada,anulada'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'estado.in' => 'El estado debe ser: pendiente, pagada o anulada',
+            'estado_venta.in' => 'El estado debe ser: pendiente, pagada o anulada',
         ];
     }
 }

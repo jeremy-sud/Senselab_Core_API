@@ -20,9 +20,10 @@ class UpdateProveedorRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'tipo_identificacion' => ['sometimes', 'required', 'in:fisica,juridica,dimex,nite,extranjero'],
+            'numero_identificacion' => ['sometimes', 'required', 'string', 'max:50'],
             'nombre' => ['sometimes', 'required', 'string', 'max:255'],
-            'razon_social' => ['nullable', 'string', 'max:255'],
-            'nit_ruc' => ['nullable', 'string', 'max:50'],
+            'nombre_comercial' => ['nullable', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255'],
             'telefono' => ['nullable', 'string', 'max:50'],
             'celular' => ['nullable', 'string', 'max:50'],
