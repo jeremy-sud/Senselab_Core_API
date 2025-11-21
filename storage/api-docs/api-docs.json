@@ -20,6 +20,228 @@
         }
     ],
     "paths": {
+        "/api/almacenes": {
+            "get": {
+                "tags": [
+                    "Almacenes"
+                ],
+                "summary": "Listar almacenes",
+                "description": "Lista almacenes/bodegas con filtros por empresa y sucursal",
+                "operationId": "f61f06f5147ce97df7be3af71d61d424",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    },
+                    {
+                        "name": "empresa_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "sucursal_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "activos",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado exitoso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Almacen"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Almacenes"
+                ],
+                "summary": "Crear almacén",
+                "description": "Crea un almacén/bodega. Si es principal, desmarca otros de la sucursal",
+                "operationId": "bf31688475550ccb73ed2d6a0dc10d7a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "empresa_id",
+                                    "sucursal_id",
+                                    "nombre"
+                                ],
+                                "properties": {
+                                    "empresa_id": {
+                                        "type": "integer"
+                                    },
+                                    "sucursal_id": {
+                                        "type": "integer"
+                                    },
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Bodega Principal"
+                                    },
+                                    "codigo": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "ubicacion": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "es_principal": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Almacén creado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/almacenes/{id}": {
+            "get": {
+                "tags": [
+                    "Almacenes"
+                ],
+                "summary": "Obtener almacén",
+                "description": "Display the specified resource.",
+                "operationId": "b6d65b441eea90e6cdaea93eafa89bbb",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Almacén encontrado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Almacenes"
+                ],
+                "summary": "Actualizar almacén",
+                "description": "Update the specified resource in storage.",
+                "operationId": "7c23829b74611e952cd084d4a308da5f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Actualizado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Almacenes"
+                ],
+                "summary": "Eliminar almacén",
+                "description": "Soft delete. No permite eliminar almacén principal",
+                "operationId": "c72c27c6c60f10adba5dfc1edba3755b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Eliminado"
+                    },
+                    "422": {
+                        "description": "No se puede eliminar el principal"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/login": {
             "post": {
                 "tags": [
@@ -904,6 +1126,619 @@
                                 }
                             }
                         }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/empleados": {
+            "get": {
+                "tags": [
+                    "Empleados"
+                ],
+                "summary": "Listar empleados",
+                "description": "Lista empleados de la empresa autenticada con filtros opcionales",
+                "operationId": "8eb442fb48a9986f146dfe2d189e0f35",
+                "parameters": [
+                    {
+                        "name": "activo",
+                        "in": "query",
+                        "description": "Filtrar por estado activo",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "cargo_id",
+                        "in": "query",
+                        "description": "Filtrar por cargo",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado exitoso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Empleado"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Empleados"
+                ],
+                "summary": "Crear empleado",
+                "description": "Registra un nuevo empleado en la empresa autenticada",
+                "operationId": "07a84cb11dd1dc24fce5f1b7abcd09e4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nombre",
+                                    "apellidos",
+                                    "numero_identificacion"
+                                ],
+                                "properties": {
+                                    "cargo_id": {
+                                        "type": "integer",
+                                        "nullable": true
+                                    },
+                                    "numero_identificacion": {
+                                        "type": "string",
+                                        "example": "1-2345-6789"
+                                    },
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Carlos"
+                                    },
+                                    "apellidos": {
+                                        "type": "string",
+                                        "example": "Rodríguez"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "telefono": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "fecha_ingreso": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "nullable": true
+                                    },
+                                    "salario_base": {
+                                        "type": "number",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Empleado creado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/empleados/{id}": {
+            "get": {
+                "tags": [
+                    "Empleados"
+                ],
+                "summary": "Obtener empleado",
+                "description": "Detalles de un empleado",
+                "operationId": "5bcf15ebe357d0f0539eb8ab7e13cdae",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empleado encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Empleado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Empleados"
+                ],
+                "summary": "Actualizar empleado",
+                "description": "Actualizar un empleado existente\n\nPUT/PATCH /api/empleados/{id}",
+                "operationId": "f7428f349f0166fdf8f46320ccd1f669",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string"
+                                    },
+                                    "apellidos": {
+                                        "type": "string"
+                                    },
+                                    "telefono": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "salario_base": {
+                                        "type": "number",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Actualizado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Empleados"
+                ],
+                "summary": "Eliminar empleado",
+                "description": "Soft delete del empleado",
+                "operationId": "866f9e07c5da23613f5a60f136deed36",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Eliminado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/empresas": {
+            "get": {
+                "tags": [
+                    "Empresas"
+                ],
+                "summary": "Listar empresas",
+                "description": "Obtiene el listado paginado de empresas (tenants) con búsqueda opcional",
+                "operationId": "306cefa0f8fe88af562dba09cb2bbcf8",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Cantidad de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15,
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Búsqueda por nombre, razón social, identificación o email",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Sistemas"
+                        }
+                    },
+                    {
+                        "name": "activos",
+                        "in": "query",
+                        "description": "Filtrar solo empresas activas",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de empresas obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Empresa"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Empresas"
+                ],
+                "summary": "Crear empresa",
+                "description": "Registra una nueva empresa (tenant) en el sistema multi-tenant",
+                "operationId": "966c4473cc456ff4b3a65e1fe6addd42",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nombre",
+                                    "num_identificacion_dgt",
+                                    "regimen_tributario_id"
+                                ],
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Sistemas Ursol S.A."
+                                    },
+                                    "razon_social": {
+                                        "type": "string",
+                                        "example": "Sistemas Ursol Sociedad Anónima",
+                                        "nullable": true
+                                    },
+                                    "num_identificacion_dgt": {
+                                        "type": "string",
+                                        "example": "3-101-123456"
+                                    },
+                                    "regimen_tributario_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "telefono": {
+                                        "type": "string",
+                                        "example": "2222-3333",
+                                        "nullable": true
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "info@ursol.com",
+                                        "nullable": true
+                                    },
+                                    "direccion": {
+                                        "type": "string",
+                                        "example": "San José, Escazú",
+                                        "nullable": true
+                                    },
+                                    "activo": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Empresa creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Empresa"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Empresa creada exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Errores de validación"
+                    },
+                    "500": {
+                        "description": "Error del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/empresas/{id}": {
+            "get": {
+                "tags": [
+                    "Empresas"
+                ],
+                "summary": "Obtener empresa",
+                "description": "Obtiene los detalles de una empresa incluyendo sucursales, usuarios y configuraciones",
+                "operationId": "a60fbba545487b25f52d270f3551e6ef",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la empresa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empresa obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Empresa"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Empresa no encontrada"
+                    },
+                    "500": {
+                        "description": "Error del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Empresas"
+                ],
+                "summary": "Eliminar empresa",
+                "description": "Realiza soft delete de una empresa (marca como inactiva y eliminada)",
+                "operationId": "ecf374a090235a5209587b781d988870",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la empresa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empresa eliminada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Empresa eliminada exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Empresa no encontrada"
+                    },
+                    "500": {
+                        "description": "Error del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/empresas/{empresa}": {
+            "put": {
+                "tags": [
+                    "Empresas"
+                ],
+                "summary": "Actualizar empresa",
+                "description": "Actualiza la información de una empresa existente",
+                "operationId": "527662926c4d2c156581ee61975f24fc",
+                "parameters": [
+                    {
+                        "name": "empresa",
+                        "in": "path",
+                        "description": "ID de la empresa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Sistemas Ursol S.A."
+                                    },
+                                    "razon_social": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "telefono": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "nullable": true
+                                    },
+                                    "activo": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Empresa actualizada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Empresa"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Empresa actualizada exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Empresa no encontrada"
+                    },
+                    "422": {
+                        "description": "Errores de validación"
+                    },
+                    "500": {
+                        "description": "Error del servidor"
                     }
                 },
                 "security": [
@@ -2013,6 +2848,299 @@
                 ]
             }
         },
+        "/api/sucursales": {
+            "get": {
+                "tags": [
+                    "Sucursales"
+                ],
+                "summary": "Listar sucursales",
+                "description": "Obtiene listado paginado de sucursales filtradas por empresa",
+                "operationId": "a201ddde2bc11ea5d3a36d8c5b399074",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    },
+                    {
+                        "name": "empresa_id",
+                        "in": "query",
+                        "description": "Filtrar por empresa",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "activos",
+                        "in": "query",
+                        "description": "Solo sucursales activas",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado exitoso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Sucursal"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Sucursales"
+                ],
+                "summary": "Crear sucursal",
+                "description": "Crea una nueva sucursal. Si es principal, desmarca las demás",
+                "operationId": "ba55df2d172c227845f0c4a3830328e1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "empresa_id",
+                                    "nombre"
+                                ],
+                                "properties": {
+                                    "empresa_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Sucursal Centro"
+                                    },
+                                    "codigo": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "telefono": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "direccion": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "provincia": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "canton": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "distrito": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "es_principal": {
+                                        "type": "boolean",
+                                        "example": false
+                                    },
+                                    "activo": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Sucursal creada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Sucursal"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/sucursales/{id}": {
+            "get": {
+                "tags": [
+                    "Sucursales"
+                ],
+                "summary": "Obtener sucursal",
+                "description": "Detalles de una sucursal con almacenes y cajas",
+                "operationId": "e565921e543f7a40c8de275bfccc803f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sucursal encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Sucursal"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Sucursales"
+                ],
+                "summary": "Actualizar sucursal",
+                "description": "Actualiza datos de sucursal. Si se marca como principal, desmarca las demás",
+                "operationId": "3b60ed1087b05432da52eae1c0c06198",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string"
+                                    },
+                                    "telefono": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "es_principal": {
+                                        "type": "boolean"
+                                    },
+                                    "activo": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Actualizada exitosamente"
+                    },
+                    "404": {
+                        "description": "No encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Sucursales"
+                ],
+                "summary": "Eliminar sucursal",
+                "description": "Soft delete. No permite eliminar la sucursal principal",
+                "operationId": "b113ba73735a9ee01ac00b94400590fb",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Eliminada exitosamente"
+                    },
+                    "404": {
+                        "description": "No encontrada"
+                    },
+                    "422": {
+                        "description": "No se puede eliminar la principal"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/ventas": {
             "get": {
                 "tags": [
@@ -2644,6 +3772,78 @@
     },
     "components": {
         "schemas": {
+            "Almacen": {
+                "title": "Almacén",
+                "description": "Almacén o bodega de inventario",
+                "required": [
+                    "id",
+                    "empresa_id",
+                    "sucursal_id",
+                    "nombre"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "empresa_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "sucursal_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nombre": {
+                        "type": "string",
+                        "example": "Bodega Principal"
+                    },
+                    "codigo": {
+                        "type": "string",
+                        "example": "ALM-001",
+                        "nullable": true
+                    },
+                    "descripcion": {
+                        "type": "string",
+                        "example": "Almacén de productos terminados",
+                        "nullable": true
+                    },
+                    "ubicacion": {
+                        "type": "string",
+                        "example": "Edificio A, Planta Baja",
+                        "nullable": true
+                    },
+                    "es_principal": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "activo": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "eliminado": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "creado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T00:00:00.000000Z"
+                    },
+                    "actualizado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T00:00:00.000000Z"
+                    },
+                    "empresa": {
+                        "$ref": "#/components/schemas/Empresa"
+                    },
+                    "sucursal": {
+                        "$ref": "#/components/schemas/Sucursal"
+                    }
+                },
+                "type": "object"
+            },
             "Cargo": {
                 "title": "Cargo",
                 "description": "Cargo o puesto de trabajo",
@@ -2810,6 +4010,99 @@
                     },
                     "empresa": {
                         "$ref": "#/components/schemas/Empresa"
+                    }
+                },
+                "type": "object"
+            },
+            "Empleado": {
+                "title": "Empleado",
+                "description": "Empleado de la empresa",
+                "required": [
+                    "id",
+                    "empresa_id",
+                    "nombre",
+                    "apellidos",
+                    "numero_identificacion"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "empresa_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "cargo_id": {
+                        "type": "integer",
+                        "example": 3,
+                        "nullable": true
+                    },
+                    "numero_identificacion": {
+                        "type": "string",
+                        "example": "1-2345-6789"
+                    },
+                    "nombre": {
+                        "type": "string",
+                        "example": "Carlos"
+                    },
+                    "apellidos": {
+                        "type": "string",
+                        "example": "Rodríguez Mora"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "carlos.rodriguez@empresa.com",
+                        "nullable": true
+                    },
+                    "telefono": {
+                        "type": "string",
+                        "example": "8888-9999",
+                        "nullable": true
+                    },
+                    "direccion": {
+                        "type": "string",
+                        "example": "Heredia, San Francisco",
+                        "nullable": true
+                    },
+                    "fecha_ingreso": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2023-01-15",
+                        "nullable": true
+                    },
+                    "salario_base": {
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 650000,
+                        "nullable": true
+                    },
+                    "activo": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "eliminado": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "creado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T00:00:00.000000Z"
+                    },
+                    "actualizado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T00:00:00.000000Z"
+                    },
+                    "cargo": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Cargo"
+                            }
+                        ],
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -3219,6 +4512,91 @@
                 },
                 "type": "object"
             },
+            "Sucursal": {
+                "title": "Sucursal",
+                "description": "Sucursal de una empresa",
+                "required": [
+                    "id",
+                    "empresa_id",
+                    "nombre"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "empresa_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nombre": {
+                        "type": "string",
+                        "example": "Sucursal Centro"
+                    },
+                    "codigo": {
+                        "type": "string",
+                        "example": "SUC-001",
+                        "nullable": true
+                    },
+                    "telefono": {
+                        "type": "string",
+                        "example": "2222-3333",
+                        "nullable": true
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "centro@empresa.com",
+                        "nullable": true
+                    },
+                    "direccion": {
+                        "type": "string",
+                        "example": "San José, Centro, Avenida Central",
+                        "nullable": true
+                    },
+                    "provincia": {
+                        "type": "string",
+                        "example": "San José",
+                        "nullable": true
+                    },
+                    "canton": {
+                        "type": "string",
+                        "example": "San José",
+                        "nullable": true
+                    },
+                    "distrito": {
+                        "type": "string",
+                        "example": "Carmen",
+                        "nullable": true
+                    },
+                    "es_principal": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "activo": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "eliminado": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "creado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T00:00:00.000000Z"
+                    },
+                    "actualizado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T00:00:00.000000Z"
+                    },
+                    "empresa": {
+                        "$ref": "#/components/schemas/Empresa"
+                    }
+                },
+                "type": "object"
+            },
             "UnidadMedida": {
                 "title": "Unidad de Medida",
                 "description": "Unidad de medida para productos",
@@ -3506,6 +4884,10 @@
             "description": "Gestión de productos del inventario"
         },
         {
+            "name": "Almacenes",
+            "description": "Almacenes"
+        },
+        {
             "name": "Autenticación",
             "description": "Autenticación"
         },
@@ -3514,8 +4896,20 @@
             "description": "Clientes"
         },
         {
+            "name": "Empleados",
+            "description": "Empleados"
+        },
+        {
+            "name": "Empresas",
+            "description": "Empresas"
+        },
+        {
             "name": "Proveedores",
             "description": "Proveedores"
+        },
+        {
+            "name": "Sucursales",
+            "description": "Sucursales"
         },
         {
             "name": "Ventas",
