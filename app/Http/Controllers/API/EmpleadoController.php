@@ -41,7 +41,7 @@ class EmpleadoController extends Controller
         $empresaId = auth()->user()->empresa_id;
         
         $query = Empleado::where('empresa_id', $empresaId)
-            ->with(['cargo', 'usuario']);
+            ->with(['cargo']);
 
         // Filtro opcional por estado activo
         if ($request->has('activo')) {
@@ -72,7 +72,7 @@ class EmpleadoController extends Controller
         $validated['empresa_id'] = auth()->user()->empresa_id;
 
         $empleado = Empleado::create($validated);
-        $empleado->load(['cargo', 'usuario']);
+        $empleado->load(['cargo']);
 
         return (new EmpleadoResource($empleado))
             ->response()
@@ -92,7 +92,7 @@ class EmpleadoController extends Controller
         $empresaId = auth()->user()->empresa_id;
 
         $empleado = Empleado::where('empresa_id', $empresaId)
-            ->with(['cargo', 'usuario'])
+            ->with(['cargo'])
             ->findOrFail($id);
 
         return new EmpleadoResource($empleado);
@@ -114,7 +114,7 @@ class EmpleadoController extends Controller
         $empleado = Empleado::where('empresa_id', $empresaId)->findOrFail($id);
 
         $empleado->update($request->validated());
-        $empleado->load(['cargo', 'usuario']);
+        $empleado->load(['cargo']);
 
         return new EmpleadoResource($empleado);
     }

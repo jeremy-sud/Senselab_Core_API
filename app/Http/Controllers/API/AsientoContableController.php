@@ -44,7 +44,7 @@ class AsientoContableController extends Controller
 
         // Filtro por rango de fechas
         if ($request->filled('desde') && $request->filled('hasta')) {
-            $query->whereBetween('fecha', [$request->desde, $request->hasta]);
+            $query->whereBetween('fecha_asiento', [$request->desde, $request->hasta]);
         }
 
         // Filtro por cuenta contable (a través de detalles)
@@ -55,7 +55,7 @@ class AsientoContableController extends Controller
         }
 
         // Ordenamiento
-        $query->orderBy($request->get('sort_by', 'fecha'), $request->get('sort_order', 'desc'));
+        $query->orderBy($request->get('sort_by', 'fecha_asiento'), $request->get('sort_order', 'desc'));
 
         $asientos = $query->paginate($request->get('per_page', 15));
 
