@@ -29,7 +29,7 @@ class EmpresaController extends Controller
                 $query->where(function($q) use ($search) {
                     $q->where('nombre', 'like', "%{$search}%")
                       ->orWhere('razon_social', 'like', "%{$search}%")
-                      ->orWhere('nit_ruc', 'like', "%{$search}%")
+                      ->orWhere('num_identificacion_dgt', 'like', "%{$search}%")
                       ->orWhere('email', 'like', "%{$search}%");
                 });
             }

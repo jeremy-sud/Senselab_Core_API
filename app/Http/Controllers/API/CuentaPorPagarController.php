@@ -52,7 +52,7 @@ class CuentaPorPagarController extends Controller
         }
 
         if ($request->filled('desde') && $request->filled('hasta')) {
-            $query->whereBetween('fecha_emision_documento', [$request->desde, $request->hasta]);
+            $query->whereBetween('fecha_emision', [$request->desde, $request->hasta]);
         }
 
         // Ordenamiento
@@ -187,7 +187,7 @@ class CuentaPorPagarController extends Controller
             ->with(['proveedor'])
             ->get();
 
-        $totalVencido = $vencidas->sum('saldo_pendiente');
+        $totalVencido = $vencidas->sum('monto_pendiente');
         $cantidadVencidas = $vencidas->count();
 
         return response()->json([
@@ -212,13 +212,13 @@ class CuentaPorPagarController extends Controller
 
         $resumen = CuentaPorPagar::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
-            ->select('estado', DB::raw('COUNT(*) as cantidad'), DB::raw('SUM(saldo_pendiente) as total_saldo'))
+            ->select('estado', DB::raw('COUNT(*) as cantidad'), DB::raw('SUM(monto_pendiente) as total_saldo'))
             ->groupBy('estado')
             ->get();
 
         $totalGeneral = CuentaPorPagar::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
-            ->sum('saldo_pendiente');
+            ->sum('monto_pendiente');
 
         return response()->json([
             'success' => true,

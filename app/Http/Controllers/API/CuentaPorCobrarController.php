@@ -182,7 +182,7 @@ class CuentaPorCobrarController extends Controller
             ->with(['cliente'])
             ->get();
 
-        $totalVencido = $vencidas->sum('saldo_pendiente');
+        $totalVencido = $vencidas->sum('monto_pendiente');
         $cantidadVencidas = $vencidas->count();
 
         return response()->json([
@@ -207,13 +207,13 @@ class CuentaPorCobrarController extends Controller
 
         $resumen = CuentaPorCobrar::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
-            ->select('estado', DB::raw('COUNT(*) as cantidad'), DB::raw('SUM(saldo_pendiente) as total_saldo'))
+            ->select('estado', DB::raw('COUNT(*) as cantidad'), DB::raw('SUM(monto_pendiente) as total_saldo'))
             ->groupBy('estado')
             ->get();
 
         $totalGeneral = CuentaPorCobrar::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
-            ->sum('saldo_pendiente');
+            ->sum('monto_pendiente');
 
         return response()->json([
             'success' => true,
