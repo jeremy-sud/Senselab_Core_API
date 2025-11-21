@@ -242,6 +242,677 @@
                 ]
             }
         },
+        "/api/clientes": {
+            "get": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Listar clientes",
+                "description": "Obtiene un listado paginado de clientes con filtros opcionales",
+                "operationId": "3a57b08de151e7cd5320b7d179a27067",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Cantidad de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15,
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Número de página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Búsqueda por nombre, apellidos, nombre comercial, número de identificación o email",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Juan"
+                        }
+                    },
+                    {
+                        "name": "empresa_id",
+                        "in": "query",
+                        "description": "Filtrar por empresa",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "tipo_identificacion",
+                        "in": "query",
+                        "description": "Filtrar por tipo de identificación",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "01",
+                                "02",
+                                "03",
+                                "04",
+                                "05",
+                                "06",
+                                "07"
+                            ],
+                            "example": "01"
+                        }
+                    },
+                    {
+                        "name": "activos",
+                        "in": "query",
+                        "description": "Filtrar solo clientes activos",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de clientes obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Cliente"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 67
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error al obtener clientes"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Database connection failed"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Crear un nuevo cliente",
+                "description": "Registra un nuevo cliente en el sistema",
+                "operationId": "9ee7eb52166cc3936b93dbb36af8c1ad",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "empresa_id",
+                                    "tipo_identificacion",
+                                    "numero_identificacion",
+                                    "nombre"
+                                ],
+                                "properties": {
+                                    "empresa_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "tipo_identificacion": {
+                                        "type": "string",
+                                        "enum": [
+                                            "01",
+                                            "02",
+                                            "03",
+                                            "04",
+                                            "05",
+                                            "06",
+                                            "07"
+                                        ],
+                                        "example": "01"
+                                    },
+                                    "numero_identificacion": {
+                                        "type": "string",
+                                        "example": "1-2345-6789"
+                                    },
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Juan"
+                                    },
+                                    "apellidos": {
+                                        "type": "string",
+                                        "example": "Pérez González",
+                                        "nullable": true
+                                    },
+                                    "nombre_comercial": {
+                                        "type": "string",
+                                        "example": "Comercial JP",
+                                        "nullable": true
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "juan.perez@example.com",
+                                        "nullable": true
+                                    },
+                                    "telefono": {
+                                        "type": "string",
+                                        "example": "8888-7777",
+                                        "nullable": true
+                                    },
+                                    "direccion": {
+                                        "type": "string",
+                                        "example": "San José, Escazú, del mall 200m oeste",
+                                        "nullable": true
+                                    },
+                                    "provincia": {
+                                        "type": "string",
+                                        "example": "San José",
+                                        "nullable": true
+                                    },
+                                    "canton": {
+                                        "type": "string",
+                                        "example": "Escazú",
+                                        "nullable": true
+                                    },
+                                    "distrito": {
+                                        "type": "string",
+                                        "example": "San Rafael",
+                                        "nullable": true
+                                    },
+                                    "limite_credito": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 500000,
+                                        "nullable": true
+                                    },
+                                    "plazo_credito_dias": {
+                                        "type": "integer",
+                                        "example": 30,
+                                        "nullable": true
+                                    },
+                                    "activo": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Cliente creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Cliente"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cliente creado exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Errores de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Los datos proporcionados no son válidos"
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "numero_identificacion": [
+                                                    "El número de identificación ya está en uso"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error al crear cliente"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/clientes/{id}": {
+            "get": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Obtener un cliente específico",
+                "description": "Obtiene los detalles de un cliente por su ID, incluyendo sus últimas 10 ventas y cuentas por cobrar pendientes",
+                "operationId": "162c715b411205e9685f1d74715e2ef4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del cliente",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cliente obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Cliente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Cliente no encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cliente no encontrado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error al obtener cliente"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Actualizar un cliente",
+                "description": "Actualiza la información de un cliente existente",
+                "operationId": "a7d7f42620f809e7c6510f7b5e93b3e8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del cliente",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "tipo_identificacion": {
+                                        "type": "string",
+                                        "enum": [
+                                            "01",
+                                            "02",
+                                            "03",
+                                            "04",
+                                            "05",
+                                            "06",
+                                            "07"
+                                        ],
+                                        "example": "01"
+                                    },
+                                    "numero_identificacion": {
+                                        "type": "string",
+                                        "example": "1-2345-6789"
+                                    },
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Juan"
+                                    },
+                                    "apellidos": {
+                                        "type": "string",
+                                        "example": "Pérez González",
+                                        "nullable": true
+                                    },
+                                    "nombre_comercial": {
+                                        "type": "string",
+                                        "example": "Comercial JP",
+                                        "nullable": true
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "juan.perez@example.com",
+                                        "nullable": true
+                                    },
+                                    "telefono": {
+                                        "type": "string",
+                                        "example": "8888-7777",
+                                        "nullable": true
+                                    },
+                                    "direccion": {
+                                        "type": "string",
+                                        "example": "San José, Escazú, del mall 200m oeste",
+                                        "nullable": true
+                                    },
+                                    "provincia": {
+                                        "type": "string",
+                                        "example": "San José",
+                                        "nullable": true
+                                    },
+                                    "canton": {
+                                        "type": "string",
+                                        "example": "Escazú",
+                                        "nullable": true
+                                    },
+                                    "distrito": {
+                                        "type": "string",
+                                        "example": "San Rafael",
+                                        "nullable": true
+                                    },
+                                    "limite_credito": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 500000,
+                                        "nullable": true
+                                    },
+                                    "plazo_credito_dias": {
+                                        "type": "integer",
+                                        "example": 30,
+                                        "nullable": true
+                                    },
+                                    "activo": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cliente actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Cliente"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cliente actualizado exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Cliente no encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cliente no encontrado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Errores de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Los datos proporcionados no son válidos"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error al actualizar cliente"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Eliminar un cliente",
+                "description": "Realiza un soft delete del cliente, marcándolo como inactivo y eliminado",
+                "operationId": "03dc873b54952562acc0e32afab8a1bf",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del cliente",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cliente eliminado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cliente eliminado exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Cliente no encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cliente no encontrado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error al eliminar cliente"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/productos": {
             "get": {
                 "tags": [
@@ -709,6 +1380,1266 @@
                     }
                 ]
             }
+        },
+        "/api/proveedores": {
+            "get": {
+                "tags": [
+                    "Proveedores"
+                ],
+                "summary": "Listar proveedores",
+                "description": "Obtiene un listado paginado de proveedores con filtros opcionales",
+                "operationId": "f8c0a4d984e33d6ad610397738c67d48",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Cantidad de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15,
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Número de página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Búsqueda por nombre, nombre comercial, número de identificación o email",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Distribuidora"
+                        }
+                    },
+                    {
+                        "name": "empresa_id",
+                        "in": "query",
+                        "description": "Filtrar por empresa",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "activos",
+                        "in": "query",
+                        "description": "Filtrar solo proveedores activos",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de proveedores obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Proveedor"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 42
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error al obtener proveedores"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Proveedores"
+                ],
+                "summary": "Crear un nuevo proveedor",
+                "description": "Registra un nuevo proveedor en el sistema",
+                "operationId": "1746766bc534c71b348231d6bb30b942",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "empresa_id",
+                                    "tipo_identificacion",
+                                    "numero_identificacion",
+                                    "nombre"
+                                ],
+                                "properties": {
+                                    "empresa_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "tipo_identificacion": {
+                                        "type": "string",
+                                        "enum": [
+                                            "01",
+                                            "02",
+                                            "03",
+                                            "04",
+                                            "05"
+                                        ],
+                                        "example": "02"
+                                    },
+                                    "numero_identificacion": {
+                                        "type": "string",
+                                        "example": "3-101-123456"
+                                    },
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Distribuidora Nacional S.A."
+                                    },
+                                    "nombre_comercial": {
+                                        "type": "string",
+                                        "example": "DINASA",
+                                        "nullable": true
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "ventas@dinasa.com",
+                                        "nullable": true
+                                    },
+                                    "telefono": {
+                                        "type": "string",
+                                        "example": "2222-3333",
+                                        "nullable": true
+                                    },
+                                    "direccion": {
+                                        "type": "string",
+                                        "example": "San José, Curridabat",
+                                        "nullable": true
+                                    },
+                                    "provincia": {
+                                        "type": "string",
+                                        "example": "San José",
+                                        "nullable": true
+                                    },
+                                    "canton": {
+                                        "type": "string",
+                                        "example": "Curridabat",
+                                        "nullable": true
+                                    },
+                                    "distrito": {
+                                        "type": "string",
+                                        "example": "Curridabat",
+                                        "nullable": true
+                                    },
+                                    "limite_credito": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 1000000,
+                                        "nullable": true
+                                    },
+                                    "plazo_credito_dias": {
+                                        "type": "integer",
+                                        "example": 60,
+                                        "nullable": true
+                                    },
+                                    "activo": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Proveedor creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Proveedor"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Proveedor creado exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Errores de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Los datos proporcionados no son válidos"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error al crear proveedor"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/proveedores/{id}": {
+            "get": {
+                "tags": [
+                    "Proveedores"
+                ],
+                "summary": "Obtener un proveedor específico",
+                "description": "Obtiene los detalles de un proveedor por su ID, incluyendo sus últimas 10 órdenes de compra y cuentas por pagar pendientes",
+                "operationId": "f4d787d9cf1a07a23e70225d0ed965fa",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del proveedor",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Proveedor obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Proveedor"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Proveedor no encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Proveedor no encontrado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error al obtener proveedor"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Proveedores"
+                ],
+                "summary": "Actualizar un proveedor",
+                "description": "Actualiza la información de un proveedor existente",
+                "operationId": "ade9a9f0e87508bfe235571794ba7d92",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del proveedor",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "tipo_identificacion": {
+                                        "type": "string",
+                                        "enum": [
+                                            "01",
+                                            "02",
+                                            "03",
+                                            "04",
+                                            "05"
+                                        ],
+                                        "example": "02"
+                                    },
+                                    "numero_identificacion": {
+                                        "type": "string",
+                                        "example": "3-101-123456"
+                                    },
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Distribuidora Nacional S.A."
+                                    },
+                                    "nombre_comercial": {
+                                        "type": "string",
+                                        "example": "DINASA",
+                                        "nullable": true
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "ventas@dinasa.com",
+                                        "nullable": true
+                                    },
+                                    "telefono": {
+                                        "type": "string",
+                                        "example": "2222-3333",
+                                        "nullable": true
+                                    },
+                                    "direccion": {
+                                        "type": "string",
+                                        "example": "San José, Curridabat",
+                                        "nullable": true
+                                    },
+                                    "provincia": {
+                                        "type": "string",
+                                        "example": "San José",
+                                        "nullable": true
+                                    },
+                                    "canton": {
+                                        "type": "string",
+                                        "example": "Curridabat",
+                                        "nullable": true
+                                    },
+                                    "distrito": {
+                                        "type": "string",
+                                        "example": "Curridabat",
+                                        "nullable": true
+                                    },
+                                    "limite_credito": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 1000000,
+                                        "nullable": true
+                                    },
+                                    "plazo_credito_dias": {
+                                        "type": "integer",
+                                        "example": 60,
+                                        "nullable": true
+                                    },
+                                    "activo": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Proveedor actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Proveedor"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Proveedor actualizado exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Proveedor no encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Proveedor no encontrado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Errores de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Los datos proporcionados no son válidos"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error al actualizar proveedor"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Proveedores"
+                ],
+                "summary": "Eliminar un proveedor",
+                "description": "Realiza un soft delete del proveedor, marcándolo como inactivo y eliminado",
+                "operationId": "59e4a71dea3183f1f38b59d46f3d735b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del proveedor",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Proveedor eliminado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Proveedor eliminado exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Proveedor no encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Proveedor no encontrado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error al eliminar proveedor"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/ventas": {
+            "get": {
+                "tags": [
+                    "Ventas"
+                ],
+                "summary": "Listar ventas",
+                "description": "Obtiene un listado paginado de ventas con filtros por empresa, sucursal, cliente y rango de fechas",
+                "operationId": "03434eeccfa8b0fa5fba075e38211d82",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Cantidad de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15,
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Número de página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "empresa_id",
+                        "in": "query",
+                        "description": "Filtrar por empresa",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "sucursal_id",
+                        "in": "query",
+                        "description": "Filtrar por sucursal",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "cliente_id",
+                        "in": "query",
+                        "description": "Filtrar por cliente",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    },
+                    {
+                        "name": "fecha_inicio",
+                        "in": "query",
+                        "description": "Fecha de inicio del rango",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-01"
+                        }
+                    },
+                    {
+                        "name": "fecha_fin",
+                        "in": "query",
+                        "description": "Fecha de fin del rango",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-31"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de ventas obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Venta"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 142
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error al obtener ventas"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Ventas"
+                ],
+                "summary": "Crear una nueva venta",
+                "description": "Registra una nueva venta con sus detalles de línea, calculando automáticamente subtotales, descuentos, impuestos y total",
+                "operationId": "da4308a086d8e9072b3661a5db17f72d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "empresa_id",
+                                    "cliente_id",
+                                    "fecha_venta",
+                                    "tipo_comprobante",
+                                    "moneda",
+                                    "condicion_pago",
+                                    "detalles"
+                                ],
+                                "properties": {
+                                    "empresa_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "sucursal_id": {
+                                        "type": "integer",
+                                        "example": 1,
+                                        "nullable": true
+                                    },
+                                    "cliente_id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "usuario_id": {
+                                        "type": "integer",
+                                        "example": 3,
+                                        "nullable": true
+                                    },
+                                    "fecha_venta": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2024-01-15T10:30:00"
+                                    },
+                                    "tipo_comprobante": {
+                                        "type": "string",
+                                        "enum": [
+                                            "factura",
+                                            "tiquete",
+                                            "nota_credito",
+                                            "nota_debito"
+                                        ],
+                                        "example": "factura"
+                                    },
+                                    "moneda": {
+                                        "type": "string",
+                                        "enum": [
+                                            "CRC",
+                                            "USD"
+                                        ],
+                                        "example": "CRC"
+                                    },
+                                    "condicion_pago": {
+                                        "type": "string",
+                                        "enum": [
+                                            "contado",
+                                            "credito"
+                                        ],
+                                        "example": "contado"
+                                    },
+                                    "plazo_credito_dias": {
+                                        "type": "integer",
+                                        "example": 30,
+                                        "nullable": true
+                                    },
+                                    "forma_pago_id": {
+                                        "type": "integer",
+                                        "example": 1,
+                                        "nullable": true
+                                    },
+                                    "observaciones": {
+                                        "type": "string",
+                                        "example": "Venta con descuento especial",
+                                        "nullable": true
+                                    },
+                                    "detalles": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "producto_id": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "cantidad": {
+                                                    "type": "number",
+                                                    "example": 2
+                                                },
+                                                "precio_unitario": {
+                                                    "type": "number",
+                                                    "format": "decimal",
+                                                    "example": 50000
+                                                },
+                                                "descuento": {
+                                                    "type": "number",
+                                                    "format": "decimal",
+                                                    "example": 5000
+                                                },
+                                                "porcentaje_impuesto": {
+                                                    "type": "number",
+                                                    "format": "decimal",
+                                                    "example": 13
+                                                },
+                                                "descripcion": {
+                                                    "type": "string",
+                                                    "example": "Producto especial",
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Venta creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Venta"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Venta creada exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Errores de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Los datos proporcionados no son válidos"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error al crear venta"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/ventas/{id}": {
+            "get": {
+                "tags": [
+                    "Ventas"
+                ],
+                "summary": "Obtener una venta específica",
+                "description": "Obtiene los detalles completos de una venta por su ID, incluyendo todos sus detalles de línea y relaciones",
+                "operationId": "252fe3ed3181fc51f3b2ce1669d14f0a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la venta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Venta obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Venta"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Venta no encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Venta no encontrada"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error al obtener venta"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Ventas"
+                ],
+                "summary": "Actualizar una venta",
+                "description": "Actualiza información de una venta existente (solo observaciones y estado)",
+                "operationId": "d09e41b242c349ca260fa901a239cfb5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la venta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "observaciones": {
+                                        "type": "string",
+                                        "example": "Observaciones actualizadas",
+                                        "nullable": true
+                                    },
+                                    "estado_venta": {
+                                        "type": "string",
+                                        "enum": [
+                                            "pendiente",
+                                            "pagada",
+                                            "parcial",
+                                            "anulada"
+                                        ],
+                                        "example": "pagada"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Venta actualizada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Venta"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Venta actualizada exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Venta no encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Venta no encontrada"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Errores de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Los datos proporcionados no son válidos"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error al actualizar venta"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Ventas"
+                ],
+                "summary": "Anular una venta",
+                "description": "Anula una venta marcándola como anulada, inactiva y eliminada (soft delete)",
+                "operationId": "6339431e1793af658b1a0080e59502e9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la venta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Venta anulada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Venta anulada exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Venta no encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Venta no encontrada"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error al anular venta"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -762,6 +2693,123 @@
                         "type": "string",
                         "example": "Categoría de productos electrónicos",
                         "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "Cliente": {
+                "title": "Cliente",
+                "description": "Cliente del sistema",
+                "required": [
+                    "id",
+                    "empresa_id",
+                    "tipo_identificacion",
+                    "numero_identificacion",
+                    "nombre"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "empresa_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "tipo_identificacion": {
+                        "description": "01=Cédula física, 02=Cédula jurídica, 03=DIMEX, 04=NITE, 05=Extranjero, 06=Identificación sin país, 07=Pasaporte",
+                        "type": "string",
+                        "enum": [
+                            "01",
+                            "02",
+                            "03",
+                            "04",
+                            "05",
+                            "06",
+                            "07"
+                        ],
+                        "example": "01"
+                    },
+                    "numero_identificacion": {
+                        "type": "string",
+                        "example": "1-2345-6789"
+                    },
+                    "nombre": {
+                        "type": "string",
+                        "example": "Juan"
+                    },
+                    "apellidos": {
+                        "type": "string",
+                        "example": "Pérez González",
+                        "nullable": true
+                    },
+                    "nombre_comercial": {
+                        "type": "string",
+                        "example": "Comercial JP",
+                        "nullable": true
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "juan.perez@example.com",
+                        "nullable": true
+                    },
+                    "telefono": {
+                        "type": "string",
+                        "example": "8888-7777",
+                        "nullable": true
+                    },
+                    "direccion": {
+                        "type": "string",
+                        "example": "San José, Escazú, del mall 200m oeste",
+                        "nullable": true
+                    },
+                    "provincia": {
+                        "type": "string",
+                        "example": "San José",
+                        "nullable": true
+                    },
+                    "canton": {
+                        "type": "string",
+                        "example": "Escazú",
+                        "nullable": true
+                    },
+                    "distrito": {
+                        "type": "string",
+                        "example": "San Rafael",
+                        "nullable": true
+                    },
+                    "limite_credito": {
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 500000,
+                        "nullable": true
+                    },
+                    "plazo_credito_dias": {
+                        "type": "integer",
+                        "example": 30,
+                        "nullable": true
+                    },
+                    "activo": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "eliminado": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "creado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T00:00:00.000000Z"
+                    },
+                    "actualizado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T00:00:00.000000Z"
+                    },
+                    "empresa": {
+                        "$ref": "#/components/schemas/Empresa"
                     }
                 },
                 "type": "object"
@@ -1022,6 +3070,116 @@
                 },
                 "type": "object"
             },
+            "Proveedor": {
+                "title": "Proveedor",
+                "description": "Proveedor del sistema",
+                "required": [
+                    "id",
+                    "empresa_id",
+                    "tipo_identificacion",
+                    "numero_identificacion",
+                    "nombre"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "empresa_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "tipo_identificacion": {
+                        "description": "01=Cédula física, 02=Cédula jurídica, 03=DIMEX, 04=NITE, 05=Extranjero",
+                        "type": "string",
+                        "enum": [
+                            "01",
+                            "02",
+                            "03",
+                            "04",
+                            "05"
+                        ],
+                        "example": "02"
+                    },
+                    "numero_identificacion": {
+                        "type": "string",
+                        "example": "3-101-123456"
+                    },
+                    "nombre": {
+                        "type": "string",
+                        "example": "Distribuidora Nacional S.A."
+                    },
+                    "nombre_comercial": {
+                        "type": "string",
+                        "example": "DINASA",
+                        "nullable": true
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "ventas@dinasa.com",
+                        "nullable": true
+                    },
+                    "telefono": {
+                        "type": "string",
+                        "example": "2222-3333",
+                        "nullable": true
+                    },
+                    "direccion": {
+                        "type": "string",
+                        "example": "San José, Curridabat, frente al ITCR",
+                        "nullable": true
+                    },
+                    "provincia": {
+                        "type": "string",
+                        "example": "San José",
+                        "nullable": true
+                    },
+                    "canton": {
+                        "type": "string",
+                        "example": "Curridabat",
+                        "nullable": true
+                    },
+                    "distrito": {
+                        "type": "string",
+                        "example": "Curridabat",
+                        "nullable": true
+                    },
+                    "limite_credito": {
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 1000000,
+                        "nullable": true
+                    },
+                    "plazo_credito_dias": {
+                        "type": "integer",
+                        "example": 60,
+                        "nullable": true
+                    },
+                    "activo": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "eliminado": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "creado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T00:00:00.000000Z"
+                    },
+                    "actualizado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T00:00:00.000000Z"
+                    },
+                    "empresa": {
+                        "$ref": "#/components/schemas/Empresa"
+                    }
+                },
+                "type": "object"
+            },
             "Rol": {
                 "title": "Rol",
                 "description": "Rol de usuario con permisos",
@@ -1149,6 +3307,188 @@
                     }
                 },
                 "type": "object"
+            },
+            "Venta": {
+                "title": "Venta",
+                "description": "Venta o factura del sistema",
+                "required": [
+                    "id",
+                    "empresa_id",
+                    "cliente_id",
+                    "fecha_venta",
+                    "tipo_comprobante",
+                    "monto_total_venta"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "empresa_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "sucursal_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "cliente_id": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "usuario_id": {
+                        "type": "integer",
+                        "example": 3,
+                        "nullable": true
+                    },
+                    "fecha_venta": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00.000000Z"
+                    },
+                    "fecha_vencimiento": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-02-15",
+                        "nullable": true
+                    },
+                    "tipo_comprobante": {
+                        "type": "string",
+                        "enum": [
+                            "factura",
+                            "tiquete",
+                            "nota_credito",
+                            "nota_debito"
+                        ],
+                        "example": "factura"
+                    },
+                    "serie_comprobante": {
+                        "type": "string",
+                        "example": "001",
+                        "nullable": true
+                    },
+                    "numero_comprobante": {
+                        "type": "string",
+                        "example": "FAC-00000123"
+                    },
+                    "clave_numerica_hacienda": {
+                        "type": "string",
+                        "example": "50610012345678901234567890123456789012345678",
+                        "nullable": true
+                    },
+                    "consecutivo_hacienda": {
+                        "type": "string",
+                        "example": "00100001010000000123",
+                        "nullable": true
+                    },
+                    "moneda": {
+                        "type": "string",
+                        "enum": [
+                            "CRC",
+                            "USD"
+                        ],
+                        "example": "CRC"
+                    },
+                    "subtotal_bruto_total": {
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 100000
+                    },
+                    "monto_descuento_total": {
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 5000
+                    },
+                    "subtotal_neto_total": {
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 95000
+                    },
+                    "monto_impuesto_total": {
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 12350
+                    },
+                    "monto_total_venta": {
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 107350
+                    },
+                    "estado_venta": {
+                        "type": "string",
+                        "enum": [
+                            "pendiente",
+                            "pagada",
+                            "parcial",
+                            "anulada"
+                        ],
+                        "example": "pendiente"
+                    },
+                    "condicion_pago": {
+                        "type": "string",
+                        "enum": [
+                            "contado",
+                            "credito"
+                        ],
+                        "example": "contado"
+                    },
+                    "condicion_venta_dgt": {
+                        "type": "string",
+                        "example": "01",
+                        "nullable": true
+                    },
+                    "plazo_credito_dias": {
+                        "type": "integer",
+                        "example": 30,
+                        "nullable": true
+                    },
+                    "observaciones": {
+                        "type": "string",
+                        "example": "Venta con descuento especial",
+                        "nullable": true
+                    },
+                    "estado_hacienda": {
+                        "type": "string",
+                        "enum": [
+                            "pendiente",
+                            "aceptado",
+                            "rechazado"
+                        ],
+                        "example": "aceptado",
+                        "nullable": true
+                    },
+                    "forma_pago_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "activo": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "eliminado": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "creado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00.000000Z"
+                    },
+                    "actualizado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00.000000Z"
+                    },
+                    "empresa": {
+                        "$ref": "#/components/schemas/Empresa"
+                    },
+                    "cliente": {
+                        "$ref": "#/components/schemas/Cliente"
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -1168,6 +3508,18 @@
         {
             "name": "Autenticación",
             "description": "Autenticación"
+        },
+        {
+            "name": "Clientes",
+            "description": "Clientes"
+        },
+        {
+            "name": "Proveedores",
+            "description": "Proveedores"
+        },
+        {
+            "name": "Ventas",
+            "description": "Ventas"
         }
     ],
     "security": [

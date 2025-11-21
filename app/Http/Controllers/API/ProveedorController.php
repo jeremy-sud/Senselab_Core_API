@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreProveedorRequest;
 use App\Http\Requests\UpdateProveedorRequest;
 use App\Http\Resources\ProveedorResource;
+use OpenApi\Attributes as OA;
 
 class ProveedorController extends Controller
 {
@@ -17,6 +18,85 @@ class ProveedorController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
+    #[OA\Get(
+        path: '/api/proveedores',
+        summary: 'Listar proveedores',
+        description: 'Obtiene un listado paginado de proveedores con filtros opcionales',
+        security: [['sanctum' => []]],
+        tags: ['Proveedores'],
+        parameters: [
+            new OA\Parameter(
+                name: 'per_page',
+                description: 'Cantidad de registros por página',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'integer', default: 15, example: 15)
+            ),
+            new OA\Parameter(
+                name: 'page',
+                description: 'Número de página',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'integer', default: 1, example: 1)
+            ),
+            new OA\Parameter(
+                name: 'search',
+                description: 'Búsqueda por nombre, nombre comercial, número de identificación o email',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'string', example: 'Distribuidora')
+            ),
+            new OA\Parameter(
+                name: 'empresa_id',
+                description: 'Filtrar por empresa',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'integer', example: 1)
+            ),
+            new OA\Parameter(
+                name: 'activos',
+                description: 'Filtrar solo proveedores activos',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'boolean', example: true)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Listado de proveedores obtenido exitosamente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'data',
+                            type: 'array',
+                            items: new OA\Items(ref: '#/components/schemas/Proveedor')
+                        ),
+                        new OA\Property(
+                            property: 'meta',
+                            properties: [
+                                new OA\Property(property: 'current_page', type: 'integer', example: 1),
+                                new OA\Property(property: 'last_page', type: 'integer', example: 3),
+                                new OA\Property(property: 'per_page', type: 'integer', example: 15),
+                                new OA\Property(property: 'total', type: 'integer', example: 42)
+                            ],
+                            type: 'object'
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Error del servidor',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Error al obtener proveedores'),
+                        new OA\Property(property: 'error', type: 'string')
+                    ]
+                )
+            )
+        ]
+    )]
     public function index(Request $request)
     {
         try {
@@ -61,6 +141,67 @@ class ProveedorController extends Controller
      * @param StoreProveedorRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
+    #[OA\Post(
+        path: '/api/proveedores',
+        summary: 'Crear un nuevo proveedor',
+        description: 'Registra un nuevo proveedor en el sistema',
+        security: [['sanctum' => []]],
+        tags: ['Proveedores'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['empresa_id', 'tipo_identificacion', 'numero_identificacion', 'nombre'],
+                properties: [
+                    new OA\Property(property: 'empresa_id', type: 'integer', example: 1),
+                    new OA\Property(property: 'tipo_identificacion', type: 'string', enum: ['01', '02', '03', '04', '05'], example: '02'),
+                    new OA\Property(property: 'numero_identificacion', type: 'string', example: '3-101-123456'),
+                    new OA\Property(property: 'nombre', type: 'string', example: 'Distribuidora Nacional S.A.'),
+                    new OA\Property(property: 'nombre_comercial', type: 'string', nullable: true, example: 'DINASA'),
+                    new OA\Property(property: 'email', type: 'string', format: 'email', nullable: true, example: 'ventas@dinasa.com'),
+                    new OA\Property(property: 'telefono', type: 'string', nullable: true, example: '2222-3333'),
+                    new OA\Property(property: 'direccion', type: 'string', nullable: true, example: 'San José, Curridabat'),
+                    new OA\Property(property: 'provincia', type: 'string', nullable: true, example: 'San José'),
+                    new OA\Property(property: 'canton', type: 'string', nullable: true, example: 'Curridabat'),
+                    new OA\Property(property: 'distrito', type: 'string', nullable: true, example: 'Curridabat'),
+                    new OA\Property(property: 'limite_credito', type: 'number', format: 'decimal', nullable: true, example: 1000000.00),
+                    new OA\Property(property: 'plazo_credito_dias', type: 'integer', nullable: true, example: 60),
+                    new OA\Property(property: 'activo', type: 'boolean', example: true)
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Proveedor creado exitosamente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'data', ref: '#/components/schemas/Proveedor'),
+                        new OA\Property(property: 'message', type: 'string', example: 'Proveedor creado exitosamente')
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 422,
+                description: 'Errores de validación',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Los datos proporcionados no son válidos'),
+                        new OA\Property(property: 'errors', type: 'object')
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Error del servidor',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Error al crear proveedor'),
+                        new OA\Property(property: 'error', type: 'string')
+                    ]
+                )
+            )
+        ]
+    )]
     public function store(StoreProveedorRequest $request)
     {
         try {
@@ -85,6 +226,52 @@ class ProveedorController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
+    #[OA\Get(
+        path: '/api/proveedores/{id}',
+        summary: 'Obtener un proveedor específico',
+        description: 'Obtiene los detalles de un proveedor por su ID, incluyendo sus últimas 10 órdenes de compra y cuentas por pagar pendientes',
+        security: [['sanctum' => []]],
+        tags: ['Proveedores'],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                description: 'ID del proveedor',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Proveedor obtenido exitosamente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'data', ref: '#/components/schemas/Proveedor')
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Proveedor no encontrado',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Proveedor no encontrado')
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Error del servidor',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Error al obtener proveedor'),
+                        new OA\Property(property: 'error', type: 'string')
+                    ]
+                )
+            )
+        ]
+    )]
     public function show(int $id)
     {
         try {
@@ -118,6 +305,83 @@ class ProveedorController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
+    #[OA\Put(
+        path: '/api/proveedores/{id}',
+        summary: 'Actualizar un proveedor',
+        description: 'Actualiza la información de un proveedor existente',
+        security: [['sanctum' => []]],
+        tags: ['Proveedores'],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                description: 'ID del proveedor',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1)
+            )
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'tipo_identificacion', type: 'string', enum: ['01', '02', '03', '04', '05'], example: '02'),
+                    new OA\Property(property: 'numero_identificacion', type: 'string', example: '3-101-123456'),
+                    new OA\Property(property: 'nombre', type: 'string', example: 'Distribuidora Nacional S.A.'),
+                    new OA\Property(property: 'nombre_comercial', type: 'string', nullable: true, example: 'DINASA'),
+                    new OA\Property(property: 'email', type: 'string', format: 'email', nullable: true, example: 'ventas@dinasa.com'),
+                    new OA\Property(property: 'telefono', type: 'string', nullable: true, example: '2222-3333'),
+                    new OA\Property(property: 'direccion', type: 'string', nullable: true, example: 'San José, Curridabat'),
+                    new OA\Property(property: 'provincia', type: 'string', nullable: true, example: 'San José'),
+                    new OA\Property(property: 'canton', type: 'string', nullable: true, example: 'Curridabat'),
+                    new OA\Property(property: 'distrito', type: 'string', nullable: true, example: 'Curridabat'),
+                    new OA\Property(property: 'limite_credito', type: 'number', format: 'decimal', nullable: true, example: 1000000.00),
+                    new OA\Property(property: 'plazo_credito_dias', type: 'integer', nullable: true, example: 60),
+                    new OA\Property(property: 'activo', type: 'boolean', example: true)
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Proveedor actualizado exitosamente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'data', ref: '#/components/schemas/Proveedor'),
+                        new OA\Property(property: 'message', type: 'string', example: 'Proveedor actualizado exitosamente')
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Proveedor no encontrado',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Proveedor no encontrado')
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 422,
+                description: 'Errores de validación',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Los datos proporcionados no son válidos'),
+                        new OA\Property(property: 'errors', type: 'object')
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Error del servidor',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Error al actualizar proveedor'),
+                        new OA\Property(property: 'error', type: 'string')
+                    ]
+                )
+            )
+        ]
+    )]
     public function update(UpdateProveedorRequest $request, int $id)
     {
         try {
@@ -146,6 +410,52 @@ class ProveedorController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
+    #[OA\Delete(
+        path: '/api/proveedores/{id}',
+        summary: 'Eliminar un proveedor',
+        description: 'Realiza un soft delete del proveedor, marcándolo como inactivo y eliminado',
+        security: [['sanctum' => []]],
+        tags: ['Proveedores'],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                description: 'ID del proveedor',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Proveedor eliminado exitosamente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Proveedor eliminado exitosamente')
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Proveedor no encontrado',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Proveedor no encontrado')
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Error del servidor',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Error al eliminar proveedor'),
+                        new OA\Property(property: 'error', type: 'string')
+                    ]
+                )
+            )
+        ]
+    )]
     public function destroy(int $id)
     {
         try {
