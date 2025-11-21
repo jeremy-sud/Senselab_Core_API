@@ -16,10 +16,12 @@ class StoreDetalleSalidaInventarioRequest extends FormRequest
         return [
             'salida_inventario_id' => 'required|exists:salidas_inventario,id',
             'producto_id' => 'required|exists:productos,id',
+            'numero_linea' => 'required|integer|min:1',
             'cantidad' => 'required|numeric|min:0.01',
-            'costo_unitario_salida' => 'required|numeric|min:0',
-            'lote' => 'nullable|string|max:50',
-            'fecha_vencimiento' => 'nullable|date'
+            'costo_unitario' => 'required|numeric|min:0',
+            'total_linea' => 'required|numeric|min:0',
+            'lote' => 'nullable|string|max:100',
+            'observaciones' => 'nullable|string'
         ];
     }
 
@@ -33,9 +35,9 @@ class StoreDetalleSalidaInventarioRequest extends FormRequest
             'cantidad.required' => 'La cantidad es obligatoria',
             'cantidad.numeric' => 'La cantidad debe ser un número',
             'cantidad.min' => 'La cantidad debe ser mayor a 0',
-            'costo_unitario_salida.required' => 'El costo unitario de salida es obligatorio',
-            'costo_unitario_salida.numeric' => 'El costo unitario debe ser un número',
-            'costo_unitario_salida.min' => 'El costo unitario debe ser mayor o igual a 0'
+            'costo_unitario.required' => 'El costo unitario es obligatorio',
+            'costo_unitario.numeric' => 'El costo unitario debe ser un número',
+            'costo_unitario.min' => 'El costo unitario debe ser mayor o igual a 0'
         ];
     }
 }
