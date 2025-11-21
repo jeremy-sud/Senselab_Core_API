@@ -10,6 +10,7 @@ use App\Models\CuentaContable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use OpenApi\Attributes as OA;
 
 /**
  * Controlador API para Cuentas Contables
@@ -28,6 +29,93 @@ class CuentaContableController extends Controller
      * @param Request $request
      * @return AnonymousResourceCollection
      */
+    #[OA\Get(
+        path: "/api/cuentas-contables",
+        summary: "Listar cuentas contables",
+        description: "Obtiene el listado de cuentas contables del plan contable (PUC) de la empresa. Soporta filtros por tipo, cuenta padre, código y permisos de movimiento.",
+        security: [["sanctum" => []]],
+        tags: ["Contabilidad"],
+        parameters: [
+            new OA\Parameter(
+                name: "tipo_cuenta_id",
+                in: "query",
+                description: "Filtrar por tipo de cuenta",
+                required: false,
+                schema: new OA\Schema(type: "integer", example: 1)
+            ),
+            new OA\Parameter(
+                name: "cuenta_padre_id",
+                in: "query",
+                description: "Filtrar por cuenta padre (subcuentas de una cuenta específica)",
+                required: false,
+                schema: new OA\Schema(type: "integer", example: 1)
+            ),
+            new OA\Parameter(
+                name: "principales",
+                in: "query",
+                description: "Filtrar solo cuentas principales (sin cuenta padre). 1 = solo principales",
+                required: false,
+                schema: new OA\Schema(type: "integer", example: 1)
+            ),
+            new OA\Parameter(
+                name: "codigo",
+                in: "query",
+                description: "Buscar por código de cuenta (búsqueda parcial)",
+                required: false,
+                schema: new OA\Schema(type: "string", example: "1105")
+            ),
+            new OA\Parameter(
+                name: "permite_movimientos",
+                in: "query",
+                description: "Filtrar cuentas que permiten movimientos directos. 1 = permite, 0 = no permite",
+                required: false,
+                schema: new OA\Schema(type: "integer", example: 1)
+            ),
+            new OA\Parameter(
+                name: "sort_by",
+                in: "query",
+                description: "Campo por el cual ordenar",
+                required: false,
+                schema: new OA\Schema(type: "string", default: "codigo", example: "nombre")
+            ),
+            new OA\Parameter(
+                name: "sort_order",
+                in: "query",
+                description: "Orden ascendente o descendente",
+                required: false,
+                schema: new OA\Schema(type: "string", enum: ["asc", "desc"], default: "asc")
+            ),
+            new OA\Parameter(
+                name: "per_page",
+                in: "query",
+                description: "Número de registros por página",
+                required: false,
+                schema: new OA\Schema(type: "integer", default: 15)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Listado de cuentas contables obtenido exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: "data",
+                            type: "array",
+                            items: new OA\Items(ref: "#/components/schemas/CuentaContable")
+                        ),
+                        new OA\Property(property: "current_page", type: "integer", example: 1),
+                        new OA\Property(property: "per_page", type: "integer", example: 15),
+                        new OA\Property(property: "total", type: "integer", example: 100)
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function index(Request $request): AnonymousResourceCollection
     {
         $empresaId = $request->user()->empresa_id;
@@ -75,6 +163,50 @@ class CuentaContableController extends Controller
      * @param StoreCuentaContableRequest $request
      * @return JsonResponse
      */
+    #[OA\Post(
+        path: "/api/cuentas-contables",
+        summary: "Crear cuenta contable",
+        description: "Crea una nueva cuenta en el plan contable. Puede ser cuenta principal o subcuenta. El código debe ser único por empresa.",
+        security: [["sanctum" => []]],
+        tags: ["Contabilidad"],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["nombre", "codigo", "tipo_cuenta_id"],
+                properties: [
+                    new OA\Property(property: "nombre", type: "string", example: "Caja General"),
+                    new OA\Property(property: "codigo", type: "string", example: "1105"),
+                    new OA\Property(property: "descripcion", type: "string", example: "Cuenta para control de efectivo en caja"),
+                    new OA\Property(property: "tipo_cuenta_id", type: "integer", example: 1),
+                    new OA\Property(property: "cuenta_padre_id", type: "integer", example: 1, description: "ID de la cuenta padre (null para cuentas principales)"),
+                    new OA\Property(property: "permite_movimientos", type: "boolean", example: true, description: "Indica si la cuenta permite registrar movimientos directos"),
+                    new OA\Property(property: "saldo_actual", type: "number", format: "decimal", example: 0.00),
+                    new OA\Property(property: "activo", type: "boolean", example: true)
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: "Cuenta contable creada exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "message", type: "string", example: "Cuenta contable creada exitosamente"),
+                        new OA\Property(property: "data", ref: "#/components/schemas/CuentaContable")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 422,
+                description: "Error de validación - Código duplicado o cuenta padre no válida"
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function store(StoreCuentaContableRequest $request): JsonResponse
     {
         $validated = $request->validated();
@@ -97,6 +229,42 @@ class CuentaContableController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
+    #[OA\Get(
+        path: "/api/cuentas-contables/{id}",
+        summary: "Obtener cuenta contable",
+        description: "Obtiene los detalles completos de una cuenta contable, incluyendo su cuenta padre, tipo, subcuentas y asientos relacionados.",
+        security: [["sanctum" => []]],
+        tags: ["Contabilidad"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID de la cuenta contable",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Cuenta encontrada exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "data", ref: "#/components/schemas/CuentaContable")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Cuenta no encontrada"
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function show(int $id, Request $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -120,6 +288,62 @@ class CuentaContableController extends Controller
      * @param int $id
      * @return JsonResponse
      */
+    #[OA\Put(
+        path: "/api/cuentas-contables/{id}",
+        summary: "Actualizar cuenta contable",
+        description: "Actualiza los datos de una cuenta contable existente. Se aplican validaciones de jerarquía y permisos.",
+        security: [["sanctum" => []]],
+        tags: ["Contabilidad"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID de la cuenta a actualizar",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: "nombre", type: "string", example: "Caja General Actualizada"),
+                    new OA\Property(property: "codigo", type: "string", example: "1105-01"),
+                    new OA\Property(property: "descripcion", type: "string", example: "Descripción actualizada"),
+                    new OA\Property(property: "tipo_cuenta_id", type: "integer", example: 1),
+                    new OA\Property(property: "cuenta_padre_id", type: "integer", example: 1),
+                    new OA\Property(property: "permite_movimientos", type: "boolean", example: true),
+                    new OA\Property(property: "saldo_actual", type: "number", format: "decimal", example: 15000.00),
+                    new OA\Property(property: "activo", type: "boolean", example: true)
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Cuenta actualizada exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "message", type: "string", example: "Cuenta contable actualizada exitosamente"),
+                        new OA\Property(property: "data", ref: "#/components/schemas/CuentaContable")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Cuenta no encontrada"
+            ),
+            new OA\Response(
+                response: 422,
+                description: "Error de validación"
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function update(UpdateCuentaContableRequest $request, int $id): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -146,6 +370,46 @@ class CuentaContableController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
+    #[OA\Delete(
+        path: "/api/cuentas-contables/{id}",
+        summary: "Eliminar cuenta contable",
+        description: "Elimina una cuenta contable (soft delete). No se puede eliminar si tiene subcuentas o asientos contables asociados.",
+        security: [["sanctum" => []]],
+        tags: ["Contabilidad"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID de la cuenta a eliminar",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Cuenta eliminada exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "message", type: "string", example: "Cuenta contable eliminada exitosamente")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Cuenta no encontrada"
+            ),
+            new OA\Response(
+                response: 422,
+                description: "No se puede eliminar - tiene subcuentas o asientos asociados"
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function destroy(int $id, Request $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -185,6 +449,34 @@ class CuentaContableController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
+    #[OA\Get(
+        path: "/api/cuentas-contables/arbol",
+        summary: "Obtener árbol de cuentas",
+        description: "Obtiene la estructura jerárquica completa del plan de cuentas, mostrando cuentas principales y sus subcuentas anidadas.",
+        security: [["sanctum" => []]],
+        tags: ["Contabilidad"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Árbol de cuentas obtenido exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(
+                            property: "data",
+                            type: "array",
+                            items: new OA\Items(ref: "#/components/schemas/CuentaContable"),
+                            description: "Array de cuentas principales con subcuentas anidadas"
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function arbol(Request $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -211,6 +503,34 @@ class CuentaContableController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
+    #[OA\Get(
+        path: "/api/cuentas-contables/para-movimientos",
+        summary: "Obtener cuentas para movimientos",
+        description: "Obtiene únicamente las cuentas contables que permiten registrar movimientos directos (permite_movimientos = true). Estas son las cuentas de detalle que se utilizan en los asientos contables.",
+        security: [["sanctum" => []]],
+        tags: ["Contabilidad"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Cuentas para movimientos obtenidas exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(
+                            property: "data",
+                            type: "array",
+                            items: new OA\Items(ref: "#/components/schemas/CuentaContable"),
+                            description: "Array de cuentas que permiten movimientos"
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function paraMovimientos(Request $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;

@@ -242,6 +242,590 @@
                 ]
             }
         },
+        "/api/asientos-contables": {
+            "get": {
+                "tags": [
+                    "Contabilidad"
+                ],
+                "summary": "Listar asientos contables",
+                "description": "Obtiene un listado de todos los asientos contables de la empresa con sistema de doble partida. Permite filtrar por estado, rango de fechas y cuenta contable.",
+                "operationId": "c65b86c548f5c55016df908868270857",
+                "parameters": [
+                    {
+                        "name": "estado",
+                        "in": "query",
+                        "description": "Filtrar por estado del asiento",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "Borrador",
+                                "Mayorizado",
+                                "Anulado"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "desde",
+                        "in": "query",
+                        "description": "Fecha de inicio del rango",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-01"
+                        }
+                    },
+                    {
+                        "name": "hasta",
+                        "in": "query",
+                        "description": "Fecha fin del rango",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-12-31"
+                        }
+                    },
+                    {
+                        "name": "cuenta_contable_id",
+                        "in": "query",
+                        "description": "Filtrar por cuenta contable involucrada",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "Campo para ordenar",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "fecha_asiento"
+                        }
+                    },
+                    {
+                        "name": "sort_order",
+                        "in": "query",
+                        "description": "Orden ascendente o descendente",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ],
+                            "example": "desc"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Cantidad de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de asientos obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AsientoContable"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Contabilidad"
+                ],
+                "summary": "Crear asiento contable",
+                "description": "Registra un nuevo asiento contable con sus detalles. El total del debe debe ser igual al total del haber (doble partida). Los totales se calculan automáticamente.",
+                "operationId": "edec710cc87b90d3aaa518bd65fc3fc0",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "fecha_asiento",
+                                    "detalles"
+                                ],
+                                "properties": {
+                                    "fecha_asiento": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2024-01-15T10:30:00Z"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Registro de venta #1234"
+                                    },
+                                    "estado": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Borrador",
+                                            "Mayorizado",
+                                            "Anulado"
+                                        ],
+                                        "example": "Borrador"
+                                    },
+                                    "detalles": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "cuenta_contable_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "debe": {
+                                                    "type": "number",
+                                                    "format": "decimal",
+                                                    "example": 150000
+                                                },
+                                                "haber": {
+                                                    "type": "number",
+                                                    "format": "decimal",
+                                                    "example": 0
+                                                },
+                                                "descripcion": {
+                                                    "type": "string",
+                                                    "example": "Registro de venta"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Asiento creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Asiento contable creado exitosamente"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/AsientoContable"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/asientos-contables/{id}": {
+            "get": {
+                "tags": [
+                    "Contabilidad"
+                ],
+                "summary": "Obtener asiento contable",
+                "description": "Obtiene los detalles completos de un asiento contable específico, incluyendo todos sus detalles y cuentas relacionadas.",
+                "operationId": "b38faf7b1ac26345cd58a0d88c4b5003",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del asiento contable",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Asiento encontrado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/AsientoContable"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Asiento no encontrado"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Contabilidad"
+                ],
+                "summary": "Actualizar asiento contable",
+                "description": "Actualiza los datos de un asiento contable existente. No permite modificar asientos en estado 'Mayorizado'. Los totales se recalculan automáticamente.",
+                "operationId": "5d5aba3ee04143babd6960d9f49ade93",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del asiento a actualizar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "fecha_asiento": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2024-01-15T10:30:00Z"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Registro de venta #1234"
+                                    },
+                                    "estado": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Borrador",
+                                            "Mayorizado",
+                                            "Anulado"
+                                        ],
+                                        "example": "Borrador"
+                                    },
+                                    "detalles": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "cuenta_contable_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "debe": {
+                                                    "type": "number",
+                                                    "format": "decimal",
+                                                    "example": 150000
+                                                },
+                                                "haber": {
+                                                    "type": "number",
+                                                    "format": "decimal",
+                                                    "example": 0
+                                                },
+                                                "descripcion": {
+                                                    "type": "string",
+                                                    "example": "Registro de venta"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Asiento actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Asiento contable actualizado exitosamente"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/AsientoContable"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Asiento no encontrado"
+                    },
+                    "422": {
+                        "description": "No se puede modificar un asiento mayorizado"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Contabilidad"
+                ],
+                "summary": "Eliminar asiento contable",
+                "description": "Realiza un soft delete del asiento contable y sus detalles. No permite eliminar asientos en estado 'Mayorizado'.",
+                "operationId": "ba5a61eaba3d7fce2fc83e5c1e06424d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del asiento a eliminar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Asiento eliminado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Asiento contable eliminado exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Asiento no encontrado"
+                    },
+                    "422": {
+                        "description": "No se puede eliminar un asiento mayorizado"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/asientos-contables/{id}/mayorizar": {
+            "post": {
+                "tags": [
+                    "Contabilidad"
+                ],
+                "summary": "Mayorizar asiento contable",
+                "description": "Cambia el estado del asiento a 'Mayorizado' y actualiza los saldos de las cuentas contables involucradas. Valida que el total del debe sea igual al total del haber antes de mayorizar.",
+                "operationId": "966387197e80eb087eab4dff71537eed",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del asiento a mayorizar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Asiento mayorizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Asiento contable mayorizado exitosamente"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/AsientoContable"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Asiento no encontrado"
+                    },
+                    "422": {
+                        "description": "El asiento ya está mayorizado o no está balanceado (debe != haber)"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/asientos-contables/{id}/validar": {
+            "get": {
+                "tags": [
+                    "Contabilidad"
+                ],
+                "summary": "Validar balance del asiento",
+                "description": "Verifica que el asiento contable esté balanceado (total del debe = total del haber). Retorna información sobre el estado del balance.",
+                "operationId": "ebdba73210c661e77379636d12d55da3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del asiento a validar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Validación realizada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "balanceado": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "total_debe": {
+                                                    "type": "number",
+                                                    "format": "decimal",
+                                                    "example": 150000
+                                                },
+                                                "total_haber": {
+                                                    "type": "number",
+                                                    "format": "decimal",
+                                                    "example": 150000
+                                                },
+                                                "diferencia": {
+                                                    "type": "number",
+                                                    "format": "decimal",
+                                                    "example": 0
+                                                },
+                                                "estado": {
+                                                    "type": "string",
+                                                    "example": "Mayorizado"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Asiento no encontrado"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/login": {
             "post": {
                 "tags": [
@@ -2016,6 +2600,539 @@
                                 }
                             }
                         }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/cuentas-contables": {
+            "get": {
+                "tags": [
+                    "Contabilidad"
+                ],
+                "summary": "Listar cuentas contables",
+                "description": "Obtiene el listado de cuentas contables del plan contable (PUC) de la empresa. Soporta filtros por tipo, cuenta padre, código y permisos de movimiento.",
+                "operationId": "698ee28461674d4d07ef36974446720f",
+                "parameters": [
+                    {
+                        "name": "tipo_cuenta_id",
+                        "in": "query",
+                        "description": "Filtrar por tipo de cuenta",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "cuenta_padre_id",
+                        "in": "query",
+                        "description": "Filtrar por cuenta padre (subcuentas de una cuenta específica)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "principales",
+                        "in": "query",
+                        "description": "Filtrar solo cuentas principales (sin cuenta padre). 1 = solo principales",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "codigo",
+                        "in": "query",
+                        "description": "Buscar por código de cuenta (búsqueda parcial)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "1105"
+                        }
+                    },
+                    {
+                        "name": "permite_movimientos",
+                        "in": "query",
+                        "description": "Filtrar cuentas que permiten movimientos directos. 1 = permite, 0 = no permite",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "Campo por el cual ordenar",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "codigo",
+                            "example": "nombre"
+                        }
+                    },
+                    {
+                        "name": "sort_order",
+                        "in": "query",
+                        "description": "Orden ascendente o descendente",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "asc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Número de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de cuentas contables obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/CuentaContable"
+                                            }
+                                        },
+                                        "current_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "per_page": {
+                                            "type": "integer",
+                                            "example": 15
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 100
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Contabilidad"
+                ],
+                "summary": "Crear cuenta contable",
+                "description": "Crea una nueva cuenta en el plan contable. Puede ser cuenta principal o subcuenta. El código debe ser único por empresa.",
+                "operationId": "d9db8afcbe2eeaf47936ac807cae0178",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nombre",
+                                    "codigo",
+                                    "tipo_cuenta_id"
+                                ],
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Caja General"
+                                    },
+                                    "codigo": {
+                                        "type": "string",
+                                        "example": "1105"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Cuenta para control de efectivo en caja"
+                                    },
+                                    "tipo_cuenta_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "cuenta_padre_id": {
+                                        "description": "ID de la cuenta padre (null para cuentas principales)",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "permite_movimientos": {
+                                        "description": "Indica si la cuenta permite registrar movimientos directos",
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "saldo_actual": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 0
+                                    },
+                                    "activo": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Cuenta contable creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cuenta contable creada exitosamente"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/CuentaContable"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación - Código duplicado o cuenta padre no válida"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/cuentas-contables/{id}": {
+            "get": {
+                "tags": [
+                    "Contabilidad"
+                ],
+                "summary": "Obtener cuenta contable",
+                "description": "Obtiene los detalles completos de una cuenta contable, incluyendo su cuenta padre, tipo, subcuentas y asientos relacionados.",
+                "operationId": "ecd88fc26306471a8f6311eb83c665f5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la cuenta contable",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cuenta encontrada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/CuentaContable"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Cuenta no encontrada"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Contabilidad"
+                ],
+                "summary": "Actualizar cuenta contable",
+                "description": "Actualiza los datos de una cuenta contable existente. Se aplican validaciones de jerarquía y permisos.",
+                "operationId": "77e485f642e9025c5331651c798feee0",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la cuenta a actualizar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Caja General Actualizada"
+                                    },
+                                    "codigo": {
+                                        "type": "string",
+                                        "example": "1105-01"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Descripción actualizada"
+                                    },
+                                    "tipo_cuenta_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "cuenta_padre_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "permite_movimientos": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "saldo_actual": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 15000
+                                    },
+                                    "activo": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cuenta actualizada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cuenta contable actualizada exitosamente"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/CuentaContable"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Cuenta no encontrada"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Contabilidad"
+                ],
+                "summary": "Eliminar cuenta contable",
+                "description": "Elimina una cuenta contable (soft delete). No se puede eliminar si tiene subcuentas o asientos contables asociados.",
+                "operationId": "4fc002307f33bcbe007a03703fbbc41d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la cuenta a eliminar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cuenta eliminada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cuenta contable eliminada exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Cuenta no encontrada"
+                    },
+                    "422": {
+                        "description": "No se puede eliminar - tiene subcuentas o asientos asociados"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/cuentas-contables/arbol": {
+            "get": {
+                "tags": [
+                    "Contabilidad"
+                ],
+                "summary": "Obtener árbol de cuentas",
+                "description": "Obtiene la estructura jerárquica completa del plan de cuentas, mostrando cuentas principales y sus subcuentas anidadas.",
+                "operationId": "399c0ce572fb35460f1d4f4723c557c1",
+                "responses": {
+                    "200": {
+                        "description": "Árbol de cuentas obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "description": "Array de cuentas principales con subcuentas anidadas",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/CuentaContable"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/cuentas-contables/para-movimientos": {
+            "get": {
+                "tags": [
+                    "Contabilidad"
+                ],
+                "summary": "Obtener cuentas para movimientos",
+                "description": "Obtiene únicamente las cuentas contables que permiten registrar movimientos directos (permite_movimientos = true). Estas son las cuentas de detalle que se utilizan en los asientos contables.",
+                "operationId": "41922783434ea942c4384d3b37fa55e0",
+                "responses": {
+                    "200": {
+                        "description": "Cuentas para movimientos obtenidas exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "description": "Array de cuentas que permiten movimientos",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/CuentaContable"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
                     }
                 },
                 "security": [
@@ -4156,6 +5273,268 @@
                     },
                     "422": {
                         "description": "No se puede cancelar una salida ya procesada"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/marcas": {
+            "get": {
+                "tags": [
+                    "Catálogos de Productos"
+                ],
+                "summary": "Listar marcas de productos",
+                "description": "Obtiene un listado de todas las marcas de productos del sistema. Las marcas son globales (sin empresa_id).",
+                "operationId": "ce6ad10f4c73486f545dd673e1867f7f",
+                "parameters": [
+                    {
+                        "name": "activo",
+                        "in": "query",
+                        "description": "Filtrar por marcas activas o inactivas",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de marcas obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Marca"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Catálogos de Productos"
+                ],
+                "summary": "Crear marca de producto",
+                "description": "Registra una nueva marca de producto en el sistema. El nombre debe ser único (case-insensitive).",
+                "operationId": "63ffd61c9ee5a8aa49ad75ff6d5840a3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nombre"
+                                ],
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Samsung"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Productos electrónicos y electrodomésticos"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Marca creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Marca"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación (nombre duplicado)"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/marcas/{id}": {
+            "get": {
+                "tags": [
+                    "Catálogos de Productos"
+                ],
+                "summary": "Obtener marca de producto",
+                "description": "Obtiene los detalles de una marca de producto específica.",
+                "operationId": "9680fa5c179017437a9258536ca77af2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la marca",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Marca encontrada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Marca"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Marca no encontrada"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Catálogos de Productos"
+                ],
+                "summary": "Actualizar marca de producto",
+                "description": "Actualiza los datos de una marca de producto existente. El nombre debe ser único.",
+                "operationId": "7101209c31c5799132c163021662db4d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la marca a actualizar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Samsung"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Productos electrónicos y electrodomésticos"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Marca actualizada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Marca"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Marca no encontrada"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Catálogos de Productos"
+                ],
+                "summary": "Eliminar marca de producto",
+                "description": "Realiza un soft delete de la marca especificada.",
+                "operationId": "da9c21b4084517c4369990facb91c943",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la marca a eliminar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Marca eliminada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Marca eliminada exitosamente"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Marca"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Marca no encontrada"
                     },
                     "500": {
                         "description": "Error interno del servidor"
@@ -6870,6 +8249,276 @@
                 ]
             }
         },
+        "/api/unidades-medida": {
+            "get": {
+                "tags": [
+                    "Catálogos de Productos"
+                ],
+                "summary": "Listar unidades de medida",
+                "description": "Obtiene un listado de todas las unidades de medida del sistema. Las unidades son globales (sin empresa_id) y siguen los códigos de la Dirección General de Tributación (DGT) de Costa Rica.",
+                "operationId": "e20f8316093e9461c8753d49d2645106",
+                "parameters": [
+                    {
+                        "name": "activo",
+                        "in": "query",
+                        "description": "Filtrar por unidades activas o inactivas",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de unidades obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/UnidadMedida"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Catálogos de Productos"
+                ],
+                "summary": "Crear unidad de medida",
+                "description": "Registra una nueva unidad de medida en el sistema. El código DGT debe ser único.",
+                "operationId": "8527622cf153c406ff0c90e05531a3fe",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nombre"
+                                ],
+                                "properties": {
+                                    "codigo_dgt": {
+                                        "type": "string",
+                                        "example": "Unid"
+                                    },
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Unidad"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Unidad individual de producto"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Unidad creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnidadMedida"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/unidades-medida/{id}": {
+            "get": {
+                "tags": [
+                    "Catálogos de Productos"
+                ],
+                "summary": "Obtener unidad de medida",
+                "description": "Obtiene los detalles de una unidad de medida específica.",
+                "operationId": "01b8423771fb8bdcbba0eba73ff83fe6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la unidad de medida",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Unidad encontrada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnidadMedida"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Unidad no encontrada"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Catálogos de Productos"
+                ],
+                "summary": "Actualizar unidad de medida",
+                "description": "Actualiza los datos de una unidad de medida existente.",
+                "operationId": "9e9df8d36952816193ae443bb185a392",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la unidad a actualizar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "codigo_dgt": {
+                                        "type": "string",
+                                        "example": "Unid"
+                                    },
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Unidad"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Unidad individual de producto"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Unidad actualizada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnidadMedida"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Unidad no encontrada"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Catálogos de Productos"
+                ],
+                "summary": "Eliminar unidad de medida",
+                "description": "Realiza un soft delete de la unidad de medida especificada.",
+                "operationId": "f073075536c9a3e57d52692bcfa9dbfa",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la unidad a eliminar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Unidad eliminada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unidad de medida eliminada exitosamente"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/UnidadMedida"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Unidad no encontrada"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/usuarios": {
             "get": {
                 "tags": [
@@ -7928,6 +9577,84 @@
                 },
                 "type": "object"
             },
+            "AsientoContable": {
+                "title": "Asiento Contable",
+                "description": "Esquema para registro de asientos contables con sistema de doble partida",
+                "required": [
+                    "empresa_id",
+                    "fecha_asiento",
+                    "estado"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "ID único del asiento contable",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "empresa_id": {
+                        "description": "ID de la empresa (multi-tenant)",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "fecha_asiento": {
+                        "description": "Fecha en que se registra el asiento contable",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
+                    },
+                    "descripcion": {
+                        "description": "Descripción del asiento contable",
+                        "type": "string",
+                        "example": "Registro de venta #1234",
+                        "nullable": true
+                    },
+                    "total_debe": {
+                        "description": "Total del debe (suma de todos los débitos). Debe ser igual al total_haber",
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 150000
+                    },
+                    "total_haber": {
+                        "description": "Total del haber (suma de todos los créditos). Debe ser igual al total_debe",
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 150000
+                    },
+                    "estado": {
+                        "description": "Estado del asiento (Borrador, Mayorizado, Anulado)",
+                        "type": "string",
+                        "enum": [
+                            "Borrador",
+                            "Mayorizado",
+                            "Anulado"
+                        ],
+                        "example": "Mayorizado"
+                    },
+                    "activo": {
+                        "description": "Indica si el asiento está activo",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "eliminado": {
+                        "description": "Indica si el asiento fue eliminado (soft delete)",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "creado_en": {
+                        "description": "Fecha de creación del registro",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
+                    },
+                    "actualizado_en": {
+                        "description": "Fecha de última actualización",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T14:45:00Z"
+                    }
+                },
+                "type": "object"
+            },
             "Cargo": {
                 "title": "Cargo",
                 "description": "Cargo o puesto de trabajo",
@@ -8159,6 +9886,89 @@
                     },
                     "empresa": {
                         "$ref": "#/components/schemas/Empresa"
+                    }
+                },
+                "type": "object"
+            },
+            "CuentaContable": {
+                "title": "Cuenta Contable",
+                "description": "Esquema para Plan Único de Cuentas (PUC) contables con estructura jerárquica",
+                "required": [
+                    "empresa_id",
+                    "nombre",
+                    "codigo",
+                    "tipo_cuenta_id"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "ID único de la cuenta contable",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "empresa_id": {
+                        "description": "ID de la empresa (multi-tenant)",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nombre": {
+                        "description": "Nombre de la cuenta contable",
+                        "type": "string",
+                        "example": "Bancos"
+                    },
+                    "descripcion": {
+                        "description": "Descripción detallada de la cuenta",
+                        "type": "string",
+                        "example": "Cuentas bancarias de la empresa",
+                        "nullable": true
+                    },
+                    "codigo": {
+                        "description": "Código único de la cuenta (debe ser único por empresa)",
+                        "type": "string",
+                        "example": "1105"
+                    },
+                    "tipo_cuenta_id": {
+                        "description": "ID del tipo de cuenta (Activo, Pasivo, Patrimonio, Ingresos, Gastos)",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "cuenta_padre_id": {
+                        "description": "ID de la cuenta padre (para estructura jerárquica)",
+                        "type": "integer",
+                        "example": 5,
+                        "nullable": true
+                    },
+                    "permite_movimientos": {
+                        "description": "Indica si la cuenta permite registrar movimientos contables",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "saldo_actual": {
+                        "description": "Saldo actual de la cuenta (decimal con 2 decimales)",
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 250000
+                    },
+                    "activo": {
+                        "description": "Indica si la cuenta está activa",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "eliminado": {
+                        "description": "Indica si la cuenta fue eliminada (soft delete)",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "creado_en": {
+                        "description": "Fecha de creación del registro",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
+                    },
+                    "actualizado_en": {
+                        "description": "Fecha de última actualización",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T14:45:00Z"
                     }
                 },
                 "type": "object"
@@ -9752,6 +11562,10 @@
             "description": "Almacenes"
         },
         {
+            "name": "Contabilidad",
+            "description": "Contabilidad"
+        },
+        {
             "name": "Autenticación",
             "description": "Autenticación"
         },
@@ -9794,6 +11608,10 @@
         {
             "name": "Inventario",
             "description": "Inventario"
+        },
+        {
+            "name": "Catálogos de Productos",
+            "description": "Catálogos de Productos"
         },
         {
             "name": "Órdenes de Compra",
