@@ -32,23 +32,19 @@ class Proveedor extends Model
         'nombre_comercial',
         'email',
         'telefono',
-        'celular',
         'direccion',
-        'pais',
         'provincia',
-        'ciudad',
-        'codigo_postal',
-        'contacto_nombre',
-        'contacto_telefono',
-        'contacto_email',
-        'dias_credito',
+        'canton',
+        'distrito',
         'limite_credito',
+        'plazo_credito_dias',
         'activo',
         'eliminado',
     ];
 
     protected $casts = [
-        'dias_credito' => 'integer',
+        'limite_credito' => 'decimal:2',
+        'plazo_credito_dias' => 'integer',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
     ];
@@ -68,7 +64,7 @@ class Proveedor extends Model
 
     public function productos()
     {
-        return $this->hasMany(Producto::class, 'proveedor_id_predeterminado');
+        return $this->hasMany(Producto::class, 'proveedor_id');
     }
 
     /**

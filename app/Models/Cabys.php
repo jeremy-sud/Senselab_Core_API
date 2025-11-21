@@ -44,13 +44,13 @@ class Cabys extends Model
     ];
 
     /**
+    /**
      * Obtiene los productos asociados a este código CAByS.
      */
     public function productos(): HasMany
     {
-        return $this->hasMany(Producto::class, 'cabys_id');
+        return $this->hasMany(\App\Models\Producto::class, 'cabys_id');
     }
-
     /**
      * Scope para buscar por código CAByS.
      */

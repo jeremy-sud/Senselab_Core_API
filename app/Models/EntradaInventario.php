@@ -119,7 +119,7 @@ class EntradaInventario extends Model
             // Calcular monto total si la relación detalles está cargada
             if ($model->relationLoaded('detalles')) {
                 $total = $model->detalles->sum(function ($d) {
-                    return (float) ($d->subtotal ?? 0);
+                    return (float) ($d->total_linea ?? 0);
                 });
                 $model->monto_total = round($total, 2);
             }

@@ -61,13 +61,13 @@ class CategoriaProducto extends Model
     }
 
     /**
+    /**
      * Relación con los productos.
      */
     public function productos(): HasMany
     {
-        return $this->hasMany(Producto::class, 'categoria_id');
+        return $this->hasMany(\App\Models\Producto::class, 'categoria_id');
     }
-
     /**
      * Scope para obtener categorías activas.
      */

@@ -95,6 +95,14 @@ class Almacen extends Model
     }
 
     /**
+     * Relación con los inventarios de productos.
+     */
+    public function inventariosProductos(): HasMany
+    {
+        return $this->hasMany(InventarioProducto::class, 'almacen_id');
+    }
+
+    /**
      * Scope para filtrar almacenes activos.
      */
     public function scopeActivos($query)
@@ -112,18 +120,14 @@ class Almacen extends Model
     }
 
     /**
-     * Obtiene el stock actual de un producto en este almacén.
+     * Obtiene el stock actual de un producto en este almacén desde inventario_productos.
      */
     public function getStockProducto($productoId): float
     {
-        $entradas = $this->entradasInventario()
+        $inventario = $this->inventariosProductos()
             ->where('producto_id', $productoId)
-            ->sum('cantidad');
+            ->first();
 
-        $salidas = $this->salidasInventario()
-            ->where('producto_id', $productoId)
-            ->sum('cantidad');
-
-        return $entradas - $salidas;
+        return $inventario ? (float) $inventario->stock_actual : 0.0;
     }
 }

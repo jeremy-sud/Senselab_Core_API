@@ -1,3 +1,12 @@
+<?php
+
+namespace App\Models;
+
+use App\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+
 /**
  * Modelo para la tabla `productos`.
  * Generado a partir del SHOW CREATE TABLE real.
@@ -20,38 +29,37 @@ class Producto extends Model
         'categoria_id',
         'unidad_medida_id',
         'marca_id',
-        'proveedor_id_predeterminado',
+        'proveedor_id',
+        'tipo_impuesto_id',
+        'cabys_id',
+        'codigo',
+        'codigo_barras',
         'nombre',
         'descripcion',
-        'codigo_barras',
-        'sku',
         'precio_venta',
         'precio_compra',
-        'stock',
         'stock_minimo',
         'stock_maximo',
-        'peso',
-        'volumen',
-        'impuesto_id',
-        'cabys_id',
         'tipo_producto',
-        'codigo_tipo_item_dgt',
+        'vende',
+        'compra',
+        'controla_inventario',
         'activo',
         'eliminado',
-        'creado_en',
-        'actualizado_en',
     ];
 
     protected $casts = [
         'precio_venta' => 'decimal:2',
         'precio_compra' => 'decimal:2',
-        'stock' => 'decimal:2',
         'stock_minimo' => 'decimal:2',
         'stock_maximo' => 'decimal:2',
-        'peso' => 'decimal:2',
-        'volumen' => 'decimal:2',
+        'vende' => 'boolean',
+        'compra' => 'boolean',
+        'controla_inventario' => 'boolean',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
+        'creado_en' => 'datetime',
+        'actualizado_en' => 'datetime',
     ];
 
     public static $rules = [
@@ -83,14 +91,14 @@ class Producto extends Model
         return $this->belongsTo(Marca::class, 'marca_id');
     }
 
-    public function proveedorPredeterminado()
+    public function proveedor()
     {
-        return $this->belongsTo(Proveedor::class, 'proveedor_id_predeterminado');
+        return $this->belongsTo(Proveedor::class, 'proveedor_id');
     }
 
-    public function impuesto()
+    public function tipoImpuesto()
     {
-        return $this->belongsTo(TipoImpuesto::class, 'impuesto_id');
+        return $this->belongsTo(TipoImpuesto::class, 'tipo_impuesto_id');
     }
 
     public function cabys()
@@ -128,16 +136,12 @@ class Producto extends Model
             if (isset($p->nombre)) {
                 $p->nombre = trim($p->nombre);
             }
-            if (isset($p->sku)) {
-                $p->sku = Str::upper(trim($p->sku));
+            if (isset($p->codigo)) {
+                $p->codigo = Str::upper(trim($p->codigo));
             }
             if (isset($p->codigo_barras)) {
                 $p->codigo_barras = trim($p->codigo_barras);
             }
-            if (isset($p->tipo_producto)) {
-                $p->tipo_producto = Str::ucfirst(Str::lower(trim($p->tipo_producto)));
-            }
         });
     }
 }
-            }
