@@ -24,12 +24,11 @@ return new class extends Migration
             $table->timestamp('actualizado_en')->nullable()->useCurrent()->useCurrentOnUpdate();
 
             // Índices y Foreign Keys
-            $table->unique('empresa_id', 'sucursales_ibfk_1');
+            $table->index('empresa_id');
             
-            $table->foreign('empresa_id', 'fk_sucursales_empresa')
+            $table->foreign('empresa_id')
                   ->references('id')->on('empresas')
-                  ->onDelete('restrict')
-                  ->onUpdate('cascade');
+                  ->onDelete('cascade');
         });
     }
 
