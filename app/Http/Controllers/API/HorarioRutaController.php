@@ -11,6 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
+use OpenApi\Attributes as OA;
 
 /**
  * Controlador API para Horarios de Ruta (Viajes Programados)
@@ -29,6 +30,69 @@ class HorarioRutaController extends Controller
      * @param Request $request
      * @return AnonymousResourceCollection
      */
+    #[OA\Get(
+        path: "/api/horarios-rutas",
+        summary: "Listar horarios de ruta",
+        description: "Obtiene la lista paginada de horarios de ruta (viajes programados). Permite filtrar por ruta, bus, estado, fecha y rango de fechas.",
+        security: [["sanctum" => []]],
+        tags: ["Transporte"],
+        parameters: [
+            new OA\Parameter(
+                name: "ruta_id",
+                in: "query",
+                description: "Filtrar por ruta",
+                required: false,
+                schema: new OA\Schema(type: "integer", example: 1)
+            ),
+            new OA\Parameter(
+                name: "bus_id",
+                in: "query",
+                description: "Filtrar por bus",
+                required: false,
+                schema: new OA\Schema(type: "integer", example: 1)
+            ),
+            new OA\Parameter(
+                name: "estado",
+                in: "query",
+                description: "Filtrar por estado del viaje",
+                required: false,
+                schema: new OA\Schema(type: "string", enum: ["Programado", "En Viaje", "Finalizado", "Cancelado"], example: "Programado")
+            ),
+            new OA\Parameter(
+                name: "fecha",
+                in: "query",
+                description: "Filtrar por fecha exacta de salida",
+                required: false,
+                schema: new OA\Schema(type: "string", format: "date", example: "2024-12-25")
+            ),
+            new OA\Parameter(
+                name: "desde",
+                in: "query",
+                description: "Fecha inicio del rango",
+                required: false,
+                schema: new OA\Schema(type: "string", format: "date", example: "2024-12-01")
+            ),
+            new OA\Parameter(
+                name: "hasta",
+                in: "query",
+                description: "Fecha fin del rango",
+                required: false,
+                schema: new OA\Schema(type: "string", format: "date", example: "2024-12-31")
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Lista de horarios obtenida exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "data", type: "array", items: new OA\Items(type: "object"))
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function index(Request $request): AnonymousResourceCollection
     {
         $query = HorarioRuta::with(['ruta', 'bus'])
@@ -72,6 +136,35 @@ class HorarioRutaController extends Controller
      * @param StoreHorarioRutaRequest $request
      * @return HorarioRutaResource
      */
+    #[OA\Post(
+        path: "/api/horarios-rutas",
+        summary: "Crear horario de ruta",
+        description: "Programa un nuevo viaje asignando bus y ruta con fechas/horas de salida y llegada. Los asientos disponibles se establecen automáticamente según la capacidad del bus.",
+        security: [["sanctum" => []]],
+        tags: ["Transporte"],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["ruta_id", "bus_id", "fecha_salida", "hora_salida", "fecha_llegada_estimada", "hora_llegada_estimada"],
+                properties: [
+                    new OA\Property(property: "ruta_id", type: "integer", example: 1),
+                    new OA\Property(property: "bus_id", type: "integer", example: 1),
+                    new OA\Property(property: "fecha_salida", type: "string", format: "date", example: "2024-12-25"),
+                    new OA\Property(property: "hora_salida", type: "string", format: "time", example: "08:00:00"),
+                    new OA\Property(property: "fecha_llegada_estimada", type: "string", format: "date", example: "2024-12-25"),
+                    new OA\Property(property: "hora_llegada_estimada", type: "string", format: "time", example: "11:00:00"),
+                    new OA\Property(property: "estado", type: "string", enum: ["Programado", "En Viaje", "Finalizado", "Cancelado"], example: "Programado", description: "Opcional, por defecto 'Programado'"),
+                    new OA\Property(property: "activo", type: "integer", enum: [0, 1], example: 1, description: "Opcional, por defecto 1")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 201, description: "Horario creado exitosamente"),
+            new OA\Response(response: 422, description: "Datos de validación incorrectos"),
+            new OA\Response(response: 500, description: "Error al crear el horario"),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function store(StoreHorarioRutaRequest $request): HorarioRutaResource
     {
         DB::beginTransaction();
@@ -108,6 +201,27 @@ class HorarioRutaController extends Controller
      * @param int $id
      * @return HorarioRutaResource
      */
+    #[OA\Get(
+        path: "/api/horarios-rutas/{id}",
+        summary: "Obtener horario de ruta",
+        description: "Obtiene el detalle de un horario de ruta con ruta, bus y tiquetes vendidos asociados.",
+        security: [["sanctum" => []]],
+        tags: ["Transporte"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del horario de ruta",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "Horario obtenido exitosamente"),
+            new OA\Response(response: 404, description: "Horario no encontrado"),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function show(int $id): HorarioRutaResource
     {
         $horario = HorarioRuta::where('eliminado', 0)
@@ -124,6 +238,43 @@ class HorarioRutaController extends Controller
      * @param int $id
      * @return HorarioRutaResource
      */
+    #[OA\Put(
+        path: "/api/horarios-rutas/{id}",
+        summary: "Actualizar horario de ruta",
+        description: "Actualiza un horario de ruta. No permite modificar horarios en estado 'En Viaje' o 'Finalizado'.",
+        security: [["sanctum" => []]],
+        tags: ["Transporte"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del horario de ruta",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: "ruta_id", type: "integer", example: 1),
+                    new OA\Property(property: "bus_id", type: "integer", example: 1),
+                    new OA\Property(property: "fecha_salida", type: "string", format: "date", example: "2024-12-25"),
+                    new OA\Property(property: "hora_salida", type: "string", format: "time", example: "08:00:00"),
+                    new OA\Property(property: "fecha_llegada_estimada", type: "string", format: "date", example: "2024-12-25"),
+                    new OA\Property(property: "hora_llegada_estimada", type: "string", format: "time", example: "11:00:00"),
+                    new OA\Property(property: "estado", type: "string", enum: ["Programado", "En Viaje", "Finalizado", "Cancelado"], example: "Programado"),
+                    new OA\Property(property: "activo", type: "integer", enum: [0, 1], example: 1)
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: "Horario actualizado exitosamente"),
+            new OA\Response(response: 404, description: "Horario no encontrado"),
+            new OA\Response(response: 422, description: "No se puede modificar un horario en estado En Viaje o Finalizado"),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function update(UpdateHorarioRutaRequest $request, int $id): HorarioRutaResource
     {
         $horario = HorarioRuta::where('eliminado', 0)
@@ -154,6 +305,36 @@ class HorarioRutaController extends Controller
      * @param int $id
      * @return JsonResponse
      */
+    #[OA\Delete(
+        path: "/api/horarios-rutas/{id}",
+        summary: "Eliminar horario de ruta",
+        description: "Elimina lógicamente un horario de ruta. No permite eliminar horarios con tiquetes vendidos.",
+        security: [["sanctum" => []]],
+        tags: ["Transporte"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del horario de ruta",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Horario eliminado exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "message", type: "string", example: "Horario de ruta eliminado exitosamente")
+                    ]
+                )
+            ),
+            new OA\Response(response: 404, description: "Horario no encontrado"),
+            new OA\Response(response: 422, description: "No se puede eliminar un horario con tiquetes vendidos"),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function destroy(int $id): JsonResponse
     {
         $horario = HorarioRuta::where('eliminado', 0)
@@ -179,6 +360,28 @@ class HorarioRutaController extends Controller
      * @param int $id
      * @return HorarioRutaResource
      */
+    #[OA\Post(
+        path: "/api/horarios-rutas/{id}/iniciar-viaje",
+        summary: "Iniciar viaje",
+        description: "Cambia el estado del horario de 'Programado' a 'En Viaje'. Solo permite iniciar viajes programados.",
+        security: [["sanctum" => []]],
+        tags: ["Transporte"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del horario de ruta",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "Viaje iniciado exitosamente"),
+            new OA\Response(response: 404, description: "Horario no encontrado"),
+            new OA\Response(response: 422, description: "Solo se pueden iniciar viajes en estado Programado"),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function iniciarViaje(int $id): HorarioRutaResource
     {
         $horario = HorarioRuta::where('eliminado', 0)
@@ -199,6 +402,28 @@ class HorarioRutaController extends Controller
      * @param int $id
      * @return HorarioRutaResource
      */
+    #[OA\Post(
+        path: "/api/horarios-rutas/{id}/finalizar-viaje",
+        summary: "Finalizar viaje",
+        description: "Cambia el estado del horario de 'En Viaje' a 'Finalizado'. Solo permite finalizar viajes en curso.",
+        security: [["sanctum" => []]],
+        tags: ["Transporte"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del horario de ruta",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "Viaje finalizado exitosamente"),
+            new OA\Response(response: 404, description: "Horario no encontrado"),
+            new OA\Response(response: 422, description: "Solo se pueden finalizar viajes en estado En Viaje"),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function finalizarViaje(int $id): HorarioRutaResource
     {
         $horario = HorarioRuta::where('eliminado', 0)
@@ -219,6 +444,28 @@ class HorarioRutaController extends Controller
      * @param int $id
      * @return HorarioRutaResource
      */
+    #[OA\Post(
+        path: "/api/horarios-rutas/{id}/cancelar",
+        summary: "Cancelar horario",
+        description: "Cambia el estado del horario a 'Cancelado'. No permite cancelar viajes finalizados.",
+        security: [["sanctum" => []]],
+        tags: ["Transporte"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del horario de ruta",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "Horario cancelado exitosamente"),
+            new OA\Response(response: 404, description: "Horario no encontrado"),
+            new OA\Response(response: 422, description: "No se puede cancelar un viaje finalizado"),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function cancelar(int $id): HorarioRutaResource
     {
         $horario = HorarioRuta::where('eliminado', 0)
@@ -239,6 +486,39 @@ class HorarioRutaController extends Controller
      * @param int $id
      * @return JsonResponse
      */
+    #[OA\Get(
+        path: "/api/horarios-rutas/{id}/asientos-disponibles",
+        summary: "Asientos disponibles",
+        description: "Consulta la disponibilidad de asientos de un horario específico con base en tiquetes vendidos.",
+        security: [["sanctum" => []]],
+        tags: ["Transporte"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del horario de ruta",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Información de disponibilidad obtenida exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "horario_id", type: "integer", example: 1),
+                        new OA\Property(property: "capacidad_total", type: "integer", example: 48),
+                        new OA\Property(property: "tiquetes_vendidos", type: "integer", example: 32),
+                        new OA\Property(property: "asientos_disponibles", type: "integer", example: 16),
+                        new OA\Property(property: "porcentaje_ocupacion", type: "number", format: "decimal", example: 66.67)
+                    ]
+                )
+            ),
+            new OA\Response(response: 404, description: "Horario no encontrado"),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function asientosDisponibles(int $id): JsonResponse
     {
         $horario = HorarioRuta::where('eliminado', 0)
@@ -268,6 +548,34 @@ class HorarioRutaController extends Controller
      * @param Request $request
      * @return AnonymousResourceCollection
      */
+    #[OA\Get(
+        path: "/api/horarios-rutas/proximos-disponibles",
+        summary: "Próximos horarios disponibles",
+        description: "Obtiene los próximos 10 horarios programados con asientos disponibles, ordenados por fecha/hora de salida.",
+        security: [["sanctum" => []]],
+        tags: ["Transporte"],
+        parameters: [
+            new OA\Parameter(
+                name: "ruta_id",
+                in: "query",
+                description: "Filtrar por ruta específica (opcional)",
+                required: false,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Lista de próximos horarios obtenida exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "data", type: "array", items: new OA\Items(type: "object"))
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function proximosDisponibles(Request $request): AnonymousResourceCollection
     {
         $query = HorarioRuta::with(['ruta', 'bus'])
