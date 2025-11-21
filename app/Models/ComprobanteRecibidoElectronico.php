@@ -46,35 +46,31 @@ class ComprobanteRecibidoElectronico extends Model
         'empresa_id',
         'proveedor_id',
         'clave_numerica',
-        'consecutivo_receptor',
-        'tipo_documento_dgt',
-        'fecha_emision_comprobante',
-        'fecha_recepcion_sistema',
+        'consecutivo',
+        'fecha_emision',
+        'tipo_documento',
+        'numero_cedula_emisor',
+        'nombre_emisor',
+        'monto_total',
+        'monto_impuesto',
         'moneda',
-        'total_impuesto',
-        'total_comprobante',
-        'xml_contenido',
-        'xml_respuesta_hacienda',
-        'estado_hacienda',
+        'xml_original',
+        'estado_validacion',
         'mensaje_hacienda',
-        'fecha_respuesta_hacienda',
-        'confirmado_usuario',
-        'fecha_confirmacion_usuario',
-        'usuario_confirmacion_id',
-        'entrada_inventario_id'
+        'detalle_mensaje',
+        'contabilizado',
+        'activo',
+        'eliminado'
     ];
 
     /**
      * Los atributos que deben ser convertidos.
      */
     protected $casts = [
-        'fecha_emision_comprobante' => 'datetime',
-        'fecha_recepcion_sistema' => 'datetime',
-        'total_impuesto' => 'decimal:5',
-        'total_comprobante' => 'decimal:5',
-        'fecha_respuesta_hacienda' => 'datetime',
-        'confirmado_usuario' => 'integer',
-        'fecha_confirmacion_usuario' => 'datetime',
+        'fecha_emision' => 'date',
+        'monto_total' => 'decimal:2',
+        'monto_impuesto' => 'decimal:2',
+        'contabilizado' => 'boolean',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
         'creado_en' => 'datetime',
@@ -99,22 +95,6 @@ class ComprobanteRecibidoElectronico extends Model
     }
 
     /**
-     * Relación con el usuario que confirmó.
-     */
-    public function usuarioConfirmacion(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'usuario_confirmacion_id');
-    }
-
-    /**
-     * Relación con la entrada de inventario.
-     */
-    public function entradaInventario(): BelongsTo
-    {
-        return $this->belongsTo(EntradaInventario::class, 'entrada_inventario_id');
-    }
-
-    /**
      * Scope para obtener comprobantes activos.
      */
     public function scopeActivos($query)
@@ -124,19 +104,27 @@ class ComprobanteRecibidoElectronico extends Model
     }
 
     /**
-     * Scope para filtrar por estado de confirmación.
+     * Scope para filtrar por estado de validación.
      */
-    public function scopePorEstadoConfirmacion($query, $estado)
+    public function scopePorEstadoValidacion($query, $estado)
     {
-        return $query->where('confirmado_usuario', $estado);
+        return $query->where('estado_validacion', $estado);
     }
 
     /**
-     * Scope para filtrar por estado de hacienda.
+     * Scope para filtrar por contabilizado.
      */
-    public function scopePorEstadoHacienda($query, $estado)
+    public function scopeContabilizados($query, $contabilizado = true)
     {
-        return $query->where('estado_hacienda', $estado);
+        return $query->where('contabilizado', $contabilizado);
+    }
+
+    /**
+     * Scope para filtrar por mensaje de hacienda.
+     */
+    public function scopePorMensajeHacienda($query, $mensaje)
+    {
+        return $query->where('mensaje_hacienda', $mensaje);
     }
 
     /**
@@ -144,7 +132,7 @@ class ComprobanteRecibidoElectronico extends Model
      */
     public function scopePorTipoDocumento($query, $tipo)
     {
-        return $query->where('tipo_documento_dgt', $tipo);
+        return $query->where('tipo_documento', $tipo);
     }
 
     /**
@@ -152,7 +140,7 @@ class ComprobanteRecibidoElectronico extends Model
      */
     public function scopePorFechaEmision($query, $start, $end)
     {
-        return $query->whereBetween('fecha_emision_comprobante', [$start, $end]);
+        return $query->whereBetween('fecha_emision', [$start, $end]);
     }
 
     /**
@@ -164,27 +152,27 @@ class ComprobanteRecibidoElectronico extends Model
     }
 
     /**
-     * Determina si el comprobante está pendiente de confirmación.
+     * Determina si el comprobante está contabilizado.
      */
-    public function estaPendiente(): bool
+    public function estaContabilizado(): bool
     {
-        return $this->confirmado_usuario === self::ESTADO_PENDIENTE;
+        return (bool) $this->contabilizado;
     }
 
     /**
-     * Determina si el comprobante está aceptado.
+     * Determina si fue aceptado por Hacienda.
      */
     public function estaAceptado(): bool
     {
-        return $this->confirmado_usuario === self::ESTADO_ACEPTADO;
+        return $this->mensaje_hacienda === 'Aceptado';
     }
 
     /**
-     * Determina si el comprobante está rechazado.
+     * Determina si fue rechazado por Hacienda.
      */
     public function estaRechazado(): bool
     {
-        return $this->confirmado_usuario === self::ESTADO_RECHAZADO;
+        return $this->mensaje_hacienda === 'Rechazado';
     }
 
     /**
@@ -192,26 +180,13 @@ class ComprobanteRecibidoElectronico extends Model
      */
     public function getTipoDocumentoDescripcionAttribute(): string
     {
-        return match($this->tipo_documento_dgt) {
+        return match($this->tipo_documento) {
             self::TIPO_FACTURA_ELECTRONICA => 'Factura Electrónica',
             self::TIPO_NOTA_DEBITO => 'Nota de Débito',
             self::TIPO_NOTA_CREDITO => 'Nota de Crédito',
             self::TIPO_TIQUETE_ELECTRONICO => 'Tiquete Electrónico',
             self::TIPO_FACTURA_COMPRA => 'Factura de Compra',
             self::TIPO_FACTURA_EXPORTACION => 'Factura de Exportación',
-            default => 'Desconocido'
-        };
-    }
-
-    /**
-     * Obtiene la descripción del estado de confirmación.
-     */
-    public function getEstadoConfirmacionDescripcionAttribute(): string
-    {
-        return match($this->confirmado_usuario) {
-            self::ESTADO_PENDIENTE => 'Pendiente',
-            self::ESTADO_ACEPTADO => 'Aceptado',
-            self::ESTADO_RECHAZADO => 'Rechazado',
             default => 'Desconocido'
         };
     }
