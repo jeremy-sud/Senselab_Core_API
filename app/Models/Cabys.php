@@ -27,7 +27,9 @@ class Cabys extends Model
     protected $fillable = [
         'codigo',
         'descripcion',
-        'impuesto_iva_predeterminado'
+        'impuesto_iva_predeterminado',
+        'activo',
+        'eliminado'
     ];
 
     /**
