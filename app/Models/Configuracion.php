@@ -40,7 +40,9 @@ class Configuracion extends Model
         'clave',
         'valor',
         'tipo_dato',
-        'descripcion'
+        'descripcion',
+        'activo',
+        'eliminado'
     ];
 
     /**
