@@ -10,6 +10,7 @@ use App\Models\FormaPago;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use OpenApi\Attributes as OA;
 
 /**
  * Controlador API para gestión de formas de pago
@@ -27,6 +28,20 @@ class FormaPagoController extends Controller
      * 
      * GET /api/formas-pago
      */
+    #[OA\Get(
+        path: '/api/formas-pago',
+        summary: 'Listar formas de pago',
+        description: 'Obtiene todos los métodos de pago disponibles',
+        security: [['sanctum' => []]],
+        tags: ['Formas de Pago'],
+        parameters: [
+            new OA\Parameter(name: 'activo', in: 'query', required: false, schema: new OA\Schema(type: 'boolean')),
+            new OA\Parameter(name: 'tipo', in: 'query', required: false, schema: new OA\Schema(type: 'string'))
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Listado exitoso', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/FormaPago'))]))
+        ]
+    )]
     public function index(Request $request): AnonymousResourceCollection
     {
         $query = FormaPago::query();
@@ -49,6 +64,28 @@ class FormaPagoController extends Controller
      * 
      * POST /api/formas-pago
      */
+    #[OA\Post(
+        path: '/api/formas-pago',
+        summary: 'Crear forma de pago',
+        description: 'Registra nuevo método de pago en el sistema',
+        security: [['sanctum' => []]],
+        tags: ['Formas de Pago'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['codigo_dgt', 'nombre'],
+                properties: [
+                    new OA\Property(property: 'codigo_dgt', type: 'string', maxLength: 10, example: '01'),
+                    new OA\Property(property: 'nombre', type: 'string', maxLength: 255, example: 'Efectivo'),
+                    new OA\Property(property: 'descripcion', type: 'string', nullable: true),
+                    new OA\Property(property: 'activo', type: 'boolean', example: true)
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Forma de pago creada', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', ref: '#/components/schemas/FormaPago')]))
+        ]
+    )]
     public function store(StoreFormaPagoRequest $request): JsonResponse
     {
         $formaPago = FormaPago::create($request->validated());
@@ -63,6 +100,17 @@ class FormaPagoController extends Controller
      * 
      * GET /api/formas-pago/{id}
      */
+    #[OA\Get(
+        path: '/api/formas-pago/{id}',
+        summary: 'Obtener forma de pago',
+        security: [['sanctum' => []]],
+        tags: ['Formas de Pago'],
+        parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
+        responses: [
+            new OA\Response(response: 200, description: 'Encontrada'),
+            new OA\Response(response: 404, description: 'No encontrada')
+        ]
+    )]
     public function show(int $id): FormaPagoResource
     {
         $formaPago = FormaPago::findOrFail($id);
@@ -75,6 +123,14 @@ class FormaPagoController extends Controller
      * 
      * PUT/PATCH /api/formas-pago/{id}
      */
+    #[OA\Put(
+        path: '/api/formas-pago/{id}',
+        summary: 'Actualizar forma de pago',
+        security: [['sanctum' => []]],
+        tags: ['Formas de Pago'],
+        parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
+        responses: [new OA\Response(response: 200, description: 'Actualizada')]
+    )]
     public function update(UpdateFormaPagoRequest $request, int $id): FormaPagoResource
     {
         $formaPago = FormaPago::findOrFail($id);
@@ -88,6 +144,15 @@ class FormaPagoController extends Controller
      * 
      * DELETE /api/formas-pago/{id}
      */
+    #[OA\Delete(
+        path: '/api/formas-pago/{id}',
+        summary: 'Eliminar forma de pago',
+        description: 'Soft delete de la forma de pago',
+        security: [['sanctum' => []]],
+        tags: ['Formas de Pago'],
+        parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
+        responses: [new OA\Response(response: 200, description: 'Eliminada')]
+    )]
     public function destroy(int $id): JsonResponse
     {
         $formaPago = FormaPago::findOrFail($id);
