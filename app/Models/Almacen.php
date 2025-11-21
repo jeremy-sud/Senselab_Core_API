@@ -29,17 +29,22 @@ class Almacen extends Model
      */
     protected $fillable = [
         'empresa_id',
-        'nombre',
         'sucursal_id',
+        'nombre',
+        'codigo',
         'descripcion',
-        'direccion',
-        'activo'
+        'ubicacion',
+        'responsable_id',
+        'es_principal',
+        'activo',
+        'eliminado'
     ];
 
     /**
      * Los atributos que deben ser convertidos.
      */
     protected $casts = [
+        'es_principal' => 'boolean',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
         'creado_en' => 'datetime',
@@ -61,6 +66,15 @@ class Almacen extends Model
     public function sucursal(): BelongsTo
     {
         return $this->belongsTo(Sucursal::class, 'sucursal_id')
+                    ->withDefault(); // Permite que sea NULL
+    }
+
+    /**
+     * Relación con el empleado responsable del almacén.
+     */
+    public function responsable(): BelongsTo
+    {
+        return $this->belongsTo(Empleado::class, 'responsable_id')
                     ->withDefault(); // Permite que sea NULL
     }
 
