@@ -21,7 +21,7 @@ class UpdateAsientoContableRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'fecha' => ['sometimes', 'date'],
+            'fecha_asiento' => ['sometimes', 'date'],
             'descripcion' => ['nullable', 'string'],
             'estado' => ['sometimes', 'string', 'max:50', Rule::in(['Borrador', 'Mayorizado', 'Anulado'])],
             'detalles' => ['sometimes', 'array', 'min:2'],
@@ -58,7 +58,7 @@ class UpdateAsientoContableRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'fecha' => 'fecha',
+            'fecha_asiento' => 'fecha',
             'descripcion' => 'descripción',
             'estado' => 'estado',
             'detalles' => 'detalles del asiento'

@@ -30,24 +30,28 @@ class UpdateEmpresaRequest extends FormRequest
 
         return [
             'nombre' => ['sometimes', 'required', 'string', 'max:255'],
-            'razon_social' => ['sometimes', 'required', 'string', 'max:255'],
-            'nit_ruc' => [
+            'nombre_comercial' => ['nullable', 'string', 'max:255'],
+            'razon_social' => ['nullable', 'string', 'max:255'],
+            'num_identificacion_dgt' => [
                 'sometimes',
                 'required',
                 'string',
-                'max:50',
-                Rule::unique('empresas', 'nit_ruc')->ignore($empresaId)
+                'max:20',
+                Rule::unique('empresas', 'num_identificacion_dgt')->ignore($empresaId)
             ],
-            'regimen_tributario_id' => ['sometimes', 'required', 'exists:regimen_tributario,id'],
+            'tipo_identificacion' => ['nullable', 'string', 'max:2'],
+            'actividad_economica_principal' => ['nullable', 'string', 'max:6'],
+            'regimen_tributario_id' => ['nullable', 'exists:regimenes_tributarios,id'],
             'email' => ['nullable', 'email', 'max:255'],
             'telefono' => ['nullable', 'string', 'max:50'],
             'direccion' => ['nullable', 'string'],
-            'pais' => ['sometimes', 'required', 'string', 'max:100'],
-            'provincia' => ['nullable', 'string', 'max:100'],
-            'ciudad' => ['nullable', 'string', 'max:100'],
-            'codigo_postal' => ['nullable', 'string', 'max:20'],
-            'logo_url' => ['nullable', 'string', 'max:500'],
-            'sitio_web' => ['nullable', 'url', 'max:255'],
+            'provincia' => ['nullable', 'string', 'max:2'],
+            'canton' => ['nullable', 'string', 'max:2'],
+            'distrito' => ['nullable', 'string', 'max:2'],
+            'certificado_llave_fe' => ['nullable', 'string'],
+            'pin_llave_fe_hash' => ['nullable', 'string', 'max:255'],
+            'prefijo_orden_compra' => ['nullable', 'string', 'max:20'],
+            'moneda_defecto' => ['nullable', 'string', 'max:3'],
             'activo' => ['boolean'],
         ];
     }
@@ -59,14 +63,10 @@ class UpdateEmpresaRequest extends FormRequest
     {
         return [
             'nombre.required' => 'El nombre de la empresa es obligatorio',
-            'razon_social.required' => 'La razón social es obligatoria',
-            'nit_ruc.required' => 'El NIT/RUC es obligatorio',
-            'nit_ruc.unique' => 'Ya existe una empresa con este NIT/RUC',
-            'regimen_tributario_id.required' => 'El régimen tributario es obligatorio',
+            'num_identificacion_dgt.required' => 'El número de identificación es obligatorio',
+            'num_identificacion_dgt.unique' => 'Ya existe una empresa con este número de identificación',
             'regimen_tributario_id.exists' => 'El régimen tributario seleccionado no existe',
             'email.email' => 'El formato del email no es válido',
-            'pais.required' => 'El país es obligatorio',
-            'sitio_web.url' => 'El formato del sitio web no es válido',
         ];
     }
 }
