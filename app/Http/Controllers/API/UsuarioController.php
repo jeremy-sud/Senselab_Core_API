@@ -132,7 +132,7 @@ class UsuarioController extends Controller
             new OA\Response(response: 404, description: 'No encontrado')
         ]
     )]
-    public function show(int $id): JsonResponse
+    public function show(int $id): UsuarioResource
     {
         $empresaId = auth()->user()->empresa_id;
 
