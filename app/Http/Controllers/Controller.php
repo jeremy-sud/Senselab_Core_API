@@ -12,7 +12,7 @@ use OpenApi\Attributes as OA;
  *         description="API completa de ERP para empresas costarricenses. Sistema integral de gestión empresarial con soporte para contabilidad, facturación electrónica, inventario, compras, ventas, recursos humanos y más.",
  *         @OA\Contact(
  *             name="Sistemas Ursol",
- *             email="soporte@ursol.com"
+ *             email="sistemas@ursol.com"
  *         )
  *     ),
  *     @OA\Server(

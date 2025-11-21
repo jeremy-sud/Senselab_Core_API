@@ -5,7 +5,7 @@
         "description": "API completa de ERP para empresas costarricenses. Sistema integral de gestión empresarial con soporte para contabilidad, facturación electrónica, inventario, compras, ventas, recursos humanos y más.",
         "contact": {
             "name": "Sistemas Ursol",
-            "email": "soporte@ursol.com"
+            "email": "sistemas@ursol.com"
         },
         "version": "1.0.0"
     },
