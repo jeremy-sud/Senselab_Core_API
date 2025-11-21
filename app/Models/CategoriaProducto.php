@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CategoriaProducto extends Model
 {
-    use HasFactory, BelongsToTenant;
+    use HasFactory;
 
     /**
      * La tabla asociada al modelo.
@@ -27,9 +27,11 @@ class CategoriaProducto extends Model
      * Los atributos que son asignables masivamente.
      */
     protected $fillable = [
-        'empresa_id',
         'nombre',
-        'descripcion'
+        'descripcion',
+        'categoria_padre_id',
+        'activo',
+        'eliminado'
     ];
 
     /**
@@ -43,12 +45,19 @@ class CategoriaProducto extends Model
     ];
 
     /**
-     * Relación con la empresa.
+     * Relación con la categoría padre.
      */
-    public function empresa(): BelongsTo
+    public function categoriaPadre(): BelongsTo
     {
-        return $this->belongsTo(Empresa::class, 'empresa_id')
-                    ->withoutGlobalScopes();
+        return $this->belongsTo(CategoriaProducto::class, 'categoria_padre_id');
+    }
+
+    /**
+     * Relación con las categorías hijas.
+     */
+    public function categoriasHijas(): HasMany
+    {
+        return $this->hasMany(CategoriaProducto::class, 'categoria_padre_id');
     }
 
     /**
@@ -83,18 +92,17 @@ class CategoriaProducto extends Model
     {
         parent::boot();
 
-        // Asegurar que el nombre sea único por empresa (case-insensitive)
+        // Asegurar que el nombre sea único (case-insensitive)
         static::saving(function ($categoria) {
             $categoria->nombre = trim($categoria->nombre);
             
-            // Verificar si existe otra categoría con el mismo nombre en la misma empresa
+            // Verificar si existe otra categoría con el mismo nombre
             $exists = static::where('id', '!=', $categoria->id)
-                          ->where('empresa_id', $categoria->empresa_id)
                           ->where('nombre', 'LIKE', $categoria->nombre)
                           ->exists();
             
             if ($exists) {
-                throw new \Exception('Ya existe una categoría con este nombre en la empresa.');
+                throw new \Exception('Ya existe una categoría con este nombre.');
             }
         });
     }
