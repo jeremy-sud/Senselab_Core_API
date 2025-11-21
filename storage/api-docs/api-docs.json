@@ -1135,6 +1135,361 @@
                 ]
             }
         },
+        "/api/configuraciones": {
+            "get": {
+                "tags": [
+                    "Configuraciones"
+                ],
+                "summary": "Listar configuraciones",
+                "description": "Obtiene todas las configuraciones de la empresa autenticada",
+                "operationId": "4e67512df0f8f836210e0271fc581709",
+                "responses": {
+                    "200": {
+                        "description": "Listado exitoso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Configuracion"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Configuraciones"
+                ],
+                "summary": "Crear configuración",
+                "description": "Crea nueva configuración clave-valor",
+                "operationId": "1fa6e9d5f17dd9741b626814b2d82ac4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "clave",
+                                    "valor",
+                                    "tipo_dato"
+                                ],
+                                "properties": {
+                                    "clave": {
+                                        "type": "string",
+                                        "example": "moneda_default"
+                                    },
+                                    "valor": {
+                                        "type": "string",
+                                        "example": "CRC"
+                                    },
+                                    "tipo_dato": {
+                                        "type": "string",
+                                        "enum": [
+                                            "string",
+                                            "integer",
+                                            "float",
+                                            "boolean",
+                                            "json",
+                                            "array"
+                                        ],
+                                        "example": "string"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Configuración creada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Configuracion"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/configuraciones/{id}": {
+            "get": {
+                "tags": [
+                    "Configuraciones"
+                ],
+                "summary": "Obtener configuración",
+                "description": "Mostrar configuración específica",
+                "operationId": "faa2ede4212e0eec7590ae94e4ef73c2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Encontrada"
+                    },
+                    "404": {
+                        "description": "No encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Configuraciones"
+                ],
+                "summary": "Actualizar configuración",
+                "description": "Actualizar configuración",
+                "operationId": "e870d00a17998aab9036a2f44cec73ba",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Actualizada"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Configuraciones"
+                ],
+                "summary": "Eliminar configuración",
+                "description": "Eliminar configuración",
+                "operationId": "c7e2a8945833d1afb3babec567f67e39",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Eliminada"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/configuraciones/clave/{clave}": {
+            "get": {
+                "tags": [
+                    "Configuraciones"
+                ],
+                "summary": "Buscar por clave",
+                "description": "Obtiene configuración por su clave única",
+                "operationId": "e5b0b12bb0e05664bd447e416e14a51f",
+                "parameters": [
+                    {
+                        "name": "clave",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "moneda_default"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Encontrada"
+                    },
+                    "404": {
+                        "description": "No encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/configuraciones/valor/{clave}": {
+            "get": {
+                "tags": [
+                    "Configuraciones"
+                ],
+                "summary": "Obtener solo valor",
+                "description": "Retorna el valor convertido según tipo_dato",
+                "operationId": "78c6cf39e828d35fb1813ec2460e88cb",
+                "parameters": [
+                    {
+                        "name": "clave",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "moneda_default"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Valor obtenido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "clave": {
+                                            "type": "string",
+                                            "example": "moneda_default"
+                                        },
+                                        "valor": {
+                                            "example": "CRC"
+                                        },
+                                        "tipo_dato": {
+                                            "type": "string",
+                                            "example": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/configuraciones/actualizar-multiples": {
+            "post": {
+                "tags": [
+                    "Configuraciones"
+                ],
+                "summary": "Actualizar en lote",
+                "description": "Actualiza múltiples configuraciones en una sola petición",
+                "operationId": "b6d83f4b2c8f5e54a67f783df1794035",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "configuraciones"
+                                ],
+                                "properties": {
+                                    "configuraciones": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "clave": {
+                                                    "type": "string"
+                                                },
+                                                "valor": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "example": [
+                                            {
+                                                "clave": "moneda_default",
+                                                "valor": "USD"
+                                            },
+                                            {
+                                                "clave": "idioma",
+                                                "valor": "es"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Configuraciones actualizadas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "total_actualizadas": {
+                                            "type": "integer",
+                                            "example": 2
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/cuentas-por-cobrar": {
             "get": {
                 "tags": [
@@ -2454,6 +2809,212 @@
                 ]
             }
         },
+        "/api/formas-pago": {
+            "get": {
+                "tags": [
+                    "Formas de Pago"
+                ],
+                "summary": "Listar formas de pago",
+                "description": "Obtiene todos los métodos de pago disponibles",
+                "operationId": "81df0cc6ef64afa607659549d985045b",
+                "parameters": [
+                    {
+                        "name": "activo",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "tipo",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado exitoso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/FormaPago"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Formas de Pago"
+                ],
+                "summary": "Crear forma de pago",
+                "description": "Registra nuevo método de pago en el sistema",
+                "operationId": "75eced8ed0936c8693e5452a6cd105e8",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "codigo_dgt",
+                                    "nombre"
+                                ],
+                                "properties": {
+                                    "codigo_dgt": {
+                                        "type": "string",
+                                        "maxLength": 10,
+                                        "example": "01"
+                                    },
+                                    "nombre": {
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "Efectivo"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "activo": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Forma de pago creada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/FormaPago"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/formas-pago/{id}": {
+            "get": {
+                "tags": [
+                    "Formas de Pago"
+                ],
+                "summary": "Obtener forma de pago",
+                "description": "Mostrar una forma de pago específica\n\nGET /api/formas-pago/{id}",
+                "operationId": "7b7b814969d89f9a87b8602c711a30d5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Encontrada"
+                    },
+                    "404": {
+                        "description": "No encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Formas de Pago"
+                ],
+                "summary": "Actualizar forma de pago",
+                "description": "Actualizar una forma de pago existente\n\nPUT/PATCH /api/formas-pago/{id}",
+                "operationId": "760d8aea955aa9dd99828f97a081382b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Actualizada"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Formas de Pago"
+                ],
+                "summary": "Eliminar forma de pago",
+                "description": "Soft delete de la forma de pago",
+                "operationId": "c13d7192b5f793696d821cbc2c967401",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Eliminada"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/ordenes-compra": {
             "get": {
                 "tags": [
@@ -2733,6 +3294,260 @@
                     },
                     "422": {
                         "description": "Solo se pueden eliminar en estado borrador"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/permisos": {
+            "get": {
+                "tags": [
+                    "Roles y Permisos"
+                ],
+                "summary": "Listar permisos",
+                "description": "Obtiene todos los permisos del sistema con filtros",
+                "operationId": "a869e07035d68204df9a5bf92c58c36a",
+                "parameters": [
+                    {
+                        "name": "activo",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "modulo",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "ventas"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado exitoso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Permiso"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Roles y Permisos"
+                ],
+                "summary": "Crear permiso",
+                "description": "Crea nuevo permiso en el sistema",
+                "operationId": "61d9afd266e1cf5360cdc20aec1c19a9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nombre",
+                                    "accion"
+                                ],
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Ver Ventas"
+                                    },
+                                    "accion": {
+                                        "type": "string",
+                                        "example": "ventas.view"
+                                    },
+                                    "modulo": {
+                                        "type": "string",
+                                        "example": "ventas",
+                                        "nullable": true
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "activo": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Permiso creado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Permiso"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/permisos/{id}": {
+            "get": {
+                "tags": [
+                    "Roles y Permisos"
+                ],
+                "summary": "Obtener permiso",
+                "description": "Detalles del permiso con roles asignados",
+                "operationId": "7492856c3d97b4ab50d723104ce5a69f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Permiso encontrado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Roles y Permisos"
+                ],
+                "summary": "Actualizar permiso",
+                "description": "Actualizar un permiso existente\n\nPUT/PATCH /api/permisos/{id}",
+                "operationId": "16c7d3b4eb0f505611f995ffb888567e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Actualizado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Roles y Permisos"
+                ],
+                "summary": "Eliminar permiso",
+                "description": "Soft delete. Valida que no esté asignado a roles",
+                "operationId": "8122177a72713ea3784ca4335beb6d6d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Eliminado"
+                    },
+                    "422": {
+                        "description": "No se puede eliminar con roles asignados"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/permisos/modulos": {
+            "get": {
+                "tags": [
+                    "Roles y Permisos"
+                ],
+                "summary": "Listar módulos",
+                "description": "Obtiene lista única de módulos del sistema",
+                "operationId": "b5190f5ab2f588749670eb5261ae592d",
+                "responses": {
+                    "200": {
+                        "description": "Lista de módulos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "example": [
+                                                "ventas",
+                                                "compras",
+                                                "inventario",
+                                                "contabilidad"
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -3833,6 +4648,271 @@
                                 }
                             }
                         }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/roles": {
+            "get": {
+                "tags": [
+                    "Roles y Permisos"
+                ],
+                "summary": "Listar roles",
+                "description": "Obtiene todos los roles del sistema con sus permisos",
+                "operationId": "2c3504b35e674a0c35862ee9de858f78",
+                "parameters": [
+                    {
+                        "name": "activo",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado exitoso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Rol"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Roles y Permisos"
+                ],
+                "summary": "Crear rol",
+                "description": "Crea nuevo rol y opcionalmente asigna permisos",
+                "operationId": "cb0fa9068f3280a6f33b279fc8ae5c76",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nombre"
+                                ],
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Gerente de Ventas"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Acceso completo al módulo de ventas",
+                                        "nullable": true
+                                    },
+                                    "activo": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "permisos": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            2,
+                                            3
+                                        ],
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Rol creado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Rol"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/roles/{id}": {
+            "get": {
+                "tags": [
+                    "Roles y Permisos"
+                ],
+                "summary": "Obtener rol",
+                "description": "Detalles del rol con permisos y usuarios asignados",
+                "operationId": "d1a87d006f18227fbffab1dcb18b5e04",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Rol encontrado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Roles y Permisos"
+                ],
+                "summary": "Actualizar rol",
+                "description": "Actualizar un rol existente\n\nPUT/PATCH /api/roles/{id}",
+                "operationId": "447d773b6e06048b161e05a300789bd4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Actualizado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Roles y Permisos"
+                ],
+                "summary": "Eliminar rol",
+                "description": "Soft delete. Valida que no tenga usuarios asignados",
+                "operationId": "facbcae4f9743043a689f1de0ea6d537",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Eliminado"
+                    },
+                    "422": {
+                        "description": "No se puede eliminar con usuarios asignados"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/roles/{id}/permisos": {
+            "post": {
+                "tags": [
+                    "Roles y Permisos"
+                ],
+                "summary": "Asignar permisos a rol",
+                "description": "Sincroniza permisos del rol (reemplaza existentes)",
+                "operationId": "75d7f34e76bbf958dadb27eb42e97fbe",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "permisos"
+                                ],
+                                "properties": {
+                                    "permisos": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            2,
+                                            3,
+                                            4,
+                                            5
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Permisos asignados"
                     }
                 },
                 "security": [
@@ -5363,6 +6443,71 @@
                 },
                 "type": "object"
             },
+            "Configuracion": {
+                "title": "Configuración",
+                "description": "Configuración clave-valor del sistema por empresa",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "empresa_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "clave": {
+                        "description": "Identificador único de la configuración",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "moneda_default"
+                    },
+                    "valor": {
+                        "description": "Valor almacenado como string",
+                        "type": "string",
+                        "example": "CRC"
+                    },
+                    "tipo_dato": {
+                        "description": "Tipo de dato del valor",
+                        "type": "string",
+                        "enum": [
+                            "string",
+                            "integer",
+                            "float",
+                            "boolean",
+                            "json",
+                            "array"
+                        ],
+                        "example": "string"
+                    },
+                    "descripcion": {
+                        "type": "string",
+                        "example": "Moneda por defecto del sistema",
+                        "nullable": true
+                    },
+                    "activo": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "eliminado": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "creado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
+                    },
+                    "actualizado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
+                    },
+                    "empresa": {
+                        "$ref": "#/components/schemas/Empresa"
+                    }
+                },
+                "type": "object"
+            },
             "CuentaPorCobrar": {
                 "title": "Cuenta por Cobrar",
                 "description": "Cuenta por cobrar de cliente",
@@ -5707,6 +6852,52 @@
                     "activo": {
                         "type": "boolean",
                         "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "FormaPago": {
+                "title": "Forma de Pago",
+                "description": "Método de pago disponible en el sistema",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "codigo_dgt": {
+                        "description": "Código DGT de Costa Rica",
+                        "type": "string",
+                        "maxLength": 10,
+                        "example": "01"
+                    },
+                    "nombre": {
+                        "description": "Nombre de la forma de pago",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Efectivo"
+                    },
+                    "descripcion": {
+                        "type": "string",
+                        "example": "Pago en efectivo al momento de la venta",
+                        "nullable": true
+                    },
+                    "activo": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "eliminado": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "creado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
+                    },
+                    "actualizado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
                     }
                 },
                 "type": "object"
@@ -6553,6 +7744,10 @@
             "description": "Clientes"
         },
         {
+            "name": "Configuraciones",
+            "description": "Configuraciones"
+        },
+        {
             "name": "Cuentas por Cobrar",
             "description": "Cuentas por Cobrar"
         },
@@ -6569,8 +7764,16 @@
             "description": "Empresas"
         },
         {
+            "name": "Formas de Pago",
+            "description": "Formas de Pago"
+        },
+        {
             "name": "Órdenes de Compra",
             "description": "Órdenes de Compra"
+        },
+        {
+            "name": "Roles y Permisos",
+            "description": "Roles y Permisos"
         },
         {
             "name": "Proveedores",
