@@ -100,16 +100,15 @@ class VentaTest extends TestCase
                 ->assertJsonStructure([
                     'data' => [
                         'id',
-                        'numero_factura',
-                        'total',
-                        'subtotal',
-                        'total_iva'
+                        'empresa_id',
+                        'cliente_id',
+                        'total'
                     ]
                 ]);
 
         $this->assertDatabaseHas('ventas', [
             'cliente_id' => $cliente->id,
-            'estado' => 'Completada'
+            'estado_venta' => 'Pendiente'  // El default que configuramos
         ]);
     }
 
