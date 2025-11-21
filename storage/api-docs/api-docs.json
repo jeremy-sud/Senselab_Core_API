@@ -1048,6 +1048,469 @@
                 ]
             }
         },
+        "/api/buses-unidades": {
+            "get": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Listar buses",
+                "description": "Obtiene la lista paginada de buses de la empresa. Permite filtrar por modelo, estado activo y buscar por placa o identificador.",
+                "operationId": "fc83874f9fdbc0e8337c51c5263a258b",
+                "parameters": [
+                    {
+                        "name": "modelo_id",
+                        "in": "query",
+                        "description": "Filtrar por modelo de bus",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "activo",
+                        "in": "query",
+                        "description": "Filtrar por estado activo",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "enum": [
+                                0,
+                                1
+                            ],
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "buscar",
+                        "in": "query",
+                        "description": "Buscar por placa o identificador interno",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "ABC123"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de buses obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Crear bus",
+                "description": "Registra un nuevo bus en la flota de la empresa con placa, modelo y capacidad.",
+                "operationId": "0a96852d8292d74aa9f4e6e8aff30080",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "placa",
+                                    "modelo_id",
+                                    "capacidad_asientos",
+                                    "identificador_interno"
+                                ],
+                                "properties": {
+                                    "placa": {
+                                        "type": "string",
+                                        "maxLength": 20,
+                                        "example": "ABC-1234"
+                                    },
+                                    "modelo_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "capacidad_asientos": {
+                                        "type": "integer",
+                                        "example": 48
+                                    },
+                                    "identificador_interno": {
+                                        "type": "string",
+                                        "maxLength": 50,
+                                        "example": "BUS-001"
+                                    },
+                                    "activo": {
+                                        "description": "Opcional, por defecto 1",
+                                        "type": "integer",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Bus creado exitosamente"
+                    },
+                    "422": {
+                        "description": "Datos de validación incorrectos"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/buses-unidades/{id}": {
+            "get": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Obtener bus",
+                "description": "Obtiene el detalle de un bus con su modelo y horarios de ruta asociados.",
+                "operationId": "2d7f30b7344aa16cd1e56c2f011b320c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del bus",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bus obtenido exitosamente"
+                    },
+                    "404": {
+                        "description": "Bus no encontrado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Actualizar bus",
+                "description": "Actualiza la información de un bus existente (placa, modelo, capacidad, identificador).",
+                "operationId": "694220770c1a4d0f6690e44c3d42ff7a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del bus",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "placa": {
+                                        "type": "string",
+                                        "maxLength": 20,
+                                        "example": "ABC-1234"
+                                    },
+                                    "modelo_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "capacidad_asientos": {
+                                        "type": "integer",
+                                        "example": 48
+                                    },
+                                    "identificador_interno": {
+                                        "type": "string",
+                                        "maxLength": 50,
+                                        "example": "BUS-001"
+                                    },
+                                    "activo": {
+                                        "type": "integer",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Bus actualizado exitosamente"
+                    },
+                    "404": {
+                        "description": "Bus no encontrado"
+                    },
+                    "422": {
+                        "description": "Datos de validación incorrectos"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Eliminar bus",
+                "description": "Elimina lógicamente un bus. No permite eliminar buses con horarios de ruta activos (no finalizados).",
+                "operationId": "9d833a3e1ee7376f2832c0bda9c4f81e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del bus",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bus eliminado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Bus eliminado exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Bus no encontrado"
+                    },
+                    "422": {
+                        "description": "No se puede eliminar un bus con horarios activos"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/buses-unidades/disponibles": {
+            "get": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Listar buses disponibles",
+                "description": "Obtiene la lista de buses activos que no están actualmente en viaje. Útil para asignar a nuevos horarios.",
+                "operationId": "8b39120420df92e77fe8132746dc97e0",
+                "responses": {
+                    "200": {
+                        "description": "Lista de buses disponibles obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "placa": {
+                                                "type": "string",
+                                                "example": "ABC-1234"
+                                            },
+                                            "modelo_id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "capacidad_asientos": {
+                                                "type": "integer",
+                                                "example": 48
+                                            },
+                                            "identificador_interno": {
+                                                "type": "string",
+                                                "example": "BUS-001"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/buses-unidades/resumen-flota": {
+            "get": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Resumen de flota",
+                "description": "Obtiene estadísticas agregadas de la flota: total de buses, activos, en viaje y capacidad total.",
+                "operationId": "a20cb76ea7e10c5eaad7c7220298fb21",
+                "responses": {
+                    "200": {
+                        "description": "Resumen obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "total_buses": {
+                                            "type": "integer",
+                                            "example": 12
+                                        },
+                                        "buses_activos": {
+                                            "type": "integer",
+                                            "example": 10
+                                        },
+                                        "buses_en_viaje": {
+                                            "type": "integer",
+                                            "example": 3
+                                        },
+                                        "capacidad_total": {
+                                            "type": "integer",
+                                            "example": 480
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/buses-unidades/modelo/{modeloId}": {
+            "get": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Buses por modelo",
+                "description": "Obtiene todos los buses de un modelo específico.",
+                "operationId": "6df65b353f0f90fbd0265c5e3d107eb7",
+                "parameters": [
+                    {
+                        "name": "modeloId",
+                        "in": "path",
+                        "description": "ID del modelo de bus",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de buses obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/cabys": {
             "get": {
                 "tags": [
@@ -7112,6 +7575,638 @@
                 ]
             }
         },
+        "/api/horarios-rutas": {
+            "get": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Listar horarios de ruta",
+                "description": "Obtiene la lista paginada de horarios de ruta (viajes programados). Permite filtrar por ruta, bus, estado, fecha y rango de fechas.",
+                "operationId": "3d4928c5a8bb1036f79f36ae3767e0a5",
+                "parameters": [
+                    {
+                        "name": "ruta_id",
+                        "in": "query",
+                        "description": "Filtrar por ruta",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "bus_id",
+                        "in": "query",
+                        "description": "Filtrar por bus",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "estado",
+                        "in": "query",
+                        "description": "Filtrar por estado del viaje",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "Programado",
+                                "En Viaje",
+                                "Finalizado",
+                                "Cancelado"
+                            ],
+                            "example": "Programado"
+                        }
+                    },
+                    {
+                        "name": "fecha",
+                        "in": "query",
+                        "description": "Filtrar por fecha exacta de salida",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-12-25"
+                        }
+                    },
+                    {
+                        "name": "desde",
+                        "in": "query",
+                        "description": "Fecha inicio del rango",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-12-01"
+                        }
+                    },
+                    {
+                        "name": "hasta",
+                        "in": "query",
+                        "description": "Fecha fin del rango",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-12-31"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de horarios obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Crear horario de ruta",
+                "description": "Programa un nuevo viaje asignando bus y ruta con fechas/horas de salida y llegada. Los asientos disponibles se establecen automáticamente según la capacidad del bus.",
+                "operationId": "b46c74f68c70a18e39958995f9b3a644",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "ruta_id",
+                                    "bus_id",
+                                    "fecha_salida",
+                                    "hora_salida",
+                                    "fecha_llegada_estimada",
+                                    "hora_llegada_estimada"
+                                ],
+                                "properties": {
+                                    "ruta_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "bus_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "fecha_salida": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-12-25"
+                                    },
+                                    "hora_salida": {
+                                        "type": "string",
+                                        "format": "time",
+                                        "example": "08:00:00"
+                                    },
+                                    "fecha_llegada_estimada": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-12-25"
+                                    },
+                                    "hora_llegada_estimada": {
+                                        "type": "string",
+                                        "format": "time",
+                                        "example": "11:00:00"
+                                    },
+                                    "estado": {
+                                        "description": "Opcional, por defecto 'Programado'",
+                                        "type": "string",
+                                        "enum": [
+                                            "Programado",
+                                            "En Viaje",
+                                            "Finalizado",
+                                            "Cancelado"
+                                        ],
+                                        "example": "Programado"
+                                    },
+                                    "activo": {
+                                        "description": "Opcional, por defecto 1",
+                                        "type": "integer",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Horario creado exitosamente"
+                    },
+                    "422": {
+                        "description": "Datos de validación incorrectos"
+                    },
+                    "500": {
+                        "description": "Error al crear el horario"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/horarios-rutas/{id}": {
+            "get": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Obtener horario de ruta",
+                "description": "Obtiene el detalle de un horario de ruta con ruta, bus y tiquetes vendidos asociados.",
+                "operationId": "5320953a98bfff54b1d4653bcfac984b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del horario de ruta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Horario obtenido exitosamente"
+                    },
+                    "404": {
+                        "description": "Horario no encontrado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Actualizar horario de ruta",
+                "description": "Actualiza un horario de ruta. No permite modificar horarios en estado 'En Viaje' o 'Finalizado'.",
+                "operationId": "9e2be893d13ab7933fe234a079d8a34d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del horario de ruta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "ruta_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "bus_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "fecha_salida": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-12-25"
+                                    },
+                                    "hora_salida": {
+                                        "type": "string",
+                                        "format": "time",
+                                        "example": "08:00:00"
+                                    },
+                                    "fecha_llegada_estimada": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-12-25"
+                                    },
+                                    "hora_llegada_estimada": {
+                                        "type": "string",
+                                        "format": "time",
+                                        "example": "11:00:00"
+                                    },
+                                    "estado": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Programado",
+                                            "En Viaje",
+                                            "Finalizado",
+                                            "Cancelado"
+                                        ],
+                                        "example": "Programado"
+                                    },
+                                    "activo": {
+                                        "type": "integer",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Horario actualizado exitosamente"
+                    },
+                    "404": {
+                        "description": "Horario no encontrado"
+                    },
+                    "422": {
+                        "description": "No se puede modificar un horario en estado En Viaje o Finalizado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Eliminar horario de ruta",
+                "description": "Elimina lógicamente un horario de ruta. No permite eliminar horarios con tiquetes vendidos.",
+                "operationId": "681f68fabc2cbe18041941fe92ab3832",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del horario de ruta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Horario eliminado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Horario de ruta eliminado exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Horario no encontrado"
+                    },
+                    "422": {
+                        "description": "No se puede eliminar un horario con tiquetes vendidos"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/horarios-rutas/{id}/iniciar-viaje": {
+            "post": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Iniciar viaje",
+                "description": "Cambia el estado del horario de 'Programado' a 'En Viaje'. Solo permite iniciar viajes programados.",
+                "operationId": "46ecba4171d4f9e51faa5ecdcaedf81c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del horario de ruta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Viaje iniciado exitosamente"
+                    },
+                    "404": {
+                        "description": "Horario no encontrado"
+                    },
+                    "422": {
+                        "description": "Solo se pueden iniciar viajes en estado Programado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/horarios-rutas/{id}/finalizar-viaje": {
+            "post": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Finalizar viaje",
+                "description": "Cambia el estado del horario de 'En Viaje' a 'Finalizado'. Solo permite finalizar viajes en curso.",
+                "operationId": "0abe167a9f6e408074e6cc370bce01bf",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del horario de ruta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Viaje finalizado exitosamente"
+                    },
+                    "404": {
+                        "description": "Horario no encontrado"
+                    },
+                    "422": {
+                        "description": "Solo se pueden finalizar viajes en estado En Viaje"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/horarios-rutas/{id}/cancelar": {
+            "post": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Cancelar horario",
+                "description": "Cambia el estado del horario a 'Cancelado'. No permite cancelar viajes finalizados.",
+                "operationId": "e6f05272c17dc3fc5156b968b6f33e26",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del horario de ruta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Horario cancelado exitosamente"
+                    },
+                    "404": {
+                        "description": "Horario no encontrado"
+                    },
+                    "422": {
+                        "description": "No se puede cancelar un viaje finalizado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/horarios-rutas/{id}/asientos-disponibles": {
+            "get": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Asientos disponibles",
+                "description": "Consulta la disponibilidad de asientos de un horario específico con base en tiquetes vendidos.",
+                "operationId": "400e975b0d2d19ec88f776763e121ba1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del horario de ruta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Información de disponibilidad obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "horario_id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "capacidad_total": {
+                                            "type": "integer",
+                                            "example": 48
+                                        },
+                                        "tiquetes_vendidos": {
+                                            "type": "integer",
+                                            "example": 32
+                                        },
+                                        "asientos_disponibles": {
+                                            "type": "integer",
+                                            "example": 16
+                                        },
+                                        "porcentaje_ocupacion": {
+                                            "type": "number",
+                                            "format": "decimal",
+                                            "example": 66.67
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Horario no encontrado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/horarios-rutas/proximos-disponibles": {
+            "get": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Próximos horarios disponibles",
+                "description": "Obtiene los próximos 10 horarios programados con asientos disponibles, ordenados por fecha/hora de salida.",
+                "operationId": "80d8a4d84ffef7c7096f968cccfa0865",
+                "parameters": [
+                    {
+                        "name": "ruta_id",
+                        "in": "query",
+                        "description": "Filtrar por ruta específica (opcional)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de próximos horarios obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/inventario/entradas": {
             "get": {
                 "tags": [
@@ -7983,6 +9078,280 @@
                     },
                     "500": {
                         "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/modelos-buses": {
+            "get": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Listar modelos de buses",
+                "description": "Obtiene la lista paginada de modelos de buses disponibles en el catálogo global. Incluye contador de buses asociados.",
+                "operationId": "7514eeb8b53ce086dcfdf06dae350da4",
+                "responses": {
+                    "200": {
+                        "description": "Lista de modelos obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Crear modelo de bus",
+                "description": "Crea un nuevo modelo de bus en el catálogo global. Ejemplos: Paradiso 1800 DD, Viaggio 1050.",
+                "operationId": "8d85a659778837c167077db99b530f02",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nombre"
+                                ],
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "example": "Marcopolo Paradiso 1800 DD"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Modelo creado exitosamente"
+                    },
+                    "422": {
+                        "description": "Datos de validación incorrectos"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/modelos-buses/{id}": {
+            "get": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Obtener modelo de bus",
+                "description": "Obtiene el detalle de un modelo de bus con el contador de buses asociados.",
+                "operationId": "c2fe1f50ed4ebbc3a5c75b51d9a29b23",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del modelo de bus",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Modelo obtenido exitosamente"
+                    },
+                    "404": {
+                        "description": "Modelo no encontrado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Actualizar modelo de bus",
+                "description": "Actualiza un modelo de bus existente.",
+                "operationId": "c58e72f43f3044ec60abbf2d86f93d45",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del modelo de bus",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nombre"
+                                ],
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "example": "Marcopolo Paradiso 1800 DD"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Modelo actualizado exitosamente"
+                    },
+                    "404": {
+                        "description": "Modelo no encontrado"
+                    },
+                    "422": {
+                        "description": "Datos de validación incorrectos"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Eliminar modelo de bus",
+                "description": "Elimina un modelo de bus. No permite eliminar modelos con buses asociados.",
+                "operationId": "3f769254391539f0c8f812c94838cb61",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del modelo de bus",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Modelo eliminado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Modelo de bus eliminado exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Modelo no encontrado"
+                    },
+                    "422": {
+                        "description": "No se puede eliminar un modelo con buses asociados"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/modelos-buses/activos": {
+            "get": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Listar modelos activos",
+                "description": "Obtiene una lista simplificada de modelos de buses para uso en selectores.",
+                "operationId": "75a0d175de2a95ac1aed721a7363d875",
+                "responses": {
+                    "200": {
+                        "description": "Lista de modelos activos obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "nombre": {
+                                                "type": "string",
+                                                "example": "Marcopolo Paradiso 1800 DD"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
                     }
                 },
                 "security": [
@@ -12197,6 +13566,625 @@
                 "responses": {
                     "200": {
                         "description": "Permisos asignados"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/rutas": {
+            "get": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Listar rutas",
+                "description": "Obtiene la lista paginada de rutas de transporte. Permite filtrar por origen, destino y estado activo.",
+                "operationId": "83013e89e17e438a4742bbc3a2faf0f1",
+                "parameters": [
+                    {
+                        "name": "origen",
+                        "in": "query",
+                        "description": "Filtrar por ciudad de origen",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "San José"
+                        }
+                    },
+                    {
+                        "name": "destino",
+                        "in": "query",
+                        "description": "Filtrar por ciudad de destino",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Limón"
+                        }
+                    },
+                    {
+                        "name": "activo",
+                        "in": "query",
+                        "description": "Filtrar por estado activo",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "enum": [
+                                0,
+                                1
+                            ],
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de rutas obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Crear ruta",
+                "description": "Registra una nueva ruta de transporte con origen, destino, distancia, duración y tarifa base.",
+                "operationId": "834220f862fc3f65dbcb5699ae741b21",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nombre",
+                                    "origen",
+                                    "destino",
+                                    "distancia_km",
+                                    "duracion_estimada",
+                                    "tarifa_base"
+                                ],
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "maxLength": 150,
+                                        "example": "San José - Limón"
+                                    },
+                                    "origen": {
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "example": "San José"
+                                    },
+                                    "destino": {
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "example": "Limón"
+                                    },
+                                    "distancia_km": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 165.5
+                                    },
+                                    "duracion_estimada": {
+                                        "description": "Duración en minutos",
+                                        "type": "integer",
+                                        "example": 180
+                                    },
+                                    "tarifa_base": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 5500
+                                    },
+                                    "observaciones": {
+                                        "type": "string",
+                                        "example": "Ruta turística principal",
+                                        "nullable": true
+                                    },
+                                    "activo": {
+                                        "description": "Opcional, por defecto 1",
+                                        "type": "integer",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Ruta creada exitosamente"
+                    },
+                    "422": {
+                        "description": "Datos de validación incorrectos"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/rutas/{id}": {
+            "get": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Obtener ruta",
+                "description": "Obtiene el detalle de una ruta con sus horarios asociados.",
+                "operationId": "ca08ebad62041a7724982d195802bd4f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la ruta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ruta obtenida exitosamente"
+                    },
+                    "404": {
+                        "description": "Ruta no encontrada"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Actualizar ruta",
+                "description": "Actualiza una ruta de transporte existente.",
+                "operationId": "2422149d8cc7f7e9572b405521504ee9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la ruta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "maxLength": 150,
+                                        "example": "San José - Limón"
+                                    },
+                                    "origen": {
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "example": "San José"
+                                    },
+                                    "destino": {
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "example": "Limón"
+                                    },
+                                    "distancia_km": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 165.5
+                                    },
+                                    "duracion_estimada": {
+                                        "type": "integer",
+                                        "example": 180
+                                    },
+                                    "tarifa_base": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 5500
+                                    },
+                                    "observaciones": {
+                                        "type": "string",
+                                        "example": "Ruta turística principal",
+                                        "nullable": true
+                                    },
+                                    "activo": {
+                                        "type": "integer",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Ruta actualizada exitosamente"
+                    },
+                    "404": {
+                        "description": "Ruta no encontrada"
+                    },
+                    "422": {
+                        "description": "Datos de validación incorrectos"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Eliminar ruta",
+                "description": "Elimina lógicamente una ruta. No permite eliminar rutas con horarios activos (no finalizados).",
+                "operationId": "67ffa323ac993667b1f74b07a4515d5a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la ruta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ruta eliminada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ruta eliminada exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Ruta no encontrada"
+                    },
+                    "422": {
+                        "description": "No se puede eliminar una ruta con horarios activos"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/rutas/activas": {
+            "get": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Listar rutas activas",
+                "description": "Obtiene lista simplificada de rutas activas para uso en selectores.",
+                "operationId": "9a7d6fdd3d8f1acd02f18df4414cafa2",
+                "responses": {
+                    "200": {
+                        "description": "Lista de rutas activas obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "nombre": {
+                                                "type": "string",
+                                                "example": "San José - Limón"
+                                            },
+                                            "origen": {
+                                                "type": "string",
+                                                "example": "San José"
+                                            },
+                                            "destino": {
+                                                "type": "string",
+                                                "example": "Limón"
+                                            },
+                                            "tarifa_base": {
+                                                "type": "number",
+                                                "format": "decimal",
+                                                "example": 5500
+                                            },
+                                            "duracion_estimada": {
+                                                "type": "integer",
+                                                "example": 180
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/rutas/{id}/calcular-tarifa": {
+            "post": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Calcular tarifa",
+                "description": "Calcula la tarifa total para una ruta considerando cantidad de pasajeros y descuentos opcionales.",
+                "operationId": "f56698d261a53124eee2f2143b86936b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la ruta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "cantidad_pasajeros": {
+                                        "description": "Opcional, por defecto 1",
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "descuento_porcentaje": {
+                                        "description": "Opcional, por defecto 0",
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 10
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Tarifa calculada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ruta": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "nombre": {
+                                                    "type": "string",
+                                                    "example": "San José - Limón"
+                                                },
+                                                "origen": {
+                                                    "type": "string",
+                                                    "example": "San José"
+                                                },
+                                                "destino": {
+                                                    "type": "string",
+                                                    "example": "Limón"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "calculo": {
+                                            "properties": {
+                                                "tarifa_base_unitaria": {
+                                                    "type": "string",
+                                                    "example": "5500.00"
+                                                },
+                                                "cantidad_pasajeros": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "subtotal": {
+                                                    "type": "string",
+                                                    "example": "11000.00"
+                                                },
+                                                "descuento_porcentaje": {
+                                                    "type": "number",
+                                                    "example": 10
+                                                },
+                                                "monto_descuento": {
+                                                    "type": "string",
+                                                    "example": "1100.00"
+                                                },
+                                                "tarifa_final": {
+                                                    "type": "string",
+                                                    "example": "9900.00"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Ruta no encontrada"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/rutas/{id}/estadisticas": {
+            "get": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Estadísticas de ruta",
+                "description": "Obtiene estadísticas de viajes de una ruta: total, finalizados, en curso y programados.",
+                "operationId": "58a916ff81f613919704726c0f8e6382",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la ruta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Estadísticas obtenidas exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ruta": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "nombre": {
+                                                    "type": "string",
+                                                    "example": "San José - Limón"
+                                                },
+                                                "origen": {
+                                                    "type": "string",
+                                                    "example": "San José"
+                                                },
+                                                "destino": {
+                                                    "type": "string",
+                                                    "example": "Limón"
+                                                },
+                                                "distancia_km": {
+                                                    "type": "number",
+                                                    "format": "decimal",
+                                                    "example": 165.5
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "estadisticas": {
+                                            "properties": {
+                                                "total_viajes": {
+                                                    "type": "integer",
+                                                    "example": 156
+                                                },
+                                                "finalizados": {
+                                                    "type": "integer",
+                                                    "example": 142
+                                                },
+                                                "en_curso": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "programados": {
+                                                    "type": "integer",
+                                                    "example": 12
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Ruta no encontrada"
+                    },
+                    "401": {
+                        "description": "No autenticado"
                     }
                 },
                 "security": [
@@ -19263,6 +21251,10 @@
         {
             "name": "Autenticación",
             "description": "Autenticación"
+        },
+        {
+            "name": "Transporte",
+            "description": "Transporte"
         },
         {
             "name": "Catálogos Fiscales",
