@@ -8,6 +8,12 @@ class FormaPago extends Model
 {
     protected $table = 'formas_pago';
 
+    /**
+     * Nombres personalizados de las marcas de tiempo.
+     */
+    const CREATED_AT = 'creado_en';
+    const UPDATED_AT = 'actualizado_en';
+
     protected $fillable = [
         'codigo_dgt',
         'nombre',

@@ -8,6 +8,8 @@ use App\Models\Usuario;
 use App\Models\Empresa;
 use App\Models\Rol;
 use App\Models\Permiso;
+use App\Models\Sucursal;
+use App\Models\FormaPago;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -18,6 +20,12 @@ abstract class TestCase extends BaseTestCase
      */
     protected function createEmpresa(array $attributes = []): Empresa
     {
+        // Crear régimen tributario si no existe
+        $regimen = \App\Models\RegimenTributario::firstOrCreate(
+            ['nombre' => 'Régimen General'],
+            ['descripcion' => 'Régimen General de Tributación']
+        );
+
         return Empresa::create(array_merge([
             'nombre' => 'Empresa Test',
             'nombre_comercial' => 'Test Corp',
@@ -31,10 +39,46 @@ abstract class TestCase extends BaseTestCase
             'telefono' => '+506 2222-3333',
             'email' => 'test@empresa.com',
             'moneda_defecto' => 'CRC',
-            'regimen_tributario_id' => 1,
+            'regimen_tributario_id' => $regimen->id,
             'activo' => true,
             'eliminado' => false,
         ], $attributes));
+    }
+
+    /**
+     * Crea una sucursal de prueba
+     */
+    protected function createSucursal(Empresa $empresa = null, array $attributes = []): Sucursal
+    {
+        if (!$empresa) {
+            $empresa = Empresa::first() ?? $this->createEmpresa();
+        }
+
+        return Sucursal::create(array_merge([
+            'empresa_id' => $empresa->id,
+            'nombre' => 'Sucursal Principal',
+            'direccion' => 'San José, Costa Rica',
+            'telefono' => '+506 2222-3333',
+            'email' => 'sucursal@empresa.com',
+            'activo' => true,
+            'eliminado' => false,
+        ], $attributes));
+    }
+
+    /**
+     * Crea o retorna una forma de pago de prueba
+     */
+    protected function getFormaPago(): FormaPago
+    {
+        return FormaPago::firstOrCreate(
+            ['codigo_dgt' => '01'],
+            [
+                'nombre' => 'Efectivo',
+                'descripcion' => 'Pago en efectivo',
+                'activo' => true,
+                'eliminado' => false,
+            ]
+        );
     }
 
     /**
