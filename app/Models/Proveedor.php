@@ -26,17 +26,25 @@ class Proveedor extends Model
 
     protected $fillable = [
         'empresa_id',
+        'tipo_identificacion',
+        'numero_identificacion',
         'nombre',
-        'razon_social',
-        'nit_ruc',
-        'direccion',
-        'telefono',
+        'nombre_comercial',
         'email',
+        'telefono',
+        'celular',
+        'direccion',
+        'pais',
+        'provincia',
+        'ciudad',
+        'codigo_postal',
+        'contacto_nombre',
+        'contacto_telefono',
+        'contacto_email',
         'dias_credito',
+        'limite_credito',
         'activo',
         'eliminado',
-        'creado_en',
-        'actualizado_en',
     ];
 
     protected $casts = [
@@ -48,7 +56,7 @@ class Proveedor extends Model
     public static $rules = [
         'empresa_id' => 'required|exists:empresas,id',
         'nombre' => 'required|string',
-        'nit_ruc' => 'required|string',
+        'numero_identificacion' => 'required|string',
         'email' => 'nullable|email',
     ];
 
@@ -115,11 +123,11 @@ class Proveedor extends Model
             if (isset($p->nombre)) {
                 $p->nombre = trim($p->nombre);
             }
-            if (isset($p->razon_social)) {
-                $p->razon_social = trim($p->razon_social);
+            if (isset($p->nombre_comercial)) {
+                $p->nombre_comercial = trim($p->nombre_comercial);
             }
-            if (isset($p->nit_ruc)) {
-                $p->nit_ruc = Str::upper(trim($p->nit_ruc));
+            if (isset($p->numero_identificacion)) {
+                $p->numero_identificacion = Str::upper(trim($p->numero_identificacion));
             }
             if (isset($p->email)) {
                 $p->email = Str::lower(trim($p->email));
