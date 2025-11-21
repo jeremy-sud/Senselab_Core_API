@@ -108,9 +108,9 @@ class OrdenCompraController extends Controller
                 
                 // Actualizar totales
                 $orden->update([
-                    'monto_subtotal' => $montoSubtotal,
-                    'monto_impuestos' => $montoImpuestos,
-                    'monto_total' => $montoSubtotal + $montoImpuestos,
+                    'subtotal' => $montoSubtotal,
+                    'impuesto_total' => $montoImpuestos,
+                    'total_orden' => $montoSubtotal + $montoImpuestos,
                 ]);
                 
                 DB::commit();
