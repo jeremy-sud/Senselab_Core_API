@@ -1,1 +1,2 @@
-*.sqlite*
+# Database directory
+# No se ignora nada aquí, las bases de datos están en MySQL (localhost/phpmyadmin)
