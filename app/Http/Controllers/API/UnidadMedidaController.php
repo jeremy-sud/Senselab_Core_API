@@ -10,6 +10,7 @@ use App\Models\UnidadMedida;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use OpenApi\Attributes as OA;
 
 /**
  * Controlador API para gestión de unidades de medida
@@ -24,6 +25,36 @@ class UnidadMedidaController extends Controller
     /**
      * Listar todas las unidades de medida
      */
+    #[OA\Get(
+        path: "/api/unidades-medida",
+        summary: "Listar unidades de medida",
+        description: "Obtiene un listado de todas las unidades de medida del sistema. Las unidades son globales (sin empresa_id) y siguen los códigos de la Dirección General de Tributación (DGT) de Costa Rica.",
+        security: [["sanctum" => []]],
+        tags: ["Catálogos de Productos"],
+        parameters: [
+            new OA\Parameter(
+                name: "activo",
+                in: "query",
+                description: "Filtrar por unidades activas o inactivas",
+                required: false,
+                schema: new OA\Schema(type: "boolean", example: true)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Listado de unidades obtenido exitosamente",
+                content: new OA\JsonContent(
+                    type: "array",
+                    items: new OA\Items(ref: "#/components/schemas/UnidadMedida")
+                )
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function index(Request $request): AnonymousResourceCollection
     {
         $query = UnidadMedida::query();
@@ -40,6 +71,39 @@ class UnidadMedidaController extends Controller
     /**
      * Crear una nueva unidad de medida
      */
+    #[OA\Post(
+        path: "/api/unidades-medida",
+        summary: "Crear unidad de medida",
+        description: "Registra una nueva unidad de medida en el sistema. El código DGT debe ser único.",
+        security: [["sanctum" => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["nombre"],
+                properties: [
+                    new OA\Property(property: "codigo_dgt", type: "string", example: "Unid"),
+                    new OA\Property(property: "nombre", type: "string", example: "Unidad"),
+                    new OA\Property(property: "descripcion", type: "string", example: "Unidad individual de producto")
+                ]
+            )
+        ),
+        tags: ["Catálogos de Productos"],
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: "Unidad creada exitosamente",
+                content: new OA\JsonContent(ref: "#/components/schemas/UnidadMedida")
+            ),
+            new OA\Response(
+                response: 422,
+                description: "Error de validación"
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function store(StoreUnidadMedidaRequest $request): JsonResponse
     {
         $unidad = UnidadMedida::create($request->validated());
@@ -52,6 +116,37 @@ class UnidadMedidaController extends Controller
     /**
      * Mostrar una unidad de medida específica
      */
+    #[OA\Get(
+        path: "/api/unidades-medida/{id}",
+        summary: "Obtener unidad de medida",
+        description: "Obtiene los detalles de una unidad de medida específica.",
+        security: [["sanctum" => []]],
+        tags: ["Catálogos de Productos"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID de la unidad de medida",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Unidad encontrada exitosamente",
+                content: new OA\JsonContent(ref: "#/components/schemas/UnidadMedida")
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Unidad no encontrada"
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function show(int $id): UnidadMedidaResource
     {
         $unidad = UnidadMedida::findOrFail($id);
@@ -62,6 +157,51 @@ class UnidadMedidaController extends Controller
     /**
      * Actualizar una unidad de medida existente
      */
+    #[OA\Put(
+        path: "/api/unidades-medida/{id}",
+        summary: "Actualizar unidad de medida",
+        description: "Actualiza los datos de una unidad de medida existente.",
+        security: [["sanctum" => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: "codigo_dgt", type: "string", example: "Unid"),
+                    new OA\Property(property: "nombre", type: "string", example: "Unidad"),
+                    new OA\Property(property: "descripcion", type: "string", example: "Unidad individual de producto")
+                ]
+            )
+        ),
+        tags: ["Catálogos de Productos"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID de la unidad a actualizar",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Unidad actualizada exitosamente",
+                content: new OA\JsonContent(ref: "#/components/schemas/UnidadMedida")
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Unidad no encontrada"
+            ),
+            new OA\Response(
+                response: 422,
+                description: "Error de validación"
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function update(UpdateUnidadMedidaRequest $request, int $id): UnidadMedidaResource
     {
         $unidad = UnidadMedida::findOrFail($id);
@@ -73,6 +213,42 @@ class UnidadMedidaController extends Controller
     /**
      * Eliminar una unidad de medida (soft delete)
      */
+    #[OA\Delete(
+        path: "/api/unidades-medida/{id}",
+        summary: "Eliminar unidad de medida",
+        description: "Realiza un soft delete de la unidad de medida especificada.",
+        security: [["sanctum" => []]],
+        tags: ["Catálogos de Productos"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID de la unidad a eliminar",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Unidad eliminada exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "message", type: "string", example: "Unidad de medida eliminada exitosamente"),
+                        new OA\Property(property: "data", ref: "#/components/schemas/UnidadMedida")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Unidad no encontrada"
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function destroy(int $id): JsonResponse
     {
         $unidad = UnidadMedida::findOrFail($id);
