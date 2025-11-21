@@ -1,22 +1,25 @@
 # Guía de Testing - Ursol CAST API
 
 **Desarrollado por Sistemas Ursol S.A.**  
-*Suite de 66 tests automatizados para garantizar calidad del código*
+*Suite de 81 tests automatizados para garantizar calidad del código*  
+**Última actualización:** 21 de noviembre de 2025
 
 ---
 
 ## 📊 Resumen
 
-El proyecto incluye una **suite completa de 66 tests** que cubren los componentes críticos del sistema:
+El proyecto incluye una **suite de 81 tests** que cubren los componentes críticos del sistema:
 
-| Tipo | Archivo | Tests | Descripción |
-|------|---------|-------|-------------|
-| Feature | AuthTest.php | 11 | Autenticación, login, logout, tokens |
-| Feature | ProductoTest.php | 12 | CRUD productos, búsqueda, filtros |
-| Feature | PermissionTest.php | 17 | Sistema RBAC completo |
-| Unit | RoleTest.php | 10 | Modelo Rol y relaciones |
-| Unit | UsuarioTest.php | 16 | Modelo Usuario y autenticación |
-| **TOTAL** | **5 archivos** | **66** | **Cobertura completa** |
+| Tipo | Archivo | Tests | Estado | Descripción |
+|------|---------|-------|--------|-------------|
+| Feature | AuthTest.php | 11 | ✅ 100% | Autenticación, login, logout, tokens |
+| Feature | EmpresaTest.php | 8 | ✅ 100% | CRUD empresas, multi-tenancy |
+| Feature | ProductoTest.php | 12 | ⚠️ 25% | CRUD productos, búsqueda, filtros |
+| Feature | VentaTest.php | 7 | ❌ 0% | CRUD ventas, anular, estadísticas |
+| Feature | PermissionTest.php | 17 | ✅ 100% | Sistema RBAC completo |
+| Unit | RoleTest.php | 10 | ✅ 100% | Modelo Rol y relaciones |
+| Unit | UsuarioTest.php | 16 | ✅ 100% | Modelo Usuario y autenticación |
+| **TOTAL** | **7 archivos** | **81** | **54%** | **44 pasando / 37 fallando** |
 
 ---
 
@@ -247,33 +250,103 @@ tests/
 
 ### TestCase.php Helpers
 
-**Crear datos de prueba:**
+El archivo `tests/TestCase.php` incluye helpers reutilizables para simplificar la escritura de tests:
+
+**Helpers de Empresas:**
 
 ```php
-// Crear empresa
-$empresa = $this->createEmpresa();
+// Crear empresa con régimen tributario válido
+$empresa = $this->createEmpresa([
+    'nombre' => 'Mi Empresa',
+    'cedula_juridica' => '3-101-123456'
+]);
+```
 
+**Helpers de Usuarios:**
+
+```php
 // Crear usuario normal
-$usuario = $this->createUsuario(['nombre' => 'Test User']);
+$usuario = $this->createUsuario([
+    'nombre' => 'Juan Pérez',
+    'email' => 'juan@example.com'
+]);
 
 // Crear usuario admin con todos los permisos
 $admin = $this->createAdminUsuario();
 
-// Hacer request autenticado
-$response = $this->authenticatedJson($usuario, 'GET', '/api/productos');
+// Usuario con roles específicos
+$vendedor = $this->createUsuario([], ['Vendedor']);
 ```
 
-**Seed de datos:**
+**Helpers de Productos:**
 
 ```php
-// Cargar 8 roles
+// Crear producto con todos los campos requeridos
+$producto = $this->createProducto([
+    'nombre' => 'Laptop HP',
+    'precio' => 500000
+], $empresa);
+
+// Obtener o crear categoría de producto
+$categoria = $this->getCategoriaProducto($empresa);
+
+// Obtener o crear unidad de medida
+$unidad = $this->getUnidadMedida();
+```
+
+**Helpers de Autenticación:**
+
+```php
+// Hacer request JSON autenticado
+$response = $this->authenticatedJson('GET', '/api/productos', [], $usuario);
+
+// Con datos en el body
+$response = $this->authenticatedJson('POST', '/api/productos', [
+    'nombre' => 'Nuevo Producto',
+    'precio' => 100
+], $usuario);
+```
+
+**Helpers de Seeders:**
+
+```php
+// Cargar 7 roles básicos
 $this->seedRoles();
 
 // Cargar 68 permisos
 $this->seedPermisos();
 
 // Asignar todos los permisos a un rol
-$this->assignAllPermissionsToRole($rol);
+$this->assignAllPermissionsToRole($rolAdmin);
+```
+
+### Ejemplo Completo de Test
+
+```php
+public function test_puede_crear_producto_con_helpers()
+{
+    // Arrange - Preparar datos
+    $admin = $this->createAdminUsuario();
+    $categoria = $this->getCategoriaProducto();
+    $unidad = $this->getUnidadMedida();
+    
+    // Act - Ejecutar acción
+    $response = $this->authenticatedJson('POST', '/api/productos', [
+        'nombre' => 'Laptop HP',
+        'codigo' => 'LAPTOP-001',
+        'precio' => 500000,
+        'categoria_id' => $categoria->id,
+        'unidad_medida_id' => $unidad->id,
+        'tipo' => 'producto'
+    ], $admin);
+    
+    // Assert - Verificar resultados
+    $response->assertStatus(201);
+    $this->assertDatabaseHas('productos', [
+        'nombre' => 'Laptop HP',
+        'codigo' => 'LAPTOP-001'
+    ]);
+}
 ```
 
 ---
