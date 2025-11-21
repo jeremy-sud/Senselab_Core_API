@@ -1048,6 +1048,472 @@
                 ]
             }
         },
+        "/api/cabys": {
+            "get": {
+                "tags": [
+                    "Catálogos Fiscales"
+                ],
+                "summary": "Listar códigos CAByS",
+                "description": "Obtiene el listado del Catálogo de Bienes y Servicios (CAByS) de Costa Rica. Permite búsqueda por código o descripción.",
+                "operationId": "aade5469e054e39d1a6fcad8bd4909f0",
+                "parameters": [
+                    {
+                        "name": "buscar",
+                        "in": "query",
+                        "description": "Buscar por código o descripción",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "8529"
+                        }
+                    },
+                    {
+                        "name": "codigo",
+                        "in": "query",
+                        "description": "Filtrar por código específico",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "8529901000000"
+                        }
+                    },
+                    {
+                        "name": "impuesto_iva",
+                        "in": "query",
+                        "description": "Filtrar por tasa de IVA predeterminada",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "decimal",
+                            "example": 13
+                        }
+                    },
+                    {
+                        "name": "activo",
+                        "in": "query",
+                        "description": "Filtrar por estado activo",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "Campo por el cual ordenar",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "codigo"
+                        }
+                    },
+                    {
+                        "name": "sort_order",
+                        "in": "query",
+                        "description": "Orden ascendente o descendente",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "asc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Número de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Caby"
+                                            }
+                                        },
+                                        "current_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "per_page": {
+                                            "type": "integer",
+                                            "example": 15
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 1500
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Catálogos Fiscales"
+                ],
+                "summary": "Crear código CAByS",
+                "description": "Crea un nuevo código CAByS. El código debe tener 13 dígitos según catálogo oficial de Hacienda Costa Rica.",
+                "operationId": "d8ce5f451c66ccdbf5f237153753bfaa",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "codigo",
+                                    "descripcion"
+                                ],
+                                "properties": {
+                                    "codigo": {
+                                        "type": "string",
+                                        "maxLength": 13,
+                                        "example": "8529901000000"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Antenas de telefonía móvil"
+                                    },
+                                    "impuesto_iva_predeterminado": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 13
+                                    },
+                                    "activo": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Código CAByS creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Código CAByS creado exitosamente"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Caby"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/cabys/{id}": {
+            "get": {
+                "tags": [
+                    "Catálogos Fiscales"
+                ],
+                "summary": "Obtener código CAByS",
+                "description": "Obtiene los detalles de un código CAByS específico.",
+                "operationId": "d3c9ef2178fc2c14bca287ca23314261",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del código CAByS",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Código CAByS encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Caby"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Código CAByS no encontrado"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Catálogos Fiscales"
+                ],
+                "summary": "Actualizar código CAByS",
+                "description": "Actualiza los datos de un código CAByS existente.",
+                "operationId": "c9b8511d0692923726324f94c0ec32b5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del código CAByS a actualizar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "codigo": {
+                                        "type": "string",
+                                        "maxLength": 13,
+                                        "example": "8529901000000"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Descripción actualizada"
+                                    },
+                                    "impuesto_iva_predeterminado": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 13
+                                    },
+                                    "activo": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Código CAByS actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Código CAByS actualizado exitosamente"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Caby"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Código CAByS no encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Catálogos Fiscales"
+                ],
+                "summary": "Eliminar código CAByS",
+                "description": "Elimina un código CAByS (soft delete). No se puede eliminar si está asignado a productos.",
+                "operationId": "8730feb4bd07e19f1f2ad48a3cab7635",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del código CAByS a eliminar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Código CAByS eliminado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Código CAByS eliminado exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Código CAByS no encontrado"
+                    },
+                    "422": {
+                        "description": "No se puede eliminar - está asignado a productos"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/cabys/buscar": {
+            "get": {
+                "tags": [
+                    "Catálogos Fiscales"
+                ],
+                "summary": "Buscar códigos CAByS",
+                "description": "Busca códigos CAByS por término de búsqueda en código o descripción. Retorna máximo 50 resultados.",
+                "operationId": "c4faa6fb5084a0c34d535fc36996376a",
+                "parameters": [
+                    {
+                        "name": "termino",
+                        "in": "query",
+                        "description": "Término de búsqueda (mínimo 3 caracteres)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "minLength": 3,
+                            "example": "852"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Búsqueda realizada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Caby"
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 15
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación - término debe tener mínimo 3 caracteres"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/cargos": {
             "get": {
                 "tags": [
@@ -8249,6 +8715,1518 @@
                 ]
             }
         },
+        "/api/tasas-impuesto": {
+            "get": {
+                "tags": [
+                    "Catálogos Fiscales"
+                ],
+                "summary": "Listar tasas de impuesto",
+                "description": "Obtiene el listado de tasas de impuesto con vigencia temporal. Permite mantener histórico de cambios en tasas (ej: IVA 13% -> 15%).",
+                "operationId": "8ed27b19a0689b2773e276c6e3056629",
+                "parameters": [
+                    {
+                        "name": "tipo_impuesto_id",
+                        "in": "query",
+                        "description": "Filtrar por tipo de impuesto",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "activo",
+                        "in": "query",
+                        "description": "Filtrar por estado activo",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "vigentes",
+                        "in": "query",
+                        "description": "Filtrar solo tasas vigentes a la fecha actual",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": true
+                        }
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "Campo por el cual ordenar",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "fecha_inicio_vigencia"
+                        }
+                    },
+                    {
+                        "name": "sort_order",
+                        "in": "query",
+                        "description": "Orden ascendente o descendente",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "desc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Número de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TasaImpuesto"
+                                            }
+                                        },
+                                        "current_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "per_page": {
+                                            "type": "integer",
+                                            "example": 15
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 10
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Catálogos Fiscales"
+                ],
+                "summary": "Crear tasa de impuesto",
+                "description": "Crea una nueva tasa de impuesto con vigencia temporal. Permite registrar cambios históricos en las tasas.",
+                "operationId": "73f22681429daf895eafca20f00756c7",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "tipo_impuesto_id",
+                                    "tasa_porcentaje",
+                                    "fecha_inicio_vigencia"
+                                ],
+                                "properties": {
+                                    "tipo_impuesto_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "tasa_porcentaje": {
+                                        "description": "Porcentaje de la tasa (0-100)",
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 13
+                                    },
+                                    "fecha_inicio_vigencia": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-01-01"
+                                    },
+                                    "fecha_fin_vigencia": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-12-31",
+                                        "nullable": true
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Tasa IVA estándar 2024"
+                                    },
+                                    "activo": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tasa de impuesto creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tasa de impuesto creada exitosamente"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/TasaImpuesto"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/tasas-impuesto/{id}": {
+            "get": {
+                "tags": [
+                    "Catálogos Fiscales"
+                ],
+                "summary": "Obtener tasa de impuesto",
+                "description": "Obtiene los detalles de una tasa de impuesto específica.",
+                "operationId": "5fdaaa4992bc91533d659209a038ebd8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la tasa de impuesto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tasa de impuesto encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/TasaImpuesto"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Tasa de impuesto no encontrada"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Catálogos Fiscales"
+                ],
+                "summary": "Actualizar tasa de impuesto",
+                "description": "Actualiza los datos de una tasa de impuesto existente.",
+                "operationId": "58b808db638be02259213165a0fca62a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la tasa de impuesto a actualizar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "tipo_impuesto_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "tasa_porcentaje": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 15
+                                    },
+                                    "fecha_inicio_vigencia": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-07-01"
+                                    },
+                                    "fecha_fin_vigencia": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": null,
+                                        "nullable": true
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Tasa IVA incrementada"
+                                    },
+                                    "activo": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Tasa de impuesto actualizada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tasa de impuesto actualizada exitosamente"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/TasaImpuesto"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Tasa de impuesto no encontrada"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Catálogos Fiscales"
+                ],
+                "summary": "Eliminar tasa de impuesto",
+                "description": "Elimina una tasa de impuesto (soft delete).",
+                "operationId": "b66f89dc252116051bfc4677a32bfe7e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la tasa de impuesto a eliminar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tasa de impuesto eliminada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tasa de impuesto eliminada exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Tasa de impuesto no encontrada"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/tasas-impuesto/vigente": {
+            "get": {
+                "tags": [
+                    "Catálogos Fiscales"
+                ],
+                "summary": "Obtener tasa vigente",
+                "description": "Obtiene la tasa vigente para un tipo de impuesto específico en una fecha determinada. Si no se especifica fecha, usa la fecha actual.",
+                "operationId": "20709d73cf307e64164d0a6df4be15bd",
+                "parameters": [
+                    {
+                        "name": "tipo_impuesto_id",
+                        "in": "query",
+                        "description": "ID del tipo de impuesto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "fecha",
+                        "in": "query",
+                        "description": "Fecha para consultar vigencia (formato: YYYY-MM-DD). Si se omite, usa fecha actual",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-15"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tasa vigente encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/TasaImpuesto"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No se encontró una tasa vigente para la fecha especificada"
+                    },
+                    "422": {
+                        "description": "Error de validación - tipo_impuesto_id requerido"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/tasas-impuesto/vigentes-actuales": {
+            "get": {
+                "tags": [
+                    "Catálogos Fiscales"
+                ],
+                "summary": "Obtener tasas vigentes actuales",
+                "description": "Obtiene todas las tasas de impuesto vigentes a la fecha actual para todos los tipos de impuesto.",
+                "operationId": "b781fcee9dd7651ec81143e32dc6d201",
+                "responses": {
+                    "200": {
+                        "description": "Tasas vigentes obtenidas exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TasaImpuesto"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/tasas-impuesto/historico/{tipoImpuestoId}": {
+            "get": {
+                "tags": [
+                    "Catálogos Fiscales"
+                ],
+                "summary": "Obtener histórico de tasas",
+                "description": "Obtiene el histórico completo de tasas para un tipo de impuesto específico, ordenadas por fecha de vigencia.",
+                "operationId": "f33f80b5ccd5e992e3269070122a429d",
+                "parameters": [
+                    {
+                        "name": "tipoImpuestoId",
+                        "in": "path",
+                        "description": "ID del tipo de impuesto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Histórico de tasas obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "description": "Tasas ordenadas por fecha de inicio de vigencia (más reciente primero)",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TasaImpuesto"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/tipos-cuenta": {
+            "get": {
+                "tags": [
+                    "Catálogos Contables"
+                ],
+                "summary": "Listar tipos de cuenta",
+                "description": "Obtiene el listado de tipos de cuentas contables (Activo, Pasivo, Patrimonio, Ingresos, Costos, Gastos) con filtros por naturaleza y estado.",
+                "operationId": "07feb2471c37213d8e4d9ee3cc216e29",
+                "parameters": [
+                    {
+                        "name": "naturaleza",
+                        "in": "query",
+                        "description": "Filtrar por naturaleza contable",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "Deudora",
+                                "Acreedora"
+                            ],
+                            "example": "Deudora"
+                        }
+                    },
+                    {
+                        "name": "activo",
+                        "in": "query",
+                        "description": "Filtrar por estado activo. 1 = activos, 0 = inactivos",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "buscar",
+                        "in": "query",
+                        "description": "Buscar por nombre del tipo de cuenta",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Activo"
+                        }
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "Campo por el cual ordenar",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "nombre"
+                        }
+                    },
+                    {
+                        "name": "sort_order",
+                        "in": "query",
+                        "description": "Orden ascendente o descendente",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "asc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Número de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TipoCuenta"
+                                            }
+                                        },
+                                        "current_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "per_page": {
+                                            "type": "integer",
+                                            "example": 15
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 6
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Catálogos Contables"
+                ],
+                "summary": "Crear tipo de cuenta",
+                "description": "Crea un nuevo tipo de cuenta contable. Los tipos estándar son: Activo, Pasivo, Patrimonio, Ingresos, Costos, Gastos.",
+                "operationId": "ad16403fb37ad6cab88a438e9c02909a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nombre",
+                                    "naturaleza"
+                                ],
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Activo"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Representa los bienes y derechos de la empresa"
+                                    },
+                                    "naturaleza": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Deudora",
+                                            "Acreedora"
+                                        ],
+                                        "example": "Deudora"
+                                    },
+                                    "activo": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tipo de cuenta creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tipo de cuenta creado exitosamente"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/TipoCuenta"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/tipos-cuenta/{id}": {
+            "get": {
+                "tags": [
+                    "Catálogos Contables"
+                ],
+                "summary": "Obtener tipo de cuenta",
+                "description": "Obtiene los detalles de un tipo de cuenta específico, incluyendo las cuentas contables asociadas.",
+                "operationId": "6ca4a44b30f11c26271f60a78c2336b1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del tipo de cuenta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tipo de cuenta encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/TipoCuenta"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Tipo de cuenta no encontrado"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Catálogos Contables"
+                ],
+                "summary": "Actualizar tipo de cuenta",
+                "description": "Actualiza los datos de un tipo de cuenta existente.",
+                "operationId": "f18cca33c575743d34d755dc833e5083",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del tipo de cuenta a actualizar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Activo Corriente"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Activos con liquidez menor a un año"
+                                    },
+                                    "naturaleza": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Deudora",
+                                            "Acreedora"
+                                        ],
+                                        "example": "Deudora"
+                                    },
+                                    "activo": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Tipo de cuenta actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tipo de cuenta actualizado exitosamente"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/TipoCuenta"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Tipo de cuenta no encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Catálogos Contables"
+                ],
+                "summary": "Eliminar tipo de cuenta",
+                "description": "Elimina un tipo de cuenta (soft delete). No se puede eliminar si tiene cuentas contables asignadas.",
+                "operationId": "21ee4651d3dc850b97e83154da73dff0",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del tipo de cuenta a eliminar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tipo de cuenta eliminado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tipo de cuenta eliminado exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Tipo de cuenta no encontrado"
+                    },
+                    "422": {
+                        "description": "No se puede eliminar - tiene cuentas contables asignadas"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/tipos-cuenta/por-naturaleza": {
+            "get": {
+                "tags": [
+                    "Catálogos Contables"
+                ],
+                "summary": "Tipos de cuenta por naturaleza",
+                "description": "Obtiene los tipos de cuenta filtrados por naturaleza contable (Deudora o Acreedora).",
+                "operationId": "26a94de200b9658e919f0d24e1e0b167",
+                "parameters": [
+                    {
+                        "name": "naturaleza",
+                        "in": "query",
+                        "description": "Naturaleza contable del tipo de cuenta",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "Deudora",
+                                "Acreedora"
+                            ],
+                            "example": "Deudora"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tipos de cuenta obtenidos exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TipoCuenta"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Naturaleza inválida"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/tipos-cuenta/activos": {
+            "get": {
+                "tags": [
+                    "Catálogos Contables"
+                ],
+                "summary": "Tipos de cuenta activos",
+                "description": "Obtiene únicamente los tipos de cuenta activos, útil para llenar selectores en formularios.",
+                "operationId": "40792b261cd2289f3000d87e769a9567",
+                "responses": {
+                    "200": {
+                        "description": "Tipos de cuenta activos obtenidos exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TipoCuenta"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/tipos-impuesto": {
+            "get": {
+                "tags": [
+                    "Catálogos Fiscales"
+                ],
+                "summary": "Listar tipos de impuesto",
+                "description": "Obtiene el listado de tipos de impuesto utilizados en facturación electrónica. Incluye códigos de Hacienda Costa Rica (01=IVA, 02=Consumo, etc.).",
+                "operationId": "7dad650ea0126af07a4570769fef1e14",
+                "parameters": [
+                    {
+                        "name": "activo",
+                        "in": "query",
+                        "description": "Filtrar por estado activo",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "buscar",
+                        "in": "query",
+                        "description": "Buscar por nombre o código de Hacienda",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "IVA"
+                        }
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "Campo por el cual ordenar",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "nombre"
+                        }
+                    },
+                    {
+                        "name": "sort_order",
+                        "in": "query",
+                        "description": "Orden ascendente o descendente",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "asc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Número de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TipoImpuesto"
+                                            }
+                                        },
+                                        "current_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "per_page": {
+                                            "type": "integer",
+                                            "example": 15
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 5
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Catálogos Fiscales"
+                ],
+                "summary": "Crear tipo de impuesto",
+                "description": "Crea un nuevo tipo de impuesto. Debe incluir el código oficial de Hacienda Costa Rica.",
+                "operationId": "42b81456ff56e8990b0ee8c9c9e51953",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "codigo_hacienda",
+                                    "nombre"
+                                ],
+                                "properties": {
+                                    "codigo_hacienda": {
+                                        "type": "string",
+                                        "maxLength": 2,
+                                        "example": "01"
+                                    },
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Impuesto al Valor Agregado"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "IVA aplicable a bienes y servicios"
+                                    },
+                                    "comentario": {
+                                        "type": "string",
+                                        "example": "Tasa estándar 13%"
+                                    },
+                                    "activo": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tipo de impuesto creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tipo de impuesto creado exitosamente"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/TipoImpuesto"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/tipos-impuesto/{id}": {
+            "get": {
+                "tags": [
+                    "Catálogos Fiscales"
+                ],
+                "summary": "Obtener tipo de impuesto",
+                "description": "Obtiene los detalles de un tipo de impuesto específico.",
+                "operationId": "50d449dd07f3ef2cf04357d0122f2175",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del tipo de impuesto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tipo de impuesto encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/TipoImpuesto"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Tipo de impuesto no encontrado"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Catálogos Fiscales"
+                ],
+                "summary": "Actualizar tipo de impuesto",
+                "description": "Actualiza los datos de un tipo de impuesto existente.",
+                "operationId": "79a169111585ae660651eb8a8afb6058",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del tipo de impuesto a actualizar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "codigo_hacienda": {
+                                        "type": "string",
+                                        "maxLength": 2,
+                                        "example": "01"
+                                    },
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "IVA Reducido"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Tasa reducida de IVA"
+                                    },
+                                    "comentario": {
+                                        "type": "string",
+                                        "example": "Aplica para productos básicos"
+                                    },
+                                    "activo": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Tipo de impuesto actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tipo de impuesto actualizado exitosamente"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/TipoImpuesto"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Tipo de impuesto no encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Catálogos Fiscales"
+                ],
+                "summary": "Eliminar tipo de impuesto",
+                "description": "Elimina un tipo de impuesto (soft delete). No se puede eliminar el IVA (código 01) que es requerido por Hacienda.",
+                "operationId": "23d5718c4b676a892084f47f5064feed",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del tipo de impuesto a eliminar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tipo de impuesto eliminado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tipo de impuesto eliminado exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Tipo de impuesto no encontrado"
+                    },
+                    "422": {
+                        "description": "No se puede eliminar - es el IVA (código 01) requerido por Hacienda"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/tipos-impuesto/activos": {
+            "get": {
+                "tags": [
+                    "Catálogos Fiscales"
+                ],
+                "summary": "Tipos de impuesto activos",
+                "description": "Obtiene únicamente los tipos de impuesto activos para uso en facturas y documentos fiscales.",
+                "operationId": "ed875ac917d2ad28fe6ada4d0509c408",
+                "responses": {
+                    "200": {
+                        "description": "Tipos de impuesto activos obtenidos exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TipoImpuesto"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/unidades-medida": {
             "get": {
                 "tags": [
@@ -9651,6 +11629,56 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2024-01-15T14:45:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "Caby": {
+                "title": "CAByS - Catálogo de Bienes y Servicios",
+                "description": "Código CAByS del catálogo oficial de Costa Rica para clasificación fiscal de productos y servicios. Tabla global sin empresa_id.",
+                "required": [
+                    "codigo",
+                    "descripcion"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "codigo": {
+                        "description": "Código CAByS de 13 dígitos según catálogo de Hacienda",
+                        "type": "string",
+                        "maxLength": 13,
+                        "example": "8529901000000"
+                    },
+                    "descripcion": {
+                        "description": "Descripción oficial del bien o servicio",
+                        "type": "string",
+                        "example": "Antenas de telefonía móvil"
+                    },
+                    "impuesto_iva_predeterminado": {
+                        "description": "Porcentaje de IVA predeterminado para este código",
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 13
+                    },
+                    "activo": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "eliminado": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "creado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
+                    },
+                    "actualizado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
                     }
                 },
                 "type": "object"
@@ -11271,6 +13299,175 @@
                 },
                 "type": "object"
             },
+            "TasaImpuesto": {
+                "title": "Tasa de Impuesto",
+                "description": "Tasa de impuesto con vigencia temporal. Permite mantener histórico de cambios (ej: IVA 13% -> 15%). Tabla global sin empresa_id.",
+                "required": [
+                    "tipo_impuesto_id",
+                    "tasa_porcentaje",
+                    "fecha_inicio_vigencia"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "tipo_impuesto_id": {
+                        "description": "ID del tipo de impuesto (relación con TipoImpuesto)",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "tasa_porcentaje": {
+                        "description": "Porcentaje de la tasa (0-100)",
+                        "type": "number",
+                        "format": "float",
+                        "example": 13
+                    },
+                    "fecha_inicio_vigencia": {
+                        "description": "Fecha de inicio de vigencia de la tasa",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-01-01"
+                    },
+                    "fecha_fin_vigencia": {
+                        "description": "Fecha de fin de vigencia (null = vigencia indefinida)",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-12-31",
+                        "nullable": true
+                    },
+                    "descripcion": {
+                        "type": "string",
+                        "example": "Tasa reducida temporal por emergencia",
+                        "nullable": true
+                    },
+                    "activo": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "eliminado": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "creado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
+                    },
+                    "actualizado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "TipoCuenta": {
+                "title": "Tipo de Cuenta Contable",
+                "description": "Tipo de cuenta contable (Activo, Pasivo, Patrimonio, Ingresos, Costos, Gastos). Tabla global sin empresa_id.",
+                "required": [
+                    "nombre",
+                    "naturaleza"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nombre": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "example": "Activo"
+                    },
+                    "descripcion": {
+                        "type": "string",
+                        "example": "Representa los bienes y derechos de la empresa",
+                        "nullable": true
+                    },
+                    "naturaleza": {
+                        "description": "Naturaleza contable del tipo de cuenta",
+                        "type": "string",
+                        "enum": [
+                            "Deudora",
+                            "Acreedora"
+                        ],
+                        "example": "Deudora"
+                    },
+                    "activo": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "eliminado": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "creado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
+                    },
+                    "actualizado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "TipoImpuesto": {
+                "title": "Tipo de Impuesto",
+                "description": "Tipo de impuesto para facturación electrónica. Incluye códigos de Hacienda Costa Rica. Tabla global sin empresa_id.",
+                "required": [
+                    "codigo_hacienda",
+                    "nombre"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "codigo_hacienda": {
+                        "description": "Código de Hacienda Costa Rica (01=IVA, 02=Consumo, etc.)",
+                        "type": "string",
+                        "maxLength": 2,
+                        "example": "01"
+                    },
+                    "nombre": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "example": "Impuesto al Valor Agregado"
+                    },
+                    "descripcion": {
+                        "type": "string",
+                        "example": "IVA aplicable a la mayoría de bienes y servicios",
+                        "nullable": true
+                    },
+                    "comentario": {
+                        "type": "string",
+                        "example": "Tasa estándar 13%",
+                        "nullable": true
+                    },
+                    "activo": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "eliminado": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "creado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
+                    },
+                    "actualizado_en": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
+                    }
+                },
+                "type": "object"
+            },
             "UnidadMedida": {
                 "title": "Unidad de Medida",
                 "description": "Unidad de medida para productos",
@@ -11570,6 +13767,10 @@
             "description": "Autenticación"
         },
         {
+            "name": "Catálogos Fiscales",
+            "description": "Catálogos Fiscales"
+        },
+        {
             "name": "Cargos",
             "description": "Cargos"
         },
@@ -11632,6 +13833,10 @@
         {
             "name": "Sucursales",
             "description": "Sucursales"
+        },
+        {
+            "name": "Catálogos Contables",
+            "description": "Catálogos Contables"
         },
         {
             "name": "Usuarios",

@@ -10,6 +10,7 @@ use App\Models\TipoCuenta;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use OpenApi\Attributes as OA;
 
 /**
  * Controlador API para Tipos de Cuentas Contables
@@ -28,6 +29,79 @@ class TipoCuentaController extends Controller
      * @param Request $request
      * @return AnonymousResourceCollection
      */
+    #[OA\Get(
+        path: "/api/tipos-cuenta",
+        summary: "Listar tipos de cuenta",
+        description: "Obtiene el listado de tipos de cuentas contables (Activo, Pasivo, Patrimonio, Ingresos, Costos, Gastos) con filtros por naturaleza y estado.",
+        security: [["sanctum" => []]],
+        tags: ["Catálogos Contables"],
+        parameters: [
+            new OA\Parameter(
+                name: "naturaleza",
+                in: "query",
+                description: "Filtrar por naturaleza contable",
+                required: false,
+                schema: new OA\Schema(type: "string", enum: ["Deudora", "Acreedora"], example: "Deudora")
+            ),
+            new OA\Parameter(
+                name: "activo",
+                in: "query",
+                description: "Filtrar por estado activo. 1 = activos, 0 = inactivos",
+                required: false,
+                schema: new OA\Schema(type: "integer", example: 1)
+            ),
+            new OA\Parameter(
+                name: "buscar",
+                in: "query",
+                description: "Buscar por nombre del tipo de cuenta",
+                required: false,
+                schema: new OA\Schema(type: "string", example: "Activo")
+            ),
+            new OA\Parameter(
+                name: "sort_by",
+                in: "query",
+                description: "Campo por el cual ordenar",
+                required: false,
+                schema: new OA\Schema(type: "string", default: "nombre")
+            ),
+            new OA\Parameter(
+                name: "sort_order",
+                in: "query",
+                description: "Orden ascendente o descendente",
+                required: false,
+                schema: new OA\Schema(type: "string", enum: ["asc", "desc"], default: "asc")
+            ),
+            new OA\Parameter(
+                name: "per_page",
+                in: "query",
+                description: "Número de registros por página",
+                required: false,
+                schema: new OA\Schema(type: "integer", default: 15)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Listado obtenido exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: "data",
+                            type: "array",
+                            items: new OA\Items(ref: "#/components/schemas/TipoCuenta")
+                        ),
+                        new OA\Property(property: "current_page", type: "integer", example: 1),
+                        new OA\Property(property: "per_page", type: "integer", example: 15),
+                        new OA\Property(property: "total", type: "integer", example: 6)
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function index(Request $request): AnonymousResourceCollection
     {
         $query = TipoCuenta::where('eliminado', 0)->with('cuentasContables');
@@ -61,6 +135,46 @@ class TipoCuentaController extends Controller
      * @param StoreTipoCuentaRequest $request
      * @return JsonResponse
      */
+    #[OA\Post(
+        path: "/api/tipos-cuenta",
+        summary: "Crear tipo de cuenta",
+        description: "Crea un nuevo tipo de cuenta contable. Los tipos estándar son: Activo, Pasivo, Patrimonio, Ingresos, Costos, Gastos.",
+        security: [["sanctum" => []]],
+        tags: ["Catálogos Contables"],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["nombre", "naturaleza"],
+                properties: [
+                    new OA\Property(property: "nombre", type: "string", example: "Activo"),
+                    new OA\Property(property: "descripcion", type: "string", example: "Representa los bienes y derechos de la empresa"),
+                    new OA\Property(property: "naturaleza", type: "string", enum: ["Deudora", "Acreedora"], example: "Deudora"),
+                    new OA\Property(property: "activo", type: "boolean", example: true)
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: "Tipo de cuenta creado exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "message", type: "string", example: "Tipo de cuenta creado exitosamente"),
+                        new OA\Property(property: "data", ref: "#/components/schemas/TipoCuenta")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 422,
+                description: "Error de validación"
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function store(StoreTipoCuentaRequest $request): JsonResponse
     {
         $tipo = TipoCuenta::create($request->validated());
@@ -78,6 +192,42 @@ class TipoCuentaController extends Controller
      * @param int $id
      * @return JsonResponse
      */
+    #[OA\Get(
+        path: "/api/tipos-cuenta/{id}",
+        summary: "Obtener tipo de cuenta",
+        description: "Obtiene los detalles de un tipo de cuenta específico, incluyendo las cuentas contables asociadas.",
+        security: [["sanctum" => []]],
+        tags: ["Catálogos Contables"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del tipo de cuenta",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Tipo de cuenta encontrado",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "data", ref: "#/components/schemas/TipoCuenta")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Tipo de cuenta no encontrado"
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function show(int $id): JsonResponse
     {
         $tipo = TipoCuenta::where('id', $id)
@@ -100,6 +250,58 @@ class TipoCuentaController extends Controller
      * @param int $id
      * @return JsonResponse
      */
+    #[OA\Put(
+        path: "/api/tipos-cuenta/{id}",
+        summary: "Actualizar tipo de cuenta",
+        description: "Actualiza los datos de un tipo de cuenta existente.",
+        security: [["sanctum" => []]],
+        tags: ["Catálogos Contables"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del tipo de cuenta a actualizar",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: "nombre", type: "string", example: "Activo Corriente"),
+                    new OA\Property(property: "descripcion", type: "string", example: "Activos con liquidez menor a un año"),
+                    new OA\Property(property: "naturaleza", type: "string", enum: ["Deudora", "Acreedora"], example: "Deudora"),
+                    new OA\Property(property: "activo", type: "boolean", example: true)
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Tipo de cuenta actualizado exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "message", type: "string", example: "Tipo de cuenta actualizado exitosamente"),
+                        new OA\Property(property: "data", ref: "#/components/schemas/TipoCuenta")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Tipo de cuenta no encontrado"
+            ),
+            new OA\Response(
+                response: 422,
+                description: "Error de validación"
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function update(UpdateTipoCuentaRequest $request, int $id): JsonResponse
     {
         $tipo = TipoCuenta::where('id', $id)
@@ -121,6 +323,46 @@ class TipoCuentaController extends Controller
      * @param int $id
      * @return JsonResponse
      */
+    #[OA\Delete(
+        path: "/api/tipos-cuenta/{id}",
+        summary: "Eliminar tipo de cuenta",
+        description: "Elimina un tipo de cuenta (soft delete). No se puede eliminar si tiene cuentas contables asignadas.",
+        security: [["sanctum" => []]],
+        tags: ["Catálogos Contables"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del tipo de cuenta a eliminar",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Tipo de cuenta eliminado exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "message", type: "string", example: "Tipo de cuenta eliminado exitosamente")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Tipo de cuenta no encontrado"
+            ),
+            new OA\Response(
+                response: 422,
+                description: "No se puede eliminar - tiene cuentas contables asignadas"
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function destroy(int $id): JsonResponse
     {
         $tipo = TipoCuenta::where('id', $id)
@@ -150,6 +392,46 @@ class TipoCuentaController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
+    #[OA\Get(
+        path: "/api/tipos-cuenta/por-naturaleza",
+        summary: "Tipos de cuenta por naturaleza",
+        description: "Obtiene los tipos de cuenta filtrados por naturaleza contable (Deudora o Acreedora).",
+        security: [["sanctum" => []]],
+        tags: ["Catálogos Contables"],
+        parameters: [
+            new OA\Parameter(
+                name: "naturaleza",
+                in: "query",
+                description: "Naturaleza contable del tipo de cuenta",
+                required: true,
+                schema: new OA\Schema(type: "string", enum: ["Deudora", "Acreedora"], example: "Deudora")
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Tipos de cuenta obtenidos exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(
+                            property: "data",
+                            type: "array",
+                            items: new OA\Items(ref: "#/components/schemas/TipoCuenta")
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 422,
+                description: "Naturaleza inválida"
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function porNaturaleza(Request $request): JsonResponse
     {
         $request->validate([
@@ -173,6 +455,33 @@ class TipoCuentaController extends Controller
      *
      * @return JsonResponse
      */
+    #[OA\Get(
+        path: "/api/tipos-cuenta/activos",
+        summary: "Tipos de cuenta activos",
+        description: "Obtiene únicamente los tipos de cuenta activos, útil para llenar selectores en formularios.",
+        security: [["sanctum" => []]],
+        tags: ["Catálogos Contables"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Tipos de cuenta activos obtenidos exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(
+                            property: "data",
+                            type: "array",
+                            items: new OA\Items(ref: "#/components/schemas/TipoCuenta")
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function activos(): JsonResponse
     {
         $tipos = TipoCuenta::where('eliminado', 0)
