@@ -875,7 +875,7 @@ Para soporte técnico, consultas y asistencia:
   <strong>Desarrollado con ❤️ y el "Toque Humano" por</strong><br>
   <a href="https://ursol.com"><strong>Sistemas Ursol S.A.</strong></a><br>
   <em>Costa Rica | 30 años de experiencia tecnológica</em><br><br>
-  <strong>Fundador y Visionario:</strong> Eduardo Alberto Ureña Solano<br>
+  <strong>Fundador y Visionario:</strong> <a href="https://github.com/ursolcr">Eduardo Alberto Ureña Solano</a><br><br>
   <strong>Desarrollador Principal:</strong> <a href="https://github.com/jeremy-sud">Jeremy Arias Solano</a><br><br>
   <sub>© 2025 Sistemas Ursol S.A. - Todos los derechos reservados</sub>
 </p>
