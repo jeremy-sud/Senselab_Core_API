@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use OpenApi\Attributes as OA;
 
 class AsientoContable extends Model
 {
@@ -28,11 +29,18 @@ class AsientoContable extends Model
      */
     protected $fillable = [
         'empresa_id',
+        'numero_asiento',
         'fecha_asiento',
-        'descripcion',
+        'tipo_asiento',
+        'origen',
+        'documento_origen_id',
+        'concepto',
         'total_debe',
         'total_haber',
         'estado',
+        'usuario_id',
+        'activo',
+        'eliminado'
     ];
 
     /**

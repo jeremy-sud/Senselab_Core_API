@@ -18,7 +18,7 @@ class VentaResource extends JsonResource
             'id' => $this->id,
             'empresa_id' => $this->empresa_id,
             'sucursal_id' => $this->sucursal_id,
-            'numero_venta' => $this->numero_venta,
+            'numero_venta' => $this->numero_comprobante,
             'fecha_venta' => $this->fecha_venta?->toISOString(),
             'cliente_id' => $this->cliente_id,
             'cliente' => $this->whenLoaded('cliente', function () {
@@ -37,7 +37,7 @@ class VentaResource extends JsonResource
                     'email' => $this->usuario->email,
                 ];
             }),
-            'tipo_venta' => $this->tipo_venta,
+            'tipo_venta' => $this->tipo_comprobante,
             'forma_pago_id' => $this->forma_pago_id,
             'forma_pago' => $this->whenLoaded('formaPago', function () {
                 return [
@@ -45,11 +45,11 @@ class VentaResource extends JsonResource
                     'nombre' => $this->formaPago->nombre,
                 ];
             }),
-            'subtotal' => (float) $this->subtotal,
-            'descuento' => (float) $this->descuento,
-            'impuestos' => (float) $this->impuestos,
-            'total' => (float) $this->total,
-            'estado' => $this->estado,
+            'subtotal' => (float) $this->subtotal_bruto_total,
+            'descuento' => (float) $this->monto_descuento_total,
+            'impuestos' => (float) $this->monto_impuesto_total,
+            'total' => (float) $this->monto_total_venta,
+            'estado' => $this->estado_venta,
             'observaciones' => $this->observaciones,
             
             // Detalles de la venta
