@@ -5,6 +5,52 @@
 
 ---
 
+## 📖 Acceso Rápido
+
+### Documentación Interactiva Swagger
+
+**🚀 Recomendado:** Para explorar y probar la API de forma interactiva, accede a:
+
+```
+http://localhost:8000/api/documentation
+```
+
+**Características de Swagger UI:**
+- ✅ Prueba endpoints directamente desde el navegador
+- ✅ Autenticación Bearer integrada
+- ✅ Ejemplos de request/response
+- ✅ Documentación actualizada automáticamente
+- ✅ Schemas de datos completos
+
+### Esta Documentación
+
+Este documento proporciona información detallada sobre todos los endpoints, incluyendo:
+- Ejemplos de uso con curl
+- Estructura de datos
+- Códigos de error
+- Casos de uso
+
+---
+
+## 🧪 Testing
+
+El proyecto incluye **66 tests automatizados** que validan el funcionamiento de la API:
+
+- **AuthTest (11 tests)**: Login, logout, tokens, permisos
+- **ProductoTest (12 tests)**: CRUD completo, validación, búsqueda
+- **PermissionTest (17 tests)**: Sistema RBAC completo
+- **RoleTest (10 tests)**: Modelo Rol y relaciones
+- **UsuarioTest (16 tests)**: Modelo Usuario y autenticación
+
+Ejecutar tests:
+```bash
+php artisan test
+```
+
+Ver documentación completa de testing: [FASE_4_TESTING_COMPLETADA.md](FASE_4_TESTING_COMPLETADA.md)
+
+---
+
 ## 📚 Documentación de Endpoints
 
 ### Configuración Base
@@ -40,6 +86,8 @@ El sistema utiliza **Laravel Sanctum** para autenticación basada en tokens API.
 ### POST /login
 Iniciar sesión y obtener token de acceso
 
+**Endpoint en Swagger:** `POST /api/login`
+
 **Request:**
 ```json
 {
@@ -48,52 +96,138 @@ Iniciar sesión y obtener token de acceso
 }
 ```
 
+**Ejemplo con curl:**
+```bash
+curl -X POST http://localhost:8000/api/login \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "admin@ursol.com",
+    "password": "admin123"
+  }'
+```
+
 **Response (200):**
 ```json
 {
-  "user": {
-    "id": 1,
-    "nombre": "Administrador",
-    "apellidos": "Sistema",
-    "email": "admin@ursol.com",
-    "empresa_id": 1,
-    "cargo_id": 1,
-    "activo": true
+  "success": true,
+  "data": {
+    "usuario": {
+      "id": 1,
+      "nombre": "Administrador Sistema",
+      "email": "admin@ursol.com",
+      "empresa_id": 1,
+      "cargo_id": 1,
+      "activo": true,
+      "roles": [
+        {
+          "id": 1,
+          "nombre": "Administrador",
+          "slug": "administrador"
+        }
+      ],
+      "empresa": {
+        "id": 1,
+        "nombre": "Sistemas Ursol S.A.",
+        "identificacion": "3-101-123456"
+      }
+    },
+    "token": "1|dkjf9283hd9fh2938hf9823hf9823hf9823h",
+    "permisos": [
+      "empresas.crear",
+      "empresas.leer",
+      "empresas.actualizar",
+      "empresas.eliminar",
+      "productos.crear",
+      "productos.leer"
+      // ... Total: 68 permisos
+    ]
   },
-  "token": "1|dkjf9283hd9fh2938hf9823hf9823hf9823h",
-  "permisos": [
-    "empresas.crear",
-    "empresas.leer",
-    "empresas.actualizar",
-    "empresas.eliminar",
-    "sucursales.crear",
-    "sucursales.leer",
-    ...
-    // Total: 68 permisos
-  ]
+  "message": "Login exitoso"
 }
 ```
 
 **Errores:**
 ```json
-// Credenciales incorrectas (401)
+// Credenciales incorrectas (422)
 {
-  "message": "Credenciales incorrectas"
+  "message": "The given data was invalid.",
+  "errors": {
+    "email": [
+      "Las credenciales son incorrectas."
+    ]
+  }
 }
+```
 
-// Usuario inactivo (403)
-{
-  "message": "Usuario inactivo"
-}
+**Testing:**
+```php
+// Ver AuthTest::test_usuario_puede_hacer_login()
+$response = $this->postJson('/api/login', [
+    'email' => 'admin@ursol.com',
+    'password' => 'admin123',
+]);
+
+$response->assertStatus(200)
+         ->assertJsonStructure(['success', 'data' => ['usuario', 'token', 'permisos']]);
 ```
 
 ### POST /logout
 Cerrar sesión y revocar token actual
 
+**Endpoint en Swagger:** `POST /api/logout`
+
 **Headers:**
 ```http
 Authorization: Bearer {token}
 Accept: application/json
+```
+
+**Ejemplo con curl:**
+```bash
+curl -X POST http://localhost:8000/api/logout \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer 1|dkjf9283hd9fh2938hf9823hf9823hf9823h"
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "message": "Logout exitoso"
+}
+```
+
+**Testing:**
+```php
+// Ver AuthTest::test_usuario_puede_hacer_logout()
+$usuario = Usuario::factory()->create();
+$token = $usuario->createToken('test-token')->plainTextToken;
+
+$response = $this->withHeader('Authorization', 'Bearer ' . $token)
+                 ->postJson('/api/logout');
+
+$response->assertStatus(200);
+```
+
+---
+
+### GET /user
+Obtener información del usuario autenticado
+
+**Endpoint en Swagger:** `GET /api/user`
+
+**Headers:**
+```http
+Authorization: Bearer {token}
+Accept: application/json
+```
+
+**Ejemplo con curl:**
+```bash
+curl -X GET http://localhost:8000/api/user \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer 1|dkjf9283hd9fh2938hf9823hf9823hf9823h"
 ```
 
 **Response (200):**

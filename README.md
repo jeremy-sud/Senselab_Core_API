@@ -31,6 +31,7 @@
 - [Módulos del Sistema](#-módulos-del-sistema)
 - [API Reference](#-api-reference)
 - [Testing](#-testing)
+- [Documentación Swagger](#-documentación-swagger)
 - [Despliegue](#-despliegue)
 - [Contribuir](#-contribuir)
 - [Licencia](#-licencia)
@@ -72,13 +73,23 @@
 - Sistema de autenticación **100% funcional y probado**
 - Commit: `e668c64`
 
-**🔄 FASE 4 - Testing (EN PROGRESO)**
-- Implementación de pruebas automatizadas
-- Tests de autenticación, autorización y RBAC
-- Tests de endpoints CRUD principales
+**✅ FASE 4 - Testing (COMPLETADA)**
+- Suite completa de **66 tests** implementados
+- Tests de autenticación y autorización (11 tests)
+- Tests CRUD de productos (12 tests)
+- Tests de sistema RBAC y permisos (17 tests)
+- Tests unitarios de modelos Rol y Usuario (26 tests)
+- Base de datos de testing configurada (MySQL)
+- Helpers de testing en TestCase (RefreshDatabase, factories, seeds)
+- Ver detalles: [FASE_4_TESTING_COMPLETADA.md](FASE_4_TESTING_COMPLETADA.md)
 
-**📝 FASE 5 - Documentación API (PENDIENTE)**
-- Swagger/OpenAPI para documentación interactiva
+**✅ FASE 5 - Documentación API (COMPLETADA)**
+- Swagger/OpenAPI instalado y configurado (L5-Swagger 9.0.1)
+- Documentación interactiva en: `http://localhost:8000/api/documentation`
+- AuthController documentado (3 endpoints: login, logout, user)
+- ProductoController documentado (5 endpoints CRUD completos)
+- 10 schemas OpenAPI creados (Usuario, Rol, Permiso, Empresa, Producto, etc.)
+- Autenticación Bearer configurada en Swagger UI
 
 ### 🔑 Credenciales de Prueba
 
@@ -564,30 +575,119 @@ Accept: application/json
 
 ## 🧪 Testing
 
+El proyecto cuenta con una **suite completa de 66 tests** que verifican el funcionamiento de los componentes críticos del sistema.
+
+### Base de Datos de Testing
+
+Se utiliza una base de datos MySQL separada para testing:
+
+```env
+DB_DATABASE=api_db_testing
+```
+
+Crear la base de datos de testing:
+
+```bash
+sudo mysql -u root -e "CREATE DATABASE IF NOT EXISTS api_db_testing;"
+```
+
 ### Ejecutar Tests
 
 ```bash
-# Todos los tests
+# Todos los tests (66 tests)
 php artisan test
 
-# Tests específicos
-php artisan test --filter NombreDelTest
+# Tests específicos por clase
+php artisan test --filter AuthTest          # 11 tests de autenticación
+php artisan test --filter ProductoTest      # 12 tests de productos
+php artisan test --filter PermissionTest    # 17 tests de permisos RBAC
+php artisan test --filter RoleTest          # 10 tests unitarios de Rol
+php artisan test --filter UsuarioTest       # 16 tests unitarios de Usuario
 
 # Con cobertura
 php artisan test --coverage
+
+# Con detalles (verbose)
+php artisan test --verbose
 ```
 
 ### Estructura de Tests
 
 ```
 tests/
-├── Feature/              # Tests de integración
-│   ├── AlmacenTest.php
-│   ├── ProductoTest.php
-│   └── VentaTest.php
-└── Unit/                 # Tests unitarios
-    ├── Models/
-    └── Services/
+├── TestCase.php                    # Base con helpers (RefreshDatabase, factories)
+├── Feature/                        # Tests de integración (40 tests)
+│   ├── AuthTest.php               # Login, logout, tokens, permisos (11)
+│   ├── ProductoTest.php           # CRUD, search, filters, multi-tenancy (12)
+│   └── PermissionTest.php         # Sistema RBAC completo (17)
+└── Unit/                          # Tests unitarios (26 tests)
+    ├── RoleTest.php               # Modelo Rol y relaciones (10)
+    └── UsuarioTest.php            # Modelo Usuario, auth, RBAC (16)
+```
+
+### Tests Implementados
+
+#### Feature Tests (40)
+- **AuthTest (11)**: Login exitoso/fallido, logout, múltiples tokens, permisos
+- **ProductoTest (12)**: CRUD completo, validación, búsqueda, filtros, paginación, multi-tenancy, soft deletes
+- **PermissionTest (17)**: Verificación de permisos, roles, middleware, herencia, gestión
+
+#### Unit Tests (26)
+- **RoleTest (10)**: Relaciones, `hasPermission()`, scopes, normalización, sincronización
+- **UsuarioTest (16)**: Relaciones, `hasRole()`, `hasPermission()`, Sanctum, validación, autenticación
+
+### Documentación Completa
+
+Ver guía detallada en: [FASE_4_TESTING_COMPLETADA.md](FASE_4_TESTING_COMPLETADA.md)
+
+## 📚 Documentación Swagger
+
+El proyecto incluye **documentación interactiva Swagger/OpenAPI** para explorar y probar la API.
+
+### Acceder a Swagger UI
+
+Una vez iniciado el servidor, accede a:
+
+```
+http://localhost:8000/api/documentation
+```
+
+### Características
+
+- ✅ **Documentación interactiva**: Prueba endpoints directamente desde el navegador
+- ✅ **Autenticación Bearer**: Configura tu token una vez y úsalo en todas las peticiones
+- ✅ **Schemas completos**: Modelos de datos documentados (Usuario, Producto, Rol, Permiso, etc.)
+- ✅ **Ejemplos de request/response**: Ve datos de ejemplo para cada endpoint
+- ✅ **Filtros y parámetros**: Documenta todos los query params disponibles
+
+### Endpoints Documentados
+
+#### Autenticación
+- `POST /api/login` - Iniciar sesión y obtener token
+- `POST /api/logout` - Cerrar sesión
+- `GET /api/user` - Obtener usuario autenticado con permisos
+
+#### Productos
+- `GET /api/productos` - Listar productos (filtros, búsqueda, paginación)
+- `POST /api/productos` - Crear producto
+- `GET /api/productos/{id}` - Obtener producto
+- `PUT /api/productos/{id}` - Actualizar producto
+- `DELETE /api/productos/{id}` - Eliminar producto (soft delete)
+
+### Usar Autenticación en Swagger
+
+1. Haz login en `POST /api/login` con credenciales válidas
+2. Copia el token de la respuesta
+3. Haz clic en el botón **"Authorize"** (🔓)
+4. Ingresa: `Bearer {tu-token}`
+5. Ahora puedes probar todos los endpoints protegidos
+
+### Regenerar Documentación
+
+Si modificas las anotaciones OpenAPI en los controllers:
+
+```bash
+php artisan l5-swagger:generate
 ```
 
 ## 🚀 Despliegue
