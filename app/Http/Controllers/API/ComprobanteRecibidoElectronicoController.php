@@ -10,6 +10,7 @@ use App\Models\ComprobanteRecibidoElectronico;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use OpenApi\Attributes as OA;
 
 /**
  * Controlador para Comprobantes Electrónicos Recibidos
@@ -25,6 +26,35 @@ class ComprobanteRecibidoElectronicoController extends Controller
     /**
      * Listar comprobantes recibidos de la empresa
      */
+    #[OA\Get(
+        path: "/api/comprobantes-recibidos-electronicos",
+        summary: "Listar comprobantes electrónicos recibidos",
+        description: "Obtiene la lista paginada de comprobantes electrónicos recibidos de proveedores (facturas, notas de crédito, etc.) según normativa DGT.",
+        security: [["sanctum" => []]],
+        tags: ["Facturación Electrónica"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Lista de comprobantes obtenida exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "data", type: "array", items: new OA\Items(type: "object")),
+                        new OA\Property(
+                            property: "meta",
+                            properties: [
+                                new OA\Property(property: "current_page", type: "integer", example: 1),
+                                new OA\Property(property: "total", type: "integer", example: 45),
+                                new OA\Property(property: "per_page", type: "integer", example: 15)
+                            ],
+                            type: "object"
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function index(Request $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -48,6 +78,37 @@ class ComprobanteRecibidoElectronicoController extends Controller
     /**
      * Registrar nuevo comprobante recibido
      */
+    #[OA\Post(
+        path: "/api/comprobantes-recibidos-electronicos",
+        summary: "Registrar comprobante electrónico recibido",
+        description: "Registra un nuevo comprobante electrónico recibido de un proveedor. Almacena XML y datos estructurados.",
+        security: [["sanctum" => []]],
+        tags: ["Facturación Electrónica"],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["proveedor_id", "clave_numerica", "tipo_documento_dgt", "fecha_emision_comprobante", "total_impuesto", "total_comprobante", "xml_contenido"],
+                properties: [
+                    new OA\Property(property: "proveedor_id", type: "integer", example: 3),
+                    new OA\Property(property: "clave_numerica", type: "string", maxLength: 50, example: "50621012400010101234567890123456789012345678"),
+                    new OA\Property(property: "consecutivo_receptor", type: "string", maxLength: 20, nullable: true, example: "REC-001"),
+                    new OA\Property(property: "tipo_documento_dgt", type: "string", maxLength: 2, example: "01", description: "Código según catálogo DGT: 01=Factura, 02=Nota Débito, 03=Nota Crédito"),
+                    new OA\Property(property: "fecha_emision_comprobante", type: "string", format: "date-time", example: "2024-01-15 14:30:00"),
+                    new OA\Property(property: "moneda", type: "string", enum: ["CRC", "USD", "EUR"], example: "CRC", description: "Opcional, por defecto CRC"),
+                    new OA\Property(property: "total_impuesto", type: "number", format: "decimal", example: 6500.00),
+                    new OA\Property(property: "total_comprobante", type: "number", format: "decimal", example: 56500.00),
+                    new OA\Property(property: "xml_contenido", type: "string", example: "<?xml version='1.0'..."),
+                    new OA\Property(property: "entrada_inventario_id", type: "integer", nullable: true, example: 12)
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 201, description: "Comprobante registrado exitosamente"),
+            new OA\Response(response: 422, description: "Datos de validación incorrectos"),
+            new OA\Response(response: 500, description: "Error al registrar"),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function store(StoreComprobanteRecibidoElectronicoRequest $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -91,6 +152,27 @@ class ComprobanteRecibidoElectronicoController extends Controller
     /**
      * Mostrar comprobante específico
      */
+    #[OA\Get(
+        path: "/api/comprobantes-recibidos-electronicos/{id}",
+        summary: "Obtener comprobante electrónico",
+        description: "Obtiene el detalle completo de un comprobante electrónico recibido con proveedor, entrada de inventario y usuario que confirmó.",
+        security: [["sanctum" => []]],
+        tags: ["Facturación Electrónica"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del comprobante",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "Comprobante obtenido exitosamente"),
+            new OA\Response(response: 404, description: "Comprobante no encontrado"),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function show(Request $request, int $id): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -108,6 +190,39 @@ class ComprobanteRecibidoElectronicoController extends Controller
     /**
      * Actualizar comprobante recibido
      */
+    #[OA\Put(
+        path: "/api/comprobantes-recibidos-electronicos/{id}",
+        summary: "Actualizar comprobante electrónico",
+        description: "Actualiza datos del comprobante. No permite modificar comprobantes ya confirmados.",
+        security: [["sanctum" => []]],
+        tags: ["Facturación Electrónica"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del comprobante",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: "proveedor_id", type: "integer", example: 3),
+                    new OA\Property(property: "consecutivo_receptor", type: "string", maxLength: 20, example: "REC-001"),
+                    new OA\Property(property: "entrada_inventario_id", type: "integer", nullable: true, example: 12)
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: "Comprobante actualizado exitosamente"),
+            new OA\Response(response: 404, description: "Comprobante no encontrado"),
+            new OA\Response(response: 422, description: "No se puede modificar un comprobante ya confirmado"),
+            new OA\Response(response: 500, description: "Error al actualizar"),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function update(UpdateComprobanteRecibidoElectronicoRequest $request, int $id): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -150,6 +265,37 @@ class ComprobanteRecibidoElectronicoController extends Controller
     /**
      * Eliminar comprobante
      */
+    #[OA\Delete(
+        path: "/api/comprobantes-recibidos-electronicos/{id}",
+        summary: "Eliminar comprobante electrónico",
+        description: "Elimina un comprobante electrónico. No permite eliminar comprobantes ya confirmados.",
+        security: [["sanctum" => []]],
+        tags: ["Facturación Electrónica"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del comprobante",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Comprobante eliminado exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "message", type: "string", example: "Comprobante eliminado exitosamente")
+                    ]
+                )
+            ),
+            new OA\Response(response: 404, description: "Comprobante no encontrado"),
+            new OA\Response(response: 422, description: "No se puede eliminar un comprobante ya confirmado"),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function destroy(Request $request, int $id): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -174,6 +320,28 @@ class ComprobanteRecibidoElectronicoController extends Controller
     /**
      * Confirmar/Aceptar comprobante por usuario
      */
+    #[OA\Post(
+        path: "/api/comprobantes-recibidos-electronicos/{id}/confirmar",
+        summary: "Confirmar comprobante",
+        description: "Marca el comprobante como confirmado/aceptado por el usuario receptor. Registra fecha y usuario que confirmó.",
+        security: [["sanctum" => []]],
+        tags: ["Facturación Electrónica"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del comprobante",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "Comprobante confirmado exitosamente"),
+            new OA\Response(response: 404, description: "Comprobante no encontrado"),
+            new OA\Response(response: 422, description: "El comprobante ya fue confirmado anteriormente"),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function confirmar(Request $request, int $id): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -204,6 +372,27 @@ class ComprobanteRecibidoElectronicoController extends Controller
     /**
      * Rechazar comprobante por usuario
      */
+    #[OA\Post(
+        path: "/api/comprobantes-recibidos-electronicos/{id}/rechazar",
+        summary: "Rechazar comprobante",
+        description: "Marca el comprobante como rechazado por el usuario receptor. Registra fecha y usuario que rechazó.",
+        security: [["sanctum" => []]],
+        tags: ["Facturación Electrónica"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del comprobante",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "Comprobante rechazado exitosamente"),
+            new OA\Response(response: 404, description: "Comprobante no encontrado"),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function rechazar(Request $request, int $id): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -227,6 +416,43 @@ class ComprobanteRecibidoElectronicoController extends Controller
     /**
      * Obtener comprobantes por proveedor
      */
+    #[OA\Get(
+        path: "/api/comprobantes-recibidos-electronicos/proveedor/{proveedorId}",
+        summary: "Comprobantes por proveedor",
+        description: "Obtiene todos los comprobantes electrónicos recibidos de un proveedor específico.",
+        security: [["sanctum" => []]],
+        tags: ["Facturación Electrónica"],
+        parameters: [
+            new OA\Parameter(
+                name: "proveedorId",
+                in: "path",
+                description: "ID del proveedor",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 3)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Lista de comprobantes obtenida exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "data", type: "array", items: new OA\Items(type: "object")),
+                        new OA\Property(
+                            property: "meta",
+                            properties: [
+                                new OA\Property(property: "current_page", type: "integer", example: 1),
+                                new OA\Property(property: "total", type: "integer", example: 23)
+                            ],
+                            type: "object"
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function porProveedor(Request $request, int $proveedorId): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -250,6 +476,26 @@ class ComprobanteRecibidoElectronicoController extends Controller
     /**
      * Obtener comprobantes pendientes de confirmar
      */
+    #[OA\Get(
+        path: "/api/comprobantes-recibidos-electronicos/pendientes/list",
+        summary: "Comprobantes pendientes",
+        description: "Obtiene todos los comprobantes electrónicos que aún no han sido confirmados ni rechazados por el usuario.",
+        security: [["sanctum" => []]],
+        tags: ["Facturación Electrónica"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Lista de comprobantes pendientes obtenida exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "data", type: "array", items: new OA\Items(type: "object"))
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function pendientes(Request $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -269,6 +515,37 @@ class ComprobanteRecibidoElectronicoController extends Controller
     /**
      * Resumen por estado de Hacienda
      */
+    #[OA\Get(
+        path: "/api/comprobantes-recibidos-electronicos/resumen/por-estado",
+        summary: "Resumen por estado de Hacienda",
+        description: "Obtiene estadísticas agregadas de comprobantes agrupados por estado de respuesta de Hacienda (Aceptado, Rechazado, Procesando).",
+        security: [["sanctum" => []]],
+        tags: ["Facturación Electrónica"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Resumen obtenido exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(
+                            property: "data",
+                            type: "array",
+                            items: new OA\Items(
+                                properties: [
+                                    new OA\Property(property: "estado_hacienda", type: "string", example: "Aceptado"),
+                                    new OA\Property(property: "total_comprobantes", type: "integer", example: 142),
+                                    new OA\Property(property: "monto_total", type: "number", format: "decimal", example: 8450000.00)
+                                ],
+                                type: "object"
+                            )
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function resumenPorEstado(Request $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -287,6 +564,39 @@ class ComprobanteRecibidoElectronicoController extends Controller
     /**
      * Actualizar respuesta de Hacienda
      */
+    #[OA\Put(
+        path: "/api/comprobantes-recibidos-electronicos/{id}/actualizar-respuesta-hacienda",
+        summary: "Actualizar respuesta de Hacienda",
+        description: "Actualiza el comprobante con la respuesta XML recibida de Hacienda (DGT) y su estado final.",
+        security: [["sanctum" => []]],
+        tags: ["Facturación Electrónica"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del comprobante",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["xml_respuesta_hacienda", "estado_hacienda"],
+                properties: [
+                    new OA\Property(property: "xml_respuesta_hacienda", type: "string", example: "<?xml version='1.0'..."),
+                    new OA\Property(property: "estado_hacienda", type: "string", enum: ["Aceptado", "Rechazado", "Procesando"], example: "Aceptado"),
+                    new OA\Property(property: "mensaje_hacienda", type: "string", nullable: true, example: "Comprobante aceptado")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: "Respuesta de Hacienda actualizada exitosamente"),
+            new OA\Response(response: 404, description: "Comprobante no encontrado"),
+            new OA\Response(response: 422, description: "Datos de validación incorrectos"),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function actualizarRespuestaHacienda(Request $request, int $id): JsonResponse
     {
         $request->validate([
