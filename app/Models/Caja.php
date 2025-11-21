@@ -28,7 +28,9 @@ class Caja extends Model
     protected $fillable = [
         'sucursal_id',
         'nombre',
-        'descripcion'
+        'descripcion',
+        'activo',
+        'eliminado'
     ];
 
     /**
