@@ -31,7 +31,7 @@ class UpdateCuentaPorCobrarRequest extends FormRequest
         return [
             'cliente_id' => ['nullable', 'integer', 'exists:clientes,id'],
             'venta_id' => ['nullable', 'integer', 'exists:ventas,id'],
-            'documento_referencia' => ['nullable', 'string', 'max:100'],
+            'numero_documento' => ['nullable', 'string', 'max:100'],
             'fecha_emision' => ['sometimes', 'date'],
             'fecha_vencimiento' => ['sometimes', 'date', 'after_or_equal:fecha_emision'],
             'moneda' => ['sometimes', 'string', 'size:3', Rule::in(['CRC', 'USD', 'EUR'])],
@@ -73,7 +73,7 @@ class UpdateCuentaPorCobrarRequest extends FormRequest
         return [
             'cliente_id' => 'cliente',
             'venta_id' => 'venta',
-            'documento_referencia' => 'documento de referencia',
+            'numero_documento' => 'número de documento',
             'fecha_emision' => 'fecha de emisión',
             'fecha_vencimiento' => 'fecha de vencimiento',
             'moneda' => 'moneda',

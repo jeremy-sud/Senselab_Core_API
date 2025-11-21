@@ -32,11 +32,11 @@ class OrdenCompra extends Model
         'proveedor_id',
         'almacen_destino_id',
         'moneda',
-        'monto_subtotal',
-        'monto_impuestos',
-        'monto_total',
-        'fecha_emision',
-        'fecha_entrega_estimada',
+        'subtotal',
+        'impuesto_total',
+        'total_orden',
+        'fecha_orden',
+        'fecha_entrega_esperada',
         'estado',
         'observaciones',
         'activo',
@@ -46,11 +46,11 @@ class OrdenCompra extends Model
     ];
 
     protected $casts = [
-        'fecha_emision' => 'date',
-        'fecha_entrega_estimada' => 'date',
-        'monto_subtotal' => 'decimal:2',
-        'monto_impuestos' => 'decimal:2',
-        'monto_total' => 'decimal:2',
+        'fecha_orden' => 'date',
+        'fecha_entrega_esperada' => 'date',
+        'subtotal' => 'decimal:2',
+        'impuesto_total' => 'decimal:2',
+        'total_orden' => 'decimal:2',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
     ];
@@ -60,7 +60,7 @@ class OrdenCompra extends Model
         'empresa_id' => 'required|exists:empresas,id',
         'proveedor_id' => 'required|exists:proveedores,id',
         'numero_orden' => 'nullable|string',
-        'fecha_emision' => 'required|date',
+        'fecha_orden' => 'required|date',
     ];
 
     /* ------------------------- Relaciones ------------------------- */
@@ -149,9 +149,9 @@ class OrdenCompra extends Model
                     $impuestos += (float) ($d->impuestos ?? 0);
                 }
 
-                $model->monto_subtotal = round($subtotal, 2);
-                $model->monto_impuestos = round($impuestos, 2);
-                $model->monto_total = round($subtotal + $impuestos, 2);
+                $model->subtotal = round($subtotal, 2);
+                $model->impuesto_total = round($impuestos, 2);
+                $model->total_orden = round($subtotal + $impuestos, 2);
             }
 
             // Normalizar número si es necesario
@@ -164,7 +164,7 @@ class OrdenCompra extends Model
     /* ------------------------- Helpers ------------------------- */
     public function calcularSaldoPendiente()
     {
-        // Método auxiliar para calcular saldo pendiente (monto_total - suma(pagos))
+        // Método auxiliar para calcular saldo pendiente (total_orden - suma(pagos))
         $pagado = 0;
         if ($this->relationLoaded('pagos')) {
             $pagado = $this->pagos->sum(function ($p) {
@@ -175,6 +175,6 @@ class OrdenCompra extends Model
             $pagado = $this->pagos()->sum('monto');
         }
 
-        return round(((float) ($this->monto_total ?? 0)) - $pagado, 2);
+        return round(((float) ($this->total_orden ?? 0)) - $pagado, 2);
     }
 }

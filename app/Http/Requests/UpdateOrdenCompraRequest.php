@@ -21,7 +21,7 @@ class UpdateOrdenCompraRequest extends FormRequest
     {
         return [
             'fecha_orden' => ['sometimes', 'required', 'date'],
-            'fecha_entrega_estimada' => ['nullable', 'date', 'after_or_equal:fecha_orden'],
+            'fecha_entrega_esperada' => ['nullable', 'date', 'after_or_equal:fecha_orden'],
             'estado' => ['sometimes', 'required', 'in:borrador,pendiente,aprobada,recibida,cancelada'],
             'observaciones' => ['nullable', 'string'],
         ];
@@ -31,7 +31,7 @@ class UpdateOrdenCompraRequest extends FormRequest
     {
         return [
             'fecha_orden.required' => 'La fecha de orden es obligatoria',
-            'fecha_entrega_estimada.after_or_equal' => 'La fecha de entrega debe ser igual o posterior a la fecha de orden',
+            'fecha_entrega_esperada.after_or_equal' => 'La fecha de entrega debe ser igual o posterior a la fecha de orden',
             'estado.in' => 'Estado inválido (borrador, pendiente, aprobada, recibida, cancelada)',
         ];
     }
