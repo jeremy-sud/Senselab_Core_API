@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('tipo_identificacion', 10);
             $table->string('numero_identificacion', 50);
             $table->string('nombre', 255);
+            $table->string('apellidos', 255);
             $table->string('nombre_comercial', 255)->nullable();
             $table->string('email', 255)->nullable();
             $table->string('telefono', 50)->nullable();
