@@ -9,16 +9,14 @@ class FormaPago extends Model
     protected $table = 'formas_pago';
 
     protected $fillable = [
+        'codigo_dgt',
         'nombre',
         'descripcion',
-        'tipo',
-        'requiere_referencia',
         'activo',
         'eliminado',
     ];
 
     protected $casts = [
-        'requiere_referencia' => 'boolean',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
         'creado_en' => 'datetime',
@@ -30,10 +28,9 @@ class FormaPago extends Model
     ];
 
     public static $rules = [
+        'codigo_dgt' => 'required|string|max:10|unique:formas_pago,codigo_dgt',
         'nombre' => 'required|string|max:255|unique:formas_pago,nombre',
         'descripcion' => 'nullable|string',
-        'tipo' => 'nullable|string|max:50',
-        'requiere_referencia' => 'boolean',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
     ];
@@ -44,9 +41,9 @@ class FormaPago extends Model
         return $query->where('activo', true)->where('eliminado', false);
     }
 
-    public function scopePorTipo($query, $tipo)
+    public function scopePorCodigo($query, $codigo)
     {
-        return $query->where('tipo', $tipo);
+        return $query->where('codigo_dgt', $codigo);
     }
 
     // Relaciones de ejemplo: pagos que usaron esta forma (si existe tabla pagos)
