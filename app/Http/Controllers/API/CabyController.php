@@ -111,7 +111,7 @@ class CabyController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
-        $query = Caby::where('eliminado', 0);
+        $query = Cabys::where('eliminado', 0);
 
         // Búsqueda por código o descripción
         if ($request->filled('buscar')) {
@@ -154,7 +154,7 @@ class CabyController extends Controller
     #[OA\Post(
         path: "/api/cabys",
         summary: "Crear código CAByS",
-        description: "Crea un nuevo código CAByS. El código debe tener 13 dígitos según catálogo oficial de Hacienda Costa Rica.",
+        description: "Crea un nuevo código CAByS. El código debe tener hasta 20 caracteres según catálogo oficial de Hacienda Costa Rica.",
         security: [["sanctum" => []]],
         tags: ["Catálogos Fiscales"],
         requestBody: new OA\RequestBody(
@@ -162,7 +162,7 @@ class CabyController extends Controller
             content: new OA\JsonContent(
                 required: ["codigo", "descripcion"],
                 properties: [
-                    new OA\Property(property: "codigo", type: "string", maxLength: 13, example: "8529901000000"),
+                    new OA\Property(property: "codigo", type: "string", maxLength: 20, example: "8529901000000"),
                     new OA\Property(property: "descripcion", type: "string", example: "Antenas de telefonía móvil"),
                     new OA\Property(property: "impuesto_iva_predeterminado", type: "number", format: "decimal", example: 13.00),
                     new OA\Property(property: "activo", type: "boolean", example: true)
@@ -193,7 +193,7 @@ class CabyController extends Controller
     )]
     public function store(StoreCabyRequest $request): JsonResponse
     {
-        $caby = Caby::create($request->validated());
+        $caby = Cabys::create($request->validated());
 
         return response()->json([
             'success' => true,
@@ -246,7 +246,7 @@ class CabyController extends Controller
     )]
     public function show(int $id): JsonResponse
     {
-        $caby = Caby::where('id', $id)
+        $caby = Cabys::where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
 
@@ -282,7 +282,7 @@ class CabyController extends Controller
             required: true,
             content: new OA\JsonContent(
                 properties: [
-                    new OA\Property(property: "codigo", type: "string", maxLength: 13, example: "8529901000000"),
+                    new OA\Property(property: "codigo", type: "string", maxLength: 20, example: "8529901000000"),
                     new OA\Property(property: "descripcion", type: "string", example: "Descripción actualizada"),
                     new OA\Property(property: "impuesto_iva_predeterminado", type: "number", format: "decimal", example: 13.00),
                     new OA\Property(property: "activo", type: "boolean", example: true)
@@ -317,7 +317,7 @@ class CabyController extends Controller
     )]
     public function update(UpdateCabyRequest $request, int $id): JsonResponse
     {
-        $caby = Caby::where('id', $id)
+        $caby = Cabys::where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
 
@@ -378,7 +378,7 @@ class CabyController extends Controller
     )]
     public function destroy(int $id): JsonResponse
     {
-        $caby = Caby::where('id', $id)
+        $caby = Cabys::where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
 
@@ -454,7 +454,7 @@ class CabyController extends Controller
 
         $termino = $request->termino;
 
-        $resultados = Caby::where('eliminado', 0)
+        $resultados = Cabys::where('eliminado', 0)
             ->where('activo', 1)
             ->where(function ($q) use ($termino) {
                 $q->where('codigo', 'like', "%{$termino}%")
