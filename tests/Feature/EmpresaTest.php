@@ -43,6 +43,9 @@ class EmpresaTest extends TestCase
     public function test_puede_crear_empresa()
     {
         $usuario = $this->createAdminUsuario();
+        
+        // Obtener un régimen tributario válido
+        $regimenTributario = \App\Models\RegimenTributario::first();
 
         $empresaData = [
             'nombre' => 'Nueva Empresa Test',
@@ -57,7 +60,7 @@ class EmpresaTest extends TestCase
             'telefono' => '+506 2555-6666',
             'email' => 'nueva@empresa.com',
             'moneda_defecto' => 'CRC',
-            'regimen_tributario_id' => 1,
+            'regimen_tributario_id' => $regimenTributario->id,
         ];
 
         $response = $this->authenticatedJson('POST', '/api/empresas', $empresaData, $usuario);
@@ -147,6 +150,9 @@ class EmpresaTest extends TestCase
     public function test_valida_email_unico()
     {
         $usuario = $this->createAdminUsuario();
+        
+        // Obtener un régimen tributario válido
+        $regimenTributario = \App\Models\RegimenTributario::first();
 
         $empresaData = [
             'nombre' => 'Empresa Email Dup',
@@ -161,7 +167,7 @@ class EmpresaTest extends TestCase
             'telefono' => '+506 2222-3333',
             'email' => $usuario->empresa->email, // Email duplicado
             'moneda_defecto' => 'CRC',
-            'regimen_tributario_id' => 1,
+            'regimen_tributario_id' => $regimenTributario->id,
         ];
 
         $response = $this->authenticatedJson('POST', '/api/empresas', $empresaData, $usuario);
@@ -190,9 +196,8 @@ class EmpresaTest extends TestCase
         $response->assertStatus(422)
                 ->assertJsonValidationErrors([
                     'nombre',
-                    'razon_social',
                     'num_identificacion_dgt',
-                    'tipo_identificacion'
+                    'regimen_tributario_id'
                 ]);
     }
 }

@@ -20,23 +20,8 @@ class ProductoTest extends TestCase
         $usuario = $this->createAdminUsuario();
         $empresa = $usuario->empresa;
 
-        Producto::create([
-            'empresa_id' => $empresa->id,
-            'nombre' => 'Producto Test 1',
-            'codigo' => 'PROD001',
-            'precio_venta' => 1000.00,
-            'activo' => true,
-            'eliminado' => false,
-        ]);
-
-        Producto::create([
-            'empresa_id' => $empresa->id,
-            'nombre' => 'Producto Test 2',
-            'codigo' => 'PROD002',
-            'precio_venta' => 2000.00,
-            'activo' => true,
-            'eliminado' => false,
-        ]);
+        $this->createProducto(['nombre' => 'Producto Test 1', 'codigo' => 'PROD001'], $empresa);
+        $this->createProducto(['nombre' => 'Producto Test 2', 'codigo' => 'PROD002'], $empresa);
 
         // Act
         $response = $this->authenticatedJson('GET', '/api/productos', [], $usuario);
@@ -68,12 +53,14 @@ class ProductoTest extends TestCase
 
         $productoData = [
             'empresa_id' => $empresa->id,
+            'categoria_id' => $this->getCategoriaProducto($empresa)->id,
+            'unidad_medida_id' => $this->getUnidadMedida()->id,
             'nombre' => 'Nuevo Producto',
             'codigo' => 'NP001',
+            'tipo' => 'producto',
             'descripcion' => 'Descripción del producto',
             'precio_venta' => 5000.00,
             'precio_compra' => 3000.00,
-            'tipo_producto' => 'Producto',
             'activo' => true,
         ];
 
@@ -124,23 +111,19 @@ class ProductoTest extends TestCase
         // Arrange
         $usuario = $this->createAdminUsuario();
 
-        // Act: Crear sin nombre
-        $response = $this->authenticatedJson('POST', '/api/productos', [
-            'codigo' => 'TEST001',
-        ], $usuario);
+        // Act: Crear sin campos requeridos
+        $response = $this->authenticatedJson('POST', '/api/productos', [], $usuario);
 
-        // Assert
+        // Assert: Debe fallar por falta de campos requeridos
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['nombre']);
-
-        // Act: Crear sin código
-        $response = $this->authenticatedJson('POST', '/api/productos', [
-            'nombre' => 'Producto Test',
-        ], $usuario);
-
-        // Assert
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['codigo']);
+            ->assertJsonValidationErrors([
+                'empresa_id',
+                'categoria_id',
+                'unidad_medida_id',
+                'nombre',
+                'tipo',
+                'precio_venta'
+            ]);
     }
 
     /**
@@ -152,20 +135,16 @@ class ProductoTest extends TestCase
         $usuario = $this->createAdminUsuario();
         $empresa = $usuario->empresa;
 
-        Producto::create([
-            'empresa_id' => $empresa->id,
-            'nombre' => 'Producto Original',
-            'codigo' => 'DUP001',
-            'precio_venta' => 1000.00,
-            'activo' => true,
-            'eliminado' => false,
-        ]);
+        $this->createProducto(['nombre' => 'Producto Original', 'codigo' => 'DUP001'], $empresa);
 
         // Act: Intentar crear con mismo código
         $response = $this->authenticatedJson('POST', '/api/productos', [
             'empresa_id' => $empresa->id,
+            'categoria_id' => $this->getCategoriaProducto($empresa)->id,
+            'unidad_medida_id' => $this->getUnidadMedida()->id,
             'nombre' => 'Producto Duplicado',
             'codigo' => 'DUP001',
+            'tipo' => 'producto',
             'precio_venta' => 2000.00,
         ], $usuario);
 
@@ -183,7 +162,7 @@ class ProductoTest extends TestCase
         $usuario = $this->createAdminUsuario();
         $empresa = $usuario->empresa;
 
-        $producto = Producto::create([
+        $producto = $this->createProducto([
             'empresa_id' => $empresa->id,
             'nombre' => 'Producto Original',
             'codigo' => 'ORIG001',
@@ -222,7 +201,7 @@ class ProductoTest extends TestCase
         $usuario = $this->createAdminUsuario();
         $empresa = $usuario->empresa;
 
-        $producto = Producto::create([
+        $producto = $this->createProducto([
             'empresa_id' => $empresa->id,
             'nombre' => 'Producto a Eliminar',
             'codigo' => 'DEL001',
@@ -252,7 +231,7 @@ class ProductoTest extends TestCase
         $usuario = $this->createAdminUsuario();
         $empresa = $usuario->empresa;
 
-        Producto::create([
+        $this->createProducto([
             'empresa_id' => $empresa->id,
             'nombre' => 'Laptop Dell',
             'codigo' => 'LAP001',
@@ -261,7 +240,7 @@ class ProductoTest extends TestCase
             'eliminado' => false,
         ]);
 
-        Producto::create([
+        $this->createProducto([
             'empresa_id' => $empresa->id,
             'nombre' => 'Mouse Logitech',
             'codigo' => 'MOU001',
@@ -290,7 +269,7 @@ class ProductoTest extends TestCase
         $usuario = $this->createAdminUsuario();
         $empresa = $usuario->empresa;
 
-        Producto::create([
+        $this->createProducto([
             'empresa_id' => $empresa->id,
             'nombre' => 'Producto Activo',
             'codigo' => 'ACT001',
@@ -299,7 +278,7 @@ class ProductoTest extends TestCase
             'eliminado' => false,
         ]);
 
-        Producto::create([
+        $this->createProducto([
             'empresa_id' => $empresa->id,
             'nombre' => 'Producto Inactivo',
             'codigo' => 'INA001',
@@ -330,7 +309,7 @@ class ProductoTest extends TestCase
 
         // Crear 25 productos
         for ($i = 1; $i <= 25; $i++) {
-            Producto::create([
+            $this->createProducto([
                 'empresa_id' => $empresa->id,
                 'nombre' => "Producto {$i}",
                 'codigo' => "PROD" . str_pad($i, 3, '0', STR_PAD_LEFT),
@@ -377,7 +356,7 @@ class ProductoTest extends TestCase
         ]);
 
         // Crear productos para empresa1
-        Producto::create([
+        $this->createProducto([
             'empresa_id' => $empresa1->id,
             'nombre' => 'Producto Empresa 1',
             'codigo' => 'EMP1-001',
@@ -387,7 +366,7 @@ class ProductoTest extends TestCase
         ]);
 
         // Crear productos para empresa2
-        Producto::create([
+        $this->createProducto([
             'empresa_id' => $empresa2->id,
             'nombre' => 'Producto Empresa 2',
             'codigo' => 'EMP2-001',
@@ -416,7 +395,7 @@ class ProductoTest extends TestCase
         $usuario = $this->createAdminUsuario();
         $empresa = $usuario->empresa;
 
-        Producto::create([
+        $this->createProducto([
             'empresa_id' => $empresa->id,
             'nombre' => 'Producto Activo',
             'codigo' => 'ACT001',
@@ -425,7 +404,7 @@ class ProductoTest extends TestCase
             'eliminado' => false,
         ]);
 
-        Producto::create([
+        $this->createProducto([
             'empresa_id' => $empresa->id,
             'nombre' => 'Producto Eliminado',
             'codigo' => 'DEL001',

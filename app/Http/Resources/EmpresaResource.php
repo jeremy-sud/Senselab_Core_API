@@ -16,9 +16,10 @@ class EmpresaResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'nombre' => $this->nombre,
             'nombre_comercial' => $this->nombre_comercial,
             'razon_social' => $this->razon_social,
-            'identificacion' => $this->identificacion,
+            'num_identificacion_dgt' => $this->num_identificacion_dgt,
             'tipo_identificacion' => $this->tipo_identificacion,
             'regimen_tributario_id' => $this->regimen_tributario_id,
             'regimen_tributario' => $this->whenLoaded('regimenTributario', function () {

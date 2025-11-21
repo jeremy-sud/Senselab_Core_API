@@ -193,4 +193,51 @@ abstract class TestCase extends BaseTestCase
             $rol->permisos()->attach($permiso->id);
         }
     }
+
+    /**
+     * Crea o retorna una categoría de producto
+     */
+    protected function getCategoriaProducto(Empresa $empresa = null): \App\Models\CategoriaProducto
+    {
+        return \App\Models\CategoriaProducto::firstOrCreate(
+            ['nombre' => 'Categoría Test'],
+            ['activo' => true, 'eliminado' => false]
+        );
+    }
+
+    /**
+     * Crea o retorna una unidad de medida
+     */
+    protected function getUnidadMedida(): \App\Models\UnidadMedida
+    {
+        return \App\Models\UnidadMedida::firstOrCreate(
+            ['codigo_dgt' => 'Unn'],
+            ['nombre' => 'Unidad', 'activo' => true, 'eliminado' => false]
+        );
+    }
+
+    /**
+     * Crea un producto de prueba con todos los campos requeridos
+     */
+    protected function createProducto(array $attributes = [], Empresa $empresa = null): \App\Models\Producto
+    {
+        if (!$empresa) {
+            $empresa = Empresa::first() ?? $this->createEmpresa();
+        }
+
+        $categoria = $this->getCategoriaProducto($empresa);
+        $unidad = $this->getUnidadMedida();
+
+        return \App\Models\Producto::create(array_merge([
+            'empresa_id' => $empresa->id,
+            'categoria_id' => $categoria->id,
+            'unidad_medida_id' => $unidad->id,
+            'nombre' => 'Producto Test ' . rand(1000, 9999),
+            'codigo' => 'PROD' . rand(1000, 9999),
+            'tipo' => 'producto',
+            'precio_venta' => 1000.00,
+            'activo' => true,
+            'eliminado' => false,
+        ], $attributes));
+    }
 }
