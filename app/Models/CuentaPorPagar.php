@@ -24,10 +24,8 @@ class CuentaPorPagar extends Model
     protected $fillable = [
         'proveedor_id',
         'orden_compra_id',
-        'comprobante_recibido_id',
-        'documento_referencia_proveedor',
-        'fecha_emision_documento',
-        'fecha_recepcion_documento',
+        'numero_documento',
+        'fecha_emision',
         'fecha_vencimiento',
         'moneda',
         'monto_original',
@@ -44,12 +42,11 @@ class CuentaPorPagar extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'fecha_emision_documento' => 'date',
-        'fecha_recepcion_documento' => 'date',
+        'fecha_emision' => 'date',
         'fecha_vencimiento' => 'date',
         'monto_original' => 'decimal:5',
         'monto_pagado' => 'decimal:5',
-        'saldo_pendiente' => 'decimal:2',
+        'monto_pendiente' => 'decimal:2',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
         'creado_en' => 'datetime',
@@ -82,11 +79,9 @@ class CuentaPorPagar extends Model
     public static $rules = [
         'proveedor_id' => 'required|exists:proveedores,id',
         'orden_compra_id' => 'nullable|exists:ordenes_compra,id',
-        'comprobante_recibido_id' => 'nullable|exists:comprobantes_recibidos_electronicos,id',
-        'documento_referencia_proveedor' => 'required|string|max:100',
-        'fecha_emision_documento' => 'required|date',
-        'fecha_recepcion_documento' => 'nullable|date',
-        'fecha_vencimiento' => 'required|date|after_or_equal:fecha_emision_documento',
+        'numero_documento' => 'required|string|max:100',
+        'fecha_emision' => 'required|date',
+        'fecha_vencimiento' => 'required|date|after_or_equal:fecha_emision',
         'moneda' => 'required|string|size:3',
         'monto_original' => 'required|numeric|min:0',
         'monto_pagado' => 'required|numeric|min:0',
@@ -120,13 +115,7 @@ class CuentaPorPagar extends Model
         return $this->belongsTo(OrdenCompra::class);
     }
 
-    /**
-     * Get the comprobante recibido associated with the cuenta por pagar.
-     */
-    public function comprobanteRecibido()
-    {
-        return $this->belongsTo(ComprobanteRecibidoElectronico::class, 'comprobante_recibido_id');
-    }
+
 
     /**
      * Get the pagos for the cuenta por pagar.
@@ -144,7 +133,7 @@ class CuentaPorPagar extends Model
     public function getEstaVencidaAttribute()
     {
         return $this->fecha_vencimiento < now() && 
-               $this->saldo_pendiente > 0 && 
+               $this->monto_pendiente > 0 && 
                $this->estado !== 'Anulada';
     }
 

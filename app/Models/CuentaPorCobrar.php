@@ -24,7 +24,7 @@ class CuentaPorCobrar extends Model
     protected $fillable = [
         'cliente_id',
         'venta_id',
-        'documento_referencia',
+        'numero_documento',
         'fecha_emision',
         'fecha_vencimiento',
         'moneda',
@@ -46,7 +46,7 @@ class CuentaPorCobrar extends Model
         'fecha_vencimiento' => 'date',
         'monto_original' => 'decimal:5',
         'monto_pagado' => 'decimal:5',
-        'saldo_pendiente' => 'decimal:2',
+        'monto_pendiente' => 'decimal:2',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
         'creado_en' => 'datetime',
@@ -79,7 +79,7 @@ class CuentaPorCobrar extends Model
     public static $rules = [
         'cliente_id' => 'nullable|exists:clientes,id',
         'venta_id' => 'nullable|exists:ventas,id',
-        'documento_referencia' => 'nullable|string|max:100',
+        'numero_documento' => 'nullable|string|max:100',
         'fecha_emision' => 'required|date',
         'fecha_vencimiento' => 'required|date|after_or_equal:fecha_emision',
         'moneda' => 'required|string|size:3',
@@ -131,7 +131,7 @@ class CuentaPorCobrar extends Model
     public function getEstaVencidaAttribute()
     {
         return $this->fecha_vencimiento < now() && 
-               $this->saldo_pendiente > 0 && 
+               $this->monto_pendiente > 0 && 
                $this->estado !== 'Anulada';
     }
 
