@@ -21,11 +21,12 @@ class DetalleSalidaInventario extends Model
     protected $fillable = [
         'salida_inventario_id',
         'producto_id',
+        'numero_linea',
         'cantidad',
-        'costo_unitario_salida',
-        'subtotal',
+        'costo_unitario',
+        'total_linea',
         'lote',
-        'fecha_vencimiento',
+        'observaciones',
         'activo',
         'eliminado',
     ];
@@ -37,9 +38,8 @@ class DetalleSalidaInventario extends Model
      */
     protected $casts = [
         'cantidad' => 'decimal:2',
-        'costo_unitario_salida' => 'decimal:2',
-        'subtotal' => 'decimal:2',
-        'fecha_vencimiento' => 'date',
+        'costo_unitario' => 'decimal:2',
+        'total_linea' => 'decimal:2',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
         'creado_en' => 'datetime',
@@ -63,11 +63,12 @@ class DetalleSalidaInventario extends Model
     public static $rules = [
         'salida_inventario_id' => 'required|exists:salidas_inventario,id',
         'producto_id' => 'required|exists:productos,id',
+        'numero_linea' => 'required|integer|min:1',
         'cantidad' => 'required|numeric|min:0.01',
-        'costo_unitario_salida' => 'required|numeric|min:0',
-        'subtotal' => 'required|numeric|min:0',
-        'lote' => 'nullable|string|max:50',
-        'fecha_vencimiento' => 'nullable|date',
+        'costo_unitario' => 'required|numeric|min:0',
+        'total_linea' => 'required|numeric|min:0',
+        'lote' => 'nullable|string|max:100',
+        'observaciones' => 'nullable|string',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
     ];
@@ -113,32 +114,6 @@ class DetalleSalidaInventario extends Model
     }
 
     /**
-     * Scope para filtrar productos por fecha de vencimiento.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \DateTime|string  $fecha
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopePorFechaVencimiento($query, $fecha)
-    {
-        return $query->whereDate('fecha_vencimiento', '=', $fecha);
-    }
-
-    /**
-     * Scope para filtrar productos vencidos a una fecha específica.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \DateTime|string|null  $fecha
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeVencidosA($query, $fecha = null)
-    {
-        $fecha = $fecha ?: now();
-        return $query->whereNotNull('fecha_vencimiento')
-                    ->whereDate('fecha_vencimiento', '<', $fecha);
-    }
-
-    /**
      * Boot the model.
      *
      * @return void
@@ -148,18 +123,18 @@ class DetalleSalidaInventario extends Model
         parent::boot();
 
         static::saving(function ($model) {
-            // Calcular el subtotal si no está establecido o si cambiaron cantidad o costo
-            if ($model->isDirty(['cantidad', 'costo_unitario_salida']) || !$model->subtotal) {
-                $model->subtotal = $model->cantidad * $model->costo_unitario_salida;
-            }
-
-            // Validar que la cantidad y costo sean positivos
+            // Validaciones
             if ($model->cantidad <= 0) {
                 throw new \Exception('La cantidad debe ser mayor que cero.');
             }
             
-            if ($model->costo_unitario_salida < 0) {
+            if ($model->costo_unitario < 0) {
                 throw new \Exception('El costo unitario no puede ser negativo.');
+            }
+
+            // Calcular total_linea (cantidad * costo_unitario)
+            if ($model->isDirty(['cantidad', 'costo_unitario']) || !$model->total_linea) {
+                $model->total_linea = round($model->cantidad * $model->costo_unitario, 2);
             }
         });
     }
