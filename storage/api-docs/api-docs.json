@@ -1179,7 +1179,7 @@
                     "Catálogos Fiscales"
                 ],
                 "summary": "Crear código CAByS",
-                "description": "Crea un nuevo código CAByS. El código debe tener 13 dígitos según catálogo oficial de Hacienda Costa Rica.",
+                "description": "Crea un nuevo código CAByS. El código debe tener hasta 20 caracteres según catálogo oficial de Hacienda Costa Rica.",
                 "operationId": "d8ce5f451c66ccdbf5f237153753bfaa",
                 "requestBody": {
                     "required": true,
@@ -1193,7 +1193,7 @@
                                 "properties": {
                                     "codigo": {
                                         "type": "string",
-                                        "maxLength": 13,
+                                        "maxLength": 20,
                                         "example": "8529901000000"
                                     },
                                     "descripcion": {
@@ -1333,7 +1333,7 @@
                                 "properties": {
                                     "codigo": {
                                         "type": "string",
-                                        "maxLength": 13,
+                                        "maxLength": 20,
                                         "example": "8529901000000"
                                     },
                                     "descripcion": {
@@ -11646,9 +11646,9 @@
                         "example": 1
                     },
                     "codigo": {
-                        "description": "Código CAByS de 13 dígitos según catálogo de Hacienda",
+                        "description": "Código CAByS según catálogo de Hacienda (hasta 20 caracteres)",
                         "type": "string",
-                        "maxLength": 13,
+                        "maxLength": 20,
                         "example": "8529901000000"
                     },
                     "descripcion": {

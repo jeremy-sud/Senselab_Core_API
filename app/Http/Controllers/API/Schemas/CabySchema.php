@@ -19,9 +19,9 @@ use OpenApi\Attributes as OA;
         new OA\Property(
             property: "codigo",
             type: "string",
-            maxLength: 13,
+            maxLength: 20,
             example: "8529901000000",
-            description: "Código CAByS de 13 dígitos según catálogo de Hacienda"
+            description: "Código CAByS según catálogo de Hacienda (hasta 20 caracteres)"
         ),
         new OA\Property(
             property: "descripcion",
