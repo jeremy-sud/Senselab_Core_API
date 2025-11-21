@@ -26,9 +26,9 @@ class UnidadMedida extends Model
      * @var array
      */
     protected $fillable = [
+        'codigo_dgt',
         'nombre',
-        'abreviatura',
-        'codigo_oficial',
+        'descripcion',
         'activo',
         'eliminado',
     ];
