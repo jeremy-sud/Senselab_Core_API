@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Venta;
 use App\Models\DetalleVenta;
+use App\Models\InventarioProducto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreVentaRequest;
@@ -244,6 +245,24 @@ class VentaController extends Controller
             DB::beginTransaction();
             
             try {
+                // Validar stock si se proporciona almacen_id
+                if ($request->has('almacen_id')) {
+                    foreach ($request->detalles as $detalle) {
+                        $inventario = InventarioProducto::where('producto_id', $detalle['producto_id'])
+                            ->where('almacen_id', $request->almacen_id)
+                            ->first();
+
+                        if (!$inventario || $inventario->stock_actual < $detalle['cantidad']) {
+                            return response()->json([
+                                'message' => 'Stock insuficiente',
+                                'errors' => [
+                                    'stock' => ["No hay suficiente stock para el producto ID {$detalle['producto_id']}"]
+                                ]
+                            ], 422);
+                        }
+                    }
+                }
+
                 // Crear venta
                 $ventaData = $request->except('detalles');
                 $ventaData['numero_comprobante'] = $this->generarNumeroComprobante($request->empresa_id, $request->tipo_comprobante);
@@ -282,6 +301,17 @@ class VentaController extends Controller
                         'total' => $total,
                         'descripcion' => $detalle['descripcion'] ?? null,
                     ]);
+
+                    // Actualizar inventario
+                    if ($request->has('almacen_id')) {
+                        $inventario = InventarioProducto::where('producto_id', $detalle['producto_id'])
+                            ->where('almacen_id', $request->almacen_id)
+                            ->first();
+                        
+                        if ($inventario) {
+                            $inventario->decrement('stock_actual', $cantidad);
+                        }
+                    }
                 }
                 
                 // Actualizar totales de la venta

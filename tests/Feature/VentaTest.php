@@ -66,8 +66,8 @@ class VentaTest extends TestCase
         InventarioProducto::create([
             'producto_id' => $producto->id,
             'almacen_id' => $almacen->id,
-            'cantidad_actual' => 100,
-            'cantidad_minima' => 10
+            'stock_actual' => 100,
+            'stock_minimo' => 10
         ]);
 
         $formaPago = $this->getFormaPago();
@@ -151,7 +151,7 @@ class VentaTest extends TestCase
         InventarioProducto::create([
             'producto_id' => $producto->id,
             'almacen_id' => $almacen->id,
-            'cantidad_actual' => 1000
+            'stock_actual' => 1000
         ]);
 
         $formaPago = $this->getFormaPago();
@@ -184,12 +184,12 @@ class VentaTest extends TestCase
 
         $venta = Venta::latest()->first();
 
-        // Subtotal: 10 * 100 = 1000
-        // IVA: 1000 * 0.13 = 130
+        // Subtotal bruto: 10 * 100 = 1000
+        // IVA (13%): 1000 * 0.13 = 130
         // Total: 1000 + 130 = 1130
-        $this->assertEquals(1000.00, $venta->subtotal);
-        $this->assertEquals(130.00, $venta->total_iva);
-        $this->assertEquals(1130.00, $venta->total);
+        $this->assertEquals(1000.00, $venta->subtotal_bruto_total);
+        $this->assertEquals(130.00, $venta->monto_impuesto_total);
+        $this->assertEquals(1130.00, $venta->monto_total_venta);
     }
 
     /** @test */
@@ -232,12 +232,11 @@ class VentaTest extends TestCase
             'eliminado' => false
         ]);
 
-        $response = $this->authenticatedJson('POST', "/api/ventas/{$venta->id}/anular", [], $usuario);
+        $response = $this->authenticatedJson('DELETE', "/api/ventas/{$venta->id}", [], $usuario);
 
-        $response->assertStatus(200);
-
-        $venta->refresh();
-        $this->assertEquals('Anulada', $venta->estado_venta);
+        $response->assertStatus(200)
+            ->assertJson(['message' => 'Venta anulada exitosamente']);        $venta->refresh();
+        $this->assertEquals('anulada', $venta->estado_venta);
     }
 
     /** @test */
@@ -278,10 +277,10 @@ class VentaTest extends TestCase
         $inventario = InventarioProducto::create([
             'producto_id' => $producto->id,
             'almacen_id' => $almacen->id,
-            'cantidad_actual' => 50
+            'stock_actual' => 50
         ]);
 
-        $cantidadInicial = $inventario->cantidad_actual;
+        $cantidadInicial = $inventario->stock_actual;
 
         $formaPago = $this->getFormaPago();
 
@@ -312,7 +311,7 @@ class VentaTest extends TestCase
         $response->assertStatus(201);
 
         $inventario->refresh();
-        $this->assertEquals($cantidadInicial - 5, $inventario->cantidad_actual);
+        $this->assertEquals($cantidadInicial - 5, $inventario->stock_actual);
     }
 
     /** @test */
@@ -353,7 +352,7 @@ class VentaTest extends TestCase
         InventarioProducto::create([
             'producto_id' => $producto->id,
             'almacen_id' => $almacen->id,
-            'cantidad_actual' => 2 // Solo 2 unidades
+            'stock_actual' => 2 // Solo 2 unidades
         ]);
 
         $formaPago = $this->getFormaPago();
@@ -440,7 +439,7 @@ class VentaTest extends TestCase
                     'data' => [
                         '*' => [
                             'id',
-                            'numero_factura',
+                            'numero_venta',
                             'total',
                             'estado'
                         ]
