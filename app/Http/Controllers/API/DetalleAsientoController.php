@@ -8,6 +8,7 @@ use App\Models\DetalleAsiento;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use OpenApi\Attributes as OA;
 
 /**
  * Controlador API para Detalles de Asientos Contables
@@ -27,6 +28,83 @@ class DetalleAsientoController extends Controller
      * @param Request $request
      * @return AnonymousResourceCollection
      */
+    #[OA\Get(
+        path: "/api/detalles-asientos",
+        summary: "Listar detalles de asientos contables",
+        description: "Obtiene los movimientos individuales (debe/haber) de los asientos contables. Permite filtrar por asiento, cuenta, tipo de movimiento.",
+        security: [["sanctum" => []]],
+        tags: ["Contabilidad"],
+        parameters: [
+            new OA\Parameter(
+                name: "asiento_contable_id",
+                in: "query",
+                description: "Filtrar por ID de asiento contable",
+                required: false,
+                schema: new OA\Schema(type: "integer", example: 15)
+            ),
+            new OA\Parameter(
+                name: "cuenta_contable_id",
+                in: "query",
+                description: "Filtrar por ID de cuenta contable",
+                required: false,
+                schema: new OA\Schema(type: "integer", example: 8)
+            ),
+            new OA\Parameter(
+                name: "solo_debe",
+                in: "query",
+                description: "Filtrar solo movimientos al debe",
+                required: false,
+                schema: new OA\Schema(type: "integer", enum: [0, 1], example: 1)
+            ),
+            new OA\Parameter(
+                name: "solo_haber",
+                in: "query",
+                description: "Filtrar solo movimientos al haber",
+                required: false,
+                schema: new OA\Schema(type: "integer", enum: [0, 1], example: 1)
+            ),
+            new OA\Parameter(
+                name: "sort_by",
+                in: "query",
+                description: "Campo de ordenamiento",
+                required: false,
+                schema: new OA\Schema(type: "string", default: "created_at")
+            ),
+            new OA\Parameter(
+                name: "sort_order",
+                in: "query",
+                description: "Orden ascendente o descendente",
+                required: false,
+                schema: new OA\Schema(type: "string", enum: ["asc", "desc"], default: "desc")
+            ),
+            new OA\Parameter(
+                name: "per_page",
+                in: "query",
+                description: "Registros por página",
+                required: false,
+                schema: new OA\Schema(type: "integer", default: 15)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Listado obtenido exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: "data",
+                            type: "array",
+                            items: new OA\Items(ref: "#/components/schemas/DetalleAsiento")
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 401,
+                description: "No autenticado"
+            )
+        ]
+    )]
     public function index(Request $request): AnonymousResourceCollection
     {
         $empresaId = $request->user()->empresa_id;
@@ -72,6 +150,36 @@ class DetalleAsientoController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
+    #[OA\Get(
+        path: "/api/detalles-asientos/{id}",
+        summary: "Obtener detalle de asiento",
+        description: "Obtiene información completa de un movimiento específico (debe/haber) de un asiento contable.",
+        security: [["sanctum" => []]],
+        tags: ["Contabilidad"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del detalle de asiento",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Detalle encontrado",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "data", ref: "#/components/schemas/DetalleAsiento")
+                    ]
+                )
+            ),
+            new OA\Response(response: 404, description: "Detalle no encontrado"),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function show(int $id, Request $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -97,6 +205,58 @@ class DetalleAsientoController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
+    #[OA\Get(
+        path: "/api/detalles-asientos/cuenta/{cuentaContableId}",
+        summary: "Movimientos por cuenta contable",
+        description: "Obtiene todos los movimientos (debe/haber) de una cuenta contable específica. Solo incluye asientos mayorizados. Calcula totales y saldo.",
+        security: [["sanctum" => []]],
+        tags: ["Contabilidad"],
+        parameters: [
+            new OA\Parameter(
+                name: "cuentaContableId",
+                in: "path",
+                description: "ID de la cuenta contable",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 5)
+            ),
+            new OA\Parameter(
+                name: "desde",
+                in: "query",
+                description: "Fecha de inicio del rango",
+                required: false,
+                schema: new OA\Schema(type: "string", format: "date", example: "2024-01-01")
+            ),
+            new OA\Parameter(
+                name: "hasta",
+                in: "query",
+                description: "Fecha de fin del rango",
+                required: false,
+                schema: new OA\Schema(type: "string", format: "date", example: "2024-12-31")
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Movimientos obtenidos exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(
+                            property: "data",
+                            properties: [
+                                new OA\Property(property: "movimientos", type: "array", items: new OA\Items(ref: "#/components/schemas/DetalleAsiento")),
+                                new OA\Property(property: "total_debe", type: "number", format: "decimal", example: 350000.00),
+                                new OA\Property(property: "total_haber", type: "number", format: "decimal", example: 200000.00),
+                                new OA\Property(property: "saldo", type: "number", format: "decimal", example: 150000.00)
+                            ],
+                            type: "object"
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function porCuenta(int $cuentaContableId, Request $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -139,6 +299,57 @@ class DetalleAsientoController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
+    #[OA\Get(
+        path: "/api/detalles-asientos/libro-mayor",
+        summary: "Libro mayor analítico",
+        description: "Genera el libro mayor analítico agrupando todos los movimientos por cuenta contable. Solo incluye asientos mayorizados. Calcula debe, haber y saldo por cada cuenta.",
+        security: [["sanctum" => []]],
+        tags: ["Contabilidad"],
+        parameters: [
+            new OA\Parameter(
+                name: "desde",
+                in: "query",
+                description: "Fecha de inicio del período",
+                required: false,
+                schema: new OA\Schema(type: "string", format: "date", example: "2024-01-01")
+            ),
+            new OA\Parameter(
+                name: "hasta",
+                in: "query",
+                description: "Fecha de fin del período",
+                required: false,
+                schema: new OA\Schema(type: "string", format: "date", example: "2024-12-31")
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Libro mayor generado exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(
+                            property: "data",
+                            type: "array",
+                            items: new OA\Items(
+                                properties: [
+                                    new OA\Property(property: "cuenta_contable", ref: "#/components/schemas/CuentaContable"),
+                                    new OA\Property(property: "movimientos", type: "array", items: new OA\Items(ref: "#/components/schemas/DetalleAsiento")),
+                                    new OA\Property(property: "total_debe", type: "number", format: "decimal", example: 500000.00),
+                                    new OA\Property(property: "total_haber", type: "number", format: "decimal", example: 350000.00),
+                                    new OA\Property(property: "saldo", type: "number", format: "decimal", example: 150000.00),
+                                    new OA\Property(property: "cantidad_movimientos", type: "integer", example: 25)
+                                ],
+                                type: "object"
+                            )
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: "No autenticado"),
+            new OA\Response(response: 422, description: "Error de validación")
+        ]
+    )]
     public function libroMayor(Request $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -189,6 +400,72 @@ class DetalleAsientoController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
+    #[OA\Get(
+        path: "/api/detalles-asientos/balance-comprobacion",
+        summary: "Balance de comprobación",
+        description: "Genera el balance de comprobación mostrando sumas y saldos de todas las cuentas. Solo incluye asientos mayorizados. Verifica que debe = haber.",
+        security: [["sanctum" => []]],
+        tags: ["Contabilidad"],
+        parameters: [
+            new OA\Parameter(
+                name: "desde",
+                in: "query",
+                description: "Fecha de inicio del período",
+                required: false,
+                schema: new OA\Schema(type: "string", format: "date", example: "2024-01-01")
+            ),
+            new OA\Parameter(
+                name: "hasta",
+                in: "query",
+                description: "Fecha de fin del período",
+                required: false,
+                schema: new OA\Schema(type: "string", format: "date", example: "2024-12-31")
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Balance de comprobación generado exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(
+                            property: "data",
+                            properties: [
+                                new OA\Property(
+                                    property: "balance",
+                                    type: "array",
+                                    items: new OA\Items(
+                                        properties: [
+                                            new OA\Property(property: "cuenta_contable", ref: "#/components/schemas/CuentaContable"),
+                                            new OA\Property(property: "total_debe", type: "number", format: "decimal", example: 500000.00),
+                                            new OA\Property(property: "total_haber", type: "number", format: "decimal", example: 350000.00),
+                                            new OA\Property(property: "saldo_deudor", type: "number", format: "decimal", example: 150000.00),
+                                            new OA\Property(property: "saldo_acreedor", type: "number", format: "decimal", example: 0.00)
+                                        ],
+                                        type: "object"
+                                    )
+                                ),
+                                new OA\Property(
+                                    property: "totales",
+                                    properties: [
+                                        new OA\Property(property: "total_debe", type: "number", format: "decimal", example: 2500000.00),
+                                        new OA\Property(property: "total_haber", type: "number", format: "decimal", example: 2500000.00),
+                                        new OA\Property(property: "total_saldos_deudores", type: "number", format: "decimal", example: 1500000.00),
+                                        new OA\Property(property: "total_saldos_acreedores", type: "number", format: "decimal", example: 1500000.00)
+                                    ],
+                                    type: "object"
+                                )
+                            ],
+                            type: "object"
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: "No autenticado"),
+            new OA\Response(response: 422, description: "Error de validación")
+        ]
+    )]
     public function balanceComprobacion(Request $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;

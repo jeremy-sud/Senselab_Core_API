@@ -11,6 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
+use OpenApi\Attributes as OA;
 
 /**
  * Controlador API para Pagos de Nómina
@@ -29,6 +30,62 @@ class PagoNominaController extends Controller
      * @param Request $request
      * @return AnonymousResourceCollection
      */
+    #[OA\Get(
+        path: "/api/pagos-nomina",
+        summary: "Listar pagos de nómina",
+        description: "Obtiene listado paginado de pagos de nómina con filtros por empleado, período, estado y rango de fechas.",
+        security: [["sanctum" => []]],
+        tags: ["Nómina"],
+        parameters: [
+            new OA\Parameter(
+                name: "empleado_id",
+                in: "query",
+                description: "Filtrar por ID de empleado",
+                required: false,
+                schema: new OA\Schema(type: "integer", example: 5)
+            ),
+            new OA\Parameter(
+                name: "periodo_nomina_id",
+                in: "query",
+                description: "Filtrar por ID de período de nómina",
+                required: false,
+                schema: new OA\Schema(type: "integer", example: 12)
+            ),
+            new OA\Parameter(
+                name: "estado",
+                in: "query",
+                description: "Filtrar por estado",
+                required: false,
+                schema: new OA\Schema(type: "string", enum: ["pendiente", "pagado", "cancelado"], example: "pagado")
+            ),
+            new OA\Parameter(
+                name: "desde",
+                in: "query",
+                description: "Fecha de inicio del rango",
+                required: false,
+                schema: new OA\Schema(type: "string", format: "date", example: "2024-01-01")
+            ),
+            new OA\Parameter(
+                name: "hasta",
+                in: "query",
+                description: "Fecha de fin del rango",
+                required: false,
+                schema: new OA\Schema(type: "string", format: "date", example: "2024-12-31")
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Listado obtenido exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "data", type: "array", items: new OA\Items(type: "object"))
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function index(Request $request): AnonymousResourceCollection
     {
         $empresaId = $request->user()->empresa_id;
@@ -68,6 +125,36 @@ class PagoNominaController extends Controller
      * @param StorePagoNominaRequest $request
      * @return PagoNominaResource
      */
+    #[OA\Post(
+        path: "/api/pagos-nomina",
+        summary: "Crear pago de nómina",
+        description: "Registra un nuevo pago de nómina con cálculo de monto bruto, deducciones y neto.",
+        security: [["sanctum" => []]],
+        tags: ["Nómina"],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["empleado_id", "periodo_nomina_id", "fecha_pago", "monto_bruto", "total_deducciones", "monto_neto_pagado"],
+                properties: [
+                    new OA\Property(property: "empleado_id", type: "integer", example: 5),
+                    new OA\Property(property: "periodo_nomina_id", type: "integer", example: 12),
+                    new OA\Property(property: "fecha_pago", type: "string", format: "date-time", example: "2024-01-15 10:00:00"),
+                    new OA\Property(property: "monto_bruto", type: "number", format: "decimal", example: 500000.00),
+                    new OA\Property(property: "total_deducciones", type: "number", format: "decimal", example: 45000.00),
+                    new OA\Property(property: "monto_neto_pagado", type: "number", format: "decimal", example: 455000.00),
+                    new OA\Property(property: "metodo_pago_id", type: "integer", example: 1),
+                    new OA\Property(property: "referencia_pago", type: "string", maxLength: 100, example: "TRANS-12345", nullable: true),
+                    new OA\Property(property: "estado", type: "string", enum: ["pendiente", "pagado", "cancelado"], example: "pendiente"),
+                    new OA\Property(property: "observaciones", type: "string", nullable: true)
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 201, description: "Pago creado exitosamente"),
+            new OA\Response(response: 422, description: "Error de validación"),
+            new OA\Response(response: 500, description: "Error del servidor")
+        ]
+    )]
     public function store(StorePagoNominaRequest $request): PagoNominaResource
     {
         $empresaId = $request->user()->empresa_id;
@@ -107,6 +194,27 @@ class PagoNominaController extends Controller
      * @param Request $request
      * @return PagoNominaResource
      */
+    #[OA\Get(
+        path: "/api/pagos-nomina/{id}",
+        summary: "Obtener pago de nómina",
+        description: "Obtiene los detalles completos de un pago de nómina incluyendo empleado, período y método de pago.",
+        security: [["sanctum" => []]],
+        tags: ["Nómina"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del pago de nómina",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "Pago encontrado"),
+            new OA\Response(response: 404, description: "Pago no encontrado"),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function show(int $id, Request $request): PagoNominaResource
     {
         $empresaId = $request->user()->empresa_id;
@@ -126,6 +234,45 @@ class PagoNominaController extends Controller
      * @param int $id
      * @return PagoNominaResource
      */
+    #[OA\Put(
+        path: "/api/pagos-nomina/{id}",
+        summary: "Actualizar pago de nómina",
+        description: "Actualiza un pago de nómina. No permite modificar pagos ya marcados como pagados.",
+        security: [["sanctum" => []]],
+        tags: ["Nómina"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del pago de nómina",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: "empleado_id", type: "integer", example: 5),
+                    new OA\Property(property: "periodo_nomina_id", type: "integer", example: 12),
+                    new OA\Property(property: "fecha_pago", type: "string", format: "date-time", example: "2024-01-15 10:00:00"),
+                    new OA\Property(property: "monto_bruto", type: "number", format: "decimal", example: 500000.00),
+                    new OA\Property(property: "total_deducciones", type: "number", format: "decimal", example: 45000.00),
+                    new OA\Property(property: "monto_neto_pagado", type: "number", format: "decimal", example: 455000.00),
+                    new OA\Property(property: "metodo_pago_id", type: "integer", example: 1),
+                    new OA\Property(property: "referencia_pago", type: "string", maxLength: 100, example: "TRANS-12345", nullable: true),
+                    new OA\Property(property: "estado", type: "string", enum: ["pendiente", "pagado", "cancelado"]),
+                    new OA\Property(property: "observaciones", type: "string", nullable: true)
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: "Pago actualizado exitosamente"),
+            new OA\Response(response: 404, description: "Pago no encontrado"),
+            new OA\Response(response: 422, description: "No se puede modificar un pago ya pagado"),
+            new OA\Response(response: 500, description: "Error del servidor")
+        ]
+    )]
     public function update(UpdatePagoNominaRequest $request, int $id): PagoNominaResource
     {
         $empresaId = $request->user()->empresa_id;
@@ -173,6 +320,36 @@ class PagoNominaController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
+    #[OA\Delete(
+        path: "/api/pagos-nomina/{id}",
+        summary: "Eliminar pago de nómina",
+        description: "Realiza soft delete de un pago de nómina. No permite eliminar pagos ya pagados.",
+        security: [["sanctum" => []]],
+        tags: ["Nómina"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del pago de nómina",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Pago eliminado exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "message", type: "string", example: "Pago de nómina eliminado exitosamente")
+                    ]
+                )
+            ),
+            new OA\Response(response: 404, description: "Pago no encontrado"),
+            new OA\Response(response: 422, description: "No se puede eliminar un pago ya pagado"),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function destroy(int $id, Request $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -202,6 +379,36 @@ class PagoNominaController extends Controller
      * @param Request $request
      * @return PagoNominaResource
      */
+    #[OA\Post(
+        path: "/api/pagos-nomina/{id}/marcar-pagado",
+        summary: "Marcar pago como pagado",
+        description: "Cambia el estado de un pago de nómina a 'pagado'. Registra la fecha de pago.",
+        security: [["sanctum" => []]],
+        tags: ["Nómina"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del pago de nómina",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        requestBody: new OA\RequestBody(
+            required: false,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: "fecha_pago", type: "string", format: "date-time", example: "2024-01-15 14:30:00", description: "Fecha de pago (opcional, usa fecha actual si se omite)")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: "Pago marcado como pagado exitosamente"),
+            new OA\Response(response: 404, description: "Pago no encontrado"),
+            new OA\Response(response: 422, description: "El pago ya ha sido marcado como pagado"),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function marcarPagado(int $id, Request $request): PagoNominaResource
     {
         $empresaId = $request->user()->empresa_id;
@@ -229,6 +436,34 @@ class PagoNominaController extends Controller
      * @param Request $request
      * @return AnonymousResourceCollection
      */
+    #[OA\Get(
+        path: "/api/pagos-nomina/empleado/{empleadoId}",
+        summary: "Pagos por empleado",
+        description: "Obtiene el historial de pagos de nómina de un empleado específico.",
+        security: [["sanctum" => []]],
+        tags: ["Nómina"],
+        parameters: [
+            new OA\Parameter(
+                name: "empleadoId",
+                in: "path",
+                description: "ID del empleado",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 5)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Historial de pagos obtenido exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "data", type: "array", items: new OA\Items(type: "object"))
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function porEmpleado(int $empleadoId, Request $request): AnonymousResourceCollection
     {
         $empresaId = $request->user()->empresa_id;
@@ -249,6 +484,41 @@ class PagoNominaController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
+    #[OA\Get(
+        path: "/api/pagos-nomina/resumen-metodo-pago",
+        summary: "Resumen por método de pago",
+        description: "Obtiene estadísticas agregadas de pagos agrupados por método de pago (efectivo, transferencia, cheque, etc.). Incluye total de pagos y monto total.",
+        security: [["sanctum" => []]],
+        tags: ["Nómina"],
+        parameters: [
+            new OA\Parameter(
+                name: "periodo_nomina_id",
+                in: "query",
+                description: "Filtrar por período de nómina",
+                required: false,
+                schema: new OA\Schema(type: "integer", example: 12)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Resumen obtenido exitosamente",
+                content: new OA\JsonContent(
+                    type: "array",
+                    items: new OA\Items(
+                        properties: [
+                            new OA\Property(property: "metodo_pago_id", type: "integer", example: 3),
+                            new OA\Property(property: "metodo_pago", type: "string", example: "Transferencia Bancaria"),
+                            new OA\Property(property: "total_pagos", type: "integer", example: 38),
+                            new OA\Property(property: "total_monto", type: "number", format: "decimal", example: 18950000.00)
+                        ],
+                        type: "object"
+                    )
+                )
+            ),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function resumenPorMetodoPago(Request $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -280,6 +550,45 @@ class PagoNominaController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
+    #[OA\Get(
+        path: "/api/pagos-nomina/totales-por-periodo",
+        summary: "Totales por período",
+        description: "Calcula totales agregados de nómina agrupados por período. Incluye total de empleados, monto bruto, deducciones y neto.",
+        security: [["sanctum" => []]],
+        tags: ["Nómina"],
+        parameters: [
+            new OA\Parameter(
+                name: "anio",
+                in: "query",
+                description: "Filtrar por año",
+                required: false,
+                schema: new OA\Schema(type: "integer", example: 2024)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Totales calculados exitosamente",
+                content: new OA\JsonContent(
+                    type: "array",
+                    items: new OA\Items(
+                        properties: [
+                            new OA\Property(property: "periodo_id", type: "integer", example: 12),
+                            new OA\Property(property: "nombre_periodo", type: "string", example: "Enero 2024"),
+                            new OA\Property(property: "fecha_inicio", type: "string", format: "date", example: "2024-01-01"),
+                            new OA\Property(property: "fecha_fin", type: "string", format: "date", example: "2024-01-31"),
+                            new OA\Property(property: "total_empleados", type: "integer", example: 45),
+                            new OA\Property(property: "total_bruto", type: "number", format: "decimal", example: 22500000.00),
+                            new OA\Property(property: "total_deducciones", type: "number", format: "decimal", example: 2025000.00),
+                            new OA\Property(property: "total_neto", type: "number", format: "decimal", example: 20475000.00)
+                        ],
+                        type: "object"
+                    )
+                )
+            ),
+            new OA\Response(response: 401, description: "No autenticado")
+        ]
+    )]
     public function totalesPorPeriodo(Request $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
