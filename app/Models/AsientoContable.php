@@ -28,7 +28,7 @@ class AsientoContable extends Model
      */
     protected $fillable = [
         'empresa_id',
-        'fecha',
+        'fecha_asiento',
         'descripcion',
         'total_debe',
         'total_haber',
@@ -39,7 +39,7 @@ class AsientoContable extends Model
      * Los atributos que deben ser convertidos.
      */
     protected $casts = [
-        'fecha' => 'datetime',
+        'fecha_asiento' => 'datetime',
         'total_debe' => 'decimal:5',
         'total_haber' => 'decimal:5',
         'activo' => 'boolean',
@@ -58,11 +58,11 @@ class AsientoContable extends Model
     }
 
     /**
-     * Scope para filtrar por fecha.
+     * Scope para filtrar por fecha de asiento.
      */
-    public function scopeFechaBetween($query, $start, $end)
+    public function scopeFechaAsientoBetween($query, $start, $end)
     {
-        return $query->whereBetween('fecha', [$start, $end]);
+        return $query->whereBetween('fecha_asiento', [$start, $end]);
     }
 
     /**

@@ -29,11 +29,9 @@ class Empleado extends Model
         'tipo_documento',
         'numero_documento',
         'fecha_nacimiento',
-        'genero',
-        'fecha_contratacion',
+        'fecha_ingreso',
         'cargo_id',
         'salario',
-        'usuario_id',
         'direccion',
         'telefono',
         'email',
@@ -48,7 +46,7 @@ class Empleado extends Model
      */
     protected $casts = [
         'fecha_nacimiento' => 'date',
-        'fecha_contratacion' => 'date',
+        'fecha_ingreso' => 'date',
         'salario' => 'decimal:2',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
@@ -87,11 +85,9 @@ class Empleado extends Model
         'tipo_documento' => 'required|string|max:50',
         'numero_documento' => 'required|string|max:50',
         'fecha_nacimiento' => 'nullable|date',
-        'genero' => 'nullable|string|max:20',
-        'fecha_contratacion' => 'required|date',
+        'fecha_ingreso' => 'required|date',
         'cargo_id' => 'nullable|exists:cargos,id',
         'salario' => 'required|numeric|min:0',
-        'usuario_id' => 'nullable|exists:usuarios,id',
         'direccion' => 'nullable|string',
         'telefono' => 'nullable|string|max:50',
         'email' => 'nullable|email|max:255',
@@ -110,11 +106,6 @@ class Empleado extends Model
     public function cargo()
     {
         return $this->belongsTo(Cargo::class);
-    }
-
-    public function usuario()
-    {
-        return $this->belongsTo(Usuario::class, 'usuario_id');
     }
 
     /**
@@ -182,17 +173,6 @@ class Empleado extends Model
 
             if ($exists) {
                 throw new \Exception('Ya existe un empleado con ese documento en la empresa.');
-            }
-
-            // Si se asigna usuario_id, asegurarse que no exista otro empleado con el mismo usuario (clave única en BD)
-            if (!empty($model->usuario_id)) {
-                $uExists = self::where('usuario_id', $model->usuario_id)
-                    ->where('id', '<>', $model->id ?? 0)
-                    ->exists();
-
-                if ($uExists) {
-                    throw new \Exception('El usuario ya está asignado a otro empleado.');
-                }
             }
         });
     }
