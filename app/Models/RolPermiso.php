@@ -26,6 +26,7 @@ class RolPermiso extends Model
      * @var array
      */
     protected $fillable = [
+        'rol_id',
         'permiso_id',
         'activo',
     ];
