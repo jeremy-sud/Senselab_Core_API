@@ -225,15 +225,18 @@ El sistema está diseñado con las mejores prácticas de desarrollo, siguiendo l
 
 ## 🔧 Instalación
 
+> **📘 Para colaboradores nuevos:** Revisa la [Guía de Instalación Completa](INSTALLATION_GUIDE.md) con instrucciones paso a paso, troubleshooting y verificación.
+
 ### 1. Clonar el Repositorio
 
 ```bash
-# Desde GitHub Organization oficial
-git clone https://github.com/SistemasUrsol/Ursol-CAST-API.git
+# Desde GitHub
+git clone https://github.com/jeremy-sud/Ursol-CAST-API.git
 cd Ursol-CAST-API
 
-# O desde Ursol Reposit for Developers
-# Consulta https://sites.google.com/view/repdevursol/home/repositorio para acceso
+# O desde GitHub Organization oficial
+git clone https://github.com/SistemasUrsol/Ursol-CAST-API.git
+cd Ursol-CAST-API
 ```
 
 ### 2. Instalar Dependencias
