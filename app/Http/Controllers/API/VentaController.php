@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreVentaRequest;
 use App\Http\Requests\UpdateVentaRequest;
 use App\Http\Resources\VentaResource;
+use OpenApi\Attributes as OA;
 
 class VentaController extends Controller
 {
@@ -19,6 +20,99 @@ class VentaController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
+    #[OA\Get(
+        path: '/api/ventas',
+        summary: 'Listar ventas',
+        description: 'Obtiene un listado paginado de ventas con filtros por empresa, sucursal, cliente y rango de fechas',
+        security: [['sanctum' => []]],
+        tags: ['Ventas'],
+        parameters: [
+            new OA\Parameter(
+                name: 'per_page',
+                description: 'Cantidad de registros por página',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'integer', default: 15, example: 15)
+            ),
+            new OA\Parameter(
+                name: 'page',
+                description: 'Número de página',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'integer', default: 1, example: 1)
+            ),
+            new OA\Parameter(
+                name: 'empresa_id',
+                description: 'Filtrar por empresa',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'integer', example: 1)
+            ),
+            new OA\Parameter(
+                name: 'sucursal_id',
+                description: 'Filtrar por sucursal',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'integer', example: 1)
+            ),
+            new OA\Parameter(
+                name: 'cliente_id',
+                description: 'Filtrar por cliente',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'integer', example: 5)
+            ),
+            new OA\Parameter(
+                name: 'fecha_inicio',
+                description: 'Fecha de inicio del rango',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'string', format: 'date', example: '2024-01-01')
+            ),
+            new OA\Parameter(
+                name: 'fecha_fin',
+                description: 'Fecha de fin del rango',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'string', format: 'date', example: '2024-01-31')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Listado de ventas obtenido exitosamente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'data',
+                            type: 'array',
+                            items: new OA\Items(ref: '#/components/schemas/Venta')
+                        ),
+                        new OA\Property(
+                            property: 'meta',
+                            properties: [
+                                new OA\Property(property: 'current_page', type: 'integer', example: 1),
+                                new OA\Property(property: 'last_page', type: 'integer', example: 10),
+                                new OA\Property(property: 'per_page', type: 'integer', example: 15),
+                                new OA\Property(property: 'total', type: 'integer', example: 142)
+                            ],
+                            type: 'object'
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Error del servidor',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Error al obtener ventas'),
+                        new OA\Property(property: 'error', type: 'string')
+                    ]
+                )
+            )
+        ]
+    )]
     public function index(Request $request)
     {
         try {
@@ -71,6 +165,79 @@ class VentaController extends Controller
      * @param StoreVentaRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
+    #[OA\Post(
+        path: '/api/ventas',
+        summary: 'Crear una nueva venta',
+        description: 'Registra una nueva venta con sus detalles de línea, calculando automáticamente subtotales, descuentos, impuestos y total',
+        security: [['sanctum' => []]],
+        tags: ['Ventas'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['empresa_id', 'cliente_id', 'fecha_venta', 'tipo_comprobante', 'moneda', 'condicion_pago', 'detalles'],
+                properties: [
+                    new OA\Property(property: 'empresa_id', type: 'integer', example: 1),
+                    new OA\Property(property: 'sucursal_id', type: 'integer', nullable: true, example: 1),
+                    new OA\Property(property: 'cliente_id', type: 'integer', example: 5),
+                    new OA\Property(property: 'usuario_id', type: 'integer', nullable: true, example: 3),
+                    new OA\Property(property: 'fecha_venta', type: 'string', format: 'date-time', example: '2024-01-15T10:30:00'),
+                    new OA\Property(property: 'tipo_comprobante', type: 'string', enum: ['factura', 'tiquete', 'nota_credito', 'nota_debito'], example: 'factura'),
+                    new OA\Property(property: 'moneda', type: 'string', enum: ['CRC', 'USD'], example: 'CRC'),
+                    new OA\Property(property: 'condicion_pago', type: 'string', enum: ['contado', 'credito'], example: 'contado'),
+                    new OA\Property(property: 'plazo_credito_dias', type: 'integer', nullable: true, example: 30),
+                    new OA\Property(property: 'forma_pago_id', type: 'integer', nullable: true, example: 1),
+                    new OA\Property(property: 'observaciones', type: 'string', nullable: true, example: 'Venta con descuento especial'),
+                    new OA\Property(
+                        property: 'detalles',
+                        type: 'array',
+                        items: new OA\Items(
+                            properties: [
+                                new OA\Property(property: 'producto_id', type: 'integer', example: 10),
+                                new OA\Property(property: 'cantidad', type: 'number', example: 2),
+                                new OA\Property(property: 'precio_unitario', type: 'number', format: 'decimal', example: 50000.00),
+                                new OA\Property(property: 'descuento', type: 'number', format: 'decimal', example: 5000.00),
+                                new OA\Property(property: 'porcentaje_impuesto', type: 'number', format: 'decimal', example: 13),
+                                new OA\Property(property: 'descripcion', type: 'string', nullable: true, example: 'Producto especial')
+                            ],
+                            type: 'object'
+                        )
+                    )
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Venta creada exitosamente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'data', ref: '#/components/schemas/Venta'),
+                        new OA\Property(property: 'message', type: 'string', example: 'Venta creada exitosamente')
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 422,
+                description: 'Errores de validación',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Los datos proporcionados no son válidos'),
+                        new OA\Property(property: 'errors', type: 'object')
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Error del servidor',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Error al crear venta'),
+                        new OA\Property(property: 'error', type: 'string')
+                    ]
+                )
+            )
+        ]
+    )]
     public function store(StoreVentaRequest $request)
     {
         try {
@@ -154,6 +321,52 @@ class VentaController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
+    #[OA\Get(
+        path: '/api/ventas/{id}',
+        summary: 'Obtener una venta específica',
+        description: 'Obtiene los detalles completos de una venta por su ID, incluyendo todos sus detalles de línea y relaciones',
+        security: [['sanctum' => []]],
+        tags: ['Ventas'],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                description: 'ID de la venta',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Venta obtenida exitosamente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'data', ref: '#/components/schemas/Venta')
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Venta no encontrada',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Venta no encontrada')
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Error del servidor',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Error al obtener venta'),
+                        new OA\Property(property: 'error', type: 'string')
+                    ]
+                )
+            )
+        ]
+    )]
     public function show(int $id)
     {
         try {
@@ -186,6 +399,72 @@ class VentaController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
+    #[OA\Put(
+        path: '/api/ventas/{id}',
+        summary: 'Actualizar una venta',
+        description: 'Actualiza información de una venta existente (solo observaciones y estado)',
+        security: [['sanctum' => []]],
+        tags: ['Ventas'],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                description: 'ID de la venta',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1)
+            )
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'observaciones', type: 'string', nullable: true, example: 'Observaciones actualizadas'),
+                    new OA\Property(property: 'estado_venta', type: 'string', enum: ['pendiente', 'pagada', 'parcial', 'anulada'], example: 'pagada')
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Venta actualizada exitosamente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'data', ref: '#/components/schemas/Venta'),
+                        new OA\Property(property: 'message', type: 'string', example: 'Venta actualizada exitosamente')
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Venta no encontrada',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Venta no encontrada')
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 422,
+                description: 'Errores de validación',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Los datos proporcionados no son válidos'),
+                        new OA\Property(property: 'errors', type: 'object')
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Error del servidor',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Error al actualizar venta'),
+                        new OA\Property(property: 'error', type: 'string')
+                    ]
+                )
+            )
+        ]
+    )]
     public function update(UpdateVentaRequest $request, int $id)
     {
         try {
@@ -215,6 +494,52 @@ class VentaController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
+    #[OA\Delete(
+        path: '/api/ventas/{id}',
+        summary: 'Anular una venta',
+        description: 'Anula una venta marcándola como anulada, inactiva y eliminada (soft delete)',
+        security: [['sanctum' => []]],
+        tags: ['Ventas'],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                description: 'ID de la venta',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Venta anulada exitosamente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Venta anulada exitosamente')
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Venta no encontrada',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Venta no encontrada')
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Error del servidor',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Error al anular venta'),
+                        new OA\Property(property: 'error', type: 'string')
+                    ]
+                )
+            )
+        ]
+    )]
     public function destroy(int $id)
     {
         try {
