@@ -464,6 +464,541 @@
                 ]
             }
         },
+        "/api/cargos": {
+            "get": {
+                "tags": [
+                    "Cargos"
+                ],
+                "summary": "Listar todos los cargos",
+                "description": "Obtiene un listado de todos los cargos de empleados del sistema. Los cargos son globales (sin empresa_id) y definen posiciones laborales como Gerente, Vendedor, Contador, etc.",
+                "operationId": "5bbe69e087438bcd8dc6dc65a2c150b6",
+                "parameters": [
+                    {
+                        "name": "activo",
+                        "in": "query",
+                        "description": "Filtrar por cargos activos o inactivos",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de cargos obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Cargo"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Cargos"
+                ],
+                "summary": "Crear un nuevo cargo",
+                "description": "Registra un nuevo cargo de empleado en el sistema. El nombre debe ser único (case-insensitive).",
+                "operationId": "bd7d527993269a780dfc6c3b7f74bb4a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nombre"
+                                ],
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Gerente de Ventas"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Responsable de gestionar el equipo de ventas"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Cargo creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Cargo"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación (nombre duplicado)"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/cargos/{id}": {
+            "get": {
+                "tags": [
+                    "Cargos"
+                ],
+                "summary": "Obtener un cargo específico",
+                "description": "Obtiene los detalles de un cargo específico, incluyendo la lista de empleados asignados.",
+                "operationId": "6731b019f3a89c3b8e9600f8f7667d8e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del cargo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cargo encontrado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Cargo"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Cargo no encontrado"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Cargos"
+                ],
+                "summary": "Actualizar un cargo existente",
+                "description": "Actualiza los datos de un cargo existente. El nombre debe ser único.",
+                "operationId": "6afe63a7a8ecf47f34816d742913d737",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del cargo a actualizar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Gerente de Ventas"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Responsable de gestionar el equipo de ventas"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cargo actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Cargo"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Cargo no encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Cargos"
+                ],
+                "summary": "Eliminar un cargo",
+                "description": "Realiza un soft delete del cargo especificado. No permite eliminar cargos que tengan empleados asignados.",
+                "operationId": "ff29f710fe140146feef7ce21d97340d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del cargo a eliminar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cargo eliminado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cargo eliminado exitosamente"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Cargo"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Cargo no encontrado"
+                    },
+                    "422": {
+                        "description": "No se puede eliminar el cargo porque tiene empleados asignados"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/categorias-productos": {
+            "get": {
+                "tags": [
+                    "Categorías de Productos"
+                ],
+                "summary": "Listar categorías de productos",
+                "description": "Obtiene un listado de todas las categorías de productos de la empresa autenticada. Permite filtrar por categorías activas.",
+                "operationId": "efc178942d7e00b25a07aff3a2534a2b",
+                "parameters": [
+                    {
+                        "name": "activo",
+                        "in": "query",
+                        "description": "Filtrar por categorías activas o inactivas",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de categorías obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/CategoriaProducto"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Categorías de Productos"
+                ],
+                "summary": "Crear categoría de producto",
+                "description": "Registra una nueva categoría de producto para la empresa autenticada. El nombre debe ser único (case-insensitive).",
+                "operationId": "f9ddc76d7f6c4a814d4fa799889c0875",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nombre"
+                                ],
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Electrónica"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Productos electrónicos y tecnología"
+                                    },
+                                    "categoria_padre_id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Categoría creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CategoriaProducto"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación (nombre duplicado)"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/categorias-productos/{id}": {
+            "get": {
+                "tags": [
+                    "Categorías de Productos"
+                ],
+                "summary": "Obtener categoría de producto",
+                "description": "Obtiene los detalles de una categoría de producto específica.",
+                "operationId": "9d4f688b34aa4949ef552d7e7d0555f5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la categoría",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Categoría encontrada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CategoriaProducto"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Categoría no encontrada"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Categorías de Productos"
+                ],
+                "summary": "Actualizar categoría de producto",
+                "description": "Actualiza los datos de una categoría de producto existente. El nombre debe ser único.",
+                "operationId": "67ce4b38409341bf0d6aeef87814714f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la categoría a actualizar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Electrónica"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Productos electrónicos y tecnología"
+                                    },
+                                    "categoria_padre_id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Categoría actualizada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CategoriaProducto"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Categoría no encontrada"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Categorías de Productos"
+                ],
+                "summary": "Eliminar categoría de producto",
+                "description": "Realiza un soft delete de la categoría especificada.",
+                "operationId": "f21fad9ee9752750ced5b85baca47613",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la categoría a eliminar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Categoría eliminada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Categoría eliminada exitosamente"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/CategoriaProducto"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Categoría no encontrada"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/clientes": {
             "get": {
                 "tags": [
@@ -3015,6 +3550,624 @@
                 ]
             }
         },
+        "/api/inventario/entradas": {
+            "get": {
+                "tags": [
+                    "Inventario"
+                ],
+                "summary": "Listar entradas de inventario",
+                "description": "Obtiene un listado de todas las entradas de inventario de la empresa. Permite filtrar por almacén, estado, tipo de entrada y rango de fechas.",
+                "operationId": "dc488346f7f77194494e9ec79f05b402",
+                "parameters": [
+                    {
+                        "name": "almacen_id",
+                        "in": "query",
+                        "description": "Filtrar por almacén",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "estado",
+                        "in": "query",
+                        "description": "Filtrar por estado",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "Pendiente",
+                                "Procesada",
+                                "Cancelada"
+                            ],
+                            "example": "Pendiente"
+                        }
+                    },
+                    {
+                        "name": "tipo_entrada",
+                        "in": "query",
+                        "description": "Filtrar por tipo de entrada",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "Compra",
+                                "Traslado",
+                                "Ajuste",
+                                "Devolución",
+                                "Producción",
+                                "Otro"
+                            ],
+                            "example": "Compra"
+                        }
+                    },
+                    {
+                        "name": "fecha_desde",
+                        "in": "query",
+                        "description": "Fecha de inicio del rango",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-01"
+                        }
+                    },
+                    {
+                        "name": "fecha_hasta",
+                        "in": "query",
+                        "description": "Fecha fin del rango",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-12-31"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de entradas obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/EntradaInventario"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Inventario"
+                ],
+                "summary": "Crear entrada de inventario",
+                "description": "Registra una nueva entrada de inventario al sistema.",
+                "operationId": "afc264195996778ecf3921af4a4d931e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "almacen_id",
+                                    "fecha_entrada",
+                                    "tipo_entrada",
+                                    "estado"
+                                ],
+                                "properties": {
+                                    "almacen_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "fecha_entrada": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2024-01-15T10:30:00Z"
+                                    },
+                                    "tipo_entrada": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Compra",
+                                            "Traslado",
+                                            "Ajuste",
+                                            "Devolución",
+                                            "Producción",
+                                            "Otro"
+                                        ],
+                                        "example": "Compra"
+                                    },
+                                    "orden_compra_id": {
+                                        "type": "integer",
+                                        "example": 15
+                                    },
+                                    "proveedor_id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "documento_referencia": {
+                                        "type": "string",
+                                        "example": "FACT-2024-001"
+                                    },
+                                    "estado": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Pendiente",
+                                            "Procesada",
+                                            "Cancelada"
+                                        ],
+                                        "example": "Pendiente"
+                                    },
+                                    "monto_total": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 125000
+                                    },
+                                    "observaciones": {
+                                        "type": "string",
+                                        "example": "Recibido en buen estado"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Entrada de mercadería según orden #15"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Entrada creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EntradaInventario"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/inventario/entradas/{id}": {
+            "get": {
+                "tags": [
+                    "Inventario"
+                ],
+                "summary": "Obtener entrada de inventario",
+                "description": "Obtiene los detalles de una entrada de inventario específica, incluyendo sus detalles de productos.",
+                "operationId": "e6a4c9734717bb15ac8e0cd4dfadadc0",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la entrada",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Entrada encontrada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EntradaInventario"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Entrada no encontrada"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/inventario/salidas": {
+            "get": {
+                "tags": [
+                    "Inventario"
+                ],
+                "summary": "Listar salidas de inventario",
+                "description": "Obtiene un listado de todas las salidas de inventario de la empresa. Permite filtrar por almacén, estado, tipo de salida y rango de fechas.",
+                "operationId": "445c4130108e24773fbb6ef99a32a421",
+                "parameters": [
+                    {
+                        "name": "almacen_id",
+                        "in": "query",
+                        "description": "Filtrar por almacén",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "estado",
+                        "in": "query",
+                        "description": "Filtrar por estado",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "Pendiente",
+                                "Procesada",
+                                "Cancelada"
+                            ],
+                            "example": "Procesada"
+                        }
+                    },
+                    {
+                        "name": "tipo_salida",
+                        "in": "query",
+                        "description": "Filtrar por tipo de salida",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "Venta",
+                                "Traslado",
+                                "Ajuste",
+                                "Devolución",
+                                "Producción",
+                                "Merma",
+                                "Otro"
+                            ],
+                            "example": "Venta"
+                        }
+                    },
+                    {
+                        "name": "fecha_desde",
+                        "in": "query",
+                        "description": "Fecha de inicio del rango",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-01"
+                        }
+                    },
+                    {
+                        "name": "fecha_hasta",
+                        "in": "query",
+                        "description": "Fecha fin del rango",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-12-31"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de salidas obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SalidaInventario"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Inventario"
+                ],
+                "summary": "Crear salida de inventario",
+                "description": "Registra una nueva salida de inventario del sistema.",
+                "operationId": "e645e551e310dce8034f7c75ddff34d4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "almacen_id",
+                                    "fecha_salida",
+                                    "tipo_salida",
+                                    "estado"
+                                ],
+                                "properties": {
+                                    "almacen_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "fecha_salida": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2024-01-15T10:30:00Z"
+                                    },
+                                    "tipo_salida": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Venta",
+                                            "Traslado",
+                                            "Ajuste",
+                                            "Devolución",
+                                            "Producción",
+                                            "Merma",
+                                            "Otro"
+                                        ],
+                                        "example": "Venta"
+                                    },
+                                    "venta_id": {
+                                        "type": "integer",
+                                        "example": 20
+                                    },
+                                    "cliente_id": {
+                                        "type": "integer",
+                                        "example": 12
+                                    },
+                                    "proveedor_id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "documento_referencia": {
+                                        "type": "string",
+                                        "example": "FACT-2024-050"
+                                    },
+                                    "estado": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Pendiente",
+                                            "Procesada",
+                                            "Cancelada"
+                                        ],
+                                        "example": "Procesada"
+                                    },
+                                    "monto_total": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 85000
+                                    },
+                                    "observaciones": {
+                                        "type": "string",
+                                        "example": "Entregado completo"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Salida para venta #20"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Salida creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SalidaInventario"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/inventario/salidas/{id}": {
+            "get": {
+                "tags": [
+                    "Inventario"
+                ],
+                "summary": "Obtener salida de inventario",
+                "description": "Obtiene los detalles de una salida de inventario específica, incluyendo sus detalles de productos.",
+                "operationId": "43d67072bee217160bf79a45a17dfcb5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la salida",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Salida encontrada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SalidaInventario"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Salida no encontrada"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/inventario/entradas/{id}/cancelar": {
+            "post": {
+                "tags": [
+                    "Inventario"
+                ],
+                "summary": "Cancelar entrada de inventario",
+                "description": "Cancela una entrada de inventario. No permite cancelar entradas ya procesadas.",
+                "operationId": "1304e6c7dfaa427ef19904a5f7347044",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la entrada a cancelar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Entrada cancelada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Entrada de inventario cancelada exitosamente"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/EntradaInventario"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Entrada no encontrada"
+                    },
+                    "422": {
+                        "description": "No se puede cancelar una entrada ya procesada"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/inventario/salidas/{id}/cancelar": {
+            "post": {
+                "tags": [
+                    "Inventario"
+                ],
+                "summary": "Cancelar salida de inventario",
+                "description": "Cancela una salida de inventario. No permite cancelar salidas ya procesadas.",
+                "operationId": "f05f4d6108f7bef47aa01199df9c76bb",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la salida a cancelar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Salida cancelada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Salida de inventario cancelada exitosamente"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/SalidaInventario"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Salida no encontrada"
+                    },
+                    "422": {
+                        "description": "No se puede cancelar una salida ya procesada"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/ordenes-compra": {
             "get": {
                 "tags": [
@@ -3294,6 +4447,508 @@
                     },
                     "422": {
                         "description": "Solo se pueden eliminar en estado borrador"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/pagos": {
+            "get": {
+                "tags": [
+                    "Pagos"
+                ],
+                "summary": "Listar todos los pagos",
+                "description": "Obtiene un listado de todos los pagos registrados en el sistema. Permite filtrar por estado, forma de pago, proveedor, cliente y rango de fechas. Actualiza automáticamente los saldos de cuentas por cobrar y por pagar.",
+                "operationId": "3ca9f79a1f4538ea857cb301bd338f05",
+                "parameters": [
+                    {
+                        "name": "estado",
+                        "in": "query",
+                        "description": "Filtrar por estado del pago",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "Pendiente",
+                                "Pagado",
+                                "Cancelado"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "forma_pago_id",
+                        "in": "query",
+                        "description": "Filtrar por forma de pago",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "proveedor_id",
+                        "in": "query",
+                        "description": "Filtrar por proveedor",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    },
+                    {
+                        "name": "cliente_id",
+                        "in": "query",
+                        "description": "Filtrar por cliente",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 12
+                        }
+                    },
+                    {
+                        "name": "desde",
+                        "in": "query",
+                        "description": "Fecha de inicio del rango (formato: Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-01"
+                        }
+                    },
+                    {
+                        "name": "hasta",
+                        "in": "query",
+                        "description": "Fecha fin del rango (formato: Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-12-31"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de pagos obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Pago"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Pagos"
+                ],
+                "summary": "Crear un nuevo pago",
+                "description": "Registra un nuevo pago en el sistema. Actualiza automáticamente el saldo de la cuenta por cobrar o cuenta por pagar relacionada. Utiliza transacciones para garantizar la integridad de los datos.",
+                "operationId": "13765722c9eaf4988ed822cf3e23d05e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "fecha_pago",
+                                    "monto",
+                                    "estado"
+                                ],
+                                "properties": {
+                                    "orden_compra_id": {
+                                        "type": "integer",
+                                        "example": 15
+                                    },
+                                    "cuenta_por_pagar_id": {
+                                        "type": "integer",
+                                        "example": 8
+                                    },
+                                    "proveedor_id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "cliente_id": {
+                                        "type": "integer",
+                                        "example": 12
+                                    },
+                                    "cuenta_por_cobrar_id": {
+                                        "type": "integer",
+                                        "example": 20
+                                    },
+                                    "forma_pago_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "fecha_pago": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-01-15"
+                                    },
+                                    "monto": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 15000.5
+                                    },
+                                    "moneda": {
+                                        "type": "string",
+                                        "maxLength": 3,
+                                        "example": "CRC"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Pago parcial de factura #1234"
+                                    },
+                                    "referencia": {
+                                        "type": "string",
+                                        "example": "REF-2024-001"
+                                    },
+                                    "estado": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Pendiente",
+                                            "Pagado",
+                                            "Cancelado"
+                                        ],
+                                        "example": "Pagado"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Pago creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Pago"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/pagos/{id}": {
+            "get": {
+                "tags": [
+                    "Pagos"
+                ],
+                "summary": "Obtener un pago específico",
+                "description": "Obtiene los detalles completos de un pago específico, incluyendo relaciones con forma de pago, proveedor, cliente, cuenta por pagar, cuenta por cobrar y orden de compra.",
+                "operationId": "35db17a6713f7f14c884e850bb34de36",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del pago",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pago encontrado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Pago"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pago no encontrado"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Pagos"
+                ],
+                "summary": "Actualizar un pago existente",
+                "description": "Actualiza los datos de un pago existente. No permite modificar pagos en estado 'Pagado'. Actualiza automáticamente los saldos de cuentas si cambia el monto.",
+                "operationId": "adffb8b1367089abb3140555a378c624",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del pago a actualizar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "orden_compra_id": {
+                                        "type": "integer",
+                                        "example": 15
+                                    },
+                                    "cuenta_por_pagar_id": {
+                                        "type": "integer",
+                                        "example": 8
+                                    },
+                                    "proveedor_id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "cliente_id": {
+                                        "type": "integer",
+                                        "example": 12
+                                    },
+                                    "cuenta_por_cobrar_id": {
+                                        "type": "integer",
+                                        "example": 20
+                                    },
+                                    "forma_pago_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "fecha_pago": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-01-15"
+                                    },
+                                    "monto": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 15000.5
+                                    },
+                                    "moneda": {
+                                        "type": "string",
+                                        "maxLength": 3,
+                                        "example": "CRC"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Pago parcial de factura #1234"
+                                    },
+                                    "referencia": {
+                                        "type": "string",
+                                        "example": "REF-2024-001"
+                                    },
+                                    "estado": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Pendiente",
+                                            "Pagado",
+                                            "Cancelado"
+                                        ],
+                                        "example": "Pagado"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Pago actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Pago actualizado exitosamente"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Pago"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pago no encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación o pago en estado 'Pagado'"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Pagos"
+                ],
+                "summary": "Eliminar un pago",
+                "description": "Realiza un soft delete del pago especificado. No permite eliminar pagos en estado 'Pagado'. Revierte los saldos de las cuentas relacionadas al eliminar.",
+                "operationId": "bb99b65924bad2d7effaaa9a125bb12d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del pago a eliminar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pago eliminado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Pago eliminado exitosamente"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Pago"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pago no encontrado"
+                    },
+                    "422": {
+                        "description": "No se puede eliminar un pago en estado 'Pagado'"
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/pagos/resumen-por-forma-pago": {
+            "get": {
+                "tags": [
+                    "Pagos"
+                ],
+                "summary": "Resumen de pagos por forma de pago",
+                "description": "Obtiene un resumen estadístico de todos los pagos agrupados por forma de pago. Incluye cantidad de pagos y total pagado por cada forma de pago. Solo considera pagos en estado 'Pagado'.",
+                "operationId": "6ad8ccc9821933751a27894a632e40bd",
+                "responses": {
+                    "200": {
+                        "description": "Resumen generado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "forma_pago_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "cantidad": {
+                                                        "type": "integer",
+                                                        "example": 25
+                                                    },
+                                                    "total": {
+                                                        "type": "number",
+                                                        "format": "decimal",
+                                                        "example": 450000
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor"
                     }
                 },
                 "security": [
@@ -6856,6 +8511,122 @@
                 },
                 "type": "object"
             },
+            "EntradaInventario": {
+                "title": "Entrada de Inventario",
+                "description": "Esquema para registro de entradas de inventario al sistema",
+                "required": [
+                    "empresa_id",
+                    "almacen_id",
+                    "fecha_entrada",
+                    "tipo_entrada",
+                    "estado"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "ID único de la entrada de inventario",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "empresa_id": {
+                        "description": "ID de la empresa (multi-tenant)",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "almacen_id": {
+                        "description": "ID del almacén donde ingresa el inventario",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "fecha_entrada": {
+                        "description": "Fecha en que se realiza la entrada",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
+                    },
+                    "tipo_entrada": {
+                        "description": "Tipo de entrada (Compra, Traslado, Ajuste, Devolución, etc.)",
+                        "type": "string",
+                        "enum": [
+                            "Compra",
+                            "Traslado",
+                            "Ajuste",
+                            "Devolución",
+                            "Producción",
+                            "Otro"
+                        ],
+                        "example": "Compra"
+                    },
+                    "orden_compra_id": {
+                        "description": "ID de la orden de compra relacionada (opcional)",
+                        "type": "integer",
+                        "example": 15,
+                        "nullable": true
+                    },
+                    "proveedor_id": {
+                        "description": "ID del proveedor que envía la mercadería (opcional)",
+                        "type": "integer",
+                        "example": 5,
+                        "nullable": true
+                    },
+                    "documento_referencia": {
+                        "description": "Número de factura, guía o documento de referencia",
+                        "type": "string",
+                        "example": "FACT-2024-001",
+                        "nullable": true
+                    },
+                    "estado": {
+                        "description": "Estado de la entrada (Pendiente, Procesada, Cancelada)",
+                        "type": "string",
+                        "enum": [
+                            "Pendiente",
+                            "Procesada",
+                            "Cancelada"
+                        ],
+                        "example": "Pendiente"
+                    },
+                    "monto_total": {
+                        "description": "Monto total de la entrada (decimal con 2 decimales)",
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 125000
+                    },
+                    "observaciones": {
+                        "description": "Observaciones o notas adicionales",
+                        "type": "string",
+                        "example": "Recibido en buen estado, verificado cantidad",
+                        "nullable": true
+                    },
+                    "descripcion": {
+                        "description": "Descripción general de la entrada",
+                        "type": "string",
+                        "example": "Entrada de mercadería según orden de compra #15",
+                        "nullable": true
+                    },
+                    "activo": {
+                        "description": "Indica si la entrada está activa",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "eliminado": {
+                        "description": "Indica si la entrada fue eliminada (soft delete)",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "creado_en": {
+                        "description": "Fecha de creación del registro",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
+                    },
+                    "actualizado_en": {
+                        "description": "Fecha de última actualización",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T14:45:00Z"
+                    }
+                },
+                "type": "object"
+            },
             "FormaPago": {
                 "title": "Forma de Pago",
                 "description": "Método de pago disponible en el sistema",
@@ -7040,6 +8811,128 @@
                     },
                     "empresa": {
                         "$ref": "#/components/schemas/Empresa"
+                    }
+                },
+                "type": "object"
+            },
+            "Pago": {
+                "title": "Pago",
+                "description": "Esquema para registro de pagos en el sistema",
+                "required": [
+                    "empresa_id",
+                    "fecha_pago",
+                    "monto",
+                    "estado"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "ID único del pago",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "empresa_id": {
+                        "description": "ID de la empresa (multi-tenant)",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "orden_compra_id": {
+                        "description": "ID de la orden de compra relacionada (opcional)",
+                        "type": "integer",
+                        "example": 15,
+                        "nullable": true
+                    },
+                    "cuenta_por_pagar_id": {
+                        "description": "ID de la cuenta por pagar (opcional)",
+                        "type": "integer",
+                        "example": 8,
+                        "nullable": true
+                    },
+                    "proveedor_id": {
+                        "description": "ID del proveedor que recibe el pago (opcional)",
+                        "type": "integer",
+                        "example": 5,
+                        "nullable": true
+                    },
+                    "cliente_id": {
+                        "description": "ID del cliente que realiza el pago (opcional)",
+                        "type": "integer",
+                        "example": 12,
+                        "nullable": true
+                    },
+                    "cuenta_por_cobrar_id": {
+                        "description": "ID de la cuenta por cobrar (opcional)",
+                        "type": "integer",
+                        "example": 20,
+                        "nullable": true
+                    },
+                    "forma_pago_id": {
+                        "description": "ID de la forma de pago utilizada",
+                        "type": "integer",
+                        "example": 2,
+                        "nullable": true
+                    },
+                    "fecha_pago": {
+                        "description": "Fecha en que se realizó el pago",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-01-15"
+                    },
+                    "monto": {
+                        "description": "Monto del pago (decimal con 2 decimales)",
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 15000.5
+                    },
+                    "moneda": {
+                        "description": "Código de moneda (CRC, USD, etc.)",
+                        "type": "string",
+                        "maxLength": 3,
+                        "example": "CRC",
+                        "nullable": true
+                    },
+                    "descripcion": {
+                        "description": "Descripción detallada del pago",
+                        "type": "string",
+                        "example": "Pago parcial de factura #1234",
+                        "nullable": true
+                    },
+                    "referencia": {
+                        "description": "Número de referencia, comprobante o código de transacción",
+                        "type": "string",
+                        "example": "REF-2024-001",
+                        "nullable": true
+                    },
+                    "estado": {
+                        "description": "Estado del pago (Pendiente, Pagado, Cancelado)",
+                        "type": "string",
+                        "enum": [
+                            "Pendiente",
+                            "Pagado",
+                            "Cancelado"
+                        ],
+                        "example": "Pagado"
+                    },
+                    "activo": {
+                        "description": "Indica si el pago está activo",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "eliminado": {
+                        "description": "Indica si el pago fue eliminado (soft delete)",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "creado_en": {
+                        "description": "Fecha de creación del registro",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
+                    },
+                    "actualizado_en": {
+                        "description": "Fecha de última actualización",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T14:45:00Z"
                     }
                 },
                 "type": "object"
@@ -7356,6 +9249,129 @@
                         "items": {
                             "$ref": "#/components/schemas/Permiso"
                         }
+                    }
+                },
+                "type": "object"
+            },
+            "SalidaInventario": {
+                "title": "Salida de Inventario",
+                "description": "Esquema para registro de salidas de inventario del sistema",
+                "required": [
+                    "empresa_id",
+                    "almacen_id",
+                    "fecha_salida",
+                    "tipo_salida",
+                    "estado"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "ID único de la salida de inventario",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "empresa_id": {
+                        "description": "ID de la empresa (multi-tenant)",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "almacen_id": {
+                        "description": "ID del almacén desde donde sale el inventario",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "fecha_salida": {
+                        "description": "Fecha en que se realiza la salida",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
+                    },
+                    "tipo_salida": {
+                        "description": "Tipo de salida (Venta, Traslado, Ajuste, Devolución, etc.)",
+                        "type": "string",
+                        "enum": [
+                            "Venta",
+                            "Traslado",
+                            "Ajuste",
+                            "Devolución",
+                            "Producción",
+                            "Merma",
+                            "Otro"
+                        ],
+                        "example": "Venta"
+                    },
+                    "venta_id": {
+                        "description": "ID de la venta relacionada (opcional)",
+                        "type": "integer",
+                        "example": 20,
+                        "nullable": true
+                    },
+                    "cliente_id": {
+                        "description": "ID del cliente que recibe la mercadería (opcional)",
+                        "type": "integer",
+                        "example": 12,
+                        "nullable": true
+                    },
+                    "proveedor_id": {
+                        "description": "ID del proveedor en caso de devolución (opcional)",
+                        "type": "integer",
+                        "example": 5,
+                        "nullable": true
+                    },
+                    "documento_referencia": {
+                        "description": "Número de factura, guía o documento de referencia",
+                        "type": "string",
+                        "example": "FACT-2024-050",
+                        "nullable": true
+                    },
+                    "estado": {
+                        "description": "Estado de la salida (Pendiente, Procesada, Cancelada)",
+                        "type": "string",
+                        "enum": [
+                            "Pendiente",
+                            "Procesada",
+                            "Cancelada"
+                        ],
+                        "example": "Procesada"
+                    },
+                    "monto_total": {
+                        "description": "Monto total de la salida (decimal con 2 decimales)",
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 85000
+                    },
+                    "observaciones": {
+                        "description": "Observaciones o notas adicionales",
+                        "type": "string",
+                        "example": "Entregado completo, firmado por cliente",
+                        "nullable": true
+                    },
+                    "descripcion": {
+                        "description": "Descripción general de la salida",
+                        "type": "string",
+                        "example": "Salida de productos para venta #20",
+                        "nullable": true
+                    },
+                    "activo": {
+                        "description": "Indica si la salida está activa",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "eliminado": {
+                        "description": "Indica si la salida fue eliminada (soft delete)",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "creado_en": {
+                        "description": "Fecha de creación del registro",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
+                    },
+                    "actualizado_en": {
+                        "description": "Fecha de última actualización",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T14:45:00Z"
                     }
                 },
                 "type": "object"
@@ -7740,6 +9756,14 @@
             "description": "Autenticación"
         },
         {
+            "name": "Cargos",
+            "description": "Cargos"
+        },
+        {
+            "name": "Categorías de Productos",
+            "description": "Categorías de Productos"
+        },
+        {
             "name": "Clientes",
             "description": "Clientes"
         },
@@ -7768,8 +9792,16 @@
             "description": "Formas de Pago"
         },
         {
+            "name": "Inventario",
+            "description": "Inventario"
+        },
+        {
             "name": "Órdenes de Compra",
             "description": "Órdenes de Compra"
+        },
+        {
+            "name": "Pagos",
+            "description": "Pagos"
         },
         {
             "name": "Roles y Permisos",

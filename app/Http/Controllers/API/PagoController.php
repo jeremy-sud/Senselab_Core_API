@@ -13,6 +13,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
+use OpenApi\Attributes as OA;
 
 /**
  * Controlador API para Pagos
@@ -31,6 +32,71 @@ class PagoController extends Controller
      * @param Request $request
      * @return AnonymousResourceCollection
      */
+    #[OA\Get(
+        path: "/api/pagos",
+        summary: "Listar todos los pagos",
+        description: "Obtiene un listado de todos los pagos registrados en el sistema. Permite filtrar por estado, forma de pago, proveedor, cliente y rango de fechas. Actualiza automáticamente los saldos de cuentas por cobrar y por pagar.",
+        security: [["sanctum" => []]],
+        tags: ["Pagos"],
+        parameters: [
+            new OA\Parameter(
+                name: "estado",
+                in: "query",
+                description: "Filtrar por estado del pago",
+                required: false,
+                schema: new OA\Schema(type: "string", enum: ["Pendiente", "Pagado", "Cancelado"])
+            ),
+            new OA\Parameter(
+                name: "forma_pago_id",
+                in: "query",
+                description: "Filtrar por forma de pago",
+                required: false,
+                schema: new OA\Schema(type: "integer", example: 1)
+            ),
+            new OA\Parameter(
+                name: "proveedor_id",
+                in: "query",
+                description: "Filtrar por proveedor",
+                required: false,
+                schema: new OA\Schema(type: "integer", example: 5)
+            ),
+            new OA\Parameter(
+                name: "cliente_id",
+                in: "query",
+                description: "Filtrar por cliente",
+                required: false,
+                schema: new OA\Schema(type: "integer", example: 12)
+            ),
+            new OA\Parameter(
+                name: "desde",
+                in: "query",
+                description: "Fecha de inicio del rango (formato: Y-m-d)",
+                required: false,
+                schema: new OA\Schema(type: "string", format: "date", example: "2024-01-01")
+            ),
+            new OA\Parameter(
+                name: "hasta",
+                in: "query",
+                description: "Fecha fin del rango (formato: Y-m-d)",
+                required: false,
+                schema: new OA\Schema(type: "string", format: "date", example: "2024-12-31")
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Listado de pagos obtenido exitosamente",
+                content: new OA\JsonContent(
+                    type: "array",
+                    items: new OA\Items(ref: "#/components/schemas/Pago")
+                )
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function index(Request $request): AnonymousResourceCollection
     {
         $empresaId = $request->user()->empresa_id;
@@ -78,6 +144,48 @@ class PagoController extends Controller
      * @param StorePagoRequest $request
      * @return JsonResponse
      */
+    #[OA\Post(
+        path: "/api/pagos",
+        summary: "Crear un nuevo pago",
+        description: "Registra un nuevo pago en el sistema. Actualiza automáticamente el saldo de la cuenta por cobrar o cuenta por pagar relacionada. Utiliza transacciones para garantizar la integridad de los datos.",
+        security: [["sanctum" => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["fecha_pago", "monto", "estado"],
+                properties: [
+                    new OA\Property(property: "orden_compra_id", type: "integer", example: 15),
+                    new OA\Property(property: "cuenta_por_pagar_id", type: "integer", example: 8),
+                    new OA\Property(property: "proveedor_id", type: "integer", example: 5),
+                    new OA\Property(property: "cliente_id", type: "integer", example: 12),
+                    new OA\Property(property: "cuenta_por_cobrar_id", type: "integer", example: 20),
+                    new OA\Property(property: "forma_pago_id", type: "integer", example: 2),
+                    new OA\Property(property: "fecha_pago", type: "string", format: "date", example: "2024-01-15"),
+                    new OA\Property(property: "monto", type: "number", format: "decimal", example: 15000.50),
+                    new OA\Property(property: "moneda", type: "string", maxLength: 3, example: "CRC"),
+                    new OA\Property(property: "descripcion", type: "string", example: "Pago parcial de factura #1234"),
+                    new OA\Property(property: "referencia", type: "string", example: "REF-2024-001"),
+                    new OA\Property(property: "estado", type: "string", enum: ["Pendiente", "Pagado", "Cancelado"], example: "Pagado")
+                ]
+            )
+        ),
+        tags: ["Pagos"],
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: "Pago creado exitosamente",
+                content: new OA\JsonContent(ref: "#/components/schemas/Pago")
+            ),
+            new OA\Response(
+                response: 422,
+                description: "Error de validación"
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function store(StorePagoRequest $request): JsonResponse
     {
         try {
@@ -124,6 +232,42 @@ class PagoController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
+    #[OA\Get(
+        path: "/api/pagos/{id}",
+        summary: "Obtener un pago específico",
+        description: "Obtiene los detalles completos de un pago específico, incluyendo relaciones con forma de pago, proveedor, cliente, cuenta por pagar, cuenta por cobrar y orden de compra.",
+        security: [["sanctum" => []]],
+        tags: ["Pagos"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del pago",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Pago encontrado exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "data", ref: "#/components/schemas/Pago")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Pago no encontrado"
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function show(int $id, Request $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -147,6 +291,66 @@ class PagoController extends Controller
      * @param int $id
      * @return JsonResponse
      */
+    #[OA\Put(
+        path: "/api/pagos/{id}",
+        summary: "Actualizar un pago existente",
+        description: "Actualiza los datos de un pago existente. No permite modificar pagos en estado 'Pagado'. Actualiza automáticamente los saldos de cuentas si cambia el monto.",
+        security: [["sanctum" => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: "orden_compra_id", type: "integer", example: 15),
+                    new OA\Property(property: "cuenta_por_pagar_id", type: "integer", example: 8),
+                    new OA\Property(property: "proveedor_id", type: "integer", example: 5),
+                    new OA\Property(property: "cliente_id", type: "integer", example: 12),
+                    new OA\Property(property: "cuenta_por_cobrar_id", type: "integer", example: 20),
+                    new OA\Property(property: "forma_pago_id", type: "integer", example: 2),
+                    new OA\Property(property: "fecha_pago", type: "string", format: "date", example: "2024-01-15"),
+                    new OA\Property(property: "monto", type: "number", format: "decimal", example: 15000.50),
+                    new OA\Property(property: "moneda", type: "string", maxLength: 3, example: "CRC"),
+                    new OA\Property(property: "descripcion", type: "string", example: "Pago parcial de factura #1234"),
+                    new OA\Property(property: "referencia", type: "string", example: "REF-2024-001"),
+                    new OA\Property(property: "estado", type: "string", enum: ["Pendiente", "Pagado", "Cancelado"], example: "Pagado")
+                ]
+            )
+        ),
+        tags: ["Pagos"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del pago a actualizar",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Pago actualizado exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "message", type: "string", example: "Pago actualizado exitosamente"),
+                        new OA\Property(property: "data", ref: "#/components/schemas/Pago")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Pago no encontrado"
+            ),
+            new OA\Response(
+                response: 422,
+                description: "Error de validación o pago en estado 'Pagado'"
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function update(UpdatePagoRequest $request, int $id): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -209,6 +413,47 @@ class PagoController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
+    #[OA\Delete(
+        path: "/api/pagos/{id}",
+        summary: "Eliminar un pago",
+        description: "Realiza un soft delete del pago especificado. No permite eliminar pagos en estado 'Pagado'. Revierte los saldos de las cuentas relacionadas al eliminar.",
+        security: [["sanctum" => []]],
+        tags: ["Pagos"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del pago a eliminar",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Pago eliminado exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "message", type: "string", example: "Pago eliminado exitosamente"),
+                        new OA\Property(property: "data", ref: "#/components/schemas/Pago")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Pago no encontrado"
+            ),
+            new OA\Response(
+                response: 422,
+                description: "No se puede eliminar un pago en estado 'Pagado'"
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function destroy(int $id, Request $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -302,6 +547,39 @@ class PagoController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
+    #[OA\Get(
+        path: "/api/pagos/resumen-por-forma-pago",
+        summary: "Resumen de pagos por forma de pago",
+        description: "Obtiene un resumen estadístico de todos los pagos agrupados por forma de pago. Incluye cantidad de pagos y total pagado por cada forma de pago. Solo considera pagos en estado 'Pagado'.",
+        security: [["sanctum" => []]],
+        tags: ["Pagos"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Resumen generado exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(
+                            property: "data",
+                            type: "array",
+                            items: new OA\Items(
+                                properties: [
+                                    new OA\Property(property: "forma_pago_id", type: "integer", example: 1),
+                                    new OA\Property(property: "cantidad", type: "integer", example: 25),
+                                    new OA\Property(property: "total", type: "number", format: "decimal", example: 450000.00)
+                                ]
+                            )
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function resumenPorFormaPago(Request $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
