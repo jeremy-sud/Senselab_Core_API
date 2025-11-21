@@ -16,10 +16,16 @@ class StoreDetalleEntradaInventarioRequest extends FormRequest
         return [
             'entrada_inventario_id' => 'required|exists:entradas_inventario,id',
             'producto_id' => 'required|exists:productos,id',
+            'numero_linea' => 'required|integer|min:1',
             'cantidad' => 'required|numeric|min:0.01',
             'costo_unitario' => 'required|numeric|min:0',
-            'lote' => 'nullable|string|max:50',
-            'fecha_vencimiento' => 'nullable|date|after:today'
+            'subtotal' => 'required|numeric|min:0',
+            'porcentaje_impuesto' => 'nullable|numeric|min:0|max:100',
+            'monto_impuesto' => 'nullable|numeric|min:0',
+            'total_linea' => 'required|numeric|min:0',
+            'lote' => 'nullable|string|max:100',
+            'fecha_vencimiento' => 'nullable|date|after:today',
+            'observaciones' => 'nullable|string'
         ];
     }
 
