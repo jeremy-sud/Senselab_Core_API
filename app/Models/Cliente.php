@@ -48,14 +48,12 @@ class Cliente extends Model
         'nombre_comercial',
         'email',
         'telefono',
-        'celular',
         'direccion',
         'provincia',
         'canton',
         'distrito',
-        'codigo_postal',
         'limite_credito',
-        'dias_credito',
+        'plazo_credito_dias',
         'activo',
         'eliminado'
     ];
@@ -64,6 +62,8 @@ class Cliente extends Model
      * Los atributos que deben ser convertidos.
      */
     protected $casts = [
+        'limite_credito' => 'decimal:2',
+        'plazo_credito_dias' => 'integer',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
         'creado_en' => 'datetime',
@@ -182,7 +182,7 @@ class Cliente extends Model
      */
     public function getTipoIdentificacionDescripcionAttribute(): ?string
     {
-        return self::TIPO_DGT[$this->tipo_identificacion_dgt] ?? null;
+        return self::TIPO_DGT[$this->tipo_identificacion] ?? null;
     }
 
     /**
@@ -190,7 +190,7 @@ class Cliente extends Model
      */
     public function tieneIdentificacionValida(): bool
     {
-        return !empty($this->tipo_identificacion_dgt) && 
-               !empty($this->num_identificacion_dgt);
+        return !empty($this->tipo_identificacion) && 
+               !empty($this->numero_identificacion);
     }
 }

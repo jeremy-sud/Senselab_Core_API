@@ -28,21 +28,19 @@ class OrdenCompra extends Model
 
     protected $fillable = [
         'empresa_id',
-        'numero_orden',
         'proveedor_id',
-        'almacen_destino_id',
+        'usuario_id',
+        'numero_orden',
+        'fecha_orden',
+        'fecha_entrega_esperada',
         'moneda',
         'subtotal',
         'impuesto_total',
         'total_orden',
-        'fecha_orden',
-        'fecha_entrega_esperada',
         'estado',
         'observaciones',
         'activo',
         'eliminado',
-        'creado_en',
-        'actualizado_en',
     ];
 
     protected $casts = [
@@ -53,6 +51,8 @@ class OrdenCompra extends Model
         'total_orden' => 'decimal:2',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
+        'creado_en' => 'datetime',
+        'actualizado_en' => 'datetime',
     ];
 
     // Reglas de validación básicas; ajustar si el esquema real difiere

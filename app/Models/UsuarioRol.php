@@ -11,21 +11,7 @@ class UsuarioRol extends Model
      *
      * @var string
      */
-    protected $table = 'usuarios_roles';
-
-    /**
-     * La tabla no tiene un campo autoincremental.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * La clave primaria es compuesta.
-     *
-     * @var array
-     */
-    protected $primaryKey = ['usuario_id', 'rol_id'];
+    protected $table = 'rol_usuario';
 
     /**
      * Atributos que se pueden asignar de manera masiva.
@@ -36,6 +22,7 @@ class UsuarioRol extends Model
         'usuario_id',
         'rol_id',
         'activo',
+        'eliminado',
     ];
 
     /**
@@ -45,6 +32,7 @@ class UsuarioRol extends Model
      */
     protected $casts = [
         'activo' => 'boolean',
+        'eliminado' => 'boolean',
         'creado_en' => 'datetime',
         'actualizado_en' => 'datetime',
     ];
