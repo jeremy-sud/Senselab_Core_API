@@ -11,6 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
+use OpenApi\Attributes as OA;
 
 /**
  * Controlador API para Cuentas por Cobrar
@@ -29,6 +30,24 @@ class CuentaPorCobrarController extends Controller
      * @param Request $request
      * @return AnonymousResourceCollection
      */
+    #[OA\Get(
+        path: '/api/cuentas-por-cobrar',
+        summary: 'Listar cuentas por cobrar',
+        description: 'Obtiene listado paginado de cuentas por cobrar con filtros de estado, cliente y fechas',
+        security: [['sanctum' => []]],
+        tags: ['Cuentas por Cobrar'],
+        parameters: [
+            new OA\Parameter(name: 'per_page', in: 'query', required: false, schema: new OA\Schema(type: 'integer', default: 15)),
+            new OA\Parameter(name: 'estado', in: 'query', required: false, schema: new OA\Schema(type: 'string', enum: ['Pendiente', 'Pagada Parcialmente', 'Pagada', 'Vencida', 'Cancelada'])),
+            new OA\Parameter(name: 'cliente_id', in: 'query', required: false, schema: new OA\Schema(type: 'integer')),
+            new OA\Parameter(name: 'vencidas', in: 'query', required: false, schema: new OA\Schema(type: 'boolean')),
+            new OA\Parameter(name: 'fecha_desde', in: 'query', required: false, schema: new OA\Schema(type: 'string', format: 'date')),
+            new OA\Parameter(name: 'fecha_hasta', in: 'query', required: false, schema: new OA\Schema(type: 'string', format: 'date'))
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Listado exitoso', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/CuentaPorCobrar'))]))
+        ]
+    )]
     public function index(Request $request): AnonymousResourceCollection
     {
         $empresaId = $request->user()->empresa_id;
@@ -69,6 +88,31 @@ class CuentaPorCobrarController extends Controller
      * @param StoreCuentaPorCobrarRequest $request
      * @return JsonResponse
      */
+    #[OA\Post(
+        path: '/api/cuentas-por-cobrar',
+        summary: 'Crear cuenta por cobrar',
+        description: 'Crea nueva cuenta por cobrar asociada a venta',
+        security: [['sanctum' => []]],
+        tags: ['Cuentas por Cobrar'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['venta_id', 'cliente_id', 'numero_documento', 'fecha_emision', 'fecha_vencimiento', 'monto_total'],
+                properties: [
+                    new OA\Property(property: 'venta_id', type: 'integer', example: 1),
+                    new OA\Property(property: 'cliente_id', type: 'integer', example: 5),
+                    new OA\Property(property: 'numero_documento', type: 'string', example: 'FAC-2024-001'),
+                    new OA\Property(property: 'fecha_emision', type: 'string', format: 'date', example: '2024-01-15'),
+                    new OA\Property(property: 'fecha_vencimiento', type: 'string', format: 'date', example: '2024-02-15'),
+                    new OA\Property(property: 'monto_total', type: 'number', format: 'decimal', example: 150000.00),
+                    new OA\Property(property: 'observaciones', type: 'string', nullable: true)
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Cuenta creada', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', ref: '#/components/schemas/CuentaPorCobrar')]))
+        ]
+    )]
     public function store(StoreCuentaPorCobrarRequest $request): JsonResponse
     {
         $validated = $request->validated();
@@ -91,6 +135,18 @@ class CuentaPorCobrarController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
+    #[OA\Get(
+        path: '/api/cuentas-por-cobrar/{id}',
+        summary: 'Obtener cuenta por cobrar',
+        description: 'Detalles completos con cliente, venta y pagos',
+        security: [['sanctum' => []]],
+        tags: ['Cuentas por Cobrar'],
+        parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
+        responses: [
+            new OA\Response(response: 200, description: 'Cuenta encontrada'),
+            new OA\Response(response: 404, description: 'No encontrada')
+        ]
+    )]
     public function show(int $id, Request $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -108,12 +164,20 @@ class CuentaPorCobrarController extends Controller
     }
 
     /**
-     * Actualizar una cuenta por cobrar existente
+     * Actualizar una cuenta por cobrar
      *
      * @param UpdateCuentaPorCobrarRequest $request
      * @param int $id
      * @return JsonResponse
      */
+    #[OA\Put(
+        path: '/api/cuentas-por-cobrar/{id}',
+        summary: 'Actualizar cuenta por cobrar',
+        security: [['sanctum' => []]],
+        tags: ['Cuentas por Cobrar'],
+        parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
+        responses: [new OA\Response(response: 200, description: 'Actualizada')]
+    )]
     public function update(UpdateCuentaPorCobrarRequest $request, int $id): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -140,6 +204,18 @@ class CuentaPorCobrarController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
+    #[OA\Delete(
+        path: '/api/cuentas-por-cobrar/{id}',
+        summary: 'Eliminar cuenta por cobrar',
+        description: 'Soft delete. Valida que no tenga pagos registrados',
+        security: [['sanctum' => []]],
+        tags: ['Cuentas por Cobrar'],
+        parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
+        responses: [
+            new OA\Response(response: 200, description: 'Eliminada'),
+            new OA\Response(response: 422, description: 'No se puede eliminar con pagos registrados')
+        ]
+    )]
     public function destroy(int $id, Request $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -171,6 +247,26 @@ class CuentaPorCobrarController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
+    #[OA\Get(
+        path: '/api/cuentas-por-cobrar/vencidas',
+        summary: 'Listar cuentas vencidas',
+        description: 'Obtiene cuentas con fecha_vencimiento pasada y estado Pendiente/Pagada Parcialmente',
+        security: [['sanctum' => []]],
+        tags: ['Cuentas por Cobrar'],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Listado de vencidas',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'total_vencido', type: 'number', example: 125000),
+                        new OA\Property(property: 'cantidad_vencidas', type: 'integer', example: 3),
+                        new OA\Property(property: 'cuentas', type: 'array', items: new OA\Items(ref: '#/components/schemas/CuentaPorCobrar'))
+                    ]
+                )
+            )
+        ]
+    )]
     public function vencidas(Request $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
@@ -201,6 +297,26 @@ class CuentaPorCobrarController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
+    #[OA\Get(
+        path: '/api/cuentas-por-cobrar/resumen',
+        summary: 'Resumen de cuentas por cobrar',
+        description: 'Totales agregados por estado para dashboard',
+        security: [['sanctum' => []]],
+        tags: ['Cuentas por Cobrar'],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Resumen exitoso',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'total_por_cobrar', type: 'number', example: 500000),
+                        new OA\Property(property: 'total_vencido', type: 'number', example: 125000),
+                        new OA\Property(property: 'por_estado', type: 'object')
+                    ]
+                )
+            )
+        ]
+    )]
     public function resumen(Request $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;

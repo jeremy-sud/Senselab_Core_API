@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreOrdenCompraRequest;
 use App\Http\Requests\UpdateOrdenCompraRequest;
 use App\Http\Resources\OrdenCompraResource;
+use OpenApi\Attributes as OA;
 
 class OrdenCompraController extends Controller
 {
@@ -19,6 +20,24 @@ class OrdenCompraController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
+    #[OA\Get(
+        path: '/api/ordenes-compra',
+        summary: 'Listar órdenes de compra',
+        description: 'Obtiene listado paginado de órdenes de compra con filtros',
+        security: [['sanctum' => []]],
+        tags: ['Órdenes de Compra'],
+        parameters: [
+            new OA\Parameter(name: 'per_page', in: 'query', required: false, schema: new OA\Schema(type: 'integer', default: 15)),
+            new OA\Parameter(name: 'empresa_id', in: 'query', required: false, schema: new OA\Schema(type: 'integer')),
+            new OA\Parameter(name: 'proveedor_id', in: 'query', required: false, schema: new OA\Schema(type: 'integer')),
+            new OA\Parameter(name: 'estado', in: 'query', required: false, schema: new OA\Schema(type: 'string', enum: ['borrador', 'enviada', 'confirmada', 'recibida_parcial', 'recibida_completa', 'cancelada'])),
+            new OA\Parameter(name: 'pendientes', in: 'query', required: false, schema: new OA\Schema(type: 'boolean')),
+            new OA\Parameter(name: 'activas', in: 'query', required: false, schema: new OA\Schema(type: 'boolean'))
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Listado exitoso', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/OrdenCompra'))]))
+        ]
+    )]
     public function index(Request $request)
     {
         try {
@@ -71,6 +90,44 @@ class OrdenCompraController extends Controller
      * @param StoreOrdenCompraRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
+    #[OA\Post(
+        path: '/api/ordenes-compra',
+        summary: 'Crear orden de compra',
+        description: 'Crea una nueva orden de compra con sus detalles. Genera número automáticamente',
+        security: [['sanctum' => []]],
+        tags: ['Órdenes de Compra'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['empresa_id', 'proveedor_id', 'fecha_orden', 'detalles'],
+                properties: [
+                    new OA\Property(property: 'empresa_id', type: 'integer'),
+                    new OA\Property(property: 'proveedor_id', type: 'integer'),
+                    new OA\Property(property: 'fecha_orden', type: 'string', format: 'date'),
+                    new OA\Property(property: 'fecha_entrega_esperada', type: 'string', format: 'date', nullable: true),
+                    new OA\Property(property: 'moneda', type: 'string', enum: ['CRC', 'USD'], example: 'CRC'),
+                    new OA\Property(property: 'observaciones', type: 'string', nullable: true),
+                    new OA\Property(
+                        property: 'detalles',
+                        type: 'array',
+                        items: new OA\Items(
+                            properties: [
+                                new OA\Property(property: 'producto_id', type: 'integer'),
+                                new OA\Property(property: 'cantidad', type: 'number'),
+                                new OA\Property(property: 'precio_unitario', type: 'number', format: 'decimal'),
+                                new OA\Property(property: 'descuento', type: 'number', format: 'decimal', nullable: true),
+                                new OA\Property(property: 'descripcion', type: 'string', nullable: true)
+                            ],
+                            type: 'object'
+                        )
+                    )
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Orden creada', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', ref: '#/components/schemas/OrdenCompra')]))
+        ]
+    )]
     public function store(StoreOrdenCompraRequest $request)
     {
         try {
@@ -141,6 +198,18 @@ class OrdenCompraController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
+    #[OA\Get(
+        path: '/api/ordenes-compra/{id}',
+        summary: 'Obtener orden de compra',
+        description: 'Detalles completos de una orden con líneas, pagos y entradas de inventario',
+        security: [['sanctum' => []]],
+        tags: ['Órdenes de Compra'],
+        parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
+        responses: [
+            new OA\Response(response: 200, description: 'Orden encontrada'),
+            new OA\Response(response: 404, description: 'No encontrada')
+        ]
+    )]
     public function show(int $id)
     {
         try {
@@ -176,6 +245,14 @@ class OrdenCompraController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
+    #[OA\Put(
+        path: '/api/ordenes-compra/{id}',
+        summary: 'Actualizar orden de compra',
+        security: [['sanctum' => []]],
+        tags: ['Órdenes de Compra'],
+        parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
+        responses: [new OA\Response(response: 200, description: 'Actualizada')]
+    )]
     public function update(UpdateOrdenCompraRequest $request, int $id)
     {
         try {
@@ -204,6 +281,18 @@ class OrdenCompraController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
+    #[OA\Delete(
+        path: '/api/ordenes-compra/{id}',
+        summary: 'Eliminar orden de compra',
+        description: 'Soft delete. Solo permite eliminar en estado borrador',
+        security: [['sanctum' => []]],
+        tags: ['Órdenes de Compra'],
+        parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
+        responses: [
+            new OA\Response(response: 200, description: 'Eliminada'),
+            new OA\Response(response: 422, description: 'Solo se pueden eliminar en estado borrador')
+        ]
+    )]
     public function destroy(int $id)
     {
         try {
