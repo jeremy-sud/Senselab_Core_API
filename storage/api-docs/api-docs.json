@@ -3183,6 +3183,650 @@
                 ]
             }
         },
+        "/api/comprobantes-recibidos-electronicos": {
+            "get": {
+                "tags": [
+                    "Facturación Electrónica"
+                ],
+                "summary": "Listar comprobantes electrónicos recibidos",
+                "description": "Obtiene la lista paginada de comprobantes electrónicos recibidos de proveedores (facturas, notas de crédito, etc.) según normativa DGT.",
+                "operationId": "ae1cba1da308569eb4d1c36a315f56df",
+                "responses": {
+                    "200": {
+                        "description": "Lista de comprobantes obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 45
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Facturación Electrónica"
+                ],
+                "summary": "Registrar comprobante electrónico recibido",
+                "description": "Registra un nuevo comprobante electrónico recibido de un proveedor. Almacena XML y datos estructurados.",
+                "operationId": "e63871308bd6885304387cadd26aa2d6",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "proveedor_id",
+                                    "clave_numerica",
+                                    "tipo_documento_dgt",
+                                    "fecha_emision_comprobante",
+                                    "total_impuesto",
+                                    "total_comprobante",
+                                    "xml_contenido"
+                                ],
+                                "properties": {
+                                    "proveedor_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "clave_numerica": {
+                                        "type": "string",
+                                        "maxLength": 50,
+                                        "example": "50621012400010101234567890123456789012345678"
+                                    },
+                                    "consecutivo_receptor": {
+                                        "type": "string",
+                                        "maxLength": 20,
+                                        "example": "REC-001",
+                                        "nullable": true
+                                    },
+                                    "tipo_documento_dgt": {
+                                        "description": "Código según catálogo DGT: 01=Factura, 02=Nota Débito, 03=Nota Crédito",
+                                        "type": "string",
+                                        "maxLength": 2,
+                                        "example": "01"
+                                    },
+                                    "fecha_emision_comprobante": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2024-01-15 14:30:00"
+                                    },
+                                    "moneda": {
+                                        "description": "Opcional, por defecto CRC",
+                                        "type": "string",
+                                        "enum": [
+                                            "CRC",
+                                            "USD",
+                                            "EUR"
+                                        ],
+                                        "example": "CRC"
+                                    },
+                                    "total_impuesto": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 6500
+                                    },
+                                    "total_comprobante": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 56500
+                                    },
+                                    "xml_contenido": {
+                                        "type": "string",
+                                        "example": "<?xml version='1.0'..."
+                                    },
+                                    "entrada_inventario_id": {
+                                        "type": "integer",
+                                        "example": 12,
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Comprobante registrado exitosamente"
+                    },
+                    "422": {
+                        "description": "Datos de validación incorrectos"
+                    },
+                    "500": {
+                        "description": "Error al registrar"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/comprobantes-recibidos-electronicos/{id}": {
+            "get": {
+                "tags": [
+                    "Facturación Electrónica"
+                ],
+                "summary": "Obtener comprobante electrónico",
+                "description": "Obtiene el detalle completo de un comprobante electrónico recibido con proveedor, entrada de inventario y usuario que confirmó.",
+                "operationId": "e1d316e4b4a70e88262e7ccec4629e97",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del comprobante",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comprobante obtenido exitosamente"
+                    },
+                    "404": {
+                        "description": "Comprobante no encontrado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Facturación Electrónica"
+                ],
+                "summary": "Actualizar comprobante electrónico",
+                "description": "Actualiza datos del comprobante. No permite modificar comprobantes ya confirmados.",
+                "operationId": "1385025470e2dfb926db7b8e1cbed1b0",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del comprobante",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "proveedor_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "consecutivo_receptor": {
+                                        "type": "string",
+                                        "maxLength": 20,
+                                        "example": "REC-001"
+                                    },
+                                    "entrada_inventario_id": {
+                                        "type": "integer",
+                                        "example": 12,
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Comprobante actualizado exitosamente"
+                    },
+                    "404": {
+                        "description": "Comprobante no encontrado"
+                    },
+                    "422": {
+                        "description": "No se puede modificar un comprobante ya confirmado"
+                    },
+                    "500": {
+                        "description": "Error al actualizar"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Facturación Electrónica"
+                ],
+                "summary": "Eliminar comprobante electrónico",
+                "description": "Elimina un comprobante electrónico. No permite eliminar comprobantes ya confirmados.",
+                "operationId": "c7026cb262c66a522491caa56bbc5895",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del comprobante",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comprobante eliminado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Comprobante eliminado exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Comprobante no encontrado"
+                    },
+                    "422": {
+                        "description": "No se puede eliminar un comprobante ya confirmado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/comprobantes-recibidos-electronicos/{id}/confirmar": {
+            "post": {
+                "tags": [
+                    "Facturación Electrónica"
+                ],
+                "summary": "Confirmar comprobante",
+                "description": "Marca el comprobante como confirmado/aceptado por el usuario receptor. Registra fecha y usuario que confirmó.",
+                "operationId": "ee07f2e899b93ff8526f1ea075f7ef79",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del comprobante",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comprobante confirmado exitosamente"
+                    },
+                    "404": {
+                        "description": "Comprobante no encontrado"
+                    },
+                    "422": {
+                        "description": "El comprobante ya fue confirmado anteriormente"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/comprobantes-recibidos-electronicos/{id}/rechazar": {
+            "post": {
+                "tags": [
+                    "Facturación Electrónica"
+                ],
+                "summary": "Rechazar comprobante",
+                "description": "Marca el comprobante como rechazado por el usuario receptor. Registra fecha y usuario que rechazó.",
+                "operationId": "69e79e13756fda7bc171a1301651b767",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del comprobante",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comprobante rechazado exitosamente"
+                    },
+                    "404": {
+                        "description": "Comprobante no encontrado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/comprobantes-recibidos-electronicos/proveedor/{proveedorId}": {
+            "get": {
+                "tags": [
+                    "Facturación Electrónica"
+                ],
+                "summary": "Comprobantes por proveedor",
+                "description": "Obtiene todos los comprobantes electrónicos recibidos de un proveedor específico.",
+                "operationId": "619c2224a4b92cfa35f3e618cf33a179",
+                "parameters": [
+                    {
+                        "name": "proveedorId",
+                        "in": "path",
+                        "description": "ID del proveedor",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de comprobantes obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 23
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/comprobantes-recibidos-electronicos/pendientes/list": {
+            "get": {
+                "tags": [
+                    "Facturación Electrónica"
+                ],
+                "summary": "Comprobantes pendientes",
+                "description": "Obtiene todos los comprobantes electrónicos que aún no han sido confirmados ni rechazados por el usuario.",
+                "operationId": "cdde6eb1e1561498254acd9b6e2eb26c",
+                "responses": {
+                    "200": {
+                        "description": "Lista de comprobantes pendientes obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/comprobantes-recibidos-electronicos/resumen/por-estado": {
+            "get": {
+                "tags": [
+                    "Facturación Electrónica"
+                ],
+                "summary": "Resumen por estado de Hacienda",
+                "description": "Obtiene estadísticas agregadas de comprobantes agrupados por estado de respuesta de Hacienda (Aceptado, Rechazado, Procesando).",
+                "operationId": "333ec30fce3d2fdfbbe0537390580003",
+                "responses": {
+                    "200": {
+                        "description": "Resumen obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "estado_hacienda": {
+                                                        "type": "string",
+                                                        "example": "Aceptado"
+                                                    },
+                                                    "total_comprobantes": {
+                                                        "type": "integer",
+                                                        "example": 142
+                                                    },
+                                                    "monto_total": {
+                                                        "type": "number",
+                                                        "format": "decimal",
+                                                        "example": 8450000
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/comprobantes-recibidos-electronicos/{id}/actualizar-respuesta-hacienda": {
+            "put": {
+                "tags": [
+                    "Facturación Electrónica"
+                ],
+                "summary": "Actualizar respuesta de Hacienda",
+                "description": "Actualiza el comprobante con la respuesta XML recibida de Hacienda (DGT) y su estado final.",
+                "operationId": "384dbdb3da8b135dca341a002c095529",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del comprobante",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "xml_respuesta_hacienda",
+                                    "estado_hacienda"
+                                ],
+                                "properties": {
+                                    "xml_respuesta_hacienda": {
+                                        "type": "string",
+                                        "example": "<?xml version='1.0'..."
+                                    },
+                                    "estado_hacienda": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Aceptado",
+                                            "Rechazado",
+                                            "Procesando"
+                                        ],
+                                        "example": "Aceptado"
+                                    },
+                                    "mensaje_hacienda": {
+                                        "type": "string",
+                                        "example": "Comprobante aceptado",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Respuesta de Hacienda actualizada exitosamente"
+                    },
+                    "404": {
+                        "description": "Comprobante no encontrado"
+                    },
+                    "422": {
+                        "description": "Datos de validación incorrectos"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/configuraciones": {
             "get": {
                 "tags": [
@@ -5625,6 +6269,284 @@
                     },
                     "500": {
                         "description": "Error al eliminar"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/presupuestos/{presupuestoId}/detalles": {
+            "get": {
+                "tags": [
+                    "Presupuestos"
+                ],
+                "summary": "Listar cuentas del presupuesto",
+                "description": "Obtiene todas las cuentas contables asignadas a un presupuesto con sus montos presupuestados.",
+                "operationId": "3cf5f994114310b70aa23fd3a3f790e5",
+                "parameters": [
+                    {
+                        "name": "presupuestoId",
+                        "in": "path",
+                        "description": "ID del presupuesto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de detalles obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Presupuesto no encontrado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/detalles-presupuestos": {
+            "post": {
+                "tags": [
+                    "Presupuestos"
+                ],
+                "summary": "Agregar cuenta al presupuesto",
+                "description": "Agrega una cuenta contable con su monto presupuestado. No permite agregar cuentas a presupuestos finalizados.",
+                "operationId": "c9834cf77342e18b2b1519b870a031ea",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "presupuesto_id",
+                                    "cuenta_contable_id",
+                                    "monto_presupuestado"
+                                ],
+                                "properties": {
+                                    "presupuesto_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "cuenta_contable_id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "monto_presupuestado": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 250000
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Cuenta agregada exitosamente"
+                    },
+                    "422": {
+                        "description": "No se pueden agregar cuentas a un presupuesto finalizado"
+                    },
+                    "404": {
+                        "description": "Presupuesto no encontrado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/detalles-presupuestos/{id}": {
+            "get": {
+                "tags": [
+                    "Presupuestos"
+                ],
+                "summary": "Obtener detalle de presupuesto",
+                "description": "Obtiene el detalle de una cuenta específica dentro de un presupuesto.",
+                "operationId": "aec8594a21f75b14d7a7931b8ab2396f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del detalle de presupuesto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalle obtenido exitosamente"
+                    },
+                    "404": {
+                        "description": "Detalle no encontrado"
+                    },
+                    "403": {
+                        "description": "No autorizado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Presupuestos"
+                ],
+                "summary": "Actualizar detalle de presupuesto",
+                "description": "Actualiza el monto presupuestado de una cuenta. No permite modificar presupuestos finalizados.",
+                "operationId": "590e73bbd6329e67ad1c433a7c4ed4ca",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del detalle de presupuesto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "monto_presupuestado"
+                                ],
+                                "properties": {
+                                    "monto_presupuestado": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 300000
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Detalle actualizado exitosamente"
+                    },
+                    "404": {
+                        "description": "Detalle no encontrado"
+                    },
+                    "422": {
+                        "description": "No se puede modificar un presupuesto finalizado"
+                    },
+                    "403": {
+                        "description": "No autorizado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Presupuestos"
+                ],
+                "summary": "Eliminar cuenta del presupuesto",
+                "description": "Elimina una cuenta contable del presupuesto. No permite eliminar cuentas de presupuestos finalizados.",
+                "operationId": "b7020358f8cacbc18bba5460b0668124",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del detalle de presupuesto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cuenta eliminada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cuenta eliminada del presupuesto exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Detalle no encontrado"
+                    },
+                    "422": {
+                        "description": "No se puede eliminar una cuenta de un presupuesto finalizado"
+                    },
+                    "403": {
+                        "description": "No autorizado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
                     }
                 },
                 "security": [
@@ -16792,6 +17714,536 @@
                 ]
             }
         },
+        "/api/tiquetes-detalle": {
+            "get": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Listar tiquetes de transporte",
+                "description": "Obtiene todos los tiquetes vendidos con filtros por horario, estado o b\\u00fasqueda de pasajero.",
+                "operationId": "7c973b03531dc777574a66f2e2658281",
+                "parameters": [
+                    {
+                        "name": "horario_ruta_id",
+                        "in": "query",
+                        "description": "Filtrar por horario de ruta",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "estado",
+                        "in": "query",
+                        "description": "Filtrar por estado (Vendido, Usado, Cancelado)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "Vendido",
+                                "Usado",
+                                "Cancelado"
+                            ],
+                            "example": "Vendido"
+                        }
+                    },
+                    {
+                        "name": "buscar_pasajero",
+                        "in": "query",
+                        "description": "B\\u00fasqueda por nombre o identificaci\\u00f3n del pasajero",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Juan"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "N\\u00famero de p\\u00e1gina",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de tiquetes obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 150
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Crear tiquete de transporte",
+                "description": "Registra un nuevo tiquete con asiento asignado y decrementa los asientos disponibles en el horario.",
+                "operationId": "9eac33485e7245191ac5c5ee24dc16fa",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "detalle_venta_id",
+                                    "horario_ruta_id",
+                                    "asiento_numero",
+                                    "nombre_pasajero",
+                                    "precio_final_tiquete"
+                                ],
+                                "properties": {
+                                    "detalle_venta_id": {
+                                        "type": "integer",
+                                        "example": 15
+                                    },
+                                    "horario_ruta_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "asiento_numero": {
+                                        "type": "integer",
+                                        "example": 12
+                                    },
+                                    "nombre_pasajero": {
+                                        "type": "string",
+                                        "example": "Juan P\\u00e9rez G\\u00f3mez"
+                                    },
+                                    "identificacion_pasajero": {
+                                        "type": "string",
+                                        "example": "1-2345-6789"
+                                    },
+                                    "precio_final_tiquete": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 3500
+                                    },
+                                    "estado": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Vendido",
+                                            "Usado",
+                                            "Cancelado"
+                                        ],
+                                        "example": "Vendido"
+                                    },
+                                    "activo": {
+                                        "type": "integer",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tiquete creado exitosamente"
+                    },
+                    "422": {
+                        "description": "Error de validaci\\u00f3n o asiento no disponible"
+                    },
+                    "500": {
+                        "description": "Error al crear el tiquete"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/tiquetes-detalle/{id}": {
+            "get": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Obtener tiquete espec\\u00edfico",
+                "description": "Muestra los detalles de un tiquete de transporte con informaci\\u00f3n del horario, ruta y bus.",
+                "operationId": "1c8323241204f0385a51def43b4fff15",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del tiquete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tiquete obtenido exitosamente"
+                    },
+                    "404": {
+                        "description": "Tiquete no encontrado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Actualizar tiquete",
+                "description": "Actualiza informaci\\u00f3n del pasajero y estado. No permite modificar tiquetes usados.",
+                "operationId": "f28aa9b6b663a15cbe759c06ac042289",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del tiquete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre_pasajero": {
+                                        "type": "string",
+                                        "example": "Mar\\u00eda Rodr\\u00edguez"
+                                    },
+                                    "identificacion_pasajero": {
+                                        "type": "string",
+                                        "example": "2-3456-7890"
+                                    },
+                                    "estado": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Vendido",
+                                            "Usado",
+                                            "Cancelado"
+                                        ],
+                                        "example": "Vendido"
+                                    },
+                                    "activo": {
+                                        "type": "integer",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Tiquete actualizado exitosamente"
+                    },
+                    "422": {
+                        "description": "No se puede modificar un tiquete usado"
+                    },
+                    "404": {
+                        "description": "Tiquete no encontrado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/tiquetes-detalle/{id}/cancelar": {
+            "post": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Cancelar tiquete",
+                "description": "Marca el tiquete como Cancelado y libera el asiento en el horario. No permite cancelar tiquetes usados.",
+                "operationId": "03494e4ac738b9600a4de60548a48743",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del tiquete a cancelar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tiquete cancelado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tiquete cancelado exitosamente"
+                                        },
+                                        "tiquete": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "No se puede cancelar un tiquete usado"
+                    },
+                    "404": {
+                        "description": "Tiquete no encontrado"
+                    },
+                    "500": {
+                        "description": "Error al cancelar el tiquete"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/tiquetes-detalle/{id}/marcar-usado": {
+            "post": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Marcar tiquete como usado",
+                "description": "Cambia el estado del tiquete de Vendido a Usado. Solo permite marcar tiquetes en estado Vendido.",
+                "operationId": "a106a5aaabc0cbb5c13c964fbafc28fd",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del tiquete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tiquete marcado como usado exitosamente"
+                    },
+                    "422": {
+                        "description": "Solo se pueden marcar como usados los tiquetes en estado Vendido"
+                    },
+                    "404": {
+                        "description": "Tiquete no encontrado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/tiquetes-detalle/horario-ruta/{horarioRutaId}": {
+            "get": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Listar tiquetes por horario",
+                "description": "Obtiene todos los tiquetes de un horario espec\\u00edfico ordenados por n\\u00famero de asiento.",
+                "operationId": "8616ecf81ad2b3ef33dac6d2856ab01d",
+                "parameters": [
+                    {
+                        "name": "horarioRutaId",
+                        "in": "path",
+                        "description": "ID del horario de ruta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de tiquetes obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/tiquetes-detalle/horario-ruta/{horarioRutaId}/mapa-asientos": {
+            "get": {
+                "tags": [
+                    "Transporte"
+                ],
+                "summary": "Mapa de asientos del bus",
+                "description": "Devuelve la disponibilidad de asientos para un horario: capacidad total, asientos ocupados y disponibles.",
+                "operationId": "c6a02f7660ea1b90e42f5d6173b7424a",
+                "parameters": [
+                    {
+                        "name": "horarioRutaId",
+                        "in": "path",
+                        "description": "ID del horario de ruta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Mapa de asientos obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "horario_id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "capacidad_total": {
+                                            "type": "integer",
+                                            "example": 40
+                                        },
+                                        "asientos_ocupados": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "integer"
+                                            },
+                                            "example": [
+                                                1,
+                                                5,
+                                                12,
+                                                18
+                                            ]
+                                        },
+                                        "total_ocupados": {
+                                            "type": "integer",
+                                            "example": 4
+                                        },
+                                        "total_disponibles": {
+                                            "type": "integer",
+                                            "example": 36
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Horario no encontrado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/unidades-medida": {
             "get": {
                 "tags": [
@@ -21273,6 +22725,10 @@
             "description": "Clientes"
         },
         {
+            "name": "Facturación Electrónica",
+            "description": "Facturación Electrónica"
+        },
+        {
             "name": "Configuraciones",
             "description": "Configuraciones"
         },
@@ -21287,6 +22743,10 @@
         {
             "name": "Inventario - Entradas",
             "description": "Inventario - Entradas"
+        },
+        {
+            "name": "Presupuestos",
+            "description": "Presupuestos"
         },
         {
             "name": "Inventario - Salidas",
@@ -21327,10 +22787,6 @@
         {
             "name": "Roles y Permisos",
             "description": "Roles y Permisos"
-        },
-        {
-            "name": "Presupuestos",
-            "description": "Presupuestos"
         },
         {
             "name": "Proveedores",
