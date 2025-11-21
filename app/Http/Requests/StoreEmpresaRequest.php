@@ -34,8 +34,8 @@ class StoreEmpresaRequest extends FormRequest
             'num_identificacion_dgt' => ['required', 'string', 'max:20', 'unique:empresas,num_identificacion_dgt'],
             'tipo_identificacion' => ['nullable', 'string', 'max:2'],
             'actividad_economica_principal' => ['nullable', 'string', 'max:6'],
-            'regimen_tributario_id' => ['nullable', 'exists:regimenes_tributarios,id'],
-            'email' => ['nullable', 'email', 'max:255'],
+            'regimen_tributario_id' => ['required', 'exists:regimenes_tributarios,id'],
+            'email' => ['nullable', 'email', 'max:255', 'unique:empresas,email'],
             'telefono' => ['nullable', 'string', 'max:50'],
             'direccion' => ['nullable', 'string'],
             'provincia' => ['nullable', 'string', 'max:2'],
@@ -58,8 +58,10 @@ class StoreEmpresaRequest extends FormRequest
             'nombre.required' => 'El nombre de la empresa es obligatorio',
             'num_identificacion_dgt.required' => 'El número de identificación es obligatorio',
             'num_identificacion_dgt.unique' => 'Ya existe una empresa con este número de identificación',
+            'regimen_tributario_id.required' => 'El régimen tributario es obligatorio',
             'regimen_tributario_id.exists' => 'El régimen tributario seleccionado no existe',
             'email.email' => 'El formato del email no es válido',
+            'email.unique' => 'Ya existe una empresa con este email',
         ];
     }
 
