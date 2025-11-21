@@ -26,6 +26,7 @@
 - [Características Principales](#-características-principales)
 - [Requisitos del Sistema](#-requisitos-del-sistema)
 - [Instalación](#-instalación)
+- [Cómo Probar la API](#-cómo-probar-la-api)
 - [Configuración](#️-configuración)
 - [Arquitectura](#-arquitectura)
 - [Módulos del Sistema](#-módulos-del-sistema)
@@ -331,34 +332,46 @@ php artisan serve
 
 El sistema estará disponible en `http://localhost:8000`
 
-### 8. Probar la API
+---
+
+## 🧪 Cómo Probar la API
+
+### Opción 1: Swagger UI (Recomendada) ⭐
+
+La forma más fácil de probar todos los endpoints:
+
+```
+http://localhost:8000/api/documentation
+```
+
+**Guía completa:** [COMO_PROBAR_API.md](COMO_PROBAR_API.md)
+
+### Opción 2: Postman / Thunder Client / Insomnia
+
+Herramientas profesionales para desarrollo de APIs.
+
+### Opción 3: cURL (Terminal)
 
 ```bash
-# Login (obtener token)
-curl -X POST http://localhost:8000/api/login \
+# 1. Login (obtener token)
+curl -X POST http://localhost:8000/api/auth/login \
   -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
   -d '{
     "email": "admin@ursol.com",
     "password": "admin123"
   }'
 
-# Respuesta incluye token y 68 permisos del usuario
-{
-  "user": {...},
-  "token": "1|abc123...",
-  "permisos": [
-    "empresas.crear",
-    "empresas.leer",
-    ...
-  ]
-}
-
-# Usar el token en requests protegidos
-curl -X GET http://localhost:8000/api/me \
-  -H "Authorization: Bearer 1|abc123..." \
+# 2. Usar el token
+curl -X GET http://localhost:8000/api/productos \
+  -H "Authorization: Bearer TU_TOKEN_AQUI" \
   -H "Accept: application/json"
 ```
+
+**📖 Guía completa con todas las opciones:** [COMO_PROBAR_API.md](COMO_PROBAR_API.md)
+
+---
+
+### 8. Verificar Instalación
 
 ## ⚙️ Configuración
 
