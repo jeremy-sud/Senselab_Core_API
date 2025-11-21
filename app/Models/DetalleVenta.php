@@ -21,23 +21,18 @@ class DetalleVenta extends Model
     protected $fillable = [
         'venta_id',
         'producto_id',
-        'horario_ruta_id',
-        'descripcion_producto',
-        'unidad_medida_id',
+        'numero_linea',
         'cantidad',
         'precio_unitario',
-        'descuento_porcentaje',
-        'monto_descuento_input',
-        'subtotal_bruto',
-        'monto_descuento_calculado',
-        'subtotal_neto',
-        'codigo_impuesto_dgt',
-        'tarifa_impuesto_porc',
+        'subtotal_linea',
+        'porcentaje_descuento',
+        'monto_descuento',
+        'subtotal_con_descuento',
+        'tipo_impuesto_id',
+        'tasa_impuesto',
         'monto_impuesto',
-        'codigo_tarifa_dgt',
-        'exoneracion_tipo_doc',
-        'monto_exoneracion',
-        'cantidad_entregada',
+        'total_linea',
+        'detalle_adicional',
         'activo',
         'eliminado',
     ];
@@ -50,15 +45,13 @@ class DetalleVenta extends Model
     protected $casts = [
         'cantidad' => 'decimal:2',
         'precio_unitario' => 'decimal:2',
-        'descuento_porcentaje' => 'decimal:2',
-        'monto_descuento_input' => 'decimal:2',
-        'subtotal_bruto' => 'decimal:2',
-        'monto_descuento_calculado' => 'decimal:2',
-        'subtotal_neto' => 'decimal:2',
-        'tarifa_impuesto_porc' => 'decimal:2',
+        'subtotal_linea' => 'decimal:2',
+        'porcentaje_descuento' => 'decimal:2',
+        'monto_descuento' => 'decimal:2',
+        'subtotal_con_descuento' => 'decimal:2',
+        'tasa_impuesto' => 'decimal:2',
         'monto_impuesto' => 'decimal:2',
-        'monto_exoneracion' => 'decimal:2',
-        'cantidad_entregada' => 'decimal:2',
+        'total_linea' => 'decimal:2',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
         'creado_en' => 'datetime',
@@ -75,15 +68,6 @@ class DetalleVenta extends Model
     ];
 
     /**
-     * Atributos añadidos.
-     *
-     * @var array<int,string>
-     */
-    protected $appends = [
-        'cantidad_pendiente',
-    ];
-
-    /**
      * Reglas de validación (referenciales, para uso externo).
      *
      * @var array<string,string>
@@ -91,13 +75,18 @@ class DetalleVenta extends Model
     public static $rules = [
         'venta_id' => 'required|exists:ventas,id',
         'producto_id' => 'required|exists:productos,id',
+        'numero_linea' => 'required|integer|min:1',
         'cantidad' => 'required|numeric|min:0.01',
         'precio_unitario' => 'required|numeric|min:0',
-        'descuento_porcentaje' => 'nullable|numeric|min:0',
-        'monto_descuento_input' => 'nullable|numeric|min:0',
-        'tarifa_impuesto_porc' => 'nullable|numeric|min:0',
-        'monto_exoneracion' => 'nullable|numeric|min:0',
-        'cantidad_entregada' => 'nullable|numeric|min:0',
+        'subtotal_linea' => 'required|numeric|min:0',
+        'porcentaje_descuento' => 'nullable|numeric|min:0|max:100',
+        'monto_descuento' => 'nullable|numeric|min:0',
+        'subtotal_con_descuento' => 'required|numeric|min:0',
+        'tipo_impuesto_id' => 'nullable|exists:tipos_impuesto,id',
+        'tasa_impuesto' => 'nullable|numeric|min:0',
+        'monto_impuesto' => 'nullable|numeric|min:0',
+        'total_linea' => 'required|numeric|min:0',
+        'detalle_adicional' => 'nullable|string',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
     ];
@@ -115,24 +104,9 @@ class DetalleVenta extends Model
         return $this->belongsTo(Producto::class);
     }
 
-    public function unidadMedida()
+    public function tipoImpuesto()
     {
-        return $this->belongsTo(UnidadMedida::class);
-    }
-
-    public function horarioRuta()
-    {
-        return $this->belongsTo(HorarioRuta::class, 'horario_ruta_id');
-    }
-
-    /**
-     * Cantidad pendiente por entregar.
-     *
-     * @return float
-     */
-    public function getCantidadPendienteAttribute()
-    {
-        return max(0, ($this->cantidad ?? 0) - ($this->cantidad_entregada ?? 0));
+        return $this->belongsTo(TipoImpuesto::class, 'tipo_impuesto_id');
     }
 
     /**
@@ -148,16 +122,6 @@ class DetalleVenta extends Model
         return $query->where('producto_id', $productoId);
     }
 
-    public function scopePendientesEntrega($query)
-    {
-        return $query->whereRaw('cantidad > cantidad_entregada');
-    }
-
-    public function scopeConImpuesto($query)
-    {
-        return $query->whereNotNull('codigo_impuesto_dgt')->where('tarifa_impuesto_porc', '>', 0);
-    }
-
     /**
      * Boot model: calcular subtotales, descuentos e impuesto antes de guardar.
      */
@@ -166,7 +130,7 @@ class DetalleVenta extends Model
         parent::boot();
 
         static::saving(function ($model) {
-            // Valores mínimos
+            // Validaciones mínimas
             if (($model->cantidad ?? 0) <= 0) {
                 throw new \Exception('La cantidad debe ser mayor que cero.');
             }
@@ -174,37 +138,28 @@ class DetalleVenta extends Model
                 throw new \Exception('El precio unitario no puede ser negativo.');
             }
 
-            // Calcular subtotal bruto
-            $model->subtotal_bruto = round(($model->cantidad * $model->precio_unitario), 2);
+            // Calcular subtotal_linea (cantidad * precio_unitario)
+            $model->subtotal_linea = round(($model->cantidad * $model->precio_unitario), 2);
 
-            // Calcular descuento: si hay monto_descuento_input > 0 lo usamos; si no, calcular por porcentaje
-            if (isset($model->monto_descuento_input) && $model->monto_descuento_input > 0) {
-                $model->monto_descuento_calculado = round(min($model->monto_descuento_input, $model->subtotal_bruto), 2);
-            } else {
-                $porc = $model->descuento_porcentaje ?? 0;
-                $model->monto_descuento_calculado = round(($model->subtotal_bruto * ($porc / 100)), 2);
-            }
+            // Calcular monto_descuento (puede venir del % o directamente)
+            $porcentajeDesc = $model->porcentaje_descuento ?? 0;
+            $model->monto_descuento = round(($model->subtotal_linea * ($porcentajeDesc / 100)), 2);
 
-            // Subtotal neto
-            $model->subtotal_neto = round(max(0, $model->subtotal_bruto - ($model->monto_descuento_calculado ?? 0)), 2);
+            // Calcular subtotal_con_descuento
+            $model->subtotal_con_descuento = round(max(0, $model->subtotal_linea - $model->monto_descuento), 2);
 
-            // Calcular impuesto si aplicable
-            $tarifa = $model->tarifa_impuesto_porc ?? 0;
-            $montoImpuesto = round($model->subtotal_neto * ($tarifa / 100), 2);
+            // Calcular monto_impuesto si tiene tasa_impuesto
+            $tasaImpuesto = $model->tasa_impuesto ?? 0;
+            $model->monto_impuesto = round(($model->subtotal_con_descuento * ($tasaImpuesto / 100)), 2);
 
-            // Aplicar exoneración si existe (se resta del impuesto calculado, no generar negativo)
-            if (($model->monto_exoneracion ?? 0) > 0) {
-                $montoImpuesto = max(0, $montoImpuesto - $model->monto_exoneracion);
-            }
-
-            $model->monto_impuesto = $montoImpuesto;
+            // Calcular total_linea (subtotal con descuento + impuesto)
+            $model->total_linea = round($model->subtotal_con_descuento + $model->monto_impuesto, 2);
 
             // Asegurar que los campos numéricos no sean nulos
-            $model->descuento_porcentaje = $model->descuento_porcentaje ?? 0.00;
-            $model->monto_descuento_input = $model->monto_descuento_input ?? 0.00;
-            $model->tarifa_impuesto_porc = $model->tarifa_impuesto_porc ?? 0.00;
-            $model->monto_exoneracion = $model->monto_exoneracion ?? 0.00;
-            $model->cantidad_entregada = $model->cantidad_entregada ?? 0.00;
+            $model->porcentaje_descuento = $model->porcentaje_descuento ?? 0.00;
+            $model->monto_descuento = $model->monto_descuento ?? 0.00;
+            $model->tasa_impuesto = $model->tasa_impuesto ?? 0.00;
+            $model->monto_impuesto = $model->monto_impuesto ?? 0.00;
         });
     }
 }
