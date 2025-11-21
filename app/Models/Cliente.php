@@ -41,15 +41,23 @@ class Cliente extends Model
      */
     protected $fillable = [
         'empresa_id',
+        'tipo_identificacion',
+        'numero_identificacion',
         'nombre',
-        'apellido',
-        'tipo_documento_interno',
-        'num_identificacion_dgt',
-        'tipo_identificacion_dgt',
-        'telefono',
+        'apellidos',
+        'nombre_comercial',
         'email',
-        'actividad_economica_dgt',
-        'direccion'
+        'telefono',
+        'celular',
+        'direccion',
+        'provincia',
+        'canton',
+        'distrito',
+        'codigo_postal',
+        'limite_credito',
+        'dias_credito',
+        'activo',
+        'eliminado'
     ];
 
     /**
@@ -111,7 +119,7 @@ class Cliente extends Model
     {
         return $query->where(function($q) use ($nombre) {
             $q->where('nombre', 'LIKE', "%{$nombre}%")
-              ->orWhere('apellido', 'LIKE', "%{$nombre}%");
+              ->orWhere('apellidos', 'LIKE', "%{$nombre}%");
         });
     }
 
@@ -120,15 +128,15 @@ class Cliente extends Model
      */
     public function scopePorIdentificacion($query, $identificacion)
     {
-        return $query->where('num_identificacion_dgt', 'LIKE', "%{$identificacion}%");
+        return $query->where('numero_identificacion', 'LIKE', "%{$identificacion}%");
     }
 
     /**
-     * Scope para buscar por tipo de identificación DGT.
+     * Scope para buscar por tipo de identificación.
      */
     public function scopePorTipoIdentificacion($query, $tipo)
     {
-        return $query->where('tipo_identificacion_dgt', $tipo);
+        return $query->where('tipo_identificacion', $tipo);
     }
 
     /**
@@ -147,17 +155,11 @@ class Cliente extends Model
         parent::boot();
 
         static::saving(function ($cliente) {
-            // Validar tipo de identificación DGT
-            if ($cliente->tipo_identificacion_dgt && !array_key_exists($cliente->tipo_identificacion_dgt, self::TIPO_DGT)) {
-                throw new \Exception('Tipo de identificación DGT inválido.');
-            }
-
-            // Validar que la identificación sea única por empresa y tipo
-            if ($cliente->tipo_documento_interno && $cliente->num_identificacion_dgt) {
+            // Validar que la identificación sea única por empresa
+            if ($cliente->numero_identificacion) {
                 $exists = static::where('id', '!=', $cliente->id)
                     ->where('empresa_id', $cliente->empresa_id)
-                    ->where('tipo_documento_interno', $cliente->tipo_documento_interno)
-                    ->where('num_identificacion_dgt', $cliente->num_identificacion_dgt)
+                    ->where('numero_identificacion', $cliente->numero_identificacion)
                     ->exists();
 
                 if ($exists) {
@@ -172,7 +174,7 @@ class Cliente extends Model
      */
     public function getNombreCompletoAttribute(): string
     {
-        return trim("{$this->nombre} {$this->apellido}");
+        return trim("{$this->nombre} {$this->apellidos}");
     }
 
     /**

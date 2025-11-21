@@ -29,9 +29,9 @@ class StoreCuentaPorCobrarRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'cliente_id' => ['nullable', 'integer', 'exists:clientes,id'],
+            'cliente_id' => ['required', 'integer', 'exists:clientes,id'],
             'venta_id' => ['nullable', 'integer', 'exists:ventas,id'],
-            'documento_referencia' => ['nullable', 'string', 'max:100'],
+            'numero_documento' => ['required', 'string', 'max:100'],
             'fecha_emision' => ['required', 'date'],
             'fecha_vencimiento' => ['required', 'date', 'after_or_equal:fecha_emision'],
             'moneda' => ['required', 'string', 'size:3', Rule::in(['CRC', 'USD', 'EUR'])],
@@ -77,7 +77,7 @@ class StoreCuentaPorCobrarRequest extends FormRequest
         return [
             'cliente_id' => 'cliente',
             'venta_id' => 'venta',
-            'documento_referencia' => 'documento de referencia',
+            'numero_documento' => 'número de documento',
             'fecha_emision' => 'fecha de emisión',
             'fecha_vencimiento' => 'fecha de vencimiento',
             'moneda' => 'moneda',
