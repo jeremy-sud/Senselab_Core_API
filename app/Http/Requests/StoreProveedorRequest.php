@@ -21,9 +21,10 @@ class StoreProveedorRequest extends FormRequest
     {
         return [
             'empresa_id' => ['required', 'exists:empresas,id'],
+            'tipo_identificacion' => ['required', 'in:fisica,juridica,dimex,nite,extranjero'],
+            'numero_identificacion' => ['required', 'string', 'max:50'],
             'nombre' => ['required', 'string', 'max:255'],
-            'razon_social' => ['nullable', 'string', 'max:255'],
-            'nit_ruc' => ['nullable', 'string', 'max:50'],
+            'nombre_comercial' => ['nullable', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255'],
             'telefono' => ['nullable', 'string', 'max:50'],
             'celular' => ['nullable', 'string', 'max:50'],

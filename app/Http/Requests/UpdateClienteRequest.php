@@ -21,10 +21,9 @@ class UpdateClienteRequest extends FormRequest
     {
         return [
             'tipo_identificacion' => ['sometimes', 'required', 'in:fisica,juridica,dimex,nite,extranjero'],
-            'identificacion' => ['sometimes', 'required', 'string', 'max:50'],
+            'numero_identificacion' => ['sometimes', 'required', 'string', 'max:50'],
             'nombre' => ['sometimes', 'required', 'string', 'max:255'],
             'apellidos' => ['nullable', 'string', 'max:255'],
-            'razon_social' => ['nullable', 'string', 'max:255'],
             'nombre_comercial' => ['nullable', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255'],
             'telefono' => ['nullable', 'string', 'max:50'],
@@ -58,15 +57,15 @@ class UpdateClienteRequest extends FormRequest
             $clienteId = $this->route('cliente');
             $cliente = \App\Models\Cliente::find($clienteId);
 
-            if ($this->has('identificacion') && $this->identificacion !== $cliente->identificacion) {
+            if ($this->has('numero_identificacion') && $this->numero_identificacion !== $cliente->numero_identificacion) {
                 $existe = \App\Models\Cliente::where('empresa_id', $cliente->empresa_id)
-                    ->where('identificacion', $this->identificacion)
+                    ->where('numero_identificacion', $this->numero_identificacion)
                     ->where('id', '!=', $clienteId)
                     ->exists();
 
                 if ($existe) {
                     $validator->errors()->add(
-                        'identificacion',
+                        'numero_identificacion',
                         'Ya existe un cliente con esta identificación en la empresa'
                     );
                 }

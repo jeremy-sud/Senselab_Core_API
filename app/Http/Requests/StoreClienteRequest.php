@@ -22,10 +22,9 @@ class StoreClienteRequest extends FormRequest
         return [
             'empresa_id' => ['required', 'exists:empresas,id'],
             'tipo_identificacion' => ['required', 'in:fisica,juridica,dimex,nite,extranjero'],
-            'identificacion' => ['required', 'string', 'max:50'],
+            'numero_identificacion' => ['required', 'string', 'max:50'],
             'nombre' => ['required', 'string', 'max:255'],
             'apellidos' => ['nullable', 'string', 'max:255'],
-            'razon_social' => ['nullable', 'string', 'max:255'],
             'nombre_comercial' => ['nullable', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255'],
             'telefono' => ['nullable', 'string', 'max:50'],
@@ -46,7 +45,7 @@ class StoreClienteRequest extends FormRequest
         return [
             'tipo_identificacion.required' => 'El tipo de identificación es obligatorio',
             'tipo_identificacion.in' => 'Tipo de identificación inválido',
-            'identificacion.required' => 'La identificación es obligatoria',
+            'numero_identificacion.required' => 'La identificación es obligatoria',
             'nombre.required' => 'El nombre es obligatorio',
             'email.email' => 'El formato del email no es válido',
             'limite_credito.min' => 'El límite de crédito debe ser mayor o igual a 0',
@@ -62,12 +61,12 @@ class StoreClienteRequest extends FormRequest
         $validator->after(function ($validator) {
             // Validar unicidad de identificación por empresa
             $existe = \App\Models\Cliente::where('empresa_id', $this->empresa_id)
-                ->where('identificacion', $this->identificacion)
+                ->where('numero_identificacion', $this->numero_identificacion)
                 ->exists();
 
             if ($existe) {
                 $validator->errors()->add(
-                    'identificacion',
+                    'numero_identificacion',
                     'Ya existe un cliente con esta identificación en la empresa'
                 );
             }
