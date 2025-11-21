@@ -14,6 +14,12 @@ class DetalleVenta extends Model
     protected $table = 'detalle_ventas';
 
     /**
+     * Nombres personalizados de las marcas de tiempo.
+     */
+    const CREATED_AT = 'creado_en';
+    const UPDATED_AT = 'actualizado_en';
+
+    /**
      * Atributos asignables.
      *
      * @var array<int,string>
