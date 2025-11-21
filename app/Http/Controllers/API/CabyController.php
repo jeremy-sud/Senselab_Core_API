@@ -6,10 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCabyRequest;
 use App\Http\Requests\UpdateCabyRequest;
 use App\Http\Resources\CabyResource;
-use App\Models\Caby;
+use App\Models\Cabys;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use OpenApi\Attributes as OA;
 
 /**
  * Controlador API para CAByS
@@ -28,6 +29,86 @@ class CabyController extends Controller
      * @param Request $request
      * @return AnonymousResourceCollection
      */
+    #[OA\Get(
+        path: "/api/cabys",
+        summary: "Listar códigos CAByS",
+        description: "Obtiene el listado del Catálogo de Bienes y Servicios (CAByS) de Costa Rica. Permite búsqueda por código o descripción.",
+        security: [["sanctum" => []]],
+        tags: ["Catálogos Fiscales"],
+        parameters: [
+            new OA\Parameter(
+                name: "buscar",
+                in: "query",
+                description: "Buscar por código o descripción",
+                required: false,
+                schema: new OA\Schema(type: "string", example: "8529")
+            ),
+            new OA\Parameter(
+                name: "codigo",
+                in: "query",
+                description: "Filtrar por código específico",
+                required: false,
+                schema: new OA\Schema(type: "string", example: "8529901000000")
+            ),
+            new OA\Parameter(
+                name: "impuesto_iva",
+                in: "query",
+                description: "Filtrar por tasa de IVA predeterminada",
+                required: false,
+                schema: new OA\Schema(type: "number", format: "decimal", example: 13.00)
+            ),
+            new OA\Parameter(
+                name: "activo",
+                in: "query",
+                description: "Filtrar por estado activo",
+                required: false,
+                schema: new OA\Schema(type: "integer", example: 1)
+            ),
+            new OA\Parameter(
+                name: "sort_by",
+                in: "query",
+                description: "Campo por el cual ordenar",
+                required: false,
+                schema: new OA\Schema(type: "string", default: "codigo")
+            ),
+            new OA\Parameter(
+                name: "sort_order",
+                in: "query",
+                description: "Orden ascendente o descendente",
+                required: false,
+                schema: new OA\Schema(type: "string", enum: ["asc", "desc"], default: "asc")
+            ),
+            new OA\Parameter(
+                name: "per_page",
+                in: "query",
+                description: "Número de registros por página",
+                required: false,
+                schema: new OA\Schema(type: "integer", default: 15)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Listado obtenido exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: "data",
+                            type: "array",
+                            items: new OA\Items(ref: "#/components/schemas/Caby")
+                        ),
+                        new OA\Property(property: "current_page", type: "integer", example: 1),
+                        new OA\Property(property: "per_page", type: "integer", example: 15),
+                        new OA\Property(property: "total", type: "integer", example: 1500)
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function index(Request $request): AnonymousResourceCollection
     {
         $query = Caby::where('eliminado', 0);
@@ -70,6 +151,46 @@ class CabyController extends Controller
      * @param StoreCabyRequest $request
      * @return JsonResponse
      */
+    #[OA\Post(
+        path: "/api/cabys",
+        summary: "Crear código CAByS",
+        description: "Crea un nuevo código CAByS. El código debe tener 13 dígitos según catálogo oficial de Hacienda Costa Rica.",
+        security: [["sanctum" => []]],
+        tags: ["Catálogos Fiscales"],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["codigo", "descripcion"],
+                properties: [
+                    new OA\Property(property: "codigo", type: "string", maxLength: 13, example: "8529901000000"),
+                    new OA\Property(property: "descripcion", type: "string", example: "Antenas de telefonía móvil"),
+                    new OA\Property(property: "impuesto_iva_predeterminado", type: "number", format: "decimal", example: 13.00),
+                    new OA\Property(property: "activo", type: "boolean", example: true)
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: "Código CAByS creado exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "message", type: "string", example: "Código CAByS creado exitosamente"),
+                        new OA\Property(property: "data", ref: "#/components/schemas/Caby")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 422,
+                description: "Error de validación"
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function store(StoreCabyRequest $request): JsonResponse
     {
         $caby = Caby::create($request->validated());
@@ -87,6 +208,42 @@ class CabyController extends Controller
      * @param int $id
      * @return JsonResponse
      */
+    #[OA\Get(
+        path: "/api/cabys/{id}",
+        summary: "Obtener código CAByS",
+        description: "Obtiene los detalles de un código CAByS específico.",
+        security: [["sanctum" => []]],
+        tags: ["Catálogos Fiscales"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del código CAByS",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Código CAByS encontrado",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "data", ref: "#/components/schemas/Caby")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Código CAByS no encontrado"
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function show(int $id): JsonResponse
     {
         $caby = Caby::where('id', $id)
@@ -106,6 +263,58 @@ class CabyController extends Controller
      * @param int $id
      * @return JsonResponse
      */
+    #[OA\Put(
+        path: "/api/cabys/{id}",
+        summary: "Actualizar código CAByS",
+        description: "Actualiza los datos de un código CAByS existente.",
+        security: [["sanctum" => []]],
+        tags: ["Catálogos Fiscales"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del código CAByS a actualizar",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: "codigo", type: "string", maxLength: 13, example: "8529901000000"),
+                    new OA\Property(property: "descripcion", type: "string", example: "Descripción actualizada"),
+                    new OA\Property(property: "impuesto_iva_predeterminado", type: "number", format: "decimal", example: 13.00),
+                    new OA\Property(property: "activo", type: "boolean", example: true)
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Código CAByS actualizado exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "message", type: "string", example: "Código CAByS actualizado exitosamente"),
+                        new OA\Property(property: "data", ref: "#/components/schemas/Caby")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Código CAByS no encontrado"
+            ),
+            new OA\Response(
+                response: 422,
+                description: "Error de validación"
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function update(UpdateCabyRequest $request, int $id): JsonResponse
     {
         $caby = Caby::where('id', $id)
@@ -127,6 +336,46 @@ class CabyController extends Controller
      * @param int $id
      * @return JsonResponse
      */
+    #[OA\Delete(
+        path: "/api/cabys/{id}",
+        summary: "Eliminar código CAByS",
+        description: "Elimina un código CAByS (soft delete). No se puede eliminar si está asignado a productos.",
+        security: [["sanctum" => []]],
+        tags: ["Catálogos Fiscales"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID del código CAByS a eliminar",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Código CAByS eliminado exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "message", type: "string", example: "Código CAByS eliminado exitosamente")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Código CAByS no encontrado"
+            ),
+            new OA\Response(
+                response: 422,
+                description: "No se puede eliminar - está asignado a productos"
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function destroy(int $id): JsonResponse
     {
         $caby = Caby::where('id', $id)
@@ -156,6 +405,47 @@ class CabyController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
+    #[OA\Get(
+        path: "/api/cabys/buscar",
+        summary: "Buscar códigos CAByS",
+        description: "Busca códigos CAByS por término de búsqueda en código o descripción. Retorna máximo 50 resultados.",
+        security: [["sanctum" => []]],
+        tags: ["Catálogos Fiscales"],
+        parameters: [
+            new OA\Parameter(
+                name: "termino",
+                in: "query",
+                description: "Término de búsqueda (mínimo 3 caracteres)",
+                required: true,
+                schema: new OA\Schema(type: "string", minLength: 3, example: "852")
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Búsqueda realizada exitosamente",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(
+                            property: "data",
+                            type: "array",
+                            items: new OA\Items(ref: "#/components/schemas/Caby")
+                        ),
+                        new OA\Property(property: "total", type: "integer", example: 15)
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 422,
+                description: "Error de validación - término debe tener mínimo 3 caracteres"
+            ),
+            new OA\Response(
+                response: 500,
+                description: "Error interno del servidor"
+            )
+        ]
+    )]
     public function buscar(Request $request): JsonResponse
     {
         $request->validate([
