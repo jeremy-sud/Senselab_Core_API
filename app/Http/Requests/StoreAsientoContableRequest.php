@@ -21,7 +21,7 @@ class StoreAsientoContableRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'fecha' => ['required', 'date'],
+            'fecha_asiento' => ['required', 'date'],
             'descripcion' => ['nullable', 'string'],
             'estado' => ['nullable', 'string', 'max:50', Rule::in(['Borrador', 'Mayorizado', 'Anulado'])],
             'detalles' => ['required', 'array', 'min:2'],
@@ -51,7 +51,7 @@ class StoreAsientoContableRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'fecha.required' => 'La fecha del asiento es obligatoria',
+            'fecha_asiento.required' => 'La fecha del asiento es obligatoria',
             'detalles.required' => 'Debe agregar al menos 2 líneas de detalle',
             'detalles.min' => 'Un asiento contable debe tener al menos 2 líneas',
             'detalles.*.cuenta_contable_id.required' => 'Cada línea debe tener una cuenta contable',
@@ -64,7 +64,7 @@ class StoreAsientoContableRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'fecha' => 'fecha',
+            'fecha_asiento' => 'fecha',
             'descripcion' => 'descripción',
             'estado' => 'estado',
             'detalles' => 'detalles del asiento'
