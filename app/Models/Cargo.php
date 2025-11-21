@@ -26,7 +26,9 @@ class Cargo extends Model
      */
     protected $fillable = [
         'nombre',
-        'descripcion'
+        'descripcion',
+        'activo',
+        'eliminado'
     ];
 
     /**

@@ -34,7 +34,9 @@ class CuentaContable extends Model
         'tipo_cuenta_id',
         'cuenta_padre_id',
         'permite_movimientos',
-        'saldo_actual'
+        'saldo_actual',
+        'activo',
+        'eliminado'
     ];
 
     /**
