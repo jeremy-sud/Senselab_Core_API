@@ -45,11 +45,15 @@ class ConsecutivoFe extends Model
     protected $fillable = [
         'empresa_id',
         'sucursal_id',
-        'tipo_documento_dgt',
+        'tipo_comprobante',
         'prefijo',
         'consecutivo_actual',
-        'estado',
-        'fecha_autorizacion'
+        'consecutivo_inicial',
+        'consecutivo_final',
+        'fecha_resolucion',
+        'numero_resolucion',
+        'activo',
+        'eliminado'
     ];
 
     /**
@@ -57,7 +61,9 @@ class ConsecutivoFe extends Model
      */
     protected $casts = [
         'consecutivo_actual' => 'integer',
-        'fecha_autorizacion' => 'date',
+        'consecutivo_inicial' => 'integer',
+        'consecutivo_final' => 'integer',
+        'fecha_resolucion' => 'date',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
         'creado_en' => 'datetime',
@@ -91,19 +97,11 @@ class ConsecutivoFe extends Model
     }
 
     /**
-     * Scope para filtrar por tipo de documento.
+     * Scope para filtrar por tipo de comprobante.
      */
-    public function scopePorTipoDocumento($query, $tipo)
+    public function scopePorTipoComprobante($query, $tipo)
     {
-        return $query->where('tipo_documento_dgt', $tipo);
-    }
-
-    /**
-     * Scope para filtrar por estado.
-     */
-    public function scopePorEstado($query, $estado)
-    {
-        return $query->where('estado', $estado);
+        return $query->where('tipo_comprobante', $tipo);
     }
 
     /**
@@ -111,17 +109,17 @@ class ConsecutivoFe extends Model
      */
     public function obtenerSiguienteConsecutivo(): ?string
     {
-        if ($this->estado !== self::ESTADO_ACTIVO) {
+        if (!$this->activo) {
             throw new \Exception('El consecutivo no está activo.');
+        }
+
+        // Verificar si se alcanzó el límite
+        if ($this->consecutivo_final && $this->consecutivo_actual >= $this->consecutivo_final) {
+            throw new \Exception('Se alcanzó el consecutivo final autorizado.');
         }
 
         $siguiente = str_pad($this->consecutivo_actual, 10, '0', STR_PAD_LEFT);
         $this->increment('consecutivo_actual');
-
-        // Si se alcanza el máximo permitido, marcar como agotado
-        if ($this->consecutivo_actual >= 9999999999) {
-            $this->update(['estado' => self::ESTADO_AGOTADO]);
-        }
 
         return $siguiente;
     }
@@ -142,51 +140,34 @@ class ConsecutivoFe extends Model
         parent::boot();
 
         static::saving(function ($consecutivo) {
-            // Validar tipo de documento
-            if (!in_array($consecutivo->tipo_documento_dgt, [
-                self::TIPO_FACTURA_ELECTRONICA,
-                self::TIPO_NOTA_DEBITO,
-                self::TIPO_NOTA_CREDITO,
-                self::TIPO_TIQUETE_ELECTRONICO,
-                self::TIPO_FACTURA_COMPRA,
-                self::TIPO_FACTURA_EXPORTACION
-            ])) {
-                throw new \Exception('Tipo de documento DGT no válido.');
+            // Validar consecutivos
+            if ($consecutivo->consecutivo_actual < $consecutivo->consecutivo_inicial) {
+                $consecutivo->consecutivo_actual = $consecutivo->consecutivo_inicial;
             }
 
-            // Validar estado
-            if (!in_array($consecutivo->estado, [
-                self::ESTADO_ACTIVO,
-                self::ESTADO_AGOTADO,
-                self::ESTADO_INACTIVO
-            ])) {
-                throw new \Exception('Estado no válido.');
+            if ($consecutivo->consecutivo_final && $consecutivo->consecutivo_actual > $consecutivo->consecutivo_final) {
+                throw new \Exception('El consecutivo actual no puede ser mayor al consecutivo final.');
             }
 
-            // Validar prefijo (3 dígitos)
-            if (!preg_match('/^\d{3}$/', $consecutivo->prefijo)) {
-                throw new \Exception('El prefijo debe ser un número de 3 dígitos.');
-            }
-
-            // Validar unicidad de la combinación empresa, tipo y prefijo
+            // Validar unicidad de la combinación empresa, sucursal y tipo
             $exists = static::where('id', '!=', $consecutivo->id)
                 ->where('empresa_id', $consecutivo->empresa_id)
-                ->where('tipo_documento_dgt', $consecutivo->tipo_documento_dgt)
-                ->where('prefijo', $consecutivo->prefijo)
+                ->where('sucursal_id', $consecutivo->sucursal_id)
+                ->where('tipo_comprobante', $consecutivo->tipo_comprobante)
                 ->exists();
 
             if ($exists) {
-                throw new \Exception('Ya existe un consecutivo con esta combinación de empresa, tipo y prefijo.');
+                throw new \Exception('Ya existe un consecutivo para esta combinación de empresa, sucursal y tipo de comprobante.');
             }
         });
     }
 
     /**
-     * Obtiene la descripción del tipo de documento.
+     * Obtiene la descripción del tipo de comprobante.
      */
-    public function getTipoDocumentoDescripcionAttribute(): string
+    public function getTipoComprobanteDescripcionAttribute(): string
     {
-        return match($this->tipo_documento_dgt) {
+        return match($this->tipo_comprobante) {
             self::TIPO_FACTURA_ELECTRONICA => 'Factura Electrónica',
             self::TIPO_NOTA_DEBITO => 'Nota de Débito',
             self::TIPO_NOTA_CREDITO => 'Nota de Crédito',

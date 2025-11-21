@@ -20,13 +20,7 @@ class ModeloBus extends Model
      *
      * @var bool
      */
-    public $timestamps = true;
-
-    /**
-     * Nombres personalizados de las marcas de tiempo.
-     */
-    const CREATED_AT = 'creado_en';
-    const UPDATED_AT = 'actualizado_en';
+    public $timestamps = false;
 
     /**
      * Los atributos que son asignables masivamente.

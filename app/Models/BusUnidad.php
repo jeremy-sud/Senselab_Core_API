@@ -31,7 +31,9 @@ class BusUnidad extends Model
         'placa',
         'modelo_id',
         'capacidad_asientos',
-        'identificador_interno'
+        'identificador_interno',
+        'activo',
+        'eliminado'
     ];
 
     /**
