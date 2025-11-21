@@ -29,8 +29,8 @@ class ProveedorController extends Controller
             if ($search) {
                 $query->where(function($q) use ($search) {
                     $q->where('nombre', 'like', "%{$search}%")
-                      ->orWhere('razon_social', 'like', "%{$search}%")
-                      ->orWhere('nit_ruc', 'like', "%{$search}%")
+                      ->orWhere('nombre_comercial', 'like', "%{$search}%")
+                      ->orWhere('numero_identificacion', 'like', "%{$search}%")
                       ->orWhere('email', 'like', "%{$search}%");
                 });
             }

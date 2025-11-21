@@ -119,10 +119,11 @@ class VentaController extends Controller
                 
                 // Actualizar totales de la venta
                 $venta->update([
-                    'monto_subtotal' => $montoSubtotal,
-                    'monto_descuentos' => $montoDescuentos,
-                    'monto_impuestos' => $montoImpuestos,
-                    'monto_total' => $montoSubtotal - $montoDescuentos + $montoImpuestos,
+                    'subtotal_bruto_total' => $montoSubtotal,
+                    'monto_descuento_total' => $montoDescuentos,
+                    'subtotal_neto_total' => $montoSubtotal - $montoDescuentos,
+                    'monto_impuesto_total' => $montoImpuestos,
+                    'monto_total_venta' => $montoSubtotal - $montoDescuentos + $montoImpuestos,
                 ]);
                 
                 DB::commit();
@@ -221,7 +222,7 @@ class VentaController extends Controller
             
             // Marcar como anulada en lugar de eliminar
             $venta->update([
-                'estado' => 'anulada',
+                'estado_venta' => 'anulada',
                 'activo' => false,
                 'eliminado' => true
             ]);

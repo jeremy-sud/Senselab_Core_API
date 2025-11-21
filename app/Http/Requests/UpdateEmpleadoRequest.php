@@ -32,11 +32,9 @@ class UpdateEmpleadoRequest extends FormRequest
                 })
             ],
             'fecha_nacimiento' => ['nullable', 'date', 'before:today'],
-            'genero' => ['nullable', 'string', 'in:Masculino,Femenino,Otro'],
-            'fecha_contratacion' => ['sometimes', 'date'],
+            'fecha_ingreso' => ['sometimes', 'date'],
             'cargo_id' => ['nullable', 'integer', 'exists:cargos,id'],
             'salario' => ['sometimes', 'numeric', 'min:0', 'max:99999999.99'],
-            'usuario_id' => ['nullable', 'integer', 'exists:usuarios,id'],
             'direccion' => ['nullable', 'string'],
             'telefono' => ['nullable', 'string', 'max:50'],
             'email' => ['nullable', 'email', 'max:255'],
@@ -51,7 +49,6 @@ class UpdateEmpleadoRequest extends FormRequest
             'fecha_nacimiento.before' => 'La fecha de nacimiento debe ser anterior a hoy',
             'salario.min' => 'El salario debe ser mayor o igual a 0',
             'cargo_id.exists' => 'El cargo seleccionado no existe',
-            'usuario_id.exists' => 'El usuario seleccionado no existe',
             'email.email' => 'El formato del email no es válido'
         ];
     }
