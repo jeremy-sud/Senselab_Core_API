@@ -18,6 +18,7 @@ use App\Http\Controllers\API\InventarioController;
 use App\Http\Controllers\API\RolController;
 use App\Http\Controllers\API\PermisoController;
 use App\Http\Controllers\API\UsuarioController;
+use App\Http\Controllers\API\UrlShortenerController;
 use App\Http\Controllers\API\FormaPagoController;
 use App\Http\Controllers\API\CargoController;
 use App\Http\Controllers\API\CuentaPorCobrarController;
@@ -144,6 +145,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('usuarios', UsuarioController::class);
     Route::post('/usuarios/{id}/roles', [UsuarioController::class, 'asignarRoles']);
     Route::post('/usuarios/{id}/cambiar-password', [UsuarioController::class, 'cambiarPassword']);
+
+    // URL Shortener
+    Route::apiResource('url-shortener', UrlShortenerController::class);
+    Route::get('/url-shortener/{id}/stats', [UrlShortenerController::class, 'stats']);
 
     // Formas de Pago
     Route::apiResource('formas-pago', FormaPagoController::class);

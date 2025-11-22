@@ -32,6 +32,7 @@ class StoreProductoRequest extends FormRequest
                 'max:100',
                 'unique:productos,codigo,NULL,id,empresa_id,' . $empresaId . ',eliminado,0'
             ],
+            'codigo_barras' => ['nullable', 'string', 'max:100'],
             'descripcion' => ['nullable', 'string'],
             'tipo' => ['required', 'in:producto,servicio'],
             'precio_compra' => ['nullable', 'numeric', 'min:0'],
