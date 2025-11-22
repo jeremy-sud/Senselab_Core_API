@@ -170,16 +170,29 @@ abstract class TestCase extends BaseTestCase
     protected function seedPermisos(): void
     {
         $permisos = [
+            // Productos
             ['nombre' => 'Ver Productos', 'slug' => 'ver-productos', 'modulo' => 'Productos'],
             ['nombre' => 'Crear Productos', 'slug' => 'crear-productos', 'modulo' => 'Productos'],
             ['nombre' => 'Editar Productos', 'slug' => 'editar-productos', 'modulo' => 'Productos'],
             ['nombre' => 'Eliminar Productos', 'slug' => 'eliminar-productos', 'modulo' => 'Productos'],
+            // Clientes
             ['nombre' => 'Ver Clientes', 'slug' => 'ver-clientes', 'modulo' => 'Clientes'],
             ['nombre' => 'Crear Clientes', 'slug' => 'crear-clientes', 'modulo' => 'Clientes'],
+            // Roles
+            ['nombre' => 'Ver Roles', 'slug' => 'ver-roles', 'modulo' => 'Roles y Permisos'],
+            ['nombre' => 'Crear Roles', 'slug' => 'crear-roles', 'modulo' => 'Roles y Permisos'],
+            ['nombre' => 'Editar Roles', 'slug' => 'editar-roles', 'modulo' => 'Roles y Permisos'],
+            ['nombre' => 'Eliminar Roles', 'slug' => 'eliminar-roles', 'modulo' => 'Roles y Permisos'],
         ];
 
         foreach ($permisos as $permiso) {
             Permiso::create($permiso);
+        }
+        
+        // Asignar todos los permisos al rol Administrador si existe
+        $adminRol = Rol::where('nombre', 'Administrador')->first();
+        if ($adminRol) {
+            $this->assignAllPermissionsToRole($adminRol);
         }
     }
 
@@ -188,10 +201,8 @@ abstract class TestCase extends BaseTestCase
      */
     protected function assignAllPermissionsToRole(Rol $rol): void
     {
-        $permisos = Permiso::all();
-        foreach ($permisos as $permiso) {
-            $rol->permisos()->attach($permiso->id);
-        }
+        $permisos = Permiso::all()->pluck('id')->toArray();
+        $rol->permisos()->sync($permisos); // Usa sync en lugar de attach para evitar duplicados
     }
 
     /**

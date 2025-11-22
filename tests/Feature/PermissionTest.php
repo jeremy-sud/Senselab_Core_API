@@ -207,6 +207,7 @@ class PermissionTest extends TestCase
     {
         // Arrange
         $this->seedRoles();
+        $this->seedPermisos();
         $usuario = $this->createAdminUsuario();
 
         // Act
@@ -300,7 +301,6 @@ class PermissionTest extends TestCase
      */
     public function test_middleware_verifica_permisos_correctamente(): void
     {
-        $this->markTestSkipped('Middleware de permisos no implementado aún');
         
         // Arrange
         $this->seedRoles();
@@ -357,6 +357,7 @@ class PermissionTest extends TestCase
     {
         // Arrange
         $this->seedRoles();
+        $this->seedPermisos();
         $usuario = $this->createAdminUsuario();
 
         // Act: Intentar crear rol con nombre existente
@@ -375,7 +376,6 @@ class PermissionTest extends TestCase
      */
     public function test_solo_usuarios_con_permiso_pueden_gestionar_roles(): void
     {
-        $this->markTestSkipped('Middleware de permisos no implementado aún');
         
         // Arrange
         $this->seedRoles();

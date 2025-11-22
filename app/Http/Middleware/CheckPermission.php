@@ -12,9 +12,9 @@ class CheckPermission
      * Handle an incoming request.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     * @param  string  $permission  Slug del permiso requerido
+     * @param  string  ...$permissions  Slug(s) del/los permiso(s) requerido(s)
      */
-    public function handle(Request $request, Closure $next, string $permission): Response
+    public function handle(Request $request, Closure $next, string ...$permissions): Response
     {
         $user = $request->user();
 
@@ -26,12 +26,20 @@ class CheckPermission
             ], 401);
         }
 
-        // Verificar si el usuario tiene el permiso
-        if (!$user->hasPermission($permission)) {
+        // Verificar si el usuario tiene al menos uno de los permisos
+        $hasPermission = false;
+        foreach ($permissions as $permission) {
+            if ($user->hasPermission($permission)) {
+                $hasPermission = true;
+                break;
+            }
+        }
+
+        if (!$hasPermission) {
             return response()->json([
                 'success' => false,
                 'message' => 'No tiene permisos para realizar esta acción',
-                'permiso_requerido' => $permission
+                'permisos_requeridos' => $permissions
             ], 403);
         }
 
