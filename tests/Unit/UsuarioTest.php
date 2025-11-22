@@ -204,8 +204,8 @@ class UsuarioTest extends TestCase
         ]);
 
         // Assert
-        $response->assertStatus(401)
-            ->assertJson(['message' => 'Usuario inactivo']);
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['email']);
     }
 
     /**
