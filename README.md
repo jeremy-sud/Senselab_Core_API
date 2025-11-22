@@ -228,7 +228,70 @@ El sistema está diseñado con las mejores prácticas de desarrollo, siguiendo l
 
 > **📘 Para colaboradores nuevos:** Revisa la [Guía de Instalación Completa](INSTALLATION_GUIDE.md) con instrucciones paso a paso, troubleshooting y verificación.
 
-### 1. Clonar el Repositorio
+> **🐳 Instalación con Docker (Recomendado):** Ve directamente a la sección [Instalación con Docker](#-instalación-con-docker) o consulta la [Guía Docker completa](DOCKER_GUIDE.md).
+
+### Opción A: Instalación con Docker 🐳 (Recomendada)
+
+La forma más rápida y confiable de iniciar el proyecto en cualquier sistema operativo.
+
+#### Instalación Automática
+
+```bash
+# 1. Clonar repositorio
+git clone https://github.com/jeremy-sud/Ursol-CAST-API.git
+cd Ursol-CAST-API
+
+# 2. Dar permisos al script
+chmod +x docker-start.sh
+
+# 3. Ejecutar instalación completa (todo automático)
+./docker-start.sh
+```
+
+El script automáticamente:
+- ✅ Verifica Docker y Docker Compose
+- ✅ Construye contenedores optimizados
+- ✅ Crea archivo .env
+- ✅ Instala dependencias de Composer
+- ✅ Genera APP_KEY
+- ✅ Ejecuta migraciones y seeders
+- ✅ Genera documentación Swagger
+- ✅ Configura permisos
+
+#### Usando Makefile
+
+```bash
+# Ver todos los comandos disponibles
+make help
+
+# Instalación completa en un comando
+make install
+
+# Comandos útiles
+make up              # Iniciar contenedores
+make down            # Detener contenedores
+make logs            # Ver logs
+make shell           # Acceder a shell de PHP
+make test            # Ejecutar tests
+make swagger         # Regenerar Swagger
+```
+
+#### Servicios Disponibles
+
+| Servicio | URL | Credenciales |
+|----------|-----|--------------|
+| API | http://localhost:8000 | - |
+| Swagger | http://localhost:8000/api/documentation | - |
+| PHPMyAdmin | http://localhost:8080 | ursol_user / ursol_password |
+| Mailhog | http://localhost:8025 | - |
+
+**📖 Guía completa:** [DOCKER_GUIDE.md](DOCKER_GUIDE.md)
+
+---
+
+### Opción B: Instalación Manual (Tradicional)
+
+#### 1. Clonar el Repositorio
 
 ```bash
 # Desde GitHub
@@ -240,7 +303,7 @@ git clone https://github.com/SistemasUrsol/Ursol-CAST-API.git
 cd Ursol-CAST-API
 ```
 
-### 2. Instalar Dependencias
+#### 2. Instalar Dependencias
 
 ```bash
 # Dependencias de PHP
@@ -250,7 +313,7 @@ composer install
 npm install
 ```
 
-### 3. Configurar Variables de Entorno
+#### 3. Configurar Variables de Entorno
 
 ```bash
 # Copiar archivo de ejemplo
@@ -260,7 +323,7 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-### 4. Configurar Base de Datos
+#### 4. Configurar Base de Datos
 
 Edita el archivo `.env` con tus credenciales:
 
@@ -273,7 +336,7 @@ DB_USERNAME=####
 DB_PASSWORD=####
 ```
 
-### 5. Ejecutar Migraciones y Seeders
+#### 5. Ejecutar Migraciones y Seeders
 
 ```bash
 # Ejecutar migraciones
@@ -303,18 +366,7 @@ php artisan migrate:fresh --seed
 
 **Total de registros:** 112 (96 datos maestros + 16 datos demo/test)
 
-### 6. Credenciales de Acceso
-
-Después de ejecutar los seeders, inicia sesión con:
-
-```
-Email: admin@ursol.com
-Password: admin123
-```
-
-Este usuario tiene acceso completo a todos los módulos (68 permisos).
-
-### 6. Compilar Assets
+#### 6. Compilar Assets
 
 ```bash
 # Desarrollo
@@ -324,13 +376,24 @@ npm run dev
 npm run build
 ```
 
-### 7. Iniciar Servidor de Desarrollo
+#### 7. Iniciar Servidor de Desarrollo
 
 ```bash
 php artisan serve
 ```
 
 El sistema estará disponible en `http://localhost:8000`
+
+#### Credenciales de Acceso
+
+Después de ejecutar los seeders, inicia sesión con:
+
+```
+Email: admin@ursol.com
+Password: admin123
+```
+
+Este usuario tiene acceso completo a todos los módulos (68 permisos).
 
 ---
 
@@ -370,8 +433,6 @@ curl -X GET http://localhost:8000/api/productos \
 **📖 Guía completa con todas las opciones:** [COMO_PROBAR_API.md](COMO_PROBAR_API.md)
 
 ---
-
-### 8. Verificar Instalación
 
 ## ⚙️ Configuración
 
@@ -736,7 +797,29 @@ php artisan l5-swagger:generate
 
 ## 🚀 Despliegue
 
-### Preparación para Producción
+### Opción A: Despliegue con Docker (Recomendado)
+
+#### Producción con Docker
+
+```bash
+# 1. Configurar variables de entorno para producción
+cp .env.docker .env
+# Editar .env con credenciales de producción
+
+# 2. Iniciar en modo producción (con queue worker y scheduler)
+make prod-up
+# O
+docker-compose --profile production up -d
+
+# 3. Optimizar aplicación
+make optimize
+```
+
+**Ver guía completa:** [DOCKER_GUIDE.md](DOCKER_GUIDE.md#-producción)
+
+### Opción B: Despliegue Tradicional
+
+#### Preparación para Producción
 
 1. **Optimizar Configuración**
 ```bash

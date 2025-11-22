@@ -1,0 +1,59 @@
+# .dockerignore - Archivos excluidos del contexto Docker
+
+# Dependencias
+/vendor
+/node_modules
+
+# Archivos de configuración local
+.env
+.env.local
+.env.*.local
+
+# Testing
+/coverage
+.phpunit.result.cache
+
+# IDE
+/.vscode
+/.idea
+*.swp
+*.swo
+*~
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Logs
+/storage/logs/*.log
+npm-debug.log
+yarn-error.log
+
+# Cache y archivos temporales
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/bootstrap/cache/*
+
+# Archivos de prueba
+/tests
+phpunit.xml
+
+# Documentación
+*.md
+!README.md
+
+# Archivos varios
+.editorconfig
+.php_cs
+.php_cs.cache

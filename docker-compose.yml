@@ -1,0 +1,203 @@
+version: '3.8'
+
+# Ursol CAST API - Docker Compose
+# Sistemas Ursol S.A.
+
+services:
+  # Nginx - Servidor Web
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: ursol_nginx
+    restart: unless-stopped
+    ports:
+      - "${NGINX_PORT:-8000}:80"
+      - "${NGINX_SSL_PORT:-8443}:443"
+    volumes:
+      - ./:/var/www/html:delegated
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - php
+    networks:
+      - ursol_network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # PHP-FPM - Aplicación Laravel
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ursol_php
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html:delegated
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
+    environment:
+      - APP_ENV=${APP_ENV:-local}
+      - APP_DEBUG=${APP_DEBUG:-true}
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=${DB_DATABASE:-api_db}
+      - DB_USERNAME=${DB_USERNAME:-ursol_user}
+      - DB_PASSWORD=${DB_PASSWORD:-ursol_password}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=redis
+      - QUEUE_CONNECTION=redis
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ursol_network
+    healthcheck:
+      test: ["CMD-SHELL", "php-fpm -t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # MySQL - Base de Datos
+  mysql:
+    image: mysql:8.0
+    container_name: ursol_mysql
+    restart: unless-stopped
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_password}
+      MYSQL_DATABASE: ${DB_DATABASE:-api_db}
+      MYSQL_USER: ${DB_USERNAME:-ursol_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-ursol_password}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/custom.cnf
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - ursol_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-root_password}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: --default-authentication-plugin=mysql_native_password
+
+  # Redis - Cache y Sesiones
+  redis:
+    image: redis:7-alpine
+    container_name: ursol_redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    networks:
+      - ursol_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # PHPMyAdmin - Administración de Base de Datos (Opcional)
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: ursol_phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "${PHPMYADMIN_PORT:-8080}:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: ${DB_USERNAME:-ursol_user}
+      PMA_PASSWORD: ${DB_PASSWORD:-ursol_password}
+      UPLOAD_LIMIT: 100M
+    depends_on:
+      - mysql
+    networks:
+      - ursol_network
+    profiles:
+      - tools
+
+  # Mailhog - Testing de emails (Desarrollo)
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: ursol_mailhog
+    restart: unless-stopped
+    ports:
+      - "${MAILHOG_SMTP_PORT:-1025}:1025"
+      - "${MAILHOG_WEB_PORT:-8025}:8025"
+    networks:
+      - ursol_network
+    profiles:
+      - development
+
+  # Queue Worker - Procesamiento de colas (Producción)
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ursol_queue
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html:delegated
+    environment:
+      - APP_ENV=${APP_ENV:-local}
+      - DB_HOST=mysql
+      - REDIS_HOST=redis
+    command: php artisan queue:work --tries=3 --timeout=90 --sleep=3
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - ursol_network
+    profiles:
+      - production
+
+  # Scheduler - Tareas programadas (Producción)
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ursol_scheduler
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html:delegated
+    environment:
+      - APP_ENV=${APP_ENV:-local}
+      - DB_HOST=mysql
+    command: sh -c "while true; do php artisan schedule:run --verbose --no-interaction & sleep 60; done"
+    depends_on:
+      - mysql
+    networks:
+      - ursol_network
+    profiles:
+      - production
+
+# Redes
+networks:
+  ursol_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# Volúmenes persistentes
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+  nginx_logs:
+    driver: local
