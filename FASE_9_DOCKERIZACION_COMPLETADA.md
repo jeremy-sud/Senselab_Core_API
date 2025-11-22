@@ -12,7 +12,8 @@ La **Fase 9** implementa containerización completa del proyecto Ursol CAST API 
 - ✅ Pipeline CI/CD con GitHub Actions
 
 **Fecha de completación:** 22 de noviembre de 2025  
-**Commit:** `PENDIENTE`
+**Commit principal:** `0ca8ec3`  
+**Commit docs:** `3b07458`
 
 ---
 
