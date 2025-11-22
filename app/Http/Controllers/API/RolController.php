@@ -238,4 +238,19 @@ class RolController extends Controller
             'data' => new RolResource($rol)
         ], 200);
     }
+
+    /**
+     * Remover un permiso específico de un rol
+     */
+    public function removerPermiso(int $id, int $permiso_id): JsonResponse
+    {
+        $rol = Rol::findOrFail($id);
+        $rol->permisos()->detach($permiso_id);
+        $rol->load('permisos');
+
+        return response()->json([
+            'message' => 'Permiso removido exitosamente',
+            'data' => new RolResource($rol)
+        ], 200);
+    }
 }

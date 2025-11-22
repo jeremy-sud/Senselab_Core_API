@@ -12,9 +12,9 @@ class PermisoResource extends JsonResource
         return [
             'id' => $this->id,
             'nombre' => $this->nombre,
+            'slug' => $this->slug,
             'descripcion' => $this->descripcion,
             'modulo' => $this->modulo,
-            'codigo_unico' => $this->codigo_unico,
             'roles' => $this->whenLoaded('roles', function () {
                 return $this->roles->map(function ($rol) {
                     return [
