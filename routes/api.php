@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\AlmacenController;
 use App\Http\Controllers\API\ProductoController;
@@ -74,6 +75,12 @@ Route::middleware('auth:sanctum')->group(function () {
     // Autenticación
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
+    Route::get('/user', [AuthController::class, 'me']); // Alias para compatibilidad con tests
+    Route::get('/user/permissions', function (Request $request) {
+        return response()->json([
+            'permissions' => $request->user()->getAllPermissions()
+        ]);
+    });
 
     // Empresas
     Route::apiResource('empresas', EmpresaController::class);
@@ -126,10 +133,12 @@ Route::middleware('auth:sanctum')->group(function () {
     // Roles (RBAC)
     Route::apiResource('roles', RolController::class);
     Route::post('/roles/{id}/permisos', [RolController::class, 'asignarPermisos']);
+    Route::delete('/roles/{id}/permisos/{permiso_id}', [RolController::class, 'removerPermiso']);
 
     // Permisos (RBAC)
-    Route::apiResource('permisos', PermisoController::class);
+    Route::get('/permisos/grouped', [PermisoController::class, 'grouped']); // Debe ir antes del apiResource
     Route::get('/permisos/modulos/list', [PermisoController::class, 'modulos']);
+    Route::apiResource('permisos', PermisoController::class);
 
     // Usuarios
     Route::apiResource('usuarios', UsuarioController::class);
@@ -274,7 +283,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // GRUPO E: COMPROBANTES ELECTRÓNICOS Y CONFIGURACIONES
     // Comprobantes Electrónicos Recibidos
-    Route::apiResource('comprobantes-recibidos-electronicos', ComprobanteRecibidoElectronicoController::class);
+    Route::apiResource('comprobantes-recibidos-electronicos', ComprobanteRecibidoElectronicoController::class)
+        ->parameters(['comprobantes-recibidos-electronicos' => 'comprobante']);
     Route::post('/comprobantes-recibidos-electronicos/{id}/confirmar', [ComprobanteRecibidoElectronicoController::class, 'confirmar']);
     Route::post('/comprobantes-recibidos-electronicos/{id}/rechazar', [ComprobanteRecibidoElectronicoController::class, 'rechazar']);
     Route::get('/comprobantes-recibidos-electronicos/proveedor/{proveedorId}', [ComprobanteRecibidoElectronicoController::class, 'porProveedor']);
