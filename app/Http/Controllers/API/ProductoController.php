@@ -122,14 +122,13 @@ class ProductoController extends Controller
                 'categoria',
                 'unidadMedida',
                 'marca',
-                'impuesto'
-            ]);
+                'tipoImpuesto'
+            ])->where('productos.eliminado', false);
             
             if ($search) {
                 $query->where(function($q) use ($search) {
                     $q->where('nombre', 'like', "%{$search}%")
                       ->orWhere('codigo', 'like', "%{$search}%")
-                      ->orWhere('codigo_barras', 'like', "%{$search}%")
                       ->orWhere('descripcion', 'like', "%{$search}%");
                 });
             }
@@ -146,8 +145,14 @@ class ProductoController extends Controller
                 $query->porTipo($tipo);
             }
             
-            if ($request->boolean('activos')) {
-                $query->activos();
+            // Filtro por estado activo (soporta 'activo' y 'activos')
+            if ($request->has('activo') || $request->has('activos')) {
+                $esActivo = $request->boolean('activo') || $request->boolean('activos');
+                if ($esActivo) {
+                    $query->activos();
+                } else {
+                    $query->where('productos.activo', false);
+                }
             }
             
             $productos = $query->orderBy('nombre', 'asc')
@@ -221,7 +226,7 @@ class ProductoController extends Controller
                 'categoria',
                 'unidadMedida',
                 'marca',
-                'impuesto'
+                'tipoImpuesto',
             ]);
             
             return (new ProductoResource($producto))
@@ -282,7 +287,7 @@ class ProductoController extends Controller
                 'unidadMedida',
                 'marca',
                 'proveedorPredeterminado',
-                'impuesto',
+                'tipoImpuesto',
                 'cabys'
             ])->findOrFail($id);
             
@@ -362,7 +367,7 @@ class ProductoController extends Controller
                 'categoria',
                 'unidadMedida',
                 'marca',
-                'impuesto'
+                'tipoImpuesto'
             ]);
             
             return (new ProductoResource($producto))

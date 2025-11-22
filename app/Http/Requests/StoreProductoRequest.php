@@ -19,13 +19,19 @@ class StoreProductoRequest extends FormRequest
 
     public function rules(): array
     {
+        $empresaId = $this->input('empresa_id');
+        
         return [
             'empresa_id' => ['required', 'exists:empresas,id'],
             'categoria_id' => ['required', 'exists:categorias_productos,id'],
             'unidad_medida_id' => ['required', 'exists:unidades_medida,id'],
             'nombre' => ['required', 'string', 'max:255'],
-            'codigo' => ['nullable', 'string', 'max:100'],
-            'codigo_barras' => ['nullable', 'string', 'max:100'],
+            'codigo' => [
+                'nullable', 
+                'string', 
+                'max:100',
+                'unique:productos,codigo,NULL,id,empresa_id,' . $empresaId . ',eliminado,0'
+            ],
             'descripcion' => ['nullable', 'string'],
             'tipo' => ['required', 'in:producto,servicio'],
             'precio_compra' => ['nullable', 'numeric', 'min:0'],
