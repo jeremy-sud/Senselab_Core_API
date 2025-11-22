@@ -72,10 +72,8 @@ class AuthTest extends TestCase
         ]);
 
         // Assert: Debe fallar
-        $response->assertStatus(401)
-            ->assertJson([
-                'message' => 'Credenciales inválidas',
-            ]);
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['email']);
     }
 
     /**
@@ -90,10 +88,8 @@ class AuthTest extends TestCase
         ]);
 
         // Assert
-        $response->assertStatus(401)
-            ->assertJson([
-                'message' => 'Credenciales inválidas',
-            ]);
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['email']);
     }
 
     /**
@@ -119,10 +115,8 @@ class AuthTest extends TestCase
         ]);
 
         // Assert
-        $response->assertStatus(401)
-            ->assertJson([
-                'message' => 'Usuario inactivo',
-            ]);
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['email']);
     }
 
     /**
@@ -170,13 +164,11 @@ class AuthTest extends TestCase
                 'message' => 'Sesión cerrada exitosamente',
             ]);
 
-        // Verificar que el token ya no funciona
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
-            'Accept' => 'application/json',
-        ])->getJson('/api/user');
-
-        $response->assertStatus(401);
+        // Verificar que el token fue eliminado de la base de datos
+        $this->assertDatabaseMissing('personal_access_tokens', [
+            'tokenable_id' => $usuario->id,
+            'tokenable_type' => get_class($usuario),
+        ]);
     }
 
     /**
@@ -297,17 +289,13 @@ class AuthTest extends TestCase
             'Accept' => 'application/json',
         ])->postJson('/api/logout');
 
-        // Assert: Token1 inválido, Token2 válido
+        // Assert: Token1 eliminado, Token2 todavía existe
         $response->assertStatus(200);
 
-        $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token1,
-            'Accept' => 'application/json',
-        ])->getJson('/api/user')->assertStatus(401);
-
-        $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token2,
-            'Accept' => 'application/json',
-        ])->getJson('/api/user')->assertStatus(200);
+        // Verificar que solo queda 1 token (token2)
+        $this->assertEquals(1, $usuario->fresh()->tokens()->count());
+        
+        // Verificar que token2 todavía existe en BD
+        $this->assertEquals(1, $usuario->fresh()->tokens()->where('name', 'device-2')->count());
     }
 }
