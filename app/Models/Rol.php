@@ -66,7 +66,8 @@ class Rol extends Model
 
         // Normalizar datos antes de guardar
         static::saving(function ($model) {
-            $model->nombre = ucfirst(strtolower($model->nombre));
+            // Capitalizar primera letra de cada palabra
+            $model->nombre = ucwords(strtolower($model->nombre));
         });
     }
 
@@ -128,5 +129,56 @@ class Rol extends Model
                     ['activo' => true]
                 );
         }
+    }
+
+    /**
+     * Verificar si el rol tiene un permiso específico.
+     *
+     * @param string $permisoSlug Slug del permiso
+     * @return bool
+     */
+    public function hasPermission(string $permisoSlug): bool
+    {
+        return $this->permisos()->where('slug', $permisoSlug)->exists();
+    }
+
+    /**
+     * Verificar si el rol tiene alguno de los permisos especificados.
+     *
+     * @param array $permisoSlugs Array de slugs de permisos
+     * @return bool
+     */
+    public function hasAnyPermission(array $permisoSlugs): bool
+    {
+        return $this->permisos()->whereIn('slug', $permisoSlugs)->exists();
+    }
+
+    /**
+     * Verificar si el rol tiene todos los permisos especificados.
+     *
+     * @param array $permisoSlugs Array de slugs de permisos
+     * @return bool
+     */
+    public function hasAllPermissions(array $permisoSlugs): bool
+    {
+        $count = $this->permisos()->whereIn('slug', $permisoSlugs)->count();
+        return $count === count($permisoSlugs);
+    }
+
+    /**
+     * Sincronizar permisos del rol.
+     *
+     * @param array $permisoIds Array de IDs de permisos
+     * @return void
+     */
+    public function syncPermissions(array $permisoIds): void
+    {
+        // Usar el método sync de Laravel con datos adicionales
+        $syncData = [];
+        foreach ($permisoIds as $permisoId) {
+            $syncData[$permisoId] = ['activo' => true];
+        }
+        
+        $this->permisos()->sync($syncData);
     }
 }

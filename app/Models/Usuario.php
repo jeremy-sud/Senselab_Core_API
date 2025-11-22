@@ -172,8 +172,8 @@ class Usuario extends Authenticatable
     {
         return $this->roles()
             ->where('nombre', $roleName)
-            ->where('activo', true)
-            ->where('eliminado', false)
+            ->where('roles.activo', true)
+            ->where('roles.eliminado', false)
             ->exists();
     }
 
@@ -187,15 +187,15 @@ class Usuario extends Authenticatable
     {
         return $this->roles()
             ->whereIn('nombre', $roleNames)
-            ->where('activo', true)
-            ->where('eliminado', false)
+            ->where('roles.activo', true)
+            ->where('roles.eliminado', false)
             ->exists();
     }
 
     /**
      * Obtener todos los permisos del usuario a través de sus roles.
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return array Array de slugs de permisos
      */
     public function getAllPermissions()
     {
@@ -207,9 +207,10 @@ class Usuario extends Authenticatable
             ->where('roles.activo', true)
             ->where('roles.eliminado', false);
         })
-        ->where('activo', true)
-        ->where('eliminado', false)
-        ->get();
+        ->where('permisos.activo', true)
+        ->where('permisos.eliminado', false)
+        ->pluck('slug')
+        ->toArray();
     }
 
     /**

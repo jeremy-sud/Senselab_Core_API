@@ -103,12 +103,10 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => [
-                'usuario' => $usuario,
-                'token' => $token,
-                'permisos' => $usuario->getAllPermissions()->pluck('slug')->values(),
-            ],
             'message' => 'Login exitoso',
+            'user' => $usuario,
+            'token' => $token,
+            'permissions' => $usuario->getAllPermissions(),
         ]);
     }
 
@@ -150,7 +148,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Logout exitoso',
+            'message' => 'Sesión cerrada exitosamente',
         ]);
     }
 
@@ -202,11 +200,15 @@ class AuthController extends Controller
         $usuario->load(['roles.permisos', 'empresa', 'cargo']);
 
         return response()->json([
-            'success' => true,
-            'data' => [
-                'usuario' => $usuario,
-                'permisos' => $usuario->getAllPermissions()->pluck('slug')->values(),
-            ],
+            'id' => $usuario->id,
+            'nombre' => $usuario->nombre,
+            'apellidos' => $usuario->apellidos,
+            'email' => $usuario->email,
+            'activo' => $usuario->activo,
+            'empresa' => $usuario->empresa,
+            'cargo' => $usuario->cargo,
+            'roles' => $usuario->roles,
+            'permissions' => $usuario->getAllPermissions(),
         ]);
     }
 }
