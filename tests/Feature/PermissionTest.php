@@ -240,7 +240,7 @@ class PermissionTest extends TestCase
 
         // Act
         $response = $this->authenticatedJson('POST', "/api/roles/{$rol->id}/permisos", [
-            'permiso_id' => $permiso->id,
+            'permisos' => [$permiso->id],
         ], $usuario);
 
         // Assert

@@ -60,6 +60,33 @@ class PermisoController extends Controller
     }
 
     /**
+     * Obtener permisos agrupados por módulo
+     * 
+     * GET /api/permisos/grouped
+     */
+    public function grouped(): JsonResponse
+    {
+        $permisos = Permiso::where('activo', true)
+            ->where('eliminado', false)
+            ->get()
+            ->groupBy('modulo')
+            ->map(function ($group) {
+                return $group->map(function ($permiso) {
+                    return [
+                        'id' => $permiso->id,
+                        'nombre' => $permiso->nombre,
+                        'slug' => $permiso->slug,
+                        'descripcion' => $permiso->descripcion,
+                    ];
+                });
+            });
+
+        return response()->json([
+            'data' => $permisos
+        ]);
+    }
+
+    /**
      * Crear un nuevo permiso
      * 
      * POST /api/permisos
