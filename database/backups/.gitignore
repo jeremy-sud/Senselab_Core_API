@@ -1,0 +1,11 @@
+# Ignorar todos los archivos de backup
+*.sql
+*.sql.gz
+*.sql.bz2
+
+# Mantener los scripts
+!backup.sh
+!restore.sh
+
+# Mantener el README si existe
+!README.md
