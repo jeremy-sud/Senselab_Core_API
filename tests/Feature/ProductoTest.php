@@ -17,6 +17,8 @@ class ProductoTest extends TestCase
     public function test_puede_listar_productos_autenticado(): void
     {
         // Arrange
+        $this->seedRoles();
+        $this->seedPermisos();
         $usuario = $this->createAdminUsuario();
         $empresa = $usuario->empresa;
 
@@ -48,6 +50,8 @@ class ProductoTest extends TestCase
     public function test_puede_crear_producto_con_datos_validos(): void
     {
         // Arrange
+        $this->seedRoles();
+        $this->seedPermisos();
         $usuario = $this->createAdminUsuario();
         $empresa = $usuario->empresa;
 
@@ -109,6 +113,8 @@ class ProductoTest extends TestCase
     public function test_validacion_campos_requeridos_al_crear_producto(): void
     {
         // Arrange
+        $this->seedRoles();
+        $this->seedPermisos();
         $usuario = $this->createAdminUsuario();
 
         // Act: Crear sin campos requeridos
@@ -132,6 +138,8 @@ class ProductoTest extends TestCase
     public function test_no_puede_crear_producto_con_codigo_duplicado(): void
     {
         // Arrange
+        $this->seedRoles();
+        $this->seedPermisos();
         $usuario = $this->createAdminUsuario();
         $empresa = $usuario->empresa;
 
@@ -159,6 +167,8 @@ class ProductoTest extends TestCase
     public function test_puede_actualizar_producto_existente(): void
     {
         // Arrange
+        $this->seedRoles();
+        $this->seedPermisos();
         $usuario = $this->createAdminUsuario();
         $empresa = $usuario->empresa;
 
@@ -198,6 +208,8 @@ class ProductoTest extends TestCase
     public function test_puede_eliminar_producto_soft_delete(): void
     {
         // Arrange
+        $this->seedRoles();
+        $this->seedPermisos();
         $usuario = $this->createAdminUsuario();
         $empresa = $usuario->empresa;
 
@@ -228,6 +240,8 @@ class ProductoTest extends TestCase
     public function test_puede_buscar_productos_por_nombre(): void
     {
         // Arrange
+        $this->seedRoles();
+        $this->seedPermisos();
         $usuario = $this->createAdminUsuario();
         $empresa = $usuario->empresa;
 
@@ -266,6 +280,8 @@ class ProductoTest extends TestCase
     public function test_puede_filtrar_productos_por_estado_activo(): void
     {
         // Arrange
+        $this->seedRoles();
+        $this->seedPermisos();
         $usuario = $this->createAdminUsuario();
         $empresa = $usuario->empresa;
 
@@ -304,6 +320,8 @@ class ProductoTest extends TestCase
     public function test_productos_estan_paginados(): void
     {
         // Arrange
+        $this->seedRoles();
+        $this->seedPermisos();
         $usuario = $this->createAdminUsuario();
         $empresa = $usuario->empresa;
 
@@ -343,7 +361,9 @@ class ProductoTest extends TestCase
     public function test_usuario_solo_ve_productos_de_su_empresa(): void
     {
         // Arrange
-        $usuario1 = $this->createUsuario(['email' => 'user1@test.com']);
+        $this->seedRoles();
+        $this->seedPermisos();
+        $usuario1 = $this->createUsuario(['email' => 'user1@test.com'], ['Administrador']);
         $empresa1 = $usuario1->empresa;
 
         $empresa2 = $this->createEmpresa([
@@ -353,7 +373,7 @@ class ProductoTest extends TestCase
         $usuario2 = $this->createUsuario([
             'email' => 'user2@test.com',
             'empresa_id' => $empresa2->id,
-        ]);
+        ], ['Administrador']);
 
         // Crear productos para empresa1
         $this->createProducto([
@@ -392,6 +412,8 @@ class ProductoTest extends TestCase
     public function test_productos_eliminados_no_aparecen_en_listado(): void
     {
         // Arrange
+        $this->seedRoles();
+        $this->seedPermisos();
         $usuario = $this->createAdminUsuario();
         $empresa = $usuario->empresa;
 

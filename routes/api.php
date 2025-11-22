@@ -93,7 +93,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('almacenes', AlmacenController::class);
 
     // Productos
-    Route::apiResource('productos', ProductoController::class);
+    Route::apiResource('productos', ProductoController::class)
+        ->middleware('permission:ver-productos');
 
     // Clientes
     Route::apiResource('clientes', ClienteController::class);
@@ -132,9 +133,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/inventario/salidas/{id}/cancelar', [InventarioController::class, 'cancelarSalida']);
 
     // Roles (RBAC)
-    Route::apiResource('roles', RolController::class);
-    Route::post('/roles/{id}/permisos', [RolController::class, 'asignarPermisos']);
-    Route::delete('/roles/{id}/permisos/{permiso_id}', [RolController::class, 'removerPermiso']);
+    Route::apiResource('roles', RolController::class)
+        ->middleware('permission:ver-roles');
+    Route::post('/roles/{id}/permisos', [RolController::class, 'asignarPermisos'])
+        ->middleware('permission:editar-roles');
+    Route::delete('/roles/{id}/permisos/{permiso_id}', [RolController::class, 'removerPermiso'])
+        ->middleware('permission:editar-roles');
 
     // Permisos (RBAC)
     Route::get('/permisos/grouped', [PermisoController::class, 'grouped']); // Debe ir antes del apiResource
