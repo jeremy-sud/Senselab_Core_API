@@ -38,7 +38,7 @@ class MovimientoBancarioResource extends JsonResource
             'cuenta_bancaria' => $this->whenLoaded('cuentaBancaria', fn() => [
                 'id' => $this->cuentaBancaria->id,
                 'banco' => $this->cuentaBancaria->banco,
-                'numero_cuenta' => $this->cuentaBancaria->numero_cuenta_enmascarado,
+                'numero_cuenta' => $this->cuentaBancaria->getNumeroCuentaEnmascarado(),
             ]),
             'empresa' => $this->whenLoaded('empresa', fn() => [
                 'id' => $this->empresa->id,

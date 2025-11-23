@@ -66,7 +66,7 @@ class DeclaracionTributariaTest extends TestCase
         $response->assertStatus(201)
             ->assertJsonPath('data.tipo_declaracion', 'D104')
             ->assertJsonPath('data.periodo_fiscal', '2025-01')
-            ->assertJsonPath('data.monto_a_pagar', 91000.0);
+            ->assertJsonPath('data.monto_a_pagar', 91000);
 
         $this->assertDatabaseHas('declaraciones_tributarias', [
             'empresa_id' => $empresa->id,
