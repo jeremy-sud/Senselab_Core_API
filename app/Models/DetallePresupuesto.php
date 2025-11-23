@@ -93,11 +93,13 @@ class DetallePresupuesto extends Model
 
     /**
      * Get the movimientos relacionados con este detalle de presupuesto.
+     * 
+     * TODO: Implementar modelo MovimientoPresupuesto
      */
-    public function movimientos()
-    {
-        return $this->hasMany(MovimientoPresupuesto::class);
-    }
+    // public function movimientos()
+    // {
+    //     return $this->hasMany(MovimientoPresupuesto::class);
+    // }
 
     /**
      * Get el monto ejecutado del presupuesto.
@@ -106,10 +108,12 @@ class DetallePresupuesto extends Model
      */
     public function getMontoEjecutadoAttribute()
     {
-        return $this->movimientos()
-                    ->where('activo', true)
-                    ->where('eliminado', false)
-                    ->sum('monto');
+        // TODO: Descomentar cuando se implemente MovimientoPresupuesto
+        // return $this->movimientos()
+        //             ->where('activo', true)
+        //             ->where('eliminado', false)
+        //             ->sum('monto');
+        return 0; // Temporal hasta implementar MovimientoPresupuesto
     }
 
     /**
