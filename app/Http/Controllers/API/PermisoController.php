@@ -44,6 +44,8 @@ class PermisoController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', Permiso::class);
+        
         $query = Permiso::query();
 
         if ($request->has('activo')) {
@@ -116,6 +118,8 @@ class PermisoController extends Controller
     )]
     public function store(StorePermisoRequest $request): JsonResponse
     {
+        $this->authorize('create', Permiso::class);
+        
         $permiso = Permiso::create($request->validated());
 
         return (new PermisoResource($permiso))
@@ -143,7 +147,9 @@ class PermisoController extends Controller
     public function show(int $id): PermisoResource
     {
         $permiso = Permiso::with('roles')->findOrFail($id);
-
+        
+        $this->authorize('view', $permiso);
+        
         return new PermisoResource($permiso);
     }
 
@@ -163,6 +169,9 @@ class PermisoController extends Controller
     public function update(UpdatePermisoRequest $request, int $id): PermisoResource
     {
         $permiso = Permiso::findOrFail($id);
+        
+        $this->authorize('update', $permiso);
+        
         $permiso->update($request->validated());
 
         return new PermisoResource($permiso);
@@ -188,6 +197,8 @@ class PermisoController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $permiso = Permiso::findOrFail($id);
+        
+        $this->authorize('delete', $permiso);
 
         // Validar que no esté asignado a ningún rol
         if ($permiso->roles()->count() > 0) {

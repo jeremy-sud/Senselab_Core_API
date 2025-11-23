@@ -192,8 +192,12 @@ class AsientoContableController extends Controller
             )
         ]
     )]
-    public function store(StoreAsientoContableRequest $request): JsonResponse
+    public function store(public function store(StoreAsientoContableRequest $request): JsonResponse
     {
+        try {): JsonResponse
+    {
+        $this->authorize('create', AsientoContable::class);
+        
         try {
             DB::beginTransaction();
 

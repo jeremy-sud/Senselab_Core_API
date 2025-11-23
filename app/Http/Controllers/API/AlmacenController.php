@@ -34,8 +34,12 @@ class AlmacenController extends Controller
             new OA\Response(response: 200, description: 'Listado exitoso', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/Almacen'))]))
         ]
     )]
-    public function index(Request $request)
+    public function index(public function index(Request $request)
     {
+        try {)
+    {
+        $this->authorize('viewAny', Almacen::class);
+        
         try {
             $perPage = $request->input('per_page', 15);
             $empresaId = $request->input('empresa_id');
@@ -96,8 +100,12 @@ class AlmacenController extends Controller
         ),
         responses: [new OA\Response(response: 201, description: 'Almacén creado')]
     )]
-    public function store(StoreAlmacenRequest $request)
+    public function store(public function store(StoreAlmacenRequest $request)
     {
+        try {)
+    {
+        $this->authorize('create', Almacen::class);
+        
         try {
             // Si es principal, desmarcar otros almacenes principales de la sucursal
             if ($request->boolean('es_principal')) {

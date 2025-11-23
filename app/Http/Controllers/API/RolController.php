@@ -44,6 +44,8 @@ class RolController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', Rol::class);
+        
         $query = Rol::query()->with(['permisos']);
 
         if ($request->has('activo')) {
@@ -84,6 +86,8 @@ class RolController extends Controller
     )]
     public function store(StoreRolRequest $request): JsonResponse
     {
+        $this->authorize('create', Rol::class);
+        
         $validated = $request->validated();
         
         $rol = Rol::create([
@@ -124,7 +128,9 @@ class RolController extends Controller
     public function show(int $id): RolResource
     {
         $rol = Rol::with(['permisos', 'usuarios'])->findOrFail($id);
-
+        
+        $this->authorize('view', $rol);
+        
         return new RolResource($rol);
     }
 
@@ -144,6 +150,9 @@ class RolController extends Controller
     public function update(UpdateRolRequest $request, int $id): RolResource
     {
         $rol = Rol::findOrFail($id);
+        
+        $this->authorize('update', $rol);
+        
         $validated = $request->validated();
 
         $rol->update([
@@ -182,6 +191,8 @@ class RolController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $rol = Rol::findOrFail($id);
+        
+        $this->authorize('delete', $rol);
 
         // Validar que no tenga usuarios asignados
         if ($rol->usuarios()->count() > 0) {
