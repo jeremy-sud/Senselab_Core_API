@@ -183,6 +183,26 @@ abstract class TestCase extends BaseTestCase
             ['nombre' => 'Crear Roles', 'slug' => 'crear-roles', 'modulo' => 'Roles y Permisos'],
             ['nombre' => 'Editar Roles', 'slug' => 'editar-roles', 'modulo' => 'Roles y Permisos'],
             ['nombre' => 'Eliminar Roles', 'slug' => 'eliminar-roles', 'modulo' => 'Roles y Permisos'],
+            // FASE 9 - Declaraciones Tributarias
+            ['nombre' => 'Ver Declaraciones Tributarias', 'slug' => 'ver-declaraciones-tributarias', 'modulo' => 'Tributación'],
+            ['nombre' => 'Crear Declaraciones Tributarias', 'slug' => 'crear-declaraciones-tributarias', 'modulo' => 'Tributación'],
+            ['nombre' => 'Editar Declaraciones Tributarias', 'slug' => 'editar-declaraciones-tributarias', 'modulo' => 'Tributación'],
+            ['nombre' => 'Eliminar Declaraciones Tributarias', 'slug' => 'eliminar-declaraciones-tributarias', 'modulo' => 'Tributación'],
+            // FASE 9 - Cuentas Bancarias
+            ['nombre' => 'Ver Cuentas Bancarias', 'slug' => 'ver-cuentas-bancarias', 'modulo' => 'Banca'],
+            ['nombre' => 'Crear Cuentas Bancarias', 'slug' => 'crear-cuentas-bancarias', 'modulo' => 'Banca'],
+            ['nombre' => 'Editar Cuentas Bancarias', 'slug' => 'editar-cuentas-bancarias', 'modulo' => 'Banca'],
+            ['nombre' => 'Eliminar Cuentas Bancarias', 'slug' => 'eliminar-cuentas-bancarias', 'modulo' => 'Banca'],
+            // FASE 9 - Movimientos Bancarios
+            ['nombre' => 'Ver Movimientos Bancarios', 'slug' => 'ver-movimientos-bancarios', 'modulo' => 'Banca'],
+            ['nombre' => 'Crear Movimientos Bancarios', 'slug' => 'crear-movimientos-bancarios', 'modulo' => 'Banca'],
+            ['nombre' => 'Editar Movimientos Bancarios', 'slug' => 'editar-movimientos-bancarios', 'modulo' => 'Banca'],
+            ['nombre' => 'Eliminar Movimientos Bancarios', 'slug' => 'eliminar-movimientos-bancarios', 'modulo' => 'Banca'],
+            // FASE 9 - Retenciones de Impuesto
+            ['nombre' => 'Ver Retenciones Impuesto', 'slug' => 'ver-retenciones-impuesto', 'modulo' => 'Tributación'],
+            ['nombre' => 'Crear Retenciones Impuesto', 'slug' => 'crear-retenciones-impuesto', 'modulo' => 'Tributación'],
+            ['nombre' => 'Editar Retenciones Impuesto', 'slug' => 'editar-retenciones-impuesto', 'modulo' => 'Tributación'],
+            ['nombre' => 'Eliminar Retenciones Impuesto', 'slug' => 'eliminar-retenciones-impuesto', 'modulo' => 'Tributación'],
         ];
 
         foreach ($permisos as $permiso) {
