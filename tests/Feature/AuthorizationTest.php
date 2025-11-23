@@ -8,6 +8,8 @@ use App\Models\Cliente;
 use App\Models\Usuario;
 use App\Models\Rol;
 use App\Models\Permiso;
+use App\Models\CategoriaProducto;
+use App\Models\UnidadMedida;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
@@ -32,6 +34,7 @@ class AuthorizationTest extends TestCase
     private Usuario $usuario2;
     private Rol $rolAdmin;
     private Rol $rolUsuario;
+    private UnidadMedida $unidadMedida;
 
     protected function setUp(): void
     {
@@ -77,34 +80,48 @@ class AuthorizationTest extends TestCase
             'eliminado' => false,
         ]);
 
-        // Crear permisos para Producto
+        // Crear permisos necesarios para las pruebas
         $permisoVerProductos = Permiso::create([
-            'nombre' => 'producto.leer',
-            'slug' => 'producto-leer',
+            'nombre' => 'productos.leer',
+            'slug' => 'productos-leer',
             'descripcion' => 'Ver productos',
         ]);
 
         $permisoCrearProductos = Permiso::create([
-            'nombre' => 'producto.crear',
-            'slug' => 'producto-crear',
+            'nombre' => 'productos.crear',
+            'slug' => 'productos-crear',
             'descripcion' => 'Crear productos',
         ]);
 
         $permisoActualizarProductos = Permiso::create([
-            'nombre' => 'producto.actualizar',
-            'slug' => 'producto-actualizar',
+            'nombre' => 'productos.actualizar',
+            'slug' => 'productos-actualizar',
             'descripcion' => 'Actualizar productos',
+        ]);
+
+        $permisoVerClientes = Permiso::create([
+            'nombre' => 'clientes.leer',
+            'slug' => 'clientes-leer',
+            'descripcion' => 'Ver clientes',
+        ]);
+
+        $permisoCrearClientes = Permiso::create([
+            'nombre' => 'clientes.crear',
+            'slug' => 'clientes-crear',
+            'descripcion' => 'Crear clientes',
         ]);
 
         // Asignar todos los permisos al rol admin
         $this->rolAdmin->permisos()->attach([
-            $permisoVerProductos->id,
-            $permisoCrearProductos->id,
-            $permisoActualizarProductos->id,
+            $permisoVerProductos->id => ['activo' => true],
+            $permisoCrearProductos->id => ['activo' => true],
+            $permisoActualizarProductos->id => ['activo' => true],
+            $permisoVerClientes->id => ['activo' => true],
+            $permisoCrearClientes->id => ['activo' => true],
         ]);
 
         // Asignar solo permiso de lectura al rol usuario
-        $this->rolUsuario->permisos()->attach($permisoVerProductos->id);
+        $this->rolUsuario->permisos()->attach($permisoVerProductos->id, ['activo' => true]);
 
         // Crear usuarios de prueba
         $this->usuario1 = Usuario::create([
@@ -113,7 +130,6 @@ class AuthorizationTest extends TestCase
             'nombre' => 'Admin',
             'apellidos' => 'Test',
             'password_hash' => bcrypt('password'),
-            'rol_id' => $this->rolAdmin->id,
             'activo' => true,
             'eliminado' => false,
         ]);
@@ -124,7 +140,21 @@ class AuthorizationTest extends TestCase
             'nombre' => 'User',
             'apellidos' => 'Test',
             'password_hash' => bcrypt('password'),
-            'rol_id' => null, // Sin rol
+            'activo' => true,
+            'eliminado' => false,
+        ]);
+
+        // Asignar roles vía tabla pivote rol_usuario
+        $this->usuario1->roles()->attach($this->rolAdmin->id, [
+            'activo' => true,
+            'eliminado' => false,
+        ]);
+        // usuario2 sin rol (para test de permisos)
+
+        // Crear unidad de medida para tests de productos
+        $this->unidadMedida = UnidadMedida::create([
+            'nombre' => 'Unidad',
+            'codigo_dgt' => 'Sp',
             'activo' => true,
             'eliminado' => false,
         ]);
@@ -194,13 +224,38 @@ class AuthorizationTest extends TestCase
         // Autenticar como admin (tiene todos los permisos)
         Sanctum::actingAs($this->usuario1);
 
-        // Crear producto (tiene permiso producto.crear)
+        // Debug: Verificar relaciones
+        $roles = $this->usuario1->roles()->get();
+        $this->assertCount(1, $roles, 'El usuario debería tener 1 rol');
+        
+        $rol = $roles->first();
+        $permisos = $rol->permisos()->get();
+        $this->assertGreaterThan(0, $permisos->count(), 'El rol debería tener permisos');
+        
+        // Debug: Verificar nombre de permisos (no slug)
+        $nombres = $permisos->pluck('nombre')->toArray();
+        $this->assertContains('productos.crear', $nombres, 'El rol debería tener el permiso productos.crear. Permisos: ' . implode(', ', $nombres));
+        
+        $tienePermiso = $this->usuario1->hasPermission('productos.crear');
+        $this->assertTrue($tienePermiso, 'El usuario debería tener el permiso productos.crear');
+
+        // Crear categoría para el producto
+        $categoria = CategoriaProducto::create([
+            'empresa_id' => $this->empresa1->id,
+            'nombre' => 'Categoría Test',
+            'activo' => true,
+            'eliminado' => false,
+        ]);
+
+        // Crear producto (tiene permiso productos.crear)
         $response = $this->postJson('/api/productos', [
             'empresa_id' => $this->empresa1->id,
             'codigo' => 'PROD-001',
             'nombre' => 'Producto Test Autorizado',
             'precio_venta' => 1500,
-            'categoria_producto_id' => null,
+            'categoria_id' => $categoria->id,
+            'unidad_medida_id' => $this->unidadMedida->id,
+            'tipo' => 'producto',
         ]);
 
         // Debe retornar 201 Created
@@ -272,28 +327,47 @@ class AuthorizationTest extends TestCase
             'nombre' => 'Lector',
             'apellidos' => 'Test',
             'password_hash' => bcrypt('password'),
-            'rol_id' => $this->rolUsuario->id, // Solo tiene producto.leer
+            'activo' => true,
+            'eliminado' => false,
+        ]);
+        
+        // Asignar rol con solo lectura
+        $usuarioLectora->roles()->attach($this->rolUsuario->id, [
             'activo' => true,
             'eliminado' => false,
         ]);
 
-        // Crear producto
+        // Crear categoría para el producto
+        $categoria = CategoriaProducto::create([
+            'empresa_id' => $this->empresa1->id,
+            'nombre' => 'Categoría Test RBAC',
+            'activo' => true,
+            'eliminado' => false,
+        ]);
+
+        // Crear producto con todos los campos obligatorios
         $producto = Producto::create([
             'empresa_id' => $this->empresa1->id,
             'nombre' => 'Producto Test',
             'codigo' => 'PROD-TEST',
             'precio_venta' => 1500,
+            'categoria_id' => $categoria->id,
+            'unidad_medida_id' => $this->unidadMedida->id,
+            'tipo' => 'producto',
             'activo' => true,
             'eliminado' => false,
         ]);
 
         Sanctum::actingAs($usuarioLectora);
 
-        // PUEDE ver productos (tiene producto.leer)
+        // PUEDE ver productos (tiene productos.leer)
         $response = $this->getJson('/api/productos');
         $response->assertStatus(200);
 
         $response = $this->getJson("/api/productos/{$producto->id}");
+        if ($response->status() !== 200) {
+            dump($response->json());
+        }
         $response->assertStatus(200);
 
         // NO PUEDE actualizar productos (no tiene producto.actualizar)
@@ -315,8 +389,10 @@ class AuthorizationTest extends TestCase
         // Crear cliente
         $cliente = Cliente::create([
             'empresa_id' => $this->empresa1->id,
-            'nombre' => 'Cliente Test',
-            'numero_identificacion' => '123456789',
+            'nombre' => 'Cliente',
+            'apellidos' => 'Test',
+            'numero_identificacion' => '3101234567',
+            'tipo_identificacion' => '02',
             'activo' => true,
             'eliminado' => false,
         ]);
@@ -342,28 +418,19 @@ class AuthorizationTest extends TestCase
     {
         Sanctum::actingAs($this->usuario1);
 
-        // Crear permisos para otros recursos
-        $permisoCrearCliente = Permiso::create([
-            'nombre' => 'cliente.crear',
-            'slug' => 'cliente-crear',
-            'descripcion' => 'Crear clientes',
-        ]);
-        $permisoCrearVenta = Permiso::create([
-            'nombre' => 'venta.crear',
-            'slug' => 'venta-crear',
-            'descripcion' => 'Crear ventas',
-        ]);
-        $this->rolAdmin->permisos()->attach([$permisoCrearCliente->id, $permisoCrearVenta->id]);
+        // Ya se crearon permisos de clientes en setUp(), no necesitamos crear más
 
-        // Verificar Cliente
+        // Verificar Cliente (usuario1 ya tiene permiso clientes.crear)
         $responseCliente = $this->postJson('/api/clientes', [
             'empresa_id' => $this->empresa1->id,
-            'nombre' => 'Cliente Test',
-            'numero_identificacion' => '123456789',
+            'nombre' => 'Cliente',
+            'apellidos' => 'Test',
+            'numero_identificacion' => '3101234567',
+            'tipo_identificacion' => '02', // Cédula jurídica
         ]);
         $responseCliente->assertStatus(201);
 
-        // Verificar que productos de la empresa 1 estén accesibles
+        // Verificar que productos de la empresa 1 estén accesibles (usuario1 tiene productos.leer)
         $response = $this->getJson('/api/productos');
         $response->assertStatus(200);
     }
