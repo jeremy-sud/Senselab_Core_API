@@ -1,14 +1,14 @@
 # Guía de Testing - Ursol CAST API
 
 **Desarrollado por Sistemas Ursol S.A.**  
-*Suite de 81 tests automatizados para garantizar calidad del código*  
+*Suite de 127 tests automatizados para garantizar calidad del código*  
 **Última actualización:** 21 de noviembre de 2025
 
 ---
 
 ## 📊 Resumen
 
-El proyecto incluye una **suite de 81 tests** que cubren los componentes críticos del sistema:
+El proyecto incluye una **suite de 127 tests** que cubren los componentes críticos del sistema:
 
 | Tipo | Archivo | Tests | Estado | Descripción |
 |------|---------|-------|--------|-------------|
