@@ -38,8 +38,12 @@ class OrdenCompraController extends Controller
             new OA\Response(response: 200, description: 'Listado exitoso', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/OrdenCompra'))]))
         ]
     )]
-    public function index(Request $request)
+    public function index(public function index(Request $request)
     {
+        try {)
+    {
+        $this->authorize('viewAny', OrdenCompra::class);
+        
         try {
             $perPage = $request->input('per_page', 15);
             $empresaId = $request->input('empresa_id');
@@ -128,8 +132,12 @@ class OrdenCompraController extends Controller
             new OA\Response(response: 201, description: 'Orden creada', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', ref: '#/components/schemas/OrdenCompra')]))
         ]
     )]
-    public function store(StoreOrdenCompraRequest $request)
+    public function store(public function store(StoreOrdenCompraRequest $request)
     {
+        try {)
+    {
+        $this->authorize('create', OrdenCompra::class);
+        
         try {
             DB::beginTransaction();
             

@@ -59,8 +59,12 @@ class SucursalController extends Controller
             )
         ]
     )]
-    public function index(Request $request)
+    public function index(public function index(Request $request)
     {
+        try {)
+    {
+        $this->authorize('viewAny', Sucursal::class);
+        
         try {
             $perPage = $request->input('per_page', 15);
             $empresaId = $request->input('empresa_id');
@@ -131,8 +135,12 @@ class SucursalController extends Controller
             )
         ]
     )]
-    public function store(StoreSucursalRequest $request)
+    public function store(public function store(StoreSucursalRequest $request)
     {
+        try {)
+    {
+        $this->authorize('create', Sucursal::class);
+        
         try {
             // Si es principal, desmarcar otras sucursales principales
             if ($request->boolean('es_principal')) {
