@@ -18,20 +18,20 @@ class RetencionImpuestoResource extends JsonResource
             'id' => $this->id,
             'empresa_id' => $this->empresa_id,
             'proveedor_id' => $this->proveedor_id,
-            'factura_id' => $this->factura_id,
+            'compra_id' => $this->compra_id,
+            'venta_id' => $this->venta_id,
             'tipo_retencion' => $this->tipo_retencion,
             'porcentaje_retencion' => (float) $this->porcentaje_retencion,
             'monto_base' => (float) $this->monto_base,
             'monto_retenido' => (float) $this->monto_retenido,
             'numero_comprobante' => $this->numero_comprobante,
-            'fecha_emision' => $this->fecha_emision?->toISOString(),
+            'fecha_retencion' => $this->fecha_retencion?->toISOString(),
             'periodo_declaracion' => $this->periodo_declaracion,
             'declaracion_id' => $this->declaracion_id,
-            'estado' => $this->estado,
+            'declarado' => (bool) $this->declarado,
             'notas' => $this->notas,
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
-            'deleted_at' => $this->deleted_at?->toISOString(),
             
             // Relaciones
             'empresa' => $this->whenLoaded('empresa', fn() => [
@@ -41,11 +41,6 @@ class RetencionImpuestoResource extends JsonResource
             'proveedor' => $this->whenLoaded('proveedor', fn() => [
                 'id' => $this->proveedor->id,
                 'nombre' => $this->proveedor->nombre,
-            ]),
-            'declaracion' => $this->whenLoaded('declaracion', fn() => [
-                'id' => $this->declaracion->id,
-                'tipo_declaracion' => $this->declaracion->tipo_declaracion,
-                'periodo_fiscal' => $this->declaracion->periodo_fiscal,
             ]),
         ];
     }

@@ -39,7 +39,7 @@ class MovimientoBancarioTest extends TestCase
 
         $response->assertStatus(201)
             ->assertJsonPath('data.tipo_movimiento', 'deposito')
-            ->assertJsonPath('data.monto', 50000.0);
+            ->assertJsonPath('data.monto', 50000);
 
         $this->assertDatabaseHas('movimientos_bancarios', [
             'cuenta_bancaria_id' => $cuenta->id,

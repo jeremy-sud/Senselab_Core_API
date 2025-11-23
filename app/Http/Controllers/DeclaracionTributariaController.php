@@ -61,7 +61,7 @@ class DeclaracionTributariaController extends Controller
     public function update(UpdateDeclaracionTributariaRequest $request, DeclaracionTributaria $declaracionTributaria)
     {
         $declaracionTributaria->update($request->validated());
-        $declaracionTributaria->load('empresa');
+        $declaracionTributaria->refresh()->load('empresa');
 
         return new DeclaracionTributariaResource($declaracionTributaria);
     }

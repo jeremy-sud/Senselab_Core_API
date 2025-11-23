@@ -26,8 +26,8 @@ class RetencionImpuestoController extends Controller
             $query->where('tipo_retencion', $request->tipo_retencion);
         }
 
-        if ($request->filled('estado')) {
-            $query->where('estado', $request->estado);
+        if ($request->filled('declarado')) {
+            $query->where('declarado', $request->declarado);
         }
 
         if ($request->filled('periodo')) {
@@ -38,7 +38,7 @@ class RetencionImpuestoController extends Controller
             $query->where('numero_comprobante', 'like', "%{$request->search}%");
         }
 
-        $retenciones = $query->latest('fecha_emision')->paginate($request->per_page ?? 15);
+        $retenciones = $query->latest('fecha_retencion')->paginate($request->per_page ?? 15);
 
         return RetencionImpuestoResource::collection($retenciones);
     }
@@ -46,14 +46,14 @@ class RetencionImpuestoController extends Controller
     public function store(StoreRetencionImpuestoRequest $request)
     {
         $retencion = RetencionImpuesto::create($request->validated());
-        $retencion->load(['empresa', 'proveedor', 'declaracion']);
+        $retencion->load(['empresa', 'proveedor']);
 
         return new RetencionImpuestoResource($retencion);
     }
 
     public function show(RetencionImpuesto $retencionImpuesto)
     {
-        $retencionImpuesto->load(['empresa', 'proveedor', 'declaracion']);
+        $retencionImpuesto->load(['empresa', 'proveedor']);
 
         return new RetencionImpuestoResource($retencionImpuesto);
     }

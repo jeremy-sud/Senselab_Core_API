@@ -41,8 +41,8 @@ class RetencionImpuestoTest extends TestCase
 
         $response->assertStatus(201)
             ->assertJsonPath('data.tipo_retencion', 'renta')
-            ->assertJsonPath('data.porcentaje_retencion', 2.0)
-            ->assertJsonPath('data.monto_retenido', 2000.0);
+            ->assertJsonPath('data.porcentaje_retencion', 2)
+            ->assertJsonPath('data.monto_retenido', 2000);
 
         $this->assertDatabaseHas('retenciones_impuesto', [
             'empresa_id' => $empresa->id,
