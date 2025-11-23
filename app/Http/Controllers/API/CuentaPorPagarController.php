@@ -50,6 +50,8 @@ class CuentaPorPagarController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', CuentaPorPagar::class);
+
         $empresaId = $request->user()->empresa_id;
         
         $query = CuentaPorPagar::where('empresa_id', $empresaId)
@@ -116,6 +118,8 @@ class CuentaPorPagarController extends Controller
     )]
     public function store(StoreCuentaPorPagarRequest $request): JsonResponse
     {
+        $this->authorize('create', CuentaPorPagar::class);
+
         $validated = $request->validated();
         $validated['empresa_id'] = $request->user()->empresa_id;
 
@@ -162,6 +166,7 @@ class CuentaPorPagarController extends Controller
             ->where('eliminado', 0)
             ->with(['proveedor', 'ordenCompra', 'empresa'])
             ->firstOrFail();
+        $this->authorize('view', $cuenta);
 
         return response()->json([
             'success' => true,
@@ -192,6 +197,7 @@ class CuentaPorPagarController extends Controller
             ->where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
+        $this->authorize('update', $cuenta);
 
         $cuenta->update($request->validated());
         $cuenta->load(['proveedor', 'ordenCompra', 'empresa']);
@@ -230,6 +236,7 @@ class CuentaPorPagarController extends Controller
             ->where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
+        $this->authorize('delete', $cuenta);
 
         // Validar que no tenga pagos registrados
         if ($cuenta->monto_pagado > 0) {
