@@ -9,6 +9,7 @@ use App\Http\Resources\ConsecutivoFEResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\ObtenerSiguienteConsecutivoRequest;
 
 class ConsecutivoFEController extends Controller
 {
@@ -139,13 +140,8 @@ class ConsecutivoFEController extends Controller
     /**
      * Obtiene el siguiente consecutivo disponible de forma thread-safe.
      */
-    public function obtenerSiguiente(Request $request): JsonResponse
+    public function obtenerSiguiente(ObtenerSiguienteConsecutivoRequest $request): JsonResponse
     {
-        $request->validate([
-            'tipo_documento_dgt' => 'required|string|size:2',
-            'sucursal_id' => 'nullable|exists:sucursales,id',
-            'prefijo' => 'nullable|string|max:10',
-        ]);
 
         DB::beginTransaction();
         try {
