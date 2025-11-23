@@ -110,6 +110,8 @@ class ProductoController extends Controller
     )]
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Producto::class);
+        
         try {
             $perPage = $request->input('per_page', 15);
             $search = $request->input('search');
@@ -220,6 +222,8 @@ class ProductoController extends Controller
     )]
     public function store(StoreProductoRequest $request)
     {
+        $this->authorize('create', Producto::class);
+        
         try {
             $producto = Producto::create($request->validated());
             $producto->load([

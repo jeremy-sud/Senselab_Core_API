@@ -99,6 +99,8 @@ class ProveedorController extends Controller
     )]
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Proveedor::class);
+        
         try {
             $perPage = $request->input('per_page', 15);
             $search = $request->input('search');
@@ -202,8 +204,12 @@ class ProveedorController extends Controller
             )
         ]
     )]
-    public function store(StoreProveedorRequest $request)
+    public function store(public function store(StoreProveedorRequest $request)
     {
+        try {)
+    {
+        $this->authorize('create', Proveedor::class);
+        
         try {
             $proveedor = Proveedor::create($request->validated());
             $proveedor->load('empresa');

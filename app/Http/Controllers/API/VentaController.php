@@ -116,6 +116,8 @@ class VentaController extends Controller
     )]
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Venta::class);
+        
         try {
             $perPage = $request->input('per_page', 15);
             $empresaId = $request->input('empresa_id');
@@ -239,8 +241,12 @@ class VentaController extends Controller
             )
         ]
     )]
-    public function store(StoreVentaRequest $request)
+    public function store(public function store(StoreVentaRequest $request)
     {
+        try {)
+    {
+        $this->authorize('create', Venta::class);
+        
         try {
             DB::beginTransaction();
             
