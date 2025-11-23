@@ -125,7 +125,7 @@ class CuentaPorPagar extends Model
      */
     public function pagos()
     {
-        return $this->hasMany(PagoCuentaPorPagar::class);
+        return $this->hasMany(PagoCuentaPagar::class);
     }
 
     /**

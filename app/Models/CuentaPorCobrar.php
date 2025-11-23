@@ -123,7 +123,7 @@ class CuentaPorCobrar extends Model
      */
     public function pagos()
     {
-        return $this->hasMany(PagoCuentaPorCobrar::class);
+        return $this->hasMany(PagoCuentaCobrar::class);
     }
 
     /**
