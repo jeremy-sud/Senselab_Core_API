@@ -51,23 +51,32 @@ class DeclaracionTributariaController extends Controller
         return new DeclaracionTributariaResource($declaracion);
     }
 
-    public function show(DeclaracionTributaria $declaracionTributaria)
+    public function show($id)
     {
+        $declaracion = DeclaracionTributaria::withoutGlobalScope('tenant')
+            ->with('empresa')
+            ->findOrFail($id);
+
+        return new DeclaracionTributariaResource($declaracion);
+    }
+
+    public function update(UpdateDeclaracionTributariaRequest $request, $id)
+    {
+        $declaracionTributaria = DeclaracionTributaria::withoutGlobalScope('tenant')
+            ->findOrFail($id);
+            
+        $declaracionTributaria->update($request->validated());
+        
         $declaracionTributaria->load('empresa');
 
         return new DeclaracionTributariaResource($declaracionTributaria);
     }
 
-    public function update(UpdateDeclaracionTributariaRequest $request, DeclaracionTributaria $declaracionTributaria)
+    public function destroy($id)
     {
-        $declaracionTributaria->update($request->validated());
-        $declaracionTributaria->refresh()->load('empresa');
-
-        return new DeclaracionTributariaResource($declaracionTributaria);
-    }
-
-    public function destroy(DeclaracionTributaria $declaracionTributaria)
-    {
+        $declaracionTributaria = DeclaracionTributaria::withoutGlobalScope('tenant')
+            ->findOrFail($id);
+            
         $declaracionTributaria->delete();
 
         return response()->json(['message' => 'Declaración eliminada correctamente'], 200);
