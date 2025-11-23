@@ -296,6 +296,8 @@ class ProductoController extends Controller
                 'cabys'
             ])->findOrFail($id);
             
+            $this->authorize('view', $producto);
+            
             return new ProductoResource($producto);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
@@ -366,6 +368,8 @@ class ProductoController extends Controller
         try {
             $producto = Producto::findOrFail($id);
             
+            $this->authorize('update', $producto);
+            
             $producto->update($request->validated());
             $producto->load([
                 'empresa',
@@ -430,6 +434,8 @@ class ProductoController extends Controller
     {
         try {
             $producto = Producto::findOrFail($id);
+            
+            $this->authorize('delete', $producto);
             
             // Soft delete - marcar como inactivo
             $producto->update([

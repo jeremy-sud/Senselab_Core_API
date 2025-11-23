@@ -222,9 +222,7 @@ class ClienteController extends Controller
             )
         ]
     )]
-    public function store(public function store(StoreClienteRequest $request)
-    {
-        try {)
+    public function store(StoreClienteRequest $request)
     {
         $this->authorize('create', Cliente::class);
         
@@ -308,6 +306,8 @@ class ClienteController extends Controller
                     $query->where('estado', 'pendiente');
                 }
             ])->findOrFail($id);
+            
+            $this->authorize('view', $cliente);
             
             return new ClienteResource($cliente);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -412,6 +412,8 @@ class ClienteController extends Controller
         try {
             $cliente = Cliente::findOrFail($id);
             
+            $this->authorize('update', $cliente);
+            
             $cliente->update($request->validated());
             $cliente->load('empresa');
             
@@ -485,6 +487,8 @@ class ClienteController extends Controller
     {
         try {
             $cliente = Cliente::findOrFail($id);
+            
+            $this->authorize('delete', $cliente);
             
             // Soft delete - marcar como inactivo
             $cliente->update([

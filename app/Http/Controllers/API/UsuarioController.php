@@ -12,6 +12,7 @@ use App\Models\Usuario;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use OpenApi\Attributes as OA;
 
@@ -47,6 +48,8 @@ class UsuarioController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', Usuario::class);
+        
         $empresaId = auth()->user()->empresa_id;
         
         $query = Usuario::where('empresa_id', $empresaId)
@@ -98,6 +101,8 @@ class UsuarioController extends Controller
     )]
     public function store(StoreUsuarioRequest $request): JsonResponse
     {
+        $this->authorize('create', Usuario::class);
+        
         $validated = $request->validated();
         $validated['empresa_id'] = auth()->user()->empresa_id;
         $validated['password_hash'] = Hash::make($validated['password']);
@@ -141,6 +146,8 @@ class UsuarioController extends Controller
         $usuario = Usuario::where('empresa_id', $empresaId)
             ->with(['roles.permisos', 'cargo', 'empresa', 'empleado'])
             ->findOrFail($id);
+        
+        $this->authorize('view', $usuario);
 
         return new UsuarioResource($usuario);
     }
@@ -163,6 +170,9 @@ class UsuarioController extends Controller
         $empresaId = auth()->user()->empresa_id;
 
         $usuario = Usuario::where('empresa_id', $empresaId)->findOrFail($id);
+        
+        $this->authorize('update', $usuario);
+        
         $validated = $request->validated();
 
         // Si se proporciona nueva contraseña, hashearla
@@ -205,6 +215,8 @@ class UsuarioController extends Controller
         $empresaId = auth()->user()->empresa_id;
 
         $usuario = Usuario::where('empresa_id', $empresaId)->findOrFail($id);
+        
+        $this->authorize('delete', $usuario);
 
         // No permitir que el usuario se elimine a sí mismo
         if ($usuario->id === auth()->id()) {
