@@ -4,47 +4,284 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\DeclaracionTributaria;
+use App\Http\Requests\StoreDeclaracionTributariaRequest;
+use App\Http\Requests\UpdateDeclaracionTributariaRequest;
+use App\Http\Resources\DeclaracionTributariaResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
+/**
+ * Controller para gestionar declaraciones tributarias
+ * D104 (IVA), D101 (Renta), D103, D150, D151 ante Hacienda
+ * 
+ * @author GitHub Copilot
+ * @copyright 2025 Sistemas Ursol S.A.
+ */
 class DeclaracionTributariaController extends Controller
 {
     /**
      * Display a listing of the resource.
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $this->authorize('viewAny', DeclaracionTributaria::class);
+        
+        try {
+            $perPage = $request->input('per_page', 15);
+            $search = $request->input('search');
+            $empresaId = Auth::user()->empresa_id;
+            
+            $query = DeclaracionTributaria::with(['empresa'])
+                                          ->where('empresa_id', $empresaId)
+                                          ->where('eliminado', false);
+            
+            if ($search) {
+                $query->where(function($q) use ($search) {
+                    $q->where('periodo_fiscal', 'like', "%{$search}%")
+                      ->orWhere('numero_confirmacion', 'like', "%{$search}%")
+                      ->orWhere('notas', 'like', "%{$search}%");
+                });
+            }
+            
+            // Filtro por tipo de declaración
+            if ($request->has('tipo_declaracion')) {
+                $query->porTipo($request->input('tipo_declaracion'));
+            }
+            
+            // Filtros rápidos por tipo
+            if ($request->boolean('solo_iva')) {
+                $query->porTipo('D104');
+            }
+            
+            if ($request->boolean('solo_renta')) {
+                $query->porTipo('D101');
+            }
+            
+            // Filtro por estado
+            if ($request->has('estado')) {
+                $estado = $request->input('estado');
+                
+                if ($estado === 'borrador') {
+                    $query->borradores();
+                } elseif ($estado === 'enviada') {
+                    $query->enviadas();
+                } elseif ($estado === 'aceptada') {
+                    $query->aceptadas();
+                }
+            }
+            
+            // Filtro por período fiscal
+            if ($request->has('periodo_fiscal')) {
+                $query->porPeriodo($request->input('periodo_fiscal'));
+            }
+            
+            // Filtro por año fiscal
+            if ($request->has('anio_fiscal')) {
+                $query->where('periodo_fiscal', 'like', $request->input('anio_fiscal') . '%');
+            }
+            
+            // Filtro por rango de fechas
+            if ($request->has('fecha_desde')) {
+                $query->where('fecha_inicio_periodo', '>=', $request->input('fecha_desde'));
+            }
+            
+            if ($request->has('fecha_hasta')) {
+                $query->where('fecha_fin_periodo', '<=', $request->input('fecha_hasta'));
+            }
+            
+            // Filtro por declaraciones con saldo a pagar
+            if ($request->boolean('con_saldo_pagar')) {
+                $query->where('monto_a_pagar', '>', 0);
+            }
+            
+            // Filtro por declaraciones con saldo a favor
+            if ($request->boolean('con_saldo_favor')) {
+                $query->where('monto_a_favor', '>', 0);
+            }
+            
+            $declaraciones = $query->orderBy('fecha_inicio_periodo', 'desc')
+                                   ->orderBy('created_at', 'desc')
+                                   ->paginate($perPage);
+            
+            return DeclaracionTributariaResource::collection($declaraciones);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al obtener declaraciones tributarias',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
      * Store a newly created resource in storage.
+     * 
+     * @param StoreDeclaracionTributariaRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(StoreDeclaracionTributariaRequest $request)
     {
-        //
+        $this->authorize('create', DeclaracionTributaria::class);
+        
+        try {
+            $data = $request->validated();
+            
+            // Asignar empresa_id del usuario autenticado
+            $data['empresa_id'] = Auth::user()->empresa_id;
+            
+            // Asignar estado borrador por defecto si no viene
+            if (!isset($data['estado'])) {
+                $data['estado'] = 'borrador';
+            }
+            
+            // Calcular monto a pagar o a favor si no vienen
+            if (!isset($data['monto_a_pagar']) && !isset($data['monto_a_favor'])) {
+                $saldoNeto = ($data['monto_debitos'] ?? 0) - ($data['monto_creditos'] ?? 0);
+                
+                if ($saldoNeto > 0) {
+                    $data['monto_a_pagar'] = $saldoNeto;
+                    $data['monto_a_favor'] = 0;
+                } else {
+                    $data['monto_a_pagar'] = 0;
+                    $data['monto_a_favor'] = abs($saldoNeto);
+                }
+            }
+            
+            $declaracion = DeclaracionTributaria::create($data);
+            $declaracion->load(['empresa']);
+            
+            return (new DeclaracionTributariaResource($declaracion))
+                ->additional(['message' => 'Declaración tributaria creada exitosamente'])
+                ->response()
+                ->setStatusCode(201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al crear declaración tributaria',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
      * Display the specified resource.
+     * 
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(DeclaracionTributaria $declaracionTributaria)
+    public function show(int $id)
     {
-        //
+        try {
+            $declaracion = DeclaracionTributaria::with(['empresa'])->findOrFail($id);
+            
+            $this->authorize('view', $declaracion);
+            
+            return new DeclaracionTributariaResource($declaracion);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Declaración tributaria no encontrada'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al obtener declaración tributaria',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
      * Update the specified resource in storage.
+     * 
+     * @param UpdateDeclaracionTributariaRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, DeclaracionTributaria $declaracionTributaria)
+    public function update(UpdateDeclaracionTributariaRequest $request, int $id)
     {
-        //
+        try {
+            $declaracion = DeclaracionTributaria::findOrFail($id);
+            
+            $this->authorize('update', $declaracion);
+            
+            // No permitir edición si ya fue aceptada
+            if ($declaracion->fueAceptada()) {
+                return response()->json([
+                    'message' => 'No se puede editar una declaración aceptada por Hacienda'
+                ], 422);
+            }
+            
+            $data = $request->validated();
+            
+            // Recalcular saldo neto si cambiaron débitos o créditos
+            if ((isset($data['monto_debitos']) || isset($data['monto_creditos'])) && 
+                !isset($data['monto_a_pagar']) && !isset($data['monto_a_favor'])) {
+                
+                $debitos = $data['monto_debitos'] ?? $declaracion->monto_debitos;
+                $creditos = $data['monto_creditos'] ?? $declaracion->monto_creditos;
+                $saldoNeto = $debitos - $creditos;
+                
+                if ($saldoNeto > 0) {
+                    $data['monto_a_pagar'] = $saldoNeto;
+                    $data['monto_a_favor'] = 0;
+                } else {
+                    $data['monto_a_pagar'] = 0;
+                    $data['monto_a_favor'] = abs($saldoNeto);
+                }
+            }
+            
+            $declaracion->update($data);
+            $declaracion->load(['empresa']);
+            
+            return (new DeclaracionTributariaResource($declaracion))
+                ->additional(['message' => 'Declaración tributaria actualizada exitosamente']);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Declaración tributaria no encontrada'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al actualizar declaración tributaria',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
+     * 
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(DeclaracionTributaria $declaracionTributaria)
+    public function destroy(int $id)
     {
-        //
+        try {
+            $declaracion = DeclaracionTributaria::findOrFail($id);
+            
+            $this->authorize('delete', $declaracion);
+            
+            // No permitir eliminación si ya fue aceptada
+            if ($declaracion->fueAceptada()) {
+                return response()->json([
+                    'message' => 'No se puede eliminar una declaración aceptada por Hacienda'
+                ], 422);
+            }
+            
+            // Soft delete
+            $declaracion->update(['eliminado' => true]);
+            
+            return response()->json([
+                'message' => 'Declaración tributaria eliminada exitosamente'
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Declaración tributaria no encontrada'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al eliminar declaración tributaria',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
