@@ -5,9 +5,27 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Services\PermissionService;
 
 class CheckPermission
 {
+    /**
+     * The permission service instance.
+     *
+     * @var PermissionService
+     */
+    protected PermissionService $permissionService;
+
+    /**
+     * Create a new middleware instance.
+     *
+     * @param PermissionService $permissionService
+     */
+    public function __construct(PermissionService $permissionService)
+    {
+        $this->permissionService = $permissionService;
+    }
+
     /**
      * Handle an incoming request.
      *
@@ -26,13 +44,15 @@ class CheckPermission
             ], 401);
         }
 
-        // Verificar si el usuario tiene al menos uno de los permisos
+        // Verificar si el usuario tiene al menos uno de los permisos usando cache
         $hasPermission = false;
-        foreach ($permissions as $permission) {
-            if ($user->hasPermission($permission)) {
-                $hasPermission = true;
-                break;
-            }
+        
+        if (count($permissions) === 1) {
+            // Un solo permiso - verificación directa con cache
+            $hasPermission = $this->permissionService->userHasPermission($user, $permissions[0]);
+        } else {
+            // Múltiples permisos - verificar si tiene alguno con cache
+            $hasPermission = $this->permissionService->userHasAnyPermission($user, $permissions);
         }
 
         if (!$hasPermission) {

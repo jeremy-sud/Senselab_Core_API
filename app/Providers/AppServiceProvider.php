@@ -123,6 +123,10 @@ use App\Policies\UrlShortenerPolicy;
 use App\Policies\ZonaGeograficaPolicy;
 use App\Policies\InventarioPolicy;
 
+// Importar observers
+use App\Observers\PermisoObserver;
+use App\Observers\RolObserver;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -204,6 +208,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Registrar observers
+        Permiso::observe(PermisoObserver::class);
+        Rol::observe(RolObserver::class);
+        
         // Registrar policies
         foreach ($this->policies as $model => $policy) {
             Gate::policy($model, $policy);
