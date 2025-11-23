@@ -4,47 +4,265 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\RetencionImpuesto;
+use App\Http\Requests\StoreRetencionImpuestoRequest;
+use App\Http\Requests\UpdateRetencionImpuestoRequest;
+use App\Http\Resources\RetencionImpuestoResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
+/**
+ * Controller para gestionar retenciones de impuestos
+ * Retenciones de renta e IVA aplicadas a proveedores
+ * 
+ * @author GitHub Copilot
+ * @copyright 2025 Sistemas Ursol S.A.
+ */
 class RetencionImpuestoController extends Controller
 {
     /**
      * Display a listing of the resource.
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $this->authorize('viewAny', RetencionImpuesto::class);
+        
+        try {
+            $perPage = $request->input('per_page', 15);
+            $search = $request->input('search');
+            $empresaId = Auth::user()->empresa_id;
+            
+            $query = RetencionImpuesto::with(['empresa', 'proveedor'])
+                                      ->where('empresa_id', $empresaId)
+                                      ->where('eliminado', false);
+            
+            if ($search) {
+                $query->where(function($q) use ($search) {
+                    $q->where('numero_comprobante', 'like', "%{$search}%")
+                      ->orWhere('notas', 'like', "%{$search}%")
+                      ->orWhereHas('proveedor', function($sq) use ($search) {
+                          $sq->where('nombre', 'like', "%{$search}%");
+                      });
+                });
+            }
+            
+            // Filtro por proveedor
+            if ($request->has('proveedor_id')) {
+                $query->where('proveedor_id', $request->input('proveedor_id'));
+            }
+            
+            // Filtro por tipo de retención
+            if ($request->has('tipo_retencion')) {
+                $query->porTipo($request->input('tipo_retencion'));
+            }
+            
+            // Filtro por estado de declaración
+            if ($request->boolean('declaradas')) {
+                $query->declaradas();
+            }
+            
+            if ($request->boolean('pendientes_declaracion')) {
+                $query->pendientesDeclaracion();
+            }
+            
+            // Filtro por período de declaración
+            if ($request->has('periodo_declaracion')) {
+                $query->porPeriodo($request->input('periodo_declaracion'));
+            }
+            
+            // Filtro por rango de fechas
+            if ($request->has('fecha_desde')) {
+                $query->where('fecha_retencion', '>=', $request->input('fecha_desde'));
+            }
+            
+            if ($request->has('fecha_hasta')) {
+                $query->where('fecha_retencion', '<=', $request->input('fecha_hasta'));
+            }
+            
+            // Filtro por monto retenido mínimo
+            if ($request->has('monto_minimo')) {
+                $query->where('monto_retenido', '>=', $request->input('monto_minimo'));
+            }
+            
+            $retenciones = $query->orderBy('fecha_retencion', 'desc')
+                                 ->orderBy('created_at', 'desc')
+                                 ->paginate($perPage);
+            
+            return RetencionImpuestoResource::collection($retenciones);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al obtener retenciones de impuestos',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
      * Store a newly created resource in storage.
+     * 
+     * @param StoreRetencionImpuestoRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(StoreRetencionImpuestoRequest $request)
     {
-        //
+        $this->authorize('create', RetencionImpuesto::class);
+        
+        try {
+            $data = $request->validated();
+            
+            // Asignar empresa_id del usuario autenticado
+            $data['empresa_id'] = Auth::user()->empresa_id;
+            
+            // Calcular monto retenido si no viene (monto_base * porcentaje / 100)
+            if (!isset($data['monto_retenido']) && isset($data['monto_base']) && isset($data['porcentaje_retencion'])) {
+                $data['monto_retenido'] = ($data['monto_base'] * $data['porcentaje_retencion']) / 100;
+            }
+            
+            $retencion = RetencionImpuesto::create($data);
+            $retencion->load(['empresa', 'proveedor']);
+            
+            return (new RetencionImpuestoResource($retencion))
+                ->additional(['message' => 'Retención de impuesto creada exitosamente'])
+                ->response()
+                ->setStatusCode(201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al crear retención de impuesto',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
      * Display the specified resource.
+     * 
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(RetencionImpuesto $retencionImpuesto)
+    public function show(int $id)
     {
-        //
+        try {
+            $retencion = RetencionImpuesto::with([
+                'empresa', 
+                'proveedor'
+            ])->findOrFail($id);
+            
+            $this->authorize('view', $retencion);
+            
+            return new RetencionImpuestoResource($retencion);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Retención de impuesto no encontrada'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al obtener retención de impuesto',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
      * Update the specified resource in storage.
+     * 
+     * @param UpdateRetencionImpuestoRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, RetencionImpuesto $retencionImpuesto)
+    public function update(UpdateRetencionImpuestoRequest $request, int $id)
     {
-        //
+        try {
+            $retencion = RetencionImpuesto::findOrFail($id);
+            
+            $this->authorize('update', $retencion);
+            
+            $data = $request->validated();
+            
+            // Recalcular monto retenido si cambiaron base o porcentaje
+            if ((isset($data['monto_base']) || isset($data['porcentaje_retencion'])) && !isset($data['monto_retenido'])) {
+                $base = $data['monto_base'] ?? $retencion->monto_base;
+                $porcentaje = $data['porcentaje_retencion'] ?? $retencion->porcentaje_retencion;
+                $data['monto_retenido'] = ($base * $porcentaje) / 100;
+            }
+            
+            $retencion->update($data);
+            $retencion->load(['empresa', 'proveedor']);
+            
+            return (new RetencionImpuestoResource($retencion))
+                ->additional(['message' => 'Retención de impuesto actualizada exitosamente']);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Retención de impuesto no encontrada'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al actualizar retención de impuesto',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
+     * 
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(RetencionImpuesto $retencionImpuesto)
+    public function destroy(int $id)
     {
-        //
+        try {
+            $retencion = RetencionImpuesto::findOrFail($id);
+            
+            $this->authorize('delete', $retencion);
+            
+            // Soft delete
+            $retencion->update(['eliminado' => true]);
+            
+            return response()->json([
+                'message' => 'Retención de impuesto eliminada exitosamente'
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Retención de impuesto no encontrada'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al eliminar retención de impuesto',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    /**
+     * Marcar retención como declarada
+     * 
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function marcarComoDeclarada(int $id)
+    {
+        try {
+            $retencion = RetencionImpuesto::findOrFail($id);
+            
+            $this->authorize('update', $retencion);
+            
+            $retencion->marcarComoDeclarada();
+            
+            return response()->json([
+                'message' => 'Retención marcada como declarada exitosamente',
+                'data' => new RetencionImpuestoResource($retencion)
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Retención de impuesto no encontrada'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al marcar retención como declarada',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
