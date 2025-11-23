@@ -8,6 +8,7 @@ use App\Models\Rol;
 use App\Models\Permiso;
 use App\Models\Empresa;
 use App\Models\Cargo;
+use Illuminate\Support\Facades\Hash;
 
 class UsuarioTest extends TestCase
 {
@@ -137,7 +138,7 @@ class UsuarioTest extends TestCase
 
         // Assert
         $this->assertNotNull($authPassword);
-        $this->assertTrue(\Hash::check('test123', $authPassword));
+        $this->assertTrue(Hash::check('test123', $authPassword));
     }
 
     /**

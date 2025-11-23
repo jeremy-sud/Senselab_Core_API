@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Models\AuditoriaActividad;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Trait HasAuditFields
@@ -143,7 +144,7 @@ trait HasAuditFields
             ]);
         } catch (\Exception $e) {
             // Log el error pero no interrumpir el flujo normal
-            \Log::error('Error al registrar auditoría: ' . $e->getMessage(), [
+            Log::error('Error al registrar auditoría: ' . $e->getMessage(), [
                 'model' => get_class($this),
                 'action' => $accion,
             ]);
