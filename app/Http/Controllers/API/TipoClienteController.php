@@ -139,6 +139,7 @@ class TipoClienteController extends Controller
             $this->authorize('update', $tipoCliente);
             
             $tipoCliente->update($request->validated());
+            $tipoCliente->refresh(); // Refrescar modelo después del update
             
             return (new TipoClienteResource($tipoCliente))
                 ->additional(['message' => 'Tipo de cliente actualizado exitosamente']);
