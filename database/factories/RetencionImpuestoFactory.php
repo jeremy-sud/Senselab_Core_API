@@ -21,14 +21,18 @@ class RetencionImpuestoFactory extends Factory
         return [
             'empresa_id' => Empresa::factory(),
             'proveedor_id' => Proveedor::factory(),
-            'tipo_retencion' => $this->faker->randomElement(['renta', 'iva', 'servicios_profesionales', 'alquileres']),
+            'compra_id' => null,
+            'venta_id' => null,
+            'tipo_retencion' => $this->faker->randomElement(['renta', 'iva', 'otras']),
             'porcentaje_retencion' => $porcentaje,
             'monto_base' => $montoBase,
             'monto_retenido' => $montoRetenido,
-            'fecha_emision' => $this->faker->dateTimeBetween('-6 months', 'now'),
-            'periodo_declaracion' => $periodo,
             'numero_comprobante' => $this->faker->optional()->numerify('RET-########'),
-            'estado' => $this->faker->randomElement(['pendiente', 'aplicada', 'declarada']),
+            'fecha_retencion' => $this->faker->dateTimeBetween('-6 months', 'now'),
+            'periodo_declaracion' => $periodo,
+            'declarado' => $this->faker->boolean(30),
+            'notas' => $this->faker->optional()->sentence(),
+            'eliminado' => false,
         ];
     }
 }

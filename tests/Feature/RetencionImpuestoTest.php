@@ -32,9 +32,9 @@ class RetencionImpuestoTest extends TestCase
             'porcentaje_retencion' => 2.00,
             'monto_base' => 100000.00,
             'monto_retenido' => 2000.00,
-            'fecha_emision' => '2025-01-15',
+            'fecha_retencion' => '2025-01-15',
             'periodo_declaracion' => '2025-01',
-            'estado' => 'pendiente',
+            'declarado' => false,
         ];
 
         $response = $this->authenticatedJson('POST', '/api/retenciones-impuesto', $data, $usuario);
@@ -72,7 +72,7 @@ class RetencionImpuestoTest extends TestCase
             'porcentaje_retencion' => 150.00, // Inválido (>100)
             'monto_base' => 100000.00,
             'monto_retenido' => 150000.00,
-            'fecha_emision' => '2025-01-15',
+            'fecha_retencion' => '2025-01-15',
             'periodo_declaracion' => '2025-01',
         ];
 
@@ -103,7 +103,7 @@ class RetencionImpuestoTest extends TestCase
             'porcentaje_retencion' => 2.00,
             'monto_base' => 100000.00,
             'monto_retenido' => 2000.00,
-            'fecha_emision' => '2025-01-15',
+            'fecha_retencion' => '2025-01-15',
             'periodo_declaracion' => '01/2025', // Formato inválido
         ];
 
@@ -197,7 +197,7 @@ class RetencionImpuestoTest extends TestCase
             'porcentaje_retencion' => 2.00,
             'monto_base' => 100000.00,
             'monto_retenido' => 2000.00,
-            'fecha_emision' => '2025-01-15',
+            'fecha_retencion' => '2025-01-15',
             'periodo_declaracion' => '2025-01',
         ];
 
