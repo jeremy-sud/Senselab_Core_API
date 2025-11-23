@@ -5,10 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Traits\HasCustomSoftDeletes;
+use App\Traits\HasAuditFields;
+use App\Traits\HasActiveScope;
 
 class Usuario extends Authenticatable
 {
-    use HasApiTokens;
+    use HasApiTokens, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     /**
      * Campo de password personalizado

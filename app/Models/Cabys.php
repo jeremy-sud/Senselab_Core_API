@@ -5,10 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Traits\HasCustomSoftDeletes;
+use App\Traits\HasAuditFields;
+use App\Traits\HasActiveScope;
 
 class Cabys extends Model
 {
-    use HasFactory;
+    use HasFactory, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     /**
      * La tabla asociada al modelo.

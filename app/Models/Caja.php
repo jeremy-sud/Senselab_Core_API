@@ -3,13 +3,16 @@
 namespace App\Models;
 
 use App\Traits\BelongsToTenant;
+use App\Traits\HasCustomSoftDeletes;
+use App\Traits\HasAuditFields;
+use App\Traits\HasActiveScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Caja extends Model
 {
-    use HasFactory, BelongsToTenant;
+    use HasFactory, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     /**
      * La tabla asociada al modelo.

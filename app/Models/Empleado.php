@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\BelongsToTenant;
+use App\Traits\HasCustomSoftDeletes;
+use App\Traits\HasAuditFields;
+use App\Traits\HasActiveScope;
 
 class Empleado extends Model
 {
-    use BelongsToTenant;
+    use BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     /**
      * La tabla asociada.

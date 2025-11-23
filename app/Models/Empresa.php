@@ -5,10 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Multitenancy\Models\Tenant;
+use App\Traits\HasCustomSoftDeletes;
+use App\Traits\HasAuditFields;
+use App\Traits\HasActiveScope;
 
 class Empresa extends Tenant
 {
-    use HasFactory;
+    use HasFactory, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     protected $table = 'empresas';
     

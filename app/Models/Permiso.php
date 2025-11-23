@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\HasCustomSoftDeletes;
+use App\Traits\HasAuditFields;
+use App\Traits\HasActiveScope;
 use Illuminate\Support\Str;
 
 /**
@@ -12,7 +15,7 @@ use Illuminate\Support\Str;
  */
 class Permiso extends Model
 {
-    use HasFactory;
+    use HasFactory, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     protected $table = 'permisos';
     public $timestamps = true;

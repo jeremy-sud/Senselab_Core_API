@@ -3,10 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasCustomSoftDeletes;
+use App\Traits\HasAuditFields;
+use App\Traits\HasActiveScope;
 use Illuminate\Support\Str;
 
 class EntidadEtiqueta extends Model
 {
+    use HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
     protected $table = 'entidad_etiquetas';
 
     protected $fillable = [
