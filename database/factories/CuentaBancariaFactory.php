@@ -25,12 +25,17 @@ class CuentaBancariaFactory extends Factory
             'banco' => $this->faker->randomElement($bancos),
             'numero_cuenta' => $this->faker->numerify('###-##-###-######-#'),
             'iban' => 'CR' . $this->faker->numerify('####################'),
-            'tipo_cuenta' => $this->faker->randomElement(['corriente', 'ahorro', 'cliente']),
-            'moneda' => $this->faker->randomElement(['CRC', 'USD']),
-            'titular' => $this->faker->optional()->company(),
-            'saldo_inicial' => $this->faker->randomFloat(2, 0, 1000000),
+            'tipo_cuenta' => $this->faker->randomElement(['corriente', 'ahorros', 'cliente', 'colones', 'dolares']),
+            'moneda' => $this->faker->randomElement(['CRC', 'USD', 'EUR']),
             'saldo_actual' => $this->faker->randomFloat(2, 0, 1000000),
+            'cuenta_contable_id' => null,
+            'sucursal_banco' => $this->faker->optional()->city(),
+            'contacto_ejecutivo' => $this->faker->optional()->name(),
+            'telefono_ejecutivo' => $this->faker->optional()->numerify('####-####'),
             'activa' => $this->faker->boolean(90),
+            'es_principal' => false,
+            'notas' => $this->faker->optional()->sentence(),
+            'eliminado' => false,
         ];
     }
 }

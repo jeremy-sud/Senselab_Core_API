@@ -35,7 +35,7 @@ class CuentaBancariaController extends Controller
             $query->where(function($q) use ($search) {
                 $q->where('banco', 'like', "%{$search}%")
                   ->orWhere('iban', 'like', "%{$search}%")
-                  ->orWhere('titular', 'like', "%{$search}%");
+                  ->orWhere('numero_cuenta', 'like', "%{$search}%");
             });
         }
 
