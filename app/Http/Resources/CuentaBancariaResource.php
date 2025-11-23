@@ -18,7 +18,7 @@ class CuentaBancariaResource extends JsonResource
             'id' => $this->id,
             'empresa_id' => $this->empresa_id,
             'banco' => $this->banco,
-            'numero_cuenta' => $this->getNumeroCuentaEnmascarado(),
+            'numero_cuenta' => $this->resource->getNumeroCuentaEnmascarado(),
             'iban' => $this->iban,
             'tipo_cuenta' => $this->tipo_cuenta,
             'moneda' => $this->moneda,
