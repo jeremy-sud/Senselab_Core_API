@@ -24,6 +24,8 @@ class UrlShortenerController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', UrlShortener::class);
+        
         try {
             $query = UrlShortener::with(['empresa', 'usuario'])
                 ->where('eliminado', false);
@@ -66,6 +68,8 @@ class UrlShortenerController extends Controller
      */
     public function store(StoreUrlShortenerRequest $request)
     {
+        $this->authorize('create', UrlShortener::class);
+        
         try {
             $validated = $request->validated();
             
@@ -107,6 +111,8 @@ class UrlShortenerController extends Controller
         try {
             $url = UrlShortener::with(['empresa', 'usuario'])->findOrFail($id);
             
+            $this->authorize('view', $url);
+            
             return response()->json([
                 'success' => true,
                 'data' => new UrlShortenerResource($url)
@@ -127,6 +133,8 @@ class UrlShortenerController extends Controller
     {
         try {
             $url = UrlShortener::findOrFail($id);
+            
+            $this->authorize('update', $url);
             
             $validated = $request->validated();
             
@@ -164,6 +172,8 @@ class UrlShortenerController extends Controller
     {
         try {
             $url = UrlShortener::findOrFail($id);
+            
+            $this->authorize('delete', $url);
             $url->update(['eliminado' => true]);
             
             return response()->json([

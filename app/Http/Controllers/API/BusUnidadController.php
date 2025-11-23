@@ -73,6 +73,7 @@ class BusUnidadController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', BusUnidad::class);
         $empresaId = $request->user()->empresa_id;
         
         $query = BusUnidad::where('empresa_id', $empresaId)
@@ -136,6 +137,7 @@ class BusUnidadController extends Controller
     )]
     public function store(StoreBusUnidadRequest $request): BusUnidadResource
     {
+        $this->authorize('create', BusUnidad::class);
         $empresaId = $request->user()->empresa_id;
 
         $bus = BusUnidad::create([
@@ -186,6 +188,8 @@ class BusUnidadController extends Controller
             ->where('eliminado', 0)
             ->with(['empresa', 'modelo', 'horariosRuta'])
             ->findOrFail($id);
+
+        $this->authorize('view', $bus);
 
         return new BusUnidadResource($bus);
     }
@@ -238,6 +242,8 @@ class BusUnidadController extends Controller
         $bus = BusUnidad::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
             ->findOrFail($id);
+
+        $this->authorize('update', $bus);
 
         $bus->update($request->only([
             'placa',
@@ -294,6 +300,8 @@ class BusUnidadController extends Controller
         $bus = BusUnidad::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
             ->findOrFail($id);
+
+        $this->authorize('delete', $bus);
 
         // Validar que no tenga horarios activos asignados
         if ($bus->horariosRuta()->where('estado', '!=', 'Finalizado')->exists()) {

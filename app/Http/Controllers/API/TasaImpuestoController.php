@@ -106,6 +106,8 @@ class TasaImpuestoController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', TasaImpuesto::class);
+        
         $query = TasaImpuesto::where('eliminado', 0)->with('tipoImpuesto');
 
         // Filtro por tipo de impuesto
@@ -186,6 +188,8 @@ class TasaImpuestoController extends Controller
     )]
     public function store(StoreTasaImpuestoRequest $request): JsonResponse
     {
+        $this->authorize('create', TasaImpuesto::class);
+        
         $tasa = TasaImpuesto::create($request->validated());
         $tasa->load('tipoImpuesto');
 
@@ -244,6 +248,8 @@ class TasaImpuestoController extends Controller
             ->where('eliminado', 0)
             ->with('tipoImpuesto')
             ->firstOrFail();
+        
+        $this->authorize('view', $tasa);
 
         return response()->json([
             'success' => true,
@@ -317,6 +323,8 @@ class TasaImpuestoController extends Controller
         $tasa = TasaImpuesto::where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
+        
+        $this->authorize('update', $tasa);
 
         $tasa->update($request->validated());
         $tasa->load('tipoImpuesto');
@@ -375,6 +383,8 @@ class TasaImpuestoController extends Controller
         $tasa = TasaImpuesto::where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
+        
+        $this->authorize('delete', $tasa);
 
         $tasa->update(['eliminado' => 1, 'activo' => 0]);
 

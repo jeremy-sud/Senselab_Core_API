@@ -97,6 +97,8 @@ class TipoImpuestoController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', TipoImpuesto::class);
+        
         $query = TipoImpuesto::where('eliminado', 0);
 
         // Filtro por estado activo
@@ -170,6 +172,8 @@ class TipoImpuestoController extends Controller
     )]
     public function store(StoreTipoImpuestoRequest $request): JsonResponse
     {
+        $this->authorize('create', TipoImpuesto::class);
+        
         $tipo = TipoImpuesto::create($request->validated());
 
         return response()->json([
@@ -226,6 +230,8 @@ class TipoImpuestoController extends Controller
         $tipo = TipoImpuesto::where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
+        
+        $this->authorize('view', $tipo);
 
         return response()->json([
             'success' => true,
@@ -298,6 +304,8 @@ class TipoImpuestoController extends Controller
         $tipo = TipoImpuesto::where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
+        
+        $this->authorize('update', $tipo);
 
         $tipo->update($request->validated());
 
@@ -359,6 +367,8 @@ class TipoImpuestoController extends Controller
         $tipo = TipoImpuesto::where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
+        
+        $this->authorize('delete', $tipo);
 
         // Validar que no sea el IVA (código 01) que no debe borrarse
         if ($tipo->codigo_hacienda === '01') {

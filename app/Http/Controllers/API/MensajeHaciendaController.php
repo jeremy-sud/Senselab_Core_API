@@ -13,6 +13,7 @@ class MensajeHaciendaController extends Controller
      */
     public function index()
     {
+        $this->authorize('viewAny', MensajeHacienda::class);
         //
     }
 
@@ -21,6 +22,7 @@ class MensajeHaciendaController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', MensajeHacienda::class);
         //
     }
 
@@ -29,6 +31,7 @@ class MensajeHaciendaController extends Controller
      */
     public function show(MensajeHacienda $mensajeHacienda)
     {
+        $this->authorize('view', $mensajeHacienda);
         //
     }
 
@@ -37,6 +40,7 @@ class MensajeHaciendaController extends Controller
      */
     public function update(Request $request, MensajeHacienda $mensajeHacienda)
     {
+        $this->authorize('update', $mensajeHacienda);
         //
     }
 
@@ -45,6 +49,7 @@ class MensajeHaciendaController extends Controller
      */
     public function destroy(MensajeHacienda $mensajeHacienda)
     {
+        $this->authorize('delete', $mensajeHacienda);
         //
     }
 }

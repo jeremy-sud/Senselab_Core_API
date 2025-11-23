@@ -60,6 +60,7 @@ class CargoController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', Cargo::class);
         $query = Cargo::query();
 
         if ($request->has('activo')) {
@@ -110,6 +111,7 @@ class CargoController extends Controller
     )]
     public function store(StoreCargoRequest $request): JsonResponse
     {
+        $this->authorize('create', Cargo::class);
         $cargo = Cargo::create($request->validated());
 
         return (new CargoResource($cargo))
@@ -156,6 +158,8 @@ class CargoController extends Controller
     public function show(int $id): CargoResource
     {
         $cargo = Cargo::with('empleados')->findOrFail($id);
+
+        $this->authorize('view', $cargo);
 
         return new CargoResource($cargo);
     }
@@ -212,6 +216,9 @@ class CargoController extends Controller
     public function update(UpdateCargoRequest $request, int $id): CargoResource
     {
         $cargo = Cargo::findOrFail($id);
+
+        $this->authorize('update', $cargo);
+
         $cargo->update($request->validated());
 
         return new CargoResource($cargo);
@@ -265,6 +272,8 @@ class CargoController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $cargo = Cargo::findOrFail($id);
+
+        $this->authorize('delete', $cargo);
 
         // Validar que no tenga empleados asignados
         if ($cargo->empleados()->count() > 0) {

@@ -74,6 +74,8 @@ class PeriodoNominaController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', PeriodoNomina::class);
+        
         $empresaId = $request->user()->empresa_id;
         
         $query = PeriodoNomina::where('empresa_id', $empresaId)
@@ -135,6 +137,8 @@ class PeriodoNominaController extends Controller
     )]
     public function store(StorePeriodoNominaRequest $request): PeriodoNominaResource
     {
+        $this->authorize('create', PeriodoNomina::class);
+        
         $empresaId = $request->user()->empresa_id;
 
         $periodo = PeriodoNomina::create([
@@ -187,6 +191,8 @@ class PeriodoNominaController extends Controller
             ->where('eliminado', 0)
             ->with(['empresa', 'pagosNomina.empleado', 'pagosNomina.metodoPago'])
             ->findOrFail($id);
+        
+        $this->authorize('view', $periodo);
 
         return new PeriodoNominaResource($periodo);
     }
@@ -241,6 +247,8 @@ class PeriodoNominaController extends Controller
         $periodo = PeriodoNomina::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
             ->findOrFail($id);
+        
+        $this->authorize('update', $periodo);
 
         // Validar que no esté procesado
         if ($periodo->estado === 'Procesado') {
@@ -304,6 +312,8 @@ class PeriodoNominaController extends Controller
         $periodo = PeriodoNomina::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
             ->findOrFail($id);
+        
+        $this->authorize('delete', $periodo);
 
         // Validar que no tenga pagos asociados
         if ($periodo->pagosNomina()->exists()) {

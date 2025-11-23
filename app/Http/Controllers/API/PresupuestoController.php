@@ -56,6 +56,8 @@ class PresupuestoController extends Controller
     )]
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', Presupuesto::class);
+        
         $empresaId = $request->user()->empresa_id;
 
         $presupuestos = Presupuesto::where('empresa_id', $empresaId)
@@ -112,6 +114,8 @@ class PresupuestoController extends Controller
     )]
     public function store(StorePresupuestoRequest $request): JsonResponse
     {
+        $this->authorize('create', Presupuesto::class);
+        
         $empresaId = $request->user()->empresa_id;
 
         DB::beginTransaction();
@@ -182,6 +186,8 @@ class PresupuestoController extends Controller
         $presupuesto = Presupuesto::where('empresa_id', $empresaId)
             ->with('detalles.cuentaContable')
             ->findOrFail($id);
+        
+        $this->authorize('view', $presupuesto);
 
         return response()->json([
             'success' => true,
@@ -239,6 +245,8 @@ class PresupuestoController extends Controller
         $empresaId = $request->user()->empresa_id;
 
         $presupuesto = Presupuesto::where('empresa_id', $empresaId)->findOrFail($id);
+        
+        $this->authorize('update', $presupuesto);
 
         if ($presupuesto->estado === 'Finalizado') {
             return response()->json([
@@ -312,6 +320,8 @@ class PresupuestoController extends Controller
         $empresaId = $request->user()->empresa_id;
 
         $presupuesto = Presupuesto::where('empresa_id', $empresaId)->findOrFail($id);
+        
+        $this->authorize('delete', $presupuesto);
 
         if ($presupuesto->estado === 'Activo') {
             return response()->json([

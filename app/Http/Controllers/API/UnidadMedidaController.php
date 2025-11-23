@@ -57,6 +57,7 @@ class UnidadMedidaController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', UnidadMedida::class);
         $query = UnidadMedida::query();
 
         if ($request->has('activo')) {
@@ -106,6 +107,7 @@ class UnidadMedidaController extends Controller
     )]
     public function store(StoreUnidadMedidaRequest $request): JsonResponse
     {
+        $this->authorize('create', UnidadMedida::class);
         $unidad = UnidadMedida::create($request->validated());
 
         return (new UnidadMedidaResource($unidad))
@@ -150,6 +152,8 @@ class UnidadMedidaController extends Controller
     public function show(int $id): UnidadMedidaResource
     {
         $unidad = UnidadMedida::findOrFail($id);
+
+        $this->authorize('view', $unidad);
 
         return new UnidadMedidaResource($unidad);
     }
@@ -205,6 +209,9 @@ class UnidadMedidaController extends Controller
     public function update(UpdateUnidadMedidaRequest $request, int $id): UnidadMedidaResource
     {
         $unidad = UnidadMedida::findOrFail($id);
+
+        $this->authorize('update', $unidad);
+
         $unidad->update($request->validated());
 
         return new UnidadMedidaResource($unidad);
@@ -252,6 +259,8 @@ class UnidadMedidaController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $unidad = UnidadMedida::findOrFail($id);
+
+        $this->authorize('delete', $unidad);
 
         $unidad->eliminado = 1;
         $unidad->activo = 0;

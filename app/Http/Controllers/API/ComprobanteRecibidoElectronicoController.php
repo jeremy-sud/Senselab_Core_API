@@ -58,6 +58,8 @@ class ComprobanteRecibidoElectronicoController extends Controller
     )]
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', ComprobanteRecibidoElectronico::class);
+        
         $empresaId = $request->user()->empresa_id;
 
         $comprobantes = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)
@@ -112,6 +114,8 @@ class ComprobanteRecibidoElectronicoController extends Controller
     )]
     public function store(StoreComprobanteRecibidoElectronicoRequest $request): JsonResponse
     {
+        $this->authorize('create', ComprobanteRecibidoElectronico::class);
+        
         $empresaId = $request->user()->empresa_id;
 
         DB::beginTransaction();
@@ -181,6 +185,8 @@ class ComprobanteRecibidoElectronicoController extends Controller
         $comprobante = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)
             ->with(['proveedor', 'entradaInventario', 'usuarioConfirmacion'])
             ->findOrFail($id);
+        
+        $this->authorize('view', $comprobante);
 
         return response()->json([
             'success' => true,
@@ -229,6 +235,8 @@ class ComprobanteRecibidoElectronicoController extends Controller
         $empresaId = $request->user()->empresa_id;
 
         $comprobante = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)->findOrFail($id);
+        
+        $this->authorize('update', $comprobante);
 
         if ($comprobante->confirmado_usuario == 1) {
             return response()->json([
@@ -302,6 +310,8 @@ class ComprobanteRecibidoElectronicoController extends Controller
         $empresaId = $request->user()->empresa_id;
 
         $comprobante = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)->findOrFail($id);
+        
+        $this->authorize('delete', $comprobante);
 
         if ($comprobante->confirmado_usuario == 1) {
             return response()->json([
