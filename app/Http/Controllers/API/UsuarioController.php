@@ -292,13 +292,8 @@ class UsuarioController extends Controller
             new OA\Response(response: 422, description: 'Password actual incorrecta')
         ]
     )]
-    public function cambiarPassword(Request $request, int $id): JsonResponse
+    public function cambiarPassword(CambiarPasswordRequest $request, int $id): JsonResponse
     {
-        $request->validate([
-            'password_actual' => ['required', 'string'],
-            'password_nueva' => ['required', 'string', 'min:8', 'confirmed']
-        ]);
-
         $empresaId = auth()->user()->empresa_id;
         $usuario = Usuario::where('empresa_id', $empresaId)->findOrFail($id);
 

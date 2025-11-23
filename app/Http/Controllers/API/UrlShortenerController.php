@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreUrlShortenerRequest;
+use App\Http\Requests\UpdateUrlShortenerRequest;
 use App\Http\Resources\UrlShortenerResource;
 use App\Models\UrlShortener;
 use Illuminate\Http\Request;
@@ -62,18 +64,10 @@ class UrlShortenerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreUrlShortenerRequest $request)
     {
         try {
-            $validated = $request->validate([
-                'empresa_id' => 'required|exists:empresas,id',
-                'usuario_id' => 'nullable|exists:usuarios,id',
-                'url_original' => 'required|url|max:2000',
-                'slug' => 'nullable|string|max:50|unique:url_shorter_db,slug',
-                'descripcion' => 'nullable|string|max:255',
-                'expira_en' => 'nullable|date|after:now',
-                'activo' => 'boolean',
-            ]);
+            $validated = $request->validated();
             
             // Generar slug si no se proporciona
             if (empty($validated['slug'])) {
@@ -129,18 +123,12 @@ class UrlShortenerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateUrlShortenerRequest $request, $id)
     {
         try {
             $url = UrlShortener::findOrFail($id);
             
-            $validated = $request->validate([
-                'url_original' => 'sometimes|required|url|max:2000',
-                'slug' => 'sometimes|required|string|max:50|unique:url_shorter_db,slug,' . $id,
-                'descripcion' => 'nullable|string|max:255',
-                'expira_en' => 'nullable|date',
-                'activo' => 'boolean',
-            ]);
+            $validated = $request->validated();
             
             // Si se actualiza el slug, actualizar también la URL corta
             if (isset($validated['slug'])) {

@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\ObtenerSiguienteConsecutivoRequest;
+use App\Http\Requests\ResetearConsecutivoRequest;
 
 class ConsecutivoFEController extends Controller
 {
@@ -200,7 +201,7 @@ class ConsecutivoFEController extends Controller
     /**
      * Resetear el consecutivo a un número específico (solo admin).
      */
-    public function resetear(Request $request, ConsecutivoFE $consecutivoFe): JsonResponse
+    public function resetear(ResetearConsecutivoRequest $request, ConsecutivoFE $consecutivoFe): JsonResponse
     {
         if ($consecutivoFe->empresa_id !== auth()->user()->empresa_id) {
             return response()->json([
@@ -208,10 +209,6 @@ class ConsecutivoFEController extends Controller
                 'message' => 'No autorizado'
             ], 403);
         }
-
-        $request->validate([
-            'nuevo_consecutivo' => 'required|integer|min:1',
-        ]);
 
         $consecutivoFe->update([
             'consecutivo_actual' => $request->nuevo_consecutivo

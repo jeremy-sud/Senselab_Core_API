@@ -11,6 +11,8 @@ use Illuminate\Http\JsonResponse;
 use Carbon\Carbon;
 use App\Http\Requests\ObtenerTipoCambioVigenteRequest;
 use App\Http\Requests\ConvertirMonedaRequest;
+use App\Http\Requests\PorMonedaRequest;
+use App\Http\Requests\TendenciaMonedaRequest;
 
 class TipoCambioHistorialController extends Controller
 {
@@ -194,13 +196,8 @@ class TipoCambioHistorialController extends Controller
     /**
      * Listar tipos de cambio por moneda.
      */
-    public function porMoneda(Request $request): JsonResponse
+    public function porMoneda(PorMonedaRequest $request): JsonResponse
     {
-        $request->validate([
-            'moneda_origen' => 'required|string|size:3',
-            'moneda_destino' => 'required|string|size:3',
-            'limite' => 'nullable|integer|min:1|max:100',
-        ]);
 
         $monedaOrigen = strtoupper($request->moneda_origen);
         $monedaDestino = strtoupper($request->moneda_destino);
@@ -244,13 +241,8 @@ class TipoCambioHistorialController extends Controller
     /**
      * Obtener tendencia de un par de monedas.
      */
-    public function tendencia(Request $request): JsonResponse
+    public function tendencia(TendenciaMonedaRequest $request): JsonResponse
     {
-        $request->validate([
-            'moneda_origen' => 'required|string|size:3',
-            'moneda_destino' => 'required|string|size:3',
-            'dias' => 'nullable|integer|min:7|max:365',
-        ]);
 
         $monedaOrigen = strtoupper($request->moneda_origen);
         $monedaDestino = strtoupper($request->moneda_destino);
