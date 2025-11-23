@@ -102,6 +102,8 @@ class Usuario extends Authenticatable
     public function roles()
     {
         return $this->belongsToMany(Rol::class, 'rol_usuario', 'usuario_id', 'rol_id')
+                    ->wherePivot('activo', true)
+                    ->wherePivot('eliminado', false)
                     ->withTimestamps();
     }
 
@@ -156,7 +158,7 @@ class Usuario extends Authenticatable
         // Obtener todos los roles del usuario con sus permisos
         return $this->roles()
             ->whereHas('permisos', function ($query) use ($permissionSlug) {
-                $query->where('slug', $permissionSlug)
+                $query->where('nombre', $permissionSlug)
                       ->where('permisos.activo', true)
                       ->where('permisos.eliminado', false);
             })
