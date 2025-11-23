@@ -50,17 +50,17 @@ class TipoClienteTest extends TestCase
             'eliminado' => false,
         ]);
 
-        // Crear permisos
+        // Crear permisos (BasePolicy usa: leer, crear, actualizar, eliminar)
         $permisos = [
-            'tipos-clientes.leer',
-            'tipos-clientes.crear',
-            'tipos-clientes.editar',
-            'tipos-clientes.eliminar',
+            'tipo_cliente.leer',
+            'tipo_cliente.crear',
+            'tipo_cliente.actualizar',
+            'tipo_cliente.eliminar',
         ];
 
         foreach ($permisos as $slug) {
             $permiso = Permiso::create([
-                'nombre' => str_replace('-', '.', $slug),
+                'nombre' => str_replace('_', ' ', ucfirst($slug)),
                 'slug' => $slug,
                 'descripcion' => 'Permiso ' . $slug,
             ]);
@@ -156,12 +156,19 @@ class TipoClienteTest extends TestCase
         ]);
 
         $response = $this->putJson("/api/tipos-clientes/{$tipo->id}", [
+            'nombre' => 'Corporativo Actualizado',
             'descuento_default' => 12.0,
         ]);
+
+        // Debug: ver respuesta si hay error
+        if ($response->status() !== 200) {
+            dump($response->json());
+        }
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('tipos_clientes', [
             'id' => $tipo->id,
+            'nombre' => 'Corporativo Actualizado',
             'descuento_default' => 12.0,
         ]);
     }
