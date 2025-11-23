@@ -64,6 +64,8 @@ class SalidaInventarioController extends Controller
     )]
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', SalidaInventario::class);
+        
         $empresaId = $request->user()->empresa_id;
 
         $salidas = SalidaInventario::where('empresa_id', $empresaId)
@@ -127,6 +129,8 @@ class SalidaInventarioController extends Controller
     )]
     public function store(StoreSalidaInventarioRequest $request): JsonResponse
     {
+        $this->authorize('create', SalidaInventario::class);
+        
         $empresaId = $request->user()->empresa_id;
 
         DB::beginTransaction();
@@ -198,6 +202,8 @@ class SalidaInventarioController extends Controller
         $salida = SalidaInventario::where('empresa_id', $empresaId)
             ->with(['almacen', 'cliente', 'proveedor', 'venta', 'detalles.producto.unidadMedida'])
             ->findOrFail($id);
+        
+        $this->authorize('view', $salida);
 
         return response()->json([
             'success' => true,
@@ -256,6 +262,8 @@ class SalidaInventarioController extends Controller
         $empresaId = $request->user()->empresa_id;
 
         $salida = SalidaInventario::where('empresa_id', $empresaId)->findOrFail($id);
+        
+        $this->authorize('update', $salida);
 
         if ($salida->estado === 'Procesada') {
             return response()->json([
@@ -329,6 +337,8 @@ class SalidaInventarioController extends Controller
         $empresaId = $request->user()->empresa_id;
 
         $salida = SalidaInventario::where('empresa_id', $empresaId)->findOrFail($id);
+        
+        $this->authorize('delete', $salida);
 
         if ($salida->estado === 'Procesada') {
             return response()->json([

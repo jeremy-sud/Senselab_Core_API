@@ -13,6 +13,7 @@ class PlanillaCcssController extends Controller
      */
     public function index()
     {
+        $this->authorize('viewAny', PlanillaCcss::class);
         //
     }
 
@@ -21,6 +22,7 @@ class PlanillaCcssController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', PlanillaCcss::class);
         //
     }
 
@@ -29,6 +31,7 @@ class PlanillaCcssController extends Controller
      */
     public function show(PlanillaCcss $planillaCcss)
     {
+        $this->authorize('view', $planillaCcss);
         //
     }
 
@@ -37,6 +40,7 @@ class PlanillaCcssController extends Controller
      */
     public function update(Request $request, PlanillaCcss $planillaCcss)
     {
+        $this->authorize('update', $planillaCcss);
         //
     }
 
@@ -45,6 +49,7 @@ class PlanillaCcssController extends Controller
      */
     public function destroy(PlanillaCcss $planillaCcss)
     {
+        $this->authorize('delete', $planillaCcss);
         //
     }
 }

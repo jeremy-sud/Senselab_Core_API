@@ -64,6 +64,8 @@ class EntradaInventarioController extends Controller
     )]
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', EntradaInventario::class);
+        
         $empresaId = $request->user()->empresa_id;
 
         $entradas = EntradaInventario::where('empresa_id', $empresaId)
@@ -125,6 +127,8 @@ class EntradaInventarioController extends Controller
     )]
     public function store(StoreEntradaInventarioRequest $request): JsonResponse
     {
+        $this->authorize('create', EntradaInventario::class);
+        
         $empresaId = $request->user()->empresa_id;
 
         DB::beginTransaction();
@@ -194,6 +198,8 @@ class EntradaInventarioController extends Controller
         $entrada = EntradaInventario::where('empresa_id', $empresaId)
             ->with(['almacen', 'proveedor', 'ordenCompra', 'detalles.producto.unidadMedida'])
             ->findOrFail($id);
+        
+        $this->authorize('view', $entrada);
 
         return response()->json([
             'success' => true,
@@ -250,6 +256,8 @@ class EntradaInventarioController extends Controller
         $empresaId = $request->user()->empresa_id;
 
         $entrada = EntradaInventario::where('empresa_id', $empresaId)->findOrFail($id);
+        
+        $this->authorize('update', $entrada);
 
         if ($entrada->estado === 'Procesada') {
             return response()->json([
@@ -321,6 +329,8 @@ class EntradaInventarioController extends Controller
         $empresaId = $request->user()->empresa_id;
 
         $entrada = EntradaInventario::where('empresa_id', $empresaId)->findOrFail($id);
+        
+        $this->authorize('delete', $entrada);
 
         if ($entrada->estado === 'Procesada') {
             return response()->json([

@@ -57,6 +57,8 @@ class DetallePresupuestoController extends Controller
     )]
     public function index(Request $request, int $presupuestoId): JsonResponse
     {
+        $this->authorize('viewAny', DetallePresupuesto::class);
+        
         $empresaId = $request->user()->empresa_id;
 
         $presupuesto = Presupuesto::where('empresa_id', $empresaId)->findOrFail($presupuestoId);
@@ -100,6 +102,8 @@ class DetallePresupuestoController extends Controller
     )]
     public function store(StoreDetallePresupuestoRequest $request): JsonResponse
     {
+        $this->authorize('create', DetallePresupuesto::class);
+        
         $empresaId = $request->user()->empresa_id;
 
         $presupuesto = Presupuesto::where('empresa_id', $empresaId)
@@ -162,6 +166,8 @@ class DetallePresupuestoController extends Controller
                 'message' => 'No autorizado'
             ], 403);
         }
+        
+        $this->authorize('view', $detalle);
 
         return response()->json([
             'success' => true,
@@ -217,6 +223,8 @@ class DetallePresupuestoController extends Controller
                 'message' => 'No autorizado'
             ], 403);
         }
+        
+        $this->authorize('update', $detalle);
 
         if ($detalle->presupuesto->estado === 'Finalizado') {
             return response()->json([
@@ -284,6 +292,8 @@ class DetallePresupuestoController extends Controller
                 'message' => 'No autorizado'
             ], 403);
         }
+        
+        $this->authorize('delete', $detalle);
 
         if ($detalle->presupuesto->estado === 'Finalizado') {
             return response()->json([

@@ -92,6 +92,8 @@ class InventarioController extends Controller
     )]
     public function indexEntradas(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', EntradaInventario::class);
+        
         $empresaId = auth()->user()->empresa_id;
         
         $query = EntradaInventario::where('empresa_id', $empresaId)
@@ -170,6 +172,8 @@ class InventarioController extends Controller
     )]
     public function storeEntrada(StoreEntradaInventarioRequest $request): JsonResponse
     {
+        $this->authorize('create', EntradaInventario::class);
+        
         $validated = $request->validated();
         $validated['empresa_id'] = auth()->user()->empresa_id;
 
@@ -224,6 +228,8 @@ class InventarioController extends Controller
         $entrada = EntradaInventario::where('empresa_id', $empresaId)
             ->with(['almacen', 'ordenCompra', 'proveedor', 'detalles.producto'])
             ->findOrFail($id);
+        
+        $this->authorize('view', $entrada);
 
         return new EntradaInventarioResource($entrada);
     }
@@ -293,6 +299,8 @@ class InventarioController extends Controller
     )]
     public function indexSalidas(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', SalidaInventario::class);
+        
         $empresaId = auth()->user()->empresa_id;
         
         $query = SalidaInventario::where('empresa_id', $empresaId)
@@ -372,6 +380,8 @@ class InventarioController extends Controller
     )]
     public function storeSalida(StoreSalidaInventarioRequest $request): JsonResponse
     {
+        $this->authorize('create', SalidaInventario::class);
+        
         $validated = $request->validated();
         $validated['empresa_id'] = auth()->user()->empresa_id;
 
@@ -426,6 +436,8 @@ class InventarioController extends Controller
         $salida = SalidaInventario::where('empresa_id', $empresaId)
             ->with(['almacen', 'venta', 'cliente', 'proveedor', 'detalles.producto'])
             ->findOrFail($id);
+        
+        $this->authorize('view', $salida);
 
         return new SalidaInventarioResource($salida);
     }

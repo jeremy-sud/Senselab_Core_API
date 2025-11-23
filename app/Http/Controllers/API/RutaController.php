@@ -73,6 +73,8 @@ class RutaController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', Ruta::class);
+        
         $empresaId = $request->user()->empresa_id;
         
         $query = Ruta::where('empresa_id', $empresaId)
@@ -134,6 +136,8 @@ class RutaController extends Controller
     )]
     public function store(StoreRutaRequest $request): RutaResource
     {
+        $this->authorize('create', Ruta::class);
+        
         $empresaId = $request->user()->empresa_id;
 
         $ruta = Ruta::create([
@@ -187,6 +191,8 @@ class RutaController extends Controller
             ->where('eliminado', 0)
             ->with(['empresa', 'horariosRuta'])
             ->findOrFail($id);
+        
+        $this->authorize('view', $ruta);
 
         return new RutaResource($ruta);
     }
@@ -242,6 +248,8 @@ class RutaController extends Controller
         $ruta = Ruta::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
             ->findOrFail($id);
+        
+        $this->authorize('update', $ruta);
 
         $ruta->update($request->only([
             'nombre',
@@ -301,6 +309,8 @@ class RutaController extends Controller
         $ruta = Ruta::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
             ->findOrFail($id);
+        
+        $this->authorize('delete', $ruta);
 
         // Validar que no tenga horarios activos
         if ($ruta->horariosRuta()->where('estado', '!=', 'Finalizado')->exists()) {

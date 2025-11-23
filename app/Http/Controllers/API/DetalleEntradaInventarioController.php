@@ -52,6 +52,8 @@ class DetalleEntradaInventarioController extends Controller
     )]
     public function index(Request $request, int $entradaId): JsonResponse
     {
+        $this->authorize('viewAny', DetalleEntradaInventario::class);
+        
         $empresaId = $request->user()->empresa_id;
 
         $entrada = EntradaInventario::where('empresa_id', $empresaId)->findOrFail($entradaId);
@@ -108,6 +110,8 @@ class DetalleEntradaInventarioController extends Controller
     )]
     public function store(StoreDetalleEntradaInventarioRequest $request): JsonResponse
     {
+        $this->authorize('create', DetalleEntradaInventario::class);
+        
         $empresaId = $request->user()->empresa_id;
 
         $entrada = EntradaInventario::where('empresa_id', $empresaId)
@@ -195,6 +199,8 @@ class DetalleEntradaInventarioController extends Controller
                 'message' => 'No autorizado'
             ], 403);
         }
+        
+        $this->authorize('view', $detalle);
 
         return response()->json([
             'success' => true,
@@ -258,6 +264,8 @@ class DetalleEntradaInventarioController extends Controller
                 'message' => 'No autorizado'
             ], 403);
         }
+        
+        $this->authorize('update', $detalle);
 
         if ($detalle->entradaInventario->estado === 'Procesada') {
             return response()->json([
@@ -344,6 +352,8 @@ class DetalleEntradaInventarioController extends Controller
                 'message' => 'No autorizado'
             ], 403);
         }
+        
+        $this->authorize('delete', $detalle);
 
         if ($detalle->entradaInventario->estado === 'Procesada') {
             return response()->json([

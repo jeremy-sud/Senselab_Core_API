@@ -37,6 +37,7 @@ class ConfiguracionController extends Controller
     )]
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', Configuracion::class);
         $empresaId = $request->user()->empresa_id;
 
         $configuraciones = Configuracion::where('empresa_id', $empresaId)
@@ -76,6 +77,7 @@ class ConfiguracionController extends Controller
     )]
     public function store(StoreConfiguracionRequest $request): JsonResponse
     {
+        $this->authorize('create', Configuracion::class);
         $empresaId = $request->user()->empresa_id;
 
         $configuracion = Configuracion::create([
@@ -113,6 +115,8 @@ class ConfiguracionController extends Controller
 
         $configuracion = Configuracion::where('empresa_id', $empresaId)->findOrFail($id);
 
+        $this->authorize('view', $configuracion);
+
         return response()->json([
             'success' => true,
             'data' => new ConfiguracionResource($configuracion)
@@ -135,6 +139,8 @@ class ConfiguracionController extends Controller
         $empresaId = $request->user()->empresa_id;
 
         $configuracion = Configuracion::where('empresa_id', $empresaId)->findOrFail($id);
+
+        $this->authorize('update', $configuracion);
 
         $configuracion->update($request->only([
             'clave',
@@ -166,6 +172,8 @@ class ConfiguracionController extends Controller
         $empresaId = $request->user()->empresa_id;
 
         $configuracion = Configuracion::where('empresa_id', $empresaId)->findOrFail($id);
+
+        $this->authorize('delete', $configuracion);
 
         $configuracion->delete();
 

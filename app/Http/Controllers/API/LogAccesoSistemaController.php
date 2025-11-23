@@ -13,6 +13,7 @@ class LogAccesoSistemaController extends Controller
      */
     public function index()
     {
+        $this->authorize('viewAny', LogAccesoSistema::class);
         //
     }
 
@@ -21,6 +22,7 @@ class LogAccesoSistemaController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', LogAccesoSistema::class);
         //
     }
 
@@ -29,6 +31,7 @@ class LogAccesoSistemaController extends Controller
      */
     public function show(LogAccesoSistema $logAccesoSistema)
     {
+        $this->authorize('view', $logAccesoSistema);
         //
     }
 
@@ -37,6 +40,7 @@ class LogAccesoSistemaController extends Controller
      */
     public function update(Request $request, LogAccesoSistema $logAccesoSistema)
     {
+        $this->authorize('update', $logAccesoSistema);
         //
     }
 
@@ -45,6 +49,7 @@ class LogAccesoSistemaController extends Controller
      */
     public function destroy(LogAccesoSistema $logAccesoSistema)
     {
+        $this->authorize('delete', $logAccesoSistema);
         //
     }
 }

@@ -44,6 +44,7 @@ class FormaPagoController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', FormaPago::class);
         $query = FormaPago::query();
 
         if ($request->has('activo')) {
@@ -88,6 +89,7 @@ class FormaPagoController extends Controller
     )]
     public function store(StoreFormaPagoRequest $request): JsonResponse
     {
+        $this->authorize('create', FormaPago::class);
         $formaPago = FormaPago::create($request->validated());
 
         return (new FormaPagoResource($formaPago))
@@ -115,6 +117,8 @@ class FormaPagoController extends Controller
     {
         $formaPago = FormaPago::findOrFail($id);
 
+        $this->authorize('view', $formaPago);
+
         return new FormaPagoResource($formaPago);
     }
 
@@ -134,6 +138,9 @@ class FormaPagoController extends Controller
     public function update(UpdateFormaPagoRequest $request, int $id): FormaPagoResource
     {
         $formaPago = FormaPago::findOrFail($id);
+
+        $this->authorize('update', $formaPago);
+
         $formaPago->update($request->validated());
 
         return new FormaPagoResource($formaPago);
@@ -156,6 +163,8 @@ class FormaPagoController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $formaPago = FormaPago::findOrFail($id);
+
+        $this->authorize('delete', $formaPago);
 
         $formaPago->eliminado = 1;
         $formaPago->activo = 0;

@@ -105,6 +105,8 @@ class TipoCuentaController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', TipoCuenta::class);
+        
         $query = TipoCuenta::where('eliminado', 0)->with('cuentasContables');
 
         // Filtro por naturaleza
@@ -178,6 +180,8 @@ class TipoCuentaController extends Controller
     )]
     public function store(StoreTipoCuentaRequest $request): JsonResponse
     {
+        $this->authorize('create', TipoCuenta::class);
+        
         $tipo = TipoCuenta::create($request->validated());
 
         return response()->json([
@@ -237,6 +241,8 @@ class TipoCuentaController extends Controller
                 $query->where('eliminado', 0);
             }])
             ->firstOrFail();
+        
+        $this->authorize('view', $tipo);
 
         return response()->json([
             'success' => true,
@@ -308,6 +314,8 @@ class TipoCuentaController extends Controller
         $tipo = TipoCuenta::where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
+        
+        $this->authorize('update', $tipo);
 
         $tipo->update($request->validated());
 
@@ -369,6 +377,8 @@ class TipoCuentaController extends Controller
         $tipo = TipoCuenta::where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
+        
+        $this->authorize('delete', $tipo);
 
         // Validar que no tenga cuentas contables asignadas
         $cuentasCount = $tipo->cuentasContables()->where('eliminado', 0)->count();

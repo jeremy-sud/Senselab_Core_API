@@ -90,6 +90,8 @@ class TiqueteDetalleController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', TiqueteDetalle::class);
+        
         $query = TiqueteDetalle::with(['horarioRuta.ruta', 'horarioRuta.bus', 'detalleVenta'])
             ->where('eliminado', 0);
 
@@ -154,6 +156,8 @@ class TiqueteDetalleController extends Controller
     )]
     public function store(StoreTiqueteDetalleRequest $request): TiqueteDetalleResource
     {
+        $this->authorize('create', TiqueteDetalle::class);
+        
         DB::beginTransaction();
 
         try {
@@ -214,6 +218,8 @@ class TiqueteDetalleController extends Controller
         $tiquete = TiqueteDetalle::where('eliminado', 0)
             ->with(['horarioRuta.ruta', 'horarioRuta.bus', 'detalleVenta'])
             ->findOrFail($id);
+        
+        $this->authorize('view', $tiquete);
 
         return new TiqueteDetalleResource($tiquete);
     }
@@ -262,6 +268,8 @@ class TiqueteDetalleController extends Controller
     {
         $tiquete = TiqueteDetalle::where('eliminado', 0)
             ->findOrFail($id);
+        
+        $this->authorize('update', $tiquete);
 
         // Validar que no esté usado
         if ($tiquete->estado === 'Usado') {

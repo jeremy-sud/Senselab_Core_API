@@ -99,6 +99,8 @@ class PagoController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', Pago::class);
+        
         $empresaId = $request->user()->empresa_id;
         
         $query = Pago::where('empresa_id', $empresaId)
@@ -188,6 +190,8 @@ class PagoController extends Controller
     )]
     public function store(StorePagoRequest $request): JsonResponse
     {
+        $this->authorize('create', Pago::class);
+        
         try {
             DB::beginTransaction();
 
@@ -277,6 +281,8 @@ class PagoController extends Controller
             ->where('eliminado', 0)
             ->with(['formaPago', 'proveedor', 'cliente', 'cuentaPorPagar', 'cuentaPorCobrar', 'ordenCompra'])
             ->firstOrFail();
+        
+        $this->authorize('view', $pago);
 
         return response()->json([
             'success' => true,
@@ -359,6 +365,8 @@ class PagoController extends Controller
             ->where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
+        
+        $this->authorize('update', $pago);
 
         // No permitir modificar pagos ya procesados
         if ($pago->estado === 'Pagado') {
@@ -462,6 +470,8 @@ class PagoController extends Controller
             ->where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
+        
+        $this->authorize('delete', $pago);
 
         // No permitir eliminar pagos ya procesados
         if ($pago->estado === 'Pagado') {

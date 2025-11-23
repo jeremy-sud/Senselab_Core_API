@@ -57,6 +57,7 @@ class MarcaController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', Marca::class);
         $query = Marca::query();
 
         if ($request->has('activo')) {
@@ -105,6 +106,7 @@ class MarcaController extends Controller
     )]
     public function store(StoreMarcaRequest $request): JsonResponse
     {
+        $this->authorize('create', Marca::class);
         $marca = Marca::create($request->validated());
 
         return (new MarcaResource($marca))
@@ -149,6 +151,8 @@ class MarcaController extends Controller
     public function show(int $id): MarcaResource
     {
         $marca = Marca::findOrFail($id);
+
+        $this->authorize('view', $marca);
 
         return new MarcaResource($marca);
     }
@@ -203,6 +207,9 @@ class MarcaController extends Controller
     public function update(UpdateMarcaRequest $request, int $id): MarcaResource
     {
         $marca = Marca::findOrFail($id);
+
+        $this->authorize('update', $marca);
+
         $marca->update($request->validated());
 
         return new MarcaResource($marca);
@@ -250,6 +257,8 @@ class MarcaController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $marca = Marca::findOrFail($id);
+
+        $this->authorize('delete', $marca);
 
         $marca->eliminado = 1;
         $marca->activo = 0;

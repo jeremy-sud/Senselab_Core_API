@@ -111,6 +111,8 @@ class DetalleAsientoController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', DetalleAsiento::class);
+        
         $empresaId = $request->user()->empresa_id;
         
         $query = DetalleAsiento::whereHas('asientoContable', function ($q) use ($empresaId) {
@@ -195,6 +197,8 @@ class DetalleAsientoController extends Controller
             ->where('eliminado', 0)
             ->with(['asientoContable', 'cuentaContable'])
             ->firstOrFail();
+        
+        $this->authorize('view', $detalle);
 
         return response()->json([
             'success' => true,

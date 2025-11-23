@@ -112,6 +112,7 @@ class CabyController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', Cabys::class);
         $query = Cabys::where('eliminado', 0);
 
         // Búsqueda por código o descripción
@@ -194,6 +195,7 @@ class CabyController extends Controller
     )]
     public function store(StoreCabyRequest $request): JsonResponse
     {
+        $this->authorize('create', Cabys::class);
         $caby = Cabys::create($request->validated());
 
         return response()->json([
@@ -250,6 +252,8 @@ class CabyController extends Controller
         $caby = Cabys::where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
+
+        $this->authorize('view', $caby);
 
         return response()->json([
             'success' => true,
@@ -322,6 +326,8 @@ class CabyController extends Controller
             ->where('eliminado', 0)
             ->firstOrFail();
 
+        $this->authorize('update', $caby);
+
         $caby->update($request->validated());
 
         return response()->json([
@@ -382,6 +388,8 @@ class CabyController extends Controller
         $caby = Cabys::where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
+
+        $this->authorize('delete', $caby);
 
         // Validar que no esté asignado a productos
         $productosCount = $caby->productos()->count();

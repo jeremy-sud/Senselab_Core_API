@@ -95,6 +95,8 @@ class HorarioRutaController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', HorarioRuta::class);
+        
         $query = HorarioRuta::with(['ruta', 'bus'])
             ->where('eliminado', 0);
 
@@ -167,6 +169,8 @@ class HorarioRutaController extends Controller
     )]
     public function store(StoreHorarioRutaRequest $request): HorarioRutaResource
     {
+        $this->authorize('create', HorarioRuta::class);
+        
         DB::beginTransaction();
 
         try {
@@ -227,6 +231,8 @@ class HorarioRutaController extends Controller
         $horario = HorarioRuta::where('eliminado', 0)
             ->with(['ruta', 'bus', 'tiquetesDetalle'])
             ->findOrFail($id);
+        
+        $this->authorize('view', $horario);
 
         return new HorarioRutaResource($horario);
     }
@@ -279,6 +285,8 @@ class HorarioRutaController extends Controller
     {
         $horario = HorarioRuta::where('eliminado', 0)
             ->findOrFail($id);
+        
+        $this->authorize('update', $horario);
 
         // Validar que no esté en viaje o finalizado
         if (in_array($horario->estado, ['En Viaje', 'Finalizado'])) {
@@ -339,6 +347,8 @@ class HorarioRutaController extends Controller
     {
         $horario = HorarioRuta::where('eliminado', 0)
             ->findOrFail($id);
+        
+        $this->authorize('delete', $horario);
 
         // Validar que no tenga tiquetes vendidos
         if ($horario->tiquetesDetalle()->exists()) {

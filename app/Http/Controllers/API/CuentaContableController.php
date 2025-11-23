@@ -118,6 +118,7 @@ class CuentaContableController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', CuentaContable::class);
         $empresaId = $request->user()->empresa_id;
         
         $query = CuentaContable::where('empresa_id', $empresaId)
@@ -209,6 +210,7 @@ class CuentaContableController extends Controller
     )]
     public function store(StoreCuentaContableRequest $request): JsonResponse
     {
+        $this->authorize('create', CuentaContable::class);
         $validated = $request->validated();
         $validated['empresa_id'] = $request->user()->empresa_id;
 
@@ -274,6 +276,8 @@ class CuentaContableController extends Controller
             ->where('eliminado', 0)
             ->with(['cuentaPadre', 'tipoCuenta', 'subcuentas', 'asientos'])
             ->firstOrFail();
+
+        $this->authorize('view', $cuenta);
 
         return response()->json([
             'success' => true,
@@ -353,6 +357,8 @@ class CuentaContableController extends Controller
             ->where('eliminado', 0)
             ->firstOrFail();
 
+        $this->authorize('update', $cuenta);
+
         $cuenta->update($request->validated());
         $cuenta->load(['cuentaPadre', 'tipoCuenta', 'subcuentas']);
 
@@ -418,6 +424,8 @@ class CuentaContableController extends Controller
             ->where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
+
+        $this->authorize('delete', $cuenta);
 
         // Validar que no tenga subcuentas
         if ($cuenta->subcuentas()->where('eliminado', 0)->count() > 0) {

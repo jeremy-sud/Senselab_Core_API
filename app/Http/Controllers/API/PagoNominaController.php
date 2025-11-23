@@ -88,6 +88,8 @@ class PagoNominaController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', PagoNomina::class);
+        
         $empresaId = $request->user()->empresa_id;
         
         $query = PagoNomina::where('empresa_id', $empresaId)
@@ -157,6 +159,8 @@ class PagoNominaController extends Controller
     )]
     public function store(StorePagoNominaRequest $request): PagoNominaResource
     {
+        $this->authorize('create', PagoNomina::class);
+        
         $empresaId = $request->user()->empresa_id;
 
         DB::beginTransaction();
@@ -223,6 +227,8 @@ class PagoNominaController extends Controller
             ->where('eliminado', 0)
             ->with(['empresa', 'empleado', 'periodoNomina', 'metodoPago'])
             ->findOrFail($id);
+        
+        $this->authorize('view', $pago);
 
         return new PagoNominaResource($pago);
     }
@@ -280,6 +286,8 @@ class PagoNominaController extends Controller
         $pago = PagoNomina::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
             ->findOrFail($id);
+        
+        $this->authorize('update', $pago);
 
         // Validar que no esté pagado
         if ($pago->estado === 'pagado') {
@@ -357,6 +365,8 @@ class PagoNominaController extends Controller
         $pago = PagoNomina::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
             ->findOrFail($id);
+        
+        $this->authorize('delete', $pago);
 
         // Validar que no esté pagado
         if ($pago->estado === 'pagado') {
