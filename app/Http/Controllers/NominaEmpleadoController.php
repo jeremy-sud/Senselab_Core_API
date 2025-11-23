@@ -17,6 +17,7 @@ class NominaEmpleadoController extends Controller
         $empresaId = $request->user()->empresa_id;
         
         $query = NominaEmpleado::where('eliminado', 0)
+            ->with(['empleado', 'periodoNomina'])
             ->whereHas('empleado', function ($q) use ($empresaId) {
                 $q->where('empresa_id', $empresaId);
             });
