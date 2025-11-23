@@ -80,13 +80,16 @@ use Illuminate\Support\Facades\Route;
 // RUTAS PÚBLICAS (Sin autenticación)
 // ============================================================================
 
-Route::post('/login', [AuthController::class, 'login']);
+// Login con rate limiting estricto (5 intentos por minuto)
+Route::post('/login', [AuthController::class, 'login'])
+    ->middleware('throttle:5,1');
 
 // ============================================================================
 // RUTAS AUTENTICADAS (Requieren auth:sanctum)
 // ============================================================================
 
-Route::middleware('auth:sanctum')->group(function () {
+// Rate limiting general: 120 requests por minuto para usuarios autenticados
+Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     
     // ------------------------------------------------------------------------
     // AUTENTICACIÓN Y PERFIL
@@ -688,8 +691,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('consecutivos-fe', ConsecutivoFEController::class)
         ->parameters(['consecutivos-fe' => 'consecutivoFe'])
         ->middleware(['permission:facturacion_electronica.leer,facturacion_electronica.crear,facturacion_electronica.actualizar,facturacion_electronica.eliminar']);
+    // Obtener siguiente consecutivo (rate limiting: 30 por minuto para evitar abuso)
     Route::post('/consecutivos-fe/obtener-siguiente', [ConsecutivoFEController::class, 'obtenerSiguiente'])
-        ->middleware('permission:facturacion_electronica.leer');
+        ->middleware(['permission:facturacion_electronica.leer', 'throttle:30,1']);
     Route::post('/consecutivos-fe/{consecutivoFe}/resetear', [ConsecutivoFEController::class, 'resetear'])
         ->middleware('permission:facturacion_electronica.actualizar');
     Route::get('/consecutivos-fe/tipo/{tipoDocumentoDgt}', [ConsecutivoFEController::class, 'porTipoDocumento'])
@@ -921,8 +925,9 @@ Route::middleware('auth:sanctum')->group(function () {
         ->middleware('permission:usuarios.eliminar');
     Route::post('/usuarios/{id}/roles', [UsuarioController::class, 'asignarRoles'])
         ->middleware('permission:usuarios.actualizar');
+    // Cambiar contraseña (operación sensible - rate limiting moderado: 10 intentos por minuto)
     Route::post('/usuarios/{id}/cambiar-password', [UsuarioController::class, 'cambiarPassword'])
-        ->middleware('permission:usuarios.actualizar');
+        ->middleware(['permission:usuarios.actualizar', 'throttle:10,1']);
 
     // Roles-Permisos (Relación Many-to-Many)
     Route::get('/roles-permisos', [RolPermisoController::class, 'index'])

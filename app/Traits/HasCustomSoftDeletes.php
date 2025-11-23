@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Trait HasCustomSoftDeletes
@@ -46,8 +47,8 @@ trait HasCustomSoftDeletes
 
         $this->{$this->getDeletedAtColumn()} = true;
 
-        if (method_exists($this, 'getDeletedByColumn') && auth()->check()) {
-            $this->{$this->getDeletedByColumn()} = auth()->id();
+        if (method_exists($this, 'getDeletedByColumn') && Auth::check()) {
+            $this->{$this->getDeletedByColumn()} = Auth::id();
         }
 
         $query->update([
