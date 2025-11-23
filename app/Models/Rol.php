@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
+use App\Traits\HasPermissionCache;
 
 class Rol extends Model
 {
-    use HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
+    use HasCustomSoftDeletes, HasAuditFields, HasActiveScope, HasPermissionCache;
     /**
      * Tabla asociada al modelo.
      *
@@ -184,5 +185,23 @@ class Rol extends Model
         }
         
         $this->permisos()->sync($syncData);
+        
+        // Limpiar cache después de sincronizar
+        $this->clearPermissionCache();
+    }
+
+    /**
+     * Cargar permisos desde la base de datos para cache.
+     * Requerido por HasPermissionCache trait.
+     *
+     * @return array
+     */
+    protected function loadPermissionsFromDatabase(): array
+    {
+        return $this->permisos()
+            ->where('permisos.activo', true)
+            ->where('permisos.eliminado', false)
+            ->pluck('slug')
+            ->toArray();
     }
 }

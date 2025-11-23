@@ -8,10 +8,11 @@ use Laravel\Sanctum\HasApiTokens;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
+use App\Traits\HasPermissionCache;
 
 class Usuario extends Authenticatable
 {
-    use HasApiTokens, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
+    use HasApiTokens, HasCustomSoftDeletes, HasAuditFields, HasActiveScope, HasPermissionCache;
 
     /**
      * Campo de password personalizado
