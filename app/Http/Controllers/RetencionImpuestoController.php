@@ -12,7 +12,7 @@ class RetencionImpuestoController extends Controller
 {
     public function index(Request $request)
     {
-        $query = RetencionImpuesto::with(['empresa', 'proveedor', 'declaracion']);
+        $query = RetencionImpuesto::with(['empresa', 'proveedor']);
 
         if ($request->filled('empresa_id')) {
             $query->where('empresa_id', $request->empresa_id);
@@ -61,7 +61,7 @@ class RetencionImpuestoController extends Controller
     public function update(UpdateRetencionImpuestoRequest $request, RetencionImpuesto $retencionImpuesto)
     {
         $retencionImpuesto->update($request->validated());
-        $retencionImpuesto->load(['empresa', 'proveedor', 'declaracion']);
+        $retencionImpuesto->load(['empresa', 'proveedor']);
 
         return new RetencionImpuestoResource($retencionImpuesto);
     }
