@@ -291,7 +291,7 @@ class ProductoController extends Controller
                 'categoria',
                 'unidadMedida',
                 'marca',
-                'proveedorPredeterminado',
+                'proveedor',
                 'tipoImpuesto',
                 'cabys'
             ])->findOrFail($id);
