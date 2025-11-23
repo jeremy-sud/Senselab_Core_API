@@ -7,6 +7,7 @@ use App\Models\TipoCliente;
 use App\Http\Requests\StoreTipoClienteRequest;
 use App\Http\Requests\UpdateTipoClienteRequest;
 use App\Http\Resources\TipoClienteResource;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 
 /**
@@ -138,7 +139,10 @@ class TipoClienteController extends Controller
             
             $this->authorize('update', $tipoCliente);
             
-            $tipoCliente->update($request->validated());
+            $validated = $request->validated();
+            Log::info('Update TipoCliente', ['id' => $id, 'validated' => $validated]);
+            
+            $tipoCliente->update($validated);
             $tipoCliente->refresh(); // Refrescar modelo después del update
             
             return (new TipoClienteResource($tipoCliente))
