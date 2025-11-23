@@ -15,7 +15,13 @@ class PagoCuentaPagarController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = PagoCuentaPagar::where('eliminado', 0);
+        // Multi-tenancy: Filtrar por empresa del usuario autenticado
+        $empresaId = $request->user()->empresa_id;
+        
+        $query = PagoCuentaPagar::where('eliminado', 0)
+            ->whereHas('cuentaPorPagar', function ($q) use ($empresaId) {
+                $q->where('empresa_id', $empresaId);
+            });
 
         if ($request->filled('cuenta_por_pagar_id')) {
             $query->where('cuenta_por_pagar_id', $request->cuenta_por_pagar_id);

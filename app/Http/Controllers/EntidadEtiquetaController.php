@@ -16,8 +16,14 @@ class EntidadEtiquetaController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        // Multi-tenancy: Filtrar por empresa del usuario autenticado
+        $empresaId = $request->user()->empresa_id;
+        
         $query = EntidadEtiqueta::where('eliminado', 0)
-            ->with('etiqueta');
+            ->with('etiqueta')
+            ->whereHas('etiqueta', function ($q) use ($empresaId) {
+                $q->where('empresa_id', $empresaId);
+            });
 
         // Filtros
         if ($request->filled('etiqueta_id')) {
