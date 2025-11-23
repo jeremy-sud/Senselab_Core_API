@@ -104,6 +104,8 @@ class AsientoContableController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', AsientoContable::class);
+
         $empresaId = $request->user()->empresa_id;
         
         $query = AsientoContable::where('empresa_id', $empresaId)
@@ -192,9 +194,7 @@ class AsientoContableController extends Controller
             )
         ]
     )]
-    public function store(public function store(StoreAsientoContableRequest $request): JsonResponse
-    {
-        try {): JsonResponse
+    public function store(StoreAsientoContableRequest $request): JsonResponse
     {
         $this->authorize('create', AsientoContable::class);
         
@@ -292,6 +292,7 @@ class AsientoContableController extends Controller
             ->where('eliminado', 0)
             ->with(['detalles.cuentaContable', 'empresa'])
             ->firstOrFail();
+        $this->authorize('view', $asiento);
 
         return response()->json([
             'success' => true,
@@ -377,6 +378,7 @@ class AsientoContableController extends Controller
             ->where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
+        $this->authorize('update', $asiento);
 
         // No permitir modificar asientos mayorizados
         if ($asiento->estado === 'Mayorizado') {
@@ -482,6 +484,7 @@ class AsientoContableController extends Controller
             ->where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
+        $this->authorize('delete', $asiento);
 
         // No permitir eliminar asientos mayorizados
         if ($asiento->estado === 'Mayorizado') {
