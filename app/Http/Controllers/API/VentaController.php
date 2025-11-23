@@ -241,9 +241,7 @@ class VentaController extends Controller
             )
         ]
     )]
-    public function store(public function store(StoreVentaRequest $request)
-    {
-        try {)
+    public function store(StoreVentaRequest $request)
     {
         $this->authorize('create', Venta::class);
         
@@ -415,6 +413,8 @@ class VentaController extends Controller
                 'detalles.producto'
             ])->findOrFail($id);
             
+            $this->authorize('view', $venta);
+            
             return new VentaResource($venta);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
@@ -506,6 +506,8 @@ class VentaController extends Controller
         try {
             $venta = Venta::findOrFail($id);
             
+            $this->authorize('update', $venta);
+            
             // Solo permitir actualizar observaciones y estado
             $venta->update($request->validated());
             $venta->load(['cliente', 'detalles.producto']);
@@ -580,6 +582,8 @@ class VentaController extends Controller
     {
         try {
             $venta = Venta::findOrFail($id);
+            
+            $this->authorize('delete', $venta);
             
             // Marcar como anulada en lugar de eliminar
             $venta->update([

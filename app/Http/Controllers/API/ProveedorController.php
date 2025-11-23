@@ -204,9 +204,7 @@ class ProveedorController extends Controller
             )
         ]
     )]
-    public function store(public function store(StoreProveedorRequest $request)
-    {
-        try {)
+    public function store(StoreProveedorRequest $request)
     {
         $this->authorize('create', Proveedor::class);
         
@@ -290,6 +288,8 @@ class ProveedorController extends Controller
                     $query->where('estado', 'pendiente');
                 }
             ])->findOrFail($id);
+            
+            $this->authorize('view', $proveedor);
             
             return new ProveedorResource($proveedor);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -393,6 +393,8 @@ class ProveedorController extends Controller
         try {
             $proveedor = Proveedor::findOrFail($id);
             
+            $this->authorize('update', $proveedor);
+            
             $proveedor->update($request->validated());
             $proveedor->load('empresa');
             
@@ -466,6 +468,8 @@ class ProveedorController extends Controller
     {
         try {
             $proveedor = Proveedor::findOrFail($id);
+            
+            $this->authorize('delete', $proveedor);
             
             // Soft delete
             $proveedor->update([
