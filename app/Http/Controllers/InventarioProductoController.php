@@ -13,7 +13,13 @@ class InventarioProductoController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = InventarioProducto::where('eliminado', 0);
+        // Multi-tenancy: Filtrar por empresa del usuario autenticado
+        $empresaId = $request->user()->empresa_id;
+        
+        $query = InventarioProducto::where('eliminado', 0)
+            ->whereHas('almacen', function ($q) use ($empresaId) {
+                $q->where('empresa_id', $empresaId);
+            });
 
         if ($request->filled('almacen_id')) {
             $query->where('almacen_id', $request->almacen_id);

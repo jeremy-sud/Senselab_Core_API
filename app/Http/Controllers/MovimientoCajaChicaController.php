@@ -18,7 +18,13 @@ class MovimientoCajaChicaController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = MovimientoCajaChica::query();
+        // Multi-tenancy: Filtrar por empresa del usuario autenticado
+        $empresaId = $request->user()->empresa_id;
+        
+        $query = MovimientoCajaChica::query()
+            ->whereHas('cajaChica.sucursal', function ($q) use ($empresaId) {
+                $q->where('empresa_id', $empresaId);
+            });
 
         // Filtros
         if ($request->filled('caja_chica_id')) {

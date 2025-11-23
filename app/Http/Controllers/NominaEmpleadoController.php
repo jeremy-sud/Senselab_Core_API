@@ -13,7 +13,13 @@ class NominaEmpleadoController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = NominaEmpleado::where('eliminado', 0);
+        // Multi-tenancy: Filtrar por empresa del usuario autenticado
+        $empresaId = $request->user()->empresa_id;
+        
+        $query = NominaEmpleado::where('eliminado', 0)
+            ->whereHas('empleado', function ($q) use ($empresaId) {
+                $q->where('empresa_id', $empresaId);
+            });
 
         if ($request->filled('periodo_nomina_id')) {
             $query->where('periodo_nomina_id', $request->periodo_nomina_id);

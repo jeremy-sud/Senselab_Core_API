@@ -16,7 +16,13 @@ class CajaController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Caja::where('eliminado', 0);
+        // Multi-tenancy: Filtrar por empresa del usuario autenticado
+        $empresaId = $request->user()->empresa_id;
+        
+        $query = Caja::where('eliminado', 0)
+            ->whereHas('sucursal', function ($q) use ($empresaId) {
+                $q->where('empresa_id', $empresaId);
+            });
 
         // Filtros
         if ($request->filled('sucursal_id')) {
