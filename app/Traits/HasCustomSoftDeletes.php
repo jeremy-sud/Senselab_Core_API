@@ -76,11 +76,18 @@ trait HasCustomSoftDeletes
             return false;
         }
 
-        $result = $this->save();
+        // Usar query update en lugar de save() para evitar problemas con exists
+        $query = $this->newQueryWithoutScopes()->where($this->getKeyName(), $this->getKey());
+        $result = $query->update([
+            $this->getDeletedAtColumn() => false,
+        ]);
+
+        // Sincronizar el modelo con los cambios
+        $this->syncOriginal();
 
         $this->fireModelEvent('restored', false);
 
-        return $result;
+        return $result > 0;
     }
 
     /**
