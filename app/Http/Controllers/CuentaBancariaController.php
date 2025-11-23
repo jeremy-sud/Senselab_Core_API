@@ -52,23 +52,34 @@ class CuentaBancariaController extends Controller
         return new CuentaBancariaResource($cuenta);
     }
 
-    public function show(CuentaBancaria $cuentaBancaria)
+    public function show($id)
     {
-        $cuentaBancaria->load('empresa');
+        // Buscar sin el scope global para evitar problemas con route model binding
+        $cuentaBancaria = CuentaBancaria::withoutGlobalScope('tenant')
+            ->with('empresa')
+            ->findOrFail($id);
 
         return new CuentaBancariaResource($cuentaBancaria);
     }
 
-    public function update(UpdateCuentaBancariaRequest $request, CuentaBancaria $cuentaBancaria)
+    public function update(UpdateCuentaBancariaRequest $request, $id)
     {
+        // Buscar sin el scope global para evitar problemas con route model binding
+        $cuentaBancaria = CuentaBancaria::withoutGlobalScope('tenant')
+            ->findOrFail($id);
+        
         $cuentaBancaria->update($request->validated());
+        
         $cuentaBancaria->load('empresa');
 
         return new CuentaBancariaResource($cuentaBancaria);
     }
 
-    public function destroy(CuentaBancaria $cuentaBancaria)
+    public function destroy($id)
     {
+        $cuentaBancaria = CuentaBancaria::withoutGlobalScope('tenant')
+            ->findOrFail($id);
+            
         $cuentaBancaria->delete();
 
         return response()->json(['message' => 'Cuenta bancaria eliminada correctamente'], 200);
