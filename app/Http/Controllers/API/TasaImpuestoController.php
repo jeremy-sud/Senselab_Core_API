@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTasaImpuestoRequest;
 use App\Http\Requests\UpdateTasaImpuestoRequest;
+use App\Http\Requests\TasaImpuestoVigenteRequest;
 use App\Http\Resources\TasaImpuestoResource;
 use App\Models\TasaImpuesto;
 use Illuminate\Http\JsonResponse;
@@ -436,13 +437,8 @@ class TasaImpuestoController extends Controller
             )
         ]
     )]
-    public function vigente(Request $request): JsonResponse
+    public function vigente(TasaImpuestoVigenteRequest $request): JsonResponse
     {
-        $request->validate([
-            'tipo_impuesto_id' => 'required|integer|exists:tipos_impuesto,id',
-            'fecha' => 'nullable|date'
-        ]);
-
         $fecha = $request->filled('fecha') ? Carbon::parse($request->fecha) : Carbon::now();
 
         $tasa = TasaImpuesto::where('tipo_impuesto_id', $request->tipo_impuesto_id)

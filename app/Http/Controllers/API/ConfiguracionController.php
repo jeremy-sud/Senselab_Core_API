@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreConfiguracionRequest;
 use App\Http\Requests\UpdateConfiguracionRequest;
+use App\Http\Requests\ActualizarMultiplesConfiguracionesRequest;
 use App\Http\Resources\ConfiguracionResource;
 use App\Models\Configuracion;
 use Illuminate\Http\JsonResponse;
@@ -317,14 +318,8 @@ class ConfiguracionController extends Controller
             )
         ]
     )]
-    public function actualizarMultiples(Request $request): JsonResponse
+    public function actualizarMultiples(ActualizarMultiplesConfiguracionesRequest $request): JsonResponse
     {
-        $request->validate([
-            'configuraciones' => 'required|array|min:1',
-            'configuraciones.*.clave' => 'required|string',
-            'configuraciones.*.valor' => 'required|string'
-        ]);
-
         $empresaId = $request->user()->empresa_id;
         $actualizadas = 0;
 

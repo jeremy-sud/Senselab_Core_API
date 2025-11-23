@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Etiqueta;
 use App\Http\Requests\StoreEtiquetaRequest;
 use App\Http\Requests\UpdateEtiquetaRequest;
+use App\Http\Requests\BuscarEtiquetaRequest;
 use App\Http\Resources\EtiquetaResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -164,12 +165,8 @@ class EtiquetaController extends Controller
     /**
      * Buscar etiquetas por nombre.
      */
-    public function buscar(Request $request): JsonResponse
+    public function buscar(BuscarEtiquetaRequest $request): JsonResponse
     {
-        $request->validate([
-            'q' => 'required|string|min:2',
-        ]);
-
         $etiquetas = Etiqueta::where('empresa_id', auth()->user()->empresa_id)
             ->where('eliminado', 0)
             ->where('nombre', 'LIKE', '%' . $request->q . '%')

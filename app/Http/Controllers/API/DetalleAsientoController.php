@@ -4,6 +4,10 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DetalleAsientoResource;
+use App\Http\Requests\StoreDetalleAsientoRequest;
+use App\Http\Requests\UpdateDetalleAsientoRequest;
+use App\Http\Requests\LibroMayorRequest;
+use App\Http\Requests\BalanceComprobacionRequest;
 use App\Models\DetalleAsiento;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -350,14 +354,9 @@ class DetalleAsientoController extends Controller
             new OA\Response(response: 422, description: "Error de validación")
         ]
     )]
-    public function libroMayor(Request $request): JsonResponse
+    public function libroMayor(LibroMayorRequest $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
-
-        $request->validate([
-            'desde' => 'nullable|date',
-            'hasta' => 'nullable|date|after_or_equal:desde'
-        ]);
 
         $query = DetalleAsiento::whereHas('asientoContable', function ($q) use ($empresaId, $request) {
                 $q->where('empresa_id', $empresaId)
@@ -466,14 +465,9 @@ class DetalleAsientoController extends Controller
             new OA\Response(response: 422, description: "Error de validación")
         ]
     )]
-    public function balanceComprobacion(Request $request): JsonResponse
+    public function balanceComprobacion(BalanceComprobacionRequest $request): JsonResponse
     {
         $empresaId = $request->user()->empresa_id;
-
-        $request->validate([
-            'desde' => 'nullable|date',
-            'hasta' => 'nullable|date|after_or_equal:desde'
-        ]);
 
         $query = DetalleAsiento::whereHas('asientoContable', function ($q) use ($empresaId, $request) {
                 $q->where('empresa_id', $empresaId)

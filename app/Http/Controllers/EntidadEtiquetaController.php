@@ -12,6 +12,7 @@ use App\Http\Requests\AsignarEtiquetasMultiplesRequest;
 use App\Http\Requests\RemoverEtiquetasMultiplesRequest;
 use App\Http\Requests\BuscarEntidadPorTipoRequest;
 use App\Http\Requests\SincronizarEtiquetasRequest;
+use App\Http\Requests\PorEtiquetaRequest;
 
 class EntidadEtiquetaController extends Controller
 {
@@ -204,11 +205,8 @@ class EntidadEtiquetaController extends Controller
     /**
      * Obtener todas las entidades de una etiqueta.
      */
-    public function porEtiqueta(Request $request, int $etiquetaId): JsonResponse
+    public function porEtiqueta(PorEtiquetaRequest $request, int $etiquetaId): JsonResponse
     {
-        $request->validate([
-            'entidad_tipo' => 'nullable|string|max:50',
-        ]);
 
         $query = EntidadEtiqueta::where('etiqueta_id', $etiquetaId)
             ->where('eliminado', 0);
@@ -228,15 +226,8 @@ class EntidadEtiquetaController extends Controller
     /**
      * Sincronizar etiquetas de una entidad (reemplaza todas las existentes).
      */
-    public function sincronizar(Request $request): JsonResponse
+    public function sincronizar(SincronizarEtiquetasRequest $request): JsonResponse
     {
-        $request->validate([
-            'etiqueta_ids' => 'required|array',
-            'etiqueta_ids.*' => 'required|integer|exists:etiquetas,id',
-            'entidad_tipo' => 'required|string|max:50',
-            'entidad_id' => 'required|integer|min:1',
-        ]);
-
         // Remover todas las etiquetas actuales
         EntidadEtiqueta::where('entidad_tipo', $request->entidad_tipo)
             ->where('entidad_id', $request->entidad_id)

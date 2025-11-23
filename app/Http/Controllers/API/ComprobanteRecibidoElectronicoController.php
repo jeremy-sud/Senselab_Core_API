@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreComprobanteRecibidoElectronicoRequest;
 use App\Http\Requests\UpdateComprobanteRecibidoElectronicoRequest;
+use App\Http\Requests\ActualizarRespuestaHaciendaRequest;
 use App\Http\Resources\ComprobanteRecibidoElectronicoResource;
 use App\Models\ComprobanteRecibidoElectronico;
 use Illuminate\Http\JsonResponse;
@@ -597,14 +598,8 @@ class ComprobanteRecibidoElectronicoController extends Controller
             new OA\Response(response: 401, description: "No autenticado")
         ]
     )]
-    public function actualizarRespuestaHacienda(Request $request, int $id): JsonResponse
+    public function actualizarRespuestaHacienda(ActualizarRespuestaHaciendaRequest $request, int $id): JsonResponse
     {
-        $request->validate([
-            'xml_respuesta_hacienda' => 'required|string',
-            'estado_hacienda' => 'required|string|in:Aceptado,Rechazado,Procesando',
-            'mensaje_hacienda' => 'nullable|string'
-        ]);
-
         $empresaId = $request->user()->empresa_id;
 
         $comprobante = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)->findOrFail($id);

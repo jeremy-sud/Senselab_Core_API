@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCabyRequest;
 use App\Http\Requests\UpdateCabyRequest;
+use App\Http\Requests\BuscarCabyRequest;
 use App\Http\Resources\CabyResource;
 use App\Models\Cabys;
 use Illuminate\Http\JsonResponse;
@@ -446,12 +447,8 @@ class CabyController extends Controller
             )
         ]
     )]
-    public function buscar(Request $request): JsonResponse
+    public function buscar(BuscarCabyRequest $request): JsonResponse
     {
-        $request->validate([
-            'termino' => 'required|string|min:3'
-        ]);
-
         $termino = $request->termino;
 
         $resultados = Cabys::where('eliminado', 0)

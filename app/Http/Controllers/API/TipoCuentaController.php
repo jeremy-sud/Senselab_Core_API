@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTipoCuentaRequest;
 use App\Http\Requests\UpdateTipoCuentaRequest;
+use App\Http\Requests\PorNaturalezaRequest;
 use App\Http\Resources\TipoCuentaResource;
 use App\Models\TipoCuenta;
 use Illuminate\Http\JsonResponse;
@@ -432,12 +433,8 @@ class TipoCuentaController extends Controller
             )
         ]
     )]
-    public function porNaturaleza(Request $request): JsonResponse
+    public function porNaturaleza(PorNaturalezaRequest $request): JsonResponse
     {
-        $request->validate([
-            'naturaleza' => 'required|in:Deudora,Acreedora'
-        ]);
-
         $tipos = TipoCuenta::where('eliminado', 0)
             ->where('activo', 1)
             ->where('naturaleza', $request->naturaleza)
