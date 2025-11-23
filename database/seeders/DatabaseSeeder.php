@@ -25,6 +25,19 @@ class DatabaseSeeder extends Seeder
 
         $this->command->info('✅ Seeders de datos maestros ejecutados correctamente.');
 
+        $this->command->info('🌱 Iniciando seeders FASE 9 (Costa Rica)...');
+
+        // Seeders FASE 9 - Catálogos específicos de Costa Rica
+        $this->call([
+            TiposComprobantesFESeeder::class,          // 9 tipos DGT
+            DeduccionesLegalesSeeder::class,           // 6 deducciones CCSS/INS
+            CodigosActividadEconomicaSeeder::class,    // 35 códigos más comunes
+            ZonasGeograficasCRSeeder::class,           // 7 provincias
+            TiposClientesSeeder::class,                // 6 tipos de clientes
+        ]);
+
+        $this->command->info('✅ Seeders FASE 9 ejecutados correctamente.');
+
         $this->command->info('🌱 Iniciando seeders de datos demo...');
 
         // Seeders de datos demo (empresa, usuario admin)
