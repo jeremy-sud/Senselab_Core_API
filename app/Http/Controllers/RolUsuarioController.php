@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateRolUsuarioRequest;
 use App\Http\Resources\RolUsuarioResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Http\Requests\AsignarRolesUsuarioRequest;
 
 class RolUsuarioController extends Controller
 {
@@ -103,13 +104,8 @@ class RolUsuarioController extends Controller
         ]);
     }
 
-    public function asignarRoles(Request $request): JsonResponse
+    public function asignarRoles(AsignarRolesUsuarioRequest $request): JsonResponse
     {
-        $request->validate([
-            'usuario_id' => 'required|exists:usuarios,id',
-            'roles' => 'required|array',
-            'roles.*' => 'exists:roles,id',
-        ]);
 
         // Desactivar roles actuales
         RolUsuario::where('usuario_id', $request->usuario_id)

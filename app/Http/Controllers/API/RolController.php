@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRolRequest;
 use App\Http\Requests\UpdateRolRequest;
+use App\Http\Requests\AsignarPermisosRolRequest;
 use App\Http\Resources\RolResource;
 use App\Models\Rol;
 use Illuminate\Http\JsonResponse;
@@ -222,12 +223,8 @@ class RolController extends Controller
         ),
         responses: [new OA\Response(response: 200, description: 'Permisos asignados')]
     )]
-    public function asignarPermisos(Request $request, int $id): JsonResponse
+    public function asignarPermisos(AsignarPermisosRolRequest $request, int $id): JsonResponse
     {
-        $request->validate([
-            'permisos' => ['required', 'array'],
-            'permisos.*' => ['required', 'integer', 'exists:permisos,id']
-        ]);
 
         $rol = Rol::findOrFail($id);
         $rol->permisos()->sync($request->permisos);

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUsuarioRequest;
 use App\Http\Requests\UpdateUsuarioRequest;
+use App\Http\Requests\AsignarRolesRequest;
+use App\Http\Requests\CambiarPasswordRequest;
 use App\Http\Resources\UsuarioResource;
 use App\Models\Usuario;
 use Illuminate\Http\JsonResponse;
@@ -247,12 +249,8 @@ class UsuarioController extends Controller
         ),
         responses: [new OA\Response(response: 200, description: 'Roles asignados')]
     )]
-    public function asignarRoles(Request $request, int $id): JsonResponse
+    public function asignarRoles(AsignarRolesRequest $request, int $id): JsonResponse
     {
-        $request->validate([
-            'roles' => ['required', 'array'],
-            'roles.*' => ['required', 'integer', 'exists:roles,id']
-        ]);
 
         $empresaId = auth()->user()->empresa_id;
         $usuario = Usuario::where('empresa_id', $empresaId)->findOrFail($id);

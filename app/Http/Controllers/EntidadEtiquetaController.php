@@ -8,6 +8,10 @@ use App\Http\Requests\UpdateEntidadEtiquetaRequest;
 use App\Http\Resources\EntidadEtiquetaResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Http\Requests\AsignarEtiquetasMultiplesRequest;
+use App\Http\Requests\RemoverEtiquetasMultiplesRequest;
+use App\Http\Requests\BuscarEntidadPorTipoRequest;
+use App\Http\Requests\SincronizarEtiquetasRequest;
 
 class EntidadEtiquetaController extends Controller
 {
@@ -126,14 +130,8 @@ class EntidadEtiquetaController extends Controller
     /**
      * Asignar múltiples etiquetas a una entidad.
      */
-    public function asignarMultiples(Request $request): JsonResponse
+    public function asignarMultiples(AsignarEtiquetasMultiplesRequest $request): JsonResponse
     {
-        $request->validate([
-            'etiqueta_ids' => 'required|array|min:1',
-            'etiqueta_ids.*' => 'required|integer|exists:etiquetas,id',
-            'entidad_tipo' => 'required|string|max:50',
-            'entidad_id' => 'required|integer|min:1',
-        ]);
 
         $asignadas = [];
         $yaExistentes = [];
@@ -170,14 +168,8 @@ class EntidadEtiquetaController extends Controller
     /**
      * Remover múltiples etiquetas de una entidad.
      */
-    public function removerMultiples(Request $request): JsonResponse
+    public function removerMultiples(RemoverEtiquetasMultiplesRequest $request): JsonResponse
     {
-        $request->validate([
-            'etiqueta_ids' => 'required|array|min:1',
-            'etiqueta_ids.*' => 'required|integer',
-            'entidad_tipo' => 'required|string|max:50',
-            'entidad_id' => 'required|integer|min:1',
-        ]);
 
         $removidas = EntidadEtiqueta::whereIn('etiqueta_id', $request->etiqueta_ids)
             ->where('entidad_tipo', $request->entidad_tipo)
@@ -194,12 +186,8 @@ class EntidadEtiquetaController extends Controller
     /**
      * Obtener todas las etiquetas de una entidad.
      */
-    public function porEntidad(Request $request): JsonResponse
+    public function porEntidad(BuscarEntidadPorTipoRequest $request): JsonResponse
     {
-        $request->validate([
-            'entidad_tipo' => 'required|string|max:50',
-            'entidad_id' => 'required|integer|min:1',
-        ]);
 
         $etiquetas = EntidadEtiqueta::where('entidad_tipo', $request->entidad_tipo)
             ->where('entidad_id', $request->entidad_id)

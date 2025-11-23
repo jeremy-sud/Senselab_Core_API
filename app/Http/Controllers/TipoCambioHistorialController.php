@@ -9,6 +9,8 @@ use App\Http\Resources\TipoCambioHistorialResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Carbon\Carbon;
+use App\Http\Requests\ObtenerTipoCambioVigenteRequest;
+use App\Http\Requests\ConvertirMonedaRequest;
 
 class TipoCambioHistorialController extends Controller
 {
@@ -119,13 +121,8 @@ class TipoCambioHistorialController extends Controller
     /**
      * Obtiene el tipo de cambio vigente para una fecha específica.
      */
-    public function vigente(Request $request): JsonResponse
+    public function vigente(ObtenerTipoCambioVigenteRequest $request): JsonResponse
     {
-        $request->validate([
-            'fecha' => 'nullable|date',
-            'moneda_origen' => 'required|string|size:3',
-            'moneda_destino' => 'required|string|size:3',
-        ]);
 
         $fecha = $request->filled('fecha') ? $request->fecha : Carbon::now()->format('Y-m-d');
         $monedaOrigen = strtoupper($request->moneda_origen);
@@ -154,15 +151,8 @@ class TipoCambioHistorialController extends Controller
     /**
      * Convertir un monto entre monedas usando el tipo de cambio vigente.
      */
-    public function convertir(Request $request): JsonResponse
+    public function convertir(ConvertirMonedaRequest $request): JsonResponse
     {
-        $request->validate([
-            'monto' => 'required|numeric|min:0',
-            'moneda_origen' => 'required|string|size:3',
-            'moneda_destino' => 'required|string|size:3',
-            'fecha' => 'nullable|date',
-            'usar_tasa' => 'nullable|in:compra,venta',
-        ]);
 
         $fecha = $request->filled('fecha') ? $request->fecha : Carbon::now()->format('Y-m-d');
         $monedaOrigen = strtoupper($request->moneda_origen);
