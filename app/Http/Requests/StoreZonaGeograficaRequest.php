@@ -22,7 +22,24 @@ class StoreZonaGeograficaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'empresa_id' => ['nullable', 'exists:empresas,id'],
+            'codigo' => ['required', 'string', 'max:10'],
+            'nombre' => ['required', 'string', 'max:100'],
+            'tipo' => ['required', 'in:provincia,canton,distrito,zona_ventas,ruta'],
+            'zona_padre_id' => ['nullable', 'exists:zonas_geograficas,id'],
+            'provincias_incluidas' => ['nullable', 'array'],
+            'vendedor_asignado_id' => ['nullable', 'exists:empleados,id'],
+            'activa' => ['boolean'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'codigo.required' => 'El código es obligatorio',
+            'nombre.required' => 'El nombre es obligatorio',
+            'tipo.required' => 'El tipo de zona es obligatorio',
+            'tipo.in' => 'Tipo válido: provincia, cantón, distrito, zona_ventas o ruta',
         ];
     }
 }

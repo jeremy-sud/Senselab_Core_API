@@ -21,8 +21,13 @@ class UpdateCodigoActividadEconomicaRequest extends FormRequest
      */
     public function rules(): array
     {
+        $id = $this->route('codigo_actividad_economica');
+        
         return [
-            //
+            'codigo' => ['sometimes', 'string', 'max:10', 'unique:codigos_actividad_economica,codigo,' . $id],
+            'descripcion' => ['sometimes', 'string', 'max:255'],
+            'categoria_principal' => ['nullable', 'string', 'max:100'],
+            'activo' => ['boolean'],
         ];
     }
 }

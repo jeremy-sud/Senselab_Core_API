@@ -22,7 +22,19 @@ class StoreCodigoActividadEconomicaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'codigo' => ['required', 'string', 'max:10', 'unique:codigos_actividad_economica,codigo'],
+            'descripcion' => ['required', 'string', 'max:255'],
+            'categoria_principal' => ['nullable', 'string', 'max:100'],
+            'activo' => ['boolean'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'codigo.required' => 'El código es obligatorio',
+            'codigo.unique' => 'Este código ya existe',
+            'descripcion.required' => 'La descripción es obligatoria',
         ];
     }
 }

@@ -21,8 +21,15 @@ class UpdateTipoClienteRequest extends FormRequest
      */
     public function rules(): array
     {
+        $id = $this->route('tipo_cliente');
+        
         return [
-            //
+            'codigo' => ['sometimes', 'string', 'max:10', 'unique:tipos_clientes,codigo,' . $id],
+            'nombre' => ['sometimes', 'string', 'max:100'],
+            'descripcion' => ['nullable', 'string'],
+            'descuento_default' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'dias_credito_default' => ['nullable', 'integer', 'min:0', 'max:365'],
+            'activo' => ['boolean'],
         ];
     }
 }

@@ -14,6 +14,15 @@ class CodigoActividadEconomicaResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'codigo' => $this->codigo,
+            'descripcion' => $this->descripcion,
+            'categoria_principal' => $this->categoria_principal,
+            'activo' => (bool) $this->activo,
+            'created_at' => $this->created_at?->toISOString(),
+            'updated_at' => $this->updated_at?->toISOString(),
+            'deleted_at' => $this->deleted_at?->toISOString(),
+        ];
     }
 }

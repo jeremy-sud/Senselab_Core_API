@@ -22,7 +22,23 @@ class StoreTipoClienteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'codigo' => ['required', 'string', 'max:10', 'unique:tipos_clientes,codigo'],
+            'nombre' => ['required', 'string', 'max:100'],
+            'descripcion' => ['nullable', 'string'],
+            'descuento_default' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'dias_credito_default' => ['nullable', 'integer', 'min:0', 'max:365'],
+            'activo' => ['boolean'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'codigo.required' => 'El código es obligatorio',
+            'codigo.unique' => 'Este código ya existe',
+            'nombre.required' => 'El nombre es obligatorio',
+            'descuento_default.max' => 'El descuento no puede ser mayor a 100%',
+            'dias_credito_default.max' => 'Los días de crédito no pueden exceder 365',
         ];
     }
 }
