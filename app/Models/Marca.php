@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasCustomSoftDeletes;
+use App\Traits\HasAuditFields;
+use App\Traits\HasActiveScope;
 
 class Marca extends Model
 {
+    use HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
     protected $table = 'marcas';
 
     const CREATED_AT = 'creado_en';

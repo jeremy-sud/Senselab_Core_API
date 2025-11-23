@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasCustomSoftDeletes;
+use App\Traits\HasAuditFields;
+use App\Traits\HasActiveScope;
 
 class TipoCuenta extends Model
 {
+    use HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
     /**
      * Tabla asociada al modelo.
      *

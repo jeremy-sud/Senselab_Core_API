@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasCustomSoftDeletes;
+use App\Traits\HasAuditFields;
+use App\Traits\HasActiveScope;
 
 class DetalleVenta extends Model
 {
+    use HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
     /**
      * La tabla asociada al modelo.
      *
