@@ -74,6 +74,8 @@ class EmpresaController extends Controller
     )]
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Empresa::class);
+        
         try {
             $perPage = $request->input('per_page', 15);
             $search = $request->input('search');
@@ -150,6 +152,8 @@ class EmpresaController extends Controller
     )]
     public function store(StoreEmpresaRequest $request)
     {
+        $this->authorize('create', Empresa::class);
+        
         try {
             $empresa = Empresa::create($request->validated());
             $empresa->load('regimenTributario');
@@ -210,6 +214,8 @@ class EmpresaController extends Controller
                 'usuarios',
                 'configuraciones'
             ])->findOrFail($id);
+            
+            $this->authorize('view', $empresa);
             
             return new EmpresaResource($empresa);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -276,6 +282,8 @@ class EmpresaController extends Controller
     )]
     public function update(UpdateEmpresaRequest $request, Empresa $empresa)
     {
+        $this->authorize('update', $empresa);
+        
         try {
             $empresa->update($request->validated());
             $empresa->load('regimenTributario');
@@ -329,6 +337,8 @@ class EmpresaController extends Controller
     {
         try {
             $empresa = Empresa::findOrFail($id);
+            
+            $this->authorize('delete', $empresa);
             
             // Soft delete - marcar como inactivo
             $empresa->update([

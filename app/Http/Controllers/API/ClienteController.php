@@ -106,6 +106,8 @@ class ClienteController extends Controller
     )]
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Cliente::class);
+        
         try {
             $perPage = $request->input('per_page', 15);
             $search = $request->input('search');
@@ -220,8 +222,12 @@ class ClienteController extends Controller
             )
         ]
     )]
-    public function store(StoreClienteRequest $request)
+    public function store(public function store(StoreClienteRequest $request)
     {
+        try {)
+    {
+        $this->authorize('create', Cliente::class);
+        
         try {
             $cliente = Cliente::create($request->validated());
             $cliente->load('empresa');
