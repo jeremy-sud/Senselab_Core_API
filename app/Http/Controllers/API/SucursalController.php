@@ -59,9 +59,7 @@ class SucursalController extends Controller
             )
         ]
     )]
-    public function index(public function index(Request $request)
-    {
-        try {)
+    public function index(Request $request)
     {
         $this->authorize('viewAny', Sucursal::class);
         
@@ -135,9 +133,7 @@ class SucursalController extends Controller
             )
         ]
     )]
-    public function store(public function store(StoreSucursalRequest $request)
-    {
-        try {)
+    public function store(StoreSucursalRequest $request)
     {
         $this->authorize('create', Sucursal::class);
         
@@ -195,7 +191,8 @@ class SucursalController extends Controller
                 'almacenes',
                 'cajas'
             ])->findOrFail($id);
-            
+            $this->authorize('view', $sucursal);
+
             return new SucursalResource($sucursal);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
@@ -244,7 +241,8 @@ class SucursalController extends Controller
     {
         try {
             $sucursal = Sucursal::findOrFail($id);
-            
+            $this->authorize('update', $sucursal);
+
             // Si es principal, desmarcar otras sucursales principales
             if ($request->has('es_principal') && $request->boolean('es_principal')) {
                 Sucursal::where('empresa_id', $sucursal->empresa_id)
@@ -294,7 +292,8 @@ class SucursalController extends Controller
     {
         try {
             $sucursal = Sucursal::findOrFail($id);
-            
+            $this->authorize('delete', $sucursal);
+
             // No permitir eliminar sucursal principal
             if ($sucursal->es_principal) {
                 return response()->json([

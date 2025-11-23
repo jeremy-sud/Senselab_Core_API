@@ -38,9 +38,7 @@ class OrdenCompraController extends Controller
             new OA\Response(response: 200, description: 'Listado exitoso', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/OrdenCompra'))]))
         ]
     )]
-    public function index(public function index(Request $request)
-    {
-        try {)
+    public function index(Request $request)
     {
         $this->authorize('viewAny', OrdenCompra::class);
         
@@ -132,9 +130,7 @@ class OrdenCompraController extends Controller
             new OA\Response(response: 201, description: 'Orden creada', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', ref: '#/components/schemas/OrdenCompra')]))
         ]
     )]
-    public function store(public function store(StoreOrdenCompraRequest $request)
-    {
-        try {)
+    public function store(StoreOrdenCompraRequest $request)
     {
         $this->authorize('create', OrdenCompra::class);
         
@@ -229,7 +225,8 @@ class OrdenCompraController extends Controller
                 'pagos',
                 'entradasInventario'
             ])->findOrFail($id);
-            
+            $this->authorize('view', $orden);
+
             // Calcular saldo pendiente
             $orden->saldo_pendiente = $orden->calcularSaldoPendiente();
             
@@ -265,7 +262,8 @@ class OrdenCompraController extends Controller
     {
         try {
             $orden = OrdenCompra::findOrFail($id);
-            
+            $this->authorize('update', $orden);
+
             $orden->update($request->validated());
             $orden->load(['proveedor', 'detalles.producto']);
             
@@ -305,7 +303,8 @@ class OrdenCompraController extends Controller
     {
         try {
             $orden = OrdenCompra::findOrFail($id);
-            
+            $this->authorize('delete', $orden);
+
             // Solo permitir eliminar en estado borrador
             if ($orden->estado !== 'borrador') {
                 return response()->json([

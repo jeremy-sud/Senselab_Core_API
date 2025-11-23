@@ -34,9 +34,7 @@ class AlmacenController extends Controller
             new OA\Response(response: 200, description: 'Listado exitoso', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/Almacen'))]))
         ]
     )]
-    public function index(public function index(Request $request)
-    {
-        try {)
+    public function index(Request $request)
     {
         $this->authorize('viewAny', Almacen::class);
         
@@ -100,9 +98,7 @@ class AlmacenController extends Controller
         ),
         responses: [new OA\Response(response: 201, description: 'Almacén creado')]
     )]
-    public function store(public function store(StoreAlmacenRequest $request)
-    {
-        try {)
+    public function store(StoreAlmacenRequest $request)
     {
         $this->authorize('create', Almacen::class);
         
@@ -147,11 +143,13 @@ class AlmacenController extends Controller
     )]
     public function show(int $id)
     {
+        $almacen = Almacen::with([
+            'empresa',
+            'sucursal'
+        ])->findOrFail($id);
+        $this->authorize('view', $almacen);
+
         try {
-            $almacen = Almacen::with([
-                'empresa',
-                'sucursal'
-            ])->findOrFail($id);
             
             return new AlmacenResource($almacen);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -183,8 +181,10 @@ class AlmacenController extends Controller
     )]
     public function update(UpdateAlmacenRequest $request, int $id)
     {
+        $almacen = Almacen::findOrFail($id);
+        $this->authorize('update', $almacen);
+
         try {
-            $almacen = Almacen::findOrFail($id);
             
             // Si es principal, desmarcar otros almacenes principales de la sucursal
             if ($request->has('es_principal') && $request->boolean('es_principal')) {
@@ -230,8 +230,10 @@ class AlmacenController extends Controller
     )]
     public function destroy(int $id)
     {
+        $almacen = Almacen::findOrFail($id);
+        $this->authorize('delete', $almacen);
+
         try {
-            $almacen = Almacen::findOrFail($id);
             
             // No permitir eliminar almacén principal
             if ($almacen->es_principal) {

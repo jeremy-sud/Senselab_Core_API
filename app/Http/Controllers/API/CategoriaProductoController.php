@@ -55,6 +55,8 @@ class CategoriaProductoController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', CategoriaProducto::class);
+
         $empresaId = auth()->user()->empresa_id;
         
         $query = CategoriaProducto::where('empresa_id', $empresaId);
@@ -106,6 +108,8 @@ class CategoriaProductoController extends Controller
     )]
     public function store(StoreCategoriaProductoRequest $request): JsonResponse
     {
+        $this->authorize('create', CategoriaProducto::class);
+
         $validated = $request->validated();
         $validated['empresa_id'] = auth()->user()->empresa_id;
 
@@ -156,6 +160,7 @@ class CategoriaProductoController extends Controller
 
         $categoria = CategoriaProducto::where('empresa_id', $empresaId)
             ->findOrFail($id);
+        $this->authorize('view', $categoria);
 
         return new CategoriaProductoResource($categoria);
     }
@@ -213,6 +218,8 @@ class CategoriaProductoController extends Controller
         $empresaId = auth()->user()->empresa_id;
 
         $categoria = CategoriaProducto::where('empresa_id', $empresaId)->findOrFail($id);
+        $this->authorize('update', $categoria);
+
         $categoria->update($request->validated());
 
         return new CategoriaProductoResource($categoria);
@@ -262,6 +269,7 @@ class CategoriaProductoController extends Controller
         $empresaId = auth()->user()->empresa_id;
 
         $categoria = CategoriaProducto::where('empresa_id', $empresaId)->findOrFail($id);
+        $this->authorize('delete', $categoria);
 
         $categoria->eliminado = 1;
         $categoria->activo = 0;

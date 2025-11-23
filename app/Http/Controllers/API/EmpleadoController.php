@@ -10,6 +10,7 @@ use App\Models\Empleado;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Auth;
 use OpenApi\Attributes as OA;
 
 /**
@@ -73,6 +74,8 @@ class EmpleadoController extends Controller
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', Empleado::class);
+
         $empresaId = auth()->user()->empresa_id;
         
         $query = Empleado::where('empresa_id', $empresaId)
@@ -129,6 +132,8 @@ class EmpleadoController extends Controller
     )]
     public function store(StoreEmpleadoRequest $request): JsonResponse
     {
+        $this->authorize('create', Empleado::class);
+
         $validated = $request->validated();
         $validated['empresa_id'] = auth()->user()->empresa_id;
 
@@ -167,6 +172,7 @@ class EmpleadoController extends Controller
         $empleado = Empleado::where('empresa_id', $empresaId)
             ->with(['cargo'])
             ->findOrFail($id);
+        $this->authorize('view', $empleado);
 
         return new EmpleadoResource($empleado);
     }
@@ -203,6 +209,7 @@ class EmpleadoController extends Controller
         $empresaId = auth()->user()->empresa_id;
 
         $empleado = Empleado::where('empresa_id', $empresaId)->findOrFail($id);
+        $this->authorize('update', $empleado);
 
         $empleado->update($request->validated());
         $empleado->load(['cargo']);
@@ -232,6 +239,7 @@ class EmpleadoController extends Controller
         $empresaId = auth()->user()->empresa_id;
 
         $empleado = Empleado::where('empresa_id', $empresaId)->findOrFail($id);
+        $this->authorize('delete', $empleado);
 
         // Soft delete personalizado
         $empleado->eliminado = 1;
