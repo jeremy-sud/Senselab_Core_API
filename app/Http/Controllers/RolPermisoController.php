@@ -8,6 +8,9 @@ use App\Http\Requests\UpdateRolPermisoRequest;
 use App\Http\Resources\RolPermisoResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Http\Requests\AsignarPermisosRequest;
+use App\Http\Requests\RemoverPermisosRequest;
+use App\Http\Requests\SincronizarPermisosRequest;
 
 class RolPermisoController extends Controller
 {
@@ -115,13 +118,8 @@ class RolPermisoController extends Controller
     /**
      * Asignar múltiples permisos a un rol.
      */
-    public function asignarPermisos(Request $request): JsonResponse
+    public function asignarPermisos(AsignarPermisosRequest $request): JsonResponse
     {
-        $request->validate([
-            'rol_id' => 'required|integer|exists:roles,id',
-            'permiso_ids' => 'required|array|min:1',
-            'permiso_ids.*' => 'required|integer|exists:permisos,id',
-        ]);
 
         $asignados = [];
         $yaExistentes = [];
@@ -155,13 +153,8 @@ class RolPermisoController extends Controller
     /**
      * Remover múltiples permisos de un rol.
      */
-    public function removerPermisos(Request $request): JsonResponse
+    public function removerPermisos(RemoverPermisosRequest $request): JsonResponse
     {
-        $request->validate([
-            'rol_id' => 'required|integer|exists:roles,id',
-            'permiso_ids' => 'required|array|min:1',
-            'permiso_ids.*' => 'required|integer',
-        ]);
 
         $removidos = RolPermiso::where('rol_id', $request->rol_id)
             ->whereIn('permiso_id', $request->permiso_ids)
@@ -206,13 +199,8 @@ class RolPermisoController extends Controller
     /**
      * Sincronizar permisos de un rol (reemplaza todos los existentes).
      */
-    public function sincronizarPermisos(Request $request): JsonResponse
+    public function sincronizarPermisos(SincronizarPermisosRequest $request): JsonResponse
     {
-        $request->validate([
-            'rol_id' => 'required|integer|exists:roles,id',
-            'permiso_ids' => 'required|array',
-            'permiso_ids.*' => 'required|integer|exists:permisos,id',
-        ]);
 
         // Remover todos los permisos actuales del rol
         RolPermiso::where('rol_id', $request->rol_id)->delete();
