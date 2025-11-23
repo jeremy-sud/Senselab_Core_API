@@ -10,7 +10,7 @@
 
 ## ✅ Estado Actual
 
-Se han configurado **55 modelos** con sus relaciones correspondientes y timestamps personalizados.
+Se han configurado **65 modelos** con sus relaciones correspondientes y timestamps personalizados.
 
 ## 🔄 Configuración Global
 

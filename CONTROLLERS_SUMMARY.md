@@ -11,7 +11,7 @@
 
 ## ✅ Controladores Implementados
 
-Se han creado **10 controladores API** completamente funcionales:
+Se han creado **60 controladores** completamente funcionales (44 en API/, 16 en raíz):
 
 ### 🔐 0. **AuthController** ✅ (NUEVO - FASE 3)
 - **Rutas**: `/api/login`, `/api/logout`, `/api/me`

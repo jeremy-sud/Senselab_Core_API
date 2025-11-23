@@ -34,7 +34,7 @@ Este documento proporciona información detallada sobre todos los endpoints, inc
 
 ## 🧪 Testing
 
-El proyecto incluye **66 tests automatizados** que validan el funcionamiento de la API:
+El proyecto incluye **127 tests automatizados** que validan el funcionamiento de la API:
 
 - **AuthTest (11 tests)**: Login, logout, tokens, permisos
 - **ProductoTest (12 tests)**: CRUD completo, validación, búsqueda
