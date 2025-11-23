@@ -22,7 +22,22 @@ class UpdatePlanillaCcssRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'empresa_id' => ['sometimes', 'exists:empresas,id'],
+            'periodo_nomina_id' => ['nullable', 'exists:periodos_nomina,id'],
+            'periodo' => ['sometimes', 'string', 'size:7', 'regex:/^\d{4}-\d{2}$/'],
+            'fecha_generacion' => ['sometimes', 'date'],
+            'fecha_presentacion' => ['nullable', 'date'],
+            'numero_planilla' => ['nullable', 'string', 'max:50'],
+            'total_empleados' => ['sometimes', 'integer', 'min:1'],
+            'total_salarios' => ['sometimes', 'numeric', 'min:0'],
+            'total_cuota_obrera' => ['sometimes', 'numeric', 'min:0'],
+            'total_cuota_patronal' => ['sometimes', 'numeric', 'min:0'],
+            'total_a_pagar' => ['sometimes', 'numeric', 'min:0'],
+            'archivo_xml' => ['nullable', 'string', 'max:255'],
+            'archivo_pdf' => ['nullable', 'string', 'max:255'],
+            'estado' => ['sometimes', 'in:borrador,enviada,aceptada,rechazada,pagada'],
+            'fecha_pago' => ['nullable', 'date'],
+            'notas' => ['nullable', 'string'],
         ];
     }
 }

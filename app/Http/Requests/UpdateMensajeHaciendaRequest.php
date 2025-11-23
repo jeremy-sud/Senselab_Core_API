@@ -22,7 +22,18 @@ class UpdateMensajeHaciendaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'empresa_id' => ['sometimes', 'exists:empresas,id'],
+            'comprobante_id' => ['nullable', 'exists:comprobantes_recibidos_electronicos,id'],
+            'clave_numerica' => ['sometimes', 'string', 'max:50'],
+            'tipo_mensaje' => ['sometimes', 'in:aceptacion,rechazo,aceptacion_parcial,consulta'],
+            'codigo_respuesta' => ['nullable', 'string', 'max:10'],
+            'detalle_mensaje' => ['nullable', 'string'],
+            'xml_respuesta' => ['nullable', 'string'],
+            'fecha_emision' => ['sometimes', 'date'],
+            'fecha_procesamiento' => ['nullable', 'date'],
+            'estado' => ['sometimes', 'in:pendiente,procesado,error'],
+            'intentos_envio' => ['sometimes', 'integer', 'min:0'],
+            'ultimo_error' => ['nullable', 'string'],
         ];
     }
 }

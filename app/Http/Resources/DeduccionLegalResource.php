@@ -14,6 +14,20 @@ class DeduccionLegalResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'codigo' => $this->codigo,
+            'nombre' => $this->nombre,
+            'descripcion' => $this->descripcion,
+            'tipo' => $this->tipo,
+            'porcentaje_base' => (float) $this->porcentaje_base,
+            'monto_fijo' => (float) $this->monto_fijo,
+            'aplica_sobre' => $this->aplica_sobre,
+            'es_obligatoria' => (bool) $this->es_obligatoria,
+            'activa' => (bool) $this->activa,
+            'created_at' => $this->created_at?->toISOString(),
+            'updated_at' => $this->updated_at?->toISOString(),
+            'deleted_at' => $this->deleted_at?->toISOString(),
+        ];
     }
 }

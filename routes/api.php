@@ -967,4 +967,44 @@ Route::middleware('auth:sanctum')->group(function () {
         ->middleware('permission:usuarios.leer');
     Route::post('/rol-usuario/asignar-roles', [RolUsuarioController::class, 'asignarRoles'])
         ->middleware('permission:usuarios.actualizar');
+
+    // ============================================
+    // FASE 9: Nuevos Módulos
+    // ============================================
+    
+    // Mensajes Hacienda
+    Route::apiResource('mensajes-hacienda', \App\Http\Controllers\MensajeHaciendaController::class);
+    
+    // Tipos Comprobantes FE
+    Route::apiResource('tipos-comprobantes-fe', \App\Http\Controllers\TipoComprobanteFeController::class);
+    
+    // Códigos Actividad Económica
+    Route::apiResource('codigos-actividad-economica', \App\Http\Controllers\CodigoActividadEconomicaController::class);
+    
+    // Declaraciones Tributarias
+    Route::apiResource('declaraciones-tributarias', \App\Http\Controllers\DeclaracionTributariaController::class);
+    
+    // Retenciones Impuesto
+    Route::apiResource('retenciones-impuesto', \App\Http\Controllers\RetencionImpuestoController::class);
+    
+    // Cuentas Bancarias
+    Route::apiResource('cuentas-bancarias', \App\Http\Controllers\CuentaBancariaController::class);
+    
+    // Movimientos Bancarios
+    Route::apiResource('movimientos-bancarios', \App\Http\Controllers\MovimientoBancarioController::class);
+    
+    // Deducciones Legales
+    Route::apiResource('deducciones-legales', \App\Http\Controllers\DeduccionLegalController::class);
+    
+    // Planillas CCSS
+    Route::apiResource('planillas-ccss', \App\Http\Controllers\PlanillaCcssController::class);
+    
+    // Tipos Cliente
+    Route::apiResource('tipos-clientes', \App\Http\Controllers\TipoClienteController::class);
+    
+    // Zonas Geográficas
+    Route::apiResource('zonas-geograficas', \App\Http\Controllers\ZonaGeograficaController::class);
+    
+    // Logs Acceso Sistema
+    Route::apiResource('logs-acceso-sistema', \App\Http\Controllers\LogAccesoSistemaController::class);
 });

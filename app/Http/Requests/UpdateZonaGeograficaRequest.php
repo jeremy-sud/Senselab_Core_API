@@ -22,7 +22,14 @@ class UpdateZonaGeograficaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'empresa_id' => ['nullable', 'exists:empresas,id'],
+            'codigo' => ['sometimes', 'string', 'max:10'],
+            'nombre' => ['sometimes', 'string', 'max:100'],
+            'tipo' => ['sometimes', 'in:provincia,canton,distrito,zona_ventas,ruta'],
+            'zona_padre_id' => ['nullable', 'exists:zonas_geograficas,id'],
+            'provincias_incluidas' => ['nullable', 'array'],
+            'vendedor_asignado_id' => ['nullable', 'exists:empleados,id'],
+            'activa' => ['boolean'],
         ];
     }
 }

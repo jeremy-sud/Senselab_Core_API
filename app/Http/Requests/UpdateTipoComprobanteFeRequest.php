@@ -21,8 +21,15 @@ class UpdateTipoComprobanteFeRequest extends FormRequest
      */
     public function rules(): array
     {
+        $id = $this->route('tipo_comprobante_fe');
+        
         return [
-            //
+            'codigo_dgt' => ['sometimes', 'string', 'size:2', 'unique:tipos_comprobantes_fe,codigo_dgt,' . $id],
+            'nombre' => ['sometimes', 'string', 'max:100'],
+            'descripcion' => ['nullable', 'string'],
+            'requiere_referencia' => ['boolean'],
+            'permite_exportacion' => ['boolean'],
+            'activo' => ['boolean'],
         ];
     }
 }
