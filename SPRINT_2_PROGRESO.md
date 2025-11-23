@@ -1,7 +1,7 @@
 # Sprint 2: Optimización y Completado - EN PROGRESO
 
 **Fecha inicio**: 23 de noviembre de 2025  
-**Estado**: 🔄 **EN PROGRESO** (20% completado)
+**Estado**: 🔄 **EN PROGRESO** (57% completado)
 
 ---
 
@@ -19,9 +19,9 @@ Sprint 2 se enfoca en:
 ✅ Bugs corregidos: 2/2 (100%)
 ✅ Tests pasando: 8/8 (100%)
 ✅ Seeder de permisos: 1/1 (100%)
-🔄 Controllers implementados: 1/7 (14%)
+✅ Controllers implementados: 4/7 (57%)
 ───────────────────────────────────
-Total Sprint 2: 20% completado
+Total Sprint 2: 57% completado
 ```
 
 ---
@@ -182,7 +182,7 @@ php artisan db:seed --class=PermisosPoliciesSeeder
 
 ## 4. Controllers Stubs Implementados 🔄
 
-### Progreso: 1/7 (14%)
+### Progreso: 4/7 (57%)
 
 #### ✅ TipoClienteController (Implementado)
 
@@ -243,44 +243,153 @@ php artisan db:seed --class=PermisosPoliciesSeeder
 
 ---
 
-### ⏳ Controllers Pendientes (6/7)
+#### ✅ TipoComprobanteFeController (Implementado)
 
-#### 1. ZonaGeograficaController (Pendiente)
+**Archivo**: `app/Http/Controllers/API/TipoComprobanteFeController.php`  
+**Líneas**: 199  
+**Commit**: b412f20
 
-**Modelo**: ZonaGeografica  
-**Complejidad**: Media  
-**Relaciones**: Posiblemente con sucursales/clientes  
-**Estimado**: 2h
+**Métodos implementados**:
 
-#### 2. TipoComprobanteFeController (Pendiente)
+1. **index()** - Listar tipos de comprobante FE
+   ```php
+   - Filtro por búsqueda: nombre, código DGT, descripción
+   - Filtros especiales:
+     * requiere_referencia: comprobantes que requieren referencia
+     * permite_exportacion: comprobantes permitidos para exportación
+     * codigo_dgt: filtro por código DGT específico ('01', '02', etc.)
+   - Ordenado por codigo_dgt ascendente
+   - authorize('viewAny', TipoComprobanteFe::class)
+   ```
 
-**Modelo**: TipoComprobanteFe  
-**Complejidad**: Baja (catálogo simple)  
-**Relaciones**: Facturación electrónica  
-**Estimado**: 1.5h
+2. **store(), show(), update(), destroy()** - Operaciones CRUD estándar
 
-#### 3. MovimientoBancarioController (Pendiente)
+**Códigos DGT implementados**:
+- `'01'` - Factura Electrónica
+- `'02'` - Nota de Débito Electrónica
+- `'03'` - Nota de Crédito Electrónica
+- `'04'` - Tiquete Electrónico
+- `'05'` - Comprobante de Compra (exportación)
+
+**Métodos del modelo**:
+- `esFacturaElectronica()`, `esNotaCredito()`, `esNotaDebito()`, `esTiquete()`
+
+---
+
+#### ✅ ZonaGeograficaController (Implementado)
+
+**Archivo**: `app/Http/Controllers/API/ZonaGeograficaController.php`  
+**Líneas**: 215  
+**Commit**: b412f20
+
+**Métodos implementados**:
+
+1. **index()** - Listar zonas geográficas
+   ```php
+   - Multi-tenancy: empresa_id automático del usuario autenticado
+   - Eager loading: empresa, zonaPadre, vendedorAsignado
+   - Filtro por tipo: provincia, canton, distrito, zona_ventas, ruta
+   - Filtros booleanos: provincias, cantones, zonas_ventas
+   - Filtro por zona_padre_id: zonas hijas de una zona padre
+   - Filtro por vendedor_asignado_id
+   - authorize('viewAny', ZonaGeografica::class)
+   ```
+
+2. **store()** - Crear zona geográfica
+   ```php
+   - empresa_id asignado automáticamente si no viene en request
+   - Tipos válidos: provincia, canton, distrito, zona_ventas, ruta
+   - Soporte para jerarquías (zona_padre_id)
+   - provincias_incluidas como JSON array
+   ```
+
+3. **show()** - Ver zona geográfica
+   ```php
+   - Eager loading: empresa, zonaPadre, zonasHijas, vendedorAsignado
+   - Incluye zonas hijas en respuesta
+   ```
+
+4. **update(), destroy()** - Operaciones CRUD estándar
+
+**Casos de uso**:
+- Provincias de Costa Rica (San José, Alajuela, etc.)
+- Cantones por provincia
+- Zonas de ventas personalizadas
+- Rutas de distribución con vendedor asignado
+
+---
+
+#### ✅ CuentaBancariaController (Implementado)
+
+**Archivo**: `app/Http/Controllers/API/CuentaBancariaController.php`  
+**Líneas**: 231  
+**Commit**: b412f20
+
+**Métodos implementados**:
+
+1. **index()** - Listar cuentas bancarias
+   ```php
+   - Multi-tenancy: empresa_id automático
+   - Eager loading: empresa, cuentaContable
+   - Filtro por moneda: CRC, USD, EUR
+   - Filtro principales: solo cuentas marcadas como principales
+   - Filtro por tipo_cuenta: corriente, ahorros, cliente
+   - Filtro por banco: búsqueda parcial
+   - Ordenado por banco + número de cuenta
+   - authorize('viewAny', CuentaBancaria::class)
+   ```
+
+2. **store()** - Crear cuenta bancaria
+   ```php
+   - empresa_id asignado automáticamente
+   - Lógica especial: solo 1 cuenta principal por moneda
+     * Al marcar como principal, desactiva otras principales de la misma moneda
+   - Validación IBAN: formato CR + 20 dígitos (22 caracteres totales)
+   - Validación unicidad de IBAN
+   ```
+
+3. **update()** - Actualizar cuenta bancaria
+   ```php
+   - Mantiene lógica de cuenta principal única por moneda
+   - Si se cambia moneda y es principal, actualiza otras cuentas
+   ```
+
+4. **show(), destroy()** - Operaciones CRUD estándar
+   ```php
+   - show() incluye cuentaContable
+   - destroy() hace soft delete: activa=false, eliminado=true
+   ```
+
+**Campos de seguridad**:
+- `numero_cuenta` oculto en respuesta (modelo CuentaBancaria)
+- Método `getNumeroCuentaEnmascarado()` disponible
+
+**Validaciones especiales**:
+- IBAN: regex `/^CR\d{20}$/` (inicia con CR + 20 dígitos)
+- Tipos cuenta: corriente, ahorros, cliente, colones, dolares
+- Monedas: CRC (Colón), USD (Dólar), EUR (Euro)
+
+---
+
+### ⏳ Controllers Pendientes (3/7)
+
+### ⏳ Controllers Pendientes (3/7)
+
+#### 1. MovimientoBancarioController (Pendiente)
 
 **Modelo**: MovimientoBancario  
 **Complejidad**: Alta (transaccional)  
 **Relaciones**: CuentaBancaria, Empresa  
 **Estimado**: 3h
 
-#### 4. RetencionImpuestoController (Pendiente)
+#### 2. RetencionImpuestoController (Pendiente)
 
 **Modelo**: RetencionImpuesto  
 **Complejidad**: Alta (fiscal)  
 **Relaciones**: Compras, Proveedores  
 **Estimado**: 3h
 
-#### 5. CuentaBancariaController (Pendiente)
-
-**Modelo**: CuentaBancaria  
-**Complejidad**: Media  
-**Relaciones**: Empresa, MovimientosBancarios  
-**Estimado**: 2h
-
-#### 6. DeclaracionTributariaController (Pendiente)
+#### 3. DeclaracionTributariaController (Pendiente)
 
 **Modelo**: DeclaracionTributaria  
 **Complejidad**: Alta (fiscal)  
@@ -295,14 +404,15 @@ php artisan db:seed --class=PermisosPoliciesSeeder
 
 ```
 1. ✅ TipoClienteController (Completado)
-2. ⏳ TipoComprobanteFeController (1.5h)
-3. ⏳ ZonaGeograficaController (2h)
-4. ⏳ CuentaBancariaController (2h)
+2. ✅ TipoComprobanteFeController (Completado)
+3. ✅ ZonaGeograficaController (Completado)
+4. ✅ CuentaBancariaController (Completado)
 5. ⏳ MovimientoBancarioController (3h)
 6. ⏳ RetencionImpuestoController (3h)
 7. ⏳ DeclaracionTributariaController (3h)
 ────────────────────────────────────
-Total estimado: 14.5h
+Completado: 6.5h / Total: 14.5h (45%)
+Pendiente: 9h
 ```
 
 ### Patrón de Implementación (Template)
@@ -472,9 +582,9 @@ class {Modelo}Controller extends Controller
 Bugs corregidos:         2/2    (100%) ✅
 Tests pasando:           8/8    (100%) ✅
 Seeder de permisos:      1/1    (100%) ✅
-Controllers stubs:       1/7    (14%)  🔄
+Controllers stubs:       4/7    (57%)  🔄
 ────────────────────────────────────────
-Total Sprint 2:          20%    🔄
+Total Sprint 2:          57%    🔄
 ```
 
 ### Commits Realizados
@@ -488,21 +598,27 @@ Total Sprint 2:          20%    🔄
 2. 285d110 - feat: Sprint 2 - Implementar TipoClienteController + Seeder
    - TipoClienteController completo (175 líneas)
    - PermisosPoliciesSeeder (228 permisos para 57 policies)
+
+3. b412f20 - feat: Implementar 3 controllers stubs
+   - TipoComprobanteFeController (199 líneas)
+   - ZonaGeograficaController (215 líneas)
+   - CuentaBancariaController (231 líneas)
+   - Progreso: 57% (4/7 controllers)
 ```
 
 ---
 
 ## Conclusión Parcial
 
-**Sprint 2 - Progreso 20%**:
+**Sprint 2 - Progreso 57%**:
 - ✅ Bugs críticos corregidos (100%)
 - ✅ Testing al 100% (8/8 pasando)
 - ✅ Seeder de permisos creado
-- 🔄 Controllers stubs: 1/7 implementados
+- ✅ Controllers stubs: 4/7 implementados (57%)
 
-**Próximo objetivo**: Implementar 3 controllers más (TipoComprobanteFe, ZonaGeografica, CuentaBancaria) para alcanzar 57% de progreso.
+**Próximo objetivo**: Implementar 3 controllers finales (Movimiento Bancario, Retención Impuesto, Declaración Tributaria) para alcanzar 100% de progreso.
 
 ---
 
-**Última actualización**: 23 de noviembre de 2025 - 15:30  
-**Próxima revisión**: Al completar 4/7 controllers
+**Última actualización**: 23 de noviembre de 2025 - 16:15  
+**Próxima revisión**: Al completar 7/7 controllers
