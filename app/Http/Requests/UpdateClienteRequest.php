@@ -20,7 +20,7 @@ class UpdateClienteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'tipo_identificacion' => ['sometimes', 'required', 'in:fisica,juridica,dimex,nite,extranjero'],
+            'tipo_identificacion' => ['sometimes', 'required', 'in:01,02,03,04,05,06,07'],
             'numero_identificacion' => ['sometimes', 'required', 'string', 'max:50'],
             'nombre' => ['sometimes', 'required', 'string', 'max:255'],
             'apellidos' => ['nullable', 'string', 'max:255'],

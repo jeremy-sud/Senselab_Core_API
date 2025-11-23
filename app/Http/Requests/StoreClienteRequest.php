@@ -21,7 +21,7 @@ class StoreClienteRequest extends FormRequest
     {
         return [
             'empresa_id' => ['required', 'exists:empresas,id'],
-            'tipo_identificacion' => ['required', 'in:fisica,juridica,dimex,nite,extranjero'],
+            'tipo_identificacion' => ['required', 'in:01,02,03,04,05,06,07'],
             'numero_identificacion' => ['required', 'string', 'max:50'],
             'nombre' => ['required', 'string', 'max:255'],
             'apellidos' => ['nullable', 'string', 'max:255'],
