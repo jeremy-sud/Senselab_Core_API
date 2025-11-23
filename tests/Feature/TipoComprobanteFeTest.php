@@ -46,7 +46,20 @@ class TipoComprobanteFeTest extends TestCase
             $this->rol->permisos()->attach($permiso->id, ['activo' => true]);
         }
 
+        // Crear empresa para multi-tenancy
+        $empresa = \App\Models\Empresa::create([
+            'nombre' => 'Empresa Test',
+            'nombre_comercial' => 'Test',
+            'razon_social' => 'Test S.A.',
+            'num_identificacion_dgt' => '1234567890',
+            'tipo_identificacion' => '02',
+            'email' => 'empresa@test.com',
+            'activo' => true,
+            'eliminado' => false,
+        ]);
+
         $this->usuario = Usuario::create([
+            'empresa_id' => $empresa->id,
             'email' => 'admin@test.com',
             'nombre' => 'Admin',
             'apellidos' => 'Test',
@@ -155,16 +168,15 @@ class TipoComprobanteFeTest extends TestCase
     {
         Sanctum::actingAs($this->usuario);
 
-        TipoComprobanteFe::create(['nombre' => 'Factura', 'codigo_dgt' => '01', 'activo' => true, 'eliminado' => false]);
-        TipoComprobanteFe::create(['nombre' => 'Tiquete', 'codigo_dgt' => '04', 'activo' => true, 'eliminado' => false]);
+        TipoComprobanteFe::create(['nombre' => 'Factura', 'codigo_dgt' => '01', 'descripcion' => 'Factura electrónica', 'activo' => true, 'eliminado' => false]);
+        TipoComprobanteFe::create(['nombre' => 'Tiquete', 'codigo_dgt' => '04', 'descripcion' => 'Tiquete electrónico', 'activo' => true, 'eliminado' => false]);
 
         $response = $this->getJson('/api/tipos-comprobantes-fe?codigo_dgt=01');
 
         $response->assertStatus(200);
         $data = $response->json('data');
-        foreach ($data as $item) {
-            $this->assertEquals('01', $item['codigo_dgt']);
-        }
+        $this->assertCount(1, $data); // Solo debe devolver el de código '01'
+        $this->assertEquals('01', $data[0]['codigo_dgt']);
     }
 
     public function test_ordenamiento_por_codigo_dgt(): void
