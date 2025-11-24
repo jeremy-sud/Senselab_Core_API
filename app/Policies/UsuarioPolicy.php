@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Models\Usuario;
-use App\Models\Usuario;
 
 /**
  * UsuarioPolicy - Gestión de autorización para Usuario
