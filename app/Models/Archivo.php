@@ -43,7 +43,7 @@ class Archivo extends Model
     /**
      * Relación polimórfica con la entidad (producto, cliente, venta, etc.)
      */
-    public function entidad()
+    public function entidad(): \Illuminate\Database\Eloquent\Relations\MorphTo
     {
         return $this->morphTo(__FUNCTION__, 'entidad_tipo', 'entidad_id');
     }
@@ -51,7 +51,7 @@ class Archivo extends Model
     /**
      * Relación con la empresa propietaria
      */
-    public function empresa()
+    public function empresa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empresa::class, 'empresa_id');
     }
@@ -59,7 +59,7 @@ class Archivo extends Model
     /**
      * Relación con el usuario que subió el archivo
      */
-    public function usuario()
+    public function usuario(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Usuario::class, 'usuario_id');
     }
@@ -67,7 +67,7 @@ class Archivo extends Model
     /**
      * Scope para archivos activos
      */
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true);
     }
@@ -75,7 +75,7 @@ class Archivo extends Model
     /**
      * Scope para archivos no eliminados
      */
-    public function scopeNoEliminados($query)
+    public function scopeNoEliminados(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('eliminado', false);
     }

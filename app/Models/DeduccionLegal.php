@@ -50,12 +50,12 @@ class DeduccionLegal extends Model
 
     /* --------------------- Scopes --------------------- */
 
-    public function scopeActivas($query)
+    public function scopeActivas(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activa', true)->where('eliminado', false);
     }
 
-    public function scopeObligatorias($query)
+    public function scopeObligatorias(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('es_obligatoria', true);
     }

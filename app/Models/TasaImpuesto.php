@@ -70,7 +70,7 @@ class TasaImpuesto extends Model
     /**
      * Relación con el modelo TipoImpuesto.
      */
-    public function tipoImpuesto()
+    public function tipoImpuesto(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(TipoImpuesto::class, 'tipo_impuesto_id');
     }
@@ -78,7 +78,7 @@ class TasaImpuesto extends Model
     /**
      * Scope para filtrar solo los registros activos.
      */
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true);
     }
@@ -86,7 +86,7 @@ class TasaImpuesto extends Model
     /**
      * Scope para filtrar solo los registros no eliminados.
      */
-    public function scopeNoEliminados($query)
+    public function scopeNoEliminados(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('eliminado', false);
     }

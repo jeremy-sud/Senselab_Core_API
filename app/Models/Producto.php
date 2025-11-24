@@ -74,37 +74,37 @@ class Producto extends Model
     ];
 
     /* --------------------- Relaciones --------------------- */
-    public function empresa()
+    public function empresa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empresa::class);
     }
 
-    public function categoria()
+    public function categoria(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(CategoriaProducto::class, 'categoria_id');
     }
 
-    public function unidadMedida()
+    public function unidadMedida(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(UnidadMedida::class, 'unidad_medida_id');
     }
 
-    public function marca()
+    public function marca(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Marca::class, 'marca_id');
     }
 
-    public function proveedor()
+    public function proveedor(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Proveedor::class, 'proveedor_id');
     }
 
-    public function tipoImpuesto()
+    public function tipoImpuesto(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(TipoImpuesto::class, 'tipo_impuesto_id');
     }
 
-    public function cabys()
+    public function cabys(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Cabys::class, 'cabys_id');
     }

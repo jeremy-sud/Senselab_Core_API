@@ -67,7 +67,7 @@ class BusUnidad extends Model
     /**
      * Scope para obtener unidades activas (no eliminadas).
      */
-    public function scopeActivas($query)
+    public function scopeActivas(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true)
                     ->where('eliminado', false);

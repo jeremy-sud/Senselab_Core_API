@@ -52,7 +52,7 @@ class Permiso extends Model
     /**
      * Relación muchos a muchos con Rol.
      */
-    public function roles()
+    public function roles(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Rol::class, 'roles_permisos', 'permiso_id', 'rol_id')
                     ->wherePivot('activo', true)

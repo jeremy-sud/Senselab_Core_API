@@ -87,7 +87,7 @@ class DetalleOrdenCompra extends Model
     /**
      * Get the orden de compra that owns the detalle.
      */
-    public function ordenCompra()
+    public function ordenCompra(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(OrdenCompra::class);
     }
@@ -95,7 +95,7 @@ class DetalleOrdenCompra extends Model
     /**
      * Get the producto associated with the detalle.
      */
-    public function producto()
+    public function producto(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Producto::class);
     }
@@ -106,7 +106,7 @@ class DetalleOrdenCompra extends Model
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true)
                     ->where('eliminado', false);

@@ -41,13 +41,13 @@ class Marca extends Model
     ];
 
     // Relaciones
-    public function productos()
+    public function productos(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Producto::class, 'marca_id');
     }
 
     // Scopes
-    public function scopeActivas($query)
+    public function scopeActivas(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true)->where('eliminado', false);
     }

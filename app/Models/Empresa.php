@@ -55,127 +55,127 @@ class Empresa extends Tenant
     const UPDATED_AT = 'actualizado_en';
 
     // Relaciones principales
-    public function almacenes()
+    public function almacenes(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Almacen::class);
     }
 
-    public function sucursales()
+    public function sucursales(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Sucursal::class);
     }
 
-    public function productos()
+    public function productos(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Producto::class);
     }
 
-    public function clientes()
+    public function clientes(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Cliente::class);
     }
 
-    public function usuarios()
+    public function usuarios(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Usuario::class);
     }
 
-    public function configuraciones()
+    public function configuraciones(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Configuracion::class);
     }
 
     // Relaciones de documentos
-    public function ventas()
+    public function ventas(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Venta::class);
     }
 
-    public function comprobantesRecibidos()
+    public function comprobantesRecibidos(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(ComprobanteRecibidoElectronico::class);
     }
 
     // Relaciones de catálogos
-    public function categoriasProductos()
+    public function categoriasProductos(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(CategoriaProducto::class);
     }
 
     // Relación con régimen tributario
-    public function regimenTributario()
+    public function regimenTributario(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(RegimenTributario::class);
     }
 
     // Relaciones adicionales
-    public function proveedores()
+    public function proveedores(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Proveedor::class);
     }
 
-    public function empleados()
+    public function empleados(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Empleado::class);
     }
 
-    public function ordenesCompra()
+    public function ordenesCompra(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(OrdenCompra::class);
     }
 
-    public function cuentasContables()
+    public function cuentasContables(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(CuentaContable::class);
     }
 
-    public function asientosContables()
+    public function asientosContables(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(AsientoContable::class);
     }
 
-    public function presupuestos()
+    public function presupuestos(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Presupuesto::class);
     }
 
-    public function cajaChica()
+    public function cajaChica(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(CajaChica::class);
     }
 
-    public function cuentasPorCobrar()
+    public function cuentasPorCobrar(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(CuentaPorCobrar::class);
     }
 
-    public function cuentasPorPagar()
+    public function cuentasPorPagar(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(CuentaPorPagar::class);
     }
 
-    public function periodosNomina()
+    public function periodosNomina(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(PeriodoNomina::class);
     }
 
-    public function etiquetas()
+    public function etiquetas(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Etiqueta::class);
     }
 
-    public function rutas()
+    public function rutas(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Ruta::class);
     }
 
-    public function consecutivosFe()
+    public function consecutivosFe(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(ConsecutivoFe::class);
     }
 
     // Scopes
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true)->where('eliminado', false);
     }

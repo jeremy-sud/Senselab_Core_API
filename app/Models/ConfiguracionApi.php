@@ -37,7 +37,7 @@ class ConfiguracionApi extends Model
     /**
      * Relación con la empresa
      */
-    public function empresa()
+    public function empresa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empresa::class, 'empresa_id');
     }
@@ -45,7 +45,7 @@ class ConfiguracionApi extends Model
     /**
      * Scope para configuraciones activas
      */
-    public function scopeActivas($query)
+    public function scopeActivas(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true);
     }

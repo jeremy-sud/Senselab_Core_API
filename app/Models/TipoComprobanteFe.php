@@ -46,7 +46,7 @@ class TipoComprobanteFe extends Model
 
     /* --------------------- Scopes --------------------- */
 
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true)->where('eliminado', false);
     }
@@ -56,12 +56,12 @@ class TipoComprobanteFe extends Model
         return $query->where('codigo_dgt', $codigo);
     }
 
-    public function scopeQueRequierenReferencia($query)
+    public function scopeQueRequierenReferencia(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('requiere_referencia', true);
     }
 
-    public function scopePermiteExportacion($query)
+    public function scopePermiteExportacion(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('permite_exportacion', true);
     }

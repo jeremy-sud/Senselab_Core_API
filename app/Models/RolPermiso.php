@@ -62,7 +62,7 @@ class RolPermiso extends Model
     /**
      * Relación con el modelo Permiso.
      */
-    public function permiso()
+    public function permiso(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Permiso::class, 'permiso_id');
     }
@@ -70,7 +70,7 @@ class RolPermiso extends Model
     /**
      * Scope para filtrar solo los registros activos.
      */
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true);
     }

@@ -79,7 +79,7 @@ class Rol extends Model
     /**
      * Scope para filtrar solo los registros activos.
      */
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true);
     }
@@ -87,7 +87,7 @@ class Rol extends Model
     /**
      * Scope para filtrar solo los registros no eliminados.
      */
-    public function scopeNoEliminados($query)
+    public function scopeNoEliminados(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('eliminado', false);
     }
@@ -95,7 +95,7 @@ class Rol extends Model
     /**
      * Relación muchos a muchos con Usuario.
      */
-    public function usuarios()
+    public function usuarios(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Usuario::class, 'rol_usuario', 'rol_id', 'usuario_id')
                     ->wherePivot('activo', true)
@@ -106,7 +106,7 @@ class Rol extends Model
     /**
      * Relación muchos a muchos con Permiso.
      */
-    public function permisos()
+    public function permisos(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Permiso::class, 'roles_permisos', 'rol_id', 'permiso_id')
                     ->wherePivot('activo', true)

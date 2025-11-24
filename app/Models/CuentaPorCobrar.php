@@ -97,7 +97,7 @@ class CuentaPorCobrar extends Model
     /**
      * Get the empresa that owns the cuenta por cobrar.
      */
-    public function empresa()
+    public function empresa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empresa::class);
     }
@@ -105,7 +105,7 @@ class CuentaPorCobrar extends Model
     /**
      * Get the cliente that owns the cuenta por cobrar.
      */
-    public function cliente()
+    public function cliente(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Cliente::class);
     }
@@ -113,7 +113,7 @@ class CuentaPorCobrar extends Model
     /**
      * Get the venta associated with the cuenta por cobrar.
      */
-    public function venta()
+    public function venta(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Venta::class);
     }
@@ -121,7 +121,7 @@ class CuentaPorCobrar extends Model
     /**
      * Get the pagos for the cuenta por cobrar.
      */
-    public function pagos()
+    public function pagos(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(PagoCuentaCobrar::class);
     }
@@ -144,7 +144,7 @@ class CuentaPorCobrar extends Model
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeActivas($query)
+    public function scopeActivas(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true)
                     ->where('eliminado', false);
@@ -156,7 +156,7 @@ class CuentaPorCobrar extends Model
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopePendientes($query)
+    public function scopePendientes(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('estado', 'Pendiente')
                     ->orWhere('estado', 'Pagada Parcialmente');
@@ -168,7 +168,7 @@ class CuentaPorCobrar extends Model
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeVencidas($query)
+    public function scopeVencidas(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('fecha_vencimiento', '<', now())
                     ->whereRaw('monto_original - monto_pagado > 0')

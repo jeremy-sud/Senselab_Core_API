@@ -42,18 +42,18 @@ class Etiqueta extends Model
     ];
 
     // Relaciones
-    public function empresa()
+    public function empresa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empresa::class);
     }
 
-    public function entidades()
+    public function entidades(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(EntidadEtiqueta::class, 'etiqueta_id');
     }
 
     // Scopes
-    public function scopeActivas($query)
+    public function scopeActivas(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true)->where('eliminado', false);
     }

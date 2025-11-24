@@ -46,24 +46,24 @@ class TipoCliente extends Model
 
     /* --------------------- Relaciones --------------------- */
 
-    public function clientes()
+    public function clientes(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Cliente::class, 'tipo_cliente_id');
     }
 
     /* --------------------- Scopes --------------------- */
 
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true)->where('eliminado', false);
     }
 
-    public function scopeConDescuento($query)
+    public function scopeConDescuento(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('descuento_default', '>', 0);
     }
 
-    public function scopeConCredito($query)
+    public function scopeConCredito(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('dias_credito_default', '>', 0);
     }

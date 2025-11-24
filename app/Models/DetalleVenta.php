@@ -104,17 +104,17 @@ class DetalleVenta extends Model
     /**
      * Relaciones
      */
-    public function venta()
+    public function venta(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Venta::class);
     }
 
-    public function producto()
+    public function producto(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Producto::class);
     }
 
-    public function tipoImpuesto()
+    public function tipoImpuesto(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(TipoImpuesto::class, 'tipo_impuesto_id');
     }
@@ -122,7 +122,7 @@ class DetalleVenta extends Model
     /**
      * Scopes útiles.
      */
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true)->where('eliminado', false);
     }

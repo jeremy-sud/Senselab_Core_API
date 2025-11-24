@@ -48,29 +48,29 @@ class ZonaGeografica extends Model
 
     /* --------------------- Relaciones --------------------- */
 
-    public function empresa()
+    public function empresa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empresa::class);
     }
 
-    public function zonaPadre()
+    public function zonaPadre(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(ZonaGeografica::class, 'zona_padre_id');
     }
 
-    public function zonasHijas()
+    public function zonasHijas(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(ZonaGeografica::class, 'zona_padre_id');
     }
 
-    public function vendedorAsignado()
+    public function vendedorAsignado(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empleado::class, 'vendedor_asignado_id');
     }
 
     /* --------------------- Scopes --------------------- */
 
-    public function scopeActivas($query)
+    public function scopeActivas(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activa', true)->where('eliminado', false);
     }
@@ -80,17 +80,17 @@ class ZonaGeografica extends Model
         return $query->where('tipo', $tipo);
     }
 
-    public function scopeProvincias($query)
+    public function scopeProvincias(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('tipo', 'provincia');
     }
 
-    public function scopeCantones($query)
+    public function scopeCantones(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('tipo', 'canton');
     }
 
-    public function scopeZonasVentas($query)
+    public function scopeZonasVentas(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('tipo', 'zona_ventas');
     }

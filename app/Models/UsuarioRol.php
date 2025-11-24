@@ -57,7 +57,7 @@ class UsuarioRol extends Model
     /**
      * Relación con el modelo Usuario.
      */
-    public function usuario()
+    public function usuario(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Usuario::class, 'usuario_id');
     }
@@ -65,7 +65,7 @@ class UsuarioRol extends Model
     /**
      * Relación con el modelo Rol.
      */
-    public function rol()
+    public function rol(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Rol::class, 'rol_id');
     }
@@ -73,7 +73,7 @@ class UsuarioRol extends Model
     /**
      * Scope para filtrar solo los registros activos.
      */
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true);
     }

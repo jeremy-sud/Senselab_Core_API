@@ -60,12 +60,12 @@ class Proveedor extends Model
     ];
 
     /* --------------------- Relaciones --------------------- */
-    public function empresa()
+    public function empresa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empresa::class);
     }
 
-    public function productos()
+    public function productos(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Producto::class, 'proveedor_id');
     }
@@ -73,7 +73,7 @@ class Proveedor extends Model
     /**
      * Relación con órdenes de compra.
      */
-    public function ordenesCompra()
+    public function ordenesCompra(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(OrdenCompra::class, 'proveedor_id');
     }
@@ -81,7 +81,7 @@ class Proveedor extends Model
     /**
      * Relación con cuentas por pagar.
      */
-    public function cuentasPorPagar()
+    public function cuentasPorPagar(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(CuentaPorPagar::class, 'proveedor_id');
     }
@@ -89,7 +89,7 @@ class Proveedor extends Model
     /**
      * Relación con entradas de inventario.
      */
-    public function entradasInventario()
+    public function entradasInventario(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(EntradaInventario::class, 'proveedor_id');
     }
@@ -97,7 +97,7 @@ class Proveedor extends Model
     /**
      * Relación con comprobantes recibidos electrónicos.
      */
-    public function comprobantesRecibidos()
+    public function comprobantesRecibidos(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(ComprobanteRecibidoElectronico::class, 'proveedor_id');
     }

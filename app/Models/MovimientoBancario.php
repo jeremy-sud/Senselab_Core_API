@@ -58,29 +58,29 @@ class MovimientoBancario extends Model
 
     /* --------------------- Relaciones --------------------- */
 
-    public function cuentaBancaria()
+    public function cuentaBancaria(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(CuentaBancaria::class);
     }
 
-    public function empresa()
+    public function empresa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empresa::class);
     }
 
-    public function asientoContable()
+    public function asientoContable(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(AsientoContable::class);
     }
 
     /* --------------------- Scopes --------------------- */
 
-    public function scopeConciliados($query)
+    public function scopeConciliados(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('conciliado', true);
     }
 
-    public function scopePendientesConciliacion($query)
+    public function scopePendientesConciliacion(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('conciliado', false);
     }

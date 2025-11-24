@@ -46,7 +46,7 @@ class FormaPago extends Model
     ];
 
     // Scopes
-    public function scopeActivas($query)
+    public function scopeActivas(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true)->where('eliminado', false);
     }
@@ -57,7 +57,7 @@ class FormaPago extends Model
     }
 
     // Relaciones de ejemplo: pagos que usaron esta forma (si existe tabla pagos)
-    public function pagos()
+    public function pagos(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Pago::class, 'forma_pago_id');
     }

@@ -67,7 +67,7 @@ class Sucursal extends Model
     /**
      * Relación con el modelo Empresa.
      */
-    public function empresa()
+    public function empresa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empresa::class, 'empresa_id');
     }
@@ -75,7 +75,7 @@ class Sucursal extends Model
     /**
      * Relación con almacenes de la sucursal.
      */
-    public function almacenes()
+    public function almacenes(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Almacen::class, 'sucursal_id');
     }
@@ -83,7 +83,7 @@ class Sucursal extends Model
     /**
      * Relación con ventas de la sucursal.
      */
-    public function ventas()
+    public function ventas(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Venta::class, 'sucursal_id');
     }
@@ -91,7 +91,7 @@ class Sucursal extends Model
     /**
      * Relación con cajas de la sucursal.
      */
-    public function cajas()
+    public function cajas(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Caja::class, 'sucursal_id');
     }
@@ -99,7 +99,7 @@ class Sucursal extends Model
     /**
      * Relación con consecutivos FE de la sucursal.
      */
-    public function consecutivosFe()
+    public function consecutivosFe(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(ConsecutivoFe::class, 'sucursal_id');
     }
@@ -107,7 +107,7 @@ class Sucursal extends Model
     /**
      * Scope para filtrar solo los registros activos.
      */
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true);
     }
@@ -115,7 +115,7 @@ class Sucursal extends Model
     /**
      * Scope para filtrar solo los registros no eliminados.
      */
-    public function scopeNoEliminados($query)
+    public function scopeNoEliminados(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('eliminado', false);
     }

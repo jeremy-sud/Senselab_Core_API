@@ -90,7 +90,7 @@ class CuentaContable extends Model
     /**
      * Scope para obtener cuentas activas.
      */
-    public function scopeActivas($query)
+    public function scopeActivas(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true)
                     ->where('eliminado', false);
@@ -123,7 +123,7 @@ class CuentaContable extends Model
     /**
      * Scope para obtener solo cuentas que permiten movimientos.
      */
-    public function scopeConMovimientos($query)
+    public function scopeConMovimientos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('permite_movimientos', true);
     }
@@ -131,7 +131,7 @@ class CuentaContable extends Model
     /**
      * Scope para obtener cuentas raíz (sin padre).
      */
-    public function scopeCuentasRaiz($query)
+    public function scopeCuentasRaiz(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->whereNull('cuenta_padre_id');
     }
