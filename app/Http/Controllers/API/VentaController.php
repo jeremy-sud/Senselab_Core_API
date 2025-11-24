@@ -12,6 +12,7 @@ use App\Http\Requests\StoreVentaRequest;
 use App\Http\Requests\UpdateVentaRequest;
 use App\Http\Resources\VentaResource;
 use App\Traits\HasCacheableQueries;
+use App\Jobs\GeneratePdfReportJob;
 use OpenApi\Attributes as OA;
 
 class VentaController extends Controller
@@ -645,5 +646,68 @@ class VentaController extends Controller
         $numero = $ultimaVenta ? (int)substr($ultimaVenta->numero_comprobante, -8) + 1 : 1;
         
         return $prefijo . '-' . str_pad($numero, 8, '0', STR_PAD_LEFT);
+    }
+    
+    /**
+     * Generar reporte PDF de ventas (async con Queue Job)
+     * Sprint 8.4 - Queue Jobs
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    #[OA\Post(
+        path: '/api/ventas/reportes/pdf',
+        summary: 'Generar reporte PDF de ventas (asíncrono)',
+        description: 'Encola un job para generar reporte PDF de ventas con filtros. El PDF se genera en background.',
+        security: [['sanctum' => []]],
+        tags: ['Ventas', 'Reportes'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['fecha_inicio', 'fecha_fin'],
+                properties: [
+                    new OA\Property(property: 'fecha_inicio', type: 'string', format: 'date', example: '2025-01-01'),
+                    new OA\Property(property: 'fecha_fin', type: 'string', format: 'date', example: '2025-01-31'),
+                    new OA\Property(property: 'cliente_id', type: 'integer', example: 5),
+                    new OA\Property(property: 'sucursal_id', type: 'integer', example: 1),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 202,
+                description: 'Job encolado exitosamente',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Reporte PDF en proceso. Recibirás notificación cuando esté listo.'),
+                        new OA\Property(property: 'job_id', type: 'string', example: 'abc123'),
+                    ]
+                )
+            ),
+        ]
+    )]
+    public function generatePdfReport(Request $request)
+    {
+        $request->validate([
+            'fecha_inicio' => 'required|date',
+            'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
+            'cliente_id' => 'nullable|exists:clientes,id',
+            'sucursal_id' => 'nullable|exists:sucursales,id',
+        ]);
+
+        $empresaId = $request->user()->empresa_id;
+        
+        // Dispatch job asíncrono (Sprint 8.4)
+        $job = GeneratePdfReportJob::dispatch(
+            reportType: 'ventas',
+            empresaId: $empresaId,
+            filters: $request->only(['fecha_inicio', 'fecha_fin', 'cliente_id', 'sucursal_id']),
+            userId: $request->user()->id
+        );
+
+        return response()->json([
+            'message' => 'Reporte PDF en proceso. Recibirás notificación cuando esté listo.',
+            'job_id' => $job->getJobId(),
+        ], 202); // 202 Accepted
     }
 }

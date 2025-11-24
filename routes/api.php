@@ -213,6 +213,8 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
         ->middleware('permission:ver-ventas');
     Route::post('/ventas', [VentaController::class, 'store'])
         ->middleware('permission:crear-ventas');
+    Route::post('/ventas/reportes/pdf', [VentaController::class, 'generatePdfReport'])
+        ->middleware('permission:ver-ventas'); // Sprint 8.4 - Queue Jobs
     Route::get('/ventas/{venta}', [VentaController::class, 'show'])
         ->middleware('permission:ver-ventas');
     Route::put('/ventas/{venta}', [VentaController::class, 'update'])
