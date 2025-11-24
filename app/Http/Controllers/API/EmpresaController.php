@@ -8,10 +8,15 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreEmpresaRequest;
 use App\Http\Requests\UpdateEmpresaRequest;
 use App\Http\Resources\EmpresaResource;
+use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
 
 class EmpresaController extends Controller
 {
+    use HasCacheableQueries;
+    
+    protected $cacheTags = ['empresas', 'tenants'];
+    protected $cacheTTL = 3600; // 1 hora
     /**
      * Display a listing of the resource.
      * 
@@ -80,23 +85,27 @@ class EmpresaController extends Controller
             $perPage = $request->input('per_page', 15);
             $search = $request->input('search');
             
-            $query = Empresa::with(['regimenTributario']);
-            
-            if ($search) {
-                $query->where(function($q) use ($search) {
-                    $q->where('nombre', 'like', "%{$search}%")
-                      ->orWhere('razon_social', 'like', "%{$search}%")
-                      ->orWhere('num_identificacion_dgt', 'like', "%{$search}%")
-                      ->orWhere('email', 'like', "%{$search}%");
-                });
-            }
-            
-            if ($request->boolean('activos')) {
-                $query->where('activo', true);
-            }
-            
-            $empresas = $query->orderBy('creado_en', 'desc')
-                              ->paginate($perPage);
+            $empresas = $this->cacheQueryIfEnabled(
+                $this->getCacheKey('index', $request->all()),
+                function() use ($request, $perPage, $search) {
+                    $query = Empresa::with(['regimenTributario']);
+                    
+                    if ($search) {
+                        $query->where(function($q) use ($search) {
+                            $q->where('nombre', 'like', "%{$search}%")
+                              ->orWhere('razon_social', 'like', "%{$search}%")
+                              ->orWhere('num_identificacion_dgt', 'like', "%{$search}%")
+                              ->orWhere('email', 'like', "%{$search}%");
+                        });
+                    }
+                    
+                    if ($request->boolean('activos')) {
+                        $query->where('activo', true);
+                    }
+                    
+                    return $query->orderBy('creado_en', 'desc')->paginate($perPage);
+                }
+            );
             
             return EmpresaResource::collection($empresas);
         } catch (\Exception $e) {
@@ -157,6 +166,8 @@ class EmpresaController extends Controller
         try {
             $empresa = Empresa::create($request->validated());
             $empresa->load('regimenTributario');
+            
+            $this->flushCache();
             
             return (new EmpresaResource($empresa))
                 ->additional(['message' => 'Empresa creada exitosamente'])
@@ -288,6 +299,8 @@ class EmpresaController extends Controller
             $empresa->update($request->validated());
             $empresa->load('regimenTributario');
             
+            $this->flushCache();
+            
             return (new EmpresaResource($empresa))
                 ->additional(['message' => 'Empresa actualizada exitosamente']);
         } catch (\Exception $e) {
@@ -345,6 +358,8 @@ class EmpresaController extends Controller
                 'activo' => false,
                 'eliminado' => true
             ]);
+            
+            $this->flushCache();
             
             return response()->json([
                 'message' => 'Empresa eliminada exitosamente'

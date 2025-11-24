@@ -3,7 +3,6 @@
 namespace App\Traits;
 
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Http\Request;
 
 /**
  * Trait HasCacheableQueries
@@ -34,16 +33,15 @@ trait HasCacheableQueries
     }
 
     /**
-     * Genera una clave de cache única basada en los parámetros del request
+     * Genera una clave de cache única basada en parámetros
      * 
-     * @param Request $request
-     * @param string|null $suffix Sufijo adicional para la clave
+     * @param string $method Nombre del método (ej: 'index', 'show')
+     * @param array $params Parámetros para generar la clave
      * @return string
      */
-    protected function getCacheKey(Request $request, ?string $suffix = null): string
+    protected function getCacheKey(string $method, array $params = []): string
     {
         $prefix = $this->getCachePrefix();
-        $params = $request->all();
         
         // Agregar empresa_id del usuario autenticado si existe
         if (auth('sanctum')->check() && !isset($params['empresa_id'])) {
@@ -52,9 +50,7 @@ trait HasCacheableQueries
         
         $hash = md5(json_encode($params));
         
-        return $suffix 
-            ? "{$prefix}:{$suffix}:{$hash}"
-            : "{$prefix}:index:{$hash}";
+        return "{$prefix}:{$method}:{$hash}";
     }
 
     /**
@@ -83,14 +79,12 @@ trait HasCacheableQueries
     /**
      * Ejecuta una consulta con cache
      * 
-     * @param Request $request
+     * @param string $cacheKey Clave de cache ya generada
      * @param callable $callback Función que retorna los datos a cachear
-     * @param string|null $suffix Sufijo para la clave de cache
      * @return mixed
      */
-    protected function cacheQuery(Request $request, callable $callback, ?string $suffix = null)
+    protected function cacheQuery(string $cacheKey, callable $callback)
     {
-        $cacheKey = $this->getCacheKey($request, $suffix);
         $cacheTags = $this->getCacheTags();
         $cacheTTL = $this->getCacheTTL();
 
@@ -136,15 +130,14 @@ trait HasCacheableQueries
      * Wrapper condicional para cache
      * Solo cachea si está habilitado, sino ejecuta directamente
      * 
-     * @param Request $request
+     * @param string $cacheKey Clave de cache ya generada
      * @param callable $callback
-     * @param string|null $suffix
      * @return mixed
      */
-    protected function cacheQueryIfEnabled(Request $request, callable $callback, ?string $suffix = null)
+    protected function cacheQueryIfEnabled(string $cacheKey, callable $callback)
     {
         if ($this->isCacheEnabled()) {
-            return $this->cacheQuery($request, $callback, $suffix);
+            return $this->cacheQuery($cacheKey, $callback);
         }
         
         return $callback();

@@ -7,6 +7,7 @@ use App\Http\Requests\StoreCategoriaProductoRequest;
 use App\Http\Requests\UpdateCategoriaProductoRequest;
 use App\Http\Resources\CategoriaProductoResource;
 use App\Models\CategoriaProducto;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -20,6 +21,10 @@ use OpenApi\Attributes as OA;
  */
 class CategoriaProductoController extends Controller
 {
+    use HasCacheableQueries;
+    
+    protected $cacheTags = ['categorias-productos', 'catalogos'];
+    protected $cacheTTL = 3600; // 1 hora
     /**
      * Listar todas las categorías de la empresa
      */
@@ -59,13 +64,18 @@ class CategoriaProductoController extends Controller
 
         $empresaId = auth()->user()->empresa_id;
         
-        $query = CategoriaProducto::where('empresa_id', $empresaId);
+        $categorias = $this->cacheQueryIfEnabled(
+            $this->getCacheKey('index', array_merge($request->all(), ['empresa_id' => $empresaId])),
+            function() use ($request, $empresaId) {
+                $query = CategoriaProducto::where('empresa_id', $empresaId);
 
-        if ($request->has('activo')) {
-            $query->where('activo', $request->boolean('activo'));
-        }
+                if ($request->has('activo')) {
+                    $query->where('activo', $request->boolean('activo'));
+                }
 
-        $categorias = $query->get();
+                return $query->get();
+            }
+        );
 
         return CategoriaProductoResource::collection($categorias);
     }
@@ -114,6 +124,8 @@ class CategoriaProductoController extends Controller
         $validated['empresa_id'] = auth()->user()->empresa_id;
 
         $categoria = CategoriaProducto::create($validated);
+        
+        $this->flushCache();
 
         return (new CategoriaProductoResource($categoria))
             ->response()
@@ -221,6 +233,8 @@ class CategoriaProductoController extends Controller
         $this->authorize('update', $categoria);
 
         $categoria->update($request->validated());
+        
+        $this->flushCache();
 
         return new CategoriaProductoResource($categoria);
     }
@@ -274,6 +288,8 @@ class CategoriaProductoController extends Controller
         $categoria->eliminado = 1;
         $categoria->activo = 0;
         $categoria->save();
+        
+        $this->flushCache();
 
         return response()->json([
             'message' => 'Categoría eliminada exitosamente',
