@@ -7,6 +7,7 @@ use App\Http\Requests\StoreModeloBusRequest;
 use App\Http\Requests\UpdateModeloBusRequest;
 use App\Http\Resources\ModeloBusResource;
 use App\Models\ModeloBus;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -23,6 +24,10 @@ use OpenApi\Attributes as OA;
  */
 class ModeloBusController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['modelos-buses', 'transporte', 'catalogos'];
+    protected int $cacheTTL = 7200; // 2 horas - catálogo estable
     /**
      * Listar todos los modelos de buses
      *
@@ -52,11 +57,15 @@ class ModeloBusController extends Controller
     {
         $this->authorize('viewAny', ModeloBus::class);
         
-        $modelos = ModeloBus::withCount('busesUnidades')
-            ->orderBy('nombre')
-            ->paginate(20);
+        $cacheKey = $this->getCacheKey('index', []);
 
-        return ModeloBusResource::collection($modelos);
+        return $this->cacheQueryIfEnabled($cacheKey, function () {
+            $modelos = ModeloBus::withCount('busesUnidades')
+                ->orderBy('nombre')
+                ->paginate(20);
+
+            return ModeloBusResource::collection($modelos);
+        });
     }
 
     /**
@@ -93,6 +102,8 @@ class ModeloBusController extends Controller
         $modelo = ModeloBus::create([
             'nombre' => $request->nombre
         ]);
+
+        $this->flushCache();
 
         return new ModeloBusResource($modelo);
     }
@@ -182,6 +193,8 @@ class ModeloBusController extends Controller
             'nombre' => $request->nombre
         ]);
 
+        $this->flushCache();
+
         return new ModeloBusResource($modelo);
     }
 
@@ -235,6 +248,8 @@ class ModeloBusController extends Controller
         }
 
         $modelo->delete();
+
+        $this->flushCache();
 
         return response()->json([
             'message' => 'Modelo de bus eliminado exitosamente'

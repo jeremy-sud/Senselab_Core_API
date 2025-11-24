@@ -7,6 +7,7 @@ use App\Http\Requests\StoreBusUnidadRequest;
 use App\Http\Requests\UpdateBusUnidadRequest;
 use App\Http\Resources\BusUnidadResource;
 use App\Models\BusUnidad;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -23,6 +24,10 @@ use OpenApi\Attributes as OA;
  */
 class BusUnidadController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['buses-unidades', 'transporte'];
+    protected int $cacheTTL = 1800; // 30 min - flota cambia ocasionalmente
     /**
      * Listar todos los buses de la empresa autenticada
      *
@@ -76,32 +81,40 @@ class BusUnidadController extends Controller
         $this->authorize('viewAny', BusUnidad::class);
         $empresaId = $request->user()->empresa_id;
         
-        $query = BusUnidad::where('empresa_id', $empresaId)
-            ->where('eliminado', 0)
-            ->with(['empresa', 'modelo']);
+        $cacheKey = $this->getCacheKey('index', [
+            'modelo_id' => $request->get('modelo_id'),
+            'activo' => $request->get('activo'),
+            'buscar' => $request->get('buscar')
+        ]);
 
-        // Filtro por modelo
-        if ($request->filled('modelo_id')) {
-            $query->where('modelo_id', $request->modelo_id);
-        }
+        return $this->cacheQueryIfEnabled($cacheKey, function () use ($request, $empresaId) {
+            $query = BusUnidad::where('empresa_id', $empresaId)
+                ->where('eliminado', 0)
+                ->with(['empresa', 'modelo']);
 
-        // Filtro por activo
-        if ($request->filled('activo')) {
-            $query->where('activo', $request->activo);
-        }
+            // Filtro por modelo
+            if ($request->filled('modelo_id')) {
+                $query->where('modelo_id', $request->modelo_id);
+            }
 
-        // Búsqueda por placa o identificador
-        if ($request->filled('buscar')) {
-            $buscar = $request->buscar;
-            $query->where(function ($q) use ($buscar) {
-                $q->where('placa', 'like', "%{$buscar}%")
-                  ->orWhere('identificador_interno', 'like', "%{$buscar}%");
-            });
-        }
+            // Filtro por activo
+            if ($request->filled('activo')) {
+                $query->where('activo', $request->activo);
+            }
 
-        $buses = $query->orderBy('identificador_interno')->paginate(15);
+            // Búsqueda por placa o identificador
+            if ($request->filled('buscar')) {
+                $buscar = $request->buscar;
+                $query->where(function ($q) use ($buscar) {
+                    $q->where('placa', 'like', "%{$buscar}%")
+                      ->orWhere('identificador_interno', 'like', "%{$buscar}%");
+                });
+            }
 
-        return BusUnidadResource::collection($buses);
+            $buses = $query->orderBy('identificador_interno')->paginate(15);
+
+            return BusUnidadResource::collection($buses);
+        });
     }
 
     /**
@@ -148,6 +161,8 @@ class BusUnidadController extends Controller
             'identificador_interno' => $request->identificador_interno,
             'activo' => $request->activo ?? 1
         ]);
+
+        $this->flushCache();
 
         return new BusUnidadResource($bus->load(['empresa', 'modelo']));
     }
@@ -253,6 +268,8 @@ class BusUnidadController extends Controller
             'activo'
         ]));
 
+        $this->flushCache();
+
         return new BusUnidadResource($bus->load(['empresa', 'modelo']));
     }
 
@@ -311,6 +328,8 @@ class BusUnidadController extends Controller
         }
 
         $bus->update(['eliminado' => 1, 'activo' => 0]);
+
+        $this->flushCache();
 
         return response()->json([
             'message' => 'Bus eliminado exitosamente'
