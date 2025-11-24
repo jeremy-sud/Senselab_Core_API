@@ -7,6 +7,7 @@ use App\Http\Requests\StoreEntradaInventarioRequest;
 use App\Http\Requests\UpdateEntradaInventarioRequest;
 use App\Http\Resources\EntradaInventarioResource;
 use App\Models\EntradaInventario;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +24,20 @@ use OpenApi\Attributes as OA;
  */
 class EntradaInventarioController extends Controller
 {
+    use HasCacheableQueries;
+
+    /**
+     * Tags para invalidación de cache
+     * @var array<string>
+     */
+    protected array $cacheTags = ['entradas-inventario', 'inventario'];
+
+    /**
+     * TTL del cache en segundos (20 minutos)
+     * Datos dinámicos: entradas cambian frecuentemente durante operaciones
+     * @var int
+     */
+    protected int $cacheTTL = 1200;
     /**
      * Listar todas las entradas de inventario de la empresa
      */
@@ -68,20 +83,22 @@ class EntradaInventarioController extends Controller
         
         $empresaId = $request->user()->empresa_id;
 
-        $entradas = EntradaInventario::where('empresa_id', $empresaId)
-            ->with(['almacen', 'proveedor', 'ordenCompra', 'detalles.producto'])
-            ->orderBy('fecha_entrada', 'desc')
-            ->paginate(15);
+        return $this->cacheQueryIfEnabled(function () use ($empresaId) {
+            $entradas = EntradaInventario::where('empresa_id', $empresaId)
+                ->with(['almacen', 'proveedor', 'ordenCompra', 'detalles.producto'])
+                ->orderBy('fecha_entrada', 'desc')
+                ->paginate(15);
 
-        return response()->json([
-            'success' => true,
-            'data' => EntradaInventarioResource::collection($entradas),
-            'meta' => [
-                'current_page' => $entradas->currentPage(),
-                'total' => $entradas->total(),
-                'per_page' => $entradas->perPage()
-            ]
-        ]);
+            return response()->json([
+                'success' => true,
+                'data' => EntradaInventarioResource::collection($entradas),
+                'meta' => [
+                    'current_page' => $entradas->currentPage(),
+                    'total' => $entradas->total(),
+                    'per_page' => $entradas->perPage()
+                ]
+            ]);
+        }, []);
     }
 
     /**
@@ -147,6 +164,7 @@ class EntradaInventarioController extends Controller
             ]);
 
             DB::commit();
+            $this->flushCache();
 
             return response()->json([
                 'success' => true,
@@ -279,6 +297,7 @@ class EntradaInventarioController extends Controller
             ]));
 
             DB::commit();
+            $this->flushCache();
 
             return response()->json([
                 'success' => true,
@@ -340,6 +359,7 @@ class EntradaInventarioController extends Controller
         }
 
         $entrada->delete();
+        $this->flushCache();
 
         return response()->json([
             'success' => true,
