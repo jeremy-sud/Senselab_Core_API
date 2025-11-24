@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Producto;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreProductoRequest;
 use App\Http\Requests\UpdateProductoRequest;
@@ -16,6 +17,19 @@ use OpenApi\Attributes as OA;
 )]
 class ProductoController extends Controller
 {
+    use HasCacheableQueries;
+
+    /**
+     * Tags de cache para productos
+     * @var array
+     */
+    protected array $cacheTags = ['productos', 'catalogos'];
+
+    /**
+     * TTL del cache: 1 hora (productos cambian frecuentemente)
+     * @var int
+     */
+    protected int $cacheTTL = 3600;
     /**
      * Display a listing of the resource.
      * 
@@ -113,55 +127,58 @@ class ProductoController extends Controller
         $this->authorize('viewAny', Producto::class);
         
         try {
-            $perPage = $request->input('per_page', 15);
-            $search = $request->input('search');
-            $empresaId = $request->input('empresa_id');
-            $categoriaId = $request->input('categoria_id');
-            $tipo = $request->input('tipo');
-            
-            $query = Producto::with([
-                'empresa',
-                'categoria',
-                'unidadMedida',
-                'marca',
-                'tipoImpuesto'
-            ])->where('productos.eliminado', false);
-            
-            if ($search) {
-                $query->where(function($q) use ($search) {
-                    $q->where('nombre', 'like', "%{$search}%")
-                      ->orWhere('codigo', 'like', "%{$search}%")
-                      ->orWhere('codigo_barras', 'like', "%{$search}%")
-                      ->orWhere('descripcion', 'like', "%{$search}%");
-                });
-            }
-            
-            if ($empresaId) {
-                $query->porEmpresa($empresaId);
-            }
-            
-            if ($categoriaId) {
-                $query->porCategoria($categoriaId);
-            }
-            
-            if ($tipo) {
-                $query->porTipo($tipo);
-            }
-            
-            // Filtro por estado activo (soporta 'activo' y 'activos')
-            if ($request->has('activo') || $request->has('activos')) {
-                $esActivo = $request->boolean('activo') || $request->boolean('activos');
-                if ($esActivo) {
-                    $query->activos();
-                } else {
-                    $query->where('productos.activo', false);
+            // Usar cache si está habilitado
+            return $this->cacheQueryIfEnabled($request, function() use ($request) {
+                $perPage = $request->input('per_page', 15);
+                $search = $request->input('search');
+                $empresaId = $request->input('empresa_id');
+                $categoriaId = $request->input('categoria_id');
+                $tipo = $request->input('tipo');
+                
+                $query = Producto::with([
+                    'empresa',
+                    'categoria',
+                    'unidadMedida',
+                    'marca',
+                    'tipoImpuesto'
+                ])->where('productos.eliminado', false);
+                
+                if ($search) {
+                    $query->where(function($q) use ($search) {
+                        $q->where('nombre', 'like', "%{$search}%")
+                          ->orWhere('codigo', 'like', "%{$search}%")
+                          ->orWhere('codigo_barras', 'like', "%{$search}%")
+                          ->orWhere('descripcion', 'like', "%{$search}%");
+                    });
                 }
-            }
-            
-            $productos = $query->orderBy('nombre', 'asc')
-                               ->paginate($perPage);
-            
-            return ProductoResource::collection($productos);
+                
+                if ($empresaId) {
+                    $query->porEmpresa($empresaId);
+                }
+                
+                if ($categoriaId) {
+                    $query->porCategoria($categoriaId);
+                }
+                
+                if ($tipo) {
+                    $query->porTipo($tipo);
+                }
+                
+                // Filtro por estado activo (soporta 'activo' y 'activos')
+                if ($request->has('activo') || $request->has('activos')) {
+                    $esActivo = $request->boolean('activo') || $request->boolean('activos');
+                    if ($esActivo) {
+                        $query->activos();
+                    } else {
+                        $query->where('productos.activo', false);
+                    }
+                }
+                
+                $productos = $query->orderBy('nombre', 'asc')
+                                   ->paginate($perPage);
+                
+                return ProductoResource::collection($productos);
+            });
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener productos',
@@ -233,6 +250,9 @@ class ProductoController extends Controller
                 'marca',
                 'tipoImpuesto',
             ]);
+            
+            // Invalidar cache de productos
+            $this->flushCache();
             
             return (new ProductoResource($producto))
                 ->additional(['message' => 'Producto creado exitosamente'])
@@ -379,6 +399,9 @@ class ProductoController extends Controller
                 'tipoImpuesto'
             ]);
             
+            // Invalidar cache de productos
+            $this->flushCache();
+            
             return (new ProductoResource($producto))
                 ->additional(['message' => 'Producto actualizado exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -442,6 +465,9 @@ class ProductoController extends Controller
                 'activo' => false,
                 'eliminado' => true
             ]);
+            
+            // Invalidar cache de productos
+            $this->flushCache();
             
             return response()->json([
                 'message' => 'Producto eliminado exitosamente'

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cliente;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreClienteRequest;
 use App\Http\Requests\UpdateClienteRequest;
@@ -12,6 +13,19 @@ use OpenApi\Attributes as OA;
 
 class ClienteController extends Controller
 {
+    use HasCacheableQueries;
+
+    /**
+     * Tags de cache para clientes
+     * @var array
+     */
+    protected array $cacheTags = ['clientes', 'catalogos'];
+
+    /**
+     * TTL del cache: 30 minutos (clientes cambian con frecuencia)
+     * @var int
+     */
+    protected int $cacheTTL = 1800;
     /**
      * Display a listing of the resource.
      * 
@@ -109,39 +123,42 @@ class ClienteController extends Controller
         $this->authorize('viewAny', Cliente::class);
         
         try {
-            $perPage = $request->input('per_page', 15);
-            $search = $request->input('search');
-            $empresaId = $request->input('empresa_id');
-            $tipoIdentificacion = $request->input('tipo_identificacion');
-            
-            $query = Cliente::with('empresa');
-            
-            if ($search) {
-                $query->where(function($q) use ($search) {
-                    $q->where('nombre', 'like', "%{$search}%")
-                      ->orWhere('apellidos', 'like', "%{$search}%")
-                      ->orWhere('nombre_comercial', 'like', "%{$search}%")
-                      ->orWhere('numero_identificacion', 'like', "%{$search}%")
-                      ->orWhere('email', 'like', "%{$search}%");
-                });
-            }
-            
-            if ($empresaId) {
-                $query->where('empresa_id', $empresaId);
-            }
-            
-            if ($tipoIdentificacion) {
-                $query->porTipoIdentificacion($tipoIdentificacion);
-            }
-            
-            if ($request->boolean('activos')) {
-                $query->activos();
-            }
-            
-            $clientes = $query->orderBy('nombre', 'asc')
-                              ->paginate($perPage);
-            
-            return ClienteResource::collection($clientes);
+            // Usar cache si está habilitado
+            return $this->cacheQueryIfEnabled($request, function() use ($request) {
+                $perPage = $request->input('per_page', 15);
+                $search = $request->input('search');
+                $empresaId = $request->input('empresa_id');
+                $tipoIdentificacion = $request->input('tipo_identificacion');
+                
+                $query = Cliente::with('empresa');
+                
+                if ($search) {
+                    $query->where(function($q) use ($search) {
+                        $q->where('nombre', 'like', "%{$search}%")
+                          ->orWhere('apellidos', 'like', "%{$search}%")
+                          ->orWhere('nombre_comercial', 'like', "%{$search}%")
+                          ->orWhere('numero_identificacion', 'like', "%{$search}%")
+                          ->orWhere('email', 'like', "%{$search}%");
+                    });
+                }
+                
+                if ($empresaId) {
+                    $query->where('empresa_id', $empresaId);
+                }
+                
+                if ($tipoIdentificacion) {
+                    $query->porTipoIdentificacion($tipoIdentificacion);
+                }
+                
+                if ($request->boolean('activos')) {
+                    $query->activos();
+                }
+                
+                $clientes = $query->orderBy('nombre', 'asc')
+                                  ->paginate($perPage);
+                
+                return ClienteResource::collection($clientes);
+            });
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener clientes',
@@ -229,6 +246,9 @@ class ClienteController extends Controller
         try {
             $cliente = Cliente::create($request->validated());
             $cliente->load('empresa');
+            
+            // Invalidar cache de clientes
+            $this->flushCache();
             
             return (new ClienteResource($cliente))
                 ->additional(['message' => 'Cliente creado exitosamente'])
@@ -417,6 +437,9 @@ class ClienteController extends Controller
             $cliente->update($request->validated());
             $cliente->load('empresa');
             
+            // Invalidar cache de clientes
+            $this->flushCache();
+            
             return (new ClienteResource($cliente))
                 ->additional(['message' => 'Cliente actualizado exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -495,6 +518,9 @@ class ClienteController extends Controller
                 'activo' => false,
                 'eliminado' => true
             ]);
+            
+            // Invalidar cache de clientes
+            $this->flushCache();
             
             return response()->json([
                 'message' => 'Cliente eliminado exitosamente'
