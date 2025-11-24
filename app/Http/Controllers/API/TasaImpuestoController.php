@@ -114,34 +114,45 @@ class TasaImpuestoController extends Controller
     {
         $this->authorize('viewAny', TasaImpuesto::class);
         
-        $query = TasaImpuesto::where('eliminado', 0)->with('tipoImpuesto');
+        $cacheKey = $this->getCacheKey('index', [
+            'tipo_impuesto_id' => $request->get('tipo_impuesto_id'),
+            'activo' => $request->get('activo'),
+            'vigentes' => $request->get('vigentes'),
+            'sort_by' => $request->get('sort_by', 'fecha_inicio_vigencia'),
+            'sort_order' => $request->get('sort_order', 'desc'),
+            'per_page' => $request->get('per_page', 15)
+        ]);
 
-        // Filtro por tipo de impuesto
-        if ($request->filled('tipo_impuesto_id')) {
-            $query->where('tipo_impuesto_id', $request->tipo_impuesto_id);
-        }
+        return $this->cacheQueryIfEnabled($cacheKey, function () use ($request) {
+            $query = TasaImpuesto::where('eliminado', 0)->with('tipoImpuesto');
 
-        // Filtro por estado activo
-        if ($request->filled('activo')) {
-            $query->where('activo', $request->activo);
-        }
+            // Filtro por tipo de impuesto
+            if ($request->filled('tipo_impuesto_id')) {
+                $query->where('tipo_impuesto_id', $request->tipo_impuesto_id);
+            }
 
-        // Filtro por vigencia actual
-        if ($request->filled('vigentes')) {
-            $now = Carbon::now();
-            $query->where('fecha_inicio_vigencia', '<=', $now)
-                ->where(function ($q) use ($now) {
-                    $q->whereNull('fecha_fin_vigencia')
-                      ->orWhere('fecha_fin_vigencia', '>=', $now);
-                });
-        }
+            // Filtro por estado activo
+            if ($request->filled('activo')) {
+                $query->where('activo', $request->activo);
+            }
 
-        // Ordenamiento
-        $query->orderBy($request->get('sort_by', 'fecha_inicio_vigencia'), $request->get('sort_order', 'desc'));
+            // Filtro por vigencia actual
+            if ($request->filled('vigentes')) {
+                $now = Carbon::now();
+                $query->where('fecha_inicio_vigencia', '<=', $now)
+                    ->where(function ($q) use ($now) {
+                        $q->whereNull('fecha_fin_vigencia')
+                          ->orWhere('fecha_fin_vigencia', '>=', $now);
+                    });
+            }
 
-        $tasas = $query->paginate($request->get('per_page', 15));
+            // Ordenamiento
+            $query->orderBy($request->get('sort_by', 'fecha_inicio_vigencia'), $request->get('sort_order', 'desc'));
 
-        return TasaImpuestoResource::collection($tasas);
+            $tasas = $query->paginate($request->get('per_page', 15));
+
+            return TasaImpuestoResource::collection($tasas);
+        });
     }
 
     /**
@@ -198,6 +209,8 @@ class TasaImpuestoController extends Controller
         
         $tasa = TasaImpuesto::create($request->validated());
         $tasa->load('tipoImpuesto');
+
+        $this->flushCache();
 
         return response()->json([
             'success' => true,
@@ -335,6 +348,8 @@ class TasaImpuestoController extends Controller
         $tasa->update($request->validated());
         $tasa->load('tipoImpuesto');
 
+        $this->flushCache();
+
         return response()->json([
             'success' => true,
             'message' => 'Tasa de impuesto actualizada exitosamente',
@@ -393,6 +408,8 @@ class TasaImpuestoController extends Controller
         $this->authorize('delete', $tasa);
 
         $tasa->update(['eliminado' => 1, 'activo' => 0]);
+
+        $this->flushCache();
 
         return response()->json([
             'success' => true,
@@ -456,29 +473,37 @@ class TasaImpuestoController extends Controller
     public function vigente(TasaImpuestoVigenteRequest $request): JsonResponse
     {
         $fecha = $request->filled('fecha') ? Carbon::parse($request->fecha) : Carbon::now();
+        $fechaStr = $fecha->format('Y-m-d');
 
-        $tasa = TasaImpuesto::where('tipo_impuesto_id', $request->tipo_impuesto_id)
-            ->where('eliminado', 0)
-            ->where('activo', 1)
-            ->where('fecha_inicio_vigencia', '<=', $fecha)
-            ->where(function ($q) use ($fecha) {
-                $q->whereNull('fecha_fin_vigencia')
-                  ->orWhere('fecha_fin_vigencia', '>=', $fecha);
-            })
-            ->with('tipoImpuesto')
-            ->first();
-
-        if (!$tasa) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se encontró una tasa vigente para la fecha especificada'
-            ], 404);
-        }
-
-        return response()->json([
-            'success' => true,
-            'data' => new TasaImpuestoResource($tasa)
+        $cacheKey = $this->getCacheKey('vigente', [
+            'tipo_impuesto_id' => $request->tipo_impuesto_id,
+            'fecha' => $fechaStr
         ]);
+
+        return $this->cacheQueryIfEnabled($cacheKey, function () use ($request, $fecha) {
+            $tasa = TasaImpuesto::where('tipo_impuesto_id', $request->tipo_impuesto_id)
+                ->where('eliminado', 0)
+                ->where('activo', 1)
+                ->where('fecha_inicio_vigencia', '<=', $fecha)
+                ->where(function ($q) use ($fecha) {
+                    $q->whereNull('fecha_fin_vigencia')
+                      ->orWhere('fecha_fin_vigencia', '>=', $fecha);
+                })
+                ->with('tipoImpuesto')
+                ->first();
+
+            if (!$tasa) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se encontró una tasa vigente para la fecha especificada'
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => new TasaImpuestoResource($tasa)
+            ]);
+        });
     }
 
     /**
@@ -516,21 +541,26 @@ class TasaImpuestoController extends Controller
     public function vigentesActuales(): JsonResponse
     {
         $now = Carbon::now();
+        $fechaStr = $now->format('Y-m-d');
 
-        $tasas = TasaImpuesto::where('eliminado', 0)
-            ->where('activo', 1)
-            ->where('fecha_inicio_vigencia', '<=', $now)
-            ->where(function ($q) use ($now) {
-                $q->whereNull('fecha_fin_vigencia')
-                  ->orWhere('fecha_fin_vigencia', '>=', $now);
-            })
-            ->with('tipoImpuesto')
-            ->get();
+        $cacheKey = $this->getCacheKey('vigentesActuales', ['fecha' => $fechaStr]);
 
-        return response()->json([
-            'success' => true,
-            'data' => TasaImpuestoResource::collection($tasas)
-        ]);
+        return $this->cacheQueryIfEnabled($cacheKey, function () use ($now) {
+            $tasas = TasaImpuesto::where('eliminado', 0)
+                ->where('activo', 1)
+                ->where('fecha_inicio_vigencia', '<=', $now)
+                ->where(function ($q) use ($now) {
+                    $q->whereNull('fecha_fin_vigencia')
+                      ->orWhere('fecha_fin_vigencia', '>=', $now);
+                })
+                ->with('tipoImpuesto')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => TasaImpuestoResource::collection($tasas)
+            ]);
+        });
     }
 
     /**

@@ -40,58 +40,73 @@ class ZonaGeograficaController extends Controller
             $search = $request->input('search');
             $empresaId = Auth::user()->empresa_id;
             
-            $query = ZonaGeografica::with(['empresa', 'zonaPadre', 'vendedorAsignado'])
-                                   ->where('empresa_id', $empresaId)
-                                   ->where('eliminado', false);
-            
-            if ($search) {
-                $query->where(function($q) use ($search) {
-                    $q->where('nombre', 'like', "%{$search}%")
-                      ->orWhere('codigo', 'like', "%{$search}%");
-                });
-            }
-            
-            // Filtro por estado activo
-            if ($request->has('activa') || $request->has('activas')) {
-                $esActivo = $request->boolean('activa') || $request->boolean('activas');
-                if ($esActivo) {
-                    $query->activas();
-                } else {
-                    $query->where('activa', false);
+            $cacheKey = $this->getCacheKey('index', [
+                'search' => $search,
+                'activa' => $request->get('activa'),
+                'activas' => $request->get('activas'),
+                'tipo' => $request->get('tipo'),
+                'provincias' => $request->boolean('provincias'),
+                'cantones' => $request->boolean('cantones'),
+                'zonas_ventas' => $request->boolean('zonas_ventas'),
+                'zona_padre_id' => $request->get('zona_padre_id'),
+                'vendedor_asignado_id' => $request->get('vendedor_asignado_id'),
+                'per_page' => $perPage
+            ]);
+
+            return $this->cacheQueryIfEnabled($cacheKey, function () use ($request, $empresaId, $search, $perPage) {
+                $query = ZonaGeografica::with(['empresa', 'zonaPadre', 'vendedorAsignado'])
+                                       ->where('empresa_id', $empresaId)
+                                       ->where('eliminado', false);
+                
+                if ($search) {
+                    $query->where(function($q) use ($search) {
+                        $q->where('nombre', 'like', "%{$search}%")
+                          ->orWhere('codigo', 'like', "%{$search}%");
+                    });
                 }
-            }
-            
-            // Filtros por tipo
-            if ($request->has('tipo')) {
-                $query->porTipo($request->input('tipo'));
-            }
-            
-            if ($request->boolean('provincias')) {
-                $query->provincias();
-            }
-            
-            if ($request->boolean('cantones')) {
-                $query->cantones();
-            }
-            
-            if ($request->boolean('zonas_ventas')) {
-                $query->zonasVentas();
-            }
-            
-            // Filtro por zona padre
-            if ($request->has('zona_padre_id')) {
-                $query->where('zona_padre_id', $request->input('zona_padre_id'));
-            }
-            
-            // Filtro por vendedor asignado
-            if ($request->has('vendedor_asignado_id')) {
-                $query->where('vendedor_asignado_id', $request->input('vendedor_asignado_id'));
-            }
-            
-            $zonasGeograficas = $query->orderBy('nombre', 'asc')
-                                      ->paginate($perPage);
-            
-            return ZonaGeograficaResource::collection($zonasGeograficas);
+                
+                // Filtro por estado activo
+                if ($request->has('activa') || $request->has('activas')) {
+                    $esActivo = $request->boolean('activa') || $request->boolean('activas');
+                    if ($esActivo) {
+                        $query->activas();
+                    } else {
+                        $query->where('activa', false);
+                    }
+                }
+                
+                // Filtros por tipo
+                if ($request->has('tipo')) {
+                    $query->porTipo($request->input('tipo'));
+                }
+                
+                if ($request->boolean('provincias')) {
+                    $query->provincias();
+                }
+                
+                if ($request->boolean('cantones')) {
+                    $query->cantones();
+                }
+                
+                if ($request->boolean('zonas_ventas')) {
+                    $query->zonasVentas();
+                }
+                
+                // Filtro por zona padre
+                if ($request->has('zona_padre_id')) {
+                    $query->where('zona_padre_id', $request->input('zona_padre_id'));
+                }
+                
+                // Filtro por vendedor asignado
+                if ($request->has('vendedor_asignado_id')) {
+                    $query->where('vendedor_asignado_id', $request->input('vendedor_asignado_id'));
+                }
+                
+                $zonasGeograficas = $query->orderBy('nombre', 'asc')
+                                          ->paginate($perPage);
+                
+                return ZonaGeograficaResource::collection($zonasGeograficas);
+            });
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener zonas geográficas',
@@ -120,6 +135,8 @@ class ZonaGeograficaController extends Controller
             
             $zonaGeografica = ZonaGeografica::create($data);
             $zonaGeografica->load(['empresa', 'zonaPadre', 'vendedorAsignado']);
+            
+            $this->flushCache();
             
             return (new ZonaGeograficaResource($zonaGeografica))
                 ->additional(['message' => 'Zona geográfica creada exitosamente'])
@@ -181,6 +198,8 @@ class ZonaGeograficaController extends Controller
             $zonaGeografica->update($request->validated());
             $zonaGeografica->load(['empresa', 'zonaPadre', 'vendedorAsignado']);
             
+            $this->flushCache();
+            
             return (new ZonaGeograficaResource($zonaGeografica))
                 ->additional(['message' => 'Zona geográfica actualizada exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -213,6 +232,8 @@ class ZonaGeograficaController extends Controller
                 'activa' => false,
                 'eliminado' => true
             ]);
+            
+            $this->flushCache();
             
             return response()->json([
                 'message' => 'Zona geográfica eliminada exitosamente'
