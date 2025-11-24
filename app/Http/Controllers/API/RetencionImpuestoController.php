@@ -7,6 +7,7 @@ use App\Models\RetencionImpuesto;
 use App\Http\Requests\StoreRetencionImpuestoRequest;
 use App\Http\Requests\UpdateRetencionImpuestoRequest;
 use App\Http\Resources\RetencionImpuestoResource;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,6 +20,10 @@ use Illuminate\Support\Facades\Auth;
  */
 class RetencionImpuestoController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['retenciones-impuesto', 'contabilidad', 'proveedores'];
+    protected int $cacheTTL = 2400; // 40min - tax withholdings, semi-stable
     /**
      * Display a listing of the resource.
      * 
@@ -29,74 +34,76 @@ class RetencionImpuestoController extends Controller
     {
         $this->authorize('viewAny', RetencionImpuesto::class);
         
-        try {
-            $perPage = $request->input('per_page', 15);
-            $search = $request->input('search');
-            $empresaId = Auth::user()->empresa_id;
-            
-            $query = RetencionImpuesto::with(['empresa', 'proveedor'])
-                                      ->where('empresa_id', $empresaId)
-                                      ->where('eliminado', false);
-            
-            if ($search) {
-                $query->where(function($q) use ($search) {
-                    $q->where('numero_comprobante', 'like', "%{$search}%")
-                      ->orWhere('notas', 'like', "%{$search}%")
-                      ->orWhereHas('proveedor', function($sq) use ($search) {
-                          $sq->where('nombre', 'like', "%{$search}%");
-                      });
-                });
+        return $this->cacheQueryIfEnabled(function() use ($request) {
+            try {
+                $perPage = $request->input('per_page', 15);
+                $search = $request->input('search');
+                $empresaId = Auth::user()->empresa_id;
+                
+                $query = RetencionImpuesto::with(['empresa', 'proveedor'])
+                                          ->where('empresa_id', $empresaId)
+                                          ->where('eliminado', false);
+                
+                if ($search) {
+                    $query->where(function($q) use ($search) {
+                        $q->where('numero_comprobante', 'like', "%{$search}%")
+                          ->orWhere('notas', 'like', "%{$search}%")
+                          ->orWhereHas('proveedor', function($sq) use ($search) {
+                              $sq->where('nombre', 'like', "%{$search}%");
+                          });
+                    });
+                }
+                
+                // Filtro por proveedor
+                if ($request->has('proveedor_id')) {
+                    $query->where('proveedor_id', $request->input('proveedor_id'));
+                }
+                
+                // Filtro por tipo de retención
+                if ($request->has('tipo_retencion')) {
+                    $query->porTipo($request->input('tipo_retencion'));
+                }
+                
+                // Filtro por estado de declaración
+                if ($request->boolean('declaradas')) {
+                    $query->declaradas();
+                }
+                
+                if ($request->boolean('pendientes_declaracion')) {
+                    $query->pendientesDeclaracion();
+                }
+                
+                // Filtro por período de declaración
+                if ($request->has('periodo_declaracion')) {
+                    $query->porPeriodo($request->input('periodo_declaracion'));
+                }
+                
+                // Filtro por rango de fechas
+                if ($request->has('fecha_desde')) {
+                    $query->where('fecha_retencion', '>=', $request->input('fecha_desde'));
+                }
+                
+                if ($request->has('fecha_hasta')) {
+                    $query->where('fecha_retencion', '<=', $request->input('fecha_hasta'));
+                }
+                
+                // Filtro por monto retenido mínimo
+                if ($request->has('monto_minimo')) {
+                    $query->where('monto_retenido', '>=', $request->input('monto_minimo'));
+                }
+                
+                $retenciones = $query->orderBy('fecha_retencion', 'desc')
+                                     ->orderBy('created_at', 'desc')
+                                     ->paginate($perPage);
+                
+                return RetencionImpuestoResource::collection($retenciones);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'message' => 'Error al obtener retenciones de impuestos',
+                    'error' => $e->getMessage()
+                ], 500);
             }
-            
-            // Filtro por proveedor
-            if ($request->has('proveedor_id')) {
-                $query->where('proveedor_id', $request->input('proveedor_id'));
-            }
-            
-            // Filtro por tipo de retención
-            if ($request->has('tipo_retencion')) {
-                $query->porTipo($request->input('tipo_retencion'));
-            }
-            
-            // Filtro por estado de declaración
-            if ($request->boolean('declaradas')) {
-                $query->declaradas();
-            }
-            
-            if ($request->boolean('pendientes_declaracion')) {
-                $query->pendientesDeclaracion();
-            }
-            
-            // Filtro por período de declaración
-            if ($request->has('periodo_declaracion')) {
-                $query->porPeriodo($request->input('periodo_declaracion'));
-            }
-            
-            // Filtro por rango de fechas
-            if ($request->has('fecha_desde')) {
-                $query->where('fecha_retencion', '>=', $request->input('fecha_desde'));
-            }
-            
-            if ($request->has('fecha_hasta')) {
-                $query->where('fecha_retencion', '<=', $request->input('fecha_hasta'));
-            }
-            
-            // Filtro por monto retenido mínimo
-            if ($request->has('monto_minimo')) {
-                $query->where('monto_retenido', '>=', $request->input('monto_minimo'));
-            }
-            
-            $retenciones = $query->orderBy('fecha_retencion', 'desc')
-                                 ->orderBy('created_at', 'desc')
-                                 ->paginate($perPage);
-            
-            return RetencionImpuestoResource::collection($retenciones);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener retenciones de impuestos',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        }, $request);
     }
 
     /**
@@ -122,6 +129,8 @@ class RetencionImpuestoController extends Controller
             
             $retencion = RetencionImpuesto::create($data);
             $retencion->load(['empresa', 'proveedor']);
+            
+            $this->flushCache();
             
             return (new RetencionImpuestoResource($retencion))
                 ->additional(['message' => 'Retención de impuesto creada exitosamente'])
@@ -190,6 +199,8 @@ class RetencionImpuestoController extends Controller
             $retencion->update($data);
             $retencion->load(['empresa', 'proveedor']);
             
+            $this->flushCache();
+            
             return (new RetencionImpuestoResource($retencion))
                 ->additional(['message' => 'Retención de impuesto actualizada exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -219,6 +230,8 @@ class RetencionImpuestoController extends Controller
             
             // Soft delete
             $retencion->update(['eliminado' => true]);
+            
+            $this->flushCache();
             
             return response()->json([
                 'message' => 'Retención de impuesto eliminada exitosamente'

@@ -7,6 +7,7 @@ use App\Http\Requests\StorePagoNominaRequest;
 use App\Http\Requests\UpdatePagoNominaRequest;
 use App\Http\Resources\PagoNominaResource;
 use App\Models\PagoNomina;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -24,6 +25,10 @@ use OpenApi\Attributes as OA;
  */
 class PagoNominaController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['pagos-nomina', 'nomina', 'rrhh'];
+    protected int $cacheTTL = 1200; // 20min - payroll payments, dynamic
     /**
      * Listar todos los pagos de nómina de la empresa autenticada
      *
@@ -92,33 +97,35 @@ class PagoNominaController extends Controller
         
         $empresaId = $request->user()->empresa_id;
         
-        $query = PagoNomina::where('empresa_id', $empresaId)
-            ->where('eliminado', 0)
-            ->with(['empresa', 'empleado', 'periodoNomina', 'metodoPago']);
+        return $this->cacheQueryIfEnabled(function() use ($request, $empresaId) {
+            $query = PagoNomina::where('empresa_id', $empresaId)
+                ->where('eliminado', 0)
+                ->with(['empresa', 'empleado', 'periodoNomina', 'metodoPago']);
 
-        // Filtro por empleado
-        if ($request->filled('empleado_id')) {
-            $query->where('empleado_id', $request->empleado_id);
-        }
+            // Filtro por empleado
+            if ($request->filled('empleado_id')) {
+                $query->where('empleado_id', $request->empleado_id);
+            }
 
-        // Filtro por período
-        if ($request->filled('periodo_nomina_id')) {
-            $query->where('periodo_nomina_id', $request->periodo_nomina_id);
-        }
+            // Filtro por período
+            if ($request->filled('periodo_nomina_id')) {
+                $query->where('periodo_nomina_id', $request->periodo_nomina_id);
+            }
 
-        // Filtro por estado
-        if ($request->filled('estado')) {
-            $query->where('estado', $request->estado);
-        }
+            // Filtro por estado
+            if ($request->filled('estado')) {
+                $query->where('estado', $request->estado);
+            }
 
-        // Filtro por rango de fechas
-        if ($request->filled('desde') && $request->filled('hasta')) {
-            $query->whereBetween('fecha_pago', [$request->desde, $request->hasta]);
-        }
+            // Filtro por rango de fechas
+            if ($request->filled('desde') && $request->filled('hasta')) {
+                $query->whereBetween('fecha_pago', [$request->desde, $request->hasta]);
+            }
 
-        $pagos = $query->orderBy('fecha_pago', 'desc')->paginate(15);
+            $pagos = $query->orderBy('fecha_pago', 'desc')->paginate(15);
 
-        return PagoNominaResource::collection($pagos);
+            return PagoNominaResource::collection($pagos);
+        }, $request);
     }
 
     /**
@@ -182,6 +189,8 @@ class PagoNominaController extends Controller
             ]);
 
             DB::commit();
+            
+            $this->flushCache();
 
             return new PagoNominaResource($pago->load(['empresa', 'empleado', 'periodoNomina', 'metodoPago']));
 
@@ -312,6 +321,8 @@ class PagoNominaController extends Controller
             ]));
 
             DB::commit();
+            
+            $this->flushCache();
 
             return new PagoNominaResource($pago->load(['empresa', 'empleado', 'periodoNomina', 'metodoPago']));
 
@@ -376,6 +387,8 @@ class PagoNominaController extends Controller
         }
 
         $pago->update(['eliminado' => 1, 'activo' => 0]);
+        
+        $this->flushCache();
 
         return response()->json([
             'message' => 'Pago de nómina eliminado exitosamente'
