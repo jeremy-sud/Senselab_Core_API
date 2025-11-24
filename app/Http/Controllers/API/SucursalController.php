@@ -72,18 +72,22 @@ class SucursalController extends Controller
             $perPage = $request->input('per_page', 15);
             $empresaId = $request->input('empresa_id');
             
-            $query = Sucursal::with('empresa');
-            
-            if ($empresaId) {
-                $query->where('empresa_id', $empresaId);
-            }
-            
-            if ($request->boolean('activos')) {
-                $query->where('activo', true);
-            }
-            
-            $sucursales = $query->orderBy('nombre', 'asc')
-                                ->paginate($perPage);
+            $sucursales = $this->cacheQueryIfEnabled(
+                $this->getCacheKey('index', $request->all()),
+                function() use ($request, $perPage, $empresaId) {
+                    $query = Sucursal::with('empresa');
+                    
+                    if ($empresaId) {
+                        $query->where('empresa_id', $empresaId);
+                    }
+                    
+                    if ($request->boolean('activos')) {
+                        $query->where('activo', true);
+                    }
+                    
+                    return $query->orderBy('nombre', 'asc')->paginate($perPage);
+                }
+            );
             
             return SucursalResource::collection($sucursales);
         } catch (\Exception $e) {
@@ -151,6 +155,8 @@ class SucursalController extends Controller
             
             $sucursal = Sucursal::create($request->validated());
             $sucursal->load('empresa');
+            
+            $this->flushCache();
             
             return (new SucursalResource($sucursal))
                 ->additional(['message' => 'Sucursal creada exitosamente'])
@@ -258,6 +264,8 @@ class SucursalController extends Controller
             $sucursal->update($request->validated());
             $sucursal->load('empresa');
             
+            $this->flushCache();
+            
             return (new SucursalResource($sucursal))
                 ->additional(['message' => 'Sucursal actualizada exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -311,6 +319,8 @@ class SucursalController extends Controller
                 'activo' => false,
                 'eliminado' => true
             ]);
+            
+            $this->flushCache();
             
             return response()->json([
                 'message' => 'Sucursal eliminada exitosamente'
