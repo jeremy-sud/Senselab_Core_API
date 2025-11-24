@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateDetalleAsientoRequest;
 use App\Http\Requests\LibroMayorRequest;
 use App\Http\Requests\BalanceComprobacionRequest;
 use App\Models\DetalleAsiento;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -26,6 +27,10 @@ use OpenApi\Attributes as OA;
  */
 class DetalleAsientoController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['detalles-asientos', 'contabilidad', 'asientos-contables'];
+    protected int $cacheTTL = 3600; // 1h - accounting movements stable
     /**
      * Listar todos los detalles de asientos de la empresa autenticada
      *
@@ -115,38 +120,40 @@ class DetalleAsientoController extends Controller
         
         $empresaId = $request->user()->empresa_id;
         
-        $query = DetalleAsiento::whereHas('asientoContable', function ($q) use ($empresaId) {
-                $q->where('empresa_id', $empresaId);
-            })
-            ->where('eliminado', 0)
-            ->with(['asientoContable', 'cuentaContable']);
+        return $this->cacheQueryIfEnabled(function() use ($request, $empresaId) {
+            $query = DetalleAsiento::whereHas('asientoContable', function ($q) use ($empresaId) {
+                    $q->where('empresa_id', $empresaId);
+                })
+                ->where('eliminado', 0)
+                ->with(['asientoContable', 'cuentaContable']);
 
-        // Filtro por asiento contable
-        if ($request->filled('asiento_contable_id')) {
-            $query->where('asiento_contable_id', $request->asiento_contable_id);
-        }
+            // Filtro por asiento contable
+            if ($request->filled('asiento_contable_id')) {
+                $query->where('asiento_contable_id', $request->asiento_contable_id);
+            }
 
-        // Filtro por cuenta contable
-        if ($request->filled('cuenta_contable_id')) {
-            $query->where('cuenta_contable_id', $request->cuenta_contable_id);
-        }
+            // Filtro por cuenta contable
+            if ($request->filled('cuenta_contable_id')) {
+                $query->where('cuenta_contable_id', $request->cuenta_contable_id);
+            }
 
-        // Filtro solo movimientos al debe
-        if ($request->filled('solo_debe') && $request->solo_debe == 1) {
-            $query->where('debe', '>', 0);
-        }
+            // Filtro solo movimientos al debe
+            if ($request->filled('solo_debe') && $request->solo_debe == 1) {
+                $query->where('debe', '>', 0);
+            }
 
-        // Filtro solo movimientos al haber
-        if ($request->filled('solo_haber') && $request->solo_haber == 1) {
-            $query->where('haber', '>', 0);
-        }
+            // Filtro solo movimientos al haber
+            if ($request->filled('solo_haber') && $request->solo_haber == 1) {
+                $query->where('haber', '>', 0);
+            }
 
-        // Ordenamiento
-        $query->orderBy($request->get('sort_by', 'created_at'), $request->get('sort_order', 'desc'));
+            // Ordenamiento
+            $query->orderBy($request->get('sort_by', 'created_at'), $request->get('sort_order', 'desc'));
 
-        $detalles = $query->paginate($request->get('per_page', 15));
+            $detalles = $query->paginate($request->get('per_page', 15));
 
-        return DetalleAsientoResource::collection($detalles);
+            return DetalleAsientoResource::collection($detalles);
+        }, $request);
     }
 
     /**
