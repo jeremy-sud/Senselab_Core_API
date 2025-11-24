@@ -7,6 +7,7 @@ use App\Http\Requests\StorePeriodoNominaRequest;
 use App\Http\Requests\UpdatePeriodoNominaRequest;
 use App\Http\Resources\PeriodoNominaResource;
 use App\Models\PeriodoNomina;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -24,6 +25,10 @@ use OpenApi\Attributes as OA;
  */
 class PeriodoNominaController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['periodos-nomina', 'nomina', 'rrhh'];
+    protected int $cacheTTL = 1800; // 30min - payroll periods, semi-dynamic
     /**
      * Listar todos los períodos de nómina de la empresa autenticada
      *
@@ -78,28 +83,30 @@ class PeriodoNominaController extends Controller
         
         $empresaId = $request->user()->empresa_id;
         
-        $query = PeriodoNomina::where('empresa_id', $empresaId)
-            ->where('eliminado', 0)
-            ->with(['empresa', 'pagosNomina']);
+        return $this->cacheQueryIfEnabled(function() use ($request, $empresaId) {
+            $query = PeriodoNomina::where('empresa_id', $empresaId)
+                ->where('eliminado', 0)
+                ->with(['empresa', 'pagosNomina']);
 
-        // Filtro por estado
-        if ($request->filled('estado')) {
-            $query->where('estado', $request->estado);
-        }
+            // Filtro por estado
+            if ($request->filled('estado')) {
+                $query->where('estado', $request->estado);
+            }
 
-        // Filtro por año
-        if ($request->filled('anio')) {
-            $query->whereYear('fecha_inicio', $request->anio);
-        }
+            // Filtro por año
+            if ($request->filled('anio')) {
+                $query->whereYear('fecha_inicio', $request->anio);
+            }
 
-        // Filtro por mes
-        if ($request->filled('mes')) {
-            $query->whereMonth('fecha_inicio', $request->mes);
-        }
+            // Filtro por mes
+            if ($request->filled('mes')) {
+                $query->whereMonth('fecha_inicio', $request->mes);
+            }
 
-        $periodos = $query->orderBy('fecha_inicio', 'desc')->paginate(15);
+            $periodos = $query->orderBy('fecha_inicio', 'desc')->paginate(15);
 
-        return PeriodoNominaResource::collection($periodos);
+            return PeriodoNominaResource::collection($periodos);
+        }, $request);
     }
 
     /**
@@ -151,6 +158,8 @@ class PeriodoNominaController extends Controller
             'observaciones' => $request->observaciones,
             'activo' => $request->activo ?? 1
         ]);
+        
+        $this->flushCache();
 
         return new PeriodoNominaResource($periodo->load(['empresa']));
     }
@@ -264,6 +273,8 @@ class PeriodoNominaController extends Controller
             'observaciones',
             'activo'
         ]));
+        
+        $this->flushCache();
 
         return new PeriodoNominaResource($periodo->load(['empresa']));
     }
@@ -323,6 +334,8 @@ class PeriodoNominaController extends Controller
         }
 
         $periodo->update(['eliminado' => 1, 'activo' => 0]);
+        
+        $this->flushCache();
 
         return response()->json([
             'message' => 'Período de nómina eliminado exitosamente'
