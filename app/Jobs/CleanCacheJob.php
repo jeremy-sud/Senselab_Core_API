@@ -22,6 +22,9 @@ class CleanCacheJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
+    /**
+     * @param array<int,string> $tags
+     */
     public function __construct(
         public string $cleanType = 'all',
         public array $tags = []
@@ -62,6 +65,9 @@ class CleanCacheJob implements ShouldQueue
         }
     }
 
+    /**
+     * @return array{action:string,success:bool,message:string}
+     */
     protected function cleanAll(): array
     {
         Cache::flush();
@@ -73,6 +79,9 @@ class CleanCacheJob implements ShouldQueue
         ];
     }
 
+    /**
+     * @return array{action:string,success:bool,message?:string,tags_cleaned?:array<int,string>}
+     */
     protected function cleanByTags(): array
     {
         if (empty($this->tags)) {
@@ -91,6 +100,9 @@ class CleanCacheJob implements ShouldQueue
         ];
     }
 
+    /**
+     * @return array{action:string,success:bool,keys_cleaned?:int,message?:string}
+     */
     protected function cleanExpired(): array
     {
         // Laravel limpia automáticamente las entradas expiradas
@@ -131,6 +143,9 @@ class CleanCacheJob implements ShouldQueue
         ];
     }
 
+    /**
+     * @return array{action:string,success:bool,sessions_deleted:int}
+     */
     protected function cleanSessions(): array
     {
         // Limpiar sesiones expiradas de la tabla sessions
@@ -145,6 +160,9 @@ class CleanCacheJob implements ShouldQueue
         ];
     }
 
+    /**
+     * @return array{action:string,success:bool,audit_deleted:int,access_deleted:int,total_deleted:int}
+     */
     protected function cleanOldLogs(): array
     {
         // Limpiar logs de auditoría antiguos (>90 días)

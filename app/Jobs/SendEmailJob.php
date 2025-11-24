@@ -23,6 +23,11 @@ class SendEmailJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
+    /**
+     * @param string|array<int,string> $to
+     * @param array<string,mixed> $data
+     * @param array<int,array<string,string>> $attachments
+     */
     public function __construct(
         public string|array $to,
         public string $subject,
@@ -45,7 +50,7 @@ class SendEmailJob implements ShouldQueue
                 'view' => $this->view,
             ]);
 
-            Mail::send($this->view, $this->data, function ($message) {
+            Mail::send($this->view, $this->data, function ($message): void {
                 $message->to($this->to)
                     ->subject($this->subject);
 

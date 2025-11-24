@@ -25,6 +25,9 @@ class SyncHaciendaJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
+    /**
+     * @param array<string,mixed> $data
+     */
     public function __construct(
         public int $empresaId,
         public string $action,
@@ -68,6 +71,10 @@ class SyncHaciendaJob implements ShouldQueue
         }
     }
 
+    /**
+     * @param array<string,mixed> $data
+     * @return array{success:bool,clave?:string}
+     */
     protected function enviarFactura(Empresa $empresa, array $data): array
     {
         // URL de pruebas de Hacienda
@@ -113,6 +120,10 @@ class SyncHaciendaJob implements ShouldQueue
         }
     }
 
+    /**
+     * @param array<string,mixed> $data
+     * @return array<string,mixed>
+     */
     protected function consultarEstado(Empresa $empresa, array $data): array
     {
         $url = config('hacienda.api_url_consulta', 'https://api.comprobanteselectronicos.go.cr/recepcion/v1/recepcion');
@@ -124,6 +135,10 @@ class SyncHaciendaJob implements ShouldQueue
         return $response->json();
     }
 
+    /**
+     * @param array<string,mixed> $data
+     * @return array{success:bool}
+     */
     protected function recibirComprobante(Empresa $empresa, array $data): array
     {
         ComprobanteRecibidoElectronico::create([
@@ -141,6 +156,10 @@ class SyncHaciendaJob implements ShouldQueue
         return ['success' => true];
     }
 
+    /**
+     * @param array<string,mixed> $data
+     * @return array{valid:int|bool,cedula:string}
+     */
     protected function validarCedulaJuridica(array $data): array
     {
         // Validación básica formato cédula jurídica CR: 3-NNN-NNNNNN
