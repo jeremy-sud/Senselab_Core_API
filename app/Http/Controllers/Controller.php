@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Routing\Controller as BaseController;
 use OpenApi\Attributes as OA;
 
 /**
@@ -34,7 +35,7 @@ use OpenApi\Attributes as OA;
  *     description="Laravel Sanctum Bearer Token. Obtén el token mediante POST /api/login"
  * )
  */
-abstract class Controller
+abstract class Controller extends BaseController
 {
     use AuthorizesRequests;
 }

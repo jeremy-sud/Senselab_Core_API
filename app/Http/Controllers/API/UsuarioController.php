@@ -55,7 +55,7 @@ class UsuarioController extends Controller
     {
         $this->authorize('viewAny', Usuario::class);
         
-        $empresaId = auth()->user()->empresa_id;
+        $empresaId = auth('sanctum')->user()->empresa_id;
         
         $usuarios = $this->cacheQueryIfEnabled(
             $this->getCacheKey('index', array_merge($request->all(), ['empresa_id' => $empresaId])),
@@ -114,7 +114,7 @@ class UsuarioController extends Controller
         $this->authorize('create', Usuario::class);
         
         $validated = $request->validated();
-        $validated['empresa_id'] = auth()->user()->empresa_id;
+        $validated['empresa_id'] = auth('sanctum')->user()->empresa_id;
         $validated['password_hash'] = Hash::make($validated['password']);
         unset($validated['password']);
 
@@ -153,7 +153,7 @@ class UsuarioController extends Controller
     )]
     public function show(int $id): UsuarioResource
     {
-        $empresaId = auth()->user()->empresa_id;
+        $empresaId = auth('sanctum')->user()->empresa_id;
 
         $usuario = Usuario::where('empresa_id', $empresaId)
             ->with(['roles.permisos', 'cargo', 'empresa', 'empleado'])
@@ -179,7 +179,7 @@ class UsuarioController extends Controller
     )]
     public function update(UpdateUsuarioRequest $request, int $id): UsuarioResource
     {
-        $empresaId = auth()->user()->empresa_id;
+        $empresaId = auth('sanctum')->user()->empresa_id;
 
         $usuario = Usuario::where('empresa_id', $empresaId)->findOrFail($id);
         
@@ -226,14 +226,14 @@ class UsuarioController extends Controller
     )]
     public function destroy(int $id): JsonResponse
     {
-        $empresaId = auth()->user()->empresa_id;
+        $empresaId = auth('sanctum')->user()->empresa_id;
 
         $usuario = Usuario::where('empresa_id', $empresaId)->findOrFail($id);
         
         $this->authorize('delete', $usuario);
 
         // No permitir que el usuario se elimine a sí mismo
-        if ($usuario->id === auth()->id()) {
+        if ($usuario->id === auth('sanctum')->id()) {
             return response()->json([
                 'message' => 'No puedes eliminar tu propia cuenta de usuario'
             ], 422);
@@ -280,7 +280,7 @@ class UsuarioController extends Controller
     public function asignarRoles(AsignarRolesRequest $request, int $id): JsonResponse
     {
 
-        $empresaId = auth()->user()->empresa_id;
+        $empresaId = auth('sanctum')->user()->empresa_id;
         $usuario = Usuario::where('empresa_id', $empresaId)->findOrFail($id);
 
         $usuario->roles()->sync($request->roles);
@@ -324,7 +324,7 @@ class UsuarioController extends Controller
     )]
     public function cambiarPassword(CambiarPasswordRequest $request, int $id): JsonResponse
     {
-        $empresaId = auth()->user()->empresa_id;
+        $empresaId = auth('sanctum')->user()->empresa_id;
         $usuario = Usuario::where('empresa_id', $empresaId)->findOrFail($id);
 
         // Verificar password actual

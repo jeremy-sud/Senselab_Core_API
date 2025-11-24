@@ -21,6 +21,14 @@ class DetalleOrdenCompraController extends Controller
     {
         $this->middleware('auth:sanctum');
     }
+    
+    /**
+     * Alias para getCacheKey (compatibilidad)
+     */
+    protected function generateCacheKey(string $method, array $params = []): string
+    {
+        return $this->getCacheKey($method, $params);
+    }
 
     /**
      * Display a listing of the resource.

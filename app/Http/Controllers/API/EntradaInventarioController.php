@@ -83,7 +83,9 @@ class EntradaInventarioController extends Controller
         
         $empresaId = $request->user()->empresa_id;
 
-        return $this->cacheQueryIfEnabled(function () use ($empresaId) {
+        $cacheKey = $this->getCacheKey('index', ['empresa_id' => $empresaId]);
+
+        return $this->cacheQueryIfEnabled($cacheKey, function () use ($empresaId) {
             $entradas = EntradaInventario::where('empresa_id', $empresaId)
                 ->with(['almacen', 'proveedor', 'ordenCompra', 'detalles.producto'])
                 ->orderBy('fecha_entrada', 'desc')
@@ -98,7 +100,7 @@ class EntradaInventarioController extends Controller
                     'per_page' => $entradas->perPage()
                 ]
             ]);
-        }, []);
+        });
     }
 
     /**

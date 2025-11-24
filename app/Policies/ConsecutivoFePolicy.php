@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\User;
+use App\Models\Usuario as User;
 use App\Models\ConsecutivoFe;
 use Illuminate\Auth\Access\HandlesAuthorization;
 

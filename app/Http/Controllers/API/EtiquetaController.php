@@ -123,7 +123,7 @@ class EtiquetaController extends Controller
 
         DB::beginTransaction();
         try {
-            $validated['empresa_id'] = auth()->user()->empresa_id;
+            $validated['empresa_id'] = auth('sanctum')->user()->empresa_id;
             
             $etiqueta = Etiqueta::create($validated);
 

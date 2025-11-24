@@ -34,7 +34,22 @@ class DeclaracionTributariaController extends Controller
     {
         $this->authorize('viewAny', DeclaracionTributaria::class);
         
-        return $this->cacheQueryIfEnabled(function() use ($request) {
+        $cacheKey = $this->getCacheKey('index', [
+            'search' => $request->input('search'),
+            'tipo_declaracion' => $request->input('tipo_declaracion'),
+            'solo_iva' => $request->boolean('solo_iva'),
+            'solo_renta' => $request->boolean('solo_renta'),
+            'estado' => $request->input('estado'),
+            'periodo_fiscal' => $request->input('periodo_fiscal'),
+            'anio_fiscal' => $request->input('anio_fiscal'),
+            'fecha_desde' => $request->input('fecha_desde'),
+            'fecha_hasta' => $request->input('fecha_hasta'),
+            'con_saldo_pagar' => $request->boolean('con_saldo_pagar'),
+            'con_saldo_favor' => $request->boolean('con_saldo_favor'),
+            'per_page' => $request->input('per_page', 15)
+        ]);
+        
+        return $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
             try {
                 $perPage = $request->input('per_page', 15);
                 $search = $request->input('search');
@@ -119,7 +134,7 @@ class DeclaracionTributariaController extends Controller
                     'error' => $e->getMessage()
                 ], 500);
             }
-        }, $request);
+        });
     }
 
     /**

@@ -61,7 +61,9 @@ class DetalleSalidaInventarioController extends Controller
         
         $empresaId = $request->user()->empresa_id;
 
-        return $this->cacheQueryIfEnabled(function() use ($empresaId, $salidaId) {
+        $cacheKey = $this->getCacheKey('index', ['salida_id' => $salidaId]);
+
+        return $this->cacheQueryIfEnabled($cacheKey, function() use ($empresaId, $salidaId) {
             $salida = SalidaInventario::where('empresa_id', $empresaId)->findOrFail($salidaId);
 
             $detalles = DetalleSalidaInventario::where('salida_inventario_id', $salidaId)
@@ -72,7 +74,7 @@ class DetalleSalidaInventarioController extends Controller
                 'success' => true,
                 'data' => DetalleSalidaInventarioResource::collection($detalles)
             ]);
-        }, $request);
+        });
     }
 
     /**

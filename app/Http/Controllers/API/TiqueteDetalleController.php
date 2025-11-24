@@ -97,7 +97,13 @@ class TiqueteDetalleController extends Controller
     {
         $this->authorize('viewAny', TiqueteDetalle::class);
         
-        return $this->cacheQueryIfEnabled(function() use ($request) {
+        $cacheKey = $this->getCacheKey('index', [
+            'horario_ruta_id' => $request->horario_ruta_id,
+            'estado' => $request->estado,
+            'buscar_pasajero' => $request->buscar_pasajero
+        ]);
+        
+        return $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
             $query = TiqueteDetalle::with(['horarioRuta.ruta', 'horarioRuta.bus', 'detalleVenta'])
                 ->where('eliminado', 0);
 
@@ -123,7 +129,7 @@ class TiqueteDetalleController extends Controller
             $tiquetes = $query->orderBy('created_at', 'desc')->paginate(15);
 
             return TiqueteDetalleResource::collection($tiquetes);
-        }, $request);
+        });
     }
 
     /**

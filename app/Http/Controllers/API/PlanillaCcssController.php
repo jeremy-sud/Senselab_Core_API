@@ -22,7 +22,7 @@ class PlanillaCcssController extends Controller
     {
         $this->authorize('viewAny', PlanillaCcss::class);
 
-        $cacheKey = $this->getCacheKey([
+        $cacheKey = $this->getCacheKey('index', [
             'estado' => $request->get('estado'),
             'periodo' => $request->get('periodo'),
             'fecha_desde' => $request->get('fecha_desde'),
@@ -32,7 +32,7 @@ class PlanillaCcssController extends Controller
 
         $planillas = $this->cacheQueryIfEnabled($cacheKey, function () use ($request) {
             $query = PlanillaCcss::query()
-                ->where('empresa_id', auth()->user()->empresa_id)
+                ->where('empresa_id', auth('sanctum')->user()->empresa_id)
                 ->with(['periodoNomina']);
 
             if ($request->filled('estado')) {
@@ -87,7 +87,7 @@ class PlanillaCcssController extends Controller
         }
 
         $planilla = PlanillaCcss::create([
-            'empresa_id' => auth()->user()->empresa_id,
+            'empresa_id' => auth('sanctum')->user()->empresa_id,
             'periodo_nomina_id' => $request->get('periodo_nomina_id'),
             'periodo' => $request->get('periodo'),
             'fecha_generacion' => $request->get('fecha_generacion'),

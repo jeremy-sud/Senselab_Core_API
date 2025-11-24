@@ -62,7 +62,7 @@ class CategoriaProductoController extends Controller
     {
         $this->authorize('viewAny', CategoriaProducto::class);
 
-        $empresaId = auth()->user()->empresa_id;
+        $empresaId = auth('sanctum')->user()->empresa_id;
         
         $categorias = $this->cacheQueryIfEnabled(
             $this->getCacheKey('index', array_merge($request->all(), ['empresa_id' => $empresaId])),
@@ -121,7 +121,7 @@ class CategoriaProductoController extends Controller
         $this->authorize('create', CategoriaProducto::class);
 
         $validated = $request->validated();
-        $validated['empresa_id'] = auth()->user()->empresa_id;
+        $validated['empresa_id'] = auth('sanctum')->user()->empresa_id;
 
         $categoria = CategoriaProducto::create($validated);
         
@@ -168,7 +168,7 @@ class CategoriaProductoController extends Controller
     )]
     public function show(int $id): CategoriaProductoResource
     {
-        $empresaId = auth()->user()->empresa_id;
+        $empresaId = auth('sanctum')->user()->empresa_id;
 
         $categoria = CategoriaProducto::where('empresa_id', $empresaId)
             ->findOrFail($id);
@@ -227,7 +227,7 @@ class CategoriaProductoController extends Controller
     )]
     public function update(UpdateCategoriaProductoRequest $request, int $id): CategoriaProductoResource
     {
-        $empresaId = auth()->user()->empresa_id;
+        $empresaId = auth('sanctum')->user()->empresa_id;
 
         $categoria = CategoriaProducto::where('empresa_id', $empresaId)->findOrFail($id);
         $this->authorize('update', $categoria);
@@ -280,7 +280,7 @@ class CategoriaProductoController extends Controller
     )]
     public function destroy(int $id): JsonResponse
     {
-        $empresaId = auth()->user()->empresa_id;
+        $empresaId = auth('sanctum')->user()->empresa_id;
 
         $categoria = CategoriaProducto::where('empresa_id', $empresaId)->findOrFail($id);
         $this->authorize('delete', $categoria);

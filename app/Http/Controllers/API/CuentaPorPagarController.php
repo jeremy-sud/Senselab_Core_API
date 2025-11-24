@@ -69,7 +69,15 @@ class CuentaPorPagarController extends Controller
 
         $empresaId = $request->user()->empresa_id;
         
-        return $this->cacheQueryIfEnabled(function () use ($request, $empresaId) {
+        $cacheKey = $this->getCacheKey('index', [
+            'estado' => $request->estado,
+            'proveedor_id' => $request->proveedor_id,
+            'vencidas' => $request->vencidas,
+            'desde' => $request->desde,
+            'hasta' => $request->hasta
+        ]);
+        
+        return $this->cacheQueryIfEnabled($cacheKey, function () use ($request, $empresaId) {
             $query = CuentaPorPagar::where('empresa_id', $empresaId)
                 ->where('eliminado', 0)
                 ->with(['proveedor', 'ordenCompra', 'empresa']);

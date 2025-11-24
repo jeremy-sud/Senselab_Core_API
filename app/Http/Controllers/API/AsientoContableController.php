@@ -123,7 +123,17 @@ class AsientoContableController extends Controller
 
         $empresaId = $request->user()->empresa_id;
         
-        return $this->cacheQueryIfEnabled(function () use ($request, $empresaId) {
+        $cacheKey = $this->getCacheKey('index', [
+            'estado' => $request->estado,
+            'desde' => $request->desde,
+            'hasta' => $request->hasta,
+            'cuenta_contable_id' => $request->cuenta_contable_id,
+            'sort_by' => $request->get('sort_by', 'fecha_asiento'),
+            'sort_order' => $request->get('sort_order', 'desc'),
+            'per_page' => $request->get('per_page', 15)
+        ]);
+        
+        return $this->cacheQueryIfEnabled($cacheKey, function () use ($request, $empresaId) {
             $query = AsientoContable::where('empresa_id', $empresaId)
                 ->where('eliminado', 0)
                 ->with(['detalles.cuentaContable', 'empresa']);

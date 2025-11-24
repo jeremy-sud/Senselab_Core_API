@@ -80,13 +80,13 @@ class NotificacionController extends Controller
 
         $cacheKey = $this->generateCacheKey('notificaciones.index', array_merge(
             $request->all(),
-            ['usuario_id' => auth()->id()]
+            ['usuario_id' => auth('sanctum')->id()]
         ));
 
         return $this->getCached($cacheKey, function () use ($request) {
             $perPage = $request->input('per_page', 15);
             
-            $query = Notificacion::where('usuario_id', auth()->id());
+            $query = Notificacion::where('usuario_id', auth('sanctum')->id());
 
             if ($request->filled('tipo')) {
                 $query->tipo($request->tipo);
@@ -107,7 +107,7 @@ class NotificacionController extends Controller
             $notificaciones = $query->orderBy('creado_en', 'desc')->paginate($perPage);
             
             // Contar no leídas
-            $noLeidasCount = Notificacion::where('usuario_id', auth()->id())
+            $noLeidasCount = Notificacion::where('usuario_id', auth('sanctum')->id())
                 ->noLeidas()
                 ->count();
 
@@ -171,7 +171,7 @@ class NotificacionController extends Controller
 
         DB::beginTransaction();
         try {
-            $validated['empresa_id'] = auth()->user()->empresa_id;
+            $validated['empresa_id'] = auth('sanctum')->user()->empresa_id;
             $validated['prioridad'] = $validated['prioridad'] ?? Notificacion::PRIORIDAD_NORMAL;
             $validated['leida'] = false;
 
@@ -292,7 +292,7 @@ class NotificacionController extends Controller
     {
         DB::beginTransaction();
         try {
-            $updated = Notificacion::where('usuario_id', auth()->id())
+            $updated = Notificacion::where('usuario_id', auth('sanctum')->id())
                 ->noLeidas()
                 ->update([
                     'leida' => true,

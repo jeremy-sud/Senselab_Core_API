@@ -169,8 +169,8 @@ class ArchivoController extends Controller
             $hashSha256 = hash_file('sha256', $file->getRealPath());
             
             $archivo = Archivo::create([
-                'empresa_id' => auth()->user()->empresa_id,
-                'usuario_id' => auth()->id(),
+                'empresa_id' => auth('sanctum')->user()->empresa_id,
+                'usuario_id' => auth('sanctum')->id(),
                 'entidad_tipo' => $validated['entidad_tipo'],
                 'entidad_id' => $validated['entidad_id'],
                 'nombre_original' => $nombreOriginal,
@@ -274,7 +274,8 @@ class ArchivoController extends Controller
             ], 404);
         }
 
-        return Storage::disk('private')->download($archivo->ruta, $archivo->nombre_original);
+        $rutaCompleta = Storage::disk('private')->path($archivo->ruta);
+        return response()->download($rutaCompleta, $archivo->nombre_original);
     }
 
     /**
