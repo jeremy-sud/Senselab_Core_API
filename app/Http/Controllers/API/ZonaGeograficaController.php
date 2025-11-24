@@ -31,7 +31,7 @@ class ZonaGeograficaController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('viewAny', ZonaGeografica::class);
         
@@ -121,7 +121,7 @@ class ZonaGeograficaController extends Controller
      * @param StoreZonaGeograficaRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(StoreZonaGeograficaRequest $request)
+    public function store(StoreZonaGeograficaRequest $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('create', ZonaGeografica::class);
         
