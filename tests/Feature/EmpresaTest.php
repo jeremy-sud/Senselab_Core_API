@@ -6,7 +6,7 @@ use Tests\TestCase;
 use App\Models\Empresa;
 use App\Models\Usuario;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-
+use PHPUnit\Framework\Attributes\Test;
 class EmpresaTest extends TestCase
 {
     use RefreshDatabase;
@@ -18,7 +18,7 @@ class EmpresaTest extends TestCase
         $this->seedPermisos();
     }
 
-    /** @test */
+    #[Test]
     public function test_puede_listar_empresas()
     {
         $usuario = $this->createAdminUsuario();
@@ -39,7 +39,7 @@ class EmpresaTest extends TestCase
                 ]);
     }
 
-    /** @test */
+    #[Test]
     public function test_puede_crear_empresa()
     {
         $usuario = $this->createAdminUsuario();
@@ -76,7 +76,7 @@ class EmpresaTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function test_puede_actualizar_empresa()
     {
         $usuario = $this->createAdminUsuario();
@@ -101,7 +101,7 @@ class EmpresaTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function test_puede_ver_empresa_especifica()
     {
         $usuario = $this->createAdminUsuario();
@@ -118,7 +118,7 @@ class EmpresaTest extends TestCase
                 ]);
     }
 
-    /** @test */
+    #[Test]
     public function test_valida_cedula_juridica_unica()
     {
         $usuario = $this->createAdminUsuario();
@@ -146,7 +146,7 @@ class EmpresaTest extends TestCase
                 ->assertJsonValidationErrors(['num_identificacion_dgt']);
     }
 
-    /** @test */
+    #[Test]
     public function test_valida_email_unico()
     {
         $usuario = $this->createAdminUsuario();
@@ -176,7 +176,7 @@ class EmpresaTest extends TestCase
                 ->assertJsonValidationErrors(['email']);
     }
 
-    /** @test */
+    #[Test]
     public function test_requiere_autenticacion()
     {
         $response = $this->json('GET', '/api/empresas');
@@ -184,7 +184,7 @@ class EmpresaTest extends TestCase
         $response->assertStatus(401);
     }
 
-    /** @test */
+    #[Test]
     public function test_valida_campos_requeridos()
     {
         $usuario = $this->createAdminUsuario();

@@ -6,7 +6,7 @@ use Tests\TestCase;
 use App\Models\MovimientoBancario;
 use App\Models\CuentaBancaria;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-
+use PHPUnit\Framework\Attributes\Test;
 class MovimientoBancarioTest extends TestCase
 {
     use RefreshDatabase;

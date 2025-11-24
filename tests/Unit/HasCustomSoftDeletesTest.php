@@ -7,7 +7,7 @@ use App\Models\Producto;
 use App\Models\Cliente;
 use App\Models\Empresa;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-
+use PHPUnit\Framework\Attributes\Test;
 /**
  * Tests para el trait HasCustomSoftDeletes
  * 
@@ -31,7 +31,7 @@ class HasCustomSoftDeletesTest extends TestCase
         $this->producto = $this->createProducto([], $this->empresa);
     }
 
-    /** @test */
+    #[Test]
     public function producto_puede_ser_eliminado_suavemente()
     {
         // El producto existe y no está eliminado
@@ -47,7 +47,7 @@ class HasCustomSoftDeletesTest extends TestCase
         $this->assertTrue($this->producto->trashed());
     }
 
-    /** @test */
+    #[Test]
     public function producto_eliminado_no_aparece_en_queries_normales()
     {
         $producto2 = $this->createProducto(['nombre' => 'Producto 2'], $this->empresa);
@@ -68,7 +68,7 @@ class HasCustomSoftDeletesTest extends TestCase
         $this->assertTrue(Producto::get()->contains('id', $producto2->id));
     }
 
-    /** @test */
+    #[Test]
     public function productos_eliminados_pueden_ser_incluidos_con_withTrashed()
     {
         $producto2 = $this->createProducto(['nombre' => 'Producto 2'], $this->empresa);
@@ -85,7 +85,7 @@ class HasCustomSoftDeletesTest extends TestCase
         $this->assertTrue($productos->contains('id', $producto2->id));
     }
 
-    /** @test */
+    #[Test]
     public function solo_productos_eliminados_pueden_ser_obtenidos_con_onlyTrashed()
     {
         $producto2 = $this->createProducto(['nombre' => 'Producto 2'], $this->empresa);
@@ -104,7 +104,7 @@ class HasCustomSoftDeletesTest extends TestCase
         $this->assertFalse($eliminados->contains('id', $producto3->id));
     }
 
-    /** @test */
+    #[Test]
     public function producto_eliminado_puede_ser_restaurado()
     {
         $productoId = $this->producto->id;
@@ -125,7 +125,7 @@ class HasCustomSoftDeletesTest extends TestCase
         $this->assertTrue(Producto::get()->contains('id', $productoId));
     }
 
-    /** @test */
+    #[Test]
     public function forceDelete_elimina_producto_permanentemente()
     {
         $productoId = $this->producto->id;
@@ -143,7 +143,7 @@ class HasCustomSoftDeletesTest extends TestCase
         $this->assertNull(Producto::withTrashed()->find($productoId));
     }
 
-    /** @test */
+    #[Test]
     public function trashed_method_retorna_estado_correcto()
     {
         $productoId = $this->producto->id;
@@ -166,7 +166,7 @@ class HasCustomSoftDeletesTest extends TestCase
         $this->assertFalse($productoRestaurado->trashed());
     }
 
-    /** @test */
+    #[Test]
     public function trait_funciona_en_diferentes_modelos()
     {
         // Crear cliente
@@ -203,7 +203,7 @@ class HasCustomSoftDeletesTest extends TestCase
         $this->assertFalse($clienteRestaurado->trashed());
     }
 
-    /** @test */
+    #[Test]
     public function eliminar_dos_veces_no_causa_error()
     {
         // Primera eliminación
@@ -215,7 +215,7 @@ class HasCustomSoftDeletesTest extends TestCase
         $this->assertTrue($this->producto->trashed());
     }
 
-    /** @test */
+    #[Test]
     public function restaurar_producto_no_eliminado_no_causa_error()
     {
         // Producto no eliminado
@@ -228,7 +228,7 @@ class HasCustomSoftDeletesTest extends TestCase
         $this->assertFalse($this->producto->trashed());
     }
 
-    /** @test */
+    #[Test]
     public function global_scope_filtra_eliminados_automaticamente()
     {
         $producto2 = $this->createProducto(['nombre' => 'Producto 2'], $this->empresa);
@@ -247,7 +247,7 @@ class HasCustomSoftDeletesTest extends TestCase
         $this->assertTrue($productos->contains('id', $producto3->id));
     }
 
-    /** @test */
+    #[Test]
     public function puede_contar_productos_eliminados()
     {
         $producto2 = $this->createProducto(['nombre' => 'Producto 2'], $this->empresa);
@@ -263,7 +263,7 @@ class HasCustomSoftDeletesTest extends TestCase
         $this->assertEquals(3, Producto::withTrashed()->count());
     }
 
-    /** @test */
+    #[Test]
     public function where_clauses_funcionan_con_soft_deletes()
     {
         $producto2 = $this->createProducto([

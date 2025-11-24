@@ -11,6 +11,7 @@ use App\Models\Permiso;
 use App\Models\CategoriaProducto;
 use App\Models\UnidadMedida;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
