@@ -7,6 +7,7 @@ use App\Models\Rol;
 use App\Models\Permiso;
 use App\Models\TipoComprobanteFe;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 

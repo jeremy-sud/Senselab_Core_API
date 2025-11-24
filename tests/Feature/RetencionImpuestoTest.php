@@ -6,7 +6,7 @@ use Tests\TestCase;
 use App\Models\RetencionImpuesto;
 use App\Models\Proveedor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-
+use PHPUnit\Framework\Attributes\Test;
 class RetencionImpuestoTest extends TestCase
 {
     use RefreshDatabase;

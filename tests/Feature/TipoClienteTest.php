@@ -8,6 +8,7 @@ use App\Models\Rol;
 use App\Models\Permiso;
 use App\Models\TipoCliente;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 

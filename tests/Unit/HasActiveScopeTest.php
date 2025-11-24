@@ -7,7 +7,7 @@ use App\Models\Producto;
 use App\Models\Cliente;
 use App\Models\Empresa;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-
+use PHPUnit\Framework\Attributes\Test;
 /**
  * Tests para el trait HasActiveScope
  * 
@@ -27,7 +27,7 @@ class HasActiveScopeTest extends TestCase
         $this->empresa = $this->createEmpresa();
     }
 
-    /** @test */
+    #[Test]
     public function scope_activo_retorna_solo_productos_activos()
     {
         // Crear productos activos e inactivos
@@ -45,7 +45,7 @@ class HasActiveScopeTest extends TestCase
         $this->assertFalse($productosActivos->contains('id', $productoInactivo->id));
     }
 
-    /** @test */
+    #[Test]
     public function scope_inactivo_retorna_solo_productos_inactivos()
     {
         // Crear productos activos e inactivos
@@ -63,7 +63,7 @@ class HasActiveScopeTest extends TestCase
         $this->assertFalse($productosInactivos->contains('id', $productoActivo->id));
     }
 
-    /** @test */
+    #[Test]
     public function scope_conInactivos_retorna_todos_los_productos()
     {
         // Crear productos activos e inactivos
@@ -79,7 +79,7 @@ class HasActiveScopeTest extends TestCase
         $this->assertTrue($todosLosProductos->contains('id', $productoInactivo->id));
     }
 
-    /** @test */
+    #[Test]
     public function estaActivo_retorna_estado_correcto()
     {
         // Producto activo
@@ -91,7 +91,7 @@ class HasActiveScopeTest extends TestCase
         $this->assertFalse($productoInactivo->estaActivo());
     }
 
-    /** @test */
+    #[Test]
     public function activar_cambia_producto_a_activo()
     {
         // Crear producto inactivo
@@ -107,7 +107,7 @@ class HasActiveScopeTest extends TestCase
         $this->assertTrue($producto->estaActivo());
     }
 
-    /** @test */
+    #[Test]
     public function desactivar_cambia_producto_a_inactivo()
     {
         // Crear producto activo
@@ -123,7 +123,7 @@ class HasActiveScopeTest extends TestCase
         $this->assertFalse($producto->estaActivo());
     }
 
-    /** @test */
+    #[Test]
     public function toggleActivo_alterna_estado()
     {
         // Crear producto activo
@@ -140,7 +140,7 @@ class HasActiveScopeTest extends TestCase
         $this->assertTrue($producto->activo);
     }
 
-    /** @test */
+    #[Test]
     public function scopes_pueden_combinarse_con_where()
     {
         // Crear productos
@@ -171,7 +171,7 @@ class HasActiveScopeTest extends TestCase
         $this->assertTrue($productosPremiumActivos->contains('id', $producto1->id));
     }
 
-    /** @test */
+    #[Test]
     public function scopes_pueden_combinarse_con_orderBy()
     {
         // Crear productos con diferentes precios
@@ -202,7 +202,7 @@ class HasActiveScopeTest extends TestCase
         $this->assertEquals($producto2->id, $productos->last()->id);
     }
 
-    /** @test */
+    #[Test]
     public function scopes_funcionan_con_count()
     {
         // Crear 3 activos y 2 inactivos
@@ -218,7 +218,7 @@ class HasActiveScopeTest extends TestCase
         $this->assertEquals(5, Producto::conInactivos()->count());
     }
 
-    /** @test */
+    #[Test]
     public function scopes_funcionan_con_first()
     {
         // Crear productos
@@ -231,7 +231,7 @@ class HasActiveScopeTest extends TestCase
         $this->assertEquals($productoActivo->id, $primerActivo->id);
     }
 
-    /** @test */
+    #[Test]
     public function trait_funciona_en_diferentes_modelos()
     {
         // Probar con Cliente
@@ -271,7 +271,7 @@ class HasActiveScopeTest extends TestCase
         $this->assertFalse($clienteActivo->estaActivo());
     }
 
-    /** @test */
+    #[Test]
     public function activar_producto_ya_activo_no_causa_error()
     {
         // Producto activo
@@ -285,7 +285,7 @@ class HasActiveScopeTest extends TestCase
         $this->assertTrue($producto->activo);
     }
 
-    /** @test */
+    #[Test]
     public function desactivar_producto_ya_inactivo_no_causa_error()
     {
         // Producto inactivo
@@ -299,7 +299,7 @@ class HasActiveScopeTest extends TestCase
         $this->assertFalse($producto->activo);
     }
 
-    /** @test */
+    #[Test]
     public function scope_activo_excluye_eliminados()
     {
         // Crear producto activo y eliminado
@@ -321,7 +321,7 @@ class HasActiveScopeTest extends TestCase
         $this->assertFalse($productosActivos->contains('id', $productoActivoEliminado->id));
     }
 
-    /** @test */
+    #[Test]
     public function scopes_funcionan_con_pagination()
     {
         // Crear 10 productos activos
@@ -342,7 +342,7 @@ class HasActiveScopeTest extends TestCase
         $this->assertEquals(2, $productosActivos->lastPage());
     }
 
-    /** @test */
+    #[Test]
     public function multiples_toggles_alternan_correctamente()
     {
         $producto = $this->createProducto(['activo' => true], $this->empresa);
@@ -363,7 +363,7 @@ class HasActiveScopeTest extends TestCase
         $this->assertFalse($producto->activo);
     }
 
-    /** @test */
+    #[Test]
     public function scope_activo_funciona_con_relaciones()
     {
         // Crear productos activos e inactivos
@@ -380,7 +380,7 @@ class HasActiveScopeTest extends TestCase
         $this->assertTrue($empresa->productos->contains('id', $productoActivo->id));
     }
 
-    /** @test */
+    #[Test]
     public function scope_puede_combinarse_con_otros_scopes()
     {
         // Crear productos

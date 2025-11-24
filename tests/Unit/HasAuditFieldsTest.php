@@ -9,6 +9,7 @@ use App\Models\Empresa;
 use App\Models\Usuario;
 use App\Models\AuditoriaActividad;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -38,7 +39,7 @@ class HasAuditFieldsTest extends TestCase
         $this->actingAs($this->usuario);
     }
 
-    /** @test */
+    #[Test]
     public function crear_producto_registra_auditoria()
     {
         // Crear producto
@@ -60,7 +61,7 @@ class HasAuditFieldsTest extends TestCase
         $this->assertNull($auditoria->datos_anteriores);
     }
 
-    /** @test */
+    #[Test]
     public function actualizar_producto_registra_auditoria_con_cambios()
     {
         // Crear producto
@@ -98,7 +99,7 @@ class HasAuditFieldsTest extends TestCase
         $this->assertEquals(1500, $datosNuevos['precio_venta']);
     }
 
-    /** @test */
+    #[Test]
     public function eliminar_producto_registra_auditoria()
     {
         // Crear producto
@@ -122,7 +123,7 @@ class HasAuditFieldsTest extends TestCase
         $this->assertEquals($this->usuario->id, $auditoria->usuario_id);
     }
 
-    /** @test */
+    #[Test]
     public function restaurar_producto_registra_auditoria()
     {
         // Crear y eliminar producto
@@ -146,7 +147,7 @@ class HasAuditFieldsTest extends TestCase
         $this->assertEquals($producto->id, $auditoria->registro_id);
     }
 
-    /** @test */
+    #[Test]
     public function auditoria_captura_ip_address()
     {
         // Simular IP
@@ -161,7 +162,7 @@ class HasAuditFieldsTest extends TestCase
         $this->assertEquals('192.168.1.100', $auditoria->ip_address);
     }
 
-    /** @test */
+    #[Test]
     public function auditoria_captura_user_agent()
     {
         // Simular User Agent
@@ -179,7 +180,7 @@ class HasAuditFieldsTest extends TestCase
         $this->assertNotNull($auditoria->user_agent);
     }
 
-    /** @test */
+    #[Test]
     public function campos_sensibles_no_se_registran_en_auditoria()
     {
         // Crear usuario con password
@@ -209,7 +210,7 @@ class HasAuditFieldsTest extends TestCase
         $this->assertArrayHasKey('email', $datosNuevos);
     }
 
-    /** @test */
+    #[Test]
     public function historialAuditoria_retorna_todos_los_cambios()
     {
         // Crear producto
@@ -235,7 +236,7 @@ class HasAuditFieldsTest extends TestCase
         $this->assertEquals(3, $historial->where('accion', 'actualizar')->count());
     }
 
-    /** @test */
+    #[Test]
     public function creador_retorna_usuario_que_creo_registro()
     {
         // Crear producto
@@ -264,7 +265,7 @@ class HasAuditFieldsTest extends TestCase
         $this->assertEquals($this->usuario->id, $auditoriaCreacion->usuario_id);
     }
 
-    /** @test */
+    #[Test]
     public function actualizador_retorna_ultimo_usuario_que_actualizo()
     {
         // Crear producto
@@ -290,7 +291,7 @@ class HasAuditFieldsTest extends TestCase
         $this->assertEquals($otroUsuario->id, $auditoriaActualizacion->usuario_id);
     }
 
-    /** @test */
+    #[Test]
     public function auditoria_funciona_sin_usuario_autenticado()
     {
         // Desautenticar
@@ -318,7 +319,7 @@ class HasAuditFieldsTest extends TestCase
         $this->assertNull($auditoria);
     }
 
-    /** @test */
+    #[Test]
     public function auditoria_registra_solo_campos_modificados()
     {
         // Crear producto
@@ -351,7 +352,7 @@ class HasAuditFieldsTest extends TestCase
         $this->assertEquals('Producto Modificado', $datosNuevos['nombre']);
     }
 
-    /** @test */
+    #[Test]
     public function trait_funciona_en_diferentes_modelos()
     {
         // Probar con Cliente
@@ -377,7 +378,7 @@ class HasAuditFieldsTest extends TestCase
         $this->assertEquals($this->usuario->id, $auditoria->usuario_id);
     }
 
-    /** @test */
+    #[Test]
     public function multiples_actualizaciones_crean_multiples_auditorias()
     {
         // Crear producto

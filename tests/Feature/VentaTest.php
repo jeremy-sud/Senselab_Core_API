@@ -10,7 +10,7 @@ use App\Models\Almacen;
 use App\Models\Usuario;
 use App\Models\InventarioProducto;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-
+use PHPUnit\Framework\Attributes\Test;
 class VentaTest extends TestCase
 {
     use RefreshDatabase;
@@ -22,7 +22,7 @@ class VentaTest extends TestCase
         $this->seedPermisos();
     }
 
-    /** @test */
+    #[Test]
     public function test_puede_crear_venta_simple()
     {
         $usuario = $this->createAdminUsuario();
@@ -112,7 +112,7 @@ class VentaTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function test_calcula_correctamente_totales()
     {
         $usuario = $this->createAdminUsuario();
@@ -192,7 +192,7 @@ class VentaTest extends TestCase
         $this->assertEquals(1130.00, $venta->monto_total_venta);
     }
 
-    /** @test */
+    #[Test]
     public function test_puede_anular_venta()
     {
         $usuario = $this->createAdminUsuario();
@@ -239,7 +239,7 @@ class VentaTest extends TestCase
         $this->assertEquals('anulada', $venta->estado_venta);
     }
 
-    /** @test */
+    #[Test]
     public function test_actualiza_inventario_al_vender()
     {
         $usuario = $this->createAdminUsuario();
@@ -314,7 +314,7 @@ class VentaTest extends TestCase
         $this->assertEquals($cantidadInicial - 5, $inventario->stock_actual);
     }
 
-    /** @test */
+    #[Test]
     public function test_no_permite_vender_sin_stock()
     {
         $usuario = $this->createAdminUsuario();
@@ -384,7 +384,7 @@ class VentaTest extends TestCase
         $response->assertStatus(422);
     }
 
-    /** @test */
+    #[Test]
     public function test_requiere_autenticacion()
     {
         $response = $this->json('GET', '/api/ventas');
@@ -392,7 +392,7 @@ class VentaTest extends TestCase
         $response->assertStatus(401);
     }
 
-    /** @test */
+    #[Test]
     public function test_puede_listar_ventas()
     {
         $usuario = $this->createAdminUsuario();
