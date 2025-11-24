@@ -26,6 +26,14 @@ class TipoClienteController extends Controller
             });
         }
 
+        if ($request->boolean('con_descuento')) {
+            $query->where('descuento_default', '>', 0);
+        }
+
+        if ($request->boolean('con_credito')) {
+            $query->where('dias_credito_default', '>', 0);
+        }
+
         $tipos = $query->orderBy('codigo')->paginate($request->per_page ?? 15);
 
         return TipoClienteResource::collection($tipos);
@@ -43,16 +51,18 @@ class TipoClienteController extends Controller
         return new TipoClienteResource($tipoCliente);
     }
 
-    public function update(UpdateTipoClienteRequest $request, TipoCliente $tipoCliente)
+    public function update(UpdateTipoClienteRequest $request, $tiposCliente)
     {
-        $tipoCliente->update($request->validated());
+        $tipo = TipoCliente::findOrFail($tiposCliente);
+        $tipo->update($request->validated());
 
-        return new TipoClienteResource($tipoCliente);
+        return new TipoClienteResource($tipo);
     }
 
-    public function destroy(TipoCliente $tipoCliente)
+    public function destroy($tiposCliente)
     {
-        $tipoCliente->delete();
+        $tipo = TipoCliente::findOrFail($tiposCliente);
+        $tipo->delete();
 
         return response()->json(['message' => 'Tipo de cliente eliminado correctamente'], 200);
     }

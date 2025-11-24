@@ -47,13 +47,21 @@ trait HasCustomSoftDeletes
 
         $this->{$this->getDeletedAtColumn()} = true;
 
+        $updateData = [
+            $this->getDeletedAtColumn() => true,
+        ];
+
+        // Si el modelo tiene el campo 'activo', también lo desactivamos
+        if ($this->isFillable('activo') || in_array('activo', $this->fillable)) {
+            $this->activo = false;
+            $updateData['activo'] = false;
+        }
+
         if (method_exists($this, 'getDeletedByColumn') && Auth::check()) {
             $this->{$this->getDeletedByColumn()} = Auth::id();
         }
 
-        $query->update([
-            $this->getDeletedAtColumn() => true,
-        ]);
+        $query->update($updateData);
 
         $this->fireModelEvent('trashed', false);
     }

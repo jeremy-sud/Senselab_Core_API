@@ -16,8 +16,9 @@ class TipoClientePolicy extends BasePolicy
 {
     /**
      * Prefijo del permiso
+     * Los permisos esperados son: ver-tipos-clientes, crear-tipos-clientes, etc.
      * 
      * @var string
      */
-    protected string $permission = 'tipo_cliente';
+    protected string $permission = 'tipos-clientes';
 }

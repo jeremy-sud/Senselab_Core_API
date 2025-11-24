@@ -180,6 +180,7 @@ class PermissionTest extends TestCase
     public function test_puede_listar_todos_los_permisos(): void
     {
         // Arrange
+        $this->seedRoles();
         $this->seedPermisos();
         $usuario = $this->createAdminUsuario();
 
@@ -280,6 +281,7 @@ class PermissionTest extends TestCase
     public function test_permisos_agrupados_por_modulo(): void
     {
         // Arrange
+        $this->seedRoles();
         $this->seedPermisos();
         $usuario = $this->createAdminUsuario();
 

@@ -143,7 +143,9 @@ class TipoClienteTest extends TestCase
 
     public function test_puede_actualizar_tipo_cliente(): void
     {
-        Sanctum::actingAs($this->usuario);
+        // Usar usuario admin con permisos
+        $admin = $this->createAdminUsuario();
+        Sanctum::actingAs($admin);
 
         $tipo = TipoCliente::create([
             'codigo' => 'CORP',
@@ -160,11 +162,6 @@ class TipoClienteTest extends TestCase
             'descuento_default' => 12.0,
         ]);
 
-        // Debug: ver respuesta si hay error
-        if ($response->status() !== 200) {
-            dump($response->json());
-        }
-
         $response->assertStatus(200);
         $this->assertDatabaseHas('tipos_clientes', [
             'id' => $tipo->id,
@@ -175,7 +172,9 @@ class TipoClienteTest extends TestCase
 
     public function test_puede_eliminar_tipo_cliente(): void
     {
-        Sanctum::actingAs($this->usuario);
+        // Usar usuario admin con permisos
+        $admin = $this->createAdminUsuario();
+        Sanctum::actingAs($admin);
 
         $tipo = TipoCliente::create([
             'codigo' => 'TMP',
@@ -236,8 +235,9 @@ class TipoClienteTest extends TestCase
 
         $response->assertStatus(200);
         $data = $response->json('data');
+        $this->assertGreaterThan(0, count($data), 'Debe haber al menos un tipo con descuento');
         foreach ($data as $item) {
-            $this->assertGreaterThan(0, $item['descuento_default']);
+            $this->assertGreaterThan(0, $item['descuento_default'], "El tipo {$item['nombre']} debería tener descuento > 0");
         }
     }
 
@@ -252,8 +252,9 @@ class TipoClienteTest extends TestCase
 
         $response->assertStatus(200);
         $data = $response->json('data');
+        $this->assertGreaterThan(0, count($data), 'Debe haber al menos un tipo con crédito');
         foreach ($data as $item) {
-            $this->assertGreaterThan(0, $item['dias_credito_default']);
+            $this->assertGreaterThan(0, $item['dias_credito_default'], "El tipo {$item['nombre']} debería tener días de crédito > 0");
         }
     }
 
