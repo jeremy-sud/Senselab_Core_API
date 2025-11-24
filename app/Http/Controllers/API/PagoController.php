@@ -9,6 +9,7 @@ use App\Http\Resources\PagoResource;
 use App\Models\Pago;
 use App\Models\CuentaPorCobrar;
 use App\Models\CuentaPorPagar;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -26,6 +27,20 @@ use OpenApi\Attributes as OA;
  */
 class PagoController extends Controller
 {
+    use HasCacheableQueries;
+
+    /**
+     * Tags para invalidación de cache
+     * @var array<string>
+     */
+    protected array $cacheTags = ['pagos', 'finanzas'];
+
+    /**
+     * TTL del cache en segundos (30 minutos)
+     * Datos dinámicos: pagos se registran frecuentemente
+     * @var int
+     */
+    protected int $cacheTTL = 1800;
     /**
      * Listar todos los pagos de la empresa autenticada
      *
@@ -103,41 +118,53 @@ class PagoController extends Controller
         
         $empresaId = $request->user()->empresa_id;
         
-        $query = Pago::where('empresa_id', $empresaId)
-            ->where('eliminado', 0)
-            ->with(['formaPago', 'proveedor', 'cliente', 'cuentaPorPagar', 'cuentaPorCobrar', 'ordenCompra']);
+        return $this->cacheQueryIfEnabled(function () use ($request, $empresaId) {
+            $query = Pago::where('empresa_id', $empresaId)
+                ->where('eliminado', 0)
+                ->with(['formaPago', 'proveedor', 'cliente', 'cuentaPorPagar', 'cuentaPorCobrar', 'ordenCompra']);
 
-        // Filtro por estado
-        if ($request->filled('estado')) {
-            $query->where('estado', $request->estado);
-        }
+            // Filtro por estado
+            if ($request->filled('estado')) {
+                $query->where('estado', $request->estado);
+            }
 
-        // Filtro por forma de pago
-        if ($request->filled('forma_pago_id')) {
-            $query->where('forma_pago_id', $request->forma_pago_id);
-        }
+            // Filtro por forma de pago
+            if ($request->filled('forma_pago_id')) {
+                $query->where('forma_pago_id', $request->forma_pago_id);
+            }
 
-        // Filtro por proveedor
-        if ($request->filled('proveedor_id')) {
-            $query->where('proveedor_id', $request->proveedor_id);
-        }
+            // Filtro por proveedor
+            if ($request->filled('proveedor_id')) {
+                $query->where('proveedor_id', $request->proveedor_id);
+            }
 
-        // Filtro por cliente
-        if ($request->filled('cliente_id')) {
-            $query->where('cliente_id', $request->cliente_id);
-        }
+            // Filtro por cliente
+            if ($request->filled('cliente_id')) {
+                $query->where('cliente_id', $request->cliente_id);
+            }
 
-        // Filtro por rango de fechas
-        if ($request->filled('desde') && $request->filled('hasta')) {
-            $query->whereBetween('fecha_pago', [$request->desde, $request->hasta]);
-        }
+            // Filtro por rango de fechas
+            if ($request->filled('desde') && $request->filled('hasta')) {
+                $query->whereBetween('fecha_pago', [$request->desde, $request->hasta]);
+            }
 
-        // Ordenamiento
-        $query->orderBy($request->get('sort_by', 'fecha_pago'), $request->get('sort_order', 'desc'));
+            // Ordenamiento
+            $query->orderBy($request->get('sort_by', 'fecha_pago'), $request->get('sort_order', 'desc'));
 
-        $pagos = $query->paginate($request->get('per_page', 15));
+            $pagos = $query->paginate($request->get('per_page', 15));
 
-        return PagoResource::collection($pagos);
+            return PagoResource::collection($pagos);
+        }, [
+            'estado' => $request->input('estado'),
+            'forma_pago_id' => $request->input('forma_pago_id'),
+            'proveedor_id' => $request->input('proveedor_id'),
+            'cliente_id' => $request->input('cliente_id'),
+            'desde' => $request->input('desde'),
+            'hasta' => $request->input('hasta'),
+            'sort_by' => $request->input('sort_by'),
+            'sort_order' => $request->input('sort_order'),
+            'per_page' => $request->input('per_page')
+        ]);
     }
 
     /**
