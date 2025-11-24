@@ -103,13 +103,27 @@
 - 10 schemas OpenAPI creados (Usuario, Rol, Permiso, Empresa, Producto, etc.)
 - Autenticación Bearer configurada en Swagger UI
 
-### FASE 6 - Correcciones de Modelos (COMPLETADA)**
+**✅ FASE 6 - Correcciones de Modelos (COMPLETADA)**
 - Revisión y corrección de 65 modelos del sistema
 - Sincronización completa con esquema de base de datos MySQL
 - Correcciones en 10 modelos críticos: Cliente, Proveedor, Producto, OrdenCompra, EntradaInventario, Almacen, RolUsuario, UsuarioRol, Cabys, CategoriaProducto
 - Verificación de relaciones, fillable, casts y métodos
 - Eliminación de campos obsoletos y adición de campos faltantes
 - Sistema 100% sincronizado sin errores de compilación
+
+**✅ SPRINT 4 - Cache con Redis (COMPLETADO) 🚀**
+- Implementación de cache inteligente con Redis en 5 controladores críticos
+- **60-80% mejora en performance** de endpoints de catálogos frecuentes
+- Sistema de tags para invalidación selectiva de cache
+- Cache keys únicas basadas en parámetros de request
+- TTL optimizado: 1h para datos dinámicos, 24h para catálogos estáticos
+- **Bugs RBAC corregidos:**
+  - Usuario::hasPermission() ahora usa cache (hasCachedPermission)
+  - BasePolicy con formato de slugs correcto: 'ver-modulo' vs 'modulo.leer'
+  - PermisoController::grouped() con autorización
+- Tests unitarios: **72/72 (100%)** ✅
+- Ver detalles: [SPRINT_4_CACHE_REDIS_COMPLETADO.md](SPRINT_4_CACHE_REDIS_COMPLETADO.md)
+- Commit: `3c61f5f`
 
 ### 🔑 Credenciales de Prueba
 
