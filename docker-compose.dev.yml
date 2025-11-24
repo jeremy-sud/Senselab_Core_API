@@ -1,5 +1,3 @@
-version: '3.8'
-
 # Docker Compose para Desarrollo
 # Incluye herramientas adicionales: PHPMyAdmin, Mailhog
 
