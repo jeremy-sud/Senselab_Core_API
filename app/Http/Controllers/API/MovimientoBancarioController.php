@@ -50,7 +50,14 @@ class MovimientoBancarioController extends Controller
             $search = $request->input('search');
             $empresaId = Auth::user()->empresa_id;
             
-            return $this->cacheQueryIfEnabled(function () use ($request, $empresaId, $search, $perPage) {
+            $cacheKey = $this->getCacheKey('index', [
+                'search' => $search,
+                'cuenta_bancaria_id' => $request->input('cuenta_bancaria_id'),
+                'tipo_movimiento' => $request->input('tipo_movimiento'),
+                'per_page' => $perPage
+            ]);
+            
+            return $this->cacheQueryIfEnabled($cacheKey, function () use ($request, $empresaId, $search, $perPage) {
                 $query = MovimientoBancario::with(['empresa', 'cuentaBancaria', 'asientoContable'])
                                            ->where('empresa_id', $empresaId)
                                            ->where('eliminado', false);

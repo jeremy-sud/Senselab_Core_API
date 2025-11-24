@@ -65,7 +65,9 @@ class PresupuestoController extends Controller
         
         $empresaId = $request->user()->empresa_id;
 
-        return $this->cacheQueryIfEnabled(function() use ($request, $empresaId) {
+        $cacheKey = $this->getCacheKey('index', ['empresa_id' => $empresaId]);
+
+        return $this->cacheQueryIfEnabled($cacheKey, function() use ($request, $empresaId) {
             $presupuestos = Presupuesto::where('empresa_id', $empresaId)
                 ->with('detalles.cuentaContable')
                 ->orderBy('periodo_inicio', 'desc')
@@ -80,7 +82,7 @@ class PresupuestoController extends Controller
                     'per_page' => $presupuestos->perPage()
                 ]
             ]);
-        }, $request);
+        });
     }
 
     /**

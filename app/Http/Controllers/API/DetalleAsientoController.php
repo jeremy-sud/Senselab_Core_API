@@ -120,7 +120,17 @@ class DetalleAsientoController extends Controller
         
         $empresaId = $request->user()->empresa_id;
         
-        return $this->cacheQueryIfEnabled(function() use ($request, $empresaId) {
+        $cacheKey = $this->getCacheKey('index', [
+            'asiento_contable_id' => $request->asiento_contable_id,
+            'cuenta_contable_id' => $request->cuenta_contable_id,
+            'solo_debe' => $request->solo_debe,
+            'solo_haber' => $request->solo_haber,
+            'sort_by' => $request->get('sort_by', 'created_at'),
+            'sort_order' => $request->get('sort_order', 'desc'),
+            'per_page' => $request->get('per_page', 15)
+        ]);
+        
+        return $this->cacheQueryIfEnabled($cacheKey, function() use ($request, $empresaId) {
             $query = DetalleAsiento::whereHas('asientoContable', function ($q) use ($empresaId) {
                     $q->where('empresa_id', $empresaId);
                 })
@@ -153,7 +163,7 @@ class DetalleAsientoController extends Controller
             $detalles = $query->paginate($request->get('per_page', 15));
 
             return DetalleAsientoResource::collection($detalles);
-        }, $request);
+        });
     }
 
     /**

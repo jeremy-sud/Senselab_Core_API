@@ -118,7 +118,17 @@ class PagoController extends Controller
         
         $empresaId = $request->user()->empresa_id;
         
-        return $this->cacheQueryIfEnabled(function () use ($request, $empresaId) {
+        $cacheKey = $this->getCacheKey('index', [
+            'estado' => $request->estado,
+            'forma_pago_id' => $request->forma_pago_id,
+            'proveedor_id' => $request->proveedor_id,
+            'cliente_id' => $request->cliente_id,
+            'desde' => $request->desde,
+            'hasta' => $request->hasta,
+            'per_page' => $request->per_page
+        ]);
+        
+        return $this->cacheQueryIfEnabled($cacheKey, function () use ($request, $empresaId) {
             $query = Pago::where('empresa_id', $empresaId)
                 ->where('eliminado', 0)
                 ->with(['formaPago', 'proveedor', 'cliente', 'cuentaPorPagar', 'cuentaPorCobrar', 'ordenCompra']);

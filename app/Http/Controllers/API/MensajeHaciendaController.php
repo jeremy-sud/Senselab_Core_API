@@ -22,7 +22,7 @@ class MensajeHaciendaController extends Controller
     {
         $this->authorize('viewAny', MensajeHacienda::class);
 
-        $cacheKey = $this->getCacheKey([
+        $cacheKey = $this->getCacheKey('index', [
             'estado' => $request->get('estado'),
             'tipo_mensaje' => $request->get('tipo_mensaje'),
             'comprobante_id' => $request->get('comprobante_id'),
@@ -33,7 +33,7 @@ class MensajeHaciendaController extends Controller
 
         $mensajes = $this->cacheQueryIfEnabled($cacheKey, function () use ($request) {
             $query = MensajeHacienda::query()
-                ->where('empresa_id', auth()->user()->empresa_id)
+                ->where('empresa_id', auth('sanctum')->user()->empresa_id)
                 ->with(['comprobante']);
 
             if ($request->filled('estado')) {
@@ -89,7 +89,7 @@ class MensajeHaciendaController extends Controller
         }
 
         $mensaje = MensajeHacienda::create([
-            'empresa_id' => auth()->user()->empresa_id,
+            'empresa_id' => auth('sanctum')->user()->empresa_id,
             'comprobante_id' => $request->get('comprobante_id'),
             'clave_numerica' => $request->get('clave_numerica'),
             'tipo_mensaje' => $request->get('tipo_mensaje'),

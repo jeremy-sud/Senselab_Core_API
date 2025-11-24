@@ -83,7 +83,9 @@ class SalidaInventarioController extends Controller
         
         $empresaId = $request->user()->empresa_id;
 
-        return $this->cacheQueryIfEnabled(function () use ($empresaId) {
+        $cacheKey = $this->getCacheKey('index', ['empresa_id' => $empresaId]);
+
+        return $this->cacheQueryIfEnabled($cacheKey, function () use ($empresaId) {
             $salidas = SalidaInventario::where('empresa_id', $empresaId)
                 ->with(['almacen', 'cliente', 'proveedor', 'venta', 'detalles.producto'])
                 ->orderBy('fecha_salida', 'desc')
@@ -98,7 +100,7 @@ class SalidaInventarioController extends Controller
                     'per_page' => $salidas->perPage()
                 ]
             ]);
-        }, []);
+        });
     }
 
     /**

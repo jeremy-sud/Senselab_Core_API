@@ -67,7 +67,9 @@ class ComprobanteRecibidoElectronicoController extends Controller
         
         $empresaId = $request->user()->empresa_id;
 
-        return $this->cacheQueryIfEnabled(function() use ($empresaId) {
+        $cacheKey = $this->getCacheKey('index', ['empresa_id' => $empresaId]);
+
+        return $this->cacheQueryIfEnabled($cacheKey, function() use ($empresaId) {
             $comprobantes = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)
                 ->with(['proveedor', 'entradaInventario', 'usuarioConfirmacion'])
                 ->orderBy('fecha_recepcion_sistema', 'desc')
@@ -82,7 +84,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
                     'per_page' => $comprobantes->perPage()
                 ]
             ]);
-        }, $request);
+        });
     }
 
     /**

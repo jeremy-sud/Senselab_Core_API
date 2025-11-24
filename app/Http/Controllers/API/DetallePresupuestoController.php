@@ -66,7 +66,9 @@ class DetallePresupuestoController extends Controller
         
         $empresaId = $request->user()->empresa_id;
 
-        return $this->cacheQueryIfEnabled(function() use ($empresaId, $presupuestoId) {
+        $cacheKey = $this->getCacheKey('index', ['presupuesto_id' => $presupuestoId]);
+
+        return $this->cacheQueryIfEnabled($cacheKey, function() use ($empresaId, $presupuestoId) {
             $presupuesto = Presupuesto::where('empresa_id', $empresaId)->findOrFail($presupuestoId);
 
             $detalles = DetallePresupuesto::where('presupuesto_id', $presupuestoId)
@@ -77,7 +79,7 @@ class DetallePresupuestoController extends Controller
                 'success' => true,
                 'data' => DetallePresupuestoResource::collection($detalles)
             ]);
-        }, $request);
+        });
     }
 
     /**

@@ -82,7 +82,7 @@ class EmpleadoController extends Controller
     {
         $this->authorize('viewAny', Empleado::class);
 
-        $empresaId = auth()->user()->empresa_id;
+        $empresaId = auth('sanctum')->user()->empresa_id;
         
         $cacheKey = $this->getCacheKey('index', [
             'empresa_id' => $empresaId,
@@ -149,7 +149,7 @@ class EmpleadoController extends Controller
         $this->authorize('create', Empleado::class);
 
         $validated = $request->validated();
-        $validated['empresa_id'] = auth()->user()->empresa_id;
+        $validated['empresa_id'] = auth('sanctum')->user()->empresa_id;
 
         $empleado = Empleado::create($validated);
         $empleado->load(['cargo']);
@@ -183,7 +183,7 @@ class EmpleadoController extends Controller
     )]
     public function show(int $id): EmpleadoResource
     {
-        $empresaId = auth()->user()->empresa_id;
+        $empresaId = auth('sanctum')->user()->empresa_id;
 
         $empleado = Empleado::where('empresa_id', $empresaId)
             ->with(['cargo'])
@@ -222,7 +222,7 @@ class EmpleadoController extends Controller
     )]
     public function update(UpdateEmpleadoRequest $request, int $id): EmpleadoResource
     {
-        $empresaId = auth()->user()->empresa_id;
+        $empresaId = auth('sanctum')->user()->empresa_id;
 
         $empleado = Empleado::where('empresa_id', $empresaId)->findOrFail($id);
         $this->authorize('update', $empleado);
@@ -254,7 +254,7 @@ class EmpleadoController extends Controller
     )]
     public function destroy(int $id): JsonResponse
     {
-        $empresaId = auth()->user()->empresa_id;
+        $empresaId = auth('sanctum')->user()->empresa_id;
 
         $empleado = Empleado::where('empresa_id', $empresaId)->findOrFail($id);
         $this->authorize('delete', $empleado);

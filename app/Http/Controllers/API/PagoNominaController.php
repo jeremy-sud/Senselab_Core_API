@@ -97,7 +97,15 @@ class PagoNominaController extends Controller
         
         $empresaId = $request->user()->empresa_id;
         
-        return $this->cacheQueryIfEnabled(function() use ($request, $empresaId) {
+        $cacheKey = $this->getCacheKey('index', [
+            'empleado_id' => $request->empleado_id,
+            'periodo_nomina_id' => $request->periodo_nomina_id,
+            'estado' => $request->estado,
+            'desde' => $request->desde,
+            'hasta' => $request->hasta
+        ]);
+        
+        return $this->cacheQueryIfEnabled($cacheKey, function() use ($request, $empresaId) {
             $query = PagoNomina::where('empresa_id', $empresaId)
                 ->where('eliminado', 0)
                 ->with(['empresa', 'empleado', 'periodoNomina', 'metodoPago']);
@@ -125,7 +133,7 @@ class PagoNominaController extends Controller
             $pagos = $query->orderBy('fecha_pago', 'desc')->paginate(15);
 
             return PagoNominaResource::collection($pagos);
-        }, $request);
+        });
     }
 
     /**

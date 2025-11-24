@@ -112,7 +112,16 @@ class HorarioRutaController extends Controller
     {
         $this->authorize('viewAny', HorarioRuta::class);
         
-        return $this->cacheQueryIfEnabled(function () use ($request) {
+        $cacheKey = $this->getCacheKey('index', [
+            'ruta_id' => $request->ruta_id,
+            'bus_id' => $request->bus_id,
+            'estado' => $request->estado,
+            'fecha' => $request->fecha,
+            'desde' => $request->desde,
+            'hasta' => $request->hasta
+        ]);
+        
+        return $this->cacheQueryIfEnabled($cacheKey, function () use ($request) {
             $query = HorarioRuta::with(['ruta', 'bus'])
                 ->where('eliminado', 0);
 

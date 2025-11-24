@@ -83,7 +83,13 @@ class PeriodoNominaController extends Controller
         
         $empresaId = $request->user()->empresa_id;
         
-        return $this->cacheQueryIfEnabled(function() use ($request, $empresaId) {
+        $cacheKey = $this->getCacheKey('index', [
+            'estado' => $request->estado,
+            'anio' => $request->anio,
+            'mes' => $request->mes
+        ]);
+        
+        return $this->cacheQueryIfEnabled($cacheKey, function() use ($request, $empresaId) {
             $query = PeriodoNomina::where('empresa_id', $empresaId)
                 ->where('eliminado', 0)
                 ->with(['empresa', 'pagosNomina']);
@@ -106,7 +112,7 @@ class PeriodoNominaController extends Controller
             $periodos = $query->orderBy('fecha_inicio', 'desc')->paginate(15);
 
             return PeriodoNominaResource::collection($periodos);
-        }, $request);
+        });
     }
 
     /**

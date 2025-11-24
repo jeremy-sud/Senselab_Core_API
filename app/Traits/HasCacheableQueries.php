@@ -142,4 +142,38 @@ trait HasCacheableQueries
         
         return $callback();
     }
+    
+    /**
+     * Alias de getCacheKey para compatibilidad
+     * 
+     * @param string $method
+     * @param array $params
+     * @return string
+     */
+    protected function generateCacheKey(string $method, array $params = []): string
+    {
+        return $this->getCacheKey($method, $params);
+    }
+    
+    /**
+     * Alias de cacheQuery para compatibilidad
+     * 
+     * @param string $cacheKey
+     * @param callable $callback
+     * @return mixed
+     */
+    protected function getCached(string $cacheKey, callable $callback)
+    {
+        return $this->cacheQuery($cacheKey, $callback);
+    }
+    
+    /**
+     * Alias de flushCache para compatibilidad
+     * 
+     * @return void
+     */
+    protected function clearCache(): void
+    {
+        $this->flushCache();
+    }
 }

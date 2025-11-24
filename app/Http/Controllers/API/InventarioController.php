@@ -100,7 +100,7 @@ class InventarioController extends Controller
     {
         $this->authorize('viewAny', EntradaInventario::class);
         
-        $empresaId = auth()->user()->empresa_id;
+        $empresaId = auth('sanctum')->user()->empresa_id;
         
         $cacheKey = $this->getCacheKey('entradas', [
             'almacen_id' => $request->input('almacen_id'),
@@ -191,7 +191,7 @@ class InventarioController extends Controller
         $this->authorize('create', EntradaInventario::class);
         
         $validated = $request->validated();
-        $validated['empresa_id'] = auth()->user()->empresa_id;
+        $validated['empresa_id'] = auth('sanctum')->user()->empresa_id;
 
         $entrada = EntradaInventario::create($validated);
         $entrada->load(['almacen', 'ordenCompra', 'proveedor', 'detalles']);
@@ -239,7 +239,7 @@ class InventarioController extends Controller
     )]
     public function showEntrada(int $id): EntradaInventarioResource
     {
-        $empresaId = auth()->user()->empresa_id;
+        $empresaId = auth('sanctum')->user()->empresa_id;
 
         $entrada = EntradaInventario::where('empresa_id', $empresaId)
             ->with(['almacen', 'ordenCompra', 'proveedor', 'detalles.producto'])
@@ -317,7 +317,7 @@ class InventarioController extends Controller
     {
         $this->authorize('viewAny', SalidaInventario::class);
         
-        $empresaId = auth()->user()->empresa_id;
+        $empresaId = auth('sanctum')->user()->empresa_id;
         
         $cacheKey = $this->getCacheKey('salidas', [
             'almacen_id' => $request->input('almacen_id'),
@@ -409,7 +409,7 @@ class InventarioController extends Controller
         $this->authorize('create', SalidaInventario::class);
         
         $validated = $request->validated();
-        $validated['empresa_id'] = auth()->user()->empresa_id;
+        $validated['empresa_id'] = auth('sanctum')->user()->empresa_id;
 
         $salida = SalidaInventario::create($validated);
         $salida->load(['almacen', 'venta', 'cliente', 'proveedor', 'detalles']);
@@ -457,7 +457,7 @@ class InventarioController extends Controller
     )]
     public function showSalida(int $id): SalidaInventarioResource
     {
-        $empresaId = auth()->user()->empresa_id;
+        $empresaId = auth('sanctum')->user()->empresa_id;
 
         $salida = SalidaInventario::where('empresa_id', $empresaId)
             ->with(['almacen', 'venta', 'cliente', 'proveedor', 'detalles.producto'])
@@ -515,7 +515,7 @@ class InventarioController extends Controller
     )]
     public function cancelarEntrada(int $id): JsonResponse
     {
-        $empresaId = auth()->user()->empresa_id;
+        $empresaId = auth('sanctum')->user()->empresa_id;
 
         $entrada = EntradaInventario::where('empresa_id', $empresaId)->findOrFail($id);
 
@@ -581,7 +581,7 @@ class InventarioController extends Controller
     )]
     public function cancelarSalida(int $id): JsonResponse
     {
-        $empresaId = auth()->user()->empresa_id;
+        $empresaId = auth('sanctum')->user()->empresa_id;
 
         $salida = SalidaInventario::where('empresa_id', $empresaId)->findOrFail($id);
 

@@ -34,7 +34,20 @@ class RetencionImpuestoController extends Controller
     {
         $this->authorize('viewAny', RetencionImpuesto::class);
         
-        return $this->cacheQueryIfEnabled(function() use ($request) {
+        $cacheKey = $this->getCacheKey('index', [
+            'search' => $request->input('search'),
+            'proveedor_id' => $request->input('proveedor_id'),
+            'tipo_retencion' => $request->input('tipo_retencion'),
+            'declaradas' => $request->boolean('declaradas'),
+            'pendientes_declaracion' => $request->boolean('pendientes_declaracion'),
+            'periodo_declaracion' => $request->input('periodo_declaracion'),
+            'fecha_desde' => $request->input('fecha_desde'),
+            'fecha_hasta' => $request->input('fecha_hasta'),
+            'monto_minimo' => $request->input('monto_minimo'),
+            'per_page' => $request->input('per_page', 15)
+        ]);
+        
+        return $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
             try {
                 $perPage = $request->input('per_page', 15);
                 $search = $request->input('search');
@@ -103,7 +116,7 @@ class RetencionImpuestoController extends Controller
                     'error' => $e->getMessage()
                 ], 500);
             }
-        }, $request);
+        });
     }
 
     /**

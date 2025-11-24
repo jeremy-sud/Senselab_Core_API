@@ -69,7 +69,15 @@ class CuentaPorCobrarController extends Controller
 
         $empresaId = $request->user()->empresa_id;
         
-        return $this->cacheQueryIfEnabled(function () use ($request, $empresaId) {
+        $cacheKey = $this->getCacheKey('index', [
+            'estado' => $request->estado,
+            'cliente_id' => $request->cliente_id,
+            'vencidas' => $request->vencidas,
+            'desde' => $request->desde,
+            'hasta' => $request->hasta
+        ]);
+        
+        return $this->cacheQueryIfEnabled($cacheKey, function () use ($request, $empresaId) {
             $query = CuentaPorCobrar::where('empresa_id', $empresaId)
                 ->where('eliminado', 0)
                 ->with(['cliente', 'venta', 'empresa']);
