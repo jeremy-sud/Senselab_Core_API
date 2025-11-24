@@ -39,51 +39,56 @@ class CuentaBancariaController extends Controller
             $search = $request->input('search');
             $empresaId = Auth::user()->empresa_id;
             
-            $query = CuentaBancaria::with(['empresa', 'cuentaContable'])
-                                   ->where('empresa_id', $empresaId)
-                                   ->where('eliminado', false);
-            
-            if ($search) {
-                $query->where(function($q) use ($search) {
-                    $q->where('banco', 'like', "%{$search}%")
-                      ->orWhere('numero_cuenta', 'like', "%{$search}%")
-                      ->orWhere('iban', 'like', "%{$search}%");
-                });
-            }
-            
-            // Filtro por estado activo
-            if ($request->has('activa') || $request->has('activas')) {
-                $esActivo = $request->boolean('activa') || $request->boolean('activas');
-                if ($esActivo) {
-                    $query->activas();
-                } else {
-                    $query->where('activa', false);
+            $cuentasBancarias = $this->cacheQueryIfEnabled(
+                $this->getCacheKey('index', array_merge($request->all(), ['empresa_id' => $empresaId])),
+                function() use ($request, $perPage, $search, $empresaId) {
+                    $query = CuentaBancaria::with(['empresa', 'cuentaContable'])
+                                           ->where('empresa_id', $empresaId)
+                                           ->where('eliminado', false);
+                    
+                    if ($search) {
+                        $query->where(function($q) use ($search) {
+                            $q->where('banco', 'like', "%{$search}%")
+                              ->orWhere('numero_cuenta', 'like', "%{$search}%")
+                              ->orWhere('iban', 'like', "%{$search}%");
+                        });
+                    }
+                    
+                    // Filtro por estado activo
+                    if ($request->has('activa') || $request->has('activas')) {
+                        $esActivo = $request->boolean('activa') || $request->boolean('activas');
+                        if ($esActivo) {
+                            $query->activas();
+                        } else {
+                            $query->where('activa', false);
+                        }
+                    }
+                    
+                    // Filtro por moneda
+                    if ($request->has('moneda')) {
+                        $query->porMoneda($request->input('moneda'));
+                    }
+                    
+                    // Filtro por cuenta principal
+                    if ($request->boolean('principales')) {
+                        $query->principales();
+                    }
+                    
+                    // Filtro por tipo de cuenta
+                    if ($request->has('tipo_cuenta')) {
+                        $query->where('tipo_cuenta', $request->input('tipo_cuenta'));
+                    }
+                    
+                    // Filtro por banco
+                    if ($request->has('banco')) {
+                        $query->where('banco', 'like', '%' . $request->input('banco') . '%');
+                    }
+                    
+                    return $query->orderBy('banco', 'asc')
+                                 ->orderBy('numero_cuenta', 'asc')
+                                 ->paginate($perPage);
                 }
-            }
-            
-            // Filtro por moneda
-            if ($request->has('moneda')) {
-                $query->porMoneda($request->input('moneda'));
-            }
-            
-            // Filtro por cuenta principal
-            if ($request->boolean('principales')) {
-                $query->principales();
-            }
-            
-            // Filtro por tipo de cuenta
-            if ($request->has('tipo_cuenta')) {
-                $query->where('tipo_cuenta', $request->input('tipo_cuenta'));
-            }
-            
-            // Filtro por banco
-            if ($request->has('banco')) {
-                $query->where('banco', 'like', '%' . $request->input('banco') . '%');
-            }
-            
-            $cuentasBancarias = $query->orderBy('banco', 'asc')
-                                      ->orderBy('numero_cuenta', 'asc')
-                                      ->paginate($perPage);
+            );
             
             return CuentaBancariaResource::collection($cuentasBancarias);
         } catch (\Exception $e) {
@@ -120,6 +125,8 @@ class CuentaBancariaController extends Controller
             
             $cuentaBancaria = CuentaBancaria::create($data);
             $cuentaBancaria->load(['empresa', 'cuentaContable']);
+            
+            $this->flushCache();
             
             return (new CuentaBancariaResource($cuentaBancaria))
                 ->additional(['message' => 'Cuenta bancaria creada exitosamente'])
@@ -192,6 +199,8 @@ class CuentaBancariaController extends Controller
             $cuentaBancaria->update($data);
             $cuentaBancaria->load(['empresa', 'cuentaContable']);
             
+            $this->flushCache();
+            
             return (new CuentaBancariaResource($cuentaBancaria))
                 ->additional(['message' => 'Cuenta bancaria actualizada exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -224,6 +233,8 @@ class CuentaBancariaController extends Controller
                 'activa' => false,
                 'eliminado' => true
             ]);
+            
+            $this->flushCache();
             
             return response()->json([
                 'message' => 'Cuenta bancaria eliminada exitosamente'

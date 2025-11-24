@@ -131,32 +131,36 @@ class VentaController extends Controller
             $fechaInicio = $request->input('fecha_inicio');
             $fechaFin = $request->input('fecha_fin');
             
-            $query = Venta::with([
-                'empresa',
-                'sucursal',
-                'cliente',
-                'usuario',
-                'formaPago'
-            ]);
-            
-            if ($empresaId) {
-                $query->where('empresa_id', $empresaId);
-            }
-            
-            if ($sucursalId) {
-                $query->where('sucursal_id', $sucursalId);
-            }
-            
-            if ($clienteId) {
-                $query->where('cliente_id', $clienteId);
-            }
-            
-            if ($fechaInicio && $fechaFin) {
-                $query->whereBetween('fecha_venta', [$fechaInicio, $fechaFin]);
-            }
-            
-            $ventas = $query->orderBy('fecha_venta', 'desc')
-                            ->paginate($perPage);
+            $ventas = $this->cacheQueryIfEnabled(
+                $this->getCacheKey('index', $request->all()),
+                function() use ($request, $perPage, $empresaId, $sucursalId, $clienteId, $fechaInicio, $fechaFin) {
+                    $query = Venta::with([
+                        'empresa',
+                        'sucursal',
+                        'cliente',
+                        'usuario',
+                        'formaPago'
+                    ]);
+                    
+                    if ($empresaId) {
+                        $query->where('empresa_id', $empresaId);
+                    }
+                    
+                    if ($sucursalId) {
+                        $query->where('sucursal_id', $sucursalId);
+                    }
+                    
+                    if ($clienteId) {
+                        $query->where('cliente_id', $clienteId);
+                    }
+                    
+                    if ($fechaInicio && $fechaFin) {
+                        $query->whereBetween('fecha_venta', [$fechaInicio, $fechaFin]);
+                    }
+                    
+                    return $query->orderBy('fecha_venta', 'desc')->paginate($perPage);
+                }
+            );
             
             return VentaResource::collection($ventas);
         } catch (\Exception $e) {
@@ -332,6 +336,7 @@ class VentaController extends Controller
                     'monto_total_venta' => $montoSubtotal - $montoDescuentos + $montoImpuestos,
                 ]);
                 
+                $this->flushCache();
                 DB::commit();
                 
                 $venta->load(['cliente', 'detalles.producto']);
@@ -596,6 +601,8 @@ class VentaController extends Controller
                 'activo' => false,
                 'eliminado' => true
             ]);
+            
+            $this->flushCache();
             
             return response()->json([
                 'message' => 'Venta anulada exitosamente'

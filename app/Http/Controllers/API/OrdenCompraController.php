@@ -53,34 +53,38 @@ class OrdenCompraController extends Controller
             $proveedorId = $request->input('proveedor_id');
             $estado = $request->input('estado');
             
-            $query = OrdenCompra::with([
-                'empresa',
-                'proveedor',
-                'usuario'
-            ]);
-            
-            if ($empresaId) {
-                $query->porEmpresa($empresaId);
-            }
-            
-            if ($proveedorId) {
-                $query->porProveedor($proveedorId);
-            }
-            
-            if ($estado) {
-                $query->where('estado', $estado);
-            }
-            
-            if ($request->boolean('pendientes')) {
-                $query->pendientes();
-            }
-            
-            if ($request->boolean('activas')) {
-                $query->activas();
-            }
-            
-            $ordenes = $query->orderBy('fecha_orden', 'desc')
-                             ->paginate($perPage);
+            $ordenes = $this->cacheQueryIfEnabled(
+                $this->getCacheKey('index', $request->all()),
+                function() use ($request, $perPage, $empresaId, $proveedorId, $estado) {
+                    $query = OrdenCompra::with([
+                        'empresa',
+                        'proveedor',
+                        'usuario'
+                    ]);
+                    
+                    if ($empresaId) {
+                        $query->porEmpresa($empresaId);
+                    }
+                    
+                    if ($proveedorId) {
+                        $query->porProveedor($proveedorId);
+                    }
+                    
+                    if ($estado) {
+                        $query->where('estado', $estado);
+                    }
+                    
+                    if ($request->boolean('pendientes')) {
+                        $query->pendientes();
+                    }
+                    
+                    if ($request->boolean('activas')) {
+                        $query->activas();
+                    }
+                    
+                    return $query->orderBy('fecha_orden', 'desc')->paginate($perPage);
+                }
+            );
             
             return OrdenCompraResource::collection($ordenes);
         } catch (\Exception $e) {
@@ -179,6 +183,7 @@ class OrdenCompraController extends Controller
                     'total_orden' => $montoSubtotal + $montoImpuestos,
                 ]);
                 
+                $this->flushCache();
                 DB::commit();
                 
                 $orden->load(['proveedor', 'detalles.producto']);
@@ -329,6 +334,7 @@ class OrdenCompraController extends Controller
                     'eliminado' => true
                 ]);
                 
+                $this->flushCache();
                 DB::commit();
                 
                 return response()->json([

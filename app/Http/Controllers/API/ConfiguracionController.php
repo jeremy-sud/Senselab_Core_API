@@ -45,9 +45,14 @@ class ConfiguracionController extends Controller
         $this->authorize('viewAny', Configuracion::class);
         $empresaId = $request->user()->empresa_id;
 
-        $configuraciones = Configuracion::where('empresa_id', $empresaId)
-            ->orderBy('clave', 'asc')
-            ->get();
+        $configuraciones = $this->cacheQueryIfEnabled(
+            $this->getCacheKey('index', ['empresa_id' => $empresaId]),
+            function() use ($empresaId) {
+                return Configuracion::where('empresa_id', $empresaId)
+                    ->orderBy('clave', 'asc')
+                    ->get();
+            }
+        );
 
         return response()->json([
             'success' => true,
@@ -92,6 +97,8 @@ class ConfiguracionController extends Controller
             'tipo_dato' => $request->tipo_dato,
             'descripcion' => $request->descripcion
         ]);
+        
+        $this->flushCache();
 
         return response()->json([
             'success' => true,
@@ -153,6 +160,8 @@ class ConfiguracionController extends Controller
             'tipo_dato',
             'descripcion'
         ]));
+        
+        $this->flushCache();
 
         return response()->json([
             'success' => true,
@@ -181,6 +190,8 @@ class ConfiguracionController extends Controller
         $this->authorize('delete', $configuracion);
 
         $configuracion->delete();
+        
+        $this->flushCache();
 
         return response()->json([
             'success' => true,
