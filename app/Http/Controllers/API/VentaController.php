@@ -19,8 +19,8 @@ class VentaController extends Controller
 {
     use HasCacheableQueries;
     
-    protected $cacheTags = ['ventas', 'transacciones'];
-    protected $cacheTTL = 600; // 10 minutos (datos muy dinámicos)
+    protected array $cacheTags = ['ventas', 'transacciones'];
+    protected int $cacheTTL = 600; // 10 minutos (datos muy dinámicos)
     /**
      * Display a listing of the resource.
      * 
@@ -120,7 +120,7 @@ class VentaController extends Controller
             )
         ]
     )]
-    public function index(Request $request)
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('viewAny', Venta::class);
         
@@ -163,7 +163,7 @@ class VentaController extends Controller
                 }
             );
             
-            return VentaResource::collection($ventas);
+            return VentaResource::collection($ventas)->response();
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener ventas',
@@ -251,7 +251,7 @@ class VentaController extends Controller
             )
         ]
     )]
-    public function store(StoreVentaRequest $request)
+    public function store(StoreVentaRequest $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('create', Venta::class);
         
@@ -412,7 +412,7 @@ class VentaController extends Controller
             )
         ]
     )]
-    public function show(int $id)
+    public function show(int $id): \Illuminate\Http\JsonResponse
     {
         try {
             $venta = Venta::with([
@@ -426,7 +426,7 @@ class VentaController extends Controller
             
             $this->authorize('view', $venta);
             
-            return new VentaResource($venta);
+            return (new VentaResource($venta))->response();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Venta no encontrada'
@@ -512,7 +512,7 @@ class VentaController extends Controller
             )
         ]
     )]
-    public function update(UpdateVentaRequest $request, int $id)
+    public function update(UpdateVentaRequest $request, int $id): \Illuminate\Http\JsonResponse
     {
         try {
             $venta = Venta::findOrFail($id);
@@ -524,7 +524,8 @@ class VentaController extends Controller
             $venta->load(['cliente', 'detalles.producto']);
             
             return (new VentaResource($venta))
-                ->additional(['message' => 'Venta actualizada exitosamente']);
+                ->additional(['message' => 'Venta actualizada exitosamente'])
+                ->response();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Venta no encontrada'
@@ -589,7 +590,7 @@ class VentaController extends Controller
             )
         ]
     )]
-    public function destroy(int $id)
+    public function destroy(int $id): \Illuminate\Http\JsonResponse
     {
         try {
             $venta = Venta::findOrFail($id);
@@ -627,7 +628,7 @@ class VentaController extends Controller
      * @param string $tipoComprobante
      * @return string
      */
-    private function generarNumeroComprobante($empresaId, $tipoComprobante)
+    private function generarNumeroComprobante(int $empresaId, string $tipoComprobante): string
     {
         $prefijos = [
             'factura' => 'FAC',
@@ -686,7 +687,7 @@ class VentaController extends Controller
             ),
         ]
     )]
-    public function generatePdfReport(Request $request)
+    public function generatePdfReport(Request $request): \Illuminate\Http\JsonResponse
     {
         $request->validate([
             'fecha_inicio' => 'required|date',

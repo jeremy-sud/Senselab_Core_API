@@ -118,7 +118,7 @@ class ClienteController extends Controller
             )
         ]
     )]
-    public function index(Request $request)
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('viewAny', Cliente::class);
         
@@ -157,7 +157,7 @@ class ClienteController extends Controller
                 $clientes = $query->orderBy('id', 'asc')
                                   ->cursorPaginate($perPage);
                 
-                return ClienteResource::collection($clientes);
+                return ClienteResource::collection($clientes)->response();
             });
         } catch (\Exception $e) {
             return response()->json([
@@ -239,7 +239,7 @@ class ClienteController extends Controller
             )
         ]
     )]
-    public function store(StoreClienteRequest $request)
+    public function store(StoreClienteRequest $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('create', Cliente::class);
         
@@ -314,7 +314,7 @@ class ClienteController extends Controller
             )
         ]
     )]
-    public function show(int $id)
+    public function show(int $id): \Illuminate\Http\JsonResponse
     {
         try {
             $cliente = Cliente::with([
@@ -329,7 +329,7 @@ class ClienteController extends Controller
             
             $this->authorize('view', $cliente);
             
-            return new ClienteResource($cliente);
+            return (new ClienteResource($cliente))->response();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Cliente no encontrado'
@@ -427,7 +427,7 @@ class ClienteController extends Controller
             )
         ]
     )]
-    public function update(UpdateClienteRequest $request, int $id)
+    public function update(UpdateClienteRequest $request, int $id): \Illuminate\Http\JsonResponse
     {
         try {
             $cliente = Cliente::findOrFail($id);
@@ -441,7 +441,8 @@ class ClienteController extends Controller
             $this->flushCache();
             
             return (new ClienteResource($cliente))
-                ->additional(['message' => 'Cliente actualizado exitosamente']);
+                ->additional(['message' => 'Cliente actualizado exitosamente'])
+                ->response();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Cliente no encontrado'
@@ -506,7 +507,7 @@ class ClienteController extends Controller
             )
         ]
     )]
-    public function destroy(int $id)
+    public function destroy(int $id): \Illuminate\Http\JsonResponse
     {
         try {
             $cliente = Cliente::findOrFail($id);
