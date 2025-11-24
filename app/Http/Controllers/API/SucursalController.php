@@ -8,10 +8,15 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreSucursalRequest;
 use App\Http\Requests\UpdateSucursalRequest;
 use App\Http\Resources\SucursalResource;
+use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
 
 class SucursalController extends Controller
 {
+    use HasCacheableQueries;
+    
+    protected $cacheTags = ['sucursales', 'catalogos'];
+    protected $cacheTTL = 3600; // 1 hora
     /**
      * Display a listing of the resource.
      * 
