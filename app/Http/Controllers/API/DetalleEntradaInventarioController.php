@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateDetalleEntradaInventarioRequest;
 use App\Http\Resources\DetalleEntradaInventarioResource;
 use App\Models\DetalleEntradaInventario;
 use App\Models\EntradaInventario;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +24,10 @@ use OpenApi\Attributes as OA;
  */
 class DetalleEntradaInventarioController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['detalles-entradas-inventario', 'inventario', 'entradas'];
+    protected int $cacheTTL = 1800; // 30min - inventory detail semi-dynamic
     /**
      * Listar detalles de una entrada específica
      */
@@ -56,16 +61,18 @@ class DetalleEntradaInventarioController extends Controller
         
         $empresaId = $request->user()->empresa_id;
 
-        $entrada = EntradaInventario::where('empresa_id', $empresaId)->findOrFail($entradaId);
+        return $this->cacheQueryIfEnabled(function() use ($empresaId, $entradaId) {
+            $entrada = EntradaInventario::where('empresa_id', $empresaId)->findOrFail($entradaId);
 
-        $detalles = DetalleEntradaInventario::where('entrada_inventario_id', $entradaId)
-            ->with(['producto.unidadMedida', 'producto.categoriaProducto'])
-            ->get();
+            $detalles = DetalleEntradaInventario::where('entrada_inventario_id', $entradaId)
+                ->with(['producto.unidadMedida', 'producto.categoriaProducto'])
+                ->get();
 
-        return response()->json([
-            'success' => true,
-            'data' => DetalleEntradaInventarioResource::collection($detalles)
-        ]);
+            return response()->json([
+                'success' => true,
+                'data' => DetalleEntradaInventarioResource::collection($detalles)
+            ]);
+        }, $request);
     }
 
     /**
@@ -142,6 +149,8 @@ class DetalleEntradaInventarioController extends Controller
             $entrada->increment('monto_total', $subtotal);
 
             DB::commit();
+            
+            $this->flushCache();
 
             return response()->json([
                 'success' => true,
@@ -291,6 +300,8 @@ class DetalleEntradaInventarioController extends Controller
             $diferencia = $nuevoSubtotal - $subtotalAnterior;
             $detalle->entradaInventario->increment('monto_total', $diferencia);
 
+            $this->flushCache(['detalles-entradas-inventario', 'inventario', 'entradas']);
+
             DB::commit();
 
             return response()->json([
@@ -367,6 +378,8 @@ class DetalleEntradaInventarioController extends Controller
             $subtotal = $detalle->subtotal;
             $detalle->entradaInventario->decrement('monto_total', $subtotal);
             $detalle->delete();
+
+            $this->flushCache(['detalles-entradas-inventario', 'inventario', 'entradas']);
 
             DB::commit();
 
