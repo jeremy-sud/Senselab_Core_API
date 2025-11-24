@@ -44,24 +44,24 @@ class LogAccesoSistema extends Model
 
     /* --------------------- Relaciones --------------------- */
 
-    public function usuario()
+    public function usuario(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Usuario::class);
     }
 
     /* --------------------- Scopes --------------------- */
 
-    public function scopeLoginExitoso($query)
+    public function scopeLoginExitoso(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('tipo_evento', 'login_exitoso');
     }
 
-    public function scopeLoginFallido($query)
+    public function scopeLoginFallido(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('tipo_evento', 'login_fallido');
     }
 
-    public function scopeLogout($query)
+    public function scopeLogout(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('tipo_evento', 'logout');
     }

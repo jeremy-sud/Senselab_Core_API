@@ -56,24 +56,24 @@ class RetencionImpuesto extends Model
 
     /* --------------------- Relaciones --------------------- */
 
-    public function empresa()
+    public function empresa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empresa::class);
     }
 
-    public function proveedor()
+    public function proveedor(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Proveedor::class);
     }
 
     /* --------------------- Scopes --------------------- */
 
-    public function scopeDeclaradas($query)
+    public function scopeDeclaradas(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('declarado', true);
     }
 
-    public function scopePendientesDeclaracion($query)
+    public function scopePendientesDeclaracion(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('declarado', false);
     }

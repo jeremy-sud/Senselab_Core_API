@@ -83,7 +83,7 @@ class CajaChica extends Model
     /**
      * Relación con los movimientos de caja chica.
      */
-    public function movimientos()
+    public function movimientos(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(MovimientoCajaChica::class, 'caja_chica_id');
     }
@@ -91,7 +91,7 @@ class CajaChica extends Model
     /**
      * Scope para obtener fondos activos.
      */
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true)
                     ->where('eliminado', false);
@@ -108,7 +108,7 @@ class CajaChica extends Model
     /**
      * Scope para filtrar fondos abiertos.
      */
-    public function scopeAbiertas($query)
+    public function scopeAbiertas(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('estado', self::ESTADO_ABIERTA);
     }

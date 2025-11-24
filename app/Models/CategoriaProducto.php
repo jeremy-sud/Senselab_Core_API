@@ -74,7 +74,7 @@ class CategoriaProducto extends Model
     /**
      * Scope para obtener categorías activas.
      */
-    public function scopeActivas($query)
+    public function scopeActivas(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true)
                     ->where('eliminado', false);

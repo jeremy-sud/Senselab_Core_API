@@ -80,7 +80,7 @@ class DetalleSalidaInventario extends Model
     /**
      * Get the salida de inventario that owns the detalle.
      */
-    public function salidaInventario()
+    public function salidaInventario(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(SalidaInventario::class);
     }
@@ -88,7 +88,7 @@ class DetalleSalidaInventario extends Model
     /**
      * Get the producto associated with the detalle.
      */
-    public function producto()
+    public function producto(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Producto::class);
     }
@@ -99,7 +99,7 @@ class DetalleSalidaInventario extends Model
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true)
                     ->where('eliminado', false);

@@ -88,12 +88,12 @@ class EntradaInventario extends Model
     /**
      * Scopes
      */
-    public function scopeActivas($query)
+    public function scopeActivas(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true)->where('eliminado', false);
     }
 
-    public function scopePendientes($query)
+    public function scopePendientes(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('estado', 'Pendiente');
     }

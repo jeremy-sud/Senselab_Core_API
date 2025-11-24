@@ -64,12 +64,12 @@ class PeriodoNomina extends Model
     ];
 
     /* --------------------- Relaciones --------------------- */
-    public function empresa()
+    public function empresa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empresa::class);
     }
 
-    public function pagosNomina()
+    public function pagosNomina(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(PagoNomina::class, 'periodo_nomina_id');
     }

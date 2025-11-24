@@ -75,22 +75,22 @@ class HorarioRuta extends Model
     }
 
     // Scopes
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true)->where('eliminado', false);
     }
 
-    public function scopeProgramados($query)
+    public function scopeProgramados(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('estado', 'Programado')->orWhere('estado', 'Programado');
     }
 
-    public function scopeEnViaje($query)
+    public function scopeEnViaje(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('estado', 'En Viaje');
     }
 
-    public function scopeCancelados($query)
+    public function scopeCancelados(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('estado', 'Cancelado');
     }

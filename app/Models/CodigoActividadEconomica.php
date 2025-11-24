@@ -42,7 +42,7 @@ class CodigoActividadEconomica extends Model
 
     /* --------------------- Scopes --------------------- */
 
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true)->where('eliminado', false);
     }

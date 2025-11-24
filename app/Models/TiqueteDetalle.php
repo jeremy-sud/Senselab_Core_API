@@ -66,7 +66,7 @@ class TiqueteDetalle extends Model
     /**
      * Relación con el modelo DetalleVenta.
      */
-    public function detalleVenta()
+    public function detalleVenta(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(DetalleVenta::class, 'detalle_venta_id');
     }
@@ -74,7 +74,7 @@ class TiqueteDetalle extends Model
     /**
      * Relación con el modelo HorarioRuta.
      */
-    public function horarioRuta()
+    public function horarioRuta(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(HorarioRuta::class, 'horario_ruta_id');
     }
@@ -82,7 +82,7 @@ class TiqueteDetalle extends Model
     /**
      * Scope para filtrar solo los registros activos.
      */
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true);
     }
@@ -90,7 +90,7 @@ class TiqueteDetalle extends Model
     /**
      * Scope para filtrar solo los registros no eliminados.
      */
-    public function scopeNoEliminados($query)
+    public function scopeNoEliminados(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('eliminado', false);
     }

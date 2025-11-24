@@ -51,7 +51,7 @@ class InventarioProducto extends Model
         return $this->belongsTo(Producto::class);
     }
 
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true)->where('eliminado', false);
     }
@@ -61,12 +61,12 @@ class InventarioProducto extends Model
         return $query->where('almacen_id', $almacenId);
     }
 
-    public function scopeBajoStockMinimo($query)
+    public function scopeBajoStockMinimo(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->whereRaw('stock_actual <= stock_minimo');
     }
 
-    public function scopeSobreStockMaximo($query)
+    public function scopeSobreStockMaximo(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->whereRaw('stock_actual >= stock_maximo');
     }

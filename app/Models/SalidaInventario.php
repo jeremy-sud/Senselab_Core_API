@@ -76,7 +76,7 @@ class SalidaInventario extends Model
     /**
      * Relación con el modelo Empresa.
      */
-    public function empresa()
+    public function empresa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empresa::class, 'empresa_id');
     }
@@ -84,7 +84,7 @@ class SalidaInventario extends Model
     /**
      * Relación con el modelo Almacen.
      */
-    public function almacen()
+    public function almacen(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Almacen::class, 'almacen_id');
     }
@@ -92,7 +92,7 @@ class SalidaInventario extends Model
     /**
      * Relación con el modelo Cliente.
      */
-    public function cliente()
+    public function cliente(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Cliente::class, 'cliente_id');
     }
@@ -100,7 +100,7 @@ class SalidaInventario extends Model
     /**
      * Relación con el modelo Proveedor.
      */
-    public function proveedor()
+    public function proveedor(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Proveedor::class, 'proveedor_id');
     }
@@ -108,7 +108,7 @@ class SalidaInventario extends Model
     /**
      * Relación con el modelo Venta.
      */
-    public function venta()
+    public function venta(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Venta::class, 'venta_id');
     }
@@ -116,7 +116,7 @@ class SalidaInventario extends Model
     /**
      * Relación con los detalles de la salida.
      */
-    public function detalles()
+    public function detalles(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(DetalleSalidaInventario::class, 'salida_inventario_id');
     }
@@ -124,7 +124,7 @@ class SalidaInventario extends Model
     /**
      * Scope para filtrar solo los registros activos.
      */
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true);
     }
@@ -132,7 +132,7 @@ class SalidaInventario extends Model
     /**
      * Scope para filtrar solo los registros no eliminados.
      */
-    public function scopeNoEliminados($query)
+    public function scopeNoEliminados(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('eliminado', false);
     }

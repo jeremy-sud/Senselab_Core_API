@@ -62,29 +62,29 @@ class PlanillaCcss extends Model
 
     /* --------------------- Relaciones --------------------- */
 
-    public function empresa()
+    public function empresa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empresa::class);
     }
 
-    public function periodoNomina()
+    public function periodoNomina(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(PeriodoNomina::class);
     }
 
     /* --------------------- Scopes --------------------- */
 
-    public function scopeBorradores($query)
+    public function scopeBorradores(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('estado', 'borrador');
     }
 
-    public function scopeEnviadas($query)
+    public function scopeEnviadas(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('estado', 'enviada');
     }
 
-    public function scopePagadas($query)
+    public function scopePagadas(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('estado', 'pagada');
     }

@@ -53,29 +53,29 @@ class MensajeHacienda extends Model
 
     /* --------------------- Relaciones --------------------- */
 
-    public function empresa()
+    public function empresa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empresa::class);
     }
 
-    public function comprobante()
+    public function comprobante(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(ComprobanteRecibidoElectronico::class, 'comprobante_id');
     }
 
     /* --------------------- Scopes --------------------- */
 
-    public function scopePendientes($query)
+    public function scopePendientes(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('estado', 'pendiente');
     }
 
-    public function scopeProcesados($query)
+    public function scopeProcesados(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('estado', 'procesado');
     }
 
-    public function scopeConError($query)
+    public function scopeConError(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('estado', 'error');
     }

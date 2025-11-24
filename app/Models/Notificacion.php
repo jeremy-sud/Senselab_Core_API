@@ -49,7 +49,7 @@ class Notificacion extends Model
     /**
      * Relación con el usuario
      */
-    public function usuario()
+    public function usuario(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Usuario::class, 'usuario_id');
     }
@@ -57,7 +57,7 @@ class Notificacion extends Model
     /**
      * Relación con la empresa
      */
-    public function empresa()
+    public function empresa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empresa::class, 'empresa_id');
     }
@@ -65,7 +65,7 @@ class Notificacion extends Model
     /**
      * Scope para notificaciones no leídas
      */
-    public function scopeNoLeidas($query)
+    public function scopeNoLeidas(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('leida', false);
     }
@@ -73,7 +73,7 @@ class Notificacion extends Model
     /**
      * Scope para notificaciones leídas
      */
-    public function scopeLeidas($query)
+    public function scopeLeidas(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('leida', true);
     }
@@ -97,7 +97,7 @@ class Notificacion extends Model
     /**
      * Scope para notificaciones recientes (últimas 24 horas)
      */
-    public function scopeRecientes($query)
+    public function scopeRecientes(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('creado_en', '>=', now()->subDay());
     }
@@ -105,7 +105,7 @@ class Notificacion extends Model
     /**
      * Scope para notificaciones de alta prioridad
      */
-    public function scopeAltaPrioridad($query)
+    public function scopeAltaPrioridad(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('prioridad', '>=', self::PRIORIDAD_ALTA);
     }

@@ -78,7 +78,7 @@ class DetallePresupuesto extends Model
     /**
      * Get the presupuesto that owns the detalle.
      */
-    public function presupuesto()
+    public function presupuesto(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Presupuesto::class);
     }
@@ -86,7 +86,7 @@ class DetallePresupuesto extends Model
     /**
      * Get the cuenta contable associated with the detalle.
      */
-    public function cuentaContable()
+    public function cuentaContable(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(CuentaContable::class);
     }
@@ -135,7 +135,7 @@ class DetallePresupuesto extends Model
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true)
                     ->where('eliminado', false);

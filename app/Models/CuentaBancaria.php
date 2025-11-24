@@ -59,24 +59,24 @@ class CuentaBancaria extends Model
 
     /* --------------------- Relaciones --------------------- */
 
-    public function empresa()
+    public function empresa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empresa::class);
     }
 
-    public function cuentaContable()
+    public function cuentaContable(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(CuentaContable::class);
     }
 
-    public function movimientos()
+    public function movimientos(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(MovimientoBancario::class);
     }
 
     /* --------------------- Scopes --------------------- */
 
-    public function scopeActivas($query)
+    public function scopeActivas(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activa', true)->where('eliminado', false);
     }
@@ -86,7 +86,7 @@ class CuentaBancaria extends Model
         return $query->where('moneda', $moneda);
     }
 
-    public function scopePrincipales($query)
+    public function scopePrincipales(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('es_principal', true);
     }

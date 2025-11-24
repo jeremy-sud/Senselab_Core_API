@@ -67,12 +67,12 @@ class OrdenCompra extends Model
     ];
 
     /* ------------------------- Relaciones ------------------------- */
-    public function empresa()
+    public function empresa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empresa::class);
     }
 
-    public function proveedor()
+    public function proveedor(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Proveedor::class);
     }
@@ -93,7 +93,7 @@ class OrdenCompra extends Model
     /**
      * Relación con usuario que creó la orden.
      */
-    public function usuario()
+    public function usuario(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Usuario::class, 'usuario_id');
     }
@@ -101,7 +101,7 @@ class OrdenCompra extends Model
     /**
      * Relación con cuentas por pagar generadas.
      */
-    public function cuentasPorPagar()
+    public function cuentasPorPagar(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(CuentaPorPagar::class, 'orden_compra_id');
     }
@@ -109,7 +109,7 @@ class OrdenCompra extends Model
     /**
      * Relación con entradas de inventario.
      */
-    public function entradasInventario()
+    public function entradasInventario(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(EntradaInventario::class, 'orden_compra_id');
     }

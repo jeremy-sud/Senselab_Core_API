@@ -92,7 +92,7 @@ class DetalleEntradaInventario extends Model
     /**
      * Get the entrada de inventario that owns the detalle.
      */
-    public function entradaInventario()
+    public function entradaInventario(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(EntradaInventario::class);
     }
@@ -100,7 +100,7 @@ class DetalleEntradaInventario extends Model
     /**
      * Get the producto associated with the detalle.
      */
-    public function producto()
+    public function producto(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Producto::class);
     }
@@ -111,7 +111,7 @@ class DetalleEntradaInventario extends Model
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true)
                     ->where('eliminado', false);
@@ -149,7 +149,7 @@ class DetalleEntradaInventario extends Model
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeVencidos($query)
+    public function scopeVencidos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->whereNotNull('fecha_vencimiento')
                     ->whereDate('fecha_vencimiento', '<', now());

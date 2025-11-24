@@ -73,7 +73,7 @@ class DetalleAsiento extends Model
     /**
      * Get the asiento contable that owns the detalle.
      */
-    public function asientoContable()
+    public function asientoContable(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(AsientoContable::class);
     }
@@ -81,7 +81,7 @@ class DetalleAsiento extends Model
     /**
      * Get the cuenta contable associated with the detalle.
      */
-    public function cuentaContable()
+    public function cuentaContable(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(CuentaContable::class);
     }
@@ -92,7 +92,7 @@ class DetalleAsiento extends Model
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true)
                     ->where('eliminado', false);

@@ -102,7 +102,7 @@ class Venta extends Model
     /**
      * Relación con el modelo Empresa.
      */
-    public function empresa()
+    public function empresa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empresa::class, 'empresa_id');
     }
@@ -110,7 +110,7 @@ class Venta extends Model
     /**
      * Relación con el modelo Sucursal.
      */
-    public function sucursal()
+    public function sucursal(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Sucursal::class, 'sucursal_id');
     }
@@ -118,7 +118,7 @@ class Venta extends Model
     /**
      * Relación con el modelo Cliente.
      */
-    public function cliente()
+    public function cliente(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Cliente::class, 'cliente_id');
     }
@@ -126,7 +126,7 @@ class Venta extends Model
     /**
      * Relación con el modelo Usuario.
      */
-    public function usuario()
+    public function usuario(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Usuario::class, 'usuario_id');
     }
@@ -134,7 +134,7 @@ class Venta extends Model
     /**
      * Relación con el modelo FormaPago.
      */
-    public function formaPago()
+    public function formaPago(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(FormaPago::class, 'forma_pago_id');
     }
@@ -142,7 +142,7 @@ class Venta extends Model
     /**
      * Relación con los detalles de venta.
      */
-    public function detalles()
+    public function detalles(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(DetalleVenta::class, 'venta_id');
     }
@@ -150,7 +150,7 @@ class Venta extends Model
     /**
      * Relación con las cuentas por cobrar.
      */
-    public function cuentasPorCobrar()
+    public function cuentasPorCobrar(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(CuentaPorCobrar::class, 'venta_id');
     }
@@ -158,7 +158,7 @@ class Venta extends Model
     /**
      * Relación con las salidas de inventario.
      */
-    public function salidasInventario()
+    public function salidasInventario(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(SalidaInventario::class, 'venta_id');
     }
@@ -166,7 +166,7 @@ class Venta extends Model
     /**
      * Scope para filtrar solo los registros activos.
      */
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true);
     }
@@ -174,7 +174,7 @@ class Venta extends Model
     /**
      * Scope para filtrar solo los registros no eliminados.
      */
-    public function scopeNoEliminados($query)
+    public function scopeNoEliminados(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('eliminado', false);
     }

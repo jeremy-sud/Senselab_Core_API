@@ -35,7 +35,7 @@ class AuditoriaActividad extends Model
     /**
      * Relación con el usuario que realizó la acción
      */
-    public function usuario()
+    public function usuario(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Usuario::class, 'usuario_id');
     }
@@ -43,7 +43,7 @@ class AuditoriaActividad extends Model
     /**
      * Relación con la empresa
      */
-    public function empresa()
+    public function empresa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empresa::class, 'empresa_id');
     }

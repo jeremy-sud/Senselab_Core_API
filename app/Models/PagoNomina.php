@@ -63,17 +63,17 @@ class PagoNomina extends Model
     ];
 
     /* --------------------- Relaciones --------------------- */
-    public function empresa()
+    public function empresa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empresa::class);
     }
 
-    public function empleado()
+    public function empleado(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empleado::class);
     }
 
-    public function periodoNomina()
+    public function periodoNomina(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(PeriodoNomina::class, 'periodo_nomina_id');
     }

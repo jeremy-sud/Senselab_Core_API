@@ -63,37 +63,37 @@ class Pago extends Model
     ];
 
     /* --------------------- Relaciones --------------------- */
-    public function empresa()
+    public function empresa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empresa::class);
     }
 
-    public function ordenCompra()
+    public function ordenCompra(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(OrdenCompra::class, 'orden_compra_id');
     }
 
-    public function cuentaPorPagar()
+    public function cuentaPorPagar(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(CuentaPorPagar::class, 'cuenta_por_pagar_id');
     }
 
-    public function proveedor()
+    public function proveedor(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Proveedor::class);
     }
 
-    public function cliente()
+    public function cliente(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Cliente::class);
     }
 
-    public function cuentaPorCobrar()
+    public function cuentaPorCobrar(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(CuentaPorCobrar::class, 'cuenta_por_cobrar_id');
     }
 
-    public function formaPago()
+    public function formaPago(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(FormaPago::class, 'forma_pago_id');
     }

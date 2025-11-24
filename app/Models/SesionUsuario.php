@@ -32,7 +32,7 @@ class SesionUsuario extends Model
     /**
      * Relación con el usuario
      */
-    public function usuario()
+    public function usuario(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Usuario::class, 'usuario_id');
     }
@@ -40,7 +40,7 @@ class SesionUsuario extends Model
     /**
      * Scope para sesiones activas
      */
-    public function scopeActivas($query)
+    public function scopeActivas(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true);
     }
@@ -48,7 +48,7 @@ class SesionUsuario extends Model
     /**
      * Scope para sesiones inactivas
      */
-    public function scopeInactivas($query)
+    public function scopeInactivas(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', false);
     }
@@ -73,7 +73,7 @@ class SesionUsuario extends Model
     /**
      * Scope para sesiones recientes (última hora)
      */
-    public function scopeRecientes($query)
+    public function scopeRecientes(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('ultimo_acceso', '>=', now()->subHour());
     }

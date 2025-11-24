@@ -19,7 +19,7 @@ class Usuario extends Authenticatable
      *
      * @return string
      */
-    public function getAuthPassword()
+    public function getAuthPassword(): ?string
     {
         return $this->password_hash;
     }
@@ -84,7 +84,7 @@ class Usuario extends Authenticatable
     /**
      * Relación con el modelo Empresa.
      */
-    public function empresa()
+    public function empresa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Empresa::class, 'empresa_id');
     }
@@ -92,7 +92,7 @@ class Usuario extends Authenticatable
     /**
      * Relación con el modelo Cargo.
      */
-    public function cargo()
+    public function cargo(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Cargo::class, 'cargo_id');
     }
@@ -100,7 +100,7 @@ class Usuario extends Authenticatable
     /**
      * Relación muchos a muchos con Rol.
      */
-    public function roles()
+    public function roles(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Rol::class, 'rol_usuario', 'usuario_id', 'rol_id')
                     ->wherePivot('activo', true)
@@ -111,7 +111,7 @@ class Usuario extends Authenticatable
     /**
      * Relación con Ventas creadas por el usuario.
      */
-    public function ventas()
+    public function ventas(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Venta::class, 'usuario_id');
     }
@@ -119,7 +119,7 @@ class Usuario extends Authenticatable
     /**
      * Relación con Órdenes de Compra creadas por el usuario.
      */
-    public function ordenesCompra()
+    public function ordenesCompra(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(OrdenCompra::class, 'usuario_id');
     }
@@ -127,7 +127,7 @@ class Usuario extends Authenticatable
     /**
      * Relación con Asientos Contables creados por el usuario.
      */
-    public function asientosContables()
+    public function asientosContables(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(AsientoContable::class, 'usuario_id');
     }
@@ -135,7 +135,7 @@ class Usuario extends Authenticatable
     /**
      * Scope para filtrar solo los registros activos.
      */
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true);
     }
@@ -143,7 +143,7 @@ class Usuario extends Authenticatable
     /**
      * Scope para filtrar solo los registros no eliminados.
      */
-    public function scopeNoEliminados($query)
+    public function scopeNoEliminados(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('eliminado', false);
     }
@@ -193,9 +193,9 @@ class Usuario extends Authenticatable
     /**
      * Obtener todos los permisos del usuario a través de sus roles.
      *
-     * @return array Array de slugs de permisos
+     * @return array<int, string> Array de slugs de permisos
      */
-    public function getAllPermissions()
+    public function getAllPermissions(): array
     {
         return \App\Models\Permiso::whereHas('roles', function ($query) {
             $query->whereHas('usuarios', function ($q) {

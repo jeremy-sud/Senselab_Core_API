@@ -59,7 +59,7 @@ class EntidadEtiqueta extends Model
     /**
      * Relación con la etiqueta.
      */
-    public function etiqueta()
+    public function etiqueta(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Etiqueta::class, 'etiqueta_id');
     }
@@ -86,7 +86,7 @@ class EntidadEtiqueta extends Model
     }
 
     // Scopes útiles
-    public function scopeActivos($query)
+    public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('activo', true)->where('eliminado', false);
     }
