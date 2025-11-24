@@ -27,6 +27,10 @@ class ProcessImportJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
+    /**
+     * @param string $filePath Ruta al archivo CSV/Excel
+     * @param string $importType Tipo de importación (productos|clientes|proveedores)
+     */
     public function __construct(
         public string $filePath,
         public string $importType,
@@ -81,6 +85,9 @@ class ProcessImportJob implements ShouldQueue
         }
     }
 
+    /**
+     * @return array{imported:int,errors:array<int,string>,total:int}
+     */
     protected function importProductos(string $csvContent, Empresa $empresa): array
     {
         $lines = explode("\n", $csvContent);
@@ -126,12 +133,18 @@ class ProcessImportJob implements ShouldQueue
         ];
     }
 
+    /**
+     * @return array{imported:int,errors:array<int,string>,total:int}
+     */
     protected function importClientes(string $csvContent, Empresa $empresa): array
     {
         // TODO: Implementar importación de clientes
         return ['imported' => 0, 'errors' => [], 'total' => 0];
     }
 
+    /**
+     * @return array{imported:int,errors:array<int,string>,total:int}
+     */
     protected function importProveedores(string $csvContent, Empresa $empresa): array
     {
         // TODO: Implementar importación de proveedores

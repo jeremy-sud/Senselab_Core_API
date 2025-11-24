@@ -25,6 +25,9 @@ class GeneratePdfReportJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
+    /**
+     * @param array<string, mixed> $filters
+     */
     public function __construct(
         public string $reportType,
         public int $empresaId,
@@ -85,6 +88,9 @@ class GeneratePdfReportJob implements ShouldQueue
         return "reporte_{$this->reportType}_{$this->empresaId}_{$timestamp}.pdf";
     }
 
+    /**
+     * @return \Barryvdh\DomPDF\PDF
+     */
     protected function generateVentasReport(Empresa $empresa)
     {
         $ventas = Venta::where('empresa_id', $empresa->id)
@@ -102,18 +108,27 @@ class GeneratePdfReportJob implements ShouldQueue
         ]);
     }
 
+    /**
+     * @return \Barryvdh\DomPDF\PDF
+     */
     protected function generateInventarioReport(Empresa $empresa)
     {
         // TODO: Implementar reporte de inventario
         return Pdf::loadView('reports.inventario', ['empresa' => $empresa]);
     }
 
+    /**
+     * @return \Barryvdh\DomPDF\PDF
+     */
     protected function generateCuentasCobrarReport(Empresa $empresa)
     {
         // TODO: Implementar reporte de cuentas por cobrar
         return Pdf::loadView('reports.cuentas_cobrar', ['empresa' => $empresa]);
     }
 
+    /**
+     * @return \Barryvdh\DomPDF\PDF
+     */
     protected function generateNominaReport(Empresa $empresa)
     {
         // TODO: Implementar reporte de nómina
