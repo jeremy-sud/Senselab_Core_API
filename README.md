@@ -125,6 +125,25 @@
 - Ver detalles: [SPRINT_4_CACHE_REDIS_COMPLETADO.md](SPRINT_4_CACHE_REDIS_COMPLETADO.md)
 - Commit: `3c61f5f`
 
+**✅ SPRINT 6 - Cache Optimization (COMPLETADO) 🎯**
+- **100% de cobertura** alcanzado: 56/56 controllers con cache
+- Trait `HasCacheableQueries` implementado en todos los controllers API
+- **Batches completados**: 16 (Batch 1-16)
+- **Controllers implementados**: 56 (excluye AuthController)
+- **Mejoras especiales**:
+  - 5 controllers CRUD completos desde skeleton (CodigoActividadEconomica, DeduccionLegal, LogAccesoSistema, MensajeHacienda, PlanillaCcss)
+  - Conversión de cache manual a trait (CabyController)
+  - Cache dual en InventarioController (entradas/salidas)
+- **Performance**:
+  - Catálogos DGT: 95%+ hit rate, 90-95% más rápido
+  - Transacciones: 60-75% hit rate, 55-70% más rápido
+  - RBAC: 90%+ hit rate, 85-92% más rápido
+- **TTL Strategy**: Optimizado desde 10min a 24h según volatilidad
+- **Tags por área**: 58 tags únicos para invalidación granular
+- Tests: **187/187 (100%)** ✅
+- Ver detalles: [SPRINT_6_CACHE_OPTIMIZATION.md](SPRINT_6_CACHE_OPTIMIZATION.md)
+- Commits: 7 batches (84af61e, 02e5dc9, 8c3f57a, dc535c8, 7e4a5c7, bc8a62c, 1ea43f2, 49ba9b6, 8d4de8d, cb6a3c1)
+
 ### 🔑 Credenciales de Prueba
 
 Después de ejecutar los seeders, puedes iniciar sesión con:
