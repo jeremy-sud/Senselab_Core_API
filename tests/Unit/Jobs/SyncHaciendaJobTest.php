@@ -79,7 +79,7 @@ class SyncHaciendaJobTest extends TestCase
         $job = new SyncHaciendaJob(1, 'enviar_factura', []);
 
         $this->assertEquals(5, $job->tries);
-        $this->assertEquals([60, 120, 300, 600, 1200], $job->backoff());
+        $this->assertEquals([60, 120, 300, 600, 1200], $job->backoff);
     }
 
     /**

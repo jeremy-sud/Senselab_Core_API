@@ -47,18 +47,18 @@ use App\Http\Controllers\API\ConfiguracionController;
 use App\Http\Controllers\API\PresupuestoController;
 use App\Http\Controllers\API\DetallePresupuestoController;
 use App\Http\Controllers\ConsecutivoFEController;
-use App\Http\Controllers\TipoCambioHistorialController;
-use App\Http\Controllers\EtiquetaController;
+use App\Http\Controllers\API\TipoCambioHistorialController;
+use App\Http\Controllers\API\EtiquetaController;
 use App\Http\Controllers\EntidadEtiquetaController;
-use App\Http\Controllers\CajaController;
-use App\Http\Controllers\CajaChicaController;
-use App\Http\Controllers\MovimientoCajaChicaController;
-use App\Http\Controllers\RegimenTributarioController;
+use App\Http\Controllers\API\CajaController;
+use App\Http\Controllers\API\CajaChicaController;
+use App\Http\Controllers\API\MovimientoCajaChicaController;
+use App\Http\Controllers\API\RegimenTributarioController;
 use App\Http\Controllers\RolPermisoController;
 use App\Http\Controllers\InventarioProductoController;
-use App\Http\Controllers\NominaEmpleadoController;
-use App\Http\Controllers\PagoCuentaCobrarController;
-use App\Http\Controllers\PagoCuentaPagarController;
+use App\Http\Controllers\API\NominaEmpleadoController;
+use App\Http\Controllers\API\PagoCuentaCobrarController;
+use App\Http\Controllers\API\PagoCuentaPagarController;
 use App\Http\Controllers\RolUsuarioController;
 use Illuminate\Support\Facades\Route;
 
@@ -980,37 +980,38 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     // ============================================
     
     // Mensajes Hacienda
-    Route::apiResource('mensajes-hacienda', \App\Http\Controllers\MensajeHaciendaController::class);
+    Route::apiResource('mensajes-hacienda', \App\Http\Controllers\API\MensajeHaciendaController::class);
     
     // Tipos Comprobantes FE
-    Route::apiResource('tipos-comprobantes-fe', \App\Http\Controllers\TipoComprobanteFeController::class);
+    Route::apiResource('tipos-comprobantes-fe', \App\Http\Controllers\API\TipoComprobanteFeController::class);
     
     // Códigos Actividad Económica
-    Route::apiResource('codigos-actividad-economica', \App\Http\Controllers\CodigoActividadEconomicaController::class);
+    Route::apiResource('codigos-actividad-economica', \App\Http\Controllers\API\CodigoActividadEconomicaController::class);
     
     // Declaraciones Tributarias
-    Route::apiResource('declaraciones-tributarias', \App\Http\Controllers\DeclaracionTributariaController::class);
+    Route::apiResource('declaraciones-tributarias', \App\Http\Controllers\API\DeclaracionTributariaController::class);
     
     // Retenciones Impuesto
-    Route::apiResource('retenciones-impuesto', \App\Http\Controllers\RetencionImpuestoController::class);
+    Route::apiResource('retenciones-impuesto', \App\Http\Controllers\API\RetencionImpuestoController::class);
     
     // Cuentas Bancarias
-    Route::apiResource('cuentas-bancarias', \App\Http\Controllers\CuentaBancariaController::class);
+    Route::apiResource('cuentas-bancarias', \App\Http\Controllers\API\CuentaBancariaController::class);
     
     // Movimientos Bancarios
-    Route::apiResource('movimientos-bancarios', \App\Http\Controllers\MovimientoBancarioController::class);
+    Route::apiResource('movimientos-bancarios', \App\Http\Controllers\API\MovimientoBancarioController::class);
     
     // Deducciones Legales
-    Route::apiResource('deducciones-legales', \App\Http\Controllers\DeduccionLegalController::class);
+    Route::apiResource('deducciones-legales', \App\Http\Controllers\API\DeduccionLegalController::class);
     
     // Planillas CCSS
-    Route::apiResource('planillas-ccss', \App\Http\Controllers\PlanillaCcssController::class);
+    Route::apiResource('planillas-ccss', \App\Http\Controllers\API\PlanillaCcssController::class);
     
     // Tipos Cliente
-    Route::apiResource('tipos-clientes', \App\Http\Controllers\TipoClienteController::class);
+    Route::apiResource('tipos-clientes', \App\Http\Controllers\API\TipoClienteController::class);
     
     // Zonas Geográficas
-    Route::apiResource('zonas-geograficas', \App\Http\Controllers\ZonaGeograficaController::class);
+    // Ajuste: controlador está en namespace API
+    Route::apiResource('zonas-geograficas', \App\Http\Controllers\API\ZonaGeograficaController::class);
     
     // Logs Acceso Sistema
     Route::apiResource('logs-acceso-sistema', \App\Http\Controllers\LogAccesoSistemaController::class);

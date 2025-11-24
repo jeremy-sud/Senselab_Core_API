@@ -33,7 +33,7 @@ class CleanCacheJobTest extends TestCase
         CleanCacheJob::dispatch('all');
 
         Queue::assertPushed(CleanCacheJob::class, function ($job) {
-            return $job->cacheType === 'all';
+            return $job->cleanType === 'all';
         });
     }
 
@@ -50,7 +50,7 @@ class CleanCacheJobTest extends TestCase
             CleanCacheJob::dispatch($type);
 
             Queue::assertPushed(CleanCacheJob::class, function ($job) use ($type) {
-                return $job->cacheType === $type;
+                return $job->cleanType === $type;
             });
         }
     }
@@ -67,7 +67,7 @@ class CleanCacheJobTest extends TestCase
         CleanCacheJob::dispatch('tags', $tags);
 
         Queue::assertPushed(CleanCacheJob::class, function ($job) use ($tags) {
-            return $job->cacheType === 'tags'
+            return $job->cleanType === 'tags'
                 && $job->tags === $tags;
         });
     }
@@ -102,7 +102,7 @@ class CleanCacheJobTest extends TestCase
         CleanCacheJob::dispatch('expired');
 
         Queue::assertPushed(CleanCacheJob::class, function ($job) {
-            return $job->cacheType === 'expired';
+            return $job->cleanType === 'expired';
         });
     }
 
@@ -116,7 +116,7 @@ class CleanCacheJobTest extends TestCase
         CleanCacheJob::dispatch('sessions');
 
         Queue::assertPushed(CleanCacheJob::class, function ($job) {
-            return $job->cacheType === 'sessions';
+            return $job->cleanType === 'sessions';
         });
     }
 
@@ -130,7 +130,7 @@ class CleanCacheJobTest extends TestCase
         CleanCacheJob::dispatch('logs');
 
         Queue::assertPushed(CleanCacheJob::class, function ($job) {
-            return $job->cacheType === 'logs';
+            return $job->cleanType === 'logs';
         });
     }
 }

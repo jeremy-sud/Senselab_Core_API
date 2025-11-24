@@ -61,7 +61,7 @@ class GeneratePdfReportJobTest extends TestCase
         $job = new GeneratePdfReportJob('ventas', 1, [], 1);
 
         $this->assertEquals(3, $job->tries);
-        $this->assertEquals([60, 120, 300], $job->backoff());
+        $this->assertEquals([60, 120, 300], $job->backoff);
     }
 
     /**

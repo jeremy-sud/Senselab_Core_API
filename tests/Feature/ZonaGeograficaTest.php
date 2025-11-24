@@ -51,12 +51,15 @@ class ZonaGeograficaTest extends TestCase
             'eliminado' => false,
         ]);
 
-        $permisos = ['zonas-geograficas.leer', 'zonas-geograficas.crear', 'zonas-geograficas.editar', 'zonas-geograficas.eliminar'];
+        // Permisos alineados con BasePolicy (formato: accion-prefijo)
+        $permisos = ['ver-zona_geografica', 'crear-zona_geografica', 'editar-zona_geografica', 'eliminar-zona_geografica'];
         foreach ($permisos as $slug) {
             $permiso = Permiso::create([
-                'nombre' => str_replace('-', '.', $slug),
+                'nombre' => $slug,
                 'slug' => $slug,
                 'descripcion' => 'Permiso ' . $slug,
+                'activo' => true,
+                'eliminado' => false,
             ]);
             $this->rol->permisos()->attach($permiso->id, ['activo' => true]);
         }
