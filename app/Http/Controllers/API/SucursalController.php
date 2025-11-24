@@ -85,7 +85,7 @@ class SucursalController extends Controller
                         $query->where('activo', true);
                     }
                     
-                    return $query->orderBy('nombre', 'asc')->paginate($perPage);
+                    return $query->orderBy('id', 'asc')->cursorPaginate($perPage);
                 }
             );
             

@@ -82,7 +82,7 @@ class OrdenCompraController extends Controller
                         $query->activas();
                     }
                     
-                    return $query->orderBy('fecha_orden', 'desc')->paginate($perPage);
+                    return $query->orderBy('id', 'desc')->cursorPaginate($perPage);
                 }
             );
             

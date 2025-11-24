@@ -85,7 +85,7 @@ class CajaController extends Controller
                 $query->porNombre($request->nombre);
             }
 
-            $cajas = $query->orderBy('nombre')->paginate($perPage);
+            $cajas = $query->orderBy('id')->cursorPaginate($perPage);
 
             return response()->json($cajas);
         });

@@ -95,7 +95,7 @@ class DetalleOrdenCompraController extends Controller
                 $query->where('producto_id', $request->producto_id);
             }
 
-            $detalles = $query->orderBy('id', 'desc')->paginate($perPage);
+            $detalles = $query->orderBy('id', 'desc')->cursorPaginate($perPage);
 
             return response()->json($detalles);
         });

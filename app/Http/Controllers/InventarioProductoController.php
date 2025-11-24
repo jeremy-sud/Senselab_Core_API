@@ -31,7 +31,7 @@ class InventarioProductoController extends Controller
 
         $query->orderBy('stock_actual', 'asc');
 
-        $inventarios = $query->paginate($request->get('per_page', 15));
+        $inventarios = $query->cursorPaginate($request->get('per_page', 15));
 
         return response()->json([
             'success' => true,

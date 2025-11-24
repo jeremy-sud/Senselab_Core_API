@@ -152,7 +152,7 @@ class HorarioRutaController extends Controller
 
             $horarios = $query->orderBy('fecha_salida', 'desc')
                 ->orderBy('hora_salida', 'desc')
-                ->paginate(15);
+                ->cursorPaginate(15);
 
             return HorarioRutaResource::collection($horarios);
         }, [

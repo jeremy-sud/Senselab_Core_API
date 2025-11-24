@@ -105,7 +105,7 @@ class MovimientoCajaChicaController extends Controller
                 $query->fechaBetween($request->fecha_desde, $request->fecha_hasta);
             }
 
-            $movimientos = $query->orderBy('fecha_movimiento', 'desc')->paginate($perPage);
+            $movimientos = $query->orderBy('id', 'desc')->cursorPaginate($perPage);
 
             return response()->json($movimientos);
         });

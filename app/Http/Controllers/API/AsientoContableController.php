@@ -158,7 +158,7 @@ class AsientoContableController extends Controller
             // Ordenamiento
             $query->orderBy($request->get('sort_by', 'fecha_asiento'), $request->get('sort_order', 'desc'));
 
-            $asientos = $query->paginate($request->get('per_page', 15));
+            $asientos = $query->cursorPaginate($request->get('per_page', 15));
 
             return AsientoContableResource::collection($asientos);
         }, [

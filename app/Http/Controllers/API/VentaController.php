@@ -158,7 +158,7 @@ class VentaController extends Controller
                         $query->whereBetween('fecha_venta', [$fechaInicio, $fechaFin]);
                     }
                     
-                    return $query->orderBy('fecha_venta', 'desc')->paginate($perPage);
+                    return $query->orderBy('id', 'desc')->cursorPaginate($perPage);
                 }
             );
             

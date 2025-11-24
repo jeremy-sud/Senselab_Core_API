@@ -57,7 +57,7 @@ class MensajeHaciendaController extends Controller
             }
 
             return $query->orderBy('fecha_emision', 'desc')
-                ->paginate($request->get('per_page', 20));
+                ->cursorPaginate($request->get('per_page', 20));
         });
 
         return response()->json($mensajes);

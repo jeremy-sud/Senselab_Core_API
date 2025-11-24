@@ -85,7 +85,7 @@ class CajaChicaController extends Controller
                 $query->porResponsable($request->responsable_id);
             }
 
-            $fondos = $query->orderBy('fecha_apertura', 'desc')->paginate($perPage);
+            $fondos = $query->orderBy('id', 'desc')->cursorPaginate($perPage);
 
             return response()->json($fondos);
         });

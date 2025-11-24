@@ -104,7 +104,7 @@ class NotificacionController extends Controller
                 $query->where('prioridad', '>=', $request->prioridad);
             }
 
-            $notificaciones = $query->orderBy('creado_en', 'desc')->paginate($perPage);
+            $notificaciones = $query->orderBy('id', 'desc')->cursorPaginate($perPage);
             
             // Contar no leídas
             $noLeidasCount = Notificacion::where('usuario_id', auth('sanctum')->id())

@@ -111,7 +111,7 @@ class BusUnidadController extends Controller
                 });
             }
 
-            $buses = $query->orderBy('identificador_interno')->paginate(15);
+            $buses = $query->orderBy('id')->cursorPaginate(15);
 
             return BusUnidadResource::collection($buses);
         });

@@ -125,7 +125,7 @@ class DeclaracionTributariaController extends Controller
                 
                 $declaraciones = $query->orderBy('fecha_inicio_periodo', 'desc')
                                        ->orderBy('created_at', 'desc')
-                                       ->paginate($perPage);
+                                       ->cursorPaginate($perPage);
                 
                 return DeclaracionTributariaResource::collection($declaraciones);
             } catch (\Exception $e) {

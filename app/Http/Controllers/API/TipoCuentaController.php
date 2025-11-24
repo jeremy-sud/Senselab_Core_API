@@ -142,7 +142,7 @@ class TipoCuentaController extends Controller
             // Ordenamiento
             $query->orderBy($request->get('sort_by', 'nombre'), $request->get('sort_order', 'asc'));
 
-            $tipos = $query->paginate($request->get('per_page', 15));
+            $tipos = $query->cursorPaginate($request->get('per_page', 15));
 
             return TipoCuentaResource::collection($tipos);
         });

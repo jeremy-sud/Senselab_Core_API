@@ -107,7 +107,7 @@ class RutaController extends Controller
                 $query->where('activo', $request->activo);
             }
 
-            $rutas = $query->orderBy('nombre')->paginate(15);
+            $rutas = $query->orderBy('id')->cursorPaginate(15);
 
             return RutaResource::collection($rutas);
         });

@@ -89,7 +89,7 @@ class EntradaInventarioController extends Controller
             $entradas = EntradaInventario::where('empresa_id', $empresaId)
                 ->with(['almacen', 'proveedor', 'ordenCompra', 'detalles.producto'])
                 ->orderBy('fecha_entrada', 'desc')
-                ->paginate(15);
+                ->cursorPaginate(15);
 
             return response()->json([
                 'success' => true,
