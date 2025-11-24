@@ -7,6 +7,7 @@ use App\Http\Requests\StoreUrlShortenerRequest;
 use App\Http\Requests\UpdateUrlShortenerRequest;
 use App\Http\Resources\UrlShortenerResource;
 use App\Models\UrlShortener;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -19,6 +20,11 @@ use Illuminate\Validation\ValidationException;
  */
 class UrlShortenerController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['url-shortener', 'urls'];
+    protected int $cacheTTL = 1800; // 30 minutos - URLs dinámicas por clicks
+
     /**
      * Display a listing of the resource.
      */
@@ -27,31 +33,41 @@ class UrlShortenerController extends Controller
         $this->authorize('viewAny', UrlShortener::class);
         
         try {
-            $query = UrlShortener::with(['empresa', 'usuario'])
-                ->where('eliminado', false);
+            $cacheKey = $this->getCacheKey('index', [
+                'empresa_id' => $request->input('empresa_id'),
+                'usuario_id' => $request->input('usuario_id'),
+                'activo' => $request->input('activo'),
+                'no_expirados' => $request->input('no_expirados'),
+                'per_page' => $request->input('per_page', 15)
+            ]);
             
-            // Filtrar por empresa
-            if ($request->has('empresa_id')) {
-                $query->where('empresa_id', $request->empresa_id);
-            }
-            
-            // Filtrar por usuario
-            if ($request->has('usuario_id')) {
-                $query->where('usuario_id', $request->usuario_id);
-            }
-            
-            // Filtrar por activos
-            if ($request->has('activo')) {
-                $query->where('activo', $request->boolean('activo'));
-            }
-            
-            // Filtrar no expirados
-            if ($request->boolean('no_expirados')) {
-                $query->noExpirados();
-            }
-            
-            $perPage = $request->input('per_page', 15);
-            $urls = $query->orderBy('creado_en', 'desc')->paginate($perPage);
+            $urls = $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
+                $query = UrlShortener::with(['empresa', 'usuario'])
+                    ->where('eliminado', false);
+                
+                // Filtrar por empresa
+                if ($request->has('empresa_id')) {
+                    $query->where('empresa_id', $request->empresa_id);
+                }
+                
+                // Filtrar por usuario
+                if ($request->has('usuario_id')) {
+                    $query->where('usuario_id', $request->usuario_id);
+                }
+                
+                // Filtrar por activos
+                if ($request->has('activo')) {
+                    $query->where('activo', $request->boolean('activo'));
+                }
+                
+                // Filtrar no expirados
+                if ($request->boolean('no_expirados')) {
+                    $query->noExpirados();
+                }
+                
+                $perPage = $request->input('per_page', 15);
+                return $query->orderBy('creado_en', 'desc')->paginate($perPage);
+            });
             
             return UrlShortenerResource::collection($urls);
         } catch (\Exception $e) {
@@ -82,6 +98,8 @@ class UrlShortenerController extends Controller
             $validated['url_corta'] = url('/s/' . $validated['slug']);
             
             $urlShortener = UrlShortener::create($validated);
+            
+            $this->flushCache(['url-shortener', 'urls']);
             
             return response()->json([
                 'success' => true,
@@ -145,6 +163,8 @@ class UrlShortenerController extends Controller
             
             $url->update($validated);
             
+            $this->flushCache(['url-shortener', 'urls']);
+            
             return response()->json([
                 'success' => true,
                 'message' => 'URL actualizada exitosamente',
@@ -175,6 +195,8 @@ class UrlShortenerController extends Controller
             
             $this->authorize('delete', $url);
             $url->update(['eliminado' => true]);
+            
+            $this->flushCache(['url-shortener', 'urls']);
             
             return response()->json([
                 'success' => true,

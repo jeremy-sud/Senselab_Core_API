@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateCabyRequest;
 use App\Http\Requests\BuscarCabyRequest;
 use App\Http\Resources\CabyResource;
 use App\Models\Cabys;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -25,6 +26,11 @@ use OpenApi\Attributes as OA;
  */
 class CabyController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['cabys', 'catalogos', 'hacienda'];
+    protected int $cacheTTL = 86400; // 24 horas - catálogo fiscal muy estable
+
     /**
      * Listar todos los códigos CAByS
      *
@@ -115,11 +121,17 @@ class CabyController extends Controller
     {
         $this->authorize('viewAny', Cabys::class);
         
-        // Cache key única basada en parámetros de request
-        $cacheKey = 'cabys_list_' . md5(json_encode($request->all()));
+        $cacheKey = $this->getCacheKey('index', [
+            'buscar' => $request->input('buscar'),
+            'codigo' => $request->input('codigo'),
+            'impuesto_iva' => $request->input('impuesto_iva'),
+            'activo' => $request->input('activo'),
+            'sort_by' => $request->input('sort_by', 'codigo'),
+            'sort_order' => $request->input('sort_order', 'asc'),
+            'per_page' => $request->input('per_page', 15)
+        ]);
         
-        // Cache con tags para invalidación selectiva (24 horas)
-        $cabys = Cache::tags(['cabys', 'catalogos'])->remember($cacheKey, 86400, function() use ($request) {
+        $cabys = $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
             $query = Cabys::where('eliminado', 0);
 
             // Búsqueda por código o descripción
@@ -206,8 +218,7 @@ class CabyController extends Controller
         $this->authorize('create', Cabys::class);
         $caby = Cabys::create($request->validated());
         
-        // Invalidar cache de CAByS
-        Cache::tags(['cabys', 'catalogos'])->flush();
+        $this->flushCache(['cabys', 'catalogos', 'hacienda']);
 
         return response()->json([
             'success' => true,
@@ -341,8 +352,7 @@ class CabyController extends Controller
 
         $caby->update($request->validated());
         
-        // Invalidar cache de CAByS
-        Cache::tags(['cabys', 'catalogos'])->flush();
+        $this->flushCache(['cabys', 'catalogos', 'hacienda']);
 
         return response()->json([
             'success' => true,
@@ -416,8 +426,7 @@ class CabyController extends Controller
 
         $caby->update(['eliminado' => 1, 'activo' => 0]);
         
-        // Invalidar cache de CAByS
-        Cache::tags(['cabys', 'catalogos'])->flush();
+        $this->flushCache(['cabys', 'catalogos', 'hacienda']);
 
         return response()->json([
             'success' => true,
