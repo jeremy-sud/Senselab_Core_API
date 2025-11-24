@@ -7,6 +7,7 @@ use App\Models\ZonaGeografica;
 use App\Http\Requests\StoreZonaGeograficaRequest;
 use App\Http\Requests\UpdateZonaGeograficaRequest;
 use App\Http\Resources\ZonaGeograficaResource;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,6 +20,11 @@ use Illuminate\Support\Facades\Auth;
  */
 class ZonaGeograficaController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['zonas-geograficas', 'geografico'];
+    protected int $cacheTTL = 3600; // 1 hora - cambia ocasionalmente
+
     /**
      * Display a listing of the resource.
      * 

@@ -7,6 +7,7 @@ use App\Models\TipoComprobanteFe;
 use App\Http\Requests\StoreTipoComprobanteFeRequest;
 use App\Http\Requests\UpdateTipoComprobanteFeRequest;
 use App\Http\Resources\TipoComprobanteFeResource;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\Request;
 
 /**
@@ -18,6 +19,11 @@ use Illuminate\Http\Request;
  */
 class TipoComprobanteFeController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['tipos-comprobante-fe', 'facturacion'];
+    protected int $cacheTTL = 86400; // 24 horas - catálogo fiscal muy estable
+
     /**
      * Display a listing of the resource.
      * 
@@ -32,42 +38,54 @@ class TipoComprobanteFeController extends Controller
             $perPage = $request->input('per_page', 15);
             $search = $request->input('search');
             
-            $query = TipoComprobanteFe::where('eliminado', false);
-            
-            if ($search) {
-                $query->where(function($q) use ($search) {
-                    $q->where('nombre', 'like', "%{$search}%")
-                      ->orWhere('codigo_dgt', 'like', "%{$search}%")
-                      ->orWhere('descripcion', 'like', "%{$search}%");
-                });
-            }
-            
-            // Filtro por estado activo
-            if ($request->has('activo') || $request->has('activos')) {
-                $esActivo = $request->boolean('activo') || $request->boolean('activos');
-                if ($esActivo) {
-                    $query->activos();
-                } else {
-                    $query->where('activo', false);
+            $cacheKey = $this->getCacheKey('index', [
+                'per_page' => $perPage,
+                'search' => $search,
+                'activo' => $request->input('activo'),
+                'activos' => $request->input('activos'),
+                'requiere_referencia' => $request->boolean('requiere_referencia'),
+                'permite_exportacion' => $request->boolean('permite_exportacion'),
+                'codigo_dgt' => $request->input('codigo_dgt')
+            ]);
+
+            $tiposComprobante = $this->cacheQueryIfEnabled($cacheKey, function() use ($request, $search, $perPage) {
+                $query = TipoComprobanteFe::where('eliminado', false);
+                
+                if ($search) {
+                    $query->where(function($q) use ($search) {
+                        $q->where('nombre', 'like', "%{$search}%")
+                          ->orWhere('codigo_dgt', 'like', "%{$search}%")
+                          ->orWhere('descripcion', 'like', "%{$search}%");
+                    });
                 }
-            }
-            
-            // Filtros específicos de FE
-            if ($request->boolean('requiere_referencia')) {
-                $query->queRequierenReferencia();
-            }
-            
-            if ($request->boolean('permite_exportacion')) {
-                $query->permiteExportacion();
-            }
-            
-            // Filtro por código DGT específico
-            if ($request->has('codigo_dgt')) {
-                $query->porCodigo($request->input('codigo_dgt'));
-            }
-            
-            $tiposComprobante = $query->orderBy('codigo_dgt', 'asc')
-                                      ->paginate($perPage);
+                
+                // Filtro por estado activo
+                if ($request->has('activo') || $request->has('activos')) {
+                    $esActivo = $request->boolean('activo') || $request->boolean('activos');
+                    if ($esActivo) {
+                        $query->activos();
+                    } else {
+                        $query->where('activo', false);
+                    }
+                }
+                
+                // Filtros específicos de FE
+                if ($request->boolean('requiere_referencia')) {
+                    $query->queRequierenReferencia();
+                }
+                
+                if ($request->boolean('permite_exportacion')) {
+                    $query->permiteExportacion();
+                }
+                
+                // Filtro por código DGT específico
+                if ($request->has('codigo_dgt')) {
+                    $query->porCodigo($request->input('codigo_dgt'));
+                }
+                
+                return $query->orderBy('codigo_dgt', 'asc')
+                              ->paginate($perPage);
+            });
             
             return TipoComprobanteFeResource::collection($tiposComprobante);
         } catch (\Exception $e) {
@@ -90,6 +108,8 @@ class TipoComprobanteFeController extends Controller
         
         try {
             $tipoComprobante = TipoComprobanteFe::create($request->validated());
+            
+            $this->flushCache();
             
             return (new TipoComprobanteFeResource($tipoComprobante))
                 ->additional(['message' => 'Tipo de comprobante FE creado exitosamente'])
@@ -177,6 +197,8 @@ class TipoComprobanteFeController extends Controller
                 'activo' => false,
                 'eliminado' => true
             ]);
+            
+            $this->flushCache();
             
             return response()->json([
                 'message' => 'Tipo de comprobante FE eliminado exitosamente'
