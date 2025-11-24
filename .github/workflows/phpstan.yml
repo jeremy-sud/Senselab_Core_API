@@ -1,0 +1,224 @@
+name: PHPStan Static Analysis
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'app/**'
+      - 'config/**'
+      - 'database/**'
+      - 'routes/**'
+      - 'phpstan*.neon'
+      - 'composer.json'
+      - 'composer.lock'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'app/**'
+      - 'config/**'
+      - 'database/**'
+      - 'routes/**'
+      - 'phpstan*.neon'
+      - 'composer.json'
+      - 'composer.lock'
+
+jobs:
+  phpstan-analysis:
+    name: PHPStan Level 6 Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    strategy:
+      fail-fast: true
+      matrix:
+        php: ['8.2']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, redis
+          coverage: none
+          tools: composer:v2
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-dev
+
+      - name: Prepare Laravel Application
+        run: |
+          cp .env.example .env || echo "No .env.example found, creating minimal .env"
+          php artisan key:generate --ansi
+          php artisan config:clear
+          php artisan cache:clear
+
+      - name: PHPStan Analysis (No Baseline)
+        run: |
+          echo "🔍 Running PHPStan Level 6 WITHOUT baseline..."
+          echo "This checks for NEW type errors introduced in this commit."
+          vendor/bin/phpstan analyse app \
+            --level=6 \
+            --memory-limit=1G \
+            --no-progress \
+            --error-format=github \
+            --configuration=phpstan-no-baseline.neon
+
+      - name: PHPStan Analysis Summary
+        if: failure()
+        run: |
+          echo "❌ PHPStan found new type errors!"
+          echo ""
+          echo "📊 To fix locally:"
+          echo "  1. Run: vendor/bin/phpstan analyse app --level=6 --memory-limit=1G"
+          echo "  2. Fix the errors shown above"
+          echo "  3. Commit and push again"
+          echo ""
+          echo "📖 PHPStan Docs: https://phpstan.org/user-guide/getting-started"
+
+      - name: PHPStan Analysis (With Baseline) - Info Only
+        if: always()
+        continue-on-error: true
+        run: |
+          echo "📊 Running PHPStan WITH baseline for reference..."
+          vendor/bin/phpstan analyse app \
+            --level=6 \
+            --memory-limit=1G \
+            --no-progress \
+            --error-format=table || true
+
+      - name: Generate PHPStan Report
+        if: always()
+        run: |
+          echo "📄 Generating detailed error report..."
+          vendor/bin/phpstan analyse app \
+            --level=6 \
+            --memory-limit=1G \
+            --no-progress \
+            --error-format=json \
+            --configuration=phpstan-no-baseline.neon \
+            > phpstan-report.json || true
+
+      - name: Upload PHPStan Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phpstan-report-php-${{ matrix.php }}
+          path: phpstan-report.json
+          retention-days: 7
+
+  phpstan-baseline-check:
+    name: Check Baseline Integrity
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, redis
+          coverage: none
+          tools: composer:v2
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-dev
+
+      - name: Prepare Laravel Application
+        run: |
+          cp .env.example .env || echo "Creating minimal .env"
+          php artisan key:generate --ansi
+
+      - name: Verify Baseline File Exists
+        run: |
+          if [ ! -f phpstan-baseline-reduced.neon ]; then
+            echo "❌ phpstan-baseline-reduced.neon not found!"
+            exit 1
+          fi
+          echo "✅ Baseline file found"
+          echo "📊 Baseline errors: $(grep -c 'message:' phpstan-baseline-reduced.neon || echo '0')"
+
+      - name: Check for Baseline Bloat
+        run: |
+          BASELINE_ERRORS=$(grep -c 'message:' phpstan-baseline-reduced.neon || echo '0')
+          echo "Current baseline errors: $BASELINE_ERRORS"
+          
+          if [ "$BASELINE_ERRORS" -gt 20 ]; then
+            echo "⚠️  WARNING: Baseline has $BASELINE_ERRORS errors (target: <10)"
+            echo "Consider reducing baseline by fixing more type errors"
+          else
+            echo "✅ Baseline is lean ($BASELINE_ERRORS errors)"
+          fi
+
+  phpstan-metrics:
+    name: PHPStan Metrics Dashboard
+    runs-on: ubuntu-latest
+    needs: [phpstan-analysis]
+    if: always()
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, redis
+          coverage: none
+          tools: composer:v2
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-dev
+
+      - name: Prepare Application
+        run: |
+          cp .env.example .env || echo "Creating minimal .env"
+          php artisan key:generate --ansi
+
+      - name: Generate Metrics
+        run: |
+          echo "📊 PHPStan Quality Metrics"
+          echo "=========================="
+          echo ""
+          
+          # Total errors without baseline
+          TOTAL_ERRORS=$(vendor/bin/phpstan analyse app --level=6 --memory-limit=1G --no-progress --configuration=phpstan-no-baseline.neon 2>&1 | grep -oP 'Found \K[0-9]+' || echo "0")
+          
+          # Baseline errors
+          BASELINE_ERRORS=$(grep -c 'message:' phpstan-baseline-reduced.neon || echo '0')
+          
+          # Calculate metrics
+          if [ "$TOTAL_ERRORS" -gt 0 ]; then
+            COVERAGE=$((100 - (BASELINE_ERRORS * 100 / TOTAL_ERRORS)))
+          else
+            COVERAGE=100
+          fi
+          
+          echo "Total Errors (no baseline): $TOTAL_ERRORS"
+          echo "Baseline Errors: $BASELINE_ERRORS"
+          echo "Type Coverage: ${COVERAGE}%"
+          echo ""
+          
+          # Error categories
+          echo "📋 Error Distribution:"
+          vendor/bin/phpstan analyse app --level=6 --memory-limit=1G --no-progress --error-format=raw --configuration=phpstan-no-baseline.neon 2>&1 | grep "identifier:" | sort | uniq -c | sort -rn | head -10 || echo "No errors to categorize"
