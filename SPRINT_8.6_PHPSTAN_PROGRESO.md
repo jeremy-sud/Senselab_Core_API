@@ -398,6 +398,10 @@ git diff HEAD~1 app/Models/ | grep "public function" | grep ":" | wc -l
 
 ---
 
-**Sprint 8.6 Status**: 🟡 **In Progress** (6% completado - modelos completos + 5 controllers tipados lote inicial)
+### Lote Jobs Tipado (Actualización)
+
+Se completó tipado y documentación estructurada de Jobs principales (PDF, Email, Importaciones, Hacienda, Limpieza Cache).
+
+**Sprint 8.6 Status**: 🟡 **In Progress** (8% completado - modelos + controllers lote 1 + FormRequests lote 1 + Jobs principales tipados)
 
 **Última actualización**: 24 de noviembre de 2025
