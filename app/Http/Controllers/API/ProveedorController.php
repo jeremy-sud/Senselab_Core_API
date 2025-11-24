@@ -8,10 +8,15 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreProveedorRequest;
 use App\Http\Requests\UpdateProveedorRequest;
 use App\Http\Resources\ProveedorResource;
+use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
 
 class ProveedorController extends Controller
 {
+    use HasCacheableQueries;
+    
+    protected $cacheTags = ['proveedores', 'catalogos'];
+    protected $cacheTTL = 1800; // 30 minutos
     /**
      * Display a listing of the resource.
      * 
@@ -106,27 +111,31 @@ class ProveedorController extends Controller
             $search = $request->input('search');
             $empresaId = $request->input('empresa_id');
             
-            $query = Proveedor::with('empresa');
-            
-            if ($search) {
-                $query->where(function($q) use ($search) {
-                    $q->where('nombre', 'like', "%{$search}%")
-                      ->orWhere('nombre_comercial', 'like', "%{$search}%")
-                      ->orWhere('numero_identificacion', 'like', "%{$search}%")
-                      ->orWhere('email', 'like', "%{$search}%");
-                });
-            }
-            
-            if ($empresaId) {
-                $query->where('empresa_id', $empresaId);
-            }
-            
-            if ($request->boolean('activos')) {
-                $query->where('activo', true);
-            }
-            
-            $proveedores = $query->orderBy('nombre', 'asc')
-                                 ->paginate($perPage);
+            $proveedores = $this->cacheQueryIfEnabled(
+                $this->getCacheKey('index', $request->all()),
+                function() use ($request, $perPage, $search, $empresaId) {
+                    $query = Proveedor::with('empresa');
+                    
+                    if ($search) {
+                        $query->where(function($q) use ($search) {
+                            $q->where('nombre', 'like', "%{$search}%")
+                              ->orWhere('nombre_comercial', 'like', "%{$search}%")
+                              ->orWhere('numero_identificacion', 'like', "%{$search}%")
+                              ->orWhere('email', 'like', "%{$search}%");
+                        });
+                    }
+                    
+                    if ($empresaId) {
+                        $query->where('empresa_id', $empresaId);
+                    }
+                    
+                    if ($request->boolean('activos')) {
+                        $query->where('activo', true);
+                    }
+                    
+                    return $query->orderBy('nombre', 'asc')->paginate($perPage);
+                }
+            );
             
             return ProveedorResource::collection($proveedores);
         } catch (\Exception $e) {
@@ -211,6 +220,8 @@ class ProveedorController extends Controller
         try {
             $proveedor = Proveedor::create($request->validated());
             $proveedor->load('empresa');
+            
+            $this->flushCache();
             
             return (new ProveedorResource($proveedor))
                 ->additional(['message' => 'Proveedor creado exitosamente'])
@@ -398,6 +409,8 @@ class ProveedorController extends Controller
             $proveedor->update($request->validated());
             $proveedor->load('empresa');
             
+            $this->flushCache();
+            
             return (new ProveedorResource($proveedor))
                 ->additional(['message' => 'Proveedor actualizado exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -476,6 +489,8 @@ class ProveedorController extends Controller
                 'activo' => false,
                 'eliminado' => true
             ]);
+            
+            $this->flushCache();
             
             return response()->json([
                 'message' => 'Proveedor eliminado exitosamente'

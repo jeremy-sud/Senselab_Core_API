@@ -9,6 +9,7 @@ use App\Http\Requests\AsignarRolesRequest;
 use App\Http\Requests\CambiarPasswordRequest;
 use App\Http\Resources\UsuarioResource;
 use App\Models\Usuario;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -27,6 +28,10 @@ use OpenApi\Attributes as OA;
  */
 class UsuarioController extends Controller
 {
+    use HasCacheableQueries;
+    
+    protected $cacheTags = ['usuarios', 'auth'];
+    protected $cacheTTL = 900; // 15 minutos
     /**
      * Listar todos los usuarios de la empresa
      * 
@@ -52,18 +57,23 @@ class UsuarioController extends Controller
         
         $empresaId = auth()->user()->empresa_id;
         
-        $query = Usuario::where('empresa_id', $empresaId)
-            ->with(['roles', 'cargo', 'empresa']);
+        $usuarios = $this->cacheQueryIfEnabled(
+            $this->getCacheKey('index', array_merge($request->all(), ['empresa_id' => $empresaId])),
+            function() use ($request, $empresaId) {
+                $query = Usuario::where('empresa_id', $empresaId)
+                    ->with(['roles', 'cargo', 'empresa']);
 
-        if ($request->has('activo')) {
-            $query->where('activo', $request->boolean('activo'));
-        }
+                if ($request->has('activo')) {
+                    $query->where('activo', $request->boolean('activo'));
+                }
 
-        if ($request->filled('cargo_id')) {
-            $query->where('cargo_id', $request->cargo_id);
-        }
+                if ($request->filled('cargo_id')) {
+                    $query->where('cargo_id', $request->cargo_id);
+                }
 
-        $usuarios = $query->get();
+                return $query->get();
+            }
+        );
 
         return UsuarioResource::collection($usuarios);
     }
@@ -116,6 +126,8 @@ class UsuarioController extends Controller
         }
 
         $usuario->load(['roles', 'cargo', 'empresa']);
+        
+        $this->flushCache();
 
         return (new UsuarioResource($usuario))
             ->response()
@@ -189,6 +201,8 @@ class UsuarioController extends Controller
         }
 
         $usuario->load(['roles', 'cargo', 'empresa']);
+        
+        $this->flushCache();
 
         return new UsuarioResource($usuario);
     }
@@ -231,6 +245,8 @@ class UsuarioController extends Controller
 
         // Revocar todos los tokens de acceso
         $usuario->tokens()->delete();
+        
+        $this->flushCache();
 
         return response()->json([
             'message' => 'Usuario eliminado exitosamente',
@@ -269,6 +285,8 @@ class UsuarioController extends Controller
 
         $usuario->roles()->sync($request->roles);
         $usuario->load('roles');
+        
+        $this->flushCache();
 
         return response()->json([
             'message' => 'Roles asignados exitosamente',

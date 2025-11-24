@@ -8,10 +8,15 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreAlmacenRequest;
 use App\Http\Requests\UpdateAlmacenRequest;
 use App\Http\Resources\AlmacenResource;
+use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
 
 class AlmacenController extends Controller
 {
+    use HasCacheableQueries;
+    
+    protected $cacheTags = ['almacenes', 'catalogos'];
+    protected $cacheTTL = 1800; // 30 minutos
     /**
      * Display a listing of the resource.
      * 
@@ -43,22 +48,26 @@ class AlmacenController extends Controller
             $empresaId = $request->input('empresa_id');
             $sucursalId = $request->input('sucursal_id');
             
-            $query = Almacen::with(['empresa', 'sucursal']);
-            
-            if ($empresaId) {
-                $query->where('empresa_id', $empresaId);
-            }
-            
-            if ($sucursalId) {
-                $query->where('sucursal_id', $sucursalId);
-            }
-            
-            if ($request->boolean('activos')) {
-                $query->where('activo', true);
-            }
-            
-            $almacenes = $query->orderBy('nombre', 'asc')
-                               ->paginate($perPage);
+            $almacenes = $this->cacheQueryIfEnabled(
+                $this->getCacheKey('index', $request->all()),
+                function() use ($request, $perPage, $empresaId, $sucursalId) {
+                    $query = Almacen::with(['empresa', 'sucursal']);
+                    
+                    if ($empresaId) {
+                        $query->where('empresa_id', $empresaId);
+                    }
+                    
+                    if ($sucursalId) {
+                        $query->where('sucursal_id', $sucursalId);
+                    }
+                    
+                    if ($request->boolean('activos')) {
+                        $query->where('activo', true);
+                    }
+                    
+                    return $query->orderBy('nombre', 'asc')->paginate($perPage);
+                }
+            );
             
             return AlmacenResource::collection($almacenes);
         } catch (\Exception $e) {
@@ -111,6 +120,8 @@ class AlmacenController extends Controller
             
             $almacen = Almacen::create($request->validated());
             $almacen->load(['empresa', 'sucursal']);
+            
+            $this->flushCache();
             
             return (new AlmacenResource($almacen))
                 ->additional(['message' => 'Almacén creado exitosamente'])
@@ -196,6 +207,8 @@ class AlmacenController extends Controller
             $almacen->update($request->validated());
             $almacen->load(['empresa', 'sucursal']);
             
+            $this->flushCache();
+            
             return (new AlmacenResource($almacen))
                 ->additional(['message' => 'Almacén actualizado exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -247,6 +260,8 @@ class AlmacenController extends Controller
                 'activo' => false,
                 'eliminado' => true
             ]);
+            
+            $this->flushCache();
             
             return response()->json([
                 'message' => 'Almacén eliminado exitosamente'
