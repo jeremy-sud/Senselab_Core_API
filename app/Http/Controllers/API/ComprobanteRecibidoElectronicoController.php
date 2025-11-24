@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateComprobanteRecibidoElectronicoRequest;
 use App\Http\Requests\ActualizarRespuestaHaciendaRequest;
 use App\Http\Resources\ComprobanteRecibidoElectronicoResource;
 use App\Models\ComprobanteRecibidoElectronico;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -24,6 +25,10 @@ use OpenApi\Attributes as OA;
  */
 class ComprobanteRecibidoElectronicoController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['comprobantes-recibidos', 'facturacion-electronica', 'hacienda'];
+    protected int $cacheTTL = 1800; // 30min - electronic invoices semi-dynamic
     /**
      * Listar comprobantes recibidos de la empresa
      */
@@ -62,20 +67,22 @@ class ComprobanteRecibidoElectronicoController extends Controller
         
         $empresaId = $request->user()->empresa_id;
 
-        $comprobantes = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)
-            ->with(['proveedor', 'entradaInventario', 'usuarioConfirmacion'])
-            ->orderBy('fecha_recepcion_sistema', 'desc')
-            ->paginate(15);
+        return $this->cacheQueryIfEnabled(function() use ($empresaId) {
+            $comprobantes = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)
+                ->with(['proveedor', 'entradaInventario', 'usuarioConfirmacion'])
+                ->orderBy('fecha_recepcion_sistema', 'desc')
+                ->paginate(15);
 
-        return response()->json([
-            'success' => true,
-            'data' => ComprobanteRecibidoElectronicoResource::collection($comprobantes),
-            'meta' => [
-                'current_page' => $comprobantes->currentPage(),
-                'total' => $comprobantes->total(),
-                'per_page' => $comprobantes->perPage()
-            ]
-        ]);
+            return response()->json([
+                'success' => true,
+                'data' => ComprobanteRecibidoElectronicoResource::collection($comprobantes),
+                'meta' => [
+                    'current_page' => $comprobantes->currentPage(),
+                    'total' => $comprobantes->total(),
+                    'per_page' => $comprobantes->perPage()
+                ]
+            ]);
+        }, $request);
     }
 
     /**
@@ -137,6 +144,8 @@ class ComprobanteRecibidoElectronicoController extends Controller
             ]);
 
             DB::commit();
+            
+            $this->flushCache();
 
             return response()->json([
                 'success' => true,
@@ -254,6 +263,8 @@ class ComprobanteRecibidoElectronicoController extends Controller
             ]));
 
             DB::commit();
+            
+            $this->flushCache();
 
             return response()->json([
                 'success' => true,
@@ -321,6 +332,8 @@ class ComprobanteRecibidoElectronicoController extends Controller
         }
 
         $comprobante->delete();
+        
+        $this->flushCache();
 
         return response()->json([
             'success' => true,
