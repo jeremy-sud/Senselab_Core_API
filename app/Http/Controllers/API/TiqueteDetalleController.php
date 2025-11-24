@@ -7,6 +7,7 @@ use App\Http\Requests\StoreTiqueteDetalleRequest;
 use App\Http\Requests\UpdateTiqueteDetalleRequest;
 use App\Http\Resources\TiqueteDetalleResource;
 use App\Models\TiqueteDetalle;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -24,6 +25,10 @@ use OpenApi\Attributes as OA;
  */
 class TiqueteDetalleController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['tiquetes-detalle', 'transporte', 'ventas'];
+    protected int $cacheTTL = 600; // 10min - tickets highly volatile
     /**
      * Listar todos los tiquetes
      *
@@ -92,31 +97,33 @@ class TiqueteDetalleController extends Controller
     {
         $this->authorize('viewAny', TiqueteDetalle::class);
         
-        $query = TiqueteDetalle::with(['horarioRuta.ruta', 'horarioRuta.bus', 'detalleVenta'])
-            ->where('eliminado', 0);
+        return $this->cacheQueryIfEnabled(function() use ($request) {
+            $query = TiqueteDetalle::with(['horarioRuta.ruta', 'horarioRuta.bus', 'detalleVenta'])
+                ->where('eliminado', 0);
 
-        // Filtro por horario de ruta
-        if ($request->filled('horario_ruta_id')) {
-            $query->where('horario_ruta_id', $request->horario_ruta_id);
-        }
+            // Filtro por horario de ruta
+            if ($request->filled('horario_ruta_id')) {
+                $query->where('horario_ruta_id', $request->horario_ruta_id);
+            }
 
-        // Filtro por estado
-        if ($request->filled('estado')) {
-            $query->where('estado', $request->estado);
-        }
+            // Filtro por estado
+            if ($request->filled('estado')) {
+                $query->where('estado', $request->estado);
+            }
 
-        // Búsqueda por pasajero
-        if ($request->filled('buscar_pasajero')) {
-            $buscar = $request->buscar_pasajero;
-            $query->where(function ($q) use ($buscar) {
-                $q->where('nombre_pasajero', 'like', "%{$buscar}%")
-                  ->orWhere('identificacion_pasajero', 'like', "%{$buscar}%");
-            });
-        }
+            // Búsqueda por pasajero
+            if ($request->filled('buscar_pasajero')) {
+                $buscar = $request->buscar_pasajero;
+                $query->where(function ($q) use ($buscar) {
+                    $q->where('nombre_pasajero', 'like', "%{$buscar}%")
+                      ->orWhere('identificacion_pasajero', 'like', "%{$buscar}%");
+                });
+            }
 
-        $tiquetes = $query->orderBy('created_at', 'desc')->paginate(15);
+            $tiquetes = $query->orderBy('created_at', 'desc')->paginate(15);
 
-        return TiqueteDetalleResource::collection($tiquetes);
+            return TiqueteDetalleResource::collection($tiquetes);
+        }, $request);
     }
 
     /**
@@ -177,6 +184,8 @@ class TiqueteDetalleController extends Controller
             $horario->decrement('asientos_disponibles');
 
             DB::commit();
+            
+            $this->flushCache();
 
             return new TiqueteDetalleResource($tiquete->load(['horarioRuta.ruta', 'horarioRuta.bus']));
 
@@ -282,6 +291,8 @@ class TiqueteDetalleController extends Controller
             'estado',
             'activo'
         ]));
+        
+        $this->flushCache();
 
         return new TiqueteDetalleResource($tiquete->load(['horarioRuta.ruta', 'horarioRuta.bus']));
     }

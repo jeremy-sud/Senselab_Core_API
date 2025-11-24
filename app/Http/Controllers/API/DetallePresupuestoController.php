@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateDetallePresupuestoRequest;
 use App\Http\Resources\DetallePresupuestoResource;
 use App\Models\DetallePresupuesto;
 use App\Models\Presupuesto;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
@@ -22,6 +23,10 @@ use OpenApi\Attributes as OA;
  */
 class DetallePresupuestoController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['detalles-presupuestos', 'presupuestos', 'finanzas'];
+    protected int $cacheTTL = 3600; // 1h - budget details stable
     /**
      * Listar detalles de un presupuesto
      */
@@ -61,16 +66,18 @@ class DetallePresupuestoController extends Controller
         
         $empresaId = $request->user()->empresa_id;
 
-        $presupuesto = Presupuesto::where('empresa_id', $empresaId)->findOrFail($presupuestoId);
+        return $this->cacheQueryIfEnabled(function() use ($empresaId, $presupuestoId) {
+            $presupuesto = Presupuesto::where('empresa_id', $empresaId)->findOrFail($presupuestoId);
 
-        $detalles = DetallePresupuesto::where('presupuesto_id', $presupuestoId)
-            ->with('cuentaContable')
-            ->get();
+            $detalles = DetallePresupuesto::where('presupuesto_id', $presupuestoId)
+                ->with('cuentaContable')
+                ->get();
 
-        return response()->json([
-            'success' => true,
-            'data' => DetallePresupuestoResource::collection($detalles)
-        ]);
+            return response()->json([
+                'success' => true,
+                'data' => DetallePresupuestoResource::collection($detalles)
+            ]);
+        }, $request);
     }
 
     /**
@@ -121,6 +128,8 @@ class DetallePresupuestoController extends Controller
             'cuenta_contable_id' => $request->cuenta_contable_id,
             'monto_presupuestado' => $request->monto_presupuestado
         ]);
+        
+        $this->flushCache();
 
         return response()->json([
             'success' => true,
@@ -236,6 +245,8 @@ class DetallePresupuestoController extends Controller
         $detalle->update([
             'monto_presupuestado' => $request->monto_presupuestado
         ]);
+        
+        $this->flushCache();
 
         return response()->json([
             'success' => true,
@@ -303,6 +314,8 @@ class DetallePresupuestoController extends Controller
         }
 
         $detalle->delete();
+        
+        $this->flushCache();
 
         return response()->json([
             'success' => true,
