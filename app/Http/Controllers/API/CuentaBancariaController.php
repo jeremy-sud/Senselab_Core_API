@@ -7,6 +7,7 @@ use App\Models\CuentaBancaria;
 use App\Http\Requests\StoreCuentaBancariaRequest;
 use App\Http\Requests\UpdateCuentaBancariaRequest;
 use App\Http\Resources\CuentaBancariaResource;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,6 +20,10 @@ use Illuminate\Support\Facades\Auth;
  */
 class CuentaBancariaController extends Controller
 {
+    use HasCacheableQueries;
+    
+    protected $cacheTags = ['cuentas-bancarias', 'finanzas'];
+    protected $cacheTTL = 1800; // 30 minutos
     /**
      * Display a listing of the resource.
      * 

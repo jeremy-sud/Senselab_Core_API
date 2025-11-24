@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateConfiguracionRequest;
 use App\Http\Requests\ActualizarMultiplesConfiguracionesRequest;
 use App\Http\Resources\ConfiguracionResource;
 use App\Models\Configuracion;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
@@ -22,6 +23,10 @@ use OpenApi\Attributes as OA;
  */
 class ConfiguracionController extends Controller
 {
+    use HasCacheableQueries;
+    
+    protected $cacheTags = ['configuraciones', 'settings'];
+    protected $cacheTTL = 7200; // 2 horas (cambia poco)
     /**
      * Listar configuraciones de la empresa
      */

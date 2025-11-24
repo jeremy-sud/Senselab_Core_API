@@ -11,10 +11,15 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreVentaRequest;
 use App\Http\Requests\UpdateVentaRequest;
 use App\Http\Resources\VentaResource;
+use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
 
 class VentaController extends Controller
 {
+    use HasCacheableQueries;
+    
+    protected $cacheTags = ['ventas', 'transacciones'];
+    protected $cacheTTL = 600; // 10 minutos (datos muy dinámicos)
     /**
      * Display a listing of the resource.
      * 

@@ -10,10 +10,15 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreOrdenCompraRequest;
 use App\Http\Requests\UpdateOrdenCompraRequest;
 use App\Http\Resources\OrdenCompraResource;
+use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
 
 class OrdenCompraController extends Controller
 {
+    use HasCacheableQueries;
+    
+    protected $cacheTags = ['ordenes-compra', 'transacciones'];
+    protected $cacheTTL = 900; // 15 minutos
     /**
      * Display a listing of the resource.
      * 
