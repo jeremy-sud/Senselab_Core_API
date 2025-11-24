@@ -7,10 +7,10 @@ use App\Http\Requests\StoreUnidadMedidaRequest;
 use App\Http\Requests\UpdateUnidadMedidaRequest;
 use App\Http\Resources\UnidadMedidaResource;
 use App\Models\UnidadMedida;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\Cache;
 use OpenApi\Attributes as OA;
 
 /**
@@ -23,6 +23,11 @@ use OpenApi\Attributes as OA;
  */
 class UnidadMedidaController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['unidades-medida', 'catalogos'];
+    protected int $cacheTTL = 86400; // 24 horas - catálogo muy estable
+
     /**
      * Listar todas las unidades de medida
      */
@@ -60,11 +65,11 @@ class UnidadMedidaController extends Controller
     {
         $this->authorize('viewAny', UnidadMedida::class);
         
-        // Cache key única basada en parámetros
-        $cacheKey = 'unidades_medida_list_' . md5(json_encode($request->all()));
+        $cacheKey = $this->getCacheKey('index', [
+            'activo' => $request->input('activo')
+        ]);
         
-        // Cache con tags (24 horas - catálogo estable)
-        $unidades = Cache::tags(['unidades_medida', 'catalogos'])->remember($cacheKey, 86400, function() use ($request) {
+        $unidades = $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
             $query = UnidadMedida::query();
 
             if ($request->has('activo')) {
@@ -118,8 +123,7 @@ class UnidadMedidaController extends Controller
         $this->authorize('create', UnidadMedida::class);
         $unidad = UnidadMedida::create($request->validated());
         
-        // Invalidar cache de unidades de medida
-        Cache::tags(['unidades_medida', 'catalogos'])->flush();
+        $this->flushCache();
 
         return (new UnidadMedidaResource($unidad))
             ->response()
@@ -225,8 +229,7 @@ class UnidadMedidaController extends Controller
 
         $unidad->update($request->validated());
         
-        // Invalidar cache de unidades de medida
-        Cache::tags(['unidades_medida', 'catalogos'])->flush();
+        $this->flushCache();
 
         return new UnidadMedidaResource($unidad);
     }
@@ -280,8 +283,7 @@ class UnidadMedidaController extends Controller
         $unidad->activo = 0;
         $unidad->save();
         
-        // Invalidar cache de unidades de medida
-        Cache::tags(['unidades_medida', 'catalogos'])->flush();
+        $this->flushCache();
 
         return response()->json([
             'message' => 'Unidad de medida eliminada exitosamente',

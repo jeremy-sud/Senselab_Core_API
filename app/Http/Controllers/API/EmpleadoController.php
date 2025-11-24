@@ -7,6 +7,7 @@ use App\Http\Requests\StoreEmpleadoRequest;
 use App\Http\Requests\UpdateEmpleadoRequest;
 use App\Http\Resources\EmpleadoResource;
 use App\Models\Empleado;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -27,6 +28,11 @@ use OpenApi\Attributes as OA;
  */
 class EmpleadoController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['empleados', 'rrhh'];
+    protected int $cacheTTL = 900; // 15 minutos - datos de RRHH moderadamente dinámicos
+
     /**
      * Listar todos los empleados de la empresa del usuario autenticado
      * 
@@ -78,20 +84,28 @@ class EmpleadoController extends Controller
 
         $empresaId = auth()->user()->empresa_id;
         
-        $query = Empleado::where('empresa_id', $empresaId)
-            ->with(['cargo']);
+        $cacheKey = $this->getCacheKey('index', [
+            'empresa_id' => $empresaId,
+            'activo' => $request->input('activo'),
+            'cargo_id' => $request->input('cargo_id')
+        ]);
 
-        // Filtro opcional por estado activo
-        if ($request->has('activo')) {
-            $query->where('activo', $request->boolean('activo'));
-        }
+        $empleados = $this->cacheQueryIfEnabled($cacheKey, function() use ($request, $empresaId) {
+            $query = Empleado::where('empresa_id', $empresaId)
+                ->with(['cargo']);
 
-        // Filtro opcional por cargo
-        if ($request->filled('cargo_id')) {
-            $query->where('cargo_id', $request->cargo_id);
-        }
+            // Filtro opcional por estado activo
+            if ($request->has('activo')) {
+                $query->where('activo', $request->boolean('activo'));
+            }
 
-        $empleados = $query->get();
+            // Filtro opcional por cargo
+            if ($request->filled('cargo_id')) {
+                $query->where('cargo_id', $request->cargo_id);
+            }
+
+            return $query->get();
+        });
 
         return EmpleadoResource::collection($empleados);
     }
@@ -139,6 +153,8 @@ class EmpleadoController extends Controller
 
         $empleado = Empleado::create($validated);
         $empleado->load(['cargo']);
+
+        $this->flushCache();
 
         return (new EmpleadoResource($empleado))
             ->response()
@@ -214,6 +230,8 @@ class EmpleadoController extends Controller
         $empleado->update($request->validated());
         $empleado->load(['cargo']);
 
+        $this->flushCache();
+
         return new EmpleadoResource($empleado);
     }
 
@@ -245,6 +263,8 @@ class EmpleadoController extends Controller
         $empleado->eliminado = 1;
         $empleado->activo = 0;
         $empleado->save();
+
+        $this->flushCache();
 
         return response()->json([
             'message' => 'Empleado eliminado exitosamente',
