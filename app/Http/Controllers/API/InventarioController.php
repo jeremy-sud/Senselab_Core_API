@@ -9,6 +9,7 @@ use App\Http\Resources\EntradaInventarioResource;
 use App\Http\Resources\SalidaInventarioResource;
 use App\Models\EntradaInventario;
 use App\Models\SalidaInventario;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -27,6 +28,11 @@ use OpenApi\Attributes as OA;
  */
 class InventarioController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['inventario', 'movimientos-inventario'];
+    protected int $cacheTTL = 1200; // 20 minutos - movimientos semi-dinámicos
+
     /**
      * Listar todas las entradas de inventario
      * 
@@ -96,31 +102,41 @@ class InventarioController extends Controller
         
         $empresaId = auth()->user()->empresa_id;
         
-        $query = EntradaInventario::where('empresa_id', $empresaId)
-            ->with(['almacen', 'ordenCompra', 'proveedor', 'detalles']);
+        $cacheKey = $this->getCacheKey('entradas', [
+            'almacen_id' => $request->input('almacen_id'),
+            'estado' => $request->input('estado'),
+            'tipo_entrada' => $request->input('tipo_entrada'),
+            'fecha_desde' => $request->input('fecha_desde'),
+            'fecha_hasta' => $request->input('fecha_hasta')
+        ]);
+        
+        $entradas = $this->cacheQueryIfEnabled($cacheKey, function() use ($request, $empresaId) {
+            $query = EntradaInventario::where('empresa_id', $empresaId)
+                ->with(['almacen', 'ordenCompra', 'proveedor', 'detalles']);
 
-        // Filtros opcionales
-        if ($request->filled('almacen_id')) {
-            $query->where('almacen_id', $request->almacen_id);
-        }
+            // Filtros opcionales
+            if ($request->filled('almacen_id')) {
+                $query->where('almacen_id', $request->almacen_id);
+            }
 
-        if ($request->filled('estado')) {
-            $query->where('estado', $request->estado);
-        }
+            if ($request->filled('estado')) {
+                $query->where('estado', $request->estado);
+            }
 
-        if ($request->filled('tipo_entrada')) {
-            $query->where('tipo_entrada', $request->tipo_entrada);
-        }
+            if ($request->filled('tipo_entrada')) {
+                $query->where('tipo_entrada', $request->tipo_entrada);
+            }
 
-        if ($request->filled('fecha_desde')) {
-            $query->whereDate('fecha_entrada', '>=', $request->fecha_desde);
-        }
+            if ($request->filled('fecha_desde')) {
+                $query->whereDate('fecha_entrada', '>=', $request->fecha_desde);
+            }
 
-        if ($request->filled('fecha_hasta')) {
-            $query->whereDate('fecha_entrada', '<=', $request->fecha_hasta);
-        }
+            if ($request->filled('fecha_hasta')) {
+                $query->whereDate('fecha_entrada', '<=', $request->fecha_hasta);
+            }
 
-        $entradas = $query->orderBy('fecha_entrada', 'desc')->get();
+            return $query->orderBy('fecha_entrada', 'desc')->get();
+        });
 
         return EntradaInventarioResource::collection($entradas);
     }
@@ -303,31 +319,41 @@ class InventarioController extends Controller
         
         $empresaId = auth()->user()->empresa_id;
         
-        $query = SalidaInventario::where('empresa_id', $empresaId)
-            ->with(['almacen', 'venta', 'cliente', 'proveedor', 'detalles']);
+        $cacheKey = $this->getCacheKey('salidas', [
+            'almacen_id' => $request->input('almacen_id'),
+            'estado' => $request->input('estado'),
+            'tipo_salida' => $request->input('tipo_salida'),
+            'fecha_desde' => $request->input('fecha_desde'),
+            'fecha_hasta' => $request->input('fecha_hasta')
+        ]);
+        
+        $salidas = $this->cacheQueryIfEnabled($cacheKey, function() use ($request, $empresaId) {
+            $query = SalidaInventario::where('empresa_id', $empresaId)
+                ->with(['almacen', 'venta', 'cliente', 'proveedor', 'detalles']);
 
-        // Filtros opcionales
-        if ($request->filled('almacen_id')) {
-            $query->where('almacen_id', $request->almacen_id);
-        }
+            // Filtros opcionales
+            if ($request->filled('almacen_id')) {
+                $query->where('almacen_id', $request->almacen_id);
+            }
 
-        if ($request->filled('estado')) {
-            $query->where('estado', $request->estado);
-        }
+            if ($request->filled('estado')) {
+                $query->where('estado', $request->estado);
+            }
 
-        if ($request->filled('tipo_salida')) {
-            $query->where('tipo_salida', $request->tipo_salida);
-        }
+            if ($request->filled('tipo_salida')) {
+                $query->where('tipo_salida', $request->tipo_salida);
+            }
 
-        if ($request->filled('fecha_desde')) {
-            $query->whereDate('fecha_salida', '>=', $request->fecha_desde);
-        }
+            if ($request->filled('fecha_desde')) {
+                $query->whereDate('fecha_salida', '>=', $request->fecha_desde);
+            }
 
-        if ($request->filled('fecha_hasta')) {
-            $query->whereDate('fecha_salida', '<=', $request->fecha_hasta);
-        }
+            if ($request->filled('fecha_hasta')) {
+                $query->whereDate('fecha_salida', '<=', $request->fecha_hasta);
+            }
 
-        $salidas = $query->orderBy('fecha_salida', 'desc')->get();
+            return $query->orderBy('fecha_salida', 'desc')->get();
+        });
 
         return SalidaInventarioResource::collection($salidas);
     }
