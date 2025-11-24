@@ -7,6 +7,7 @@ use App\Http\Requests\StoreAsientoContableRequest;
 use App\Http\Requests\UpdateAsientoContableRequest;
 use App\Http\Resources\AsientoContableResource;
 use App\Models\AsientoContable;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -24,6 +25,20 @@ use OpenApi\Attributes as OA;
  */
 class AsientoContableController extends Controller
 {
+    use HasCacheableQueries;
+
+    /**
+     * Tags para invalidación de cache
+     * @var array<string>
+     */
+    protected array $cacheTags = ['asientos-contables', 'contabilidad'];
+
+    /**
+     * TTL del cache en segundos (1 hora)
+     * Datos semi-estables: asientos cambian moderadamente
+     * @var int
+     */
+    protected int $cacheTTL = 3600;
     /**
      * Listar todos los asientos contables de la empresa autenticada
      *
@@ -108,33 +123,43 @@ class AsientoContableController extends Controller
 
         $empresaId = $request->user()->empresa_id;
         
-        $query = AsientoContable::where('empresa_id', $empresaId)
-            ->where('eliminado', 0)
-            ->with(['detalles.cuentaContable', 'empresa']);
+        return $this->cacheQueryIfEnabled(function () use ($request, $empresaId) {
+            $query = AsientoContable::where('empresa_id', $empresaId)
+                ->where('eliminado', 0)
+                ->with(['detalles.cuentaContable', 'empresa']);
 
-        // Filtro por estado
-        if ($request->filled('estado')) {
-            $query->where('estado', $request->estado);
-        }
+            // Filtro por estado
+            if ($request->filled('estado')) {
+                $query->where('estado', $request->estado);
+            }
 
-        // Filtro por rango de fechas
-        if ($request->filled('desde') && $request->filled('hasta')) {
-            $query->whereBetween('fecha_asiento', [$request->desde, $request->hasta]);
-        }
+            // Filtro por rango de fechas
+            if ($request->filled('desde') && $request->filled('hasta')) {
+                $query->whereBetween('fecha_asiento', [$request->desde, $request->hasta]);
+            }
 
-        // Filtro por cuenta contable (a través de detalles)
-        if ($request->filled('cuenta_contable_id')) {
-            $query->whereHas('detalles', function ($q) use ($request) {
-                $q->where('cuenta_contable_id', $request->cuenta_contable_id);
-            });
-        }
+            // Filtro por cuenta contable (a través de detalles)
+            if ($request->filled('cuenta_contable_id')) {
+                $query->whereHas('detalles', function ($q) use ($request) {
+                    $q->where('cuenta_contable_id', $request->cuenta_contable_id);
+                });
+            }
 
-        // Ordenamiento
-        $query->orderBy($request->get('sort_by', 'fecha_asiento'), $request->get('sort_order', 'desc'));
+            // Ordenamiento
+            $query->orderBy($request->get('sort_by', 'fecha_asiento'), $request->get('sort_order', 'desc'));
 
-        $asientos = $query->paginate($request->get('per_page', 15));
+            $asientos = $query->paginate($request->get('per_page', 15));
 
-        return AsientoContableResource::collection($asientos);
+            return AsientoContableResource::collection($asientos);
+        }, [
+            'estado' => $request->input('estado'),
+            'desde' => $request->input('desde'),
+            'hasta' => $request->input('hasta'),
+            'cuenta_contable_id' => $request->input('cuenta_contable_id'),
+            'sort_by' => $request->input('sort_by'),
+            'sort_order' => $request->input('sort_order'),
+            'per_page' => $request->input('per_page')
+        ]);
     }
 
     /**

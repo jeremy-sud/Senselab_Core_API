@@ -7,6 +7,7 @@ use App\Models\MovimientoBancario;
 use App\Http\Requests\StoreMovimientoBancarioRequest;
 use App\Http\Requests\UpdateMovimientoBancarioRequest;
 use App\Http\Resources\MovimientoBancarioResource;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +21,20 @@ use Illuminate\Support\Facades\DB;
  */
 class MovimientoBancarioController extends Controller
 {
+    use HasCacheableQueries;
+
+    /**
+     * Tags para invalidación de cache
+     * @var array<string>
+     */
+    protected array $cacheTags = ['movimientos-bancarios', 'finanzas', 'bancos'];
+
+    /**
+     * TTL del cache en segundos (30 minutos)
+     * Datos dinámicos: movimientos bancarios frecuentes
+     * @var int
+     */
+    protected int $cacheTTL = 1800;
     /**
      * Display a listing of the resource.
      * 
@@ -35,56 +50,69 @@ class MovimientoBancarioController extends Controller
             $search = $request->input('search');
             $empresaId = Auth::user()->empresa_id;
             
-            $query = MovimientoBancario::with(['empresa', 'cuentaBancaria', 'asientoContable'])
-                                       ->where('empresa_id', $empresaId)
-                                       ->where('eliminado', false);
-            
-            if ($search) {
-                $query->where(function($q) use ($search) {
-                    $q->where('descripcion', 'like', "%{$search}%")
-                      ->orWhere('numero_referencia', 'like', "%{$search}%")
-                      ->orWhere('beneficiario', 'like', "%{$search}%");
-                });
-            }
-            
-            // Filtro por cuenta bancaria
-            if ($request->has('cuenta_bancaria_id')) {
-                $query->where('cuenta_bancaria_id', $request->input('cuenta_bancaria_id'));
-            }
-            
-            // Filtro por tipo de movimiento
-            if ($request->has('tipo_movimiento')) {
-                $query->porTipo($request->input('tipo_movimiento'));
-            }
-            
-            // Filtro por estado de conciliación
-            if ($request->boolean('conciliados')) {
-                $query->conciliados();
-            }
-            
-            if ($request->boolean('pendientes_conciliacion')) {
-                $query->pendientesConciliacion();
-            }
-            
-            // Filtro por rango de fechas
-            if ($request->has('fecha_desde') && $request->has('fecha_hasta')) {
-                $query->entreFechas($request->input('fecha_desde'), $request->input('fecha_hasta'));
-            }
-            
-            // Filtro por monto mínimo/máximo
-            if ($request->has('monto_minimo')) {
-                $query->where('monto', '>=', $request->input('monto_minimo'));
-            }
-            
-            if ($request->has('monto_maximo')) {
-                $query->where('monto', '<=', $request->input('monto_maximo'));
-            }
-            
-            $movimientos = $query->orderBy('fecha_movimiento', 'desc')
-                                 ->orderBy('created_at', 'desc')
-                                 ->paginate($perPage);
-            
-            return MovimientoBancarioResource::collection($movimientos);
+            return $this->cacheQueryIfEnabled(function () use ($request, $empresaId, $search, $perPage) {
+                $query = MovimientoBancario::with(['empresa', 'cuentaBancaria', 'asientoContable'])
+                                           ->where('empresa_id', $empresaId)
+                                           ->where('eliminado', false);
+                
+                if ($search) {
+                    $query->where(function($q) use ($search) {
+                        $q->where('descripcion', 'like', "%{$search}%")
+                          ->orWhere('numero_referencia', 'like', "%{$search}%")
+                          ->orWhere('beneficiario', 'like', "%{$search}%");
+                    });
+                }
+                
+                // Filtro por cuenta bancaria
+                if ($request->has('cuenta_bancaria_id')) {
+                    $query->where('cuenta_bancaria_id', $request->input('cuenta_bancaria_id'));
+                }
+                
+                // Filtro por tipo de movimiento
+                if ($request->has('tipo_movimiento')) {
+                    $query->porTipo($request->input('tipo_movimiento'));
+                }
+                
+                // Filtro por estado de conciliación
+                if ($request->boolean('conciliados')) {
+                    $query->conciliados();
+                }
+                
+                if ($request->boolean('pendientes_conciliacion')) {
+                    $query->pendientesConciliacion();
+                }
+                
+                // Filtro por rango de fechas
+                if ($request->has('fecha_desde') && $request->has('fecha_hasta')) {
+                    $query->entreFechas($request->input('fecha_desde'), $request->input('fecha_hasta'));
+                }
+                
+                // Filtro por monto mínimo/máximo
+                if ($request->has('monto_minimo')) {
+                    $query->where('monto', '>=', $request->input('monto_minimo'));
+                }
+                
+                if ($request->has('monto_maximo')) {
+                    $query->where('monto', '<=', $request->input('monto_maximo'));
+                }
+                
+                $movimientos = $query->orderBy('fecha_movimiento', 'desc')
+                                     ->orderBy('created_at', 'desc')
+                                     ->paginate($perPage);
+                
+                return MovimientoBancarioResource::collection($movimientos);
+            }, [
+                'search' => $search,
+                'cuenta_bancaria_id' => $request->input('cuenta_bancaria_id'),
+                'tipo_movimiento' => $request->input('tipo_movimiento'),
+                'conciliados' => $request->boolean('conciliados'),
+                'pendientes_conciliacion' => $request->boolean('pendientes_conciliacion'),
+                'fecha_desde' => $request->input('fecha_desde'),
+                'fecha_hasta' => $request->input('fecha_hasta'),
+                'monto_minimo' => $request->input('monto_minimo'),
+                'monto_maximo' => $request->input('monto_maximo'),
+                'per_page' => $perPage
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener movimientos bancarios',
@@ -130,6 +158,7 @@ class MovimientoBancarioController extends Controller
             $movimiento->load(['empresa', 'cuentaBancaria', 'asientoContable']);
             
             DB::commit();
+            $this->flushCache();
             
             return (new MovimientoBancarioResource($movimiento))
                 ->additional(['message' => 'Movimiento bancario creado exitosamente'])
