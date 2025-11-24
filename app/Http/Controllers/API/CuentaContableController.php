@@ -7,6 +7,7 @@ use App\Http\Requests\StoreCuentaContableRequest;
 use App\Http\Requests\UpdateCuentaContableRequest;
 use App\Http\Resources\CuentaContableResource;
 use App\Models\CuentaContable;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -23,6 +24,10 @@ use OpenApi\Attributes as OA;
  */
 class CuentaContableController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['cuentas-contables', 'contabilidad'];
+    protected int $cacheTTL = 3600; // 1 hora - plan contable cambia ocasionalmente
     /**
      * Listar todas las cuentas contables de la empresa autenticada
      *
@@ -121,41 +126,54 @@ class CuentaContableController extends Controller
         $this->authorize('viewAny', CuentaContable::class);
         $empresaId = $request->user()->empresa_id;
         
-        $query = CuentaContable::where('empresa_id', $empresaId)
-            ->where('eliminado', 0)
-            ->with(['cuentaPadre', 'tipoCuenta', 'subcuentas']);
+        $cacheKey = $this->getCacheKey('index', [
+            'tipo_cuenta_id' => $request->get('tipo_cuenta_id'),
+            'cuenta_padre_id' => $request->get('cuenta_padre_id'),
+            'principales' => $request->get('principales'),
+            'codigo' => $request->get('codigo'),
+            'permite_movimientos' => $request->get('permite_movimientos'),
+            'sort_by' => $request->get('sort_by', 'codigo'),
+            'sort_order' => $request->get('sort_order', 'asc'),
+            'per_page' => $request->get('per_page', 15)
+        ]);
 
-        // Filtro por tipo de cuenta
-        if ($request->filled('tipo_cuenta_id')) {
-            $query->where('tipo_cuenta_id', $request->tipo_cuenta_id);
-        }
+        return $this->cacheQueryIfEnabled($cacheKey, function () use ($request, $empresaId) {
+            $query = CuentaContable::where('empresa_id', $empresaId)
+                ->where('eliminado', 0)
+                ->with(['cuentaPadre', 'tipoCuenta', 'subcuentas']);
 
-        // Filtro por cuenta padre
-        if ($request->filled('cuenta_padre_id')) {
-            $query->where('cuenta_padre_id', $request->cuenta_padre_id);
-        }
+            // Filtro por tipo de cuenta
+            if ($request->filled('tipo_cuenta_id')) {
+                $query->where('tipo_cuenta_id', $request->tipo_cuenta_id);
+            }
 
-        // Filtro solo cuentas principales (sin padre)
-        if ($request->filled('principales') && $request->principales == 1) {
-            $query->whereNull('cuenta_padre_id');
-        }
+            // Filtro por cuenta padre
+            if ($request->filled('cuenta_padre_id')) {
+                $query->where('cuenta_padre_id', $request->cuenta_padre_id);
+            }
 
-        // Filtro por código
-        if ($request->filled('codigo')) {
-            $query->where('codigo', 'like', "%{$request->codigo}%");
-        }
+            // Filtro solo cuentas principales (sin padre)
+            if ($request->filled('principales') && $request->principales == 1) {
+                $query->whereNull('cuenta_padre_id');
+            }
 
-        // Filtro que permiten movimientos
-        if ($request->filled('permite_movimientos')) {
-            $query->where('permite_movimientos', $request->permite_movimientos);
-        }
+            // Filtro por código
+            if ($request->filled('codigo')) {
+                $query->where('codigo', 'like', "%{$request->codigo}%");
+            }
 
-        // Ordenamiento
-        $query->orderBy($request->get('sort_by', 'codigo'), $request->get('sort_order', 'asc'));
+            // Filtro que permiten movimientos
+            if ($request->filled('permite_movimientos')) {
+                $query->where('permite_movimientos', $request->permite_movimientos);
+            }
 
-        $cuentas = $query->paginate($request->get('per_page', 15));
+            // Ordenamiento
+            $query->orderBy($request->get('sort_by', 'codigo'), $request->get('sort_order', 'asc'));
 
-        return CuentaContableResource::collection($cuentas);
+            $cuentas = $query->paginate($request->get('per_page', 15));
+
+            return CuentaContableResource::collection($cuentas);
+        });
     }
 
     /**
@@ -216,6 +234,8 @@ class CuentaContableController extends Controller
 
         $cuenta = CuentaContable::create($validated);
         $cuenta->load(['cuentaPadre', 'tipoCuenta', 'subcuentas']);
+
+        $this->flushCache();
 
         return response()->json([
             'success' => true,
@@ -362,6 +382,8 @@ class CuentaContableController extends Controller
         $cuenta->update($request->validated());
         $cuenta->load(['cuentaPadre', 'tipoCuenta', 'subcuentas']);
 
+        $this->flushCache();
+
         return response()->json([
             'success' => true,
             'message' => 'Cuenta contable actualizada exitosamente',
@@ -444,6 +466,8 @@ class CuentaContableController extends Controller
         }
 
         $cuenta->update(['eliminado' => 1, 'activo' => 0]);
+
+        $this->flushCache();
 
         return response()->json([
             'success' => true,
