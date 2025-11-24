@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateTasaImpuestoRequest;
 use App\Http\Requests\TasaImpuestoVigenteRequest;
 use App\Http\Resources\TasaImpuestoResource;
 use App\Models\TasaImpuesto;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -25,6 +26,11 @@ use OpenApi\Attributes as OA;
  */
 class TasaImpuestoController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['tasas-impuesto', 'fiscal'];
+    protected int $cacheTTL = 86400; // 24 horas - tasas fiscales muy estables
+
     /**
      * Listar todas las tasas de impuesto
      *
