@@ -58,7 +58,7 @@ class ProcessImportJobTest extends TestCase
         $job = new ProcessImportJob('file.csv', 'productos', 1, 1);
 
         $this->assertEquals(3, $job->tries);
-        $this->assertEquals([120, 300, 600], $job->backoff());
+        $this->assertEquals([120, 300, 600], $job->backoff);
     }
 
     /**

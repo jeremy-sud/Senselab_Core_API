@@ -15,11 +15,21 @@ use App\Http\Requests\ResetearConsecutivoRequest;
 class ConsecutivoFEController extends Controller
 {
     /**
+     * Obtener el ID de la empresa del usuario autenticado
+     */
+    private function getEmpresaId(): int
+    {
+        /** @var \App\Models\Usuario $user */
+        $user = auth()->user();
+        return $user->empresa_id;
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index(Request $request): JsonResponse
     {
-        $query = ConsecutivoFE::where('empresa_id', auth()->user()->empresa_id)
+        $query = ConsecutivoFE::where('empresa_id', $this->getEmpresaId())
             ->where('eliminado', 0);
 
         // Filtros
@@ -59,7 +69,7 @@ class ConsecutivoFEController extends Controller
     public function store(StoreConsecutivoFERequest $request): JsonResponse
     {
         $consecutivo = ConsecutivoFE::create([
-            'empresa_id' => auth()->user()->empresa_id,
+            'empresa_id' => $this->getEmpresaId(),
             'sucursal_id' => $request->sucursal_id,
             'tipo_documento_dgt' => $request->tipo_documento_dgt,
             'prefijo' => $request->prefijo,
@@ -80,7 +90,7 @@ class ConsecutivoFEController extends Controller
      */
     public function show(ConsecutivoFE $consecutivoFe): JsonResponse
     {
-        if ($consecutivoFe->empresa_id !== auth()->user()->empresa_id) {
+        if ($consecutivoFe->empresa_id !== $this->getEmpresaId()) {
             return response()->json([
                 'success' => false,
                 'message' => 'No autorizado'
@@ -98,7 +108,7 @@ class ConsecutivoFEController extends Controller
      */
     public function update(UpdateConsecutivoFERequest $request, ConsecutivoFE $consecutivoFe): JsonResponse
     {
-        if ($consecutivoFe->empresa_id !== auth()->user()->empresa_id) {
+        if ($consecutivoFe->empresa_id !== $this->getEmpresaId()) {
             return response()->json([
                 'success' => false,
                 'message' => 'No autorizado'
@@ -122,7 +132,7 @@ class ConsecutivoFEController extends Controller
      */
     public function destroy(ConsecutivoFE $consecutivoFe): JsonResponse
     {
-        if ($consecutivoFe->empresa_id !== auth()->user()->empresa_id) {
+        if ($consecutivoFe->empresa_id !== $this->getEmpresaId()) {
             return response()->json([
                 'success' => false,
                 'message' => 'No autorizado'
@@ -146,7 +156,7 @@ class ConsecutivoFEController extends Controller
 
         DB::beginTransaction();
         try {
-            $query = ConsecutivoFE::where('empresa_id', auth()->user()->empresa_id)
+            $query = ConsecutivoFE::where('empresa_id', $this->getEmpresaId())
                 ->where('tipo_documento_dgt', $request->tipo_documento_dgt)
                 ->where('estado', 'Activo')
                 ->where('eliminado', 0)
@@ -203,7 +213,7 @@ class ConsecutivoFEController extends Controller
      */
     public function resetear(ResetearConsecutivoRequest $request, ConsecutivoFE $consecutivoFe): JsonResponse
     {
-        if ($consecutivoFe->empresa_id !== auth()->user()->empresa_id) {
+        if ($consecutivoFe->empresa_id !== $this->getEmpresaId()) {
             return response()->json([
                 'success' => false,
                 'message' => 'No autorizado'
@@ -226,7 +236,7 @@ class ConsecutivoFEController extends Controller
      */
     public function porTipoDocumento(Request $request, string $tipoDocumentoDgt): JsonResponse
     {
-        $consecutivos = ConsecutivoFE::where('empresa_id', auth()->user()->empresa_id)
+        $consecutivos = ConsecutivoFE::where('empresa_id', $this->getEmpresaId())
             ->where('tipo_documento_dgt', $tipoDocumentoDgt)
             ->where('eliminado', 0)
             ->orderBy('prefijo')
@@ -243,7 +253,7 @@ class ConsecutivoFEController extends Controller
      */
     public function marcarAgotado(ConsecutivoFE $consecutivoFe): JsonResponse
     {
-        if ($consecutivoFe->empresa_id !== auth()->user()->empresa_id) {
+        if ($consecutivoFe->empresa_id !== $this->getEmpresaId()) {
             return response()->json([
                 'success' => false,
                 'message' => 'No autorizado'
@@ -264,7 +274,7 @@ class ConsecutivoFEController extends Controller
      */
     public function activar(ConsecutivoFE $consecutivoFe): JsonResponse
     {
-        if ($consecutivoFe->empresa_id !== auth()->user()->empresa_id) {
+        if ($consecutivoFe->empresa_id !== $this->getEmpresaId()) {
             return response()->json([
                 'success' => false,
                 'message' => 'No autorizado'
@@ -288,7 +298,7 @@ class ConsecutivoFEController extends Controller
      */
     public function resumenPorEstado(): JsonResponse
     {
-        $resumen = ConsecutivoFE::where('empresa_id', auth()->user()->empresa_id)
+        $resumen = ConsecutivoFE::where('empresa_id', $this->getEmpresaId())
             ->where('eliminado', 0)
             ->select('estado', DB::raw('count(*) as total'))
             ->groupBy('estado')

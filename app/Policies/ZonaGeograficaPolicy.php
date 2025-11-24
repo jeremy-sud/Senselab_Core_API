@@ -19,5 +19,6 @@ class ZonaGeograficaPolicy extends BasePolicy
      * 
      * @var string
      */
-    protected string $permission = 'zona_geografica';
+    // Ajuste: usar guion para coincidir con Str::slug aplicado a permisos
+    protected string $permission = 'zona-geografica';
 }

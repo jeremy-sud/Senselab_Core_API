@@ -76,7 +76,7 @@ class SendEmailJobTest extends TestCase
         $job = new SendEmailJob('test@example.com', 'Subject', 'view', []);
 
         $this->assertEquals(5, $job->tries);
-        $this->assertEquals([30, 60, 120, 300, 600], $job->backoff());
+        $this->assertEquals([30, 60, 120, 300, 600], $job->backoff);
     }
 
     /**
