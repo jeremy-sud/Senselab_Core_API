@@ -10,6 +10,7 @@ use App\Models\Permiso;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Cache;
 use OpenApi\Attributes as OA;
 
 /**
@@ -46,17 +47,23 @@ class PermisoController extends Controller
     {
         $this->authorize('viewAny', Permiso::class);
         
-        $query = Permiso::query();
+        // Cache key única basada en parámetros
+        $cacheKey = 'permisos_list_' . md5(json_encode($request->all()));
+        
+        // Cache con tags (1 hora - se consulta frecuentemente)
+        $permisos = Cache::tags(['permisos', 'rbac'])->remember($cacheKey, 3600, function() use ($request) {
+            $query = Permiso::query();
 
-        if ($request->has('activo')) {
-            $query->where('activo', $request->boolean('activo'));
-        }
+            if ($request->has('activo')) {
+                $query->where('activo', $request->boolean('activo'));
+            }
 
-        if ($request->filled('modulo')) {
-            $query->where('modulo', $request->modulo);
-        }
+            if ($request->filled('modulo')) {
+                $query->where('modulo', $request->modulo);
+            }
 
-        $permisos = $query->get();
+            return $query->get();
+        });
 
         return PermisoResource::collection($permisos);
     }
@@ -68,20 +75,25 @@ class PermisoController extends Controller
      */
     public function grouped(): JsonResponse
     {
-        $permisos = Permiso::where('activo', true)
-            ->where('eliminado', false)
-            ->get()
-            ->groupBy('modulo')
-            ->map(function ($group) {
-                return $group->map(function ($permiso) {
-                    return [
-                        'id' => $permiso->id,
-                        'nombre' => $permiso->nombre,
-                        'slug' => $permiso->slug,
-                        'descripcion' => $permiso->descripcion,
-                    ];
+        $this->authorize('viewAny', Permiso::class);
+        
+        // Cache agrupación de permisos (1 hora)
+        $permisos = Cache::tags(['permisos', 'rbac'])->remember('permisos_grouped', 3600, function() {
+            return Permiso::where('activo', true)
+                ->where('eliminado', false)
+                ->get()
+                ->groupBy('modulo')
+                ->map(function ($group) {
+                    return $group->map(function ($permiso) {
+                        return [
+                            'id' => $permiso->id,
+                            'nombre' => $permiso->nombre,
+                            'slug' => $permiso->slug,
+                            'descripcion' => $permiso->descripcion,
+                        ];
+                    });
                 });
-            });
+        });
 
         return response()->json([
             'data' => $permisos
@@ -121,6 +133,9 @@ class PermisoController extends Controller
         $this->authorize('create', Permiso::class);
         
         $permiso = Permiso::create($request->validated());
+        
+        // Invalidar cache de permisos
+        Cache::tags(['permisos', 'rbac'])->flush();
 
         return (new PermisoResource($permiso))
             ->response()
@@ -173,6 +188,9 @@ class PermisoController extends Controller
         $this->authorize('update', $permiso);
         
         $permiso->update($request->validated());
+        
+        // Invalidar cache de permisos
+        Cache::tags(['permisos', 'rbac'])->flush();
 
         return new PermisoResource($permiso);
     }
@@ -210,6 +228,9 @@ class PermisoController extends Controller
         $permiso->eliminado = 1;
         $permiso->activo = 0;
         $permiso->save();
+        
+        // Invalidar cache de permisos
+        Cache::tags(['permisos', 'rbac'])->flush();
 
         return response()->json([
             'message' => 'Permiso eliminado exitosamente',

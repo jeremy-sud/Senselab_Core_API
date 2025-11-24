@@ -10,6 +10,7 @@ use App\Models\TipoImpuesto;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Cache;
 use OpenApi\Attributes as OA;
 
 /**
@@ -99,26 +100,32 @@ class TipoImpuestoController extends Controller
     {
         $this->authorize('viewAny', TipoImpuesto::class);
         
-        $query = TipoImpuesto::where('eliminado', 0);
+        // Cache key única basada en parámetros
+        $cacheKey = 'tipos_impuesto_list_' . md5(json_encode($request->all()));
+        
+        // Cache con tags (24 horas - catálogo estable)
+        $tipos = Cache::tags(['tipos_impuesto', 'catalogos'])->remember($cacheKey, 86400, function() use ($request) {
+            $query = TipoImpuesto::where('eliminado', 0);
 
-        // Filtro por estado activo
-        if ($request->filled('activo')) {
-            $query->where('activo', $request->activo);
-        }
+            // Filtro por estado activo
+            if ($request->filled('activo')) {
+                $query->where('activo', $request->activo);
+            }
 
-        // Búsqueda por nombre o código
-        if ($request->filled('buscar')) {
-            $buscar = $request->buscar;
-            $query->where(function ($q) use ($buscar) {
-                $q->where('nombre', 'like', "%{$buscar}%")
-                  ->orWhere('codigo_hacienda', 'like', "%{$buscar}%");
-            });
-        }
+            // Búsqueda por nombre o código
+            if ($request->filled('buscar')) {
+                $buscar = $request->buscar;
+                $query->where(function ($q) use ($buscar) {
+                    $q->where('nombre', 'like', "%{$buscar}%")
+                      ->orWhere('codigo_hacienda', 'like', "%{$buscar}%");
+                });
+            }
 
-        // Ordenamiento
-        $query->orderBy($request->get('sort_by', 'nombre'), $request->get('sort_order', 'asc'));
+            // Ordenamiento
+            $query->orderBy($request->get('sort_by', 'nombre'), $request->get('sort_order', 'asc'));
 
-        $tipos = $query->paginate($request->get('per_page', 15));
+            return $query->paginate($request->get('per_page', 15));
+        });
 
         return TipoImpuestoResource::collection($tipos);
     }
@@ -175,6 +182,9 @@ class TipoImpuestoController extends Controller
         $this->authorize('create', TipoImpuesto::class);
         
         $tipo = TipoImpuesto::create($request->validated());
+        
+        // Invalidar cache de tipos de impuesto
+        Cache::tags(['tipos_impuesto', 'catalogos'])->flush();
 
         return response()->json([
             'success' => true,
@@ -308,6 +318,9 @@ class TipoImpuestoController extends Controller
         $this->authorize('update', $tipo);
 
         $tipo->update($request->validated());
+        
+        // Invalidar cache de tipos de impuesto
+        Cache::tags(['tipos_impuesto', 'catalogos'])->flush();
 
         return response()->json([
             'success' => true,
@@ -379,6 +392,9 @@ class TipoImpuestoController extends Controller
         }
 
         $tipo->update(['eliminado' => 1, 'activo' => 0]);
+        
+        // Invalidar cache de tipos de impuesto
+        Cache::tags(['tipos_impuesto', 'catalogos'])->flush();
 
         return response()->json([
             'success' => true,
@@ -420,10 +436,13 @@ class TipoImpuestoController extends Controller
     )]
     public function activos(): JsonResponse
     {
-        $tipos = TipoImpuesto::where('eliminado', 0)
-            ->where('activo', 1)
-            ->orderBy('nombre')
-            ->get();
+        // Cache tipos activos (24 horas)
+        $tipos = Cache::tags(['tipos_impuesto', 'catalogos'])->remember('tipos_impuesto_activos', 86400, function() {
+            return TipoImpuesto::where('eliminado', 0)
+                ->where('activo', 1)
+                ->orderBy('nombre')
+                ->get();
+        });
 
         return response()->json([
             'success' => true,

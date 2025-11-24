@@ -10,6 +10,7 @@ use App\Models\FormaPago;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Cache;
 use OpenApi\Attributes as OA;
 
 /**
@@ -45,17 +46,24 @@ class FormaPagoController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', FormaPago::class);
-        $query = FormaPago::query();
+        
+        // Cache key única basada en parámetros
+        $cacheKey = 'formas_pago_list_' . md5(json_encode($request->all()));
+        
+        // Cache con tags (24 horas - catálogo estable)
+        $formasPago = Cache::tags(['formas_pago', 'catalogos'])->remember($cacheKey, 86400, function() use ($request) {
+            $query = FormaPago::query();
 
-        if ($request->has('activo')) {
-            $query->where('activo', $request->boolean('activo'));
-        }
+            if ($request->has('activo')) {
+                $query->where('activo', $request->boolean('activo'));
+            }
 
-        if ($request->filled('tipo')) {
-            $query->where('tipo', $request->tipo);
-        }
+            if ($request->filled('tipo')) {
+                $query->where('tipo', $request->tipo);
+            }
 
-        $formasPago = $query->get();
+            return $query->get();
+        });
 
         return FormaPagoResource::collection($formasPago);
     }
@@ -91,6 +99,9 @@ class FormaPagoController extends Controller
     {
         $this->authorize('create', FormaPago::class);
         $formaPago = FormaPago::create($request->validated());
+        
+        // Invalidar cache de formas de pago
+        Cache::tags(['formas_pago', 'catalogos'])->flush();
 
         return (new FormaPagoResource($formaPago))
             ->response()
@@ -142,6 +153,9 @@ class FormaPagoController extends Controller
         $this->authorize('update', $formaPago);
 
         $formaPago->update($request->validated());
+        
+        // Invalidar cache de formas de pago
+        Cache::tags(['formas_pago', 'catalogos'])->flush();
 
         return new FormaPagoResource($formaPago);
     }
@@ -169,6 +183,9 @@ class FormaPagoController extends Controller
         $formaPago->eliminado = 1;
         $formaPago->activo = 0;
         $formaPago->save();
+        
+        // Invalidar cache de formas de pago
+        Cache::tags(['formas_pago', 'catalogos'])->flush();
 
         return response()->json([
             'message' => 'Forma de pago eliminada exitosamente',

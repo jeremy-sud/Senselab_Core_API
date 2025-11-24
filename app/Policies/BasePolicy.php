@@ -57,8 +57,9 @@ abstract class BasePolicy
      */
     protected function hasPermission(Usuario $user, string $action): bool
     {
-        $permissionName = "{$this->permission}.{$action}";
-        return $user->hasPermission($permissionName);
+        // Formato: '{accion}-{modulo}' (ej: 'ver-permisos', 'crear-productos')
+        $permissionSlug = "{$action}-{$this->permission}";
+        return $user->hasPermission($permissionSlug);
     }
 
     /**
@@ -69,7 +70,7 @@ abstract class BasePolicy
      */
     public function viewAny(Usuario $user): bool
     {
-        return $this->hasPermission($user, 'leer');
+        return $this->hasPermission($user, 'ver');
     }
 
     /**
@@ -82,7 +83,7 @@ abstract class BasePolicy
     public function view(Usuario $user, Model $model): bool
     {
         return $this->ownsResource($user, $model) && 
-               $this->hasPermission($user, 'leer');
+               $this->hasPermission($user, 'ver');
     }
 
     /**
@@ -106,7 +107,7 @@ abstract class BasePolicy
     public function update(Usuario $user, Model $model): bool
     {
         return $this->ownsResource($user, $model) && 
-               $this->hasPermission($user, 'actualizar');
+               $this->hasPermission($user, 'editar');
     }
 
     /**
@@ -132,7 +133,7 @@ abstract class BasePolicy
     public function restore(Usuario $user, Model $model): bool
     {
         return $this->ownsResource($user, $model) && 
-               $this->hasPermission($user, 'actualizar');
+               $this->hasPermission($user, 'editar');
     }
 
     /**
