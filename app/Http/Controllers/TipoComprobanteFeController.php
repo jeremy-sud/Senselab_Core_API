@@ -19,6 +19,11 @@ class TipoComprobanteFeController extends Controller
             $query->where('activo', $request->boolean('activo'));
         }
 
+        // Filtro específico por código DGT
+        if ($request->filled('codigo_dgt')) {
+            $query->where('codigo_dgt', $request->codigo_dgt);
+        }
+
         // Búsqueda por código o nombre
         if ($request->filled('search')) {
             $search = $request->search;
@@ -31,6 +36,11 @@ class TipoComprobanteFeController extends Controller
         // Filtro por requiere referencia
         if ($request->filled('requiere_referencia')) {
             $query->where('requiere_referencia', $request->boolean('requiere_referencia'));
+        }
+
+        // Filtro por permite exportación
+        if ($request->boolean('permite_exportacion')) {
+            $query->where('permite_exportacion', true);
         }
 
         $tipos = $query->orderBy('codigo_dgt')->paginate($request->per_page ?? 15);

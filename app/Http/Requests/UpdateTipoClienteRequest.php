@@ -21,7 +21,8 @@ class UpdateTipoClienteRequest extends FormRequest
      */
     public function rules(): array
     {
-        $id = $this->route('tipo_cliente');
+        // El parámetro de ruta para apiResource se genera automáticamente como singular sin guiones
+        $id = $this->route('tipos_cliente');
         
         return [
             'codigo' => ['sometimes', 'string', 'max:10', 'unique:tipos_clientes,codigo,' . $id],

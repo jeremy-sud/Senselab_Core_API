@@ -93,7 +93,7 @@ class ZonaGeograficaTest extends TestCase
         $response->assertStatus(201);
         // Verificar que se creó y que el controller asignó empresa_id si el modelo usa BelongsToTenant
         $this->assertDatabaseCount('zonas_geograficas', 1);
-        $zona = \App\Models\ZonaGeografica::first();
+        $zona = \App\Models\ZonaGeografica::withoutGlobalScopes()->first();
         $this->assertEquals('San José', $zona->nombre);
         // El multi-tenancy puede ser aplicado por el trait BelongsToTenant o el controller
         $this->assertNotNull($zona->empresa_id);

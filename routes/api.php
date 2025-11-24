@@ -108,153 +108,153 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     // Permisos: empresas.leer, empresas.crear, empresas.actualizar, empresas.eliminar
     // ------------------------------------------------------------------------
     Route::get('/empresas', [EmpresaController::class, 'index'])
-        ->middleware('permission:empresas.leer');
+        ->middleware('permission:ver-empresas');
     Route::post('/empresas', [EmpresaController::class, 'store'])
-        ->middleware('permission:empresas.crear');
+        ->middleware('permission:crear-empresas');
     Route::get('/empresas/{empresa}', [EmpresaController::class, 'show'])
-        ->middleware('permission:empresas.leer');
+        ->middleware('permission:ver-empresas');
     Route::put('/empresas/{empresa}', [EmpresaController::class, 'update'])
-        ->middleware('permission:empresas.actualizar');
+        ->middleware('permission:editar-empresas');
     Route::patch('/empresas/{empresa}', [EmpresaController::class, 'update'])
-        ->middleware('permission:empresas.actualizar');
+        ->middleware('permission:editar-empresas');
     Route::delete('/empresas/{empresa}', [EmpresaController::class, 'destroy'])
-        ->middleware('permission:empresas.eliminar');
+        ->middleware('permission:eliminar-empresas');
 
     // ------------------------------------------------------------------------
     // MÓDULO: SUCURSALES
     // Permisos: sucursales.leer, sucursales.crear, sucursales.actualizar, sucursales.eliminar
     // ------------------------------------------------------------------------
     Route::get('/sucursales', [SucursalController::class, 'index'])
-        ->middleware('permission:sucursales.leer');
+        ->middleware('permission:ver-sucursales');
     Route::post('/sucursales', [SucursalController::class, 'store'])
-        ->middleware('permission:sucursales.crear');
+        ->middleware('permission:crear-sucursales');
     Route::get('/sucursales/{sucursal}', [SucursalController::class, 'show'])
-        ->middleware('permission:sucursales.leer');
+        ->middleware('permission:ver-sucursales');
     Route::put('/sucursales/{sucursal}', [SucursalController::class, 'update'])
-        ->middleware('permission:sucursales.actualizar');
+        ->middleware('permission:editar-sucursales');
     Route::patch('/sucursales/{sucursal}', [SucursalController::class, 'update'])
-        ->middleware('permission:sucursales.actualizar');
+        ->middleware('permission:editar-sucursales');
     Route::delete('/sucursales/{sucursal}', [SucursalController::class, 'destroy'])
-        ->middleware('permission:sucursales.eliminar');
+        ->middleware('permission:eliminar-sucursales');
 
     // ------------------------------------------------------------------------
     // MÓDULO: ALMACENES
     // Permisos: almacenes.leer, almacenes.crear, almacenes.actualizar, almacenes.eliminar
     // ------------------------------------------------------------------------
     Route::get('/almacenes', [AlmacenController::class, 'index'])
-        ->middleware('permission:almacenes.leer');
+        ->middleware('permission:ver-almacenes');
     Route::post('/almacenes', [AlmacenController::class, 'store'])
-        ->middleware('permission:almacenes.crear');
+        ->middleware('permission:crear-almacenes');
     Route::get('/almacenes/{almacen}', [AlmacenController::class, 'show'])
-        ->middleware('permission:almacenes.leer');
+        ->middleware('permission:ver-almacenes');
     Route::put('/almacenes/{almacen}', [AlmacenController::class, 'update'])
-        ->middleware('permission:almacenes.actualizar');
+        ->middleware('permission:editar-almacenes');
     Route::patch('/almacenes/{almacen}', [AlmacenController::class, 'update'])
-        ->middleware('permission:almacenes.actualizar');
+        ->middleware('permission:editar-almacenes');
     Route::delete('/almacenes/{almacen}', [AlmacenController::class, 'destroy'])
-        ->middleware('permission:almacenes.eliminar');
+        ->middleware('permission:eliminar-almacenes');
 
     // ------------------------------------------------------------------------
     // MÓDULO: PRODUCTOS
     // Permisos: productos.leer, productos.crear, productos.actualizar, productos.eliminar
     // ------------------------------------------------------------------------
     Route::get('/productos', [ProductoController::class, 'index'])
-        ->middleware('permission:productos.leer');
+        ->middleware('permission:ver-productos');
     Route::post('/productos', [ProductoController::class, 'store'])
-        ->middleware('permission:productos.crear');
+        ->middleware('permission:crear-productos');
     Route::get('/productos/{producto}', [ProductoController::class, 'show'])
-        ->middleware('permission:productos.leer');
+        ->middleware('permission:ver-productos');
     Route::put('/productos/{producto}', [ProductoController::class, 'update'])
-        ->middleware('permission:productos.actualizar');
+        ->middleware('permission:editar-productos');
     Route::patch('/productos/{producto}', [ProductoController::class, 'update'])
-        ->middleware('permission:productos.actualizar');
+        ->middleware('permission:editar-productos');
     Route::delete('/productos/{producto}', [ProductoController::class, 'destroy'])
-        ->middleware('permission:productos.eliminar');
+        ->middleware('permission:eliminar-productos');
 
     // ------------------------------------------------------------------------
     // MÓDULO: CLIENTES
     // Permisos: clientes.leer, clientes.crear, clientes.actualizar, clientes.eliminar
     // ------------------------------------------------------------------------
     Route::get('/clientes', [ClienteController::class, 'index'])
-        ->middleware('permission:clientes.leer');
+        ->middleware('permission:ver-clientes');
     Route::post('/clientes', [ClienteController::class, 'store'])
-        ->middleware('permission:clientes.crear');
+        ->middleware('permission:crear-clientes');
     Route::get('/clientes/{cliente}', [ClienteController::class, 'show'])
-        ->middleware('permission:clientes.leer');
+        ->middleware('permission:ver-clientes');
     Route::put('/clientes/{cliente}', [ClienteController::class, 'update'])
-        ->middleware('permission:clientes.actualizar');
+        ->middleware('permission:editar-clientes');
     Route::patch('/clientes/{cliente}', [ClienteController::class, 'update'])
-        ->middleware('permission:clientes.actualizar');
+        ->middleware('permission:editar-clientes');
     Route::delete('/clientes/{cliente}', [ClienteController::class, 'destroy'])
-        ->middleware('permission:clientes.eliminar');
+        ->middleware('permission:eliminar-clientes');
 
     // ------------------------------------------------------------------------
     // MÓDULO: PROVEEDORES
     // Permisos: proveedores.leer, proveedores.crear, proveedores.actualizar, proveedores.eliminar
     // ------------------------------------------------------------------------
     Route::get('/proveedores', [ProveedorController::class, 'index'])
-        ->middleware('permission:proveedores.leer');
+        ->middleware('permission:ver-proveedores');
     Route::post('/proveedores', [ProveedorController::class, 'store'])
-        ->middleware('permission:proveedores.crear');
+        ->middleware('permission:crear-proveedores');
     Route::get('/proveedores/{proveedor}', [ProveedorController::class, 'show'])
-        ->middleware('permission:proveedores.leer');
+        ->middleware('permission:ver-proveedores');
     Route::put('/proveedores/{proveedor}', [ProveedorController::class, 'update'])
-        ->middleware('permission:proveedores.actualizar');
+        ->middleware('permission:editar-proveedores');
     Route::patch('/proveedores/{proveedor}', [ProveedorController::class, 'update'])
-        ->middleware('permission:proveedores.actualizar');
+        ->middleware('permission:editar-proveedores');
     Route::delete('/proveedores/{proveedor}', [ProveedorController::class, 'destroy'])
-        ->middleware('permission:proveedores.eliminar');
+        ->middleware('permission:eliminar-proveedores');
 
     // ------------------------------------------------------------------------
     // MÓDULO: VENTAS
     // Permisos: ventas.leer, ventas.crear, ventas.actualizar, ventas.eliminar
     // ------------------------------------------------------------------------
     Route::get('/ventas', [VentaController::class, 'index'])
-        ->middleware('permission:ventas.leer');
+        ->middleware('permission:ver-ventas');
     Route::post('/ventas', [VentaController::class, 'store'])
-        ->middleware('permission:ventas.crear');
+        ->middleware('permission:crear-ventas');
     Route::get('/ventas/{venta}', [VentaController::class, 'show'])
-        ->middleware('permission:ventas.leer');
+        ->middleware('permission:ver-ventas');
     Route::put('/ventas/{venta}', [VentaController::class, 'update'])
-        ->middleware('permission:ventas.actualizar');
+        ->middleware('permission:editar-ventas');
     Route::patch('/ventas/{venta}', [VentaController::class, 'update'])
-        ->middleware('permission:ventas.actualizar');
+        ->middleware('permission:editar-ventas');
     Route::delete('/ventas/{venta}', [VentaController::class, 'destroy'])
-        ->middleware('permission:ventas.eliminar');
+        ->middleware('permission:eliminar-ventas');
 
     // ------------------------------------------------------------------------
     // MÓDULO: COMPRAS (Órdenes de Compra)
     // Permisos: compras.leer, compras.crear, compras.actualizar, compras.eliminar
     // ------------------------------------------------------------------------
     Route::get('/ordenes-compra', [OrdenCompraController::class, 'index'])
-        ->middleware('permission:compras.leer');
+        ->middleware('permission:ver-compras');
     Route::post('/ordenes-compra', [OrdenCompraController::class, 'store'])
-        ->middleware('permission:compras.crear');
+        ->middleware('permission:crear-compras');
     Route::get('/ordenes-compra/{ordenCompra}', [OrdenCompraController::class, 'show'])
-        ->middleware('permission:compras.leer');
+        ->middleware('permission:ver-compras');
     Route::put('/ordenes-compra/{ordenCompra}', [OrdenCompraController::class, 'update'])
-        ->middleware('permission:compras.actualizar');
+        ->middleware('permission:editar-compras');
     Route::patch('/ordenes-compra/{ordenCompra}', [OrdenCompraController::class, 'update'])
-        ->middleware('permission:compras.actualizar');
+        ->middleware('permission:editar-compras');
     Route::delete('/ordenes-compra/{ordenCompra}', [OrdenCompraController::class, 'destroy'])
-        ->middleware('permission:compras.eliminar');
+        ->middleware('permission:eliminar-compras');
 
     // ------------------------------------------------------------------------
     // MÓDULO: EMPLEADOS
     // Permisos: empleados.leer, empleados.crear, empleados.actualizar, empleados.eliminar
     // ------------------------------------------------------------------------
     Route::get('/empleados', [EmpleadoController::class, 'index'])
-        ->middleware('permission:empleados.leer');
+        ->middleware('permission:ver-empleados');
     Route::post('/empleados', [EmpleadoController::class, 'store'])
-        ->middleware('permission:empleados.crear');
+        ->middleware('permission:crear-empleados');
     Route::get('/empleados/{empleado}', [EmpleadoController::class, 'show'])
-        ->middleware('permission:empleados.leer');
+        ->middleware('permission:ver-empleados');
     Route::put('/empleados/{empleado}', [EmpleadoController::class, 'update'])
-        ->middleware('permission:empleados.actualizar');
+        ->middleware('permission:editar-empleados');
     Route::patch('/empleados/{empleado}', [EmpleadoController::class, 'update'])
-        ->middleware('permission:empleados.actualizar');
+        ->middleware('permission:editar-empleados');
     Route::delete('/empleados/{empleado}', [EmpleadoController::class, 'destroy'])
-        ->middleware('permission:empleados.eliminar');
+        ->middleware('permission:eliminar-empleados');
 
     // ------------------------------------------------------------------------
     // CATÁLOGOS (Acceso general de lectura, solo admin puede modificar)
@@ -262,125 +262,125 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     
     // Categorías de Productos
     Route::get('/categorias-productos', [CategoriaProductoController::class, 'index'])
-        ->middleware('permission:categorias_producto.leer');
+        ->middleware('permission:ver-categorias_producto');
     Route::post('/categorias-productos', [CategoriaProductoController::class, 'store'])
-        ->middleware('permission:categorias_producto.crear');
+        ->middleware('permission:crear-categorias_producto');
     Route::get('/categorias-productos/{categoriaProducto}', [CategoriaProductoController::class, 'show'])
-        ->middleware('permission:categorias_producto.leer');
+        ->middleware('permission:ver-categorias_producto');
     Route::put('/categorias-productos/{categoriaProducto}', [CategoriaProductoController::class, 'update'])
-        ->middleware('permission:categorias_producto.actualizar');
+        ->middleware('permission:editar-categorias_producto');
     Route::patch('/categorias-productos/{categoriaProducto}', [CategoriaProductoController::class, 'update'])
-        ->middleware('permission:categorias_producto.actualizar');
+        ->middleware('permission:editar-categorias_producto');
     Route::delete('/categorias-productos/{categoriaProducto}', [CategoriaProductoController::class, 'destroy'])
-        ->middleware('permission:categorias_producto.eliminar');
+        ->middleware('permission:eliminar-categorias_producto');
 
     // Marcas
     Route::get('/marcas', [MarcaController::class, 'index'])
-        ->middleware('permission:catalogos.leer');
+        ->middleware('permission:ver-catalogos');
     Route::post('/marcas', [MarcaController::class, 'store'])
-        ->middleware('permission:catalogos.crear');
+        ->middleware('permission:crear-catalogos');
     Route::get('/marcas/{marca}', [MarcaController::class, 'show'])
-        ->middleware('permission:catalogos.leer');
+        ->middleware('permission:ver-catalogos');
     Route::put('/marcas/{marca}', [MarcaController::class, 'update'])
-        ->middleware('permission:catalogos.actualizar');
+        ->middleware('permission:editar-catalogos');
     Route::patch('/marcas/{marca}', [MarcaController::class, 'update'])
-        ->middleware('permission:catalogos.actualizar');
+        ->middleware('permission:editar-catalogos');
     Route::delete('/marcas/{marca}', [MarcaController::class, 'destroy'])
-        ->middleware('permission:catalogos.eliminar');
+        ->middleware('permission:eliminar-catalogos');
     
     // Unidades de Medida
     Route::get('/unidades-medida', [UnidadMedidaController::class, 'index'])
-        ->middleware('permission:catalogos.leer');
+        ->middleware('permission:ver-catalogos');
     Route::post('/unidades-medida', [UnidadMedidaController::class, 'store'])
-        ->middleware('permission:catalogos.crear');
+        ->middleware('permission:crear-catalogos');
     Route::get('/unidades-medida/{unidadMedida}', [UnidadMedidaController::class, 'show'])
-        ->middleware('permission:catalogos.leer');
+        ->middleware('permission:ver-catalogos');
     Route::put('/unidades-medida/{unidadMedida}', [UnidadMedidaController::class, 'update'])
-        ->middleware('permission:catalogos.actualizar');
+        ->middleware('permission:editar-catalogos');
     Route::patch('/unidades-medida/{unidadMedida}', [UnidadMedidaController::class, 'update'])
-        ->middleware('permission:catalogos.actualizar');
+        ->middleware('permission:editar-catalogos');
     Route::delete('/unidades-medida/{unidadMedida}', [UnidadMedidaController::class, 'destroy'])
-        ->middleware('permission:catalogos.eliminar');
+        ->middleware('permission:eliminar-catalogos');
     
     // Formas de Pago
     Route::get('/formas-pago', [FormaPagoController::class, 'index'])
-        ->middleware('permission:catalogos.leer');
+        ->middleware('permission:ver-catalogos');
     Route::post('/formas-pago', [FormaPagoController::class, 'store'])
-        ->middleware('permission:catalogos.crear');
+        ->middleware('permission:crear-catalogos');
     Route::get('/formas-pago/{formaPago}', [FormaPagoController::class, 'show'])
-        ->middleware('permission:catalogos.leer');
+        ->middleware('permission:ver-catalogos');
     Route::put('/formas-pago/{formaPago}', [FormaPagoController::class, 'update'])
-        ->middleware('permission:catalogos.actualizar');
+        ->middleware('permission:editar-catalogos');
     Route::patch('/formas-pago/{formaPago}', [FormaPagoController::class, 'update'])
-        ->middleware('permission:catalogos.actualizar');
+        ->middleware('permission:editar-catalogos');
     Route::delete('/formas-pago/{formaPago}', [FormaPagoController::class, 'destroy'])
-        ->middleware('permission:catalogos.eliminar');
+        ->middleware('permission:eliminar-catalogos');
     
     // Cargos
     Route::get('/cargos', [CargoController::class, 'index'])
-        ->middleware('permission:catalogos.leer');
+        ->middleware('permission:ver-catalogos');
     Route::post('/cargos', [CargoController::class, 'store'])
-        ->middleware('permission:catalogos.crear');
+        ->middleware('permission:crear-catalogos');
     Route::get('/cargos/{cargo}', [CargoController::class, 'show'])
-        ->middleware('permission:catalogos.leer');
+        ->middleware('permission:ver-catalogos');
     Route::put('/cargos/{cargo}', [CargoController::class, 'update'])
-        ->middleware('permission:catalogos.actualizar');
+        ->middleware('permission:editar-catalogos');
     Route::patch('/cargos/{cargo}', [CargoController::class, 'update'])
-        ->middleware('permission:catalogos.actualizar');
+        ->middleware('permission:editar-catalogos');
     Route::delete('/cargos/{cargo}', [CargoController::class, 'destroy'])
-        ->middleware('permission:catalogos.eliminar');
+        ->middleware('permission:eliminar-catalogos');
     
     // CAByS (Catálogo de Bienes y Servicios)
     Route::get('/cabys', [CabyController::class, 'index'])
-        ->middleware('permission:catalogos.leer');
+        ->middleware('permission:ver-catalogos');
     Route::post('/cabys', [CabyController::class, 'store'])
-        ->middleware('permission:catalogos.crear');
+        ->middleware('permission:crear-catalogos');
     Route::get('/cabys/{caby}', [CabyController::class, 'show'])
-        ->middleware('permission:catalogos.leer');
+        ->middleware('permission:ver-catalogos');
     Route::put('/cabys/{caby}', [CabyController::class, 'update'])
-        ->middleware('permission:catalogos.actualizar');
+        ->middleware('permission:editar-catalogos');
     Route::patch('/cabys/{caby}', [CabyController::class, 'update'])
-        ->middleware('permission:catalogos.actualizar');
+        ->middleware('permission:editar-catalogos');
     Route::delete('/cabys/{caby}', [CabyController::class, 'destroy'])
-        ->middleware('permission:catalogos.eliminar');
+        ->middleware('permission:eliminar-catalogos');
     Route::post('/cabys/buscar', [CabyController::class, 'buscar'])
-        ->middleware('permission:catalogos.leer');
+        ->middleware('permission:ver-catalogos');
     
     // Tipos de Impuesto
     Route::get('/tipos-impuesto', [TipoImpuestoController::class, 'index'])
-        ->middleware('permission:catalogos.leer');
+        ->middleware('permission:ver-catalogos');
     Route::post('/tipos-impuesto', [TipoImpuestoController::class, 'store'])
-        ->middleware('permission:catalogos.crear');
+        ->middleware('permission:crear-catalogos');
     Route::get('/tipos-impuesto/{tipoImpuesto}', [TipoImpuestoController::class, 'show'])
-        ->middleware('permission:catalogos.leer');
+        ->middleware('permission:ver-catalogos');
     Route::put('/tipos-impuesto/{tipoImpuesto}', [TipoImpuestoController::class, 'update'])
-        ->middleware('permission:catalogos.actualizar');
+        ->middleware('permission:editar-catalogos');
     Route::patch('/tipos-impuesto/{tipoImpuesto}', [TipoImpuestoController::class, 'update'])
-        ->middleware('permission:catalogos.actualizar');
+        ->middleware('permission:editar-catalogos');
     Route::delete('/tipos-impuesto/{tipoImpuesto}', [TipoImpuestoController::class, 'destroy'])
-        ->middleware('permission:catalogos.eliminar');
+        ->middleware('permission:eliminar-catalogos');
     Route::get('/tipos-impuesto/activos/list', [TipoImpuestoController::class, 'activos'])
-        ->middleware('permission:catalogos.leer');
+        ->middleware('permission:ver-catalogos');
     
     // Tasas de Impuesto
     Route::get('/tasas-impuesto', [TasaImpuestoController::class, 'index'])
-        ->middleware('permission:catalogos.leer');
+        ->middleware('permission:ver-catalogos');
     Route::post('/tasas-impuesto', [TasaImpuestoController::class, 'store'])
-        ->middleware('permission:catalogos.crear');
+        ->middleware('permission:crear-catalogos');
     Route::get('/tasas-impuesto/{tasaImpuesto}', [TasaImpuestoController::class, 'show'])
-        ->middleware('permission:catalogos.leer');
+        ->middleware('permission:ver-catalogos');
     Route::put('/tasas-impuesto/{tasaImpuesto}', [TasaImpuestoController::class, 'update'])
-        ->middleware('permission:catalogos.actualizar');
+        ->middleware('permission:editar-catalogos');
     Route::patch('/tasas-impuesto/{tasaImpuesto}', [TasaImpuestoController::class, 'update'])
-        ->middleware('permission:catalogos.actualizar');
+        ->middleware('permission:editar-catalogos');
     Route::delete('/tasas-impuesto/{tasaImpuesto}', [TasaImpuestoController::class, 'destroy'])
-        ->middleware('permission:catalogos.eliminar');
+        ->middleware('permission:eliminar-catalogos');
     Route::get('/tasas-impuesto/vigente/{tipoImpuestoId}', [TasaImpuestoController::class, 'vigente'])
-        ->middleware('permission:catalogos.leer');
+        ->middleware('permission:ver-catalogos');
     Route::get('/tasas-impuesto/vigentes-actuales/list', [TasaImpuestoController::class, 'vigentesActuales'])
-        ->middleware('permission:catalogos.leer');
+        ->middleware('permission:ver-catalogos');
     Route::get('/tasas-impuesto/historico/{tipoImpuestoId}', [TasaImpuestoController::class, 'historico'])
-        ->middleware('permission:catalogos.leer');
+        ->middleware('permission:ver-catalogos');
     
     // Regímenes Tributarios (Catálogo DGT)
     Route::apiResource('regimenes-tributarios', RegimenTributarioController::class)
@@ -395,103 +395,103 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     
     // Inventario - Entradas (InventarioController - Legacy)
     Route::get('/inventario/entradas', [InventarioController::class, 'indexEntradas'])
-        ->middleware('permission:inventario.leer');
+        ->middleware('permission:ver-inventario');
     Route::post('/inventario/entradas', [InventarioController::class, 'storeEntrada'])
-        ->middleware('permission:inventario.crear');
+        ->middleware('permission:crear-inventario');
     Route::get('/inventario/entradas/{id}', [InventarioController::class, 'showEntrada'])
-        ->middleware('permission:inventario.leer');
+        ->middleware('permission:ver-inventario');
     Route::post('/inventario/entradas/{id}/cancelar', [InventarioController::class, 'cancelarEntrada'])
-        ->middleware('permission:inventario.actualizar');
+        ->middleware('permission:editar-inventario');
 
     // Inventario - Salidas (InventarioController - Legacy)
     Route::get('/inventario/salidas', [InventarioController::class, 'indexSalidas'])
-        ->middleware('permission:inventario.leer');
+        ->middleware('permission:ver-inventario');
     Route::post('/inventario/salidas', [InventarioController::class, 'storeSalida'])
-        ->middleware('permission:inventario.crear');
+        ->middleware('permission:crear-inventario');
     Route::get('/inventario/salidas/{id}', [InventarioController::class, 'showSalida'])
-        ->middleware('permission:inventario.leer');
+        ->middleware('permission:ver-inventario');
     Route::post('/inventario/salidas/{id}/cancelar', [InventarioController::class, 'cancelarSalida'])
-        ->middleware('permission:inventario.actualizar');
+        ->middleware('permission:editar-inventario');
 
     // Entradas de Inventario (Nuevo sistema)
     Route::apiResource('entradas-inventario', EntradaInventarioController::class)
-        ->middleware(['permission:inventario.leer,inventario.crear,inventario.actualizar,inventario.eliminar']);
+        ->middleware(['permission:ver-inventario,inventario.crear,inventario.actualizar,inventario.eliminar']);
     Route::post('/entradas-inventario/{id}/procesar', [EntradaInventarioController::class, 'procesar'])
-        ->middleware('permission:inventario.actualizar');
+        ->middleware('permission:editar-inventario');
     Route::post('/entradas-inventario/{id}/cancelar', [EntradaInventarioController::class, 'cancelar'])
-        ->middleware('permission:inventario.actualizar');
+        ->middleware('permission:editar-inventario');
     Route::get('/entradas-inventario/proveedor/{proveedorId}', [EntradaInventarioController::class, 'porProveedor'])
-        ->middleware('permission:inventario.leer');
+        ->middleware('permission:ver-inventario');
     Route::get('/entradas-inventario/almacen/{almacenId}', [EntradaInventarioController::class, 'porAlmacen'])
-        ->middleware('permission:inventario.leer');
+        ->middleware('permission:ver-inventario');
     Route::get('/entradas-inventario/resumen/por-tipo', [EntradaInventarioController::class, 'resumenPorTipo'])
-        ->middleware('permission:inventario.leer');
+        ->middleware('permission:ver-inventario');
     Route::get('/entradas-inventario/pendientes/list', [EntradaInventarioController::class, 'pendientes'])
-        ->middleware('permission:inventario.leer');
+        ->middleware('permission:ver-inventario');
 
     // Detalle de Entradas de Inventario
     Route::get('/entradas-inventario/{entradaId}/detalles', [DetalleEntradaInventarioController::class, 'index'])
-        ->middleware('permission:inventario.leer');
+        ->middleware('permission:ver-inventario');
     Route::post('/detalles-entradas-inventario', [DetalleEntradaInventarioController::class, 'store'])
-        ->middleware('permission:inventario.crear');
+        ->middleware('permission:crear-inventario');
     Route::get('/detalles-entradas-inventario/{id}', [DetalleEntradaInventarioController::class, 'show'])
-        ->middleware('permission:inventario.leer');
+        ->middleware('permission:ver-inventario');
     Route::put('/detalles-entradas-inventario/{id}', [DetalleEntradaInventarioController::class, 'update'])
-        ->middleware('permission:inventario.actualizar');
+        ->middleware('permission:editar-inventario');
     Route::delete('/detalles-entradas-inventario/{id}', [DetalleEntradaInventarioController::class, 'destroy'])
-        ->middleware('permission:inventario.eliminar');
+        ->middleware('permission:eliminar-inventario');
 
     // Salidas de Inventario (Nuevo sistema)
     Route::apiResource('salidas-inventario', SalidaInventarioController::class)
-        ->middleware(['permission:inventario.leer,inventario.crear,inventario.actualizar,inventario.eliminar']);
+        ->middleware(['permission:ver-inventario,inventario.crear,inventario.actualizar,inventario.eliminar']);
     Route::post('/salidas-inventario/{id}/procesar', [SalidaInventarioController::class, 'procesar'])
-        ->middleware('permission:inventario.actualizar');
+        ->middleware('permission:editar-inventario');
     Route::post('/salidas-inventario/{id}/cancelar', [SalidaInventarioController::class, 'cancelar'])
-        ->middleware('permission:inventario.actualizar');
+        ->middleware('permission:editar-inventario');
     Route::get('/salidas-inventario/cliente/{clienteId}', [SalidaInventarioController::class, 'porCliente'])
-        ->middleware('permission:inventario.leer');
+        ->middleware('permission:ver-inventario');
     Route::get('/salidas-inventario/almacen/{almacenId}', [SalidaInventarioController::class, 'porAlmacen'])
-        ->middleware('permission:inventario.leer');
+        ->middleware('permission:ver-inventario');
     Route::get('/salidas-inventario/resumen/por-tipo', [SalidaInventarioController::class, 'resumenPorTipo'])
-        ->middleware('permission:inventario.leer');
+        ->middleware('permission:ver-inventario');
     Route::get('/salidas-inventario/pendientes/list', [SalidaInventarioController::class, 'pendientes'])
-        ->middleware('permission:inventario.leer');
+        ->middleware('permission:ver-inventario');
 
     // Detalle de Salidas de Inventario
     Route::get('/salidas-inventario/{salidaId}/detalles', [DetalleSalidaInventarioController::class, 'index'])
-        ->middleware('permission:inventario.leer');
+        ->middleware('permission:ver-inventario');
     Route::post('/detalles-salidas-inventario', [DetalleSalidaInventarioController::class, 'store'])
-        ->middleware('permission:inventario.crear');
+        ->middleware('permission:crear-inventario');
     Route::get('/detalles-salidas-inventario/{id}', [DetalleSalidaInventarioController::class, 'show'])
-        ->middleware('permission:inventario.leer');
+        ->middleware('permission:ver-inventario');
     Route::put('/detalles-salidas-inventario/{id}', [DetalleSalidaInventarioController::class, 'update'])
-        ->middleware('permission:inventario.actualizar');
+        ->middleware('permission:editar-inventario');
     Route::delete('/detalles-salidas-inventario/{id}', [DetalleSalidaInventarioController::class, 'destroy'])
-        ->middleware('permission:inventario.eliminar');
+        ->middleware('permission:eliminar-inventario');
 
     // Inventario de Productos (Stock por Almacén)
     Route::apiResource('inventario-productos', InventarioProductoController::class)
         ->parameters(['inventario-productos' => 'inventarioProducto'])
-        ->middleware(['permission:inventario.leer,inventario.crear,inventario.actualizar,inventario.eliminar']);
+        ->middleware(['permission:ver-inventario,inventario.crear,inventario.actualizar,inventario.eliminar']);
     Route::get('/inventario-productos/almacen/{almacenId}', [InventarioProductoController::class, 'porAlmacen'])
-        ->middleware('permission:inventario.leer');
+        ->middleware('permission:ver-inventario');
     Route::get('/inventario-productos/alertas/bajo-stock', [InventarioProductoController::class, 'bajoStockMinimo'])
-        ->middleware('permission:inventario.leer');
+        ->middleware('permission:ver-inventario');
     Route::get('/inventario-productos/alertas/sobre-stock', [InventarioProductoController::class, 'sobreStockMaximo'])
-        ->middleware('permission:inventario.leer');
+        ->middleware('permission:ver-inventario');
     Route::get('/inventario-productos/resumen/por-almacen', [InventarioProductoController::class, 'resumenPorAlmacen'])
-        ->middleware('permission:inventario.leer');
+        ->middleware('permission:ver-inventario');
 
     // ------------------------------------------------------------------------
     // MÓDULO: CUENTAS CONTABLES
     // Permisos: cuentas_contables.leer, cuentas_contables.crear, cuentas_contables.actualizar, cuentas_contables.eliminar
     // ------------------------------------------------------------------------
     Route::apiResource('cuentas-contables', CuentaContableController::class)
-        ->middleware(['permission:cuentas_contables.leer,cuentas_contables.crear,cuentas_contables.actualizar,cuentas_contables.eliminar']);
+        ->middleware(['permission:ver-cuentas_contables,cuentas_contables.crear,cuentas_contables.actualizar,cuentas_contables.eliminar']);
     Route::get('/cuentas-contables/arbol/jerarquia', [CuentaContableController::class, 'arbol'])
-        ->middleware('permission:cuentas_contables.leer');
+        ->middleware('permission:ver-cuentas_contables');
     Route::get('/cuentas-contables/movimientos/list', [CuentaContableController::class, 'paraMovimientos'])
-        ->middleware('permission:cuentas_contables.leer');
+        ->middleware('permission:ver-cuentas_contables');
 
     // Tipos de Cuentas Contables
     Route::apiResource('tipos-cuentas', TipoCuentaController::class);
@@ -503,23 +503,23 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     // Permisos: asientos_contables.leer, asientos_contables.crear, asientos_contables.actualizar, asientos_contables.eliminar
     // ------------------------------------------------------------------------
     Route::apiResource('asientos-contables', AsientoContableController::class)
-        ->middleware(['permission:asientos_contables.leer,asientos_contables.crear,asientos_contables.actualizar,asientos_contables.eliminar']);
+        ->middleware(['permission:ver-asientos_contables,asientos_contables.crear,asientos_contables.actualizar,asientos_contables.eliminar']);
     Route::post('/asientos-contables/{id}/mayorizar', [AsientoContableController::class, 'mayorizar'])
-        ->middleware('permission:asientos_contables.actualizar');
+        ->middleware('permission:editar-asientos_contables');
     Route::get('/asientos-contables/{id}/validar', [AsientoContableController::class, 'validar'])
-        ->middleware('permission:asientos_contables.leer');
+        ->middleware('permission:ver-asientos_contables');
 
     // Detalle de Asientos Contables
     Route::get('/detalle-asientos', [DetalleAsientoController::class, 'index'])
-        ->middleware('permission:asientos_contables.leer');
+        ->middleware('permission:ver-asientos_contables');
     Route::get('/detalle-asientos/{id}', [DetalleAsientoController::class, 'show'])
-        ->middleware('permission:asientos_contables.leer');
+        ->middleware('permission:ver-asientos_contables');
     Route::get('/detalle-asientos/cuenta/{cuentaContableId}', [DetalleAsientoController::class, 'porCuenta'])
-        ->middleware('permission:asientos_contables.leer');
+        ->middleware('permission:ver-asientos_contables');
     Route::get('/detalle-asientos/reportes/libro-mayor', [DetalleAsientoController::class, 'libroMayor'])
-        ->middleware('permission:asientos_contables.leer');
+        ->middleware('permission:ver-asientos_contables');
     Route::get('/detalle-asientos/reportes/balance-comprobacion', [DetalleAsientoController::class, 'balanceComprobacion'])
-        ->middleware('permission:asientos_contables.leer');
+        ->middleware('permission:ver-asientos_contables');
 
     // ------------------------------------------------------------------------
     // FINANZAS
@@ -574,38 +574,38 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     
     // Períodos de Nómina
     Route::apiResource('periodos-nomina', PeriodoNominaController::class)
-        ->middleware(['permission:nomina.leer,nomina.crear,nomina.actualizar,nomina.eliminar']);
+        ->middleware(['permission:ver-nomina,nomina.crear,nomina.actualizar,nomina.eliminar']);
     Route::post('/periodos-nomina/{id}/cerrar', [PeriodoNominaController::class, 'cerrar'])
-        ->middleware('permission:nomina.actualizar');
+        ->middleware('permission:editar-nomina');
     Route::post('/periodos-nomina/{id}/procesar', [PeriodoNominaController::class, 'procesar'])
-        ->middleware('permission:nomina.actualizar');
+        ->middleware('permission:editar-nomina');
     Route::get('/periodos-nomina/{id}/resumen', [PeriodoNominaController::class, 'resumen'])
-        ->middleware('permission:nomina.leer');
+        ->middleware('permission:ver-nomina');
     Route::get('/periodos-nomina/activos/list', [PeriodoNominaController::class, 'activos'])
-        ->middleware('permission:nomina.leer');
+        ->middleware('permission:ver-nomina');
 
     // Pagos de Nómina
     Route::apiResource('pagos-nomina', PagoNominaController::class)
-        ->middleware(['permission:nomina.leer,nomina.crear,nomina.actualizar,nomina.eliminar']);
+        ->middleware(['permission:ver-nomina,nomina.crear,nomina.actualizar,nomina.eliminar']);
     Route::post('/pagos-nomina/{id}/marcar-pagado', [PagoNominaController::class, 'marcarPagado'])
-        ->middleware('permission:nomina.actualizar');
+        ->middleware('permission:editar-nomina');
     Route::get('/pagos-nomina/empleado/{empleadoId}', [PagoNominaController::class, 'porEmpleado'])
-        ->middleware('permission:nomina.leer');
+        ->middleware('permission:ver-nomina');
     Route::get('/pagos-nomina/resumen/por-metodo-pago', [PagoNominaController::class, 'resumenPorMetodoPago'])
-        ->middleware('permission:nomina.leer');
+        ->middleware('permission:ver-nomina');
     Route::get('/pagos-nomina/totales/por-periodo', [PagoNominaController::class, 'totalesPorPeriodo'])
-        ->middleware('permission:nomina.leer');
+        ->middleware('permission:ver-nomina');
 
     // Nómina de Empleados
     Route::apiResource('nomina-empleados', NominaEmpleadoController::class)
         ->parameters(['nomina-empleados' => 'nominaEmpleado'])
-        ->middleware(['permission:nomina.leer,nomina.crear,nomina.actualizar,nomina.eliminar']);
+        ->middleware(['permission:ver-nomina,nomina.crear,nomina.actualizar,nomina.eliminar']);
     Route::get('/nomina-empleados/periodo/{periodoId}', [NominaEmpleadoController::class, 'porPeriodo'])
-        ->middleware('permission:nomina.leer');
+        ->middleware('permission:ver-nomina');
     Route::get('/nomina-empleados/empleado/{empleadoId}', [NominaEmpleadoController::class, 'porEmpleado'])
-        ->middleware('permission:nomina.leer');
+        ->middleware('permission:ver-nomina');
     Route::get('/nomina-empleados/resumen/periodo/{periodoId}', [NominaEmpleadoController::class, 'resumenPorPeriodo'])
-        ->middleware('permission:nomina.leer');
+        ->middleware('permission:ver-nomina');
 
     // ------------------------------------------------------------------------
     // MÓDULO: TRANSPORTE (RUTAS, BUSES, TIQUETES)
@@ -615,54 +615,54 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     
     // Buses/Unidades de Transporte
     Route::apiResource('buses-unidades', BusUnidadController::class)
-        ->middleware(['permission:buses.leer,buses.crear,buses.actualizar,buses.eliminar']);
+        ->middleware(['permission:ver-buses,buses.crear,buses.actualizar,buses.eliminar']);
     Route::get('/buses-unidades/disponibles/list', [BusUnidadController::class, 'disponibles'])
-        ->middleware('permission:buses.leer');
+        ->middleware('permission:ver-buses');
     Route::get('/buses-unidades/resumen/flota', [BusUnidadController::class, 'resumenFlota'])
-        ->middleware('permission:buses.leer');
+        ->middleware('permission:ver-buses');
     Route::get('/buses-unidades/por-modelo/{modeloId}', [BusUnidadController::class, 'porModelo'])
-        ->middleware('permission:buses.leer');
+        ->middleware('permission:ver-buses');
 
     // Modelos de Buses
     Route::apiResource('modelos-buses', ModeloBusController::class);
 
     // Rutas de Transporte
     Route::apiResource('rutas', RutaController::class)
-        ->middleware(['permission:rutas.leer,rutas.crear,rutas.actualizar,rutas.eliminar']);
+        ->middleware(['permission:ver-rutas,rutas.crear,rutas.actualizar,rutas.eliminar']);
     Route::get('/rutas/activas/list', [RutaController::class, 'activas'])
-        ->middleware('permission:rutas.leer');
+        ->middleware('permission:ver-rutas');
     Route::post('/rutas/calcular-tarifa', [RutaController::class, 'calcularTarifa'])
-        ->middleware('permission:rutas.leer');
+        ->middleware('permission:ver-rutas');
     Route::get('/rutas/{id}/estadisticas', [RutaController::class, 'estadisticas'])
-        ->middleware('permission:rutas.leer');
+        ->middleware('permission:ver-rutas');
 
     // Horarios de Ruta (Viajes Programados)
     Route::apiResource('horarios-ruta', HorarioRutaController::class)
-        ->middleware(['permission:rutas.leer,rutas.crear,rutas.actualizar,rutas.eliminar']);
+        ->middleware(['permission:ver-rutas,rutas.crear,rutas.actualizar,rutas.eliminar']);
     Route::post('/horarios-ruta/{id}/iniciar-viaje', [HorarioRutaController::class, 'iniciarViaje'])
-        ->middleware('permission:rutas.actualizar');
+        ->middleware('permission:editar-rutas');
     Route::post('/horarios-ruta/{id}/finalizar-viaje', [HorarioRutaController::class, 'finalizarViaje'])
-        ->middleware('permission:rutas.actualizar');
+        ->middleware('permission:editar-rutas');
     Route::post('/horarios-ruta/{id}/cancelar', [HorarioRutaController::class, 'cancelar'])
-        ->middleware('permission:rutas.actualizar');
+        ->middleware('permission:editar-rutas');
     Route::get('/horarios-ruta/{id}/asientos-disponibles', [HorarioRutaController::class, 'asientosDisponibles'])
-        ->middleware('permission:rutas.leer');
+        ->middleware('permission:ver-rutas');
     Route::get('/horarios-ruta/proximos/disponibles', [HorarioRutaController::class, 'proximosDisponibles'])
-        ->middleware('permission:rutas.leer');
+        ->middleware('permission:ver-rutas');
 
     // Tiquetes de Transporte
     Route::get('/tiquetes-detalle', [TiqueteDetalleController::class, 'index'])
-        ->middleware('permission:rutas.leer');
+        ->middleware('permission:ver-rutas');
     Route::get('/tiquetes-detalle/{id}', [TiqueteDetalleController::class, 'show'])
-        ->middleware('permission:rutas.leer');
+        ->middleware('permission:ver-rutas');
     Route::post('/tiquetes-detalle/{id}/cancelar', [TiqueteDetalleController::class, 'cancelar'])
-        ->middleware('permission:rutas.actualizar');
+        ->middleware('permission:editar-rutas');
     Route::post('/tiquetes-detalle/{id}/marcar-usado', [TiqueteDetalleController::class, 'marcarUsado'])
-        ->middleware('permission:rutas.actualizar');
+        ->middleware('permission:editar-rutas');
     Route::get('/tiquetes-detalle/horario-ruta/{horarioRutaId}', [TiqueteDetalleController::class, 'porHorarioRuta'])
-        ->middleware('permission:rutas.leer');
+        ->middleware('permission:ver-rutas');
     Route::get('/tiquetes-detalle/mapa-asientos/{horarioRutaId}', [TiqueteDetalleController::class, 'mapaAsientos'])
-        ->middleware('permission:rutas.leer');
+        ->middleware('permission:ver-rutas');
 
     // ------------------------------------------------------------------------
     // MÓDULO: FACTURACIÓN ELECTRÓNICA
@@ -673,37 +673,37 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     // Comprobantes Electrónicos Recibidos
     Route::apiResource('comprobantes-recibidos-electronicos', ComprobanteRecibidoElectronicoController::class)
         ->parameters(['comprobantes-recibidos-electronicos' => 'comprobante'])
-        ->middleware(['permission:facturacion_electronica.leer,facturacion_electronica.crear,facturacion_electronica.actualizar,facturacion_electronica.eliminar']);
+        ->middleware(['permission:ver-facturacion_electronica,facturacion_electronica.crear,facturacion_electronica.actualizar,facturacion_electronica.eliminar']);
     Route::post('/comprobantes-recibidos-electronicos/{id}/confirmar', [ComprobanteRecibidoElectronicoController::class, 'confirmar'])
-        ->middleware('permission:facturacion_electronica.actualizar');
+        ->middleware('permission:editar-facturacion_electronica');
     Route::post('/comprobantes-recibidos-electronicos/{id}/rechazar', [ComprobanteRecibidoElectronicoController::class, 'rechazar'])
-        ->middleware('permission:facturacion_electronica.actualizar');
+        ->middleware('permission:editar-facturacion_electronica');
     Route::get('/comprobantes-recibidos-electronicos/proveedor/{proveedorId}', [ComprobanteRecibidoElectronicoController::class, 'porProveedor'])
-        ->middleware('permission:facturacion_electronica.leer');
+        ->middleware('permission:ver-facturacion_electronica');
     Route::get('/comprobantes-recibidos-electronicos/pendientes/list', [ComprobanteRecibidoElectronicoController::class, 'pendientes'])
-        ->middleware('permission:facturacion_electronica.leer');
+        ->middleware('permission:ver-facturacion_electronica');
     Route::get('/comprobantes-recibidos-electronicos/resumen/por-estado', [ComprobanteRecibidoElectronicoController::class, 'resumenPorEstado'])
-        ->middleware('permission:facturacion_electronica.leer');
+        ->middleware('permission:ver-facturacion_electronica');
     Route::put('/comprobantes-recibidos-electronicos/{id}/actualizar-respuesta-hacienda', [ComprobanteRecibidoElectronicoController::class, 'actualizarRespuestaHacienda'])
-        ->middleware('permission:facturacion_electronica.actualizar');
+        ->middleware('permission:editar-facturacion_electronica');
 
     // Consecutivos de Facturación Electrónica
     Route::apiResource('consecutivos-fe', ConsecutivoFEController::class)
         ->parameters(['consecutivos-fe' => 'consecutivoFe'])
-        ->middleware(['permission:facturacion_electronica.leer,facturacion_electronica.crear,facturacion_electronica.actualizar,facturacion_electronica.eliminar']);
+        ->middleware(['permission:ver-facturacion_electronica,facturacion_electronica.crear,facturacion_electronica.actualizar,facturacion_electronica.eliminar']);
     // Obtener siguiente consecutivo (rate limiting: 30 por minuto para evitar abuso)
     Route::post('/consecutivos-fe/obtener-siguiente', [ConsecutivoFEController::class, 'obtenerSiguiente'])
-        ->middleware(['permission:facturacion_electronica.leer', 'throttle:30,1']);
+        ->middleware(['permission:ver-facturacion_electronica', 'throttle:30,1']);
     Route::post('/consecutivos-fe/{consecutivoFe}/resetear', [ConsecutivoFEController::class, 'resetear'])
-        ->middleware('permission:facturacion_electronica.actualizar');
+        ->middleware('permission:editar-facturacion_electronica');
     Route::get('/consecutivos-fe/tipo/{tipoDocumentoDgt}', [ConsecutivoFEController::class, 'porTipoDocumento'])
-        ->middleware('permission:facturacion_electronica.leer');
+        ->middleware('permission:ver-facturacion_electronica');
     Route::post('/consecutivos-fe/{consecutivoFe}/marcar-agotado', [ConsecutivoFEController::class, 'marcarAgotado'])
-        ->middleware('permission:facturacion_electronica.actualizar');
+        ->middleware('permission:editar-facturacion_electronica');
     Route::post('/consecutivos-fe/{consecutivoFe}/activar', [ConsecutivoFEController::class, 'activar'])
-        ->middleware('permission:facturacion_electronica.actualizar');
+        ->middleware('permission:editar-facturacion_electronica');
     Route::get('/consecutivos-fe/resumen/por-estado', [ConsecutivoFEController::class, 'resumenPorEstado'])
-        ->middleware('permission:facturacion_electronica.leer');
+        ->middleware('permission:ver-facturacion_electronica');
 
     // ------------------------------------------------------------------------
     // OTROS MÓDULOS - UTILIDADES
@@ -711,173 +711,173 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     
     // Configuraciones del Sistema (Solo Admin)
     Route::get('/configuraciones', [ConfiguracionController::class, 'index'])
-        ->middleware('permission:configuraciones.leer');
+        ->middleware('permission:ver-configuraciones');
     Route::post('/configuraciones', [ConfiguracionController::class, 'store'])
-        ->middleware('permission:configuraciones.crear');
+        ->middleware('permission:crear-configuraciones');
     Route::get('/configuraciones/{configuracion}', [ConfiguracionController::class, 'show'])
-        ->middleware('permission:configuraciones.leer');
+        ->middleware('permission:ver-configuraciones');
     Route::put('/configuraciones/{configuracion}', [ConfiguracionController::class, 'update'])
-        ->middleware('permission:configuraciones.actualizar');
+        ->middleware('permission:editar-configuraciones');
     Route::patch('/configuraciones/{configuracion}', [ConfiguracionController::class, 'update'])
-        ->middleware('permission:configuraciones.actualizar');
+        ->middleware('permission:editar-configuraciones');
     Route::delete('/configuraciones/{configuracion}', [ConfiguracionController::class, 'destroy'])
-        ->middleware('permission:configuraciones.eliminar');
+        ->middleware('permission:eliminar-configuraciones');
     Route::get('/configuraciones/clave/{clave}', [ConfiguracionController::class, 'porClave'])
-        ->middleware('permission:configuraciones.leer');
+        ->middleware('permission:ver-configuraciones');
     Route::get('/configuraciones/valor/{clave}', [ConfiguracionController::class, 'obtenerValor'])
-        ->middleware('permission:configuraciones.leer');
+        ->middleware('permission:ver-configuraciones');
     Route::put('/configuraciones/actualizar-multiples', [ConfiguracionController::class, 'actualizarMultiples'])
-        ->middleware('permission:configuraciones.actualizar');
+        ->middleware('permission:editar-configuraciones');
 
     // Tipos de Cambio - Historial
     Route::get('/tipos-cambio-historial', [TipoCambioHistorialController::class, 'index'])
-        ->middleware('permission:tipos_cambio.leer');
+        ->middleware('permission:ver-tipos_cambio');
     Route::post('/tipos-cambio-historial', [TipoCambioHistorialController::class, 'store'])
-        ->middleware('permission:tipos_cambio.crear');
+        ->middleware('permission:crear-tipos_cambio');
     Route::get('/tipos-cambio-historial/{tipoCambioHistorial}', [TipoCambioHistorialController::class, 'show'])
-        ->middleware('permission:tipos_cambio.leer');
+        ->middleware('permission:ver-tipos_cambio');
     Route::put('/tipos-cambio-historial/{tipoCambioHistorial}', [TipoCambioHistorialController::class, 'update'])
-        ->middleware('permission:tipos_cambio.actualizar');
+        ->middleware('permission:editar-tipos_cambio');
     Route::patch('/tipos-cambio-historial/{tipoCambioHistorial}', [TipoCambioHistorialController::class, 'update'])
-        ->middleware('permission:tipos_cambio.actualizar');
+        ->middleware('permission:editar-tipos_cambio');
     Route::delete('/tipos-cambio-historial/{tipoCambioHistorial}', [TipoCambioHistorialController::class, 'destroy'])
-        ->middleware('permission:tipos_cambio.eliminar');
+        ->middleware('permission:eliminar-tipos_cambio');
     Route::get('/tipos-cambio/vigente', [TipoCambioHistorialController::class, 'vigente'])
-        ->middleware('permission:tipos_cambio.leer');
+        ->middleware('permission:ver-tipos_cambio');
     Route::post('/tipos-cambio/convertir', [TipoCambioHistorialController::class, 'convertir'])
-        ->middleware('permission:tipos_cambio.leer');
+        ->middleware('permission:ver-tipos_cambio');
     Route::get('/tipos-cambio/moneda', [TipoCambioHistorialController::class, 'porMoneda'])
-        ->middleware('permission:tipos_cambio.leer');
+        ->middleware('permission:ver-tipos_cambio');
     Route::get('/tipos-cambio/fecha/{fecha}', [TipoCambioHistorialController::class, 'porFecha'])
-        ->middleware('permission:tipos_cambio.leer');
+        ->middleware('permission:ver-tipos_cambio');
     Route::get('/tipos-cambio/tendencia', [TipoCambioHistorialController::class, 'tendencia'])
-        ->middleware('permission:tipos_cambio.leer');
+        ->middleware('permission:ver-tipos_cambio');
 
     // Etiquetas (Sistema de Tags)
     Route::get('/etiquetas', [EtiquetaController::class, 'index'])
-        ->middleware('permission:etiquetas.leer');
+        ->middleware('permission:ver-etiquetas');
     Route::post('/etiquetas', [EtiquetaController::class, 'store'])
-        ->middleware('permission:etiquetas.crear');
+        ->middleware('permission:crear-etiquetas');
     Route::get('/etiquetas/{etiqueta}', [EtiquetaController::class, 'show'])
-        ->middleware('permission:etiquetas.leer');
+        ->middleware('permission:ver-etiquetas');
     Route::put('/etiquetas/{etiqueta}', [EtiquetaController::class, 'update'])
-        ->middleware('permission:etiquetas.actualizar');
+        ->middleware('permission:editar-etiquetas');
     Route::patch('/etiquetas/{etiqueta}', [EtiquetaController::class, 'update'])
-        ->middleware('permission:etiquetas.actualizar');
+        ->middleware('permission:editar-etiquetas');
     Route::delete('/etiquetas/{etiqueta}', [EtiquetaController::class, 'destroy'])
-        ->middleware('permission:etiquetas.eliminar');
+        ->middleware('permission:eliminar-etiquetas');
     Route::get('/etiquetas/todas/list', [EtiquetaController::class, 'todas'])
-        ->middleware('permission:etiquetas.leer');
+        ->middleware('permission:ver-etiquetas');
     Route::get('/etiquetas/estadisticas/uso', [EtiquetaController::class, 'estadisticas'])
-        ->middleware('permission:etiquetas.leer');
+        ->middleware('permission:ver-etiquetas');
     Route::get('/etiquetas/buscar', [EtiquetaController::class, 'buscar'])
-        ->middleware('permission:etiquetas.leer');
+        ->middleware('permission:ver-etiquetas');
 
     // Entidades-Etiquetas (Relación Polimórfica)
     Route::get('/entidad-etiquetas', [EntidadEtiquetaController::class, 'index'])
-        ->middleware('permission:etiquetas.leer');
+        ->middleware('permission:ver-etiquetas');
     Route::post('/entidad-etiquetas', [EntidadEtiquetaController::class, 'store'])
-        ->middleware('permission:etiquetas.crear');
+        ->middleware('permission:crear-etiquetas');
     Route::get('/entidad-etiquetas/{entidadEtiqueta}', [EntidadEtiquetaController::class, 'show'])
-        ->middleware('permission:etiquetas.leer');
+        ->middleware('permission:ver-etiquetas');
     Route::put('/entidad-etiquetas/{entidadEtiqueta}', [EntidadEtiquetaController::class, 'update'])
-        ->middleware('permission:etiquetas.actualizar');
+        ->middleware('permission:editar-etiquetas');
     Route::patch('/entidad-etiquetas/{entidadEtiqueta}', [EntidadEtiquetaController::class, 'update'])
-        ->middleware('permission:etiquetas.actualizar');
+        ->middleware('permission:editar-etiquetas');
     Route::delete('/entidad-etiquetas/{entidadEtiqueta}', [EntidadEtiquetaController::class, 'destroy'])
-        ->middleware('permission:etiquetas.eliminar');
+        ->middleware('permission:eliminar-etiquetas');
     Route::post('/entidad-etiquetas/asignar-multiples', [EntidadEtiquetaController::class, 'asignarMultiples'])
-        ->middleware('permission:etiquetas.crear');
+        ->middleware('permission:crear-etiquetas');
     Route::post('/entidad-etiquetas/remover-multiples', [EntidadEtiquetaController::class, 'removerMultiples'])
-        ->middleware('permission:etiquetas.eliminar');
+        ->middleware('permission:eliminar-etiquetas');
     Route::get('/entidad-etiquetas/por-entidad', [EntidadEtiquetaController::class, 'porEntidad'])
-        ->middleware('permission:etiquetas.leer');
+        ->middleware('permission:ver-etiquetas');
     Route::get('/entidad-etiquetas/por-etiqueta/{etiquetaId}', [EntidadEtiquetaController::class, 'porEtiqueta'])
-        ->middleware('permission:etiquetas.leer');
+        ->middleware('permission:ver-etiquetas');
     Route::post('/entidad-etiquetas/sincronizar', [EntidadEtiquetaController::class, 'sincronizar'])
-        ->middleware('permission:etiquetas.actualizar');
+        ->middleware('permission:editar-etiquetas');
 
     // Cajas Registradoras
     Route::get('/cajas', [CajaController::class, 'index'])
-        ->middleware('permission:cajas.leer');
+        ->middleware('permission:ver-cajas');
     Route::post('/cajas', [CajaController::class, 'store'])
-        ->middleware('permission:cajas.crear');
+        ->middleware('permission:crear-cajas');
     Route::get('/cajas/{caja}', [CajaController::class, 'show'])
-        ->middleware('permission:cajas.leer');
+        ->middleware('permission:ver-cajas');
     Route::put('/cajas/{caja}', [CajaController::class, 'update'])
-        ->middleware('permission:cajas.actualizar');
+        ->middleware('permission:editar-cajas');
     Route::patch('/cajas/{caja}', [CajaController::class, 'update'])
-        ->middleware('permission:cajas.actualizar');
+        ->middleware('permission:editar-cajas');
     Route::delete('/cajas/{caja}', [CajaController::class, 'destroy'])
-        ->middleware('permission:cajas.eliminar');
+        ->middleware('permission:eliminar-cajas');
     Route::get('/cajas/sucursal/{sucursalId}', [CajaController::class, 'porSucursal'])
-        ->middleware('permission:cajas.leer');
+        ->middleware('permission:ver-cajas');
     Route::get('/cajas/activas/list', [CajaController::class, 'activas'])
-        ->middleware('permission:cajas.leer');
+        ->middleware('permission:ver-cajas');
     Route::post('/cajas/{caja}/toggle-activo', [CajaController::class, 'toggleActivo'])
-        ->middleware('permission:cajas.actualizar');
+        ->middleware('permission:editar-cajas');
 
     // Caja Chica (Fondo de Caja Menor)
     Route::get('/caja-chica', [CajaChicaController::class, 'index'])
-        ->middleware('permission:caja_chica.leer');
+        ->middleware('permission:ver-caja_chica');
     Route::post('/caja-chica', [CajaChicaController::class, 'store'])
-        ->middleware('permission:caja_chica.crear');
+        ->middleware('permission:crear-caja_chica');
     Route::get('/caja-chica/{cajaChica}', [CajaChicaController::class, 'show'])
-        ->middleware('permission:caja_chica.leer');
+        ->middleware('permission:ver-caja_chica');
     Route::put('/caja-chica/{cajaChica}', [CajaChicaController::class, 'update'])
-        ->middleware('permission:caja_chica.actualizar');
+        ->middleware('permission:editar-caja_chica');
     Route::patch('/caja-chica/{cajaChica}', [CajaChicaController::class, 'update'])
-        ->middleware('permission:caja_chica.actualizar');
+        ->middleware('permission:editar-caja_chica');
     Route::delete('/caja-chica/{cajaChica}', [CajaChicaController::class, 'destroy'])
-        ->middleware('permission:caja_chica.eliminar');
+        ->middleware('permission:eliminar-caja_chica');
     Route::get('/caja-chica/abiertas/list', [CajaChicaController::class, 'abiertas'])
-        ->middleware('permission:caja_chica.leer');
+        ->middleware('permission:ver-caja_chica');
     Route::get('/caja-chica/responsable/{responsableId}', [CajaChicaController::class, 'porResponsable'])
-        ->middleware('permission:caja_chica.leer');
+        ->middleware('permission:ver-caja_chica');
     Route::post('/caja-chica/{cajaChica}/cerrar', [CajaChicaController::class, 'cerrar'])
-        ->middleware('permission:caja_chica.actualizar');
+        ->middleware('permission:editar-caja_chica');
     Route::post('/caja-chica/{cajaChica}/liquidar', [CajaChicaController::class, 'liquidar'])
-        ->middleware('permission:caja_chica.actualizar');
+        ->middleware('permission:editar-caja_chica');
     Route::post('/caja-chica/{cajaChica}/reabrir', [CajaChicaController::class, 'reabrir'])
-        ->middleware('permission:caja_chica.actualizar');
+        ->middleware('permission:editar-caja_chica');
     Route::get('/caja-chica/resumen/por-estado', [CajaChicaController::class, 'resumenPorEstado'])
-        ->middleware('permission:caja_chica.leer');
+        ->middleware('permission:ver-caja_chica');
 
     // Movimientos de Caja Chica
     Route::get('/movimientos-caja-chica', [MovimientoCajaChicaController::class, 'index'])
-        ->middleware('permission:caja_chica.leer');
+        ->middleware('permission:ver-caja_chica');
     Route::post('/movimientos-caja-chica', [MovimientoCajaChicaController::class, 'store'])
-        ->middleware('permission:caja_chica.crear');
+        ->middleware('permission:crear-caja_chica');
     Route::get('/movimientos-caja-chica/{movimientoCajaChica}', [MovimientoCajaChicaController::class, 'show'])
-        ->middleware('permission:caja_chica.leer');
+        ->middleware('permission:ver-caja_chica');
     Route::put('/movimientos-caja-chica/{movimientoCajaChica}', [MovimientoCajaChicaController::class, 'update'])
-        ->middleware('permission:caja_chica.actualizar');
+        ->middleware('permission:editar-caja_chica');
     Route::patch('/movimientos-caja-chica/{movimientoCajaChica}', [MovimientoCajaChicaController::class, 'update'])
-        ->middleware('permission:caja_chica.actualizar');
+        ->middleware('permission:editar-caja_chica');
     Route::delete('/movimientos-caja-chica/{movimientoCajaChica}', [MovimientoCajaChicaController::class, 'destroy'])
-        ->middleware('permission:caja_chica.eliminar');
+        ->middleware('permission:eliminar-caja_chica');
     Route::get('/movimientos-caja-chica/caja/{cajaChicaId}', [MovimientoCajaChicaController::class, 'porCaja'])
-        ->middleware('permission:caja_chica.leer');
+        ->middleware('permission:ver-caja_chica');
     Route::get('/movimientos-caja-chica/tipo/{tipo}', [MovimientoCajaChicaController::class, 'porTipo'])
-        ->middleware('permission:caja_chica.leer');
+        ->middleware('permission:ver-caja_chica');
     Route::get('/movimientos-caja-chica/resumen/totales', [MovimientoCajaChicaController::class, 'totalPorTipo'])
-        ->middleware('permission:caja_chica.leer');
+        ->middleware('permission:ver-caja_chica');
 
     // URL Shortener (Utilidad - Solo Admin)
     Route::get('/url-shortener', [UrlShortenerController::class, 'index'])
-        ->middleware('permission:configuraciones.leer');
+        ->middleware('permission:ver-configuraciones');
     Route::post('/url-shortener', [UrlShortenerController::class, 'store'])
-        ->middleware('permission:configuraciones.crear');
+        ->middleware('permission:crear-configuraciones');
     Route::get('/url-shortener/{id}', [UrlShortenerController::class, 'show'])
-        ->middleware('permission:configuraciones.leer');
+        ->middleware('permission:ver-configuraciones');
     Route::put('/url-shortener/{id}', [UrlShortenerController::class, 'update'])
-        ->middleware('permission:configuraciones.actualizar');
+        ->middleware('permission:editar-configuraciones');
     Route::patch('/url-shortener/{id}', [UrlShortenerController::class, 'update'])
-        ->middleware('permission:configuraciones.actualizar');
+        ->middleware('permission:editar-configuraciones');
     Route::delete('/url-shortener/{id}', [UrlShortenerController::class, 'destroy'])
-        ->middleware('permission:configuraciones.eliminar');
+        ->middleware('permission:eliminar-configuraciones');
     Route::get('/url-shortener/{id}/stats', [UrlShortenerController::class, 'stats'])
-        ->middleware('permission:configuraciones.leer');
+        ->middleware('permission:ver-configuraciones');
 
     // ------------------------------------------------------------------------
     // MÓDULO: RBAC (Roles y Permisos)
@@ -912,22 +912,22 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
 
     // Usuarios
     Route::get('/usuarios', [UsuarioController::class, 'index'])
-        ->middleware('permission:usuarios.leer');
+        ->middleware('permission:ver-usuarios');
     Route::post('/usuarios', [UsuarioController::class, 'store'])
-        ->middleware('permission:usuarios.crear');
+        ->middleware('permission:crear-usuarios');
     Route::get('/usuarios/{usuario}', [UsuarioController::class, 'show'])
-        ->middleware('permission:usuarios.leer');
+        ->middleware('permission:ver-usuarios');
     Route::put('/usuarios/{usuario}', [UsuarioController::class, 'update'])
-        ->middleware('permission:usuarios.actualizar');
+        ->middleware('permission:editar-usuarios');
     Route::patch('/usuarios/{usuario}', [UsuarioController::class, 'update'])
-        ->middleware('permission:usuarios.actualizar');
+        ->middleware('permission:editar-usuarios');
     Route::delete('/usuarios/{usuario}', [UsuarioController::class, 'destroy'])
-        ->middleware('permission:usuarios.eliminar');
+        ->middleware('permission:eliminar-usuarios');
     Route::post('/usuarios/{id}/roles', [UsuarioController::class, 'asignarRoles'])
-        ->middleware('permission:usuarios.actualizar');
+        ->middleware('permission:editar-usuarios');
     // Cambiar contraseña (operación sensible - rate limiting moderado: 10 intentos por minuto)
     Route::post('/usuarios/{id}/cambiar-password', [UsuarioController::class, 'cambiarPassword'])
-        ->middleware(['permission:usuarios.actualizar', 'throttle:10,1']);
+        ->middleware(['permission:editar-usuarios', 'throttle:10,1']);
 
     // Roles-Permisos (Relación Many-to-Many)
     Route::get('/roles-permisos', [RolPermisoController::class, 'index'])
@@ -955,23 +955,23 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
 
     // Rol-Usuario (Asignación de Roles a Usuarios)
     Route::get('/rol-usuario', [RolUsuarioController::class, 'index'])
-        ->middleware('permission:usuarios.leer');
+        ->middleware('permission:ver-usuarios');
     Route::post('/rol-usuario', [RolUsuarioController::class, 'store'])
-        ->middleware('permission:usuarios.actualizar');
+        ->middleware('permission:editar-usuarios');
     Route::get('/rol-usuario/{rolUsuario}', [RolUsuarioController::class, 'show'])
-        ->middleware('permission:usuarios.leer');
+        ->middleware('permission:ver-usuarios');
     Route::put('/rol-usuario/{rolUsuario}', [RolUsuarioController::class, 'update'])
-        ->middleware('permission:usuarios.actualizar');
+        ->middleware('permission:editar-usuarios');
     Route::patch('/rol-usuario/{rolUsuario}', [RolUsuarioController::class, 'update'])
-        ->middleware('permission:usuarios.actualizar');
+        ->middleware('permission:editar-usuarios');
     Route::delete('/rol-usuario/{rolUsuario}', [RolUsuarioController::class, 'destroy'])
-        ->middleware('permission:usuarios.actualizar');
+        ->middleware('permission:editar-usuarios');
     Route::get('/rol-usuario/roles-usuario/{usuarioId}', [RolUsuarioController::class, 'rolesPorUsuario'])
-        ->middleware('permission:usuarios.leer');
+        ->middleware('permission:ver-usuarios');
     Route::get('/rol-usuario/usuarios-rol/{rolId}', [RolUsuarioController::class, 'usuariosPorRol'])
-        ->middleware('permission:usuarios.leer');
+        ->middleware('permission:ver-usuarios');
     Route::post('/rol-usuario/asignar-roles', [RolUsuarioController::class, 'asignarRoles'])
-        ->middleware('permission:usuarios.actualizar');
+        ->middleware('permission:editar-usuarios');
 
     // ============================================
     // FASE 9: Nuevos Módulos

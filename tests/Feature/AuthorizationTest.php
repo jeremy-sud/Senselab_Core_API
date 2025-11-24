@@ -83,31 +83,31 @@ class AuthorizationTest extends TestCase
         // Crear permisos necesarios para las pruebas
         $permisoVerProductos = Permiso::create([
             'nombre' => 'productos.leer',
-            'slug' => 'productos-leer',
+            'slug' => 'ver-productos',
             'descripcion' => 'Ver productos',
         ]);
 
         $permisoCrearProductos = Permiso::create([
             'nombre' => 'productos.crear',
-            'slug' => 'productos-crear',
+            'slug' => 'crear-productos',
             'descripcion' => 'Crear productos',
         ]);
 
         $permisoActualizarProductos = Permiso::create([
             'nombre' => 'productos.actualizar',
-            'slug' => 'productos-actualizar',
+            'slug' => 'editar-productos',
             'descripcion' => 'Actualizar productos',
         ]);
 
         $permisoVerClientes = Permiso::create([
             'nombre' => 'clientes.leer',
-            'slug' => 'clientes-leer',
+            'slug' => 'ver-clientes',
             'descripcion' => 'Ver clientes',
         ]);
 
         $permisoCrearClientes = Permiso::create([
             'nombre' => 'clientes.crear',
-            'slug' => 'clientes-crear',
+            'slug' => 'crear-clientes',
             'descripcion' => 'Crear clientes',
         ]);
 
@@ -236,8 +236,8 @@ class AuthorizationTest extends TestCase
         $nombres = $permisos->pluck('nombre')->toArray();
         $this->assertContains('productos.crear', $nombres, 'El rol debería tener el permiso productos.crear. Permisos: ' . implode(', ', $nombres));
         
-        $tienePermiso = $this->usuario1->hasPermission('productos.crear');
-        $this->assertTrue($tienePermiso, 'El usuario debería tener el permiso productos.crear');
+        $tienePermiso = $this->usuario1->hasPermission('crear-productos');
+        $this->assertTrue($tienePermiso, 'El usuario debería tener el permiso crear-productos');
 
         // Crear categoría para el producto
         $categoria = CategoriaProducto::create([
