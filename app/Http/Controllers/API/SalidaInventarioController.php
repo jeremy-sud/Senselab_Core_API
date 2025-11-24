@@ -7,6 +7,7 @@ use App\Http\Requests\StoreSalidaInventarioRequest;
 use App\Http\Requests\UpdateSalidaInventarioRequest;
 use App\Http\Resources\SalidaInventarioResource;
 use App\Models\SalidaInventario;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +24,20 @@ use OpenApi\Attributes as OA;
  */
 class SalidaInventarioController extends Controller
 {
+    use HasCacheableQueries;
+
+    /**
+     * Tags para invalidación de cache
+     * @var array<string>
+     */
+    protected array $cacheTags = ['salidas-inventario', 'inventario'];
+
+    /**
+     * TTL del cache en segundos (20 minutos)
+     * Datos dinámicos: salidas cambian frecuentemente durante operaciones
+     * @var int
+     */
+    protected int $cacheTTL = 1200;
     /**
      * Listar todas las salidas de inventario de la empresa
      */
@@ -68,20 +83,22 @@ class SalidaInventarioController extends Controller
         
         $empresaId = $request->user()->empresa_id;
 
-        $salidas = SalidaInventario::where('empresa_id', $empresaId)
-            ->with(['almacen', 'cliente', 'proveedor', 'venta', 'detalles.producto'])
-            ->orderBy('fecha_salida', 'desc')
-            ->paginate(15);
+        return $this->cacheQueryIfEnabled(function () use ($empresaId) {
+            $salidas = SalidaInventario::where('empresa_id', $empresaId)
+                ->with(['almacen', 'cliente', 'proveedor', 'venta', 'detalles.producto'])
+                ->orderBy('fecha_salida', 'desc')
+                ->paginate(15);
 
-        return response()->json([
-            'success' => true,
-            'data' => SalidaInventarioResource::collection($salidas),
-            'meta' => [
-                'current_page' => $salidas->currentPage(),
-                'total' => $salidas->total(),
-                'per_page' => $salidas->perPage()
-            ]
-        ]);
+            return response()->json([
+                'success' => true,
+                'data' => SalidaInventarioResource::collection($salidas),
+                'meta' => [
+                    'current_page' => $salidas->currentPage(),
+                    'total' => $salidas->total(),
+                    'per_page' => $salidas->perPage()
+                ]
+            ]);
+        }, []);
     }
 
     /**
@@ -151,6 +168,7 @@ class SalidaInventarioController extends Controller
             ]);
 
             DB::commit();
+            $this->flushCache();
 
             return response()->json([
                 'success' => true,
@@ -287,6 +305,7 @@ class SalidaInventarioController extends Controller
             ]));
 
             DB::commit();
+            $this->flushCache();
 
             return response()->json([
                 'success' => true,
@@ -348,6 +367,7 @@ class SalidaInventarioController extends Controller
         }
 
         $salida->delete();
+        $this->flushCache();
 
         return response()->json([
             'success' => true,
