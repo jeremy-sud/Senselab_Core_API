@@ -17,6 +17,9 @@ class StoreProductoRequest extends FormRequest
         return true;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function rules(): array
     {
         $empresaId = $this->input('empresa_id');
@@ -48,6 +51,9 @@ class StoreProductoRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function messages(): array
     {
         return [

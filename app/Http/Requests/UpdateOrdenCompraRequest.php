@@ -17,6 +17,9 @@ class UpdateOrdenCompraRequest extends FormRequest
         return true;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function rules(): array
     {
         return [
@@ -27,6 +30,9 @@ class UpdateOrdenCompraRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function messages(): array
     {
         return [
@@ -39,7 +45,10 @@ class UpdateOrdenCompraRequest extends FormRequest
     /**
      * Validación adicional: solo permitir editar en estado borrador o pendiente
      */
-    public function withValidator($validator)
+    /**
+     * @param \Illuminate\Validation\Validator $validator
+     */
+    public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
             $ordenId = $this->route('ordenes_compra');
