@@ -17,6 +17,7 @@ class OrdenCompraController extends Controller
 {
     use HasCacheableQueries;
     
+    /** @var array<int,string> */
     protected array $cacheTags = ['ordenes-compra', 'transacciones'];
     protected int $cacheTTL = 900; // 15 minutos
     /**

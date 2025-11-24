@@ -19,6 +19,7 @@ class VentaController extends Controller
 {
     use HasCacheableQueries;
     
+    /** @var array<int,string> */
     protected array $cacheTags = ['ventas', 'transacciones'];
     protected int $cacheTTL = 600; // 10 minutos (datos muy dinámicos)
     /**
