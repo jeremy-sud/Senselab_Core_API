@@ -24,7 +24,15 @@ Efectos esperados:
 - Eliminación de advertencias por retorno de `AnonymousResourceCollection` donde se esperaba `JsonResponse`.
 - Base consolidada para aplicar patrón repetible al resto de controllers.
 
-Pendiente recálculo exacto de errores tras batch inicial (estimado reducción controllers: ~40–50%). Estimación de avance Fase 2: ~30%.
+Se completó lote principal de **FormRequests** tipados (Producto, Cliente, Venta, OrdenCompra, ZonaGeografica) añadiendo:
+- Tipos de retorno en `authorize(): bool`, `rules(): array<string,mixed>`, `messages(): array<string,string>`
+- Tipado de `withValidator(): void` en validaciones post-reglas
+
+Impacto esperado:
+- Reducción de errores `missingType.return`, `missingType.parameter` y `missingType.iterableValue` en reglas.
+- Base estandarizada para aplicar patrón al resto de 150+ requests.
+
+Pendiente recálculo exacto de errores tras lote controllers + form requests (estimado reducción combinada categoría Controllers/FormRequests: ~45–55%). Estimación de avance Fase 2: ~38%.
 
 ## ✅ Fase 1 Completada: Modelos Eloquent
 
