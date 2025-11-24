@@ -34,6 +34,7 @@ class RolPermisoController extends Controller
             $query->where('activo', $request->activo);
         }
 
+        // Usar paginate() normal aquí: tabla pivot pequeña, necesita total count
         $rolesPermisos = $query->paginate($request->get('per_page', 15));
 
         return response()->json([

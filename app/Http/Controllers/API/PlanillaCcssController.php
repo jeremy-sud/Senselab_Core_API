@@ -52,7 +52,7 @@ class PlanillaCcssController extends Controller
             }
 
             return $query->orderBy('periodo', 'desc')
-                ->paginate($request->get('per_page', 20));
+                ->cursorPaginate($request->get('per_page', 20));
         });
 
         return response()->json($planillas);

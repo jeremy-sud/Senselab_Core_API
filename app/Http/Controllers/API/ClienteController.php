@@ -154,8 +154,8 @@ class ClienteController extends Controller
                     $query->activos();
                 }
                 
-                $clientes = $query->orderBy('nombre', 'asc')
-                                  ->paginate($perPage);
+                $clientes = $query->orderBy('id', 'asc')
+                                  ->cursorPaginate($perPage);
                 
                 return ClienteResource::collection($clientes);
             });

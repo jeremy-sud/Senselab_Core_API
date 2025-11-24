@@ -86,7 +86,7 @@ class ConsecutivoFeController extends Controller
                 $query->porTipoComprobante($request->tipo_comprobante);
             }
 
-            $consecutivos = $query->orderBy('id', 'desc')->paginate($perPage);
+            $consecutivos = $query->orderBy('id', 'desc')->cursorPaginate($perPage);
 
             return response()->json($consecutivos);
         });

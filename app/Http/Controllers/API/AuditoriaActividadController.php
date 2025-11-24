@@ -115,7 +115,7 @@ class AuditoriaActividadController extends Controller
             }
 
             // Ordenar por más recientes primero
-            $auditorias = $query->orderBy('created_at', 'desc')->paginate($perPage);
+            $auditorias = $query->orderBy('id', 'desc')->cursorPaginate($perPage);
 
             // Incluir cambios calculados
             $auditorias->getCollection()->transform(function ($auditoria) {

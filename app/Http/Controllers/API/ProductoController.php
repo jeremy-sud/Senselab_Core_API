@@ -174,8 +174,8 @@ class ProductoController extends Controller
                     }
                 }
                 
-                $productos = $query->orderBy('nombre', 'asc')
-                                   ->paginate($perPage);
+                $productos = $query->orderBy('id', 'asc')
+                                   ->cursorPaginate($perPage);
                 
                 return ProductoResource::collection($productos);
             });

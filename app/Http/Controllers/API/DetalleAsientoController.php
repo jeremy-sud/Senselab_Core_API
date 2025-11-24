@@ -160,7 +160,7 @@ class DetalleAsientoController extends Controller
             // Ordenamiento
             $query->orderBy($request->get('sort_by', 'created_at'), $request->get('sort_order', 'desc'));
 
-            $detalles = $query->paginate($request->get('per_page', 15));
+            $detalles = $query->cursorPaginate($request->get('per_page', 15));
 
             return DetalleAsientoResource::collection($detalles);
         });

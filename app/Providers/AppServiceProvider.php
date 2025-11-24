@@ -126,6 +126,10 @@ use App\Policies\InventarioPolicy;
 // Importar observers
 use App\Observers\PermisoObserver;
 use App\Observers\RolObserver;
+use App\Observers\ProductoObserver;
+use App\Observers\VentaObserver;
+use App\Observers\ClienteObserver;
+use App\Observers\AsientoContableObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -208,9 +212,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Registrar observers
+        // Registrar observers (Sprint 8.3 - Observer Pattern)
         Permiso::observe(PermisoObserver::class);
         Rol::observe(RolObserver::class);
+        Producto::observe(ProductoObserver::class);
+        Venta::observe(VentaObserver::class);
+        Cliente::observe(ClienteObserver::class);
+        AsientoContable::observe(AsientoContableObserver::class);
         
         // Registrar policies
         foreach ($this->policies as $model => $policy) {

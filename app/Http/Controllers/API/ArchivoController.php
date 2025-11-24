@@ -99,7 +99,7 @@ class ArchivoController extends Controller
                 $query->categoria($request->categoria);
             }
 
-            $archivos = $query->orderBy('creado_en', 'desc')->paginate($perPage);
+            $archivos = $query->orderBy('id', 'desc')->cursorPaginate($perPage);
 
             return response()->json($archivos);
         });

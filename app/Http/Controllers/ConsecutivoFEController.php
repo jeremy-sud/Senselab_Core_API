@@ -39,7 +39,7 @@ class ConsecutivoFEController extends Controller
         $query->orderBy('tipo_documento_dgt')
             ->orderBy('prefijo');
 
-        $consecutivos = $query->paginate($request->get('per_page', 15));
+        $consecutivos = $query->cursorPaginate($request->get('per_page', 15));
 
         return response()->json([
             'success' => true,

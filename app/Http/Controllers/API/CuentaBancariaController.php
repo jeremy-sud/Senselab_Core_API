@@ -86,7 +86,7 @@ class CuentaBancariaController extends Controller
                     
                     return $query->orderBy('banco', 'asc')
                                  ->orderBy('numero_cuenta', 'asc')
-                                 ->paginate($perPage);
+                                 ->cursorPaginate($perPage);
                 }
             );
             

@@ -48,7 +48,7 @@ class DeduccionLegalController extends Controller
                 $query->where('es_obligatoria', $request->boolean('obligatoria'));
             }
 
-            return $query->orderBy('nombre')->paginate($request->input('per_page', 20));
+            return $query->orderBy('id')->cursorPaginate($request->input('per_page', 20));
         });
 
         return response()->json(['success' => true, 'data' => $deducciones]);
