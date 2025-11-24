@@ -170,6 +170,11 @@ abstract class TestCase extends BaseTestCase
     protected function seedPermisos(): void
     {
         $permisos = [
+            // Empresas
+            ['nombre' => 'Ver Empresas', 'slug' => 'ver-empresas', 'modulo' => 'Empresas'],
+            ['nombre' => 'Crear Empresas', 'slug' => 'crear-empresas', 'modulo' => 'Empresas'],
+            ['nombre' => 'Editar Empresas', 'slug' => 'editar-empresas', 'modulo' => 'Empresas'],
+            ['nombre' => 'Eliminar Empresas', 'slug' => 'eliminar-empresas', 'modulo' => 'Empresas'],
             // Productos
             ['nombre' => 'Ver Productos', 'slug' => 'ver-productos', 'modulo' => 'Productos'],
             ['nombre' => 'Crear Productos', 'slug' => 'crear-productos', 'modulo' => 'Productos'],
@@ -178,27 +183,38 @@ abstract class TestCase extends BaseTestCase
             // Clientes
             ['nombre' => 'Ver Clientes', 'slug' => 'ver-clientes', 'modulo' => 'Clientes'],
             ['nombre' => 'Crear Clientes', 'slug' => 'crear-clientes', 'modulo' => 'Clientes'],
-            // Roles
+            ['nombre' => 'Editar Clientes', 'slug' => 'editar-clientes', 'modulo' => 'Clientes'],
+            ['nombre' => 'Eliminar Clientes', 'slug' => 'eliminar-clientes', 'modulo' => 'Clientes'],
+            // Ventas
+            ['nombre' => 'Ver Ventas', 'slug' => 'ver-ventas', 'modulo' => 'Ventas'],
+            ['nombre' => 'Crear Ventas', 'slug' => 'crear-ventas', 'modulo' => 'Ventas'],
+            ['nombre' => 'Editar Ventas', 'slug' => 'editar-ventas', 'modulo' => 'Ventas'],
+            ['nombre' => 'Eliminar Ventas', 'slug' => 'eliminar-ventas', 'modulo' => 'Ventas'],
+            // Roles y Permisos
+            ['nombre' => 'Ver Permisos', 'slug' => 'ver-permisos', 'modulo' => 'Roles y Permisos'],
+            ['nombre' => 'Crear Permisos', 'slug' => 'crear-permisos', 'modulo' => 'Roles y Permisos'],
+            ['nombre' => 'Editar Permisos', 'slug' => 'editar-permisos', 'modulo' => 'Roles y Permisos'],
+            ['nombre' => 'Eliminar Permisos', 'slug' => 'eliminar-permisos', 'modulo' => 'Roles y Permisos'],
             ['nombre' => 'Ver Roles', 'slug' => 'ver-roles', 'modulo' => 'Roles y Permisos'],
             ['nombre' => 'Crear Roles', 'slug' => 'crear-roles', 'modulo' => 'Roles y Permisos'],
             ['nombre' => 'Editar Roles', 'slug' => 'editar-roles', 'modulo' => 'Roles y Permisos'],
             ['nombre' => 'Eliminar Roles', 'slug' => 'eliminar-roles', 'modulo' => 'Roles y Permisos'],
-            // FASE 9 - Declaraciones Tributarias
+            // Declaraciones Tributarias
             ['nombre' => 'Ver Declaraciones Tributarias', 'slug' => 'ver-declaraciones-tributarias', 'modulo' => 'Tributación'],
             ['nombre' => 'Crear Declaraciones Tributarias', 'slug' => 'crear-declaraciones-tributarias', 'modulo' => 'Tributación'],
             ['nombre' => 'Editar Declaraciones Tributarias', 'slug' => 'editar-declaraciones-tributarias', 'modulo' => 'Tributación'],
             ['nombre' => 'Eliminar Declaraciones Tributarias', 'slug' => 'eliminar-declaraciones-tributarias', 'modulo' => 'Tributación'],
-            // FASE 9 - Cuentas Bancarias
+            // Cuentas Bancarias
             ['nombre' => 'Ver Cuentas Bancarias', 'slug' => 'ver-cuentas-bancarias', 'modulo' => 'Banca'],
             ['nombre' => 'Crear Cuentas Bancarias', 'slug' => 'crear-cuentas-bancarias', 'modulo' => 'Banca'],
             ['nombre' => 'Editar Cuentas Bancarias', 'slug' => 'editar-cuentas-bancarias', 'modulo' => 'Banca'],
             ['nombre' => 'Eliminar Cuentas Bancarias', 'slug' => 'eliminar-cuentas-bancarias', 'modulo' => 'Banca'],
-            // FASE 9 - Movimientos Bancarios
+            // Movimientos Bancarios
             ['nombre' => 'Ver Movimientos Bancarios', 'slug' => 'ver-movimientos-bancarios', 'modulo' => 'Banca'],
             ['nombre' => 'Crear Movimientos Bancarios', 'slug' => 'crear-movimientos-bancarios', 'modulo' => 'Banca'],
             ['nombre' => 'Editar Movimientos Bancarios', 'slug' => 'editar-movimientos-bancarios', 'modulo' => 'Banca'],
             ['nombre' => 'Eliminar Movimientos Bancarios', 'slug' => 'eliminar-movimientos-bancarios', 'modulo' => 'Banca'],
-            // FASE 9 - Retenciones de Impuesto
+            // Retenciones de Impuesto
             ['nombre' => 'Ver Retenciones Impuesto', 'slug' => 'ver-retenciones-impuesto', 'modulo' => 'Tributación'],
             ['nombre' => 'Crear Retenciones Impuesto', 'slug' => 'crear-retenciones-impuesto', 'modulo' => 'Tributación'],
             ['nombre' => 'Editar Retenciones Impuesto', 'slug' => 'editar-retenciones-impuesto', 'modulo' => 'Tributación'],
@@ -206,7 +222,10 @@ abstract class TestCase extends BaseTestCase
         ];
 
         foreach ($permisos as $permiso) {
-            Permiso::create($permiso);
+            Permiso::firstOrCreate(
+                ['slug' => $permiso['slug']], 
+                $permiso
+            );
         }
         
         // Asignar todos los permisos al rol Administrador si existe

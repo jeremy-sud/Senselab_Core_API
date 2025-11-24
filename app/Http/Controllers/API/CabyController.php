@@ -11,6 +11,7 @@ use App\Models\Cabys;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Cache;
 use OpenApi\Attributes as OA;
 
 /**
@@ -113,36 +114,43 @@ class CabyController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Cabys::class);
-        $query = Cabys::where('eliminado', 0);
+        
+        // Cache key única basada en parámetros de request
+        $cacheKey = 'cabys_list_' . md5(json_encode($request->all()));
+        
+        // Cache con tags para invalidación selectiva (24 horas)
+        $cabys = Cache::tags(['cabys', 'catalogos'])->remember($cacheKey, 86400, function() use ($request) {
+            $query = Cabys::where('eliminado', 0);
 
-        // Búsqueda por código o descripción
-        if ($request->filled('buscar')) {
-            $buscar = $request->buscar;
-            $query->where(function ($q) use ($buscar) {
-                $q->where('codigo', 'like', "%{$buscar}%")
-                  ->orWhere('descripcion', 'like', "%{$buscar}%");
-            });
-        }
+            // Búsqueda por código o descripción
+            if ($request->filled('buscar')) {
+                $buscar = $request->buscar;
+                $query->where(function ($q) use ($buscar) {
+                    $q->where('codigo', 'like', "%{$buscar}%")
+                      ->orWhere('descripcion', 'like', "%{$buscar}%");
+                });
+            }
 
-        // Filtro por código específico
-        if ($request->filled('codigo')) {
-            $query->where('codigo', $request->codigo);
-        }
+            // Filtro por código específico
+            if ($request->filled('codigo')) {
+                $query->where('codigo', $request->codigo);
+            }
 
-        // Filtro por tasa IVA
-        if ($request->filled('impuesto_iva')) {
-            $query->where('impuesto_iva_predeterminado', $request->impuesto_iva);
-        }
+            // Filtro por tasa IVA
+            if ($request->filled('impuesto_iva')) {
+                $query->where('impuesto_iva_predeterminado', $request->impuesto_iva);
+            }
 
-        // Filtro por estado activo
-        if ($request->filled('activo')) {
-            $query->where('activo', $request->activo);
-        }
+            // Filtro por estado activo
+            if ($request->filled('activo')) {
+                $query->where('activo', $request->activo);
+            }
 
-        // Ordenamiento
-        $query->orderBy($request->get('sort_by', 'codigo'), $request->get('sort_order', 'asc'));
+            // Ordenamiento
+            $query->orderBy($request->get('sort_by', 'codigo'), $request->get('sort_order', 'asc'));
 
-        $cabys = $query->paginate($request->get('per_page', 15));
+            return $query->paginate($request->get('per_page', 15));
+        });
 
         return CabyResource::collection($cabys);
     }
@@ -197,6 +205,9 @@ class CabyController extends Controller
     {
         $this->authorize('create', Cabys::class);
         $caby = Cabys::create($request->validated());
+        
+        // Invalidar cache de CAByS
+        Cache::tags(['cabys', 'catalogos'])->flush();
 
         return response()->json([
             'success' => true,
@@ -329,6 +340,9 @@ class CabyController extends Controller
         $this->authorize('update', $caby);
 
         $caby->update($request->validated());
+        
+        // Invalidar cache de CAByS
+        Cache::tags(['cabys', 'catalogos'])->flush();
 
         return response()->json([
             'success' => true,
@@ -401,6 +415,9 @@ class CabyController extends Controller
         }
 
         $caby->update(['eliminado' => 1, 'activo' => 0]);
+        
+        // Invalidar cache de CAByS
+        Cache::tags(['cabys', 'catalogos'])->flush();
 
         return response()->json([
             'success' => true,

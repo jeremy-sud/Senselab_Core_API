@@ -156,16 +156,8 @@ class Usuario extends Authenticatable
      */
     public function hasPermission(string $permissionSlug): bool
     {
-        // Obtener todos los roles del usuario con sus permisos
-        return $this->roles()
-            ->whereHas('permisos', function ($query) use ($permissionSlug) {
-                $query->where('nombre', $permissionSlug)
-                      ->where('permisos.activo', true)
-                      ->where('permisos.eliminado', false);
-            })
-            ->where('roles.activo', true)
-            ->where('roles.eliminado', false)
-            ->exists();
+        // Usar cache de permisos para mejor performance
+        return $this->hasCachedPermission($permissionSlug);
     }
 
     /**
