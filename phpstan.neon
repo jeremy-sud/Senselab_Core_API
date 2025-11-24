@@ -1,0 +1,20 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    # Level 6 - Strict type checking
+    level: 6
+    
+    # Paths to analyze
+    paths:
+        - app
+    
+    # Exclude paths
+    excludePaths:
+        - app/Console/Kernel.php (?)
+        - app/Http/Middleware/TrustProxies.php (?)
+    
+    # Ignore errors until fixed
+    ignoreErrors:
+        # Ignore dynamic properties from Eloquent models
+        - '#Access to an undefined property App\\Models\\[a-zA-Z]+::\$[a-zA-Z_]+#'
