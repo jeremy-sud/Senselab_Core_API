@@ -7,6 +7,7 @@ use App\Http\Requests\StoreCargoRequest;
 use App\Http\Requests\UpdateCargoRequest;
 use App\Http\Resources\CargoResource;
 use App\Models\Cargo;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -23,6 +24,11 @@ use OpenApi\Attributes as OA;
  */
 class CargoController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['cargos', 'catalogos'];
+    protected int $cacheTTL = 3600; // 1 hora - catálogo estable
+
     /**
      * Listar todos los cargos
      * 
@@ -61,13 +67,20 @@ class CargoController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Cargo::class);
-        $query = Cargo::query();
+        
+        $cacheKey = $this->getCacheKey('index', [
+            'activo' => $request->input('activo')
+        ]);
 
-        if ($request->has('activo')) {
-            $query->where('activo', $request->boolean('activo'));
-        }
+        $cargos = $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
+            $query = Cargo::query();
 
-        $cargos = $query->get();
+            if ($request->has('activo')) {
+                $query->where('activo', $request->boolean('activo'));
+            }
+
+            return $query->get();
+        });
 
         return CargoResource::collection($cargos);
     }
@@ -113,6 +126,8 @@ class CargoController extends Controller
     {
         $this->authorize('create', Cargo::class);
         $cargo = Cargo::create($request->validated());
+
+        $this->flushCache();
 
         return (new CargoResource($cargo))
             ->response()
@@ -221,6 +236,8 @@ class CargoController extends Controller
 
         $cargo->update($request->validated());
 
+        $this->flushCache();
+
         return new CargoResource($cargo);
     }
 
@@ -285,6 +302,8 @@ class CargoController extends Controller
         $cargo->eliminado = 1;
         $cargo->activo = 0;
         $cargo->save();
+
+        $this->flushCache();
 
         return response()->json([
             'message' => 'Cargo eliminado exitosamente',

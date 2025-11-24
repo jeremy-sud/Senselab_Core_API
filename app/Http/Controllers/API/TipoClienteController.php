@@ -7,6 +7,7 @@ use App\Models\TipoCliente;
 use App\Http\Requests\StoreTipoClienteRequest;
 use App\Http\Requests\UpdateTipoClienteRequest;
 use App\Http\Resources\TipoClienteResource;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 
@@ -19,6 +20,11 @@ use Illuminate\Http\Request;
  */
 class TipoClienteController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['tipos-cliente', 'catalogos'];
+    protected int $cacheTTL = 3600; // 1 hora - catálogo estable
+
     /**
      * Display a listing of the resource.
      * 
@@ -33,37 +39,48 @@ class TipoClienteController extends Controller
             $perPage = $request->input('per_page', 15);
             $search = $request->input('search');
             
-            $query = TipoCliente::where('eliminado', false);
-            
-            if ($search) {
-                $query->where(function($q) use ($search) {
-                    $q->where('nombre', 'like', "%{$search}%")
-                      ->orWhere('codigo', 'like', "%{$search}%")
-                      ->orWhere('descripcion', 'like', "%{$search}%");
-                });
-            }
-            
-            // Filtro por estado activo
-            if ($request->has('activo') || $request->has('activos')) {
-                $esActivo = $request->boolean('activo') || $request->boolean('activos');
-                if ($esActivo) {
-                    $query->activos();
-                } else {
-                    $query->where('activo', false);
+            $cacheKey = $this->getCacheKey('index', [
+                'per_page' => $perPage,
+                'search' => $search,
+                'activo' => $request->input('activo'),
+                'activos' => $request->input('activos'),
+                'con_descuento' => $request->boolean('con_descuento'),
+                'con_credito' => $request->boolean('con_credito')
+            ]);
+
+            $tiposCliente = $this->cacheQueryIfEnabled($cacheKey, function() use ($request, $search, $perPage) {
+                $query = TipoCliente::where('eliminado', false);
+                
+                if ($search) {
+                    $query->where(function($q) use ($search) {
+                        $q->where('nombre', 'like', "%{$search}%")
+                          ->orWhere('codigo', 'like', "%{$search}%")
+                          ->orWhere('descripcion', 'like', "%{$search}%");
+                    });
                 }
-            }
-            
-            // Filtros adicionales
-            if ($request->boolean('con_descuento')) {
-                $query->conDescuento();
-            }
-            
-            if ($request->boolean('con_credito')) {
-                $query->conCredito();
-            }
-            
-            $tiposCliente = $query->orderBy('nombre', 'asc')
-                                  ->paginate($perPage);
+                
+                // Filtro por estado activo
+                if ($request->has('activo') || $request->has('activos')) {
+                    $esActivo = $request->boolean('activo') || $request->boolean('activos');
+                    if ($esActivo) {
+                        $query->activos();
+                    } else {
+                        $query->where('activo', false);
+                    }
+                }
+                
+                // Filtros adicionales
+                if ($request->boolean('con_descuento')) {
+                    $query->conDescuento();
+                }
+                
+                if ($request->boolean('con_credito')) {
+                    $query->conCredito();
+                }
+                
+                return $query->orderBy('nombre', 'asc')
+                              ->paginate($perPage);
+            });
             
             return TipoClienteResource::collection($tiposCliente);
         } catch (\Exception $e) {
@@ -86,6 +103,8 @@ class TipoClienteController extends Controller
         
         try {
             $tipoCliente = TipoCliente::create($request->validated());
+            
+            $this->flushCache();
             
             return (new TipoClienteResource($tipoCliente))
                 ->additional(['message' => 'Tipo de cliente creado exitosamente'])
@@ -145,6 +164,8 @@ class TipoClienteController extends Controller
             $tipoCliente->update($validated);
             $tipoCliente->refresh(); // Refrescar modelo después del update
             
+            $this->flushCache();
+            
             return (new TipoClienteResource($tipoCliente))
                 ->additional(['message' => 'Tipo de cliente actualizado exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -177,6 +198,8 @@ class TipoClienteController extends Controller
                 'activo' => false,
                 'eliminado' => true
             ]);
+            
+            $this->flushCache();
             
             return response()->json([
                 'message' => 'Tipo de cliente eliminado exitosamente'

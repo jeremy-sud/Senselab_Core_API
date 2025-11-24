@@ -7,10 +7,10 @@ use App\Http\Requests\StoreTipoImpuestoRequest;
 use App\Http\Requests\UpdateTipoImpuestoRequest;
 use App\Http\Resources\TipoImpuestoResource;
 use App\Models\TipoImpuesto;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\Cache;
 use OpenApi\Attributes as OA;
 
 /**
@@ -24,6 +24,11 @@ use OpenApi\Attributes as OA;
  */
 class TipoImpuestoController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['tipos-impuesto', 'catalogos'];
+    protected int $cacheTTL = 86400; // 24 horas - catálogo fiscal muy estable
+
     /**
      * Listar todos los tipos de impuesto
      *
@@ -100,11 +105,15 @@ class TipoImpuestoController extends Controller
     {
         $this->authorize('viewAny', TipoImpuesto::class);
         
-        // Cache key única basada en parámetros
-        $cacheKey = 'tipos_impuesto_list_' . md5(json_encode($request->all()));
+        $cacheKey = $this->getCacheKey('index', [
+            'activo' => $request->input('activo'),
+            'buscar' => $request->input('buscar'),
+            'sort_by' => $request->get('sort_by', 'nombre'),
+            'sort_order' => $request->get('sort_order', 'asc'),
+            'per_page' => $request->get('per_page', 15)
+        ]);
         
-        // Cache con tags (24 horas - catálogo estable)
-        $tipos = Cache::tags(['tipos_impuesto', 'catalogos'])->remember($cacheKey, 86400, function() use ($request) {
+        $tipos = $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
             $query = TipoImpuesto::where('eliminado', 0);
 
             // Filtro por estado activo
@@ -183,8 +192,7 @@ class TipoImpuestoController extends Controller
         
         $tipo = TipoImpuesto::create($request->validated());
         
-        // Invalidar cache de tipos de impuesto
-        Cache::tags(['tipos_impuesto', 'catalogos'])->flush();
+        $this->flushCache();
 
         return response()->json([
             'success' => true,
@@ -319,8 +327,7 @@ class TipoImpuestoController extends Controller
 
         $tipo->update($request->validated());
         
-        // Invalidar cache de tipos de impuesto
-        Cache::tags(['tipos_impuesto', 'catalogos'])->flush();
+        $this->flushCache();
 
         return response()->json([
             'success' => true,
@@ -393,8 +400,7 @@ class TipoImpuestoController extends Controller
 
         $tipo->update(['eliminado' => 1, 'activo' => 0]);
         
-        // Invalidar cache de tipos de impuesto
-        Cache::tags(['tipos_impuesto', 'catalogos'])->flush();
+        $this->flushCache();
 
         return response()->json([
             'success' => true,
@@ -436,8 +442,9 @@ class TipoImpuestoController extends Controller
     )]
     public function activos(): JsonResponse
     {
-        // Cache tipos activos (24 horas)
-        $tipos = Cache::tags(['tipos_impuesto', 'catalogos'])->remember('tipos_impuesto_activos', 86400, function() {
+        $cacheKey = $this->getCacheKey('activos', []);
+        
+        $tipos = $this->cacheQueryIfEnabled($cacheKey, function() {
             return TipoImpuesto::where('eliminado', 0)
                 ->where('activo', 1)
                 ->orderBy('nombre')

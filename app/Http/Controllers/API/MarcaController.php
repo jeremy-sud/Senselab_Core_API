@@ -7,6 +7,7 @@ use App\Http\Requests\StoreMarcaRequest;
 use App\Http\Requests\UpdateMarcaRequest;
 use App\Http\Resources\MarcaResource;
 use App\Models\Marca;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -22,6 +23,11 @@ use OpenApi\Attributes as OA;
  */
 class MarcaController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['marcas', 'catalogos'];
+    protected int $cacheTTL = 3600; // 1 hora - catálogo estable
+
     /**
      * Listar todas las marcas activas
      */
@@ -58,13 +64,20 @@ class MarcaController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Marca::class);
-        $query = Marca::query();
+        
+        $cacheKey = $this->getCacheKey('index', [
+            'activo' => $request->input('activo')
+        ]);
 
-        if ($request->has('activo')) {
-            $query->where('activo', $request->boolean('activo'));
-        }
+        $marcas = $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
+            $query = Marca::query();
 
-        $marcas = $query->get();
+            if ($request->has('activo')) {
+                $query->where('activo', $request->boolean('activo'));
+            }
+
+            return $query->get();
+        });
 
         return MarcaResource::collection($marcas);
     }
@@ -108,6 +121,8 @@ class MarcaController extends Controller
     {
         $this->authorize('create', Marca::class);
         $marca = Marca::create($request->validated());
+
+        $this->flushCache();
 
         return (new MarcaResource($marca))
             ->response()
@@ -212,6 +227,8 @@ class MarcaController extends Controller
 
         $marca->update($request->validated());
 
+        $this->flushCache();
+
         return new MarcaResource($marca);
     }
 
@@ -263,6 +280,8 @@ class MarcaController extends Controller
         $marca->eliminado = 1;
         $marca->activo = 0;
         $marca->save();
+
+        $this->flushCache();
 
         return response()->json([
             'message' => 'Marca eliminada exitosamente',

@@ -7,10 +7,10 @@ use App\Http\Requests\StoreFormaPagoRequest;
 use App\Http\Requests\UpdateFormaPagoRequest;
 use App\Http\Resources\FormaPagoResource;
 use App\Models\FormaPago;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\Cache;
 use OpenApi\Attributes as OA;
 
 /**
@@ -24,6 +24,11 @@ use OpenApi\Attributes as OA;
  */
 class FormaPagoController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['formas-pago', 'catalogos'];
+    protected int $cacheTTL = 86400; // 24 horas - catálogo muy estable
+
     /**
      * Listar todas las formas de pago
      * 
@@ -47,11 +52,12 @@ class FormaPagoController extends Controller
     {
         $this->authorize('viewAny', FormaPago::class);
         
-        // Cache key única basada en parámetros
-        $cacheKey = 'formas_pago_list_' . md5(json_encode($request->all()));
+        $cacheKey = $this->getCacheKey('index', [
+            'activo' => $request->input('activo'),
+            'tipo' => $request->input('tipo')
+        ]);
         
-        // Cache con tags (24 horas - catálogo estable)
-        $formasPago = Cache::tags(['formas_pago', 'catalogos'])->remember($cacheKey, 86400, function() use ($request) {
+        $formasPago = $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
             $query = FormaPago::query();
 
             if ($request->has('activo')) {
@@ -100,8 +106,7 @@ class FormaPagoController extends Controller
         $this->authorize('create', FormaPago::class);
         $formaPago = FormaPago::create($request->validated());
         
-        // Invalidar cache de formas de pago
-        Cache::tags(['formas_pago', 'catalogos'])->flush();
+        $this->flushCache();
 
         return (new FormaPagoResource($formaPago))
             ->response()

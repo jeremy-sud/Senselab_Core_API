@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateRolRequest;
 use App\Http\Requests\AsignarPermisosRolRequest;
 use App\Http\Resources\RolResource;
 use App\Models\Rol;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -24,6 +25,11 @@ use OpenApi\Attributes as OA;
  */
 class RolController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['roles', 'rbac'];
+    protected int $cacheTTL = 1800; // 30 minutos - datos RBAC cambian ocasionalmente
+
     /**
      * Listar todos los roles activos
      * 
@@ -46,13 +52,19 @@ class RolController extends Controller
     {
         $this->authorize('viewAny', Rol::class);
         
-        $query = Rol::query()->with(['permisos']);
+        $cacheKey = $this->getCacheKey('index', [
+            'activo' => $request->input('activo')
+        ]);
 
-        if ($request->has('activo')) {
-            $query->where('activo', $request->boolean('activo'));
-        }
+        $roles = $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
+            $query = Rol::query()->with(['permisos']);
 
-        $roles = $query->get();
+            if ($request->has('activo')) {
+                $query->where('activo', $request->boolean('activo'));
+            }
+
+            return $query->get();
+        });
 
         return RolResource::collection($roles);
     }
@@ -102,6 +114,8 @@ class RolController extends Controller
         }
 
         $rol->load('permisos');
+
+        $this->flushCache();
 
         return (new RolResource($rol))
             ->response()
@@ -168,6 +182,8 @@ class RolController extends Controller
 
         $rol->load('permisos');
 
+        $this->flushCache();
+
         return new RolResource($rol);
     }
 
@@ -205,6 +221,8 @@ class RolController extends Controller
         $rol->activo = 0;
         $rol->save();
 
+        $this->flushCache();
+
         return response()->json([
             'message' => 'Rol eliminado exitosamente',
             'data' => new RolResource($rol)
@@ -241,6 +259,8 @@ class RolController extends Controller
         $rol->permisos()->sync($request->permisos);
         $rol->load('permisos');
 
+        $this->flushCache();
+
         return response()->json([
             'message' => 'Permisos asignados exitosamente',
             'data' => new RolResource($rol)
@@ -255,6 +275,8 @@ class RolController extends Controller
         $rol = Rol::findOrFail($id);
         $rol->permisos()->detach($permiso_id);
         $rol->load('permisos');
+
+        $this->flushCache();
 
         return response()->json([
             'message' => 'Permiso removido exitosamente',

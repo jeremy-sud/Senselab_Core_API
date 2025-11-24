@@ -7,10 +7,10 @@ use App\Http\Requests\StorePermisoRequest;
 use App\Http\Requests\UpdatePermisoRequest;
 use App\Http\Resources\PermisoResource;
 use App\Models\Permiso;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\Cache;
 use OpenApi\Attributes as OA;
 
 /**
@@ -24,6 +24,11 @@ use OpenApi\Attributes as OA;
  */
 class PermisoController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['permisos', 'rbac'];
+    protected int $cacheTTL = 3600; // 1 hora - permisos cambian raramente
+
     /**
      * Listar todos los permisos
      * 
@@ -47,11 +52,12 @@ class PermisoController extends Controller
     {
         $this->authorize('viewAny', Permiso::class);
         
-        // Cache key única basada en parámetros
-        $cacheKey = 'permisos_list_' . md5(json_encode($request->all()));
+        $cacheKey = $this->getCacheKey('index', [
+            'activo' => $request->input('activo'),
+            'modulo' => $request->input('modulo')
+        ]);
         
-        // Cache con tags (1 hora - se consulta frecuentemente)
-        $permisos = Cache::tags(['permisos', 'rbac'])->remember($cacheKey, 3600, function() use ($request) {
+        $permisos = $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
             $query = Permiso::query();
 
             if ($request->has('activo')) {
@@ -77,8 +83,9 @@ class PermisoController extends Controller
     {
         $this->authorize('viewAny', Permiso::class);
         
-        // Cache agrupación de permisos (1 hora)
-        $permisos = Cache::tags(['permisos', 'rbac'])->remember('permisos_grouped', 3600, function() {
+        $cacheKey = $this->getCacheKey('grouped', []);
+        
+        $permisos = $this->cacheQueryIfEnabled($cacheKey, function() {
             return Permiso::where('activo', true)
                 ->where('eliminado', false)
                 ->get()
@@ -134,8 +141,7 @@ class PermisoController extends Controller
         
         $permiso = Permiso::create($request->validated());
         
-        // Invalidar cache de permisos
-        Cache::tags(['permisos', 'rbac'])->flush();
+        $this->flushCache();
 
         return (new PermisoResource($permiso))
             ->response()
@@ -189,8 +195,7 @@ class PermisoController extends Controller
         
         $permiso->update($request->validated());
         
-        // Invalidar cache de permisos
-        Cache::tags(['permisos', 'rbac'])->flush();
+        $this->flushCache();
 
         return new PermisoResource($permiso);
     }
@@ -229,8 +234,7 @@ class PermisoController extends Controller
         $permiso->activo = 0;
         $permiso->save();
         
-        // Invalidar cache de permisos
-        Cache::tags(['permisos', 'rbac'])->flush();
+        $this->flushCache();
 
         return response()->json([
             'message' => 'Permiso eliminado exitosamente',
