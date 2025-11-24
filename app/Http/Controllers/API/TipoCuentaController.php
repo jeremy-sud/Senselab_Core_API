@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateTipoCuentaRequest;
 use App\Http\Requests\PorNaturalezaRequest;
 use App\Http\Resources\TipoCuentaResource;
 use App\Models\TipoCuenta;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -24,6 +25,10 @@ use OpenApi\Attributes as OA;
  */
 class TipoCuentaController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['tipos-cuenta', 'catalogos', 'contabilidad'];
+    protected int $cacheTTL = 7200; // 2 horas - catálogo contable estándar
     /**
      * Listar todos los tipos de cuentas contables
      *
@@ -107,29 +112,40 @@ class TipoCuentaController extends Controller
     {
         $this->authorize('viewAny', TipoCuenta::class);
         
-        $query = TipoCuenta::where('eliminado', 0)->with('cuentasContables');
+        $cacheKey = $this->getCacheKey('index', [
+            'naturaleza' => $request->get('naturaleza'),
+            'activo' => $request->get('activo'),
+            'buscar' => $request->get('buscar'),
+            'sort_by' => $request->get('sort_by', 'nombre'),
+            'sort_order' => $request->get('sort_order', 'asc'),
+            'per_page' => $request->get('per_page', 15)
+        ]);
 
-        // Filtro por naturaleza
-        if ($request->filled('naturaleza')) {
-            $query->where('naturaleza', $request->naturaleza);
-        }
+        return $this->cacheQueryIfEnabled($cacheKey, function () use ($request) {
+            $query = TipoCuenta::where('eliminado', 0)->with('cuentasContables');
 
-        // Filtro por estado activo
-        if ($request->filled('activo')) {
-            $query->where('activo', $request->activo);
-        }
+            // Filtro por naturaleza
+            if ($request->filled('naturaleza')) {
+                $query->where('naturaleza', $request->naturaleza);
+            }
 
-        // Búsqueda por nombre
-        if ($request->filled('buscar')) {
-            $query->where('nombre', 'like', "%{$request->buscar}%");
-        }
+            // Filtro por estado activo
+            if ($request->filled('activo')) {
+                $query->where('activo', $request->activo);
+            }
 
-        // Ordenamiento
-        $query->orderBy($request->get('sort_by', 'nombre'), $request->get('sort_order', 'asc'));
+            // Búsqueda por nombre
+            if ($request->filled('buscar')) {
+                $query->where('nombre', 'like', "%{$request->buscar}%");
+            }
 
-        $tipos = $query->paginate($request->get('per_page', 15));
+            // Ordenamiento
+            $query->orderBy($request->get('sort_by', 'nombre'), $request->get('sort_order', 'asc'));
 
-        return TipoCuentaResource::collection($tipos);
+            $tipos = $query->paginate($request->get('per_page', 15));
+
+            return TipoCuentaResource::collection($tipos);
+        });
     }
 
     /**
@@ -183,6 +199,8 @@ class TipoCuentaController extends Controller
         $this->authorize('create', TipoCuenta::class);
         
         $tipo = TipoCuenta::create($request->validated());
+
+        $this->flushCache();
 
         return response()->json([
             'success' => true,
@@ -319,6 +337,8 @@ class TipoCuentaController extends Controller
 
         $tipo->update($request->validated());
 
+        $this->flushCache();
+
         return response()->json([
             'success' => true,
             'message' => 'Tipo de cuenta actualizado exitosamente',
@@ -391,6 +411,8 @@ class TipoCuentaController extends Controller
 
         $tipo->update(['eliminado' => 1, 'activo' => 0]);
 
+        $this->flushCache();
+
         return response()->json([
             'success' => true,
             'message' => 'Tipo de cuenta eliminado exitosamente'
@@ -445,16 +467,20 @@ class TipoCuentaController extends Controller
     )]
     public function porNaturaleza(PorNaturalezaRequest $request): JsonResponse
     {
-        $tipos = TipoCuenta::where('eliminado', 0)
-            ->where('activo', 1)
-            ->where('naturaleza', $request->naturaleza)
-            ->orderBy('nombre')
-            ->get();
+        $cacheKey = $this->getCacheKey('porNaturaleza', ['naturaleza' => $request->naturaleza]);
 
-        return response()->json([
-            'success' => true,
-            'data' => TipoCuentaResource::collection($tipos)
-        ]);
+        return $this->cacheQueryIfEnabled($cacheKey, function () use ($request) {
+            $tipos = TipoCuenta::where('eliminado', 0)
+                ->where('activo', 1)
+                ->where('naturaleza', $request->naturaleza)
+                ->orderBy('nombre')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => TipoCuentaResource::collection($tipos)
+            ]);
+        });
     }
 
     /**
@@ -491,14 +517,18 @@ class TipoCuentaController extends Controller
     )]
     public function activos(): JsonResponse
     {
-        $tipos = TipoCuenta::where('eliminado', 0)
-            ->where('activo', 1)
-            ->orderBy('nombre')
-            ->get();
+        $cacheKey = $this->getCacheKey('activos', []);
 
-        return response()->json([
-            'success' => true,
-            'data' => TipoCuentaResource::collection($tipos)
-        ]);
+        return $this->cacheQueryIfEnabled($cacheKey, function () {
+            $tipos = TipoCuenta::where('eliminado', 0)
+                ->where('activo', 1)
+                ->orderBy('nombre')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => TipoCuentaResource::collection($tipos)
+            ]);
+        });
     }
 }
