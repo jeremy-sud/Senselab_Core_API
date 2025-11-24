@@ -10,6 +10,20 @@
 | **Baseline Generado** | ❌ | ✅ | ✅ |
 | **CI/CD Integration** | ❌ | ✅ | ✅ |
 
+## 🔄 Actualización Reciente (24-11-2025)
+
+Avances en Fase 2 (Controllers): Se tiparon y ajustaron retornos JSON en:
+- `ZonaGeograficaController` (retornos tipados, uso consistente de `JsonResponse` y recursos)
+- `OrdenCompraController` (agregados tipos estrictos, `JsonResponse` en CRUD, helper privado con tipo)
+- `ProductoController` (cierre de brecha de tipos en index/show/update/destroy y recurso convertido a respuesta JSON)
+
+Efectos esperados:
+- Reducción parcial de errores `missingType.return` y `missingType.parameter` en estos 3 controllers.
+- Eliminación de advertencias por retorno de `AnonymousResourceCollection` donde se esperaba `JsonResponse`.
+- Base para aplicar el mismo patrón en los próximos 2 controllers clave del lote inicial.
+
+Pendiente recálculo exacto de errores (se realizará tras completar 5 controllers clave). Estimación de avance Fase 2: ~15%.
+
 ## ✅ Fase 1 Completada: Modelos Eloquent
 
 ### Cambios Implementados
@@ -374,6 +388,6 @@ git diff HEAD~1 app/Models/ | grep "public function" | grep ":" | wc -l
 
 ---
 
-**Sprint 8.6 Status**: 🟡 **In Progress** (3% completado - baseline estable, fase 1 completada)
+**Sprint 8.6 Status**: 🟡 **In Progress** (4% completado - modelos completos + 3 controllers tipados)
 
 **Última actualización**: 24 de noviembre de 2025

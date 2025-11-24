@@ -17,8 +17,8 @@ class OrdenCompraController extends Controller
 {
     use HasCacheableQueries;
     
-    protected $cacheTags = ['ordenes-compra', 'transacciones'];
-    protected $cacheTTL = 900; // 15 minutos
+    protected array $cacheTags = ['ordenes-compra', 'transacciones'];
+    protected int $cacheTTL = 900; // 15 minutos
     /**
      * Display a listing of the resource.
      * 
@@ -43,7 +43,7 @@ class OrdenCompraController extends Controller
             new OA\Response(response: 200, description: 'Listado exitoso', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/OrdenCompra'))]))
         ]
     )]
-    public function index(Request $request)
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('viewAny', OrdenCompra::class);
         
@@ -86,7 +86,7 @@ class OrdenCompraController extends Controller
                 }
             );
             
-            return OrdenCompraResource::collection($ordenes);
+            return OrdenCompraResource::collection($ordenes)->response();
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener órdenes de compra',
@@ -139,7 +139,7 @@ class OrdenCompraController extends Controller
             new OA\Response(response: 201, description: 'Orden creada', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', ref: '#/components/schemas/OrdenCompra')]))
         ]
     )]
-    public function store(StoreOrdenCompraRequest $request)
+    public function store(StoreOrdenCompraRequest $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('create', OrdenCompra::class);
         
@@ -224,7 +224,7 @@ class OrdenCompraController extends Controller
             new OA\Response(response: 404, description: 'No encontrada')
         ]
     )]
-    public function show(int $id)
+    public function show(int $id): \Illuminate\Http\JsonResponse
     {
         try {
             $orden = OrdenCompra::with([
@@ -240,7 +240,7 @@ class OrdenCompraController extends Controller
             // Calcular saldo pendiente
             $orden->saldo_pendiente = $orden->calcularSaldoPendiente();
             
-            return new OrdenCompraResource($orden);
+            return (new OrdenCompraResource($orden))->response();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Orden de compra no encontrada'
@@ -268,7 +268,7 @@ class OrdenCompraController extends Controller
         parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
         responses: [new OA\Response(response: 200, description: 'Actualizada')]
     )]
-    public function update(UpdateOrdenCompraRequest $request, int $id)
+    public function update(UpdateOrdenCompraRequest $request, int $id): \Illuminate\Http\JsonResponse
     {
         try {
             $orden = OrdenCompra::findOrFail($id);
@@ -278,7 +278,8 @@ class OrdenCompraController extends Controller
             $orden->load(['proveedor', 'detalles.producto']);
             
             return (new OrdenCompraResource($orden))
-                ->additional(['message' => 'Orden de compra actualizada exitosamente']);
+                ->additional(['message' => 'Orden de compra actualizada exitosamente'])
+                ->response();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Orden de compra no encontrada'
@@ -309,7 +310,7 @@ class OrdenCompraController extends Controller
             new OA\Response(response: 422, description: 'Solo se pueden eliminar en estado borrador')
         ]
     )]
-    public function destroy(int $id)
+    public function destroy(int $id): \Illuminate\Http\JsonResponse
     {
         try {
             $orden = OrdenCompra::findOrFail($id);
@@ -364,7 +365,7 @@ class OrdenCompraController extends Controller
      * @param int $empresaId
      * @return string
      */
-    private function generarNumeroOrden($empresaId)
+    private function generarNumeroOrden(int $empresaId): string
     {
         $ultimaOrden = OrdenCompra::where('empresa_id', $empresaId)
                                   ->orderBy('id', 'desc')

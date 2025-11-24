@@ -122,7 +122,7 @@ class ProductoController extends Controller
             new OA\Response(response: 500, description: 'Error del servidor')
         ]
     )]
-    public function index(Request $request)
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('viewAny', Producto::class);
         
@@ -177,7 +177,7 @@ class ProductoController extends Controller
                 $productos = $query->orderBy('id', 'asc')
                                    ->cursorPaginate($perPage);
                 
-                return ProductoResource::collection($productos);
+                return ProductoResource::collection($productos)->response();
             });
         } catch (\Exception $e) {
             return response()->json([
@@ -237,7 +237,7 @@ class ProductoController extends Controller
             new OA\Response(response: 500, description: 'Error del servidor')
         ]
     )]
-    public function store(StoreProductoRequest $request)
+    public function store(StoreProductoRequest $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('create', Producto::class);
         
@@ -303,7 +303,7 @@ class ProductoController extends Controller
             new OA\Response(response: 500, description: 'Error del servidor')
         ]
     )]
-    public function show(int $id)
+    public function show(int $id): \Illuminate\Http\JsonResponse
     {
         try {
             $producto = Producto::with([
@@ -318,7 +318,7 @@ class ProductoController extends Controller
             
             $this->authorize('view', $producto);
             
-            return new ProductoResource($producto);
+            return (new ProductoResource($producto))->response();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Producto no encontrado'
@@ -383,7 +383,7 @@ class ProductoController extends Controller
             new OA\Response(response: 500, description: 'Error del servidor')
         ]
     )]
-    public function update(UpdateProductoRequest $request, int $id)
+    public function update(UpdateProductoRequest $request, int $id): \Illuminate\Http\JsonResponse
     {
         try {
             $producto = Producto::findOrFail($id);
@@ -403,7 +403,8 @@ class ProductoController extends Controller
             $this->flushCache();
             
             return (new ProductoResource($producto))
-                ->additional(['message' => 'Producto actualizado exitosamente']);
+                ->additional(['message' => 'Producto actualizado exitosamente'])
+                ->response();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Producto no encontrado'
@@ -453,7 +454,7 @@ class ProductoController extends Controller
             new OA\Response(response: 500, description: 'Error del servidor')
         ]
     )]
-    public function destroy(int $id)
+    public function destroy(int $id): \Illuminate\Http\JsonResponse
     {
         try {
             $producto = Producto::findOrFail($id);
