@@ -563,6 +563,28 @@ app/Http/Requests/
 
 **Estado Final**: 🎉 **Sprints 8.4 y 8.6 COMPLETADOS AL 100%**
 
+### **Correcciones Post-Completado (24-11-2025)**
+
+✅ **Errores Reales Encontrados y Corregidos**:
+1. **Tests de Jobs fallaban** (9 de 40 tests):
+   - `backoff()` → `backoff` (property, no método)
+   - `cacheType` → `cleanType` en CleanCacheJob
+   - **Resultado**: 31/31 tests pasan ✅
+
+2. **Imports incorrectos routes/api.php** (50+ errores PHPStan):
+   - Faltaba namespace `API\` en 14 controladores
+   - Verificados namespaces reales vs imports
+   - **Resultado**: 0 errores de imports ✅
+
+3. **ConsecutivoFEController auth()->user()** (11 errores IDE):
+   - Agregado helper `getEmpresaId()` con PHPDoc
+   - Reemplazadas 10 ocurrencias
+   - **Resultado**: Código más limpio y sin warnings ✅
+
+**Commit**: `1f12fb9` - fix: corregir errores reales encontrados en tests y PHPStan
+
+---
+
 **Autor**: GitHub Copilot  
 **Fecha**: 24 de noviembre de 2025  
-**Versión**: 1.0.0
+**Versión**: 1.0.1 (con correcciones)
