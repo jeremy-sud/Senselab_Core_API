@@ -7,6 +7,7 @@ use App\Http\Requests\StoreCuentaPorCobrarRequest;
 use App\Http\Requests\UpdateCuentaPorCobrarRequest;
 use App\Http\Resources\CuentaPorCobrarResource;
 use App\Models\CuentaPorCobrar;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -24,6 +25,20 @@ use OpenApi\Attributes as OA;
  */
 class CuentaPorCobrarController extends Controller
 {
+    use HasCacheableQueries;
+
+    /**
+     * Tags para invalidación de cache
+     * @var array<string>
+     */
+    protected array $cacheTags = ['cuentas-por-cobrar', 'finanzas'];
+
+    /**
+     * TTL del cache en segundos (30 minutos)
+     * Datos semi-dinámicos: saldos actualizan con pagos
+     * @var int
+     */
+    protected int $cacheTTL = 1800;
     /**
      * Listar todas las cuentas por cobrar de la empresa autenticada
      *
@@ -54,34 +69,45 @@ class CuentaPorCobrarController extends Controller
 
         $empresaId = $request->user()->empresa_id;
         
-        $query = CuentaPorCobrar::where('empresa_id', $empresaId)
-            ->where('eliminado', 0)
-            ->with(['cliente', 'venta', 'empresa']);
+        return $this->cacheQueryIfEnabled(function () use ($request, $empresaId) {
+            $query = CuentaPorCobrar::where('empresa_id', $empresaId)
+                ->where('eliminado', 0)
+                ->with(['cliente', 'venta', 'empresa']);
 
-        // Filtros opcionales
-        if ($request->filled('estado')) {
-            $query->where('estado', $request->estado);
-        }
+            // Filtros opcionales
+            if ($request->filled('estado')) {
+                $query->where('estado', $request->estado);
+            }
 
-        if ($request->filled('cliente_id')) {
-            $query->where('cliente_id', $request->cliente_id);
-        }
+            if ($request->filled('cliente_id')) {
+                $query->where('cliente_id', $request->cliente_id);
+            }
 
-        if ($request->filled('vencidas')) {
-            $query->where('fecha_vencimiento', '<', now())
-                ->whereIn('estado', ['Pendiente', 'Pagada Parcialmente']);
-        }
+            if ($request->filled('vencidas')) {
+                $query->where('fecha_vencimiento', '<', now())
+                    ->whereIn('estado', ['Pendiente', 'Pagada Parcialmente']);
+            }
 
-        if ($request->filled('desde') && $request->filled('hasta')) {
-            $query->whereBetween('fecha_emision', [$request->desde, $request->hasta]);
-        }
+            if ($request->filled('desde') && $request->filled('hasta')) {
+                $query->whereBetween('fecha_emision', [$request->desde, $request->hasta]);
+            }
 
-        // Ordenamiento
-        $query->orderBy($request->get('sort_by', 'fecha_vencimiento'), $request->get('sort_order', 'asc'));
+            // Ordenamiento
+            $query->orderBy($request->get('sort_by', 'fecha_vencimiento'), $request->get('sort_order', 'asc'));
 
-        $cuentas = $query->paginate($request->get('per_page', 15));
+            $cuentas = $query->paginate($request->get('per_page', 15));
 
-        return CuentaPorCobrarResource::collection($cuentas);
+            return CuentaPorCobrarResource::collection($cuentas);
+        }, [
+            'estado' => $request->input('estado'),
+            'cliente_id' => $request->input('cliente_id'),
+            'vencidas' => $request->input('vencidas'),
+            'desde' => $request->input('desde'),
+            'hasta' => $request->input('hasta'),
+            'sort_by' => $request->input('sort_by'),
+            'sort_order' => $request->input('sort_order'),
+            'per_page' => $request->input('per_page')
+        ]);
     }
 
     /**
@@ -124,6 +150,7 @@ class CuentaPorCobrarController extends Controller
 
         $cuenta = CuentaPorCobrar::create($validated);
         $cuenta->load(['cliente', 'venta', 'empresa']);
+        $this->flushCache();
 
         return response()->json([
             'success' => true,
@@ -195,6 +222,7 @@ class CuentaPorCobrarController extends Controller
 
         $cuenta->update($request->validated());
         $cuenta->load(['cliente', 'venta', 'empresa']);
+        $this->flushCache();
 
         return response()->json([
             'success' => true,
@@ -241,6 +269,7 @@ class CuentaPorCobrarController extends Controller
         }
 
         $cuenta->update(['eliminado' => 1, 'activo' => 0]);
+        $this->flushCache();
 
         return response()->json([
             'success' => true,

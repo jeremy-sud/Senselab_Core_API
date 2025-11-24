@@ -7,6 +7,7 @@ use App\Http\Requests\StoreHorarioRutaRequest;
 use App\Http\Requests\UpdateHorarioRutaRequest;
 use App\Http\Resources\HorarioRutaResource;
 use App\Models\HorarioRuta;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -24,6 +25,20 @@ use OpenApi\Attributes as OA;
  */
 class HorarioRutaController extends Controller
 {
+    use HasCacheableQueries;
+
+    /**
+     * Tags para invalidación de cache
+     * @var array<string>
+     */
+    protected array $cacheTags = ['horarios-rutas', 'transporte'];
+
+    /**
+     * TTL del cache en segundos (15 minutos)
+     * Datos altamente dinámicos: fechas/horarios cambian frecuentemente
+     * @var int
+     */
+    protected int $cacheTTL = 900;
     /**
      * Listar todos los horarios de ruta
      *
@@ -97,39 +112,48 @@ class HorarioRutaController extends Controller
     {
         $this->authorize('viewAny', HorarioRuta::class);
         
-        $query = HorarioRuta::with(['ruta', 'bus'])
-            ->where('eliminado', 0);
+        return $this->cacheQueryIfEnabled(function () use ($request) {
+            $query = HorarioRuta::with(['ruta', 'bus'])
+                ->where('eliminado', 0);
 
-        // Filtro por ruta
-        if ($request->filled('ruta_id')) {
-            $query->where('ruta_id', $request->ruta_id);
-        }
+            // Filtro por ruta
+            if ($request->filled('ruta_id')) {
+                $query->where('ruta_id', $request->ruta_id);
+            }
 
-        // Filtro por bus
-        if ($request->filled('bus_id')) {
-            $query->where('bus_id', $request->bus_id);
-        }
+            // Filtro por bus
+            if ($request->filled('bus_id')) {
+                $query->where('bus_id', $request->bus_id);
+            }
 
-        // Filtro por estado
-        if ($request->filled('estado')) {
-            $query->where('estado', $request->estado);
-        }
+            // Filtro por estado
+            if ($request->filled('estado')) {
+                $query->where('estado', $request->estado);
+            }
 
-        // Filtro por fecha
-        if ($request->filled('fecha')) {
-            $query->whereDate('fecha_salida', $request->fecha);
-        }
+            // Filtro por fecha
+            if ($request->filled('fecha')) {
+                $query->whereDate('fecha_salida', $request->fecha);
+            }
 
-        // Filtro por rango de fechas
-        if ($request->filled('desde') && $request->filled('hasta')) {
-            $query->whereBetween('fecha_salida', [$request->desde, $request->hasta]);
-        }
+            // Filtro por rango de fechas
+            if ($request->filled('desde') && $request->filled('hasta')) {
+                $query->whereBetween('fecha_salida', [$request->desde, $request->hasta]);
+            }
 
-        $horarios = $query->orderBy('fecha_salida', 'desc')
-            ->orderBy('hora_salida', 'desc')
-            ->paginate(15);
+            $horarios = $query->orderBy('fecha_salida', 'desc')
+                ->orderBy('hora_salida', 'desc')
+                ->paginate(15);
 
-        return HorarioRutaResource::collection($horarios);
+            return HorarioRutaResource::collection($horarios);
+        }, [
+            'ruta_id' => $request->input('ruta_id'),
+            'bus_id' => $request->input('bus_id'),
+            'estado' => $request->input('estado'),
+            'fecha' => $request->input('fecha'),
+            'desde' => $request->input('desde'),
+            'hasta' => $request->input('hasta')
+        ]);
     }
 
     /**
@@ -190,6 +214,7 @@ class HorarioRutaController extends Controller
             ]);
 
             DB::commit();
+            $this->flushCache();
 
             return new HorarioRutaResource($horario->load(['ruta', 'bus']));
 
@@ -304,6 +329,8 @@ class HorarioRutaController extends Controller
             'activo'
         ]));
 
+        $this->flushCache();
+
         return new HorarioRutaResource($horario->load(['ruta', 'bus']));
     }
 
@@ -358,6 +385,7 @@ class HorarioRutaController extends Controller
         }
 
         $horario->update(['eliminado' => 1, 'activo' => 0]);
+        $this->flushCache();
 
         return response()->json([
             'message' => 'Horario de ruta eliminado exitosamente'
