@@ -7,6 +7,7 @@ use App\Http\Requests\StoreRutaRequest;
 use App\Http\Requests\UpdateRutaRequest;
 use App\Http\Resources\RutaResource;
 use App\Models\Ruta;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -23,6 +24,10 @@ use OpenApi\Attributes as OA;
  */
 class RutaController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['rutas', 'transporte'];
+    protected int $cacheTTL = 1800; // 30 min - rutas cambian ocasionalmente
     /**
      * Listar todas las rutas de la empresa autenticada
      *
@@ -77,27 +82,35 @@ class RutaController extends Controller
         
         $empresaId = $request->user()->empresa_id;
         
-        $query = Ruta::where('empresa_id', $empresaId)
-            ->where('eliminado', 0)
-            ->with(['empresa']);
+        $cacheKey = $this->getCacheKey('index', [
+            'origen' => $request->get('origen'),
+            'destino' => $request->get('destino'),
+            'activo' => $request->get('activo')
+        ]);
 
-        // Filtro por origen o destino
-        if ($request->filled('origen')) {
-            $query->where('origen', 'like', '%' . $request->origen . '%');
-        }
+        return $this->cacheQueryIfEnabled($cacheKey, function () use ($request, $empresaId) {
+            $query = Ruta::where('empresa_id', $empresaId)
+                ->where('eliminado', 0)
+                ->with(['empresa']);
 
-        if ($request->filled('destino')) {
-            $query->where('destino', 'like', '%' . $request->destino . '%');
-        }
+            // Filtro por origen o destino
+            if ($request->filled('origen')) {
+                $query->where('origen', 'like', '%' . $request->origen . '%');
+            }
 
-        // Filtro por activo
-        if ($request->filled('activo')) {
-            $query->where('activo', $request->activo);
-        }
+            if ($request->filled('destino')) {
+                $query->where('destino', 'like', '%' . $request->destino . '%');
+            }
 
-        $rutas = $query->orderBy('nombre')->paginate(15);
+            // Filtro por activo
+            if ($request->filled('activo')) {
+                $query->where('activo', $request->activo);
+            }
 
-        return RutaResource::collection($rutas);
+            $rutas = $query->orderBy('nombre')->paginate(15);
+
+            return RutaResource::collection($rutas);
+        });
     }
 
     /**
@@ -151,6 +164,8 @@ class RutaController extends Controller
             'observaciones' => $request->observaciones,
             'activo' => $request->activo ?? 1
         ]);
+
+        $this->flushCache();
 
         return new RutaResource($ruta->load(['empresa']));
     }
@@ -262,6 +277,8 @@ class RutaController extends Controller
             'activo'
         ]));
 
+        $this->flushCache();
+
         return new RutaResource($ruta->load(['empresa']));
     }
 
@@ -321,6 +338,8 @@ class RutaController extends Controller
 
         $ruta->update(['eliminado' => 1, 'activo' => 0]);
 
+        $this->flushCache();
+
         return response()->json([
             'message' => 'Ruta eliminada exitosamente'
         ]);
@@ -364,14 +383,18 @@ class RutaController extends Controller
     {
         $empresaId = $request->user()->empresa_id;
 
-        $rutas = Ruta::where('empresa_id', $empresaId)
-            ->where('eliminado', 0)
-            ->where('activo', 1)
-            ->select('id', 'nombre', 'origen', 'destino', 'tarifa_base', 'duracion_estimada')
-            ->orderBy('nombre')
-            ->get();
+        $cacheKey = $this->getCacheKey('activas', []);
 
-        return response()->json($rutas);
+        return $this->cacheQueryIfEnabled($cacheKey, function () use ($empresaId) {
+            $rutas = Ruta::where('empresa_id', $empresaId)
+                ->where('eliminado', 0)
+                ->where('activo', 1)
+                ->select('id', 'nombre', 'origen', 'destino', 'tarifa_base', 'duracion_estimada')
+                ->orderBy('nombre')
+                ->get();
+
+            return response()->json($rutas);
+        });
     }
 
     /**
