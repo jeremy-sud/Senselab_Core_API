@@ -17,6 +17,9 @@ class UpdateClienteRequest extends FormRequest
         return true;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function rules(): array
     {
         return [
@@ -39,6 +42,9 @@ class UpdateClienteRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function messages(): array
     {
         return [
@@ -51,7 +57,10 @@ class UpdateClienteRequest extends FormRequest
     /**
      * Validación adicional para unicidad de identificación
      */
-    public function withValidator($validator)
+    /**
+     * @param \Illuminate\Validation\Validator $validator
+     */
+    public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
             $clienteId = $this->route('cliente');
