@@ -7,6 +7,7 @@ use App\Models\DeclaracionTributaria;
 use App\Http\Requests\StoreDeclaracionTributariaRequest;
 use App\Http\Requests\UpdateDeclaracionTributariaRequest;
 use App\Http\Resources\DeclaracionTributariaResource;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,6 +20,10 @@ use Illuminate\Support\Facades\Auth;
  */
 class DeclaracionTributariaController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['declaraciones-tributarias', 'contabilidad', 'hacienda'];
+    protected int $cacheTTL = 2700; // 45min - tax filing queries, semi-stable
     /**
      * Display a listing of the resource.
      * 
@@ -29,90 +34,92 @@ class DeclaracionTributariaController extends Controller
     {
         $this->authorize('viewAny', DeclaracionTributaria::class);
         
-        try {
-            $perPage = $request->input('per_page', 15);
-            $search = $request->input('search');
-            $empresaId = Auth::user()->empresa_id;
-            
-            $query = DeclaracionTributaria::with(['empresa'])
-                                          ->where('empresa_id', $empresaId)
-                                          ->where('eliminado', false);
-            
-            if ($search) {
-                $query->where(function($q) use ($search) {
-                    $q->where('periodo_fiscal', 'like', "%{$search}%")
-                      ->orWhere('numero_confirmacion', 'like', "%{$search}%")
-                      ->orWhere('notas', 'like', "%{$search}%");
-                });
-            }
-            
-            // Filtro por tipo de declaración
-            if ($request->has('tipo_declaracion')) {
-                $query->porTipo($request->input('tipo_declaracion'));
-            }
-            
-            // Filtros rápidos por tipo
-            if ($request->boolean('solo_iva')) {
-                $query->porTipo('D104');
-            }
-            
-            if ($request->boolean('solo_renta')) {
-                $query->porTipo('D101');
-            }
-            
-            // Filtro por estado
-            if ($request->has('estado')) {
-                $estado = $request->input('estado');
+        return $this->cacheQueryIfEnabled(function() use ($request) {
+            try {
+                $perPage = $request->input('per_page', 15);
+                $search = $request->input('search');
+                $empresaId = Auth::user()->empresa_id;
                 
-                if ($estado === 'borrador') {
-                    $query->borradores();
-                } elseif ($estado === 'enviada') {
-                    $query->enviadas();
-                } elseif ($estado === 'aceptada') {
-                    $query->aceptadas();
+                $query = DeclaracionTributaria::with(['empresa'])
+                                              ->where('empresa_id', $empresaId)
+                                              ->where('eliminado', false);
+                
+                if ($search) {
+                    $query->where(function($q) use ($search) {
+                        $q->where('periodo_fiscal', 'like', "%{$search}%")
+                          ->orWhere('numero_confirmacion', 'like', "%{$search}%")
+                          ->orWhere('notas', 'like', "%{$search}%");
+                    });
                 }
+                
+                // Filtro por tipo de declaración
+                if ($request->has('tipo_declaracion')) {
+                    $query->porTipo($request->input('tipo_declaracion'));
+                }
+                
+                // Filtros rápidos por tipo
+                if ($request->boolean('solo_iva')) {
+                    $query->porTipo('D104');
+                }
+                
+                if ($request->boolean('solo_renta')) {
+                    $query->porTipo('D101');
+                }
+                
+                // Filtro por estado
+                if ($request->has('estado')) {
+                    $estado = $request->input('estado');
+                    
+                    if ($estado === 'borrador') {
+                        $query->borradores();
+                    } elseif ($estado === 'enviada') {
+                        $query->enviadas();
+                    } elseif ($estado === 'aceptada') {
+                        $query->aceptadas();
+                    }
+                }
+                
+                // Filtro por período fiscal
+                if ($request->has('periodo_fiscal')) {
+                    $query->porPeriodo($request->input('periodo_fiscal'));
+                }
+                
+                // Filtro por año fiscal
+                if ($request->has('anio_fiscal')) {
+                    $query->where('periodo_fiscal', 'like', $request->input('anio_fiscal') . '%');
+                }
+                
+                // Filtro por rango de fechas
+                if ($request->has('fecha_desde')) {
+                    $query->where('fecha_inicio_periodo', '>=', $request->input('fecha_desde'));
+                }
+                
+                if ($request->has('fecha_hasta')) {
+                    $query->where('fecha_fin_periodo', '<=', $request->input('fecha_hasta'));
+                }
+                
+                // Filtro por declaraciones con saldo a pagar
+                if ($request->boolean('con_saldo_pagar')) {
+                    $query->where('monto_a_pagar', '>', 0);
+                }
+                
+                // Filtro por declaraciones con saldo a favor
+                if ($request->boolean('con_saldo_favor')) {
+                    $query->where('monto_a_favor', '>', 0);
+                }
+                
+                $declaraciones = $query->orderBy('fecha_inicio_periodo', 'desc')
+                                       ->orderBy('created_at', 'desc')
+                                       ->paginate($perPage);
+                
+                return DeclaracionTributariaResource::collection($declaraciones);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'message' => 'Error al obtener declaraciones tributarias',
+                    'error' => $e->getMessage()
+                ], 500);
             }
-            
-            // Filtro por período fiscal
-            if ($request->has('periodo_fiscal')) {
-                $query->porPeriodo($request->input('periodo_fiscal'));
-            }
-            
-            // Filtro por año fiscal
-            if ($request->has('anio_fiscal')) {
-                $query->where('periodo_fiscal', 'like', $request->input('anio_fiscal') . '%');
-            }
-            
-            // Filtro por rango de fechas
-            if ($request->has('fecha_desde')) {
-                $query->where('fecha_inicio_periodo', '>=', $request->input('fecha_desde'));
-            }
-            
-            if ($request->has('fecha_hasta')) {
-                $query->where('fecha_fin_periodo', '<=', $request->input('fecha_hasta'));
-            }
-            
-            // Filtro por declaraciones con saldo a pagar
-            if ($request->boolean('con_saldo_pagar')) {
-                $query->where('monto_a_pagar', '>', 0);
-            }
-            
-            // Filtro por declaraciones con saldo a favor
-            if ($request->boolean('con_saldo_favor')) {
-                $query->where('monto_a_favor', '>', 0);
-            }
-            
-            $declaraciones = $query->orderBy('fecha_inicio_periodo', 'desc')
-                                   ->orderBy('created_at', 'desc')
-                                   ->paginate($perPage);
-            
-            return DeclaracionTributariaResource::collection($declaraciones);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener declaraciones tributarias',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        }, $request);
     }
 
     /**
@@ -151,6 +158,8 @@ class DeclaracionTributariaController extends Controller
             
             $declaracion = DeclaracionTributaria::create($data);
             $declaracion->load(['empresa']);
+            
+            $this->flushCache();
             
             return (new DeclaracionTributariaResource($declaracion))
                 ->additional(['message' => 'Declaración tributaria creada exitosamente'])
@@ -233,6 +242,8 @@ class DeclaracionTributariaController extends Controller
             $declaracion->update($data);
             $declaracion->load(['empresa']);
             
+            $this->flushCache();
+            
             return (new DeclaracionTributariaResource($declaracion))
                 ->additional(['message' => 'Declaración tributaria actualizada exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -269,6 +280,8 @@ class DeclaracionTributariaController extends Controller
             
             // Soft delete
             $declaracion->update(['eliminado' => true]);
+            
+            $this->flushCache();
             
             return response()->json([
                 'message' => 'Declaración tributaria eliminada exitosamente'

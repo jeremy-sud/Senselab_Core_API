@@ -7,6 +7,7 @@ use App\Http\Requests\StorePresupuestoRequest;
 use App\Http\Requests\UpdatePresupuestoRequest;
 use App\Http\Resources\PresupuestoResource;
 use App\Models\Presupuesto;
+use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +23,10 @@ use OpenApi\Attributes as OA;
  */
 class PresupuestoController extends Controller
 {
+    use HasCacheableQueries;
+
+    protected array $cacheTags = ['presupuestos', 'finanzas'];
+    protected int $cacheTTL = 3600; // 1h - planning data, semi-stable
     /**
      * Listar presupuestos de la empresa
      */
@@ -60,20 +65,22 @@ class PresupuestoController extends Controller
         
         $empresaId = $request->user()->empresa_id;
 
-        $presupuestos = Presupuesto::where('empresa_id', $empresaId)
-            ->with('detalles.cuentaContable')
-            ->orderBy('periodo_inicio', 'desc')
-            ->paginate(15);
+        return $this->cacheQueryIfEnabled(function() use ($request, $empresaId) {
+            $presupuestos = Presupuesto::where('empresa_id', $empresaId)
+                ->with('detalles.cuentaContable')
+                ->orderBy('periodo_inicio', 'desc')
+                ->paginate(15);
 
-        return response()->json([
-            'success' => true,
-            'data' => PresupuestoResource::collection($presupuestos),
-            'meta' => [
-                'current_page' => $presupuestos->currentPage(),
-                'total' => $presupuestos->total(),
-                'per_page' => $presupuestos->perPage()
-            ]
-        ]);
+            return response()->json([
+                'success' => true,
+                'data' => PresupuestoResource::collection($presupuestos),
+                'meta' => [
+                    'current_page' => $presupuestos->currentPage(),
+                    'total' => $presupuestos->total(),
+                    'per_page' => $presupuestos->perPage()
+                ]
+            ]);
+        }, $request);
     }
 
     /**
@@ -129,6 +136,8 @@ class PresupuestoController extends Controller
             ]);
 
             DB::commit();
+            
+            $this->flushCache();
 
             return response()->json([
                 'success' => true,
@@ -264,6 +273,8 @@ class PresupuestoController extends Controller
             ]));
 
             DB::commit();
+            
+            $this->flushCache();
 
             return response()->json([
                 'success' => true,
@@ -331,6 +342,8 @@ class PresupuestoController extends Controller
         }
 
         $presupuesto->delete();
+        
+        $this->flushCache();
 
         return response()->json([
             'success' => true,
