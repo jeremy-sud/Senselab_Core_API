@@ -626,7 +626,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
     )]
     public function actualizarRespuestaHacienda(ActualizarRespuestaHaciendaRequest $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $comprobante = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)->findOrFail($id);
 

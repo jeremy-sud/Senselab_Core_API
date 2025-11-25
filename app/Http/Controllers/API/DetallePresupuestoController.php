@@ -9,6 +9,7 @@ use App\Http\Resources\DetallePresupuestoResource;
 use App\Models\DetallePresupuesto;
 use App\Models\Presupuesto;
 use App\Traits\HasCacheableQueries;
+use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
@@ -23,7 +24,7 @@ use OpenApi\Attributes as OA;
  */
 class DetallePresupuestoController extends Controller
 {
-    use HasCacheableQueries;
+    use HasCacheableQueries, HasEmpresaContext;
 
     protected array $cacheTags = ['detalles-presupuestos', 'presupuestos', 'finanzas'];
     protected int $cacheTTL = 3600; // 1h - budget details stable
@@ -64,7 +65,7 @@ class DetallePresupuestoController extends Controller
     {
         $this->authorize('viewAny', DetallePresupuesto::class);
         
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $cacheKey = $this->getCacheKey('index', ['presupuesto_id' => $presupuestoId]);
 
@@ -113,7 +114,7 @@ class DetallePresupuestoController extends Controller
     {
         $this->authorize('create', DetallePresupuesto::class);
         
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $presupuesto = Presupuesto::where('empresa_id', $empresaId)
             ->findOrFail($request->presupuesto_id);
@@ -170,7 +171,7 @@ class DetallePresupuestoController extends Controller
         $detalle = DetallePresupuesto::with(['presupuesto', 'cuentaContable'])
             ->findOrFail($id);
 
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
         if ($detalle->presupuesto->empresa_id !== $empresaId) {
             return response()->json([
                 'success' => false,
@@ -223,7 +224,7 @@ class DetallePresupuestoController extends Controller
     )]
     public function update(UpdateDetallePresupuestoRequest $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $detalle = DetallePresupuesto::with('presupuesto')
             ->findOrFail($id);
@@ -294,7 +295,7 @@ class DetallePresupuestoController extends Controller
     )]
     public function destroy(Request $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $detalle = DetallePresupuesto::with('presupuesto')
             ->findOrFail($id);

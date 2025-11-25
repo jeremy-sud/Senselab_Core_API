@@ -568,7 +568,7 @@ class CuentaContableController extends Controller
     )]
     public function paraMovimientos(Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $cuentas = CuentaContable::where('empresa_id', $empresaId)
             ->where('eliminado', 0)

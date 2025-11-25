@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateCuentaPorPagarRequest;
 use App\Http\Resources\CuentaPorPagarResource;
 use App\Models\CuentaPorPagar;
 use App\Traits\HasCacheableQueries;
+use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -25,7 +26,7 @@ use OpenApi\Attributes as OA;
  */
 class CuentaPorPagarController extends Controller
 {
-    use HasCacheableQueries;
+    use HasCacheableQueries, HasEmpresaContext;
 
     /**
      * Tags para invalidación de cache
@@ -67,7 +68,7 @@ class CuentaPorPagarController extends Controller
     {
         $this->authorize('viewAny', CuentaPorPagar::class);
 
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
         
         $cacheKey = $this->getCacheKey('index', [
             'estado' => $request->estado,
@@ -155,7 +156,7 @@ class CuentaPorPagarController extends Controller
         $this->authorize('create', CuentaPorPagar::class);
 
         $validated = $request->validated();
-        $validated['empresa_id'] = $request->user()->empresa_id;
+        $validated['empresa_id'] = $this->getEmpresaId();
 
         // Fecha de recepción por defecto es hoy si no se proporciona
         if (!isset($validated['fecha_recepcion_documento'])) {
@@ -194,7 +195,7 @@ class CuentaPorPagarController extends Controller
     )]
     public function show(int $id, Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $cuenta = CuentaPorPagar::where('empresa_id', $empresaId)
             ->where('id', $id)
@@ -226,7 +227,7 @@ class CuentaPorPagarController extends Controller
     )]
     public function update(UpdateCuentaPorPagarRequest $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $cuenta = CuentaPorPagar::where('empresa_id', $empresaId)
             ->where('id', $id)
@@ -266,7 +267,7 @@ class CuentaPorPagarController extends Controller
     )]
     public function destroy(int $id, Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $cuenta = CuentaPorPagar::where('empresa_id', $empresaId)
             ->where('id', $id)
@@ -319,7 +320,7 @@ class CuentaPorPagarController extends Controller
     )]
     public function vencidas(Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $vencidas = CuentaPorPagar::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
@@ -369,7 +370,7 @@ class CuentaPorPagarController extends Controller
     )]
     public function resumen(Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $resumen = CuentaPorPagar::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
