@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateRutaRequest;
 use App\Http\Resources\RutaResource;
 use App\Models\Ruta;
 use App\Traits\HasCacheableQueries;
+use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -24,8 +25,8 @@ use OpenApi\Attributes as OA;
  */
 class RutaController extends Controller
 {
-    use HasCacheableQueries;
-
+    use HasCacheableQueries, HasEmpresaContext;
+    /** @var array<string> */
     protected array $cacheTags = ['rutas', 'transporte'];
     protected int $cacheTTL = 1800; // 30 min - rutas cambian ocasionalmente
     /**
@@ -80,9 +81,10 @@ class RutaController extends Controller
     {
         $this->authorize('viewAny', Ruta::class);
         
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
         
         $cacheKey = $this->getCacheKey('index', [
+            'empresa_id' => $empresaId,
             'origen' => $request->get('origen'),
             'destino' => $request->get('destino'),
             'activo' => $request->get('activo')
@@ -151,7 +153,7 @@ class RutaController extends Controller
     {
         $this->authorize('create', Ruta::class);
         
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $ruta = Ruta::create([
             'empresa_id' => $empresaId,
@@ -200,7 +202,7 @@ class RutaController extends Controller
     )]
     public function show(int $id, Request $request): RutaResource
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $ruta = Ruta::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
@@ -258,7 +260,7 @@ class RutaController extends Controller
     )]
     public function update(UpdateRutaRequest $request, int $id): RutaResource
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $ruta = Ruta::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
@@ -321,7 +323,7 @@ class RutaController extends Controller
     )]
     public function destroy(int $id, Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $ruta = Ruta::where('empresa_id', $empresaId)
             ->where('eliminado', 0)

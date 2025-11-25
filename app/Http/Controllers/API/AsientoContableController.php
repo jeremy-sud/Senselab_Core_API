@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateAsientoContableRequest;
 use App\Http\Resources\AsientoContableResource;
 use App\Models\AsientoContable;
 use App\Traits\HasCacheableQueries;
+use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -25,7 +26,7 @@ use OpenApi\Attributes as OA;
  */
 class AsientoContableController extends Controller
 {
-    use HasCacheableQueries;
+    use HasCacheableQueries, HasEmpresaContext;
 
     /**
      * Tags para invalidación de cache
@@ -121,9 +122,10 @@ class AsientoContableController extends Controller
     {
         $this->authorize('viewAny', AsientoContable::class);
 
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
         
         $cacheKey = $this->getCacheKey('index', [
+            'empresa_id' => $empresaId,
             'estado' => $request->estado,
             'desde' => $request->desde,
             'hasta' => $request->hasta,
@@ -161,15 +163,7 @@ class AsientoContableController extends Controller
             $asientos = $query->paginate($request->get('per_page', 15));
 
             return AsientoContableResource::collection($asientos);
-        }, [
-            'estado' => $request->input('estado'),
-            'desde' => $request->input('desde'),
-            'hasta' => $request->input('hasta'),
-            'cuenta_contable_id' => $request->input('cuenta_contable_id'),
-            'sort_by' => $request->input('sort_by'),
-            'sort_order' => $request->input('sort_order'),
-            'per_page' => $request->input('per_page')
-        ]);
+        });
     }
 
     /**
@@ -237,12 +231,16 @@ class AsientoContableController extends Controller
             DB::beginTransaction();
 
             $validated = $request->validated();
-            $validated['empresa_id'] = $request->user()->empresa_id;
+            $validated['empresa_id'] = $this->getEmpresaId();
 
             // Calcular totales de debe y haber
             $detalles = $validated['detalles'];
-            $totalDebe = collect($detalles)->sum('debe');
-            $totalHaber = collect($detalles)->sum('haber');
+            $totalDebe = array_sum(array_map(static function ($d) {
+                return (float) ($d['debe'] ?? 0);
+            }, $detalles));
+            $totalHaber = array_sum(array_map(static function ($d) {
+                return (float) ($d['haber'] ?? 0);
+            }, $detalles));
 
             $validated['total_debe'] = $totalDebe;
             $validated['total_haber'] = $totalHaber;
@@ -320,7 +318,7 @@ class AsientoContableController extends Controller
     )]
     public function show(int $id, Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $asiento = AsientoContable::where('empresa_id', $empresaId)
             ->where('id', $id)
@@ -407,7 +405,7 @@ class AsientoContableController extends Controller
     )]
     public function update(UpdateAsientoContableRequest $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $asiento = AsientoContable::where('empresa_id', $empresaId)
             ->where('id', $id)
@@ -431,8 +429,12 @@ class AsientoContableController extends Controller
             // Si se actualizan los detalles, recalcular totales
             if (isset($validated['detalles'])) {
                 $detalles = $validated['detalles'];
-                $totalDebe = collect($detalles)->sum('debe');
-                $totalHaber = collect($detalles)->sum('haber');
+                $totalDebe = array_sum(array_map(static function ($d) {
+                    return (float) ($d['debe'] ?? 0);
+                }, $detalles));
+                $totalHaber = array_sum(array_map(static function ($d) {
+                    return (float) ($d['haber'] ?? 0);
+                }, $detalles));
 
                 $validated['total_debe'] = $totalDebe;
                 $validated['total_haber'] = $totalHaber;
@@ -513,7 +515,7 @@ class AsientoContableController extends Controller
     )]
     public function destroy(int $id, Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $asiento = AsientoContable::where('empresa_id', $empresaId)
             ->where('id', $id)
@@ -588,7 +590,7 @@ class AsientoContableController extends Controller
     )]
     public function mayorizar(int $id, Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $asiento = AsientoContable::where('empresa_id', $empresaId)
             ->where('id', $id)
