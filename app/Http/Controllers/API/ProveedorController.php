@@ -133,7 +133,7 @@ class ProveedorController extends Controller
                         $query->where('activo', true);
                     }
                     
-                    return $query->orderBy('id', 'asc')->cursorPaginate($perPage);
+                    return $query->orderBy('id', 'asc')->paginate($perPage);
                 }
             );
             

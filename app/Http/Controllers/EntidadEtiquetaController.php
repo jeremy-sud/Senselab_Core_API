@@ -43,7 +43,7 @@ class EntidadEtiquetaController extends Controller
             $query->where('entidad_id', $request->entidad_id);
         }
 
-        $entidadEtiquetas = $query->cursorPaginate($request->get('per_page', 15));
+        $entidadEtiquetas = $query->paginate($request->get('per_page', 15));
 
         return response()->json([
             'success' => true,

@@ -149,7 +149,7 @@ class TasaImpuestoController extends Controller
             // Ordenamiento
             $query->orderBy($request->get('sort_by', 'fecha_inicio_vigencia'), $request->get('sort_order', 'desc'));
 
-            $tasas = $query->cursorPaginate($request->get('per_page', 15));
+            $tasas = $query->paginate($request->get('per_page', 15));
 
             return TasaImpuestoResource::collection($tasas);
         });

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\ModeloBus;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BusUnidad extends Model
 {
@@ -119,5 +120,13 @@ class BusUnidad extends Model
         return $this->identificador_interno 
             ? "{$this->placa} ({$this->identificador_interno})"
             : $this->placa;
+    }
+
+    /**
+     * Relación: horarios/viajes programados asociados a la unidad.
+     */
+    public function horariosRuta(): HasMany
+    {
+        return $this->hasMany(HorarioRuta::class, 'bus_unidad_id');
     }
 }

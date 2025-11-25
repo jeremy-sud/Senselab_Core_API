@@ -105,7 +105,7 @@ class PagoCuentaCobrarController extends Controller
                 $query->fechaBetween($request->fecha_desde, $request->fecha_hasta);
             }
 
-            $pagos = $query->orderBy('id', 'desc')->cursorPaginate($perPage);
+            $pagos = $query->orderBy('id', 'desc')->paginate($perPage);
 
             return response()->json($pagos);
         });

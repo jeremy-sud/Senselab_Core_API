@@ -103,7 +103,7 @@ class CuentaPorPagarController extends Controller
             // Ordenamiento
             $query->orderBy($request->get('sort_by', 'fecha_vencimiento'), $request->get('sort_order', 'asc'));
 
-            $cuentas = $query->cursorPaginate($request->get('per_page', 15));
+            $cuentas = $query->paginate($request->get('per_page', 15));
 
             return CuentaPorPagarResource::collection($cuentas);
         }, [

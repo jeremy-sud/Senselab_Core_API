@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateCuentaPorCobrarRequest;
 use App\Http\Resources\CuentaPorCobrarResource;
 use App\Models\CuentaPorCobrar;
 use App\Traits\HasCacheableQueries;
+use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -25,7 +26,7 @@ use OpenApi\Attributes as OA;
  */
 class CuentaPorCobrarController extends Controller
 {
-    use HasCacheableQueries;
+    use HasCacheableQueries, HasEmpresaContext;
 
     /**
      * Tags para invalidación de cache
@@ -67,7 +68,7 @@ class CuentaPorCobrarController extends Controller
     {
         $this->authorize('viewAny', CuentaPorCobrar::class);
 
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
         
         $cacheKey = $this->getCacheKey('index', [
             'estado' => $request->estado,
@@ -103,19 +104,10 @@ class CuentaPorCobrarController extends Controller
             // Ordenamiento
             $query->orderBy($request->get('sort_by', 'fecha_vencimiento'), $request->get('sort_order', 'asc'));
 
-            $cuentas = $query->cursorPaginate($request->get('per_page', 15));
+            $cuentas = $query->paginate($request->get('per_page', 15));
 
             return CuentaPorCobrarResource::collection($cuentas);
-        }, [
-            'estado' => $request->input('estado'),
-            'cliente_id' => $request->input('cliente_id'),
-            'vencidas' => $request->input('vencidas'),
-            'desde' => $request->input('desde'),
-            'hasta' => $request->input('hasta'),
-            'sort_by' => $request->input('sort_by'),
-            'sort_order' => $request->input('sort_order'),
-            'per_page' => $request->input('per_page')
-        ]);
+        });
     }
 
     /**
@@ -154,7 +146,7 @@ class CuentaPorCobrarController extends Controller
         $this->authorize('create', CuentaPorCobrar::class);
 
         $validated = $request->validated();
-        $validated['empresa_id'] = $request->user()->empresa_id;
+        $validated['empresa_id'] = $this->getEmpresaId();
 
         $cuenta = CuentaPorCobrar::create($validated);
         $cuenta->load(['cliente', 'venta', 'empresa']);
@@ -188,7 +180,7 @@ class CuentaPorCobrarController extends Controller
     )]
     public function show(int $id, Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $cuenta = CuentaPorCobrar::where('empresa_id', $empresaId)
             ->where('id', $id)
@@ -220,7 +212,7 @@ class CuentaPorCobrarController extends Controller
     )]
     public function update(UpdateCuentaPorCobrarRequest $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $cuenta = CuentaPorCobrar::where('empresa_id', $empresaId)
             ->where('id', $id)
@@ -260,7 +252,7 @@ class CuentaPorCobrarController extends Controller
     )]
     public function destroy(int $id, Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $cuenta = CuentaPorCobrar::where('empresa_id', $empresaId)
             ->where('id', $id)
@@ -313,7 +305,7 @@ class CuentaPorCobrarController extends Controller
     )]
     public function vencidas(Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $vencidas = CuentaPorCobrar::where('empresa_id', $empresaId)
             ->where('eliminado', 0)

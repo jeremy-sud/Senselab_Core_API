@@ -48,7 +48,7 @@ class CodigoActividadEconomicaController extends Controller
                 $query->buscar($request->buscar);
             }
 
-            return $query->orderBy('id')->cursorPaginate($request->input('per_page', 20));
+            return $query->orderBy('id')->paginate($request->input('per_page', 20));
         });
 
         return response()->json(['success' => true, 'data' => $codigos]);

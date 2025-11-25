@@ -53,7 +53,7 @@ class LogAccesoSistemaController extends Controller
             $query->ultimos($dias);
 
             return $query->orderBy('creado_en', 'desc')
-                ->cursorPaginate($request->input('per_page', 50));
+                ->paginate($request->input('per_page', 50));
         });
 
         return response()->json(['success' => true, 'data' => $logs]);

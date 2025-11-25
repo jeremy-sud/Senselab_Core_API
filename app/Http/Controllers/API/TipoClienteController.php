@@ -79,7 +79,7 @@ class TipoClienteController extends Controller
                 }
                 
                 return $query->orderBy('nombre', 'asc')
-                              ->cursorPaginate($perPage);
+                              ->paginate($perPage);
             });
             
             return TipoClienteResource::collection($tiposCliente);

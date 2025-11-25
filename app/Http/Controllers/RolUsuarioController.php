@@ -24,7 +24,7 @@ class RolUsuarioController extends Controller
             $query->where('rol_id', $request->rol_id);
         }
 
-        $rolesUsuarios = $query->cursorPaginate($request->get('per_page', 15));
+        $rolesUsuarios = $query->paginate($request->get('per_page', 15));
 
         return response()->json([
             'success' => true,

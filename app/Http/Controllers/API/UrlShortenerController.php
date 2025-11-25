@@ -66,7 +66,7 @@ class UrlShortenerController extends Controller
                 }
                 
                 $perPage = $request->input('per_page', 15);
-                return $query->orderBy('id', 'desc')->cursorPaginate($perPage);
+                return $query->orderBy('id', 'desc')->paginate($perPage);
             });
             
             return UrlShortenerResource::collection($urls);

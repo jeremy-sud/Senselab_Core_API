@@ -62,7 +62,7 @@ class ModeloBusController extends Controller
         return $this->cacheQueryIfEnabled($cacheKey, function () {
             $modelos = ModeloBus::withCount('busesUnidades')
                 ->orderBy('nombre')
-                ->cursorPaginate(20);
+                ->paginate(20);
 
             return ModeloBusResource::collection($modelos);
         });

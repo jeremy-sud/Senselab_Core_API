@@ -84,7 +84,7 @@ class TipoComprobanteFeController extends Controller
                 }
                 
                 return $query->orderBy('codigo_dgt', 'asc')
-                              ->cursorPaginate($perPage);
+                              ->paginate($perPage);
             });
             
             return TipoComprobanteFeResource::collection($tiposComprobante);

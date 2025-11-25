@@ -126,7 +126,7 @@ class TiqueteDetalleController extends Controller
                 });
             }
 
-            $tiquetes = $query->orderBy('id', 'desc')->cursorPaginate(15);
+            $tiquetes = $query->orderBy('id', 'desc')->paginate(15);
 
             return TiqueteDetalleResource::collection($tiquetes);
         });

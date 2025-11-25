@@ -71,7 +71,7 @@ class PresupuestoController extends Controller
             $presupuestos = Presupuesto::where('empresa_id', $empresaId)
                 ->with('detalles.cuentaContable')
                 ->orderBy('periodo_inicio', 'desc')
-                ->cursorPaginate(15);
+                ->paginate(15);
 
             return response()->json([
                 'success' => true,

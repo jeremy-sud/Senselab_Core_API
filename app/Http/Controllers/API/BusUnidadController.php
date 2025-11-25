@@ -111,7 +111,7 @@ class BusUnidadController extends Controller
                 });
             }
 
-            $buses = $query->orderBy('id')->cursorPaginate(15);
+            $buses = $query->orderBy('id')->paginate(15);
 
             return BusUnidadResource::collection($buses);
         });

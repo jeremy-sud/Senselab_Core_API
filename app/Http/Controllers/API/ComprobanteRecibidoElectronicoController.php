@@ -73,7 +73,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
             $comprobantes = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)
                 ->with(['proveedor', 'entradaInventario', 'usuarioConfirmacion'])
                 ->orderBy('fecha_recepcion_sistema', 'desc')
-                ->cursorPaginate(15);
+                ->paginate(15);
 
             return response()->json([
                 'success' => true,

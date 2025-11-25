@@ -108,4 +108,13 @@ class AsientoContable extends Model
     {
         return $this->total_debe == $this->total_haber;
     }
+
+    /**
+     * Relación: detalles del asiento contable.
+     * Cada asiento posee múltiples movimientos (detalle_asientos).
+     */
+    public function detalles(): HasMany
+    {
+        return $this->hasMany(DetalleAsiento::class, 'asiento_contable_id');
+    }
 }

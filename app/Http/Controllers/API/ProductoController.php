@@ -175,7 +175,7 @@ class ProductoController extends Controller
                 }
                 
                 $productos = $query->orderBy('id', 'asc')
-                                   ->cursorPaginate($perPage);
+                                   ->paginate($perPage);
                 
                 return ProductoResource::collection($productos)->response();
             });
