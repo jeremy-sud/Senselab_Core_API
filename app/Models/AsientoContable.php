@@ -113,6 +113,9 @@ class AsientoContable extends Model
      * Relación: detalles del asiento contable.
      * Cada asiento posee múltiples movimientos (detalle_asientos).
      */
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\DetalleAsiento>
+     */
     public function detalles(): HasMany
     {
         return $this->hasMany(DetalleAsiento::class, 'asiento_contable_id');

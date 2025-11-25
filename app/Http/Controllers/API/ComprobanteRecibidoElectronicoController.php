@@ -9,6 +9,7 @@ use App\Http\Requests\ActualizarRespuestaHaciendaRequest;
 use App\Http\Resources\ComprobanteRecibidoElectronicoResource;
 use App\Models\ComprobanteRecibidoElectronico;
 use App\Traits\HasCacheableQueries;
+use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -25,8 +26,9 @@ use OpenApi\Attributes as OA;
  */
 class ComprobanteRecibidoElectronicoController extends Controller
 {
-    use HasCacheableQueries;
+    use HasCacheableQueries, HasEmpresaContext;
 
+    /** @var array<string> */
     protected array $cacheTags = ['comprobantes-recibidos', 'facturacion-electronica', 'hacienda'];
     protected int $cacheTTL = 1800; // 30min - electronic invoices semi-dynamic
     /**
@@ -35,7 +37,6 @@ class ComprobanteRecibidoElectronicoController extends Controller
     #[OA\Get(
         path: "/api/comprobantes-recibidos-electronicos",
         summary: "Listar comprobantes electrónicos recibidos",
-        description: "Obtiene la lista paginada de comprobantes electrónicos recibidos de proveedores (facturas, notas de crédito, etc.) según normativa DGT.",
         security: [["sanctum" => []]],
         tags: ["Facturación Electrónica"],
         responses: [
@@ -65,7 +66,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
     {
         $this->authorize('viewAny', ComprobanteRecibidoElectronico::class);
         
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $cacheKey = $this->getCacheKey('index', ['empresa_id' => $empresaId]);
 
@@ -125,7 +126,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
     {
         $this->authorize('create', ComprobanteRecibidoElectronico::class);
         
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         DB::beginTransaction();
         try {
@@ -191,7 +192,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
     )]
     public function show(Request $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $comprobante = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)
             ->with(['proveedor', 'entradaInventario', 'usuarioConfirmacion'])
@@ -243,7 +244,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
     )]
     public function update(UpdateComprobanteRecibidoElectronicoRequest $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $comprobante = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)->findOrFail($id);
         
@@ -320,7 +321,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
     )]
     public function destroy(Request $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $comprobante = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)->findOrFail($id);
         
@@ -370,7 +371,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
     )]
     public function confirmar(Request $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
         $usuarioId = $request->user()->id;
 
         $comprobante = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)->findOrFail($id);
@@ -421,7 +422,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
     )]
     public function rechazar(Request $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
         $usuarioId = $request->user()->id;
 
         $comprobante = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)->findOrFail($id);
@@ -481,7 +482,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
     )]
     public function porProveedor(Request $request, int $proveedorId): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $comprobantes = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)
             ->where('proveedor_id', $proveedorId)
@@ -524,7 +525,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
     )]
     public function pendientes(Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $comprobantes = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)
             ->where('confirmado_usuario', 0)

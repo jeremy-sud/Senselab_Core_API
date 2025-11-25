@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateBusUnidadRequest;
 use App\Http\Resources\BusUnidadResource;
 use App\Models\BusUnidad;
 use App\Traits\HasCacheableQueries;
+use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -24,8 +25,8 @@ use OpenApi\Attributes as OA;
  */
 class BusUnidadController extends Controller
 {
-    use HasCacheableQueries;
-
+    use HasCacheableQueries, HasEmpresaContext;
+    /** @var array<string> */
     protected array $cacheTags = ['buses-unidades', 'transporte'];
     protected int $cacheTTL = 1800; // 30 min - flota cambia ocasionalmente
     /**
@@ -79,9 +80,10 @@ class BusUnidadController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', BusUnidad::class);
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
         
         $cacheKey = $this->getCacheKey('index', [
+            'empresa_id' => $empresaId,
             'modelo_id' => $request->get('modelo_id'),
             'activo' => $request->get('activo'),
             'buscar' => $request->get('buscar')
@@ -151,7 +153,7 @@ class BusUnidadController extends Controller
     public function store(StoreBusUnidadRequest $request): BusUnidadResource
     {
         $this->authorize('create', BusUnidad::class);
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $bus = BusUnidad::create([
             'empresa_id' => $empresaId,
@@ -197,7 +199,7 @@ class BusUnidadController extends Controller
     )]
     public function show(int $id, Request $request): BusUnidadResource
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $bus = BusUnidad::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
@@ -252,7 +254,7 @@ class BusUnidadController extends Controller
     )]
     public function update(UpdateBusUnidadRequest $request, int $id): BusUnidadResource
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $bus = BusUnidad::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
@@ -312,7 +314,7 @@ class BusUnidadController extends Controller
     )]
     public function destroy(int $id, Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $bus = BusUnidad::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
@@ -371,7 +373,7 @@ class BusUnidadController extends Controller
     )]
     public function disponibles(Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $buses = BusUnidad::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
@@ -478,7 +480,7 @@ class BusUnidadController extends Controller
     )]
     public function porModelo(int $modeloId, Request $request): AnonymousResourceCollection
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $buses = BusUnidad::where('empresa_id', $empresaId)
             ->where('modelo_id', $modeloId)

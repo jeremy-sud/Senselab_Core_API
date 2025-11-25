@@ -9,6 +9,7 @@ use App\Http\Requests\ActualizarMultiplesConfiguracionesRequest;
 use App\Http\Resources\ConfiguracionResource;
 use App\Models\Configuracion;
 use App\Traits\HasCacheableQueries;
+use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
@@ -23,10 +24,11 @@ use OpenApi\Attributes as OA;
  */
 class ConfiguracionController extends Controller
 {
-    use HasCacheableQueries;
+    use HasCacheableQueries, HasEmpresaContext;
     
-    protected $cacheTags = ['configuraciones', 'settings'];
-    protected $cacheTTL = 7200; // 2 horas (cambia poco)
+    /** @var array<string> */
+    protected array $cacheTags = ['configuraciones', 'settings'];
+    protected int $cacheTTL = 7200; // 2 horas (cambia poco)
     /**
      * Listar configuraciones de la empresa
      */
@@ -43,7 +45,7 @@ class ConfiguracionController extends Controller
     public function index(Request $request): JsonResponse
     {
         $this->authorize('viewAny', Configuracion::class);
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $configuraciones = $this->cacheQueryIfEnabled(
             $this->getCacheKey('index', ['empresa_id' => $empresaId]),
@@ -88,7 +90,7 @@ class ConfiguracionController extends Controller
     public function store(StoreConfiguracionRequest $request): JsonResponse
     {
         $this->authorize('create', Configuracion::class);
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $configuracion = Configuracion::create([
             'empresa_id' => $empresaId,
@@ -123,7 +125,7 @@ class ConfiguracionController extends Controller
     )]
     public function show(Request $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $configuracion = Configuracion::where('empresa_id', $empresaId)->findOrFail($id);
 
@@ -148,7 +150,7 @@ class ConfiguracionController extends Controller
     )]
     public function update(UpdateConfiguracionRequest $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $configuracion = Configuracion::where('empresa_id', $empresaId)->findOrFail($id);
 
@@ -183,7 +185,7 @@ class ConfiguracionController extends Controller
     )]
     public function destroy(Request $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $configuracion = Configuracion::where('empresa_id', $empresaId)->findOrFail($id);
 
@@ -216,7 +218,7 @@ class ConfiguracionController extends Controller
     )]
     public function porClave(Request $request, string $clave): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $configuracion = Configuracion::where('empresa_id', $empresaId)
             ->where('clave', $clave)
@@ -261,7 +263,7 @@ class ConfiguracionController extends Controller
     )]
     public function obtenerValor(Request $request, string $clave): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $configuracion = Configuracion::where('empresa_id', $empresaId)
             ->where('clave', $clave)
@@ -344,7 +346,7 @@ class ConfiguracionController extends Controller
     )]
     public function actualizarMultiples(ActualizarMultiplesConfiguracionesRequest $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
         $actualizadas = 0;
 
         foreach ($request->configuraciones as $config) {
