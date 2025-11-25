@@ -9,6 +9,7 @@ use App\Http\Resources\DetalleSalidaInventarioResource;
 use App\Models\DetalleSalidaInventario;
 use App\Models\SalidaInventario;
 use App\Traits\HasCacheableQueries;
+use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -24,7 +25,7 @@ use OpenApi\Attributes as OA;
  */
 class DetalleSalidaInventarioController extends Controller
 {
-    use HasCacheableQueries;
+    use HasCacheableQueries, HasEmpresaContext;
 
     protected array $cacheTags = ['detalles-salidas-inventario', 'inventario', 'salidas'];
     protected int $cacheTTL = 1800; // 30min - inventory detail semi-dynamic
@@ -59,7 +60,7 @@ class DetalleSalidaInventarioController extends Controller
     {
         $this->authorize('viewAny', DetalleSalidaInventario::class);
         
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $cacheKey = $this->getCacheKey('index', ['salida_id' => $salidaId]);
 
@@ -121,7 +122,7 @@ class DetalleSalidaInventarioController extends Controller
     {
         $this->authorize('create', DetalleSalidaInventario::class);
         
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $salida = SalidaInventario::where('empresa_id', $empresaId)
             ->findOrFail($request->salida_inventario_id);
@@ -203,7 +204,7 @@ class DetalleSalidaInventarioController extends Controller
         $detalle = DetalleSalidaInventario::with(['producto', 'salidaInventario'])
             ->findOrFail($id);
 
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
         if ($detalle->salidaInventario->empresa_id !== $empresaId) {
             return response()->json([
                 'success' => false,
@@ -264,7 +265,7 @@ class DetalleSalidaInventarioController extends Controller
     )]
     public function update(UpdateDetalleSalidaInventarioRequest $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $detalle = DetalleSalidaInventario::with('salidaInventario')
             ->findOrFail($id);
@@ -354,7 +355,7 @@ class DetalleSalidaInventarioController extends Controller
     )]
     public function destroy(Request $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $detalle = DetalleSalidaInventario::with('salidaInventario')
             ->findOrFail($id);

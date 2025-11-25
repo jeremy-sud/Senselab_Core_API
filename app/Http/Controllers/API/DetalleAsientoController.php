@@ -10,6 +10,7 @@ use App\Http\Requests\LibroMayorRequest;
 use App\Http\Requests\BalanceComprobacionRequest;
 use App\Models\DetalleAsiento;
 use App\Traits\HasCacheableQueries;
+use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -27,7 +28,7 @@ use OpenApi\Attributes as OA;
  */
 class DetalleAsientoController extends Controller
 {
-    use HasCacheableQueries;
+    use HasCacheableQueries, HasEmpresaContext;
 
     protected array $cacheTags = ['detalles-asientos', 'contabilidad', 'asientos-contables'];
     protected int $cacheTTL = 3600; // 1h - accounting movements stable
@@ -118,7 +119,7 @@ class DetalleAsientoController extends Controller
     {
         $this->authorize('viewAny', DetalleAsiento::class);
         
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
         
         $cacheKey = $this->getCacheKey('index', [
             'asiento_contable_id' => $request->asiento_contable_id,
@@ -205,7 +206,7 @@ class DetalleAsientoController extends Controller
     )]
     public function show(int $id, Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $detalle = DetalleAsiento::whereHas('asientoContable', function ($q) use ($empresaId) {
                 $q->where('empresa_id', $empresaId);
@@ -284,7 +285,7 @@ class DetalleAsientoController extends Controller
     )]
     public function porCuenta(int $cuentaContableId, Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $query = DetalleAsiento::whereHas('asientoContable', function ($q) use ($empresaId) {
                 $q->where('empresa_id', $empresaId)
@@ -377,7 +378,7 @@ class DetalleAsientoController extends Controller
     )]
     public function libroMayor(LibroMayorRequest $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $query = DetalleAsiento::whereHas('asientoContable', function ($q) use ($empresaId, $request) {
                 $q->where('empresa_id', $empresaId)
@@ -488,7 +489,7 @@ class DetalleAsientoController extends Controller
     )]
     public function balanceComprobacion(BalanceComprobacionRequest $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $query = DetalleAsiento::whereHas('asientoContable', function ($q) use ($empresaId, $request) {
                 $q->where('empresa_id', $empresaId)

@@ -439,7 +439,7 @@ class PeriodoNominaController extends Controller
     )]
     public function procesar(int $id, Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $periodo = PeriodoNomina::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
@@ -533,7 +533,7 @@ class PeriodoNominaController extends Controller
     )]
     public function resumen(int $id, Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $periodo = PeriodoNomina::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
@@ -601,7 +601,7 @@ class PeriodoNominaController extends Controller
     )]
     public function activos(Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $periodos = PeriodoNomina::where('empresa_id', $empresaId)
             ->where('eliminado', 0)

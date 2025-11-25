@@ -355,7 +355,7 @@ class CuentaPorCobrarController extends Controller
     )]
     public function resumen(Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $resumen = CuentaPorCobrar::where('empresa_id', $empresaId)
             ->where('eliminado', 0)

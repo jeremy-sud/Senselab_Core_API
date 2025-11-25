@@ -8,6 +8,7 @@ use App\Http\Requests\UpdatePagoNominaRequest;
 use App\Http\Resources\PagoNominaResource;
 use App\Models\PagoNomina;
 use App\Traits\HasCacheableQueries;
+use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -25,7 +26,7 @@ use OpenApi\Attributes as OA;
  */
 class PagoNominaController extends Controller
 {
-    use HasCacheableQueries;
+    use HasCacheableQueries, HasEmpresaContext;
 
     protected array $cacheTags = ['pagos-nomina', 'nomina', 'rrhh'];
     protected int $cacheTTL = 1200; // 20min - payroll payments, dynamic
@@ -95,7 +96,7 @@ class PagoNominaController extends Controller
     {
         $this->authorize('viewAny', PagoNomina::class);
         
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
         
         $cacheKey = $this->getCacheKey('index', [
             'empleado_id' => $request->empleado_id,
@@ -176,7 +177,7 @@ class PagoNominaController extends Controller
     {
         $this->authorize('create', PagoNomina::class);
         
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         DB::beginTransaction();
 
@@ -238,7 +239,7 @@ class PagoNominaController extends Controller
     )]
     public function show(int $id, Request $request): PagoNominaResource
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $pago = PagoNomina::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
@@ -298,7 +299,7 @@ class PagoNominaController extends Controller
     )]
     public function update(UpdatePagoNominaRequest $request, int $id): PagoNominaResource
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $pago = PagoNomina::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
@@ -379,7 +380,7 @@ class PagoNominaController extends Controller
     )]
     public function destroy(int $id, Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $pago = PagoNomina::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
@@ -442,7 +443,7 @@ class PagoNominaController extends Controller
     )]
     public function marcarPagado(int $id, Request $request): PagoNominaResource
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $pago = PagoNomina::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
@@ -497,7 +498,7 @@ class PagoNominaController extends Controller
     )]
     public function porEmpleado(int $empleadoId, Request $request): AnonymousResourceCollection
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $pagos = PagoNomina::where('empresa_id', $empresaId)
             ->where('empleado_id', $empleadoId)
@@ -552,7 +553,7 @@ class PagoNominaController extends Controller
     )]
     public function resumenPorMetodoPago(Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $query = PagoNomina::where('empresa_id', $empresaId)
             ->where('eliminado', 0);
@@ -622,7 +623,7 @@ class PagoNominaController extends Controller
     )]
     public function totalesPorPeriodo(Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $query = PagoNomina::where('empresa_id', $empresaId)
             ->where('eliminado', 0);
