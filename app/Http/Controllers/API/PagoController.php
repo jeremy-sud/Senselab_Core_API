@@ -10,6 +10,7 @@ use App\Models\Pago;
 use App\Models\CuentaPorCobrar;
 use App\Models\CuentaPorPagar;
 use App\Traits\HasCacheableQueries;
+use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -27,7 +28,7 @@ use OpenApi\Attributes as OA;
  */
 class PagoController extends Controller
 {
-    use HasCacheableQueries;
+    use HasCacheableQueries, HasEmpresaContext;
 
     /**
      * Tags para invalidación de cache
@@ -116,9 +117,10 @@ class PagoController extends Controller
     {
         $this->authorize('viewAny', Pago::class);
         
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
         
         $cacheKey = $this->getCacheKey('index', [
+            'empresa_id' => $empresaId,
             'estado' => $request->estado,
             'forma_pago_id' => $request->forma_pago_id,
             'proveedor_id' => $request->proveedor_id,
@@ -164,17 +166,7 @@ class PagoController extends Controller
             $pagos = $query->paginate($request->get('per_page', 15));
 
             return PagoResource::collection($pagos);
-        }, [
-            'estado' => $request->input('estado'),
-            'forma_pago_id' => $request->input('forma_pago_id'),
-            'proveedor_id' => $request->input('proveedor_id'),
-            'cliente_id' => $request->input('cliente_id'),
-            'desde' => $request->input('desde'),
-            'hasta' => $request->input('hasta'),
-            'sort_by' => $request->input('sort_by'),
-            'sort_order' => $request->input('sort_order'),
-            'per_page' => $request->input('per_page')
-        ]);
+        });
     }
 
     /**
@@ -233,7 +225,7 @@ class PagoController extends Controller
             DB::beginTransaction();
 
             $validated = $request->validated();
-            $validated['empresa_id'] = $request->user()->empresa_id;
+            $validated['empresa_id'] = $this->getEmpresaId();
 
             $pago = Pago::create($validated);
 
@@ -311,7 +303,7 @@ class PagoController extends Controller
     )]
     public function show(int $id, Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $pago = Pago::where('empresa_id', $empresaId)
             ->where('id', $id)
@@ -396,7 +388,7 @@ class PagoController extends Controller
     )]
     public function update(UpdatePagoRequest $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $pago = Pago::where('empresa_id', $empresaId)
             ->where('id', $id)
@@ -501,7 +493,7 @@ class PagoController extends Controller
     )]
     public function destroy(int $id, Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $pago = Pago::where('empresa_id', $empresaId)
             ->where('id', $id)
@@ -629,7 +621,7 @@ class PagoController extends Controller
     )]
     public function resumenPorFormaPago(Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $resumen = Pago::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
