@@ -88,6 +88,27 @@ class CuentaContable extends Model
     }
 
     /**
+     * Alias: subcuentas (para compatibilidad con controladores)
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\CuentaContable>
+     */
+    public function subcuentas(): HasMany
+    {
+        return $this->hasMany(CuentaContable::class, 'cuenta_padre_id');
+    }
+
+    /**
+     * Relación con detalles de asientos asociados a esta cuenta.
+     * Útil para validar existencia de movimientos.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\DetalleAsiento>
+     */
+    public function asientos(): HasMany
+    {
+        return $this->hasMany(DetalleAsiento::class, 'cuenta_contable_id');
+    }
+
+    /**
      * Scope para obtener cuentas activas.
      */
     public function scopeActivas(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder

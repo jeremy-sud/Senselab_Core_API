@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateCuentaContableRequest;
 use App\Http\Resources\CuentaContableResource;
 use App\Models\CuentaContable;
 use App\Traits\HasCacheableQueries;
+use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -24,8 +25,9 @@ use OpenApi\Attributes as OA;
  */
 class CuentaContableController extends Controller
 {
-    use HasCacheableQueries;
+    use HasCacheableQueries, HasEmpresaContext;
 
+    /** @var array<string> */
     protected array $cacheTags = ['cuentas-contables', 'contabilidad'];
     protected int $cacheTTL = 3600; // 1 hora - plan contable cambia ocasionalmente
     /**
@@ -124,9 +126,10 @@ class CuentaContableController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', CuentaContable::class);
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
         
         $cacheKey = $this->getCacheKey('index', [
+            'empresa_id' => $empresaId,
             'tipo_cuenta_id' => $request->get('tipo_cuenta_id'),
             'cuenta_padre_id' => $request->get('cuenta_padre_id'),
             'principales' => $request->get('principales'),
@@ -230,7 +233,7 @@ class CuentaContableController extends Controller
     {
         $this->authorize('create', CuentaContable::class);
         $validated = $request->validated();
-        $validated['empresa_id'] = $request->user()->empresa_id;
+        $validated['empresa_id'] = $this->getEmpresaId();
 
         $cuenta = CuentaContable::create($validated);
         $cuenta->load(['cuentaPadre', 'tipoCuenta', 'subcuentas']);
@@ -289,7 +292,7 @@ class CuentaContableController extends Controller
     )]
     public function show(int $id, Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $cuenta = CuentaContable::where('empresa_id', $empresaId)
             ->where('id', $id)
@@ -370,7 +373,7 @@ class CuentaContableController extends Controller
     )]
     public function update(UpdateCuentaContableRequest $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $cuenta = CuentaContable::where('empresa_id', $empresaId)
             ->where('id', $id)
@@ -440,7 +443,7 @@ class CuentaContableController extends Controller
     )]
     public function destroy(int $id, Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $cuenta = CuentaContable::where('empresa_id', $empresaId)
             ->where('id', $id)
@@ -511,7 +514,7 @@ class CuentaContableController extends Controller
     )]
     public function arbol(Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         // Obtener solo las cuentas principales (sin padre)
         $cuentasPrincipales = CuentaContable::where('empresa_id', $empresaId)

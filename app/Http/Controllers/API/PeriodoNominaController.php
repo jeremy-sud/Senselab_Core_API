@@ -8,6 +8,7 @@ use App\Http\Requests\UpdatePeriodoNominaRequest;
 use App\Http\Resources\PeriodoNominaResource;
 use App\Models\PeriodoNomina;
 use App\Traits\HasCacheableQueries;
+use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -25,8 +26,9 @@ use OpenApi\Attributes as OA;
  */
 class PeriodoNominaController extends Controller
 {
-    use HasCacheableQueries;
+    use HasCacheableQueries, HasEmpresaContext;
 
+    /** @var array<string> */
     protected array $cacheTags = ['periodos-nomina', 'nomina', 'rrhh'];
     protected int $cacheTTL = 1800; // 30min - payroll periods, semi-dynamic
     /**
@@ -81,9 +83,10 @@ class PeriodoNominaController extends Controller
     {
         $this->authorize('viewAny', PeriodoNomina::class);
         
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
         
         $cacheKey = $this->getCacheKey('index', [
+            'empresa_id' => $empresaId,
             'estado' => $request->estado,
             'anio' => $request->anio,
             'mes' => $request->mes
@@ -152,7 +155,7 @@ class PeriodoNominaController extends Controller
     {
         $this->authorize('create', PeriodoNomina::class);
         
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $periodo = PeriodoNomina::create([
             'empresa_id' => $empresaId,
@@ -200,7 +203,7 @@ class PeriodoNominaController extends Controller
     )]
     public function show(int $id, Request $request): PeriodoNominaResource
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $periodo = PeriodoNomina::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
@@ -257,7 +260,7 @@ class PeriodoNominaController extends Controller
     )]
     public function update(UpdatePeriodoNominaRequest $request, int $id): PeriodoNominaResource
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $periodo = PeriodoNomina::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
@@ -324,7 +327,7 @@ class PeriodoNominaController extends Controller
     )]
     public function destroy(int $id, Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $periodo = PeriodoNomina::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
@@ -379,7 +382,7 @@ class PeriodoNominaController extends Controller
     )]
     public function cerrar(int $id, Request $request): PeriodoNominaResource
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $periodo = PeriodoNomina::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
