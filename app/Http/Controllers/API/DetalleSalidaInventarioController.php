@@ -27,6 +27,7 @@ class DetalleSalidaInventarioController extends Controller
 {
     use HasCacheableQueries, HasEmpresaContext;
 
+    /** @var array<string> */
     protected array $cacheTags = ['detalles-salidas-inventario', 'inventario', 'salidas'];
     protected int $cacheTTL = 1800; // 30min - inventory detail semi-dynamic
     /**
@@ -303,7 +304,7 @@ class DetalleSalidaInventarioController extends Controller
             $diferencia = $nuevoSubtotal - $subtotalAnterior;
             $detalle->salidaInventario->increment('monto_total', $diferencia);
 
-            $this->flushCache(['detalles-salidas-inventario', 'inventario', 'salidas']);
+            $this->flushCache();
 
             DB::commit();
 
@@ -382,7 +383,7 @@ class DetalleSalidaInventarioController extends Controller
             $detalle->salidaInventario->decrement('monto_total', $subtotal);
             $detalle->delete();
 
-            $this->flushCache(['detalles-salidas-inventario', 'inventario', 'salidas']);
+            $this->flushCache();
 
             DB::commit();
 

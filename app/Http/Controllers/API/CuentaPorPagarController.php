@@ -71,6 +71,7 @@ class CuentaPorPagarController extends Controller
         $empresaId = $this->getEmpresaId();
         
         $cacheKey = $this->getCacheKey('index', [
+            'empresa_id' => $empresaId,
             'estado' => $request->estado,
             'proveedor_id' => $request->proveedor_id,
             'vencidas' => $request->vencidas,
