@@ -8,6 +8,7 @@ use App\Http\Requests\UpdatePresupuestoRequest;
 use App\Http\Resources\PresupuestoResource;
 use App\Models\Presupuesto;
 use App\Traits\HasCacheableQueries;
+use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +24,7 @@ use OpenApi\Attributes as OA;
  */
 class PresupuestoController extends Controller
 {
-    use HasCacheableQueries;
+    use HasCacheableQueries, HasEmpresaContext;
 
     protected array $cacheTags = ['presupuestos', 'finanzas'];
     protected int $cacheTTL = 3600; // 1h - planning data, semi-stable
@@ -63,7 +64,7 @@ class PresupuestoController extends Controller
     {
         $this->authorize('viewAny', Presupuesto::class);
         
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $cacheKey = $this->getCacheKey('index', ['empresa_id' => $empresaId]);
 
@@ -125,7 +126,7 @@ class PresupuestoController extends Controller
     {
         $this->authorize('create', Presupuesto::class);
         
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         DB::beginTransaction();
         try {
@@ -192,7 +193,7 @@ class PresupuestoController extends Controller
     )]
     public function show(Request $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $presupuesto = Presupuesto::where('empresa_id', $empresaId)
             ->with('detalles.cuentaContable')
@@ -253,7 +254,7 @@ class PresupuestoController extends Controller
     )]
     public function update(UpdatePresupuestoRequest $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $presupuesto = Presupuesto::where('empresa_id', $empresaId)->findOrFail($id);
         
@@ -330,7 +331,7 @@ class PresupuestoController extends Controller
     )]
     public function destroy(Request $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $presupuesto = Presupuesto::where('empresa_id', $empresaId)->findOrFail($id);
         
@@ -390,7 +391,7 @@ class PresupuestoController extends Controller
     )]
     public function activar(Request $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $presupuesto = Presupuesto::where('empresa_id', $empresaId)->findOrFail($id);
 
@@ -454,7 +455,7 @@ class PresupuestoController extends Controller
     )]
     public function finalizar(Request $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $presupuesto = Presupuesto::where('empresa_id', $empresaId)->findOrFail($id);
 
@@ -499,7 +500,7 @@ class PresupuestoController extends Controller
     )]
     public function activos(Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $presupuestos = Presupuesto::where('empresa_id', $empresaId)
             ->where('estado', 'Activo')
@@ -557,7 +558,7 @@ class PresupuestoController extends Controller
     )]
     public function resumen(Request $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $presupuesto = Presupuesto::where('empresa_id', $empresaId)
             ->with('detalles.cuentaContable')

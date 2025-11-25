@@ -564,7 +564,7 @@ class EntradaInventarioController extends Controller
     )]
     public function porProveedor(Request $request, int $proveedorId): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $entradas = EntradaInventario::where('empresa_id', $empresaId)
             ->where('proveedor_id', $proveedorId)
@@ -619,7 +619,7 @@ class EntradaInventarioController extends Controller
     )]
     public function porAlmacen(Request $request, int $almacenId): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $entradas = EntradaInventario::where('empresa_id', $empresaId)
             ->where('almacen_id', $almacenId)
@@ -673,7 +673,7 @@ class EntradaInventarioController extends Controller
     )]
     public function resumenPorTipo(Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $resumen = EntradaInventario::where('empresa_id', $empresaId)
             ->selectRaw('tipo_entrada, COUNT(*) as total_entradas, SUM(monto_total) as monto_total')
@@ -711,7 +711,7 @@ class EntradaInventarioController extends Controller
     )]
     public function pendientes(Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $entradas = EntradaInventario::where('empresa_id', $empresaId)
             ->where('estado', 'Pendiente')

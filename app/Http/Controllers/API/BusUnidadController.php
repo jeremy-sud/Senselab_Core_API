@@ -416,9 +416,9 @@ class BusUnidadController extends Controller
             new OA\Response(response: 401, description: "No autenticado")
         ]
     )]
-    public function resumenFlota(Request $request): JsonResponse
+    public function resumenEstado(Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $resumen = [
             'total_buses' => BusUnidad::where('empresa_id', $empresaId)

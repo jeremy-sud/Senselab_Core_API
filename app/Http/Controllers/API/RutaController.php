@@ -383,9 +383,9 @@ class RutaController extends Controller
     )]
     public function activas(Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
-        $cacheKey = $this->getCacheKey('activas', []);
+        $cacheKey = $this->getCacheKey('activas', ['empresa_id' => $empresaId]);
 
         return $this->cacheQueryIfEnabled($cacheKey, function () use ($empresaId) {
             $rutas = Ruta::where('empresa_id', $empresaId)
@@ -467,7 +467,7 @@ class RutaController extends Controller
     )]
     public function calcularTarifa(int $id, Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $ruta = Ruta::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
@@ -556,7 +556,7 @@ class RutaController extends Controller
     )]
     public function estadisticas(int $id, Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $ruta = Ruta::where('empresa_id', $empresaId)
             ->where('eliminado', 0)

@@ -573,9 +573,9 @@ class ComprobanteRecibidoElectronicoController extends Controller
             new OA\Response(response: 401, description: "No autenticado")
         ]
     )]
-    public function resumenPorEstado(Request $request): JsonResponse
+    public function resumenPorProveedor(Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $resumen = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)
             ->selectRaw('estado_hacienda, COUNT(*) as total_comprobantes, SUM(total_comprobante) as monto_total')

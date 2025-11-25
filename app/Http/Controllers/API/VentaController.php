@@ -12,12 +12,13 @@ use App\Http\Requests\StoreVentaRequest;
 use App\Http\Requests\UpdateVentaRequest;
 use App\Http\Resources\VentaResource;
 use App\Traits\HasCacheableQueries;
+use App\Traits\HasEmpresaContext;
 use App\Jobs\GeneratePdfReportJob;
 use OpenApi\Attributes as OA;
 
 class VentaController extends Controller
 {
-    use HasCacheableQueries;
+    use HasCacheableQueries, HasEmpresaContext;
     
     /** @var array<int,string> */
     protected array $cacheTags = ['ventas', 'transacciones'];
@@ -697,7 +698,7 @@ class VentaController extends Controller
             'sucursal_id' => 'nullable|exists:sucursales,id',
         ]);
 
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
         
         // Dispatch job asíncrono (Sprint 8.4)
         $job = GeneratePdfReportJob::dispatch(
