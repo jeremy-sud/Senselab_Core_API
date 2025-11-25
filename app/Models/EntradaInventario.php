@@ -11,6 +11,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\DetalleEntradaInventario> $detalles
+ */
 class EntradaInventario extends Model
 {
     use HasFactory, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
@@ -80,6 +83,9 @@ class EntradaInventario extends Model
         return $this->belongsTo(OrdenCompra::class, 'orden_compra_id');
     }
 
+    /**
+     * @return HasMany<DetalleEntradaInventario, EntradaInventario>
+     */
     public function detalles(): HasMany
     {
         return $this->hasMany(DetalleEntradaInventario::class, 'entrada_inventario_id');
