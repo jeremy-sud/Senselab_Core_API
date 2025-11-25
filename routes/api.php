@@ -1014,5 +1014,5 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     Route::apiResource('zonas-geograficas', \App\Http\Controllers\API\ZonaGeograficaController::class);
     
     // Logs Acceso Sistema
-    Route::apiResource('logs-acceso-sistema', \App\Http\Controllers\LogAccesoSistemaController::class);
+    Route::apiResource('logs-acceso-sistema', \App\Http\Controllers\API\LogAccesoSistemaController::class);
 });
