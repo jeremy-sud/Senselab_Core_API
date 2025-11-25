@@ -696,7 +696,7 @@ class AsientoContableController extends Controller
     )]
     public function validar(int $id, Request $request): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $asiento = AsientoContable::where('empresa_id', $empresaId)
             ->where('id', $id)

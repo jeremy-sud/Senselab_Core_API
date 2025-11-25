@@ -10,6 +10,7 @@ use App\Http\Resources\SalidaInventarioResource;
 use App\Models\EntradaInventario;
 use App\Models\SalidaInventario;
 use App\Traits\HasCacheableQueries;
+use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -28,7 +29,7 @@ use OpenApi\Attributes as OA;
  */
 class InventarioController extends Controller
 {
-    use HasCacheableQueries;
+    use HasCacheableQueries, HasEmpresaContext;
 
     protected array $cacheTags = ['inventario', 'movimientos-inventario'];
     protected int $cacheTTL = 1200; // 20 minutos - movimientos semi-dinámicos
@@ -100,9 +101,10 @@ class InventarioController extends Controller
     {
         $this->authorize('viewAny', EntradaInventario::class);
         
-        $empresaId = auth('sanctum')->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
         
         $cacheKey = $this->getCacheKey('entradas', [
+            'empresa_id' => $empresaId,
             'almacen_id' => $request->input('almacen_id'),
             'estado' => $request->input('estado'),
             'tipo_entrada' => $request->input('tipo_entrada'),
@@ -191,7 +193,7 @@ class InventarioController extends Controller
         $this->authorize('create', EntradaInventario::class);
         
         $validated = $request->validated();
-        $validated['empresa_id'] = auth('sanctum')->user()->empresa_id;
+        $validated['empresa_id'] = $this->getEmpresaId();
 
         $entrada = EntradaInventario::create($validated);
         $entrada->load(['almacen', 'ordenCompra', 'proveedor', 'detalles']);
@@ -239,7 +241,7 @@ class InventarioController extends Controller
     )]
     public function showEntrada(int $id): EntradaInventarioResource
     {
-        $empresaId = auth('sanctum')->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $entrada = EntradaInventario::where('empresa_id', $empresaId)
             ->with(['almacen', 'ordenCompra', 'proveedor', 'detalles.producto'])
@@ -317,9 +319,10 @@ class InventarioController extends Controller
     {
         $this->authorize('viewAny', SalidaInventario::class);
         
-        $empresaId = auth('sanctum')->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
         
         $cacheKey = $this->getCacheKey('salidas', [
+            'empresa_id' => $empresaId,
             'almacen_id' => $request->input('almacen_id'),
             'estado' => $request->input('estado'),
             'tipo_salida' => $request->input('tipo_salida'),
@@ -409,7 +412,7 @@ class InventarioController extends Controller
         $this->authorize('create', SalidaInventario::class);
         
         $validated = $request->validated();
-        $validated['empresa_id'] = auth('sanctum')->user()->empresa_id;
+        $validated['empresa_id'] = $this->getEmpresaId();
 
         $salida = SalidaInventario::create($validated);
         $salida->load(['almacen', 'venta', 'cliente', 'proveedor', 'detalles']);
@@ -457,7 +460,7 @@ class InventarioController extends Controller
     )]
     public function showSalida(int $id): SalidaInventarioResource
     {
-        $empresaId = auth('sanctum')->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $salida = SalidaInventario::where('empresa_id', $empresaId)
             ->with(['almacen', 'venta', 'cliente', 'proveedor', 'detalles.producto'])
@@ -515,7 +518,7 @@ class InventarioController extends Controller
     )]
     public function cancelarEntrada(int $id): JsonResponse
     {
-        $empresaId = auth('sanctum')->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $entrada = EntradaInventario::where('empresa_id', $empresaId)->findOrFail($id);
 
@@ -581,7 +584,7 @@ class InventarioController extends Controller
     )]
     public function cancelarSalida(int $id): JsonResponse
     {
-        $empresaId = auth('sanctum')->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $salida = SalidaInventario::where('empresa_id', $empresaId)->findOrFail($id);
 

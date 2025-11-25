@@ -9,6 +9,7 @@ use App\Http\Resources\DetalleEntradaInventarioResource;
 use App\Models\DetalleEntradaInventario;
 use App\Models\EntradaInventario;
 use App\Traits\HasCacheableQueries;
+use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -24,7 +25,7 @@ use OpenApi\Attributes as OA;
  */
 class DetalleEntradaInventarioController extends Controller
 {
-    use HasCacheableQueries;
+    use HasCacheableQueries, HasEmpresaContext;
 
     protected array $cacheTags = ['detalles-entradas-inventario', 'inventario', 'entradas'];
     protected int $cacheTTL = 1800; // 30min - inventory detail semi-dynamic
@@ -59,9 +60,9 @@ class DetalleEntradaInventarioController extends Controller
     {
         $this->authorize('viewAny', DetalleEntradaInventario::class);
         
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
-        $cacheKey = $this->getCacheKey('index', ['entrada_id' => $entradaId]);
+        $cacheKey = $this->getCacheKey('index', ['empresa_id' => $empresaId, 'entrada_id' => $entradaId]);
 
         return $this->cacheQueryIfEnabled($cacheKey, function() use ($empresaId, $entradaId) {
             $entrada = EntradaInventario::where('empresa_id', $empresaId)->findOrFail($entradaId);
@@ -121,7 +122,7 @@ class DetalleEntradaInventarioController extends Controller
     {
         $this->authorize('create', DetalleEntradaInventario::class);
         
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $entrada = EntradaInventario::where('empresa_id', $empresaId)
             ->findOrFail($request->entrada_inventario_id);
@@ -203,7 +204,7 @@ class DetalleEntradaInventarioController extends Controller
         $detalle = DetalleEntradaInventario::with(['producto', 'entradaInventario'])
             ->findOrFail($id);
 
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
         if ($detalle->entradaInventario->empresa_id !== $empresaId) {
             return response()->json([
                 'success' => false,
@@ -264,7 +265,7 @@ class DetalleEntradaInventarioController extends Controller
     )]
     public function update(UpdateDetalleEntradaInventarioRequest $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $detalle = DetalleEntradaInventario::with('entradaInventario')
             ->findOrFail($id);
@@ -302,7 +303,7 @@ class DetalleEntradaInventarioController extends Controller
             $diferencia = $nuevoSubtotal - $subtotalAnterior;
             $detalle->entradaInventario->increment('monto_total', $diferencia);
 
-            $this->flushCache(['detalles-entradas-inventario', 'inventario', 'entradas']);
+            $this->flushCache();
 
             DB::commit();
 
@@ -354,7 +355,7 @@ class DetalleEntradaInventarioController extends Controller
     )]
     public function destroy(Request $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $detalle = DetalleEntradaInventario::with('entradaInventario')
             ->findOrFail($id);
@@ -381,7 +382,7 @@ class DetalleEntradaInventarioController extends Controller
             $detalle->entradaInventario->decrement('monto_total', $subtotal);
             $detalle->delete();
 
-            $this->flushCache(['detalles-entradas-inventario', 'inventario', 'entradas']);
+            $this->flushCache();
 
             DB::commit();
 
