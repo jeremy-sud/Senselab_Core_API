@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateEntradaInventarioRequest;
 use App\Http\Resources\EntradaInventarioResource;
 use App\Models\EntradaInventario;
 use App\Traits\HasCacheableQueries;
+use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -24,7 +25,7 @@ use OpenApi\Attributes as OA;
  */
 class EntradaInventarioController extends Controller
 {
-    use HasCacheableQueries;
+    use HasCacheableQueries, HasEmpresaContext;
 
     /**
      * Tags para invalidación de cache
@@ -81,7 +82,7 @@ class EntradaInventarioController extends Controller
     {
         $this->authorize('viewAny', EntradaInventario::class);
         
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $cacheKey = $this->getCacheKey('index', ['empresa_id' => $empresaId]);
 
@@ -148,7 +149,7 @@ class EntradaInventarioController extends Controller
     {
         $this->authorize('create', EntradaInventario::class);
         
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         DB::beginTransaction();
         try {
@@ -213,7 +214,7 @@ class EntradaInventarioController extends Controller
     )]
     public function show(Request $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $entrada = EntradaInventario::where('empresa_id', $empresaId)
             ->with(['almacen', 'proveedor', 'ordenCompra', 'detalles.producto.unidadMedida'])
@@ -273,7 +274,7 @@ class EntradaInventarioController extends Controller
     )]
     public function update(UpdateEntradaInventarioRequest $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $entrada = EntradaInventario::where('empresa_id', $empresaId)->findOrFail($id);
         
@@ -347,7 +348,7 @@ class EntradaInventarioController extends Controller
     )]
     public function destroy(Request $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $entrada = EntradaInventario::where('empresa_id', $empresaId)->findOrFail($id);
         
@@ -410,7 +411,7 @@ class EntradaInventarioController extends Controller
     )]
     public function procesar(Request $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $entrada = EntradaInventario::where('empresa_id', $empresaId)
             ->with('detalles.producto')
@@ -442,12 +443,12 @@ class EntradaInventarioController extends Controller
                 if ($inventario) {
                     DB::table('inventarios')
                         ->where('id', $inventario->id)
-                        ->increment('cantidad_actual', $detalle->cantidad);
+                        ->increment('cantidad_actual', (float) $detalle->cantidad);
                 } else {
                     DB::table('inventarios')->insert([
                         'producto_id' => $detalle->producto_id,
                         'almacen_id' => $entrada->almacen_id,
-                        'cantidad_actual' => $detalle->cantidad,
+                        'cantidad_actual' => (float) $detalle->cantidad,
                         'cantidad_minima' => 0,
                         'creado_en' => now(),
                         'actualizado_en' => now()
@@ -506,7 +507,7 @@ class EntradaInventarioController extends Controller
     )]
     public function cancelar(Request $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $entrada = EntradaInventario::where('empresa_id', $empresaId)->findOrFail($id);
 

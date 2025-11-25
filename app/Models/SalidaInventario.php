@@ -7,6 +7,9 @@ use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
 
+/**
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\DetalleSalidaInventario> $detalles
+ */
 class SalidaInventario extends Model
 {
     use HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
@@ -115,6 +118,9 @@ class SalidaInventario extends Model
 
     /**
      * Relación con los detalles de la salida.
+     */
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<DetalleSalidaInventario, SalidaInventario>
      */
     public function detalles(): \Illuminate\Database\Eloquent\Relations\HasMany
     {

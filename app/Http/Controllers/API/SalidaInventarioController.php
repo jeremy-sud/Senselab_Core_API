@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateSalidaInventarioRequest;
 use App\Http\Resources\SalidaInventarioResource;
 use App\Models\SalidaInventario;
 use App\Traits\HasCacheableQueries;
+use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -24,7 +25,7 @@ use OpenApi\Attributes as OA;
  */
 class SalidaInventarioController extends Controller
 {
-    use HasCacheableQueries;
+    use HasCacheableQueries, HasEmpresaContext;
 
     /**
      * Tags para invalidación de cache
@@ -81,7 +82,7 @@ class SalidaInventarioController extends Controller
     {
         $this->authorize('viewAny', SalidaInventario::class);
         
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $cacheKey = $this->getCacheKey('index', ['empresa_id' => $empresaId]);
 
@@ -150,7 +151,7 @@ class SalidaInventarioController extends Controller
     {
         $this->authorize('create', SalidaInventario::class);
         
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         DB::beginTransaction();
         try {
@@ -217,7 +218,7 @@ class SalidaInventarioController extends Controller
     )]
     public function show(Request $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $salida = SalidaInventario::where('empresa_id', $empresaId)
             ->with(['almacen', 'cliente', 'proveedor', 'venta', 'detalles.producto.unidadMedida'])
@@ -279,7 +280,7 @@ class SalidaInventarioController extends Controller
     )]
     public function update(UpdateSalidaInventarioRequest $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $salida = SalidaInventario::where('empresa_id', $empresaId)->findOrFail($id);
         
@@ -355,7 +356,7 @@ class SalidaInventarioController extends Controller
     )]
     public function destroy(Request $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $salida = SalidaInventario::where('empresa_id', $empresaId)->findOrFail($id);
         
@@ -418,7 +419,7 @@ class SalidaInventarioController extends Controller
     )]
     public function procesar(Request $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $salida = SalidaInventario::where('empresa_id', $empresaId)
             ->with('detalles.producto')
@@ -457,7 +458,7 @@ class SalidaInventarioController extends Controller
 
                 DB::table('inventarios')
                     ->where('id', $inventario->id)
-                    ->decrement('cantidad_actual', $detalle->cantidad);
+                    ->decrement('cantidad_actual', (float) $detalle->cantidad);
             }
 
             $salida->update(['estado' => 'Procesada']);
@@ -520,7 +521,7 @@ class SalidaInventarioController extends Controller
     )]
     public function cancelar(Request $request, int $id): JsonResponse
     {
-        $empresaId = $request->user()->empresa_id;
+        $empresaId = $this->getEmpresaId();
 
         $salida = SalidaInventario::where('empresa_id', $empresaId)->findOrFail($id);
 
