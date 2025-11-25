@@ -249,6 +249,7 @@ El sistema está diseñado con las mejores prácticas de desarrollo, siguiendo l
 - ✅ Soporte para múltiples empresas
 - ✅ Aislamiento completo de datos
 - ✅ Configuraciones independientes por tenant
+- 📘 Guía y patrón de uso del contexto de empresa: ver `MULTI_TENANCY.md`
 
 ## 💻 Requisitos del Sistema
 
