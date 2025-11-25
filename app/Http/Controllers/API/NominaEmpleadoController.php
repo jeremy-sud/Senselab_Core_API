@@ -86,7 +86,7 @@ class NominaEmpleadoController extends Controller
                 $query->porEmpleado($request->empleado_id);
             }
 
-            $nominas = $query->orderBy('id', 'desc')->cursorPaginate($perPage);
+            $nominas = $query->orderBy('id', 'desc')->paginate($perPage);
 
             return response()->json($nominas);
         });

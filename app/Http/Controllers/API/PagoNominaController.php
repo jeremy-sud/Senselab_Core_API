@@ -130,7 +130,7 @@ class PagoNominaController extends Controller
                 $query->whereBetween('fecha_pago', [$request->desde, $request->hasta]);
             }
 
-            $pagos = $query->orderBy('id', 'desc')->cursorPaginate(15);
+            $pagos = $query->orderBy('id', 'desc')->paginate(15);
 
             return PagoNominaResource::collection($pagos);
         });

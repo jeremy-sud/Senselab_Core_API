@@ -105,7 +105,7 @@ class MovimientoBancarioController extends Controller
                 
                 $movimientos = $query->orderBy('fecha_movimiento', 'desc')
                                      ->orderBy('created_at', 'desc')
-                                     ->cursorPaginate($perPage);
+                                     ->paginate($perPage);
                 
                 return MovimientoBancarioResource::collection($movimientos);
             }, [

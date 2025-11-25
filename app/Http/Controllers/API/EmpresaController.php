@@ -103,7 +103,7 @@ class EmpresaController extends Controller
                         $query->where('activo', true);
                     }
                     
-                    return $query->orderBy('id', 'desc')->cursorPaginate($perPage);
+                    return $query->orderBy('id', 'desc')->paginate($perPage);
                 }
             );
             

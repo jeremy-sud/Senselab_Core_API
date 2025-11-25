@@ -161,7 +161,7 @@ class CabyController extends Controller
             // Ordenamiento
             $query->orderBy($request->get('sort_by', 'codigo'), $request->get('sort_order', 'asc'));
 
-            return $query->cursorPaginate($request->get('per_page', 15));
+            return $query->paginate($request->get('per_page', 15));
         });
 
         return CabyResource::collection($cabys);

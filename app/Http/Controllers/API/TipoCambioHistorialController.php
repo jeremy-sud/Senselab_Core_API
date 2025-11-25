@@ -99,7 +99,7 @@ class TipoCambioHistorialController extends Controller
                 $query->porRangoFechas($request->fecha_inicio, $request->fecha_fin);
             }
 
-            $historial = $query->orderBy('id', 'desc')->cursorPaginate($perPage);
+            $historial = $query->orderBy('id', 'desc')->paginate($perPage);
 
             return response()->json($historial);
         });

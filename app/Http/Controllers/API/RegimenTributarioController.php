@@ -64,7 +64,7 @@ class RegimenTributarioController extends Controller
             $regimenes = RegimenTributario::activos()
                 ->noEliminados()
                 ->orderBy('nombre')
-                ->cursorPaginate($perPage);
+                ->paginate($perPage);
 
             return response()->json($regimenes);
         });

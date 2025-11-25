@@ -109,7 +109,7 @@ class PeriodoNominaController extends Controller
                 $query->whereMonth('fecha_inicio', $request->mes);
             }
 
-            $periodos = $query->orderBy('id', 'desc')->cursorPaginate(15);
+            $periodos = $query->orderBy('id', 'desc')->paginate(15);
 
             return PeriodoNominaResource::collection($periodos);
         });

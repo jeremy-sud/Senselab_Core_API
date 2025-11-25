@@ -170,7 +170,7 @@ class CuentaContableController extends Controller
             // Ordenamiento
             $query->orderBy($request->get('sort_by', 'codigo'), $request->get('sort_order', 'asc'));
 
-            $cuentas = $query->cursorPaginate($request->get('per_page', 15));
+            $cuentas = $query->paginate($request->get('per_page', 15));
 
             return CuentaContableResource::collection($cuentas);
         });

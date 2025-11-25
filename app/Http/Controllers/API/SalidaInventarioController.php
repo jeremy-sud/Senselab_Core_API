@@ -89,7 +89,7 @@ class SalidaInventarioController extends Controller
             $salidas = SalidaInventario::where('empresa_id', $empresaId)
                 ->with(['almacen', 'cliente', 'proveedor', 'venta', 'detalles.producto'])
                 ->orderBy('fecha_salida', 'desc')
-                ->cursorPaginate(15);
+                ->paginate(15);
 
             return response()->json([
                 'success' => true,

@@ -155,7 +155,7 @@ class ClienteController extends Controller
                 }
                 
                 $clientes = $query->orderBy('id', 'asc')
-                                  ->cursorPaginate($perPage);
+                                  ->paginate($perPage);
                 
                 return ClienteResource::collection($clientes)->response();
             });

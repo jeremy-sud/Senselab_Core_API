@@ -103,7 +103,7 @@ class ZonaGeograficaController extends Controller
                 }
                 
                 $zonasGeograficas = $query->orderBy('nombre', 'asc')
-                                          ->cursorPaginate($perPage);
+                                          ->paginate($perPage);
                 
                 return ZonaGeograficaResource::collection($zonasGeograficas);
             });

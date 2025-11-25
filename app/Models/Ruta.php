@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Ruta extends Model
 {
@@ -88,5 +89,13 @@ class Ruta extends Model
     public function scopeNoEliminados(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         return $query->where('eliminado', false);
+    }
+
+    /**
+     * Relación: horarios/viajes programados para esta ruta.
+     */
+    public function horariosRuta(): HasMany
+    {
+        return $this->hasMany(HorarioRuta::class, 'ruta_id');
     }
 }

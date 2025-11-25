@@ -95,6 +95,22 @@ class ComprobanteRecibidoElectronico extends Model
     }
 
     /**
+     * Relación con la entrada de inventario asociada (opcional).
+     */
+    public function entradaInventario(): BelongsTo
+    {
+        return $this->belongsTo(EntradaInventario::class, 'entrada_inventario_id');
+    }
+
+    /**
+     * Relación con el usuario que realizó la confirmación (opcional).
+     */
+    public function usuarioConfirmacion(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Usuario::class, 'usuario_confirmacion_id');
+    }
+
+    /**
      * Scope para obtener comprobantes activos.
      */
     public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder

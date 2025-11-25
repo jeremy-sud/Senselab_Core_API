@@ -161,7 +161,7 @@ class PagoController extends Controller
             // Ordenamiento
             $query->orderBy($request->get('sort_by', 'fecha_pago'), $request->get('sort_order', 'desc'));
 
-            $pagos = $query->cursorPaginate($request->get('per_page', 15));
+            $pagos = $query->paginate($request->get('per_page', 15));
 
             return PagoResource::collection($pagos);
         }, [

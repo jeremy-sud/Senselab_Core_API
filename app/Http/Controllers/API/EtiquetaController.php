@@ -74,7 +74,7 @@ class EtiquetaController extends Controller
                 $query->porNombre($request->nombre);
             }
 
-            $etiquetas = $query->orderBy('id')->cursorPaginate($perPage);
+            $etiquetas = $query->orderBy('id')->paginate($perPage);
 
             return response()->json($etiquetas);
         });

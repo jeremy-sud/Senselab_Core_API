@@ -107,7 +107,7 @@ class RetencionImpuestoController extends Controller
                 
                 $retenciones = $query->orderBy('fecha_retencion', 'desc')
                                      ->orderBy('created_at', 'desc')
-                                     ->cursorPaginate($perPage);
+                                     ->paginate($perPage);
                 
                 return RetencionImpuestoResource::collection($retenciones);
             } catch (\Exception $e) {
