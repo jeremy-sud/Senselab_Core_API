@@ -626,4 +626,5 @@ class ComprobanteRecibidoElectronicoController extends Controller
                 'success' => true,
                 'message' => 'Respuesta de Hacienda actualizada exitosamente'
             ]);
-    }}
+    }
+}
