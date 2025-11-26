@@ -190,9 +190,11 @@ class AuthTest extends TestCase
         // Assert
         $response->assertStatus(200)
             ->assertJson([
-                'nombre' => 'Juan',
-                'apellidos' => 'Pérez',
-                'email' => 'juan@test.com',
+                'data' => [
+                    'nombre' => 'Juan',
+                    'apellidos' => 'Pérez',
+                    'email' => 'juan@test.com',
+                ]
             ]);
     }
 
