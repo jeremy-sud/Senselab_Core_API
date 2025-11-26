@@ -40,17 +40,28 @@ class ComprobanteElectronicoControllerTest extends TestCase
             'empresa_id' => $this->empresa->id,
         ]);
         
-        // Crear permisos y asignar al usuario
+        // Crear permisos necesarios
         $this->seedPermisos();
-        $this->user->permisos()->attach(
-            \App\Models\Permiso::whereIn('nombre', [
-                'comprobantes_electronicos.listar',
-                'comprobantes_electronicos.ver',
-                'comprobantes_electronicos.crear',
-                'comprobantes_electronicos.editar',
-                'comprobantes_electronicos.eliminar',
-            ])->pluck('id')
-        );
+        
+        // Crear rol con permisos
+        $rol = \App\Models\Rol::create([
+            'nombre' => 'Admin Test',
+            'descripcion' => 'Rol para tests',
+            'activo' => true,
+        ]);
+        
+        // Asignar permisos al rol
+        $permisos = \App\Models\Permiso::whereIn('slug', [
+            'ver-facturacion_electronica',
+            'crear-facturacion_electronica',
+            'editar-facturacion_electronica',
+            'eliminar-facturacion_electronica',
+        ])->pluck('id');
+        
+        $rol->permisos()->attach($permisos);
+        
+        // Asignar rol al usuario
+        $this->user->roles()->attach($rol->id);
 
         // Crear certificado digital de prueba
         $this->certificado = FeCertificadoDigital::factory()->create([
