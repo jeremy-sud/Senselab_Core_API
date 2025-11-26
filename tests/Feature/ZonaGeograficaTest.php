@@ -51,8 +51,8 @@ class ZonaGeograficaTest extends TestCase
             'eliminado' => false,
         ]);
 
-        // Permisos alineados con BasePolicy (formato: accion-prefijo)
-        $permisos = ['ver-zona_geografica', 'crear-zona_geografica', 'editar-zona_geografica', 'eliminar-zona_geografica'];
+        // Permisos alineados con BasePolicy (formato: accion-modulo)
+        $permisos = ['ver-zona-geografica', 'crear-zona-geografica', 'editar-zona-geografica', 'eliminar-zona-geografica'];
         foreach ($permisos as $slug) {
             $permiso = Permiso::create([
                 'nombre' => $slug,
