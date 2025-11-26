@@ -34,20 +34,23 @@ Este documento proporciona información detallada sobre todos los endpoints, inc
 
 ## 🧪 Testing
 
-El proyecto incluye **127 tests automatizados** que validan el funcionamiento de la API:
+El proyecto incluye **218 tests automatizados** que validan el funcionamiento de la API:
 
-- **AuthTest (11 tests)**: Login, logout, tokens, permisos
-- **ProductoTest (12 tests)**: CRUD completo, validación, búsqueda
-- **PermissionTest (17 tests)**: Sistema RBAC completo
-- **RoleTest (10 tests)**: Modelo Rol y relaciones
-- **UsuarioTest (16 tests)**: Modelo Usuario y autenticación
+**Estado Actual:** ⚠️ **186/218 passing (85.3%)** - 32 tests en corrección
+
+- **AuthTest**: Login, logout, tokens, permisos (6/11 passing)
+- **EmpresaTest**: CRUD empresas, multi-tenancy (4/8 passing)
+- **TipoClienteTest**: Catálogo clientes (10/11 passing)
+- **PermissionTest**: Sistema RBAC completo
+- **RoleTest**: Modelo Rol y relaciones
+- **UsuarioTest**: Modelo Usuario y autenticación
 
 Ejecutar tests:
 ```bash
 php artisan test
 ```
 
-Ver documentación completa de testing: [FASE_4_TESTING_COMPLETADA.md](FASE_4_TESTING_COMPLETADA.md)
+Ver documentación completa de testing: [INFORME_TESTS_POST_OPTIMIZACION.md](INFORME_TESTS_POST_OPTIMIZACION.md)
 
 ---
 

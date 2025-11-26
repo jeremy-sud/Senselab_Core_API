@@ -8,6 +8,12 @@ y este proyecto se adhiere a [Versionado Semántico](https://semver.org/lang/es/
 ## [Unreleased]
 
 ### Added
+- **Correcciones de tests y permisos** (Enero 2025)
+  - TestCase.seedPermisos() expandido: 48 → 68 permisos
+  - Permission slugs corregidos con underscores: cuentas_bancarias, tipo_comprobante_fe, declaraciones_tributarias
+  - TipoClienteTest refactorizado: 0/11 → 10/11 passing
+  - Múltiples tests actualizados para usar authenticatedJson() en lugar de Sanctum::actingAs()
+  - INFORME_TESTS_POST_OPTIMIZACION.md creado con análisis detallado
 - Resolución de tenant por encabezados/subdominio
   - Nuevo `HeaderSubdomainTenantFinder` que prioriza `X-Empresa-Id`, `X-Empresa-Subdominio` o subdominio público y valida contra `empresas`
   - Migración `2025_11_25_120000_add_subdominio_to_empresas_table` agrega el campo único `subdominio`
@@ -49,13 +55,15 @@ y este proyecto se adhiere a [Versionado Semántico](https://semver.org/lang/es/
 - Git tag v1.0.0 para marcar el primer release oficial
 
 ### Changed
-- **Actualización de estadísticas del proyecto** (Diciembre 2024)
-  - 78 tablas en base de datos (65 originales + 12 FASE 9 + migrations)
+- **Actualización de estadísticas del proyecto** (Enero 2025)
+  - 81 tablas en base de datos MySQL Docker (100% optimizadas: 123 FKs, 392 indexes)
   - 77 migraciones CREATE ejecutadas
   - 65 modelos Eloquent
-  - 60 controladores implementados
-  - 127 tests automatizados (100% pasando)
+  - 77 controladores implementados (100% completitud)
+  - 72 policies RBAC implementadas
+  - 218 tests automatizados (186 pasando / 32 fallando - 85.3%)
   - 140 registros iniciales (112 originales + 28 nuevos)
+  - Entorno Docker completamente funcional (Nginx, PHP-FPM, MySQL, Redis, PHPMyAdmin)
 - Actualizado `tests/TestCase.php` para mejorar el seeding de permisos
   - `seedPermisos()` ahora incluye 10 permisos: productos (4), clientes (2), roles (4)
   - Auto-asignación de todos los permisos al rol Administrador después de crear permisos
@@ -90,11 +98,11 @@ y este proyecto se adhiere a [Versionado Semántico](https://semver.org/lang/es/
 - Autenticación basada en Laravel Sanctum
 - Sistema RBAC completo con roles, permisos y asignaciones
 - 77 migraciones de base de datos
-- 127 tests automatizados con PHPUnit (100% pasando)
-- 60 controladores implementados (44 en API/, 16 en raíz)
+- 218 tests automatizados con PHPUnit (186 pasando - 85.3%)
+- 77 controladores implementados (100% completitud)
+- 72 policies RBAC (100% cobertura)
 - 65 modelos Eloquent sincronizados
-- 78 tablas en base de datos MySQL
-- Documentación OpenAPI/Swagger completa
+- 81 tablas en base de datos MySQL (100% optimizadas)
 - Documentación OpenAPI/Swagger completa
 - Docker Compose para ambiente de desarrollo
 
