@@ -428,7 +428,10 @@ class PagoController extends Controller
             DB::rollBack();
             throw $e;
         }
-    }* Eliminar (soft delete) un pago
+    }
+
+    /**
+     * Eliminar (soft delete) un pago
      *
      * @param int $id
      * @param Request $request

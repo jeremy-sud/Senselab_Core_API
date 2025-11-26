@@ -178,7 +178,10 @@ class DetallePresupuestoController extends Controller
         $this->authorize('view', $detalle);
 
         return new DetallePresupuestoResource($detalle);
-    }* Actualizar detalle de presupuesto
+    }
+
+    /**
+     * Actualizar detalle de presupuesto
      */
     #[OA\Put(
         path: "/api/detalles-presupuestos/{id}",
@@ -243,7 +246,10 @@ class DetallePresupuestoController extends Controller
 
         return (new DetallePresupuestoResource($detalle->fresh('cuentaContable')))
             ->additional(['message' => 'Detalle actualizado exitosamente']);
-    }* Eliminar cuenta del presupuesto
+    }
+
+    /**
+     * Eliminar cuenta del presupuesto
      */
     #[OA\Delete(
         path: "/api/detalles-presupuestos/{id}",

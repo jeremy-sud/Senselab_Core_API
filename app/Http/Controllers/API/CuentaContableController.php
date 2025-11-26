@@ -562,8 +562,6 @@ class CuentaContableController extends Controller
             )
         ]
     )]
-    public function paraMovimientos(Request $request): JsonResponse
-    {
     public function paraMovimientos(Request $request): AnonymousResourceCollection
     {
         $empresaId = $this->getEmpresaId();
@@ -578,3 +576,4 @@ class CuentaContableController extends Controller
         return CuentaContableResource::collection($cuentas)
             ->additional(['success' => true]);
     }
+}

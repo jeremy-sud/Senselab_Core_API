@@ -145,8 +145,6 @@ class ConfiguracionController extends Controller
         parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
         responses: [new OA\Response(response: 200, description: 'Actualizada')]
     )]
-    public function update(UpdateConfiguracionRequest $request, int $id): JsonResponse
-    {
     public function update(UpdateConfiguracionRequest $request, int $id): ConfiguracionResource
     {
         $empresaId = $this->getEmpresaId();
@@ -169,7 +167,9 @@ class ConfiguracionController extends Controller
                 'success' => true,
                 'message' => 'Configuración actualizada exitosamente'
             ]);
-    }**
+    }
+
+    /**
      * Eliminar configuración
      */
     #[OA\Delete(

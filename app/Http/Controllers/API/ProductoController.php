@@ -407,7 +407,12 @@ class ProductoController extends Controller
         } catch (\Exception $e) {
             throw $e;
         }
-    }* @param int $id
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     * 
+     * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
     #[OA\Delete(
