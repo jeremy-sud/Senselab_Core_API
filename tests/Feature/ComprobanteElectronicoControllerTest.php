@@ -39,6 +39,18 @@ class ComprobanteElectronicoControllerTest extends TestCase
         $this->user = Usuario::factory()->create([
             'empresa_id' => $this->empresa->id,
         ]);
+        
+        // Crear permisos y asignar al usuario
+        $this->seedPermisos();
+        $this->user->permisos()->attach(
+            \App\Models\Permiso::whereIn('nombre', [
+                'comprobantes_electronicos.listar',
+                'comprobantes_electronicos.ver',
+                'comprobantes_electronicos.crear',
+                'comprobantes_electronicos.editar',
+                'comprobantes_electronicos.eliminar',
+            ])->pluck('id')
+        );
 
         // Crear certificado digital de prueba
         $this->certificado = FeCertificadoDigital::factory()->create([

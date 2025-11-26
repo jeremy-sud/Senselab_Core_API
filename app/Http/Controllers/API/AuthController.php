@@ -147,8 +147,8 @@ class AuthController extends Controller
         /** @var \App\Models\Usuario $user */
         $user = Auth::user();
         
-        // Revocar el token actual
-        $user->tokens()->delete();
+        // Revocar solo el token actual
+        $request->user()->currentAccessToken()->delete();
 
         return response()->json([
             'message' => 'Sesión cerrada exitosamente'

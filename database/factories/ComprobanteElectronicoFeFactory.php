@@ -28,13 +28,13 @@ class ComprobanteElectronicoFeFactory extends Factory
             'receptor_numero_identificacion' => $this->faker->numerify('#########'),
             'receptor_email' => $this->faker->email,
             
-            'codigo_moneda' => 'CRC',
+            'moneda' => 'CRC',
             'tipo_cambio' => 1.00000,
             
-            'total_venta_bruta' => $this->faker->randomFloat(5, 1000, 100000),
+            'total_venta' => $this->faker->randomFloat(5, 1000, 100000),
             'total_descuentos' => 0.00000,
             'total_venta_neta' => $this->faker->randomFloat(5, 1000, 100000),
-            'total_impuestos' => $this->faker->randomFloat(5, 100, 13000),
+            'total_impuesto' => $this->faker->randomFloat(5, 100, 13000),
             'total_comprobante' => $this->faker->randomFloat(5, 1100, 113000),
             
             'estado' => $this->faker->randomElement(['pendiente', 'enviando', 'recibido', 'aceptado', 'rechazado']),

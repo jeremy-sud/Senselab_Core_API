@@ -36,15 +36,14 @@ class XmlComprobanteBuilderTest extends TestCase
         $this->empresa = Empresa::factory()->create([
             'nombre_comercial' => 'Empresa Test',
             'razon_social' => 'Empresa Test S.A.',
-            'numero_identificacion' => '310112345678',
+            'num_identificacion_dgt' => '310112345678',
             'tipo_identificacion' => '02',
             'email' => 'test@empresa.com',
             'telefono' => '88887777',
             'provincia' => '1',
             'canton' => '01',
             'distrito' => '01',
-            'barrio' => '01',
-            'otras_senas' => 'San José, Costa Rica',
+            'direccion' => 'San José, Costa Rica',
         ]);
     }
 
@@ -62,7 +61,7 @@ class XmlComprobanteBuilderTest extends TestCase
             'receptor_nombre' => 'Cliente Test',
             'receptor_numero_identificacion' => '109876543',
             'receptor_tipo_identificacion' => '01',
-            'codigo_moneda' => 'CRC',
+            'moneda' => 'CRC',
             'tipo_cambio' => 1.00000,
         ]);
 
@@ -76,12 +75,10 @@ class XmlComprobanteBuilderTest extends TestCase
             'monto_total' => 20000.00000,
             'subtotal' => 20000.00000,
             'monto_total_linea' => 22600.00000,
-            'impuestos' => [[
-                'codigo' => '01',
-                'codigo_tarifa' => '08',
-                'tarifa' => 13.00,
-                'monto' => 2600.00000,
-            ]],
+            'impuesto_codigo' => '01',
+            'impuesto_codigo_tarifa' => '08',
+            'impuesto_tarifa' => 13.00,
+            'impuesto_monto' => 2600.00000,
         ]);
 
         $xml = $this->builder->build($comprobante);
@@ -140,11 +137,13 @@ class XmlComprobanteBuilderTest extends TestCase
         $comprobante = ComprobanteElectronicoFe::factory()->create([
             'empresa_id' => $this->empresa->id,
             'tipo_documento' => '03', // Nota Crédito
-            'tipo_documento_referencia' => '01',
-            'numero_documento_referencia' => '00000000000000000001',
-            'fecha_emision_referencia' => Carbon::parse('2025-11-20'),
-            'codigo_referencia' => '01',
-            'razon_referencia' => 'Anulación de factura',
+            'metadata' => [
+                'tipo_documento_referencia' => '01',
+                'numero_documento_referencia' => '00000000000000000001',
+                'fecha_emision_referencia' => '2025-11-20',
+                'codigo_referencia' => '01',
+                'razon_referencia' => 'Anulación de factura',
+            ],
         ]);
 
         FeLineaDetalle::factory()->create([
@@ -192,7 +191,9 @@ class XmlComprobanteBuilderTest extends TestCase
         $comprobante = ComprobanteElectronicoFe::factory()->create([
             'empresa_id' => $this->empresa->id,
             'receptor_nombre' => 'Cliente & Asociados <Test>',
-            'observaciones' => 'Nota con "comillas" y \'apóstrofes\'',
+            'metadata' => [
+                'observaciones' => 'Nota con "comillas" y \'apóstrofes\'',
+            ],
         ]);
 
         FeLineaDetalle::factory()->create([
@@ -261,10 +262,10 @@ class XmlComprobanteBuilderTest extends TestCase
     {
         $comprobante = ComprobanteElectronicoFe::factory()->create([
             'empresa_id' => $this->empresa->id,
-            'total_venta_bruta' => 20000.00000,
+            'total_venta' => 20000.00000,
             'total_descuentos' => 1000.00000,
             'total_venta_neta' => 19000.00000,
-            'total_impuestos' => 2470.00000,
+            'total_impuesto' => 2470.00000,
             'total_comprobante' => 21470.00000,
         ]);
 
