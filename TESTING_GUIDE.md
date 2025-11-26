@@ -1,25 +1,30 @@
 # Guía de Testing - Ursol CAST API
 
 **Desarrollado por Sistemas Ursol S.A.**  
-*Suite de 127 tests automatizados para garantizar calidad del código*  
-**Última actualización:** 21 de noviembre de 2025
+*Suite de 218 tests automatizados para garantizar calidad del código*  
+**Última actualización:** Enero 2025
 
 ---
 
 ## 📊 Resumen
 
-El proyecto incluye una **suite de 127 tests** que cubren los componentes críticos del sistema:
+El proyecto incluye una **suite de 218 tests** que cubren los componentes críticos del sistema:
 
-| Tipo | Archivo | Tests | Estado | Descripción |
-|------|---------|-------|--------|-------------|
-| Feature | AuthTest.php | 11 | ✅ 100% | Autenticación, login, logout, tokens |
-| Feature | EmpresaTest.php | 8 | ✅ 100% | CRUD empresas, multi-tenancy |
-| Feature | ProductoTest.php | 12 | ⚠️ 25% | CRUD productos, búsqueda, filtros |
-| Feature | VentaTest.php | 7 | ❌ 0% | CRUD ventas, anular, estadísticas |
-| Feature | PermissionTest.php | 17 | ✅ 100% | Sistema RBAC completo |
-| Unit | RoleTest.php | 10 | ✅ 100% | Modelo Rol y relaciones |
-| Unit | UsuarioTest.php | 16 | ✅ 100% | Modelo Usuario y autenticación |
-| **TOTAL** | **7 archivos** | **81** | **54%** | **44 pasando / 37 fallando** |
+**Estado Actual:** ⚠️ **186/218 tests passing (85.3%)** - 32 tests fallando
+
+| Categoría | Tests Passing | Tests Failing | Estado |
+|-----------|---------------|---------------|--------|
+| **Total General** | 186 | 32 | ⚠️ 85.3% |
+| AuthTest | 6 | 5 | ⚠️ 54% |
+| EmpresaTest | 4 | 4 | ⚠️ 50% |
+| TipoClienteTest | 10 | 1 | ✅ 91% |
+| TipoComprobanteFeTest | 1 | 6 | ⚠️ 14% |
+| Otros tests | ~165 | ~16 | ✅ ~91% |
+
+**Tipos de fallas:**
+- 19 tests con error 403 (permisos pendientes)
+- 11 tests con error 500 (controllers/resources)
+- 2 tests con assertion failures (lógica update)
 
 ---
 
@@ -40,31 +45,8 @@ php artisan test
 
 **Salida esperada:**
 ```
-PASS  Tests\Feature\AuthTest
-✓ usuario puede hacer login
-✓ usuario puede hacer logout
-✓ usuario puede obtener su informacion
-... (8 tests más)
-
-PASS  Tests\Feature\ProductoTest
-✓ puede listar productos paginados
-✓ puede crear producto valido
-... (10 tests más)
-
-PASS  Tests\Feature\PermissionTest
-✓ usuario sin permisos no puede acceder a endpoint protegido
-... (16 tests más)
-
-PASS  Tests\Unit\RoleTest
-✓ rol tiene relacion con permisos
-... (9 tests más)
-
-PASS  Tests\Unit\UsuarioTest
-✓ usuario tiene relacion con roles
-... (15 tests más)
-
-Tests:    66 passed (184 assertions)
-Duration: 12.34s
+Tests:    32 failed, 186 passed (782 assertions)
+Duration: 23.56s
 ```
 
 ---
@@ -74,19 +56,22 @@ Duration: 12.34s
 ### Por Clase
 
 ```bash
-# Tests de autenticación (11 tests)
+# Tests de autenticación (6/11 passing)
 php artisan test --filter AuthTest
 
-# Tests de productos (12 tests)
-php artisan test --filter ProductoTest
+# Tests de empresas (4/8 passing)
+php artisan test --filter EmpresaTest
 
-# Tests de permisos (17 tests)
+# Tests de tipo cliente (10/11 passing)
+php artisan test --filter TipoClienteTest
+
+# Tests de permisos RBAC
 php artisan test --filter PermissionTest
 
-# Tests de roles (10 tests)
+# Tests de roles
 php artisan test --filter RoleTest
 
-# Tests de usuarios (16 tests)
+# Tests de usuarios
 php artisan test --filter UsuarioTest
 ```
 

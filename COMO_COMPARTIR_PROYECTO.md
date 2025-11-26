@@ -89,7 +89,7 @@ admin@ursol.com / admin123
 - ✅ Resumen rápido para colaboradores (COLABORADORES_README.md)
 - ✅ Archivo .env.example configurado
 - ✅ Migraciones (66 tablas)
-- ✅ Tests (127 tests - 100% pasando)
+- ✅ Tests (218 tests - 186 pasando / 32 fallando - 85.3%)
 - ✅ Documentación completa
 
 ---
@@ -168,7 +168,7 @@ El colaborador necesita:
 - **60 Controladores** (44 en API/, 16 en raíz)
 - **413 Rutas API** documentadas
 - **59 Modelos Eloquent**
-- **127 Tests** (100% pasando post-FASE 10)
+- **218 Tests** (186 pasando - 85.3% success rate)
 - **66 Migraciones**
 - **9 Seeders**
 

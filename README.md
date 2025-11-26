@@ -750,7 +750,9 @@ Accept: application/json
 
 ## 🧪 Testing
 
-El proyecto cuenta con una **suite completa de 127 tests** que verifican el funcionamiento de los componentes críticos del sistema.
+El proyecto cuenta con una **suite de 218 tests** que verifican el funcionamiento de los componentes críticos del sistema.
+
+**Estado Actual:** ⚠️ **186 tests passing / 32 failing (85.3% success rate)**
 
 ### Base de Datos de Testing
 
@@ -769,15 +771,15 @@ sudo mysql -u root -e "CREATE DATABASE IF NOT EXISTS api_db_testing;"
 ### Ejecutar Tests
 
 ```bash
-# Todos los tests (127 tests)
+# Todos los tests (218 tests - 85.3% passing)
 php artisan test
 
 # Tests específicos por clase
-php artisan test --filter AuthTest          # 11 tests de autenticación
-php artisan test --filter ProductoTest      # 12 tests de productos
-php artisan test --filter PermissionTest    # 17 tests de permisos RBAC
-php artisan test --filter RoleTest          # 10 tests unitarios de Rol
-php artisan test --filter UsuarioTest       # 16 tests unitarios de Usuario
+php artisan test --filter AuthTest          # Tests de autenticación
+php artisan test --filter ProductoTest      # Tests de productos  
+php artisan test --filter PermissionTest    # Tests de permisos RBAC
+php artisan test --filter RoleTest          # Tests unitarios de Rol
+php artisan test --filter UsuarioTest       # Tests unitarios de Usuario
 
 # Con cobertura
 php artisan test --coverage
@@ -791,29 +793,28 @@ php artisan test --verbose
 ```
 tests/
 ├── TestCase.php                    # Base con helpers (RefreshDatabase, factories)
-├── Feature/                        # Tests de integración (40 tests)
-│   ├── AuthTest.php               # Login, logout, tokens, permisos (11)
-│   ├── ProductoTest.php           # CRUD, search, filters, multi-tenancy (12)
-│   └── PermissionTest.php         # Sistema RBAC completo (17)
-└── Unit/                          # Tests unitarios (26 tests)
-    ├── RoleTest.php               # Modelo Rol y relaciones (10)
-    └── UsuarioTest.php            # Modelo Usuario, auth, RBAC (16)
+├── Feature/                        # Tests de integración
+│   ├── AuthTest.php               # Login, logout, tokens, permisos (6/11 passing)
+│   ├── ProductoTest.php           # CRUD, search, filters, multi-tenancy
+│   ├── EmpresaTest.php            # CRUD empresas (4/8 passing)
+│   ├── TipoClienteTest.php        # Catálogo clientes (10/11 passing)
+│   └── PermissionTest.php         # Sistema RBAC completo
+└── Unit/                          # Tests unitarios
+    ├── RoleTest.php               # Modelo Rol y relaciones
+    └── UsuarioTest.php            # Modelo Usuario, auth, RBAC
 ```
 
-### Tests Implementados
-
-#### Feature Tests (40)
-- **AuthTest (11)**: Login exitoso/fallido, logout, múltiples tokens, permisos
-- **ProductoTest (12)**: CRUD completo, validación, búsqueda, filtros, paginación, multi-tenancy, soft deletes
-- **PermissionTest (17)**: Verificación de permisos, roles, middleware, herencia, gestión
-
-#### Unit Tests (26)
-- **RoleTest (10)**: Relaciones, `hasPermission()`, scopes, normalización, sincronización
-- **UsuarioTest (16)**: Relaciones, `hasRole()`, `hasPermission()`, Sanctum, validación, autenticación
+**Estado Actual:**
+- ✅ **186/218 tests passing (85.3%)**
+- ⚠️ **32 tests failing:**
+  - 19 con errores 403 (permisos pendientes de corregir)
+  - 11 con errores 500 (controllers/resources)
+  - 2 con assertion failures (lógica de update)
 
 ### Documentación Completa
 
-Ver guía detallada en: [FASE_4_TESTING_COMPLETADA.md](FASE_4_TESTING_COMPLETADA.md)
+Ver guía detallada de tests y estado actual en: [INFORME_TESTS_POST_OPTIMIZACION.md](INFORME_TESTS_POST_OPTIMIZACION.md)  
+Testing completado hasta la fase: [FASE_4_TESTING_COMPLETADA.md](FASE_4_TESTING_COMPLETADA.md)
 
 ## 📚 Documentación Swagger
 
