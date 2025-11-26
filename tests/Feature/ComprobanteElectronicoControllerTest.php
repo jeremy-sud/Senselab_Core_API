@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
+use App\Models\Usuario;
 use App\Models\Empresa;
 use App\Models\ComprobanteElectronicoFe;
 use App\Models\FeLineaDetalle;
@@ -26,7 +26,7 @@ class ComprobanteElectronicoControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected User $user;
+    protected Usuario $user;
     protected Empresa $empresa;
     protected FeCertificadoDigital $certificado;
 
@@ -36,7 +36,7 @@ class ComprobanteElectronicoControllerTest extends TestCase
 
         // Crear empresa y usuario
         $this->empresa = Empresa::factory()->create();
-        $this->user = User::factory()->create([
+        $this->user = Usuario::factory()->create([
             'empresa_id' => $this->empresa->id,
         ]);
 

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateCuentaBancariaRequest extends FormRequest
 {
@@ -91,7 +92,9 @@ class UpdateCuentaBancariaRequest extends FormRequest
         $validator->after(function ($validator) {
             // Validar que solo haya una cuenta principal por empresa y moneda
             if ($this->has('es_principal') && $this->es_principal === true) {
-                $empresaId = $this->empresa_id ?? auth()->user()->empresa_id;
+                /** @var \App\Models\Usuario $user */
+                $user = Auth::user();
+                $empresaId = $this->empresa_id ?? $user->empresa_id;
                 $moneda = $this->moneda ?? null;
                 $cuentaId = $this->route('cuenta_bancaria');
 

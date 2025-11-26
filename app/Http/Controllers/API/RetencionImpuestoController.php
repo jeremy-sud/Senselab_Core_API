@@ -217,8 +217,10 @@ class RetencionImpuestoController extends Controller
             
             $this->flushCache();
             
-            return (new RetencionImpuestoResource($retencion))
-                ->additional(['message' => 'Retención de impuesto actualizada exitosamente']);
+            return response()->json([
+                'message' => 'Retención de impuesto actualizada exitosamente',
+                'data' => new RetencionImpuestoResource($retencion)
+            ]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Retención de impuesto no encontrada'

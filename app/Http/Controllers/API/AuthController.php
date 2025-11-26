@@ -7,6 +7,7 @@ use App\Models\Usuario;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use OpenApi\Attributes as OA;
 use App\Http\Resources\UsuarioResource;
@@ -143,7 +144,11 @@ class AuthController extends Controller
     )]
     public function logout(Request $request): JsonResponse
     {
-        $request->user()->currentAccessToken()->delete();
+        /** @var \App\Models\Usuario $user */
+        $user = Auth::user();
+        
+        // Revocar el token actual
+        $user->tokens()->delete();
 
         return response()->json([
             'message' => 'Sesión cerrada exitosamente'

@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 /**
@@ -216,7 +217,9 @@ class ComprobanteElectronicoController extends Controller
             ->findOrFail($id);
 
         // Verificar autorización (empresa del usuario)
-        if ($comprobante->empresa_id !== auth()->user()->empresa_id) {
+        /** @var \App\Models\Usuario $user */
+        $user = Auth::user();
+        if ($comprobante->empresa_id !== $user->empresa_id) {
             return response()->json([
                 'message' => 'No autorizado',
             ], 403);
@@ -233,7 +236,9 @@ class ComprobanteElectronicoController extends Controller
         $comprobante = ComprobanteElectronicoFe::findOrFail($id);
 
         // Verificar autorización
-        if ($comprobante->empresa_id !== auth()->user()->empresa_id) {
+        /** @var \App\Models\Usuario $user */
+        $user = Auth::user();
+        if ($comprobante->empresa_id !== $user->empresa_id) {
             return response()->json(['message' => 'No autorizado'], 403);
         }
 
@@ -262,7 +267,9 @@ class ComprobanteElectronicoController extends Controller
         $comprobante = ComprobanteElectronicoFe::findOrFail($id);
 
         // Verificar autorización
-        if ($comprobante->empresa_id !== auth()->user()->empresa_id) {
+        /** @var \App\Models\Usuario $user */
+        $user = Auth::user();
+        if ($comprobante->empresa_id !== $user->empresa_id) {
             return response()->json(['message' => 'No autorizado'], 403);
         }
 
@@ -305,7 +312,9 @@ class ComprobanteElectronicoController extends Controller
         $comprobanteOriginal = ComprobanteElectronicoFe::with('lineasDetalle')->findOrFail($id);
 
         // Verificar autorización
-        if ($comprobanteOriginal->empresa_id !== auth()->user()->empresa_id) {
+        /** @var \App\Models\Usuario $user */
+        $user = Auth::user();
+        if ($comprobanteOriginal->empresa_id !== $user->empresa_id) {
             return response()->json(['message' => 'No autorizado'], 403);
         }
 
