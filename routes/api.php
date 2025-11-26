@@ -1026,4 +1026,23 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     
     // Logs Acceso Sistema
     Route::apiResource('logs-acceso-sistema', \App\Http\Controllers\API\LogAccesoSistemaController::class);
+
+    // ------------------------------------------------------------------------
+    // MÓDULO: COMPROBANTES ELECTRÓNICOS (Emisión)
+    // Permisos: facturacion_electronica.*
+    // ------------------------------------------------------------------------
+    Route::get('/comprobantes', [\App\Http\Controllers\ComprobanteElectronicoController::class, 'index'])
+        ->middleware('permission:ver-facturacion_electronica');
+    Route::post('/comprobantes', [\App\Http\Controllers\ComprobanteElectronicoController::class, 'store'])
+        ->middleware(['permission:crear-facturacion_electronica', 'throttle:30,1']);
+    Route::get('/comprobantes/{id}', [\App\Http\Controllers\ComprobanteElectronicoController::class, 'show'])
+        ->middleware('permission:ver-facturacion_electronica');
+    Route::get('/comprobantes/{id}/xml', [\App\Http\Controllers\ComprobanteElectronicoController::class, 'downloadXml'])
+        ->middleware('permission:ver-facturacion_electronica');
+    Route::post('/comprobantes/{id}/reenviar', [\App\Http\Controllers\ComprobanteElectronicoController::class, 'reenviar'])
+        ->middleware(['permission:editar-facturacion_electronica', 'throttle:20,1']);
+    Route::post('/comprobantes/{id}/anular', [\App\Http\Controllers\ComprobanteElectronicoController::class, 'anular'])
+        ->middleware(['permission:crear-facturacion_electronica', 'throttle:20,1']);
+    Route::get('/comprobantes/estadisticas/resumen', [\App\Http\Controllers\ComprobanteElectronicoController::class, 'estadisticas'])
+        ->middleware('permission:ver-facturacion_electronica');
 });
