@@ -271,6 +271,11 @@ abstract class TestCase extends BaseTestCase
             ['nombre' => 'Crear Proveedores', 'slug' => 'crear-proveedores', 'modulo' => 'Proveedores'],
             ['nombre' => 'Editar Proveedores', 'slug' => 'editar-proveedores', 'modulo' => 'Proveedores'],
             ['nombre' => 'Eliminar Proveedores', 'slug' => 'eliminar-proveedores', 'modulo' => 'Proveedores'],
+            // Facturación Electrónica
+            ['nombre' => 'Ver Facturación Electrónica', 'slug' => 'ver-facturacion_electronica', 'modulo' => 'Facturación Electrónica'],
+            ['nombre' => 'Crear Facturación Electrónica', 'slug' => 'crear-facturacion_electronica', 'modulo' => 'Facturación Electrónica'],
+            ['nombre' => 'Editar Facturación Electrónica', 'slug' => 'editar-facturacion_electronica', 'modulo' => 'Facturación Electrónica'],
+            ['nombre' => 'Eliminar Facturación Electrónica', 'slug' => 'eliminar-facturacion_electronica', 'modulo' => 'Facturación Electrónica'],
         ];
 
         foreach ($permisos as $permiso) {

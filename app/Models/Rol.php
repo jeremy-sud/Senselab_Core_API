@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
@@ -10,7 +11,7 @@ use App\Traits\HasPermissionCache;
 
 class Rol extends Model
 {
-    use HasCustomSoftDeletes, HasAuditFields, HasActiveScope, HasPermissionCache;
+    use HasFactory, HasCustomSoftDeletes, HasAuditFields, HasActiveScope, HasPermissionCache;
     /**
      * Tabla asociada al modelo.
      *

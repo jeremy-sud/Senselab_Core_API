@@ -218,14 +218,10 @@ class XmlComprobanteBuilderTest extends TestCase
 
         FeLineaDetalle::factory()->create([
             'comprobante_id' => $comprobante->id,
-            'impuestos' => [
-                [
-                    'codigo' => '01',
-                    'codigo_tarifa' => '08',
-                    'tarifa' => 13.00,
-                    'monto' => 2600.00000,
-                ],
-            ],
+            'impuesto_codigo' => '01',
+            'impuesto_codigo_tarifa' => '08',
+            'impuesto_tarifa' => 13.00,
+            'impuesto_monto' => 2600.00000,
         ]);
 
         $xml = $this->builder->build($comprobante);
