@@ -182,14 +182,14 @@ class XmlComprobanteBuilder
     {
         $emisor = $this->doc->createElement('Emisor');
 
-        // Nombre
-        $nombre = $this->doc->createElement('Nombre', $this->escaparXml($comprobante->empresa->nombre_comercial));
+        // Nombre (razón social)
+        $nombre = $this->doc->createElement('Nombre', $this->escaparXml($comprobante->empresa->razon_social));
         $emisor->appendChild($nombre);
 
         // Identificación
         $identificacion = $this->doc->createElement('Identificacion');
         $tipo = $this->doc->createElement('Tipo', $comprobante->empresa->tipo_identificacion ?? '02');
-        $numero = $this->doc->createElement('Numero', $comprobante->empresa->numero_identificacion);
+        $numero = $this->doc->createElement('Numero', $comprobante->empresa->num_identificacion_dgt);
         $identificacion->appendChild($tipo);
         $identificacion->appendChild($numero);
         $emisor->appendChild($identificacion);
