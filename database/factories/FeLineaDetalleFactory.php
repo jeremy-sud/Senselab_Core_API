@@ -34,14 +34,10 @@ class FeLineaDetalleFactory extends Factory
             'naturaleza_descuento' => 'Descuento comercial',
             'subtotal' => $subtotal,
             'base_imponible' => $subtotal,
-            'impuestos' => [
-                [
-                    'codigo' => '01',
-                    'codigo_tarifa' => '08',
-                    'tarifa' => 13.00,
-                    'monto' => round($impuesto, 5),
-                ]
-            ],
+            'impuesto_codigo' => '01',
+            'impuesto_codigo_tarifa' => '08',
+            'impuesto_tarifa' => 13.00,
+            'impuesto_monto' => round($impuesto, 5),
             'monto_total_linea' => $montoTotalLinea,
         ];
     }

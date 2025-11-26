@@ -15,14 +15,17 @@ class FeCertificadoDigitalFactory extends Factory
         return [
             'empresa_id' => Empresa::factory(),
             'nombre' => $this->faker->company . ' - Certificado Digital',
+            'tipo' => 'p12',
             'ruta_archivo' => 'certificates/test_cert_' . $this->faker->uuid . '.p12',
-            'password' => base64_encode('test_password'),
+            'password_encrypted' => base64_encode('test_password'),
             'fecha_emision' => now()->subYear(),
             'fecha_vencimiento' => now()->addYear(),
             'numero_serie' => strtoupper($this->faker->bothify('??##??##??##??##')),
             'emisor' => 'CN=Test CA, O=Test Organization',
-            'titular' => 'CN=' . $this->faker->company,
+            'sujeto' => 'CN=' . $this->faker->company,
             'activo' => true,
+            'valido' => true,
+            'ambiente' => 'sandbox',
         ];
     }
 

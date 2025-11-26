@@ -22,10 +22,33 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
         
+        // Sembrar datos esenciales para evitar errores de foreign key
+        $this->seedEssentialData();
+        
         // Limpiar cache de Redis antes de cada test para evitar conflictos
         // con datos de tests anteriores
         if (config('cache.default') === 'redis') {
             \Illuminate\Support\Facades\Cache::flush();
+        }
+    }
+
+    /**
+     * Sembrar datos esenciales para tests
+     */
+    protected function seedEssentialData(): void
+    {
+        // Crear regímenes tributarios si no existen
+        if (\App\Models\RegimenTributario::count() === 0) {
+            \App\Models\RegimenTributario::create([
+                'codigo' => '01',
+                'nombre' => 'Régimen General',
+                'descripcion' => 'Régimen General de Tributación'
+            ]);
+            \App\Models\RegimenTributario::create([
+                'codigo' => '02',
+                'nombre' => 'Régimen Simplificado',
+                'descripcion' => 'Régimen Simplificado de Tributación'
+            ]);
         }
     }
 
