@@ -513,7 +513,6 @@ class HorarioRutaController extends Controller
         ]
     )]
     public function cancelar(int $id): HorarioRutaResource
-    public function cancelar(int $id): HorarioRutaResource
     {
         $horario = HorarioRuta::where('eliminado', 0)
             ->findOrFail($id);

@@ -8,11 +8,11 @@ use App\Http\Requests\StoreMovimientoBancarioRequest;
 use App\Http\Requests\UpdateMovimientoBancarioRequest;
 use App\Http\Resources\MovimientoBancarioResource;
 use App\Traits\HasCacheableQueries;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * Controller para gestionar movimientos bancarios
@@ -221,7 +221,12 @@ class MovimientoBancarioController extends Controller
         } catch (\Exception $e) {
             abort(500, 'Error al actualizar movimiento bancario: ' . $e->getMessage());
         }
-    }* @param int $id
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     * 
+     * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(int $id): JsonResponse
@@ -266,7 +271,12 @@ class MovimientoBancarioController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-    }* @param int $id
+    }
+
+    /**
+     * Conciliar movimiento bancario
+     * 
+     * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function conciliar(int $id): JsonResponse

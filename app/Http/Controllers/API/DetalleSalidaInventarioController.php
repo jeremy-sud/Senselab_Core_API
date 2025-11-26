@@ -311,7 +311,10 @@ class DetalleSalidaInventarioController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-    }* Eliminar producto de la salida
+    }
+
+    /**
+     * Eliminar producto de la salida
      */
     #[OA\Delete(
         path: '/api/detalles-salidas-inventario/{id}',

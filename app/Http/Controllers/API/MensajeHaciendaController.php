@@ -179,4 +179,4 @@ class MensajeHaciendaController extends Controller
         return response()->json([
             'message' => 'Mensaje de Hacienda eliminado exitosamente'
         ]);
-    }
+    }}

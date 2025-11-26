@@ -590,13 +590,6 @@ class SalidaInventarioController extends Controller
         path: '/api/salidas-inventario/almacen/{almacenId}',
         summary: 'Obtener salidas por almacén',
         description: 'Lista todas las salidas de inventario de un almacén específico',
-    /**
-     * Obtener salidas por almacén
-     */
-    #[OA\Get(
-        path: '/api/salidas-inventario/almacen/{almacenId}',
-        summary: 'Obtener salidas por almacén',
-        description: 'Lista todas las salidas de inventario de un almacén específico',
         security: [['sanctum' => []]],
         tags: ['Inventario - Salidas'],
         parameters: [
@@ -636,7 +629,14 @@ class SalidaInventarioController extends Controller
             ->paginate(15);
 
         return SalidaInventarioResource::collection($salidas);
-    }   summary: 'Resumen de salidas por tipo',
+    }
+
+    /**
+     * Resumen de salidas por tipo
+     */
+    #[OA\Get(
+        path: '/api/salidas-inventario/resumen/por-tipo',
+        summary: 'Resumen de salidas por tipo',
         description: 'Genera estadísticas agrupadas por tipo de salida mostrando cantidad total y monto total',
         security: [['sanctum' => []]],
         tags: ['Inventario - Salidas'],
@@ -687,13 +687,6 @@ class SalidaInventarioController extends Controller
         path: '/api/salidas-inventario/pendientes',
         summary: 'Obtener salidas pendientes',
         description: 'Lista todas las salidas de inventario en estado Pendiente ordenadas por fecha de salida ascendente',
-    /**
-     * Obtener salidas pendientes
-     */
-    #[OA\Get(
-        path: '/api/salidas-inventario/pendientes',
-        summary: 'Obtener salidas pendientes',
-        description: 'Lista todas las salidas de inventario en estado Pendiente ordenadas por fecha de salida ascendente',
         security: [['sanctum' => []]],
         tags: ['Inventario - Salidas'],
         responses: [
@@ -722,3 +715,4 @@ class SalidaInventarioController extends Controller
 
         return SalidaInventarioResource::collection($salidas);
     }
+}

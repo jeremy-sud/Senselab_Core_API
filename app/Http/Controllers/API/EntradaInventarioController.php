@@ -11,6 +11,7 @@ use App\Traits\HasCacheableQueries;
 use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 use OpenApi\Attributes as OA;
 
@@ -368,7 +369,16 @@ class EntradaInventarioController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-    }   tags: ['Inventario - Entradas'],
+    }
+
+    /**
+     * Procesar entrada de inventario
+     */
+    #[OA\Put(
+        path: '/api/entradas-inventario/{id}/procesar',
+        summary: 'Procesar entrada de inventario',
+        security: [['sanctum' => []]],
+        tags: ['Inventario - Entradas'],
         parameters: [
             new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
         ],

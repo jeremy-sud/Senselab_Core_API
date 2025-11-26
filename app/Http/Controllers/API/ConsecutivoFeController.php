@@ -401,4 +401,4 @@ class ConsecutivoFeController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-    }
+    }}
