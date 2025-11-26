@@ -35,6 +35,7 @@ class AuthTest extends TestCase
         // Assert: Verificar respuesta exitosa
         $response->assertStatus(200)
             ->assertJsonStructure([
+                'success',
                 'message',
                 'user' => [
                     'id',

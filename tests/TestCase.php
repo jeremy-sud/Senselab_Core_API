@@ -199,26 +199,41 @@ abstract class TestCase extends BaseTestCase
             ['nombre' => 'Crear Roles', 'slug' => 'crear-roles', 'modulo' => 'Roles y Permisos'],
             ['nombre' => 'Editar Roles', 'slug' => 'editar-roles', 'modulo' => 'Roles y Permisos'],
             ['nombre' => 'Eliminar Roles', 'slug' => 'eliminar-roles', 'modulo' => 'Roles y Permisos'],
-            // Declaraciones Tributarias
-            ['nombre' => 'Ver Declaraciones Tributarias', 'slug' => 'ver-declaraciones-tributarias', 'modulo' => 'Tributación'],
-            ['nombre' => 'Crear Declaraciones Tributarias', 'slug' => 'crear-declaraciones-tributarias', 'modulo' => 'Tributación'],
-            ['nombre' => 'Editar Declaraciones Tributarias', 'slug' => 'editar-declaraciones-tributarias', 'modulo' => 'Tributación'],
-            ['nombre' => 'Eliminar Declaraciones Tributarias', 'slug' => 'eliminar-declaraciones-tributarias', 'modulo' => 'Tributación'],
-            // Cuentas Bancarias
-            ['nombre' => 'Ver Cuentas Bancarias', 'slug' => 'ver-cuentas-bancarias', 'modulo' => 'Banca'],
-            ['nombre' => 'Crear Cuentas Bancarias', 'slug' => 'crear-cuentas-bancarias', 'modulo' => 'Banca'],
-            ['nombre' => 'Editar Cuentas Bancarias', 'slug' => 'editar-cuentas-bancarias', 'modulo' => 'Banca'],
-            ['nombre' => 'Eliminar Cuentas Bancarias', 'slug' => 'eliminar-cuentas-bancarias', 'modulo' => 'Banca'],
-            // Movimientos Bancarios
-            ['nombre' => 'Ver Movimientos Bancarios', 'slug' => 'ver-movimientos-bancarios', 'modulo' => 'Banca'],
-            ['nombre' => 'Crear Movimientos Bancarios', 'slug' => 'crear-movimientos-bancarios', 'modulo' => 'Banca'],
-            ['nombre' => 'Editar Movimientos Bancarios', 'slug' => 'editar-movimientos-bancarios', 'modulo' => 'Banca'],
-            ['nombre' => 'Eliminar Movimientos Bancarios', 'slug' => 'eliminar-movimientos-bancarios', 'modulo' => 'Banca'],
-            // Retenciones de Impuesto
-            ['nombre' => 'Ver Retenciones Impuesto', 'slug' => 'ver-retenciones-impuesto', 'modulo' => 'Tributación'],
-            ['nombre' => 'Crear Retenciones Impuesto', 'slug' => 'crear-retenciones-impuesto', 'modulo' => 'Tributación'],
-            ['nombre' => 'Editar Retenciones Impuesto', 'slug' => 'editar-retenciones-impuesto', 'modulo' => 'Tributación'],
-            ['nombre' => 'Eliminar Retenciones Impuesto', 'slug' => 'eliminar-retenciones-impuesto', 'modulo' => 'Tributación'],
+            // Declaraciones Tributarias (con guiones bajos)
+            ['nombre' => 'Ver Declaraciones Tributarias', 'slug' => 'ver-declaraciones_tributarias', 'modulo' => 'Tributación'],
+            ['nombre' => 'Crear Declaraciones Tributarias', 'slug' => 'crear-declaraciones_tributarias', 'modulo' => 'Tributación'],
+            ['nombre' => 'Editar Declaraciones Tributarias', 'slug' => 'editar-declaraciones_tributarias', 'modulo' => 'Tributación'],
+            ['nombre' => 'Eliminar Declaraciones Tributarias', 'slug' => 'eliminar-declaraciones_tributarias', 'modulo' => 'Tributación'],
+            // Cuentas Bancarias (con guiones bajos)
+            ['nombre' => 'Ver Cuentas Bancarias', 'slug' => 'ver-cuentas_bancarias', 'modulo' => 'Banca'],
+            ['nombre' => 'Crear Cuentas Bancarias', 'slug' => 'crear-cuentas_bancarias', 'modulo' => 'Banca'],
+            ['nombre' => 'Editar Cuentas Bancarias', 'slug' => 'editar-cuentas_bancarias', 'modulo' => 'Banca'],
+            ['nombre' => 'Eliminar Cuentas Bancarias', 'slug' => 'eliminar-cuentas_bancarias', 'modulo' => 'Banca'],
+            // Movimientos Bancarios (con guiones bajos)
+            ['nombre' => 'Ver Movimientos Bancarios', 'slug' => 'ver-movimientos_bancarios', 'modulo' => 'Banca'],
+            ['nombre' => 'Crear Movimientos Bancarios', 'slug' => 'crear-movimientos_bancarios', 'modulo' => 'Banca'],
+            ['nombre' => 'Editar Movimientos Bancarios', 'slug' => 'editar-movimientos_bancarios', 'modulo' => 'Banca'],
+            ['nombre' => 'Eliminar Movimientos Bancarios', 'slug' => 'eliminar-movimientos_bancarios', 'modulo' => 'Banca'],
+            // Retenciones de Impuesto (con guiones bajos)
+            ['nombre' => 'Ver Retenciones Impuesto', 'slug' => 'ver-retenciones_impuestos', 'modulo' => 'Tributación'],
+            ['nombre' => 'Crear Retenciones Impuesto', 'slug' => 'crear-retenciones_impuestos', 'modulo' => 'Tributación'],
+            ['nombre' => 'Editar Retenciones Impuesto', 'slug' => 'editar-retenciones_impuestos', 'modulo' => 'Tributación'],
+            ['nombre' => 'Eliminar Retenciones Impuesto', 'slug' => 'eliminar-retenciones_impuestos', 'modulo' => 'Tributación'],
+            // Tipos de Clientes
+            ['nombre' => 'Ver Tipos Clientes', 'slug' => 'ver-tipos-clientes', 'modulo' => 'Catálogos'],
+            ['nombre' => 'Crear Tipos Clientes', 'slug' => 'crear-tipos-clientes', 'modulo' => 'Catálogos'],
+            ['nombre' => 'Editar Tipos Clientes', 'slug' => 'editar-tipos-clientes', 'modulo' => 'Catálogos'],
+            ['nombre' => 'Eliminar Tipos Clientes', 'slug' => 'eliminar-tipos-clientes', 'modulo' => 'Catálogos'],
+            // Tipos de Comprobantes FE (con guion bajo)
+            ['nombre' => 'Ver Tipos Comprobantes FE', 'slug' => 'ver-tipo_comprobante_fe', 'modulo' => 'Catálogos'],
+            ['nombre' => 'Crear Tipos Comprobantes FE', 'slug' => 'crear-tipo_comprobante_fe', 'modulo' => 'Catálogos'],
+            ['nombre' => 'Editar Tipos Comprobantes FE', 'slug' => 'editar-tipo_comprobante_fe', 'modulo' => 'Catálogos'],
+            ['nombre' => 'Eliminar Tipos Comprobantes FE', 'slug' => 'eliminar-tipo_comprobante_fe', 'modulo' => 'Catálogos'],
+            // Proveedores
+            ['nombre' => 'Ver Proveedores', 'slug' => 'ver-proveedores', 'modulo' => 'Proveedores'],
+            ['nombre' => 'Crear Proveedores', 'slug' => 'crear-proveedores', 'modulo' => 'Proveedores'],
+            ['nombre' => 'Editar Proveedores', 'slug' => 'editar-proveedores', 'modulo' => 'Proveedores'],
+            ['nombre' => 'Eliminar Proveedores', 'slug' => 'eliminar-proveedores', 'modulo' => 'Proveedores'],
         ];
 
         foreach ($permisos as $permiso) {

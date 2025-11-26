@@ -32,62 +32,18 @@ class TipoClienteTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->empresa = Empresa::create([
-            'nombre' => 'Empresa Test',
-            'nombre_comercial' => 'Empresa Test',
-            'razon_social' => 'Empresa Test S.A.',
-            'num_identificacion_dgt' => '1234567890',
-            'tipo_identificacion' => '02',
-            'email' => 'empresa@test.com',
-            'activo' => true,
-            'eliminado' => false,
-        ]);
-
-        $this->rol = Rol::create([
-            'nombre' => 'Admin',
-            'descripcion' => 'Administrador',
-            'activo' => true,
-            'eliminado' => false,
-        ]);
-
-        // Crear permisos (BasePolicy usa: leer, crear, actualizar, eliminar)
-        $permisos = [
-            'tipo_cliente.leer',
-            'tipo_cliente.crear',
-            'tipo_cliente.actualizar',
-            'tipo_cliente.eliminar',
-        ];
-
-        foreach ($permisos as $slug) {
-            $permiso = Permiso::create([
-                'nombre' => str_replace('_', ' ', ucfirst($slug)),
-                'slug' => $slug,
-                'descripcion' => 'Permiso ' . $slug,
-            ]);
-            $this->rol->permisos()->attach($permiso->id, ['activo' => true]);
-        }
-
-        $this->usuario = Usuario::create([
-            'empresa_id' => $this->empresa->id,
-            'email' => 'admin@test.com',
-            'nombre' => 'Admin',
-            'apellidos' => 'Test',
-            'password_hash' => bcrypt('password'),
-            'activo' => true,
-            'eliminado' => false,
-        ]);
-
-        $this->usuario->roles()->attach($this->rol->id, [
-            'activo' => true,
-            'eliminado' => false,
-        ]);
+        
+        // Usar métodos del TestCase padre para consistencia
+        $this->seedRoles();
+        $this->seedPermisos();
+        
+        $this->usuario = $this->createAdminUsuario();
+        $this->empresa = $this->usuario->empresa;
+        $this->rol = Rol::where('nombre', 'Administrador')->first();
     }
 
     public function test_puede_listar_tipos_cliente(): void
     {
-        Sanctum::actingAs($this->usuario);
-
         // Crear tipos de cliente
         TipoCliente::create([
             'codigo' => 'MAY',
@@ -109,7 +65,7 @@ class TipoClienteTest extends TestCase
             'eliminado' => false,
         ]);
 
-        $response = $this->getJson('/api/tipos-clientes');
+        $response = $this->authenticatedJson('GET', '/api/tipos-clientes', [], $this->usuario);
 
         $response->assertStatus(200);
         $response->assertJsonCount(2, 'data');
@@ -122,17 +78,15 @@ class TipoClienteTest extends TestCase
 
     public function test_puede_crear_tipo_cliente(): void
     {
-        Sanctum::actingAs($this->usuario);
-
         $data = [
             'codigo' => 'VIP',
             'nombre' => 'VIP',
-            'descripcion' => 'Clientes VIP con descuentos especiales',
+            'descripcion' => 'Cliente VIP',
             'descuento_default' => 15.0,
             'dias_credito_default' => 60,
         ];
 
-        $response = $this->postJson('/api/tipos-clientes', $data);
+        $response = $this->authenticatedJson('POST', '/api/tipos-clientes', $data, $this->usuario);
 
         $response->assertStatus(201);
         $response->assertJsonFragment(['nombre' => 'VIP']);
@@ -144,10 +98,6 @@ class TipoClienteTest extends TestCase
 
     public function test_puede_actualizar_tipo_cliente(): void
     {
-        // Usar usuario admin con permisos
-        $admin = $this->createAdminUsuario();
-        Sanctum::actingAs($admin);
-
         $tipo = TipoCliente::create([
             'codigo' => 'CORP',
             'nombre' => 'Corporativo',
@@ -158,10 +108,10 @@ class TipoClienteTest extends TestCase
             'eliminado' => false,
         ]);
 
-        $response = $this->putJson("/api/tipos-clientes/{$tipo->id}", [
+        $response = $this->authenticatedJson('PUT', "/api/tipos-clientes/{$tipo->id}", [
             'nombre' => 'Corporativo Actualizado',
             'descuento_default' => 12.0,
-        ]);
+        ], $this->usuario);
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('tipos_clientes', [
@@ -173,10 +123,6 @@ class TipoClienteTest extends TestCase
 
     public function test_puede_eliminar_tipo_cliente(): void
     {
-        // Usar usuario admin con permisos
-        $admin = $this->createAdminUsuario();
-        Sanctum::actingAs($admin);
-
         $tipo = TipoCliente::create([
             'codigo' => 'TMP',
             'nombre' => 'Temporal',
@@ -185,7 +131,7 @@ class TipoClienteTest extends TestCase
             'eliminado' => false,
         ]);
 
-        $response = $this->deleteJson("/api/tipos-clientes/{$tipo->id}");
+        $response = $this->authenticatedJson('DELETE', "/api/tipos-clientes/{$tipo->id}", [], $this->usuario);
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('tipos_clientes', [
@@ -197,12 +143,10 @@ class TipoClienteTest extends TestCase
 
     public function test_filtro_por_busqueda_funciona(): void
     {
-        Sanctum::actingAs($this->usuario);
-
         TipoCliente::create(['codigo' => 'MAYP', 'nombre' => 'Mayorista Premium', 'activo' => true, 'eliminado' => false]);
         TipoCliente::create(['codigo' => 'MINB', 'nombre' => 'Minorista Básico', 'activo' => true, 'eliminado' => false]);
 
-        $response = $this->getJson('/api/tipos-clientes?search=Mayorista');
+        $response = $this->authenticatedJson('GET', '/api/tipos-clientes?search=Mayorista', [], $this->usuario);
 
         $response->assertStatus(200);
         $response->assertJsonCount(1, 'data');
@@ -211,12 +155,10 @@ class TipoClienteTest extends TestCase
 
     public function test_filtro_por_activo_funciona(): void
     {
-        Sanctum::actingAs($this->usuario);
-
         TipoCliente::create(['codigo' => 'ACT', 'nombre' => 'Activo', 'activo' => true, 'eliminado' => false]);
         TipoCliente::create(['codigo' => 'INACT', 'nombre' => 'Inactivo', 'activo' => false, 'eliminado' => false]);
 
-        $response = $this->getJson('/api/tipos-clientes?activo=true');
+        $response = $this->authenticatedJson('GET', '/api/tipos-clientes?activo=true', [], $this->usuario);
 
         $response->assertStatus(200);
         $data = $response->json('data');
@@ -227,12 +169,10 @@ class TipoClienteTest extends TestCase
 
     public function test_filtro_por_descuento_funciona(): void
     {
-        Sanctum::actingAs($this->usuario);
-
         TipoCliente::create(['codigo' => 'DESC', 'nombre' => 'Con Descuento', 'descuento_default' => 10.0, 'activo' => true, 'eliminado' => false]);
         TipoCliente::create(['codigo' => 'NDESC', 'nombre' => 'Sin Descuento', 'descuento_default' => 0, 'activo' => true, 'eliminado' => false]);
 
-        $response = $this->getJson('/api/tipos-clientes?con_descuento=true');
+        $response = $this->authenticatedJson('GET', '/api/tipos-clientes?con_descuento=true', [], $this->usuario);
 
         $response->assertStatus(200);
         $data = $response->json('data');
@@ -244,12 +184,10 @@ class TipoClienteTest extends TestCase
 
     public function test_filtro_por_credito_funciona(): void
     {
-        Sanctum::actingAs($this->usuario);
-
         TipoCliente::create(['codigo' => 'CRED', 'nombre' => 'Con Crédito', 'dias_credito_default' => 30, 'activo' => true, 'eliminado' => false]);
         TipoCliente::create(['codigo' => 'NCRED', 'nombre' => 'Sin Crédito', 'dias_credito_default' => 0, 'activo' => true, 'eliminado' => false]);
 
-        $response = $this->getJson('/api/tipos-clientes?con_credito=true');
+        $response = $this->authenticatedJson('GET', '/api/tipos-clientes?con_credito=true', [], $this->usuario);
 
         $response->assertStatus(200);
         $data = $response->json('data');
@@ -261,11 +199,9 @@ class TipoClienteTest extends TestCase
 
     public function test_validacion_nombre_requerido(): void
     {
-        Sanctum::actingAs($this->usuario);
-
-        $response = $this->postJson('/api/tipos-clientes', [
+        $response = $this->authenticatedJson('POST', '/api/tipos-clientes', [
             'descripcion' => 'Sin nombre',
-        ]);
+        ], $this->usuario);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['nombre']);
@@ -273,12 +209,10 @@ class TipoClienteTest extends TestCase
 
     public function test_validacion_descuento_debe_ser_numerico(): void
     {
-        Sanctum::actingAs($this->usuario);
-
-        $response = $this->postJson('/api/tipos-clientes', [
+        $response = $this->authenticatedJson('POST', '/api/tipos-clientes', [
             'nombre' => 'Test',
             'descuento_default' => 'no-numerico',
-        ]);
+        ], $this->usuario);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['descuento_default']);

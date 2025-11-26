@@ -53,12 +53,14 @@ class EmpresaTest extends TestCase
             'razon_social' => 'Nueva Empresa Test S.A.',
             'num_identificacion_dgt' => '3-101-654321',
             'tipo_identificacion' => '02',
+            'identificacion_tributaria' => '3-101-654321',
             'direccion' => 'Heredia, Costa Rica',
             'provincia' => '4',
             'canton' => '01',
             'distrito' => '01',
             'telefono' => '+506 2555-6666',
             'email' => 'nueva@empresa.com',
+            'moneda_principal' => 'CRC',
             'moneda_defecto' => 'CRC',
             'regimen_tributario_id' => $regimenTributario->id,
         ];
@@ -90,9 +92,7 @@ class EmpresaTest extends TestCase
         $response = $this->authenticatedJson('PUT', "/api/empresas/{$empresa->id}", $updateData, $usuario);
 
         $response->assertStatus(200)
-                ->assertJsonFragment([
-                    'nombre' => 'Empresa Actualizada'
-                ]);
+                ->assertJsonPath('data.nombre', 'Empresa Actualizada');
 
         $this->assertDatabaseHas('empresas', [
             'id' => $empresa->id,
@@ -130,12 +130,14 @@ class EmpresaTest extends TestCase
             'razon_social' => 'Empresa Duplicada S.A.',
             'num_identificacion_dgt' => $usuario->empresa->num_identificacion_dgt, // Duplicada
             'tipo_identificacion' => '02',
+            'identificacion_tributaria' => $usuario->empresa->num_identificacion_dgt,
             'direccion' => 'San José',
             'provincia' => '1',
             'canton' => '01',
             'distrito' => '01',
             'telefono' => '+506 2222-3333',
             'email' => 'dup@test.com',
+            'moneda_principal' => 'CRC',
             'moneda_defecto' => 'CRC',
             'regimen_tributario_id' => 1,
         ];
@@ -160,12 +162,14 @@ class EmpresaTest extends TestCase
             'razon_social' => 'Empresa Email S.A.',
             'num_identificacion_dgt' => '3-101-999888',
             'tipo_identificacion' => '02',
+            'identificacion_tributaria' => '3-101-999888',
             'direccion' => 'San José',
             'provincia' => '1',
             'canton' => '01',
             'distrito' => '01',
             'telefono' => '+506 2222-3333',
             'email' => $usuario->empresa->email, // Email duplicado
+            'moneda_principal' => 'CRC',
             'moneda_defecto' => 'CRC',
             'regimen_tributario_id' => $regimenTributario->id,
         ];
@@ -195,9 +199,10 @@ class EmpresaTest extends TestCase
 
         $response->assertStatus(422)
                 ->assertJsonValidationErrors([
-                    'nombre',
-                    'num_identificacion_dgt',
-                    'regimen_tributario_id'
+                    'nombre_comercial',
+                    'razon_social',
+                    'tipo_identificacion',
+                    'identificacion_tributaria'
                 ]);
     }
 }
