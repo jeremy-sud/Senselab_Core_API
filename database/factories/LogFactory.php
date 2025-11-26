@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\Log;
+use App\Models\LogAccesoSistema;
 use App\Models\Usuario;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class LogFactory extends Factory
 {
-    protected $model = Log::class;
+    protected $model = LogAccesoSistema::class;
 
     public function definition(): array
     {

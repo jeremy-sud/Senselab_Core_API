@@ -2,12 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\Caby;
+use App\Models\Cabys;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CabyFactory extends Factory
 {
-    protected $model = Caby::class;
+    protected $model = Cabys::class;
 
     public function definition(): array
     {
