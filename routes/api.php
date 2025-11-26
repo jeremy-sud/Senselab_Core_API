@@ -208,38 +208,40 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     // ------------------------------------------------------------------------
     // MÓDULO: VENTAS
     // Permisos: ventas.leer, ventas.crear, ventas.actualizar, ventas.eliminar
+    // Rate Limiting: 60 requests/minuto para operaciones de escritura
     // ------------------------------------------------------------------------
     Route::get('/ventas', [VentaController::class, 'index'])
         ->middleware('permission:ver-ventas');
     Route::post('/ventas', [VentaController::class, 'store'])
-        ->middleware('permission:crear-ventas');
+        ->middleware(['permission:crear-ventas', 'throttle:60,1']);
     Route::post('/ventas/reportes/pdf', [VentaController::class, 'generatePdfReport'])
-        ->middleware('permission:ver-ventas'); // Sprint 8.4 - Queue Jobs
+        ->middleware(['permission:ver-ventas', 'throttle:60,1']); // Sprint 8.4 - Queue Jobs
     Route::get('/ventas/{venta}', [VentaController::class, 'show'])
         ->middleware('permission:ver-ventas');
     Route::put('/ventas/{venta}', [VentaController::class, 'update'])
-        ->middleware('permission:editar-ventas');
+        ->middleware(['permission:editar-ventas', 'throttle:60,1']);
     Route::patch('/ventas/{venta}', [VentaController::class, 'update'])
-        ->middleware('permission:editar-ventas');
+        ->middleware(['permission:editar-ventas', 'throttle:60,1']);
     Route::delete('/ventas/{venta}', [VentaController::class, 'destroy'])
-        ->middleware('permission:eliminar-ventas');
+        ->middleware(['permission:eliminar-ventas', 'throttle:60,1']);
 
     // ------------------------------------------------------------------------
     // MÓDULO: COMPRAS (Órdenes de Compra)
     // Permisos: compras.leer, compras.crear, compras.actualizar, compras.eliminar
+    // Rate Limiting: 60 requests/minuto para operaciones de escritura
     // ------------------------------------------------------------------------
     Route::get('/ordenes-compra', [OrdenCompraController::class, 'index'])
         ->middleware('permission:ver-compras');
     Route::post('/ordenes-compra', [OrdenCompraController::class, 'store'])
-        ->middleware('permission:crear-compras');
+        ->middleware(['permission:crear-compras', 'throttle:60,1']);
     Route::get('/ordenes-compra/{ordenCompra}', [OrdenCompraController::class, 'show'])
         ->middleware('permission:ver-compras');
     Route::put('/ordenes-compra/{ordenCompra}', [OrdenCompraController::class, 'update'])
-        ->middleware('permission:editar-compras');
+        ->middleware(['permission:editar-compras', 'throttle:60,1']);
     Route::patch('/ordenes-compra/{ordenCompra}', [OrdenCompraController::class, 'update'])
-        ->middleware('permission:editar-compras');
+        ->middleware(['permission:editar-compras', 'throttle:60,1']);
     Route::delete('/ordenes-compra/{ordenCompra}', [OrdenCompraController::class, 'destroy'])
-        ->middleware('permission:eliminar-compras');
+        ->middleware(['permission:eliminar-compras', 'throttle:60,1']);
 
     // ------------------------------------------------------------------------
     // MÓDULO: EMPLEADOS
@@ -997,8 +999,17 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     // Cuentas Bancarias
     Route::apiResource('cuentas-bancarias', \App\Http\Controllers\API\CuentaBancariaController::class);
     
-    // Movimientos Bancarios
-    Route::apiResource('movimientos-bancarios', \App\Http\Controllers\API\MovimientoBancarioController::class);
+    // Movimientos Bancarios - Rate limiting en operaciones de escritura (60/min)
+    Route::get('movimientos-bancarios', [\App\Http\Controllers\API\MovimientoBancarioController::class, 'index']);
+    Route::post('movimientos-bancarios', [\App\Http\Controllers\API\MovimientoBancarioController::class, 'store'])
+        ->middleware('throttle:60,1');
+    Route::get('movimientos-bancarios/{movimientoBancario}', [\App\Http\Controllers\API\MovimientoBancarioController::class, 'show']);
+    Route::put('movimientos-bancarios/{movimientoBancario}', [\App\Http\Controllers\API\MovimientoBancarioController::class, 'update'])
+        ->middleware('throttle:60,1');
+    Route::patch('movimientos-bancarios/{movimientoBancario}', [\App\Http\Controllers\API\MovimientoBancarioController::class, 'update'])
+        ->middleware('throttle:60,1');
+    Route::delete('movimientos-bancarios/{movimientoBancario}', [\App\Http\Controllers\API\MovimientoBancarioController::class, 'destroy'])
+        ->middleware('throttle:60,1');
     
     // Deducciones Legales
     Route::apiResource('deducciones-legales', \App\Http\Controllers\API\DeduccionLegalController::class);
