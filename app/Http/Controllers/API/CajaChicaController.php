@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
+use App\Http\Resources\CajaChicaResource;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\JsonResponse;
 
 class CajaChicaController extends Controller
 {
@@ -66,7 +69,7 @@ class CajaChicaController extends Controller
             )
         ]
     )]
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', CajaChica::class);
 
@@ -87,7 +90,7 @@ class CajaChicaController extends Controller
 
             $fondos = $query->orderBy('id', 'desc')->paginate($perPage);
 
-            return response()->json($fondos);
+            return CajaChicaResource::collection($fondos);
         });
     }
 
@@ -127,7 +130,7 @@ class CajaChicaController extends Controller
             )
         ]
     )]
-    public function store(Request $request)
+    public function store(Request $request): CajaChicaResource|JsonResponse
     {
         $this->authorize('create', CajaChica::class);
 
@@ -150,10 +153,8 @@ class CajaChicaController extends Controller
             DB::commit();
             $this->clearCache();
 
-            return response()->json([
-                'message' => 'Fondo de caja chica creado exitosamente',
-                'data' => $fondo->load(['empresa', 'responsable'])
-            ], 201);
+            return (new CajaChicaResource($fondo->load(['empresa', 'responsable'])))
+                ->additional(['message' => 'Fondo de caja chica creado exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -189,7 +190,7 @@ class CajaChicaController extends Controller
             )
         ]
     )]
-    public function show(string $id)
+    public function show(string $id): CajaChicaResource
     {
         $fondo = CajaChica::with(['empresa', 'responsable', 'movimientos'])->findOrFail($id);
         $this->authorize('view', $fondo);
@@ -197,7 +198,7 @@ class CajaChicaController extends Controller
         $cacheKey = $this->generateCacheKey("caja_chica.show.{$id}");
 
         return $this->getCached($cacheKey, function () use ($fondo) {
-            return response()->json(['data' => $fondo]);
+            return new CajaChicaResource($fondo);
         });
     }
 
@@ -236,7 +237,7 @@ class CajaChicaController extends Controller
             )
         ]
     )]
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): CajaChicaResource|JsonResponse
     {
         $fondo = CajaChica::findOrFail($id);
         $this->authorize('update', $fondo);
@@ -255,10 +256,8 @@ class CajaChicaController extends Controller
             DB::commit();
             $this->clearCache();
 
-            return response()->json([
-                'message' => 'Fondo actualizado exitosamente',
-                'data' => $fondo->fresh(['empresa', 'responsable'])
-            ]);
+            return (new CajaChicaResource($fondo->fresh(['empresa', 'responsable'])))
+                ->additional(['message' => 'Fondo actualizado exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -294,7 +293,7 @@ class CajaChicaController extends Controller
             )
         ]
     )]
-    public function cerrar(string $id)
+    public function cerrar(string $id): CajaChicaResource|JsonResponse
     {
         $fondo = CajaChica::findOrFail($id);
         $this->authorize('update', $fondo);
@@ -315,10 +314,8 @@ class CajaChicaController extends Controller
             DB::commit();
             $this->clearCache();
 
-            return response()->json([
-                'message' => 'Fondo cerrado exitosamente',
-                'data' => $fondo->fresh()
-            ]);
+            return (new CajaChicaResource($fondo->fresh()))
+                ->additional(['message' => 'Fondo cerrado exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -354,7 +351,7 @@ class CajaChicaController extends Controller
             )
         ]
     )]
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
         $fondo = CajaChica::findOrFail($id);
         $this->authorize('delete', $fondo);

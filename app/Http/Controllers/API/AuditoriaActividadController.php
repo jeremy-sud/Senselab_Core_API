@@ -7,6 +7,8 @@ use App\Models\AuditoriaActividad;
 use Illuminate\Http\Request;
 use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
+use App\Http\Resources\AuditoriaActividadResource;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class AuditoriaActividadController extends Controller
 {
@@ -86,7 +88,7 @@ class AuditoriaActividadController extends Controller
             )
         ]
     )]
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', AuditoriaActividad::class);
 
@@ -123,7 +125,7 @@ class AuditoriaActividadController extends Controller
                 return $auditoria;
             });
 
-            return response()->json($auditorias);
+            return AuditoriaActividadResource::collection($auditorias);
         });
     }
 
@@ -152,7 +154,7 @@ class AuditoriaActividadController extends Controller
             )
         ]
     )]
-    public function show(string $id)
+    public function show(string $id): AuditoriaActividadResource
     {
         $auditoria = AuditoriaActividad::with(['usuario', 'empresa'])->findOrFail($id);
         $this->authorize('view', $auditoria);
@@ -161,10 +163,9 @@ class AuditoriaActividadController extends Controller
 
         return $this->getCached($cacheKey, function () use ($auditoria) {
             // Incluir cambios calculados
-            $data = $auditoria->toArray();
-            $data['cambios'] = $auditoria->cambios;
+            $auditoria->cambios = $auditoria->cambios;
             
-            return response()->json(['data' => $data]);
+            return new AuditoriaActividadResource($auditoria);
         });
     }
 
@@ -200,7 +201,7 @@ class AuditoriaActividadController extends Controller
             )
         ]
     )]
-    public function estadisticas(Request $request)
+    public function estadisticas(Request $request): JsonResponse
     {
         $this->authorize('viewAny', AuditoriaActividad::class);
 
@@ -287,7 +288,7 @@ class AuditoriaActividadController extends Controller
             )
         ]
     )]
-    public function exportar(Request $request)
+    public function exportar(Request $request): \Illuminate\Http\Response|\Illuminate\Contracts\Routing\ResponseFactory
     {
         $this->authorize('viewAny', AuditoriaActividad::class);
 

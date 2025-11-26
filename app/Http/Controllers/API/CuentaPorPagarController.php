@@ -108,16 +108,7 @@ class CuentaPorPagarController extends Controller
             $cuentas = $query->paginate($request->get('per_page', 15));
 
             return CuentaPorPagarResource::collection($cuentas);
-        }, [
-            'estado' => $request->input('estado'),
-            'proveedor_id' => $request->input('proveedor_id'),
-            'vencidas' => $request->input('vencidas'),
-            'desde' => $request->input('desde'),
-            'hasta' => $request->input('hasta'),
-            'sort_by' => $request->input('sort_by'),
-            'sort_order' => $request->input('sort_order'),
-            'per_page' => $request->input('per_page')
-        ]);
+        });
     }
 
     /**
@@ -152,7 +143,7 @@ class CuentaPorPagarController extends Controller
             new OA\Response(response: 201, description: 'Cuenta creada', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', ref: '#/components/schemas/CuentaPorPagar')]))
         ]
     )]
-    public function store(StoreCuentaPorPagarRequest $request): JsonResponse
+    public function store(StoreCuentaPorPagarRequest $request): CuentaPorPagarResource|JsonResponse
     {
         $this->authorize('create', CuentaPorPagar::class);
 
@@ -168,11 +159,11 @@ class CuentaPorPagarController extends Controller
         $cuenta->load(['proveedor', 'ordenCompra', 'empresa']);
         $this->flushCache();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Cuenta por pagar creada exitosamente',
-            'data' => new CuentaPorPagarResource($cuenta)
-        ], 201);
+        return (new CuentaPorPagarResource($cuenta))
+            ->additional([
+                'success' => true,
+                'message' => 'Cuenta por pagar creada exitosamente'
+            ]);
     }
 
     /**
@@ -194,7 +185,7 @@ class CuentaPorPagarController extends Controller
             new OA\Response(response: 404, description: 'No encontrada')
         ]
     )]
-    public function show(int $id, Request $request): JsonResponse
+    public function show(int $id, Request $request): CuentaPorPagarResource|JsonResponse
     {
         $empresaId = $this->getEmpresaId();
 
@@ -205,10 +196,8 @@ class CuentaPorPagarController extends Controller
             ->firstOrFail();
         $this->authorize('view', $cuenta);
 
-        return response()->json([
-            'success' => true,
-            'data' => new CuentaPorPagarResource($cuenta)
-        ]);
+        return (new CuentaPorPagarResource($cuenta))
+            ->additional(['success' => true]);
     }
 
     /**
@@ -226,7 +215,7 @@ class CuentaPorPagarController extends Controller
         parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
         responses: [new OA\Response(response: 200, description: 'Actualizada')]
     )]
-    public function update(UpdateCuentaPorPagarRequest $request, int $id): JsonResponse
+    public function update(UpdateCuentaPorPagarRequest $request, int $id): CuentaPorPagarResource|JsonResponse
     {
         $empresaId = $this->getEmpresaId();
 
@@ -240,11 +229,11 @@ class CuentaPorPagarController extends Controller
         $cuenta->load(['proveedor', 'ordenCompra', 'empresa']);
         $this->flushCache();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Cuenta por pagar actualizada exitosamente',
-            'data' => new CuentaPorPagarResource($cuenta)
-        ]);
+        return (new CuentaPorPagarResource($cuenta))
+            ->additional([
+                'success' => true,
+                'message' => 'Cuenta por pagar actualizada exitosamente'
+            ]);
     }
 
     /**

@@ -223,7 +223,7 @@ class AsientoContableController extends Controller
             )
         ]
     )]
-    public function store(StoreAsientoContableRequest $request): JsonResponse
+    public function store(StoreAsientoContableRequest $request): AsientoContableResource|JsonResponse
     {
         $this->authorize('create', AsientoContable::class);
         
@@ -258,11 +258,11 @@ class AsientoContableController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Asiento contable creado exitosamente',
-                'data' => new AsientoContableResource($asiento)
-            ], 201);
+            return (new AsientoContableResource($asiento))
+                ->additional([
+                    'success' => true,
+                    'message' => 'Asiento contable creado exitosamente'
+                ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -316,7 +316,7 @@ class AsientoContableController extends Controller
             )
         ]
     )]
-    public function show(int $id, Request $request): JsonResponse
+    public function show(int $id, Request $request): AsientoContableResource
     {
         $empresaId = $this->getEmpresaId();
 
@@ -327,10 +327,8 @@ class AsientoContableController extends Controller
             ->firstOrFail();
         $this->authorize('view', $asiento);
 
-        return response()->json([
-            'success' => true,
-            'data' => new AsientoContableResource($asiento)
-        ]);
+        return (new AsientoContableResource($asiento))
+            ->additional(['success' => true]);
     }
 
     /**
@@ -403,7 +401,7 @@ class AsientoContableController extends Controller
             )
         ]
     )]
-    public function update(UpdateAsientoContableRequest $request, int $id): JsonResponse
+    public function update(UpdateAsientoContableRequest $request, int $id): AsientoContableResource|JsonResponse
     {
         $empresaId = $this->getEmpresaId();
 
@@ -451,11 +449,11 @@ class AsientoContableController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Asiento contable actualizado exitosamente',
-                'data' => new AsientoContableResource($asiento)
-            ]);
+            return (new AsientoContableResource($asiento))
+                ->additional([
+                    'success' => true,
+                    'message' => 'Asiento contable actualizado exitosamente'
+                ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -588,7 +586,7 @@ class AsientoContableController extends Controller
             )
         ]
     )]
-    public function mayorizar(int $id, Request $request): JsonResponse
+    public function mayorizar(int $id, Request $request): AsientoContableResource|JsonResponse
     {
         $empresaId = $this->getEmpresaId();
 
@@ -627,11 +625,11 @@ class AsientoContableController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Asiento contable mayorizado exitosamente',
-                'data' => new AsientoContableResource($asiento->fresh(['detalles.cuentaContable']))
-            ]);
+            return (new AsientoContableResource($asiento->fresh(['detalles.cuentaContable'])))
+                ->additional([
+                    'success' => true,
+                    'message' => 'Asiento contable mayorizado exitosamente'
+                ]);
 
         } catch (\Exception $e) {
             DB::rollBack();

@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Empresa;
+use App\Multitenancy\TenantFinder\HeaderSubdomainTenantFinder;
 use Spatie\Multitenancy\Jobs\TenantAware;
 use Illuminate\Broadcasting\BroadcastEvent;
 use Illuminate\Events\CallQueuedListener;
@@ -21,13 +23,22 @@ return [
      * This class should extend `Spatie\Multitenancy\TenantFinder\TenantFinder`
      *
      */
-    'tenant_finder' => null,
+    'tenant_finder' => HeaderSubdomainTenantFinder::class,
 
     /*
      * These fields are used by tenant:artisan command to match one or more tenant.
      */
     'tenant_artisan_search_fields' => [
         'id',
+        'subdominio',
+        'nombre',
+        'num_identificacion_dgt',
+    ],
+
+    'identification' => [
+        'header_keys' => ['X-Empresa-Id', 'X-Tenant-Id', 'X-Tenant'],
+        'base_domain' => env('TENANT_BASE_DOMAIN', parse_url(config('app.url'), PHP_URL_HOST) ?: null),
+        'ignore_subdomains' => ['www', 'api'],
     ],
 
     /*
@@ -47,7 +58,7 @@ return [
      * It must  extend `Spatie\Multitenancy\Models\Tenant::class` or
      * implement `Spatie\Multitenancy\Contracts\IsTenant::class` interface
      */
-    'tenant_model' => Tenant::class,
+    'tenant_model' => Empresa::class,
 
     /*
      * If there is a current tenant when dispatching a job, the id of the current tenant

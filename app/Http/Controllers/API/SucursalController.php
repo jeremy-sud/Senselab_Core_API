@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreSucursalRequest;
 use App\Http\Requests\UpdateSucursalRequest;
 use App\Http\Resources\SucursalResource;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
 
@@ -21,7 +22,7 @@ class SucursalController extends Controller
      * Display a listing of the resource.
      * 
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return AnonymousResourceCollection
      */
     #[OA\Get(
         path: '/api/sucursales',
@@ -64,7 +65,7 @@ class SucursalController extends Controller
             )
         ]
     )]
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection|JsonResponse
     {
         $this->authorize('viewAny', Sucursal::class);
         
@@ -142,7 +143,7 @@ class SucursalController extends Controller
             )
         ]
     )]
-    public function store(StoreSucursalRequest $request)
+    public function store(StoreSucursalRequest $request): JsonResponse
     {
         $this->authorize('create', Sucursal::class);
         
@@ -174,7 +175,7 @@ class SucursalController extends Controller
      * Display the specified resource.
      * 
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return SucursalResource
      */
     #[OA\Get(
         path: '/api/sucursales/{id}',
@@ -194,7 +195,7 @@ class SucursalController extends Controller
             new OA\Response(response: 404, description: 'No encontrada')
         ]
     )]
-    public function show(int $id)
+    public function show(int $id): SucursalResource
     {
         try {
             $sucursal = Sucursal::with([
@@ -206,14 +207,9 @@ class SucursalController extends Controller
 
             return new SucursalResource($sucursal);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Sucursal no encontrada'
-            ], 404);
+            abort(404, 'Sucursal no encontrada');
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener sucursal',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 
@@ -222,7 +218,7 @@ class SucursalController extends Controller
      * 
      * @param UpdateSucursalRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return SucursalResource
      */
     #[OA\Put(
         path: '/api/sucursales/{id}',
@@ -248,7 +244,7 @@ class SucursalController extends Controller
             new OA\Response(response: 404, description: 'No encontrada')
         ]
     )]
-    public function update(UpdateSucursalRequest $request, int $id)
+    public function update(UpdateSucursalRequest $request, int $id): SucursalResource
     {
         try {
             $sucursal = Sucursal::findOrFail($id);
@@ -269,14 +265,9 @@ class SucursalController extends Controller
             return (new SucursalResource($sucursal))
                 ->additional(['message' => 'Sucursal actualizada exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Sucursal no encontrada'
-            ], 404);
+            abort(404, 'Sucursal no encontrada');
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al actualizar sucursal',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 
@@ -301,7 +292,7 @@ class SucursalController extends Controller
             new OA\Response(response: 422, description: 'No se puede eliminar la principal')
         ]
     )]
-    public function destroy(int $id)
+    public function destroy(int $id): JsonResponse
     {
         try {
             $sucursal = Sucursal::findOrFail($id);

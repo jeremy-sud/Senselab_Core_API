@@ -82,32 +82,37 @@ class EmpleadoController extends Controller
     {
         $this->authorize('viewAny', Empleado::class);
 
-        $empresaId = auth('sanctum')->user()->empresa_id;
-        
-        $cacheKey = $this->getCacheKey('index', [
-            'empresa_id' => $empresaId,
-            'activo' => $request->input('activo'),
-            'cargo_id' => $request->input('cargo_id')
-        ]);
+        $cacheKey = $this->generateCacheKey('empleados.index', $request->all());
 
-        $empleados = $this->cacheQueryIfEnabled($cacheKey, function() use ($request, $empresaId) {
-            $query = Empleado::where('empresa_id', $empresaId)
-                ->with(['cargo']);
+        return $this->getCached($cacheKey, function () use ($request) {
+            $perPage = $request->input('per_page', 15);
+            
+            $query = Empleado::with(['usuario', 'departamento', 'cargo'])
+                ->activos();
 
-            // Filtro opcional por estado activo
-            if ($request->has('activo')) {
-                $query->where('activo', $request->boolean('activo'));
+            if ($request->filled('departamento_id')) {
+                $query->where('departamento_id', $request->departamento_id);
             }
 
-            // Filtro opcional por cargo
             if ($request->filled('cargo_id')) {
                 $query->where('cargo_id', $request->cargo_id);
             }
 
-            return $query->get();
-        });
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('primer_nombre', 'like', "%{$search}%")
+                      ->orWhere('primer_apellido', 'like', "%{$search}%")
+                      ->orWhere('numero_identificacion', 'like', "%{$search}%");
+                });
+            }
 
-        return EmpleadoResource::collection($empleados);
+            $empleados = $query->orderBy('primer_apellido')
+                ->orderBy('primer_nombre')
+                ->paginate($perPage);
+
+            return EmpleadoResource::collection($empleados);
+        });
     }
 
     /**
@@ -144,21 +149,46 @@ class EmpleadoController extends Controller
             new OA\Response(response: 201, description: 'Empleado creado')
         ]
     )]
-    public function store(StoreEmpleadoRequest $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
         $this->authorize('create', Empleado::class);
 
-        $validated = $request->validated();
-        $validated['empresa_id'] = auth('sanctum')->user()->empresa_id;
+        $validated = $request->validate([
+            'usuario_id' => 'nullable|exists:users,id|unique:empleados,usuario_id',
+            'primer_nombre' => 'required|string|max:50',
+            'segundo_nombre' => 'nullable|string|max:50',
+            'primer_apellido' => 'required|string|max:50',
+            'segundo_apellido' => 'nullable|string|max:50',
+            'tipo_identificacion' => 'required|string|in:cedula,pasaporte,residencia',
+            'numero_identificacion' => 'required|string|max:20|unique:empleados,numero_identificacion',
+            'fecha_nacimiento' => 'required|date',
+            'fecha_ingreso' => 'required|date',
+            'departamento_id' => 'required|exists:departamentos,id',
+            'cargo_id' => 'required|exists:cargos,id',
+            'salario_base' => 'required|numeric|min:0',
+            'email_corporativo' => 'nullable|email|unique:empleados,email_corporativo',
+            'telefono_movil' => 'nullable|string|max:20',
+        ]);
 
-        $empleado = Empleado::create($validated);
-        $empleado->load(['cargo']);
+        DB::beginTransaction();
+        try {
+            $empleado = Empleado::create($validated);
+            
+            DB::commit();
+            $this->clearCache();
 
-        $this->flushCache();
+            return (new EmpleadoResource($empleado->load(['usuario', 'departamento', 'cargo'])))
+                ->additional(['message' => 'Empleado creado exitosamente'])
+                ->response()
+                ->setStatusCode(201);
 
-        return (new EmpleadoResource($empleado))
-            ->response()
-            ->setStatusCode(201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Error al crear empleado',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -181,16 +211,16 @@ class EmpleadoController extends Controller
             new OA\Response(response: 404, description: 'No encontrado')
         ]
     )]
-    public function show(int $id): EmpleadoResource
+    public function show(string $id): EmpleadoResource
     {
-        $empresaId = auth('sanctum')->user()->empresa_id;
-
-        $empleado = Empleado::where('empresa_id', $empresaId)
-            ->with(['cargo'])
-            ->findOrFail($id);
+        $empleado = Empleado::with(['usuario', 'departamento', 'cargo'])->findOrFail($id);
         $this->authorize('view', $empleado);
 
-        return new EmpleadoResource($empleado);
+        $cacheKey = $this->generateCacheKey("empleados.show.{$id}");
+
+        return $this->getCached($cacheKey, function () use ($empleado) {
+            return new EmpleadoResource($empleado);
+        });
     }
 
     /**
@@ -220,19 +250,43 @@ class EmpleadoController extends Controller
         ),
         responses: [new OA\Response(response: 200, description: 'Actualizado')]
     )]
-    public function update(UpdateEmpleadoRequest $request, int $id): EmpleadoResource
+    public function update(Request $request, string $id): EmpleadoResource
     {
-        $empresaId = auth('sanctum')->user()->empresa_id;
-
-        $empleado = Empleado::where('empresa_id', $empresaId)->findOrFail($id);
+        $empleado = Empleado::findOrFail($id);
         $this->authorize('update', $empleado);
 
-        $empleado->update($request->validated());
-        $empleado->load(['cargo']);
+        $validated = $request->validate([
+            'usuario_id' => 'nullable|exists:users,id|unique:empleados,usuario_id,' . $id,
+            'primer_nombre' => 'sometimes|string|max:50',
+            'segundo_nombre' => 'nullable|string|max:50',
+            'primer_apellido' => 'sometimes|string|max:50',
+            'segundo_apellido' => 'nullable|string|max:50',
+            'tipo_identificacion' => 'sometimes|string|in:cedula,pasaporte,residencia',
+            'numero_identificacion' => 'sometimes|string|max:20|unique:empleados,numero_identificacion,' . $id,
+            'fecha_nacimiento' => 'sometimes|date',
+            'fecha_ingreso' => 'sometimes|date',
+            'departamento_id' => 'sometimes|exists:departamentos,id',
+            'cargo_id' => 'sometimes|exists:cargos,id',
+            'salario_base' => 'sometimes|numeric|min:0',
+            'email_corporativo' => 'nullable|email|unique:empleados,email_corporativo,' . $id,
+            'telefono_movil' => 'nullable|string|max:20',
+            'estado' => 'sometimes|in:activo,inactivo,suspendido,vacaciones',
+        ]);
 
-        $this->flushCache();
+        DB::beginTransaction();
+        try {
+            $empleado->update($validated);
+            
+            DB::commit();
+            $this->clearCache();
 
-        return new EmpleadoResource($empleado);
+            return (new EmpleadoResource($empleado->fresh(['usuario', 'departamento', 'cargo'])))
+                ->additional(['message' => 'Empleado actualizado exitosamente']);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     /**
@@ -252,23 +306,23 @@ class EmpleadoController extends Controller
         parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
         responses: [new OA\Response(response: 200, description: 'Eliminado')]
     )]
-    public function destroy(int $id): JsonResponse
+    public function destroy(string $id): JsonResponse
     {
-        $empresaId = auth('sanctum')->user()->empresa_id;
-
-        $empleado = Empleado::where('empresa_id', $empresaId)->findOrFail($id);
+        $empleado = Empleado::findOrFail($id);
         $this->authorize('delete', $empleado);
 
-        // Soft delete personalizado
-        $empleado->eliminado = 1;
-        $empleado->activo = 0;
-        $empleado->save();
+        try {
+            $empleado->delete(); // Soft delete estándar de Laravel
+            $this->clearCache();
 
-        $this->flushCache();
-
-        return response()->json([
-            'message' => 'Empleado eliminado exitosamente',
-            'data' => new EmpleadoResource($empleado)
-        ], 200);
+            return response()->json([
+                'message' => 'Empleado eliminado exitosamente'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al eliminar empleado',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

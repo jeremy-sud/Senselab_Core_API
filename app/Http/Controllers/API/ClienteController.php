@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreClienteRequest;
 use App\Http\Requests\UpdateClienteRequest;
 use App\Http\Resources\ClienteResource;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
 
 class ClienteController extends Controller
@@ -118,53 +120,46 @@ class ClienteController extends Controller
             )
         ]
     )]
-    public function index(Request $request): \Illuminate\Http\JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Cliente::class);
         
-        try {
-            // Usar cache si está habilitado
-            return $this->cacheQueryIfEnabled($request, function() use ($request) {
-                $perPage = $request->input('per_page', 15);
-                $search = $request->input('search');
-                $empresaId = $request->input('empresa_id');
-                $tipoIdentificacion = $request->input('tipo_identificacion');
-                
-                $query = Cliente::with('empresa');
-                
-                if ($search) {
-                    $query->where(function($q) use ($search) {
-                        $q->where('nombre', 'like', "%{$search}%")
-                          ->orWhere('apellidos', 'like', "%{$search}%")
-                          ->orWhere('nombre_comercial', 'like', "%{$search}%")
-                          ->orWhere('numero_identificacion', 'like', "%{$search}%")
-                          ->orWhere('email', 'like', "%{$search}%");
-                    });
-                }
-                
-                if ($empresaId) {
-                    $query->where('empresa_id', $empresaId);
-                }
-                
-                if ($tipoIdentificacion) {
-                    $query->porTipoIdentificacion($tipoIdentificacion);
-                }
-                
-                if ($request->boolean('activos')) {
-                    $query->activos();
-                }
-                
-                $clientes = $query->orderBy('id', 'asc')
-                                  ->paginate($perPage);
-                
-                return ClienteResource::collection($clientes)->response();
-            });
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener clientes',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        // Usar cache si está habilitado
+        return $this->cacheQueryIfEnabled($request, function() use ($request) {
+            $perPage = $request->input('per_page', 15);
+            $search = $request->input('search');
+            $empresaId = $request->input('empresa_id');
+            $tipoIdentificacion = $request->input('tipo_identificacion');
+            
+            $query = Cliente::with('empresa');
+            
+            if ($search) {
+                $query->where(function($q) use ($search) {
+                    $q->where('nombre', 'like', "%{$search}%")
+                        ->orWhere('apellidos', 'like', "%{$search}%")
+                        ->orWhere('nombre_comercial', 'like', "%{$search}%")
+                        ->orWhere('numero_identificacion', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            }
+            
+            if ($empresaId) {
+                $query->where('empresa_id', $empresaId);
+            }
+            
+            if ($tipoIdentificacion) {
+                $query->porTipoIdentificacion($tipoIdentificacion);
+            }
+            
+            if ($request->boolean('activos')) {
+                $query->activos();
+            }
+            
+            $clientes = $query->orderBy('id', 'asc')
+                                ->paginate($perPage);
+            
+            return ClienteResource::collection($clientes);
+        });
     }
 
     /**
@@ -239,7 +234,7 @@ class ClienteController extends Controller
             )
         ]
     )]
-    public function store(StoreClienteRequest $request): \Illuminate\Http\JsonResponse
+    public function store(StoreClienteRequest $request): JsonResponse
     {
         $this->authorize('create', Cliente::class);
         
@@ -266,7 +261,7 @@ class ClienteController extends Controller
      * Display the specified resource.
      * 
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return ClienteResource
      */
     #[OA\Get(
         path: '/api/clientes/{id}',
@@ -314,7 +309,7 @@ class ClienteController extends Controller
             )
         ]
     )]
-    public function show(int $id): \Illuminate\Http\JsonResponse
+    public function show(int $id): ClienteResource
     {
         try {
             $cliente = Cliente::with([
@@ -329,16 +324,11 @@ class ClienteController extends Controller
             
             $this->authorize('view', $cliente);
             
-            return (new ClienteResource($cliente))->response();
+            return new ClienteResource($cliente);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Cliente no encontrado'
-            ], 404);
+            abort(404, 'Cliente no encontrado');
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener cliente',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 
@@ -347,7 +337,7 @@ class ClienteController extends Controller
      * 
      * @param UpdateClienteRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return ClienteResource
      */
     #[OA\Put(
         path: '/api/clientes/{id}',
@@ -427,7 +417,7 @@ class ClienteController extends Controller
             )
         ]
     )]
-    public function update(UpdateClienteRequest $request, int $id): \Illuminate\Http\JsonResponse
+    public function update(UpdateClienteRequest $request, int $id): ClienteResource
     {
         try {
             $cliente = Cliente::findOrFail($id);
@@ -441,17 +431,11 @@ class ClienteController extends Controller
             $this->flushCache();
             
             return (new ClienteResource($cliente))
-                ->additional(['message' => 'Cliente actualizado exitosamente'])
-                ->response();
+                ->additional(['message' => 'Cliente actualizado exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Cliente no encontrado'
-            ], 404);
+            abort(404, 'Cliente no encontrado');
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al actualizar cliente',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\MensajeHaciendaResource;
 use App\Models\MensajeHacienda;
 use App\Traits\HasCacheableQueries;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Validator;
 
 class MensajeHaciendaController extends Controller
@@ -18,7 +21,7 @@ class MensajeHaciendaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', MensajeHacienda::class);
 
@@ -60,13 +63,13 @@ class MensajeHaciendaController extends Controller
                 ->paginate($request->get('per_page', 20));
         });
 
-        return response()->json($mensajes);
+        return MensajeHaciendaResource::collection($mensajes);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $this->authorize('create', MensajeHacienda::class);
 
@@ -104,28 +107,28 @@ class MensajeHaciendaController extends Controller
 
         $this->flushCache();
 
-        return response()->json([
-            'message' => 'Mensaje de Hacienda creado exitosamente',
-            'data' => $mensaje
-        ], 201);
+        return (new MensajeHaciendaResource($mensaje))
+            ->additional(['message' => 'Mensaje de Hacienda creado exitosamente'])
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(MensajeHacienda $mensajeHacienda)
+    public function show(MensajeHacienda $mensajeHacienda): MensajeHaciendaResource
     {
         $this->authorize('view', $mensajeHacienda);
 
         $mensajeHacienda->load(['comprobante', 'empresa']);
 
-        return response()->json($mensajeHacienda);
+        return new MensajeHaciendaResource($mensajeHacienda);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, MensajeHacienda $mensajeHacienda)
+    public function update(Request $request, MensajeHacienda $mensajeHacienda): MensajeHaciendaResource
     {
         $this->authorize('update', $mensajeHacienda);
 
@@ -138,10 +141,7 @@ class MensajeHaciendaController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Error de validación',
-                'errors' => $validator->errors()
-            ], 422);
+            abort(422, 'Error de validación: ' . json_encode($validator->errors()));
         }
 
         $data = $request->only([
@@ -160,16 +160,14 @@ class MensajeHaciendaController extends Controller
 
         $this->flushCache();
 
-        return response()->json([
-            'message' => 'Mensaje de Hacienda actualizado exitosamente',
-            'data' => $mensajeHacienda
-        ]);
+        return (new MensajeHaciendaResource($mensajeHacienda))
+            ->additional(['message' => 'Mensaje de Hacienda actualizado exitosamente']);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(MensajeHacienda $mensajeHacienda)
+    public function destroy(MensajeHacienda $mensajeHacienda): JsonResponse
     {
         $this->authorize('delete', $mensajeHacienda);
 
@@ -182,4 +180,3 @@ class MensajeHaciendaController extends Controller
             'message' => 'Mensaje de Hacienda eliminado exitosamente'
         ]);
     }
-}

@@ -7,6 +7,8 @@ use App\Models\CodigoActividadEconomica;
 use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Http\Resources\CodigoActividadEconomicaResource;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * Controlador para códigos de actividad económica Costa Rica
@@ -22,7 +24,7 @@ class CodigoActividadEconomicaController extends Controller
     /**
      * Listar códigos de actividad económica
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', CodigoActividadEconomica::class);
 
@@ -51,13 +53,13 @@ class CodigoActividadEconomicaController extends Controller
             return $query->orderBy('id')->paginate($request->input('per_page', 20));
         });
 
-        return response()->json(['success' => true, 'data' => $codigos]);
+        return CodigoActividadEconomicaResource::collection($codigos);
     }
 
     /**
      * Crear código de actividad económica
      */
-    public function store(Request $request): JsonResponse
+    public function store(Request $request): CodigoActividadEconomicaResource
     {
         $this->authorize('create', CodigoActividadEconomica::class);
 
@@ -70,24 +72,26 @@ class CodigoActividadEconomicaController extends Controller
 
         $codigo = CodigoActividadEconomica::create($validated);
 
-        $this->flushCache(['codigos-actividad-economica', 'catalogos', 'hacienda']);
+        $this->flushCache();
 
-        return response()->json(['success' => true, 'data' => $codigo], 201);
+        return (new CodigoActividadEconomicaResource($codigo))
+            ->additional(['success' => true]);
     }
 
     /**
      * Mostrar código específico
      */
-    public function show(CodigoActividadEconomica $codigoActividadEconomica): JsonResponse
+    public function show(CodigoActividadEconomica $codigoActividadEconomica): CodigoActividadEconomicaResource
     {
         $this->authorize('view', $codigoActividadEconomica);
-        return response()->json(['success' => true, 'data' => $codigoActividadEconomica]);
+        return (new CodigoActividadEconomicaResource($codigoActividadEconomica))
+            ->additional(['success' => true]);
     }
 
     /**
      * Actualizar código de actividad económica
      */
-    public function update(Request $request, CodigoActividadEconomica $codigoActividadEconomica): JsonResponse
+    public function update(Request $request, CodigoActividadEconomica $codigoActividadEconomica): CodigoActividadEconomicaResource
     {
         $this->authorize('update', $codigoActividadEconomica);
 
@@ -100,9 +104,10 @@ class CodigoActividadEconomicaController extends Controller
 
         $codigoActividadEconomica->update($validated);
 
-        $this->flushCache(['codigos-actividad-economica', 'catalogos', 'hacienda']);
+        $this->flushCache();
 
-        return response()->json(['success' => true, 'data' => $codigoActividadEconomica]);
+        return (new CodigoActividadEconomicaResource($codigoActividadEconomica))
+            ->additional(['success' => true]);
     }
 
     /**
@@ -114,7 +119,7 @@ class CodigoActividadEconomicaController extends Controller
 
         $codigoActividadEconomica->update(['eliminado' => true, 'activo' => false]);
 
-        $this->flushCache(['codigos-actividad-economica', 'catalogos', 'hacienda']);
+        $this->flushCache();
 
         return response()->json(['success' => true, 'message' => 'Código eliminado exitosamente']);
     }

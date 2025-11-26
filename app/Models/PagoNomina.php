@@ -78,9 +78,12 @@ class PagoNomina extends Model
         return $this->belongsTo(PeriodoNomina::class, 'periodo_nomina_id');
     }
 
-    public function metodoPago()
+    /**
+     * Relación con la forma de pago (Alias para metodoPago).
+     * Se agrega para consistencia con otros modelos que usan formaPago.
+     */
+    public function formaPago()
     {
-        // En la base el FK parece apuntar a formas_pago (nombre fk_pagonom_formapago_final)
         return $this->belongsTo(FormaPago::class, 'metodo_pago_id');
     }
 

@@ -155,14 +155,7 @@ class HorarioRutaController extends Controller
                 ->paginate(15);
 
             return HorarioRutaResource::collection($horarios);
-        }, [
-            'ruta_id' => $request->input('ruta_id'),
-            'bus_id' => $request->input('bus_id'),
-            'estado' => $request->input('estado'),
-            'fecha' => $request->input('fecha'),
-            'desde' => $request->input('desde'),
-            'hasta' => $request->input('hasta')
-        ]);
+        });
     }
 
     /**
@@ -200,7 +193,7 @@ class HorarioRutaController extends Controller
             new OA\Response(response: 401, description: "No autenticado")
         ]
     )]
-    public function store(StoreHorarioRutaRequest $request): HorarioRutaResource
+    public function store(StoreHorarioRutaRequest $request): JsonResponse
     {
         $this->authorize('create', HorarioRuta::class);
         
@@ -225,7 +218,10 @@ class HorarioRutaController extends Controller
             DB::commit();
             $this->flushCache();
 
-            return new HorarioRutaResource($horario->load(['ruta', 'bus']));
+            return (new HorarioRutaResource($horario->load(['ruta', 'bus'])))
+                ->additional(['message' => 'Horario creado exitosamente'])
+                ->response()
+                ->setStatusCode(201);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -340,7 +336,8 @@ class HorarioRutaController extends Controller
 
         $this->flushCache();
 
-        return new HorarioRutaResource($horario->load(['ruta', 'bus']));
+        return (new HorarioRutaResource($horario->load(['ruta', 'bus'])))
+            ->additional(['message' => 'Horario actualizado exitosamente']);
     }
 
     /**
@@ -440,7 +437,8 @@ class HorarioRutaController extends Controller
 
         $horario->update(['estado' => 'En Viaje']);
 
-        return new HorarioRutaResource($horario->load(['ruta', 'bus']));
+        return (new HorarioRutaResource($horario->load(['ruta', 'bus'])))
+            ->additional(['message' => 'Viaje iniciado exitosamente']);
     }
 
     /**
@@ -482,7 +480,8 @@ class HorarioRutaController extends Controller
 
         $horario->update(['estado' => 'Finalizado']);
 
-        return new HorarioRutaResource($horario->load(['ruta', 'bus']));
+        return (new HorarioRutaResource($horario->load(['ruta', 'bus'])))
+            ->additional(['message' => 'Viaje finalizado exitosamente']);
     }
 
     /**
@@ -514,6 +513,7 @@ class HorarioRutaController extends Controller
         ]
     )]
     public function cancelar(int $id): HorarioRutaResource
+    public function cancelar(int $id): HorarioRutaResource
     {
         $horario = HorarioRuta::where('eliminado', 0)
             ->findOrFail($id);
@@ -524,9 +524,9 @@ class HorarioRutaController extends Controller
 
         $horario->update(['estado' => 'Cancelado']);
 
-        return new HorarioRutaResource($horario->load(['ruta', 'bus']));
+        return (new HorarioRutaResource($horario->load(['ruta', 'bus'])))
+            ->additional(['message' => 'Horario cancelado exitosamente']);
     }
-
     /**
      * Consultar asientos disponibles
      *

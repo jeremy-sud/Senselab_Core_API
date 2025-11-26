@@ -3,12 +3,30 @@
 ## Objetivo
 Estandarizar el acceso y scoping por `empresa_id` en controladores y modelos, evitando usos directos de `auth()->user()->empresa_id` y `$request->user()->empresa_id`, mejorando seguridad y consistencia.
 
+## Resolución del tenant (Header/Subdominio)
+
+- **Finder activo**: `App\Multitenancy\TenantFinder\HeaderSubdomainTenantFinder`.
+- **Headers soportados**: `X-Empresa-Id`, `X-Tenant-Id`, `X-Tenant`. El valor debe ser el `id` numérico de la empresa.
+- **Subdominios**: si la petición llega por `https://{subdominio}.api.ursol.com`, el finder comparará `{subdominio}` contra `empresas.subdominio` (configura `TENANT_BASE_DOMAIN` en `.env`).
+- **Validación**: aun cuando se envía un header o subdominio distinto, `resolveEmpresaOrFail()` compara ese ID con el `empresa_id` del usuario autenticado para prevenir accesos cruzados.
+
+```bash
+curl -X GET https://tenant-123.api.ursol.com/api/ventas \
+    -H "Authorization: Bearer $TOKEN"
+
+# O con header explícito
+curl -X GET http://localhost:8000/api/ventas \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "X-Empresa-Id: 123"
+```
+
 ## Trait `HasEmpresaContext`
 Ubicación: `app/Traits/HasEmpresaContext.php`
 
-- `getEmpresaId(): ?int` — Obtiene el `empresa_id` del usuario autenticado (Sanctum), con null‑safety.
+- `getEmpresaId(): ?int` — Usa el usuario Sanctum o el tenant actual (de `HeaderSubdomainTenantFinder`).
 - `scopeEmpresa(Builder $query, ?int $empresaId = null): Builder` — Aplica where `empresa_id` al query.
 - `assertEmpresa(Model $model, ?int $empresaId = null): void` — Verifica pertenencia del modelo a la empresa actual; lanza 403 si no coincide.
+- `resolveEmpresaOrFail(?int $requested): int` — Garantiza que el `empresa_id` solicitado (query/body) coincida con el tenant activo.
 
 ### Uso en controladores
 ```php
@@ -42,6 +60,7 @@ class EjemploController extends Controller {
    - `$request->user()->empresa_id` → `$this->getEmpresaId()`
 2. Añadir `use HasEmpresaContext` en controladores; mantener `HasCacheableQueries` cuando aplique.
 3. Donde haya `firstOrFail()` y luego lógica sensible, aplicar `assertEmpresa($model)` para reforzar pertenencia.
+- El trait `BelongsToTenant` ahora lee tanto al usuario autenticado como al tenant actual para aplicar el scope `empresa_id` y auto-completar el campo en `creating`.
 4. Ejecutar PHPStan nivel 6 para validar (firmas de métodos y tipos).
 
 ## Consideraciones

@@ -95,7 +95,7 @@ class ModeloBusController extends Controller
             new OA\Response(response: 401, description: "No autenticado")
         ]
     )]
-    public function store(StoreModeloBusRequest $request): ModeloBusResource
+    public function store(StoreModeloBusRequest $request): JsonResponse
     {
         $this->authorize('create', ModeloBus::class);
         
@@ -105,7 +105,10 @@ class ModeloBusController extends Controller
 
         $this->flushCache();
 
-        return new ModeloBusResource($modelo);
+        return (new ModeloBusResource($modelo))
+            ->additional(['message' => 'Modelo creado exitosamente'])
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
@@ -195,7 +198,8 @@ class ModeloBusController extends Controller
 
         $this->flushCache();
 
-        return new ModeloBusResource($modelo);
+        return (new ModeloBusResource($modelo))
+            ->additional(['message' => 'Modelo actualizado exitosamente']);
     }
 
     /**
@@ -285,12 +289,12 @@ class ModeloBusController extends Controller
             new OA\Response(response: 401, description: "No autenticado")
         ]
     )]
-    public function activos(): JsonResponse
+    public function activos(): AnonymousResourceCollection
     {
         $modelos = ModeloBus::select('id', 'nombre')
             ->orderBy('nombre')
             ->get();
 
-        return response()->json($modelos);
+        return ModeloBusResource::collection($modelos);
     }
 }

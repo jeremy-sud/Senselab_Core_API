@@ -12,6 +12,7 @@ use App\Traits\HasCacheableQueries;
 use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 use OpenApi\Attributes as OA;
 
@@ -57,7 +58,7 @@ class DetalleSalidaInventarioController extends Controller
             new OA\Response(response: 404, description: 'Salida no encontrada')
         ]
     )]
-    public function index(Request $request, int $salidaId): JsonResponse
+    public function index(Request $request, int $salidaId): AnonymousResourceCollection
     {
         $this->authorize('viewAny', DetalleSalidaInventario::class);
         
@@ -72,10 +73,7 @@ class DetalleSalidaInventarioController extends Controller
                 ->with(['producto.unidadMedida', 'producto.categoriaProducto'])
                 ->get();
 
-            return response()->json([
-                'success' => true,
-                'data' => DetalleSalidaInventarioResource::collection($detalles)
-            ]);
+            return DetalleSalidaInventarioResource::collection($detalles);
         });
     }
 
@@ -119,7 +117,7 @@ class DetalleSalidaInventarioController extends Controller
             new OA\Response(response: 500, description: 'Error al agregar el producto')
         ]
     )]
-    public function store(StoreDetalleSalidaInventarioRequest $request): JsonResponse
+    public function store(StoreDetalleSalidaInventarioRequest $request): DetalleSalidaInventarioResource|JsonResponse
     {
         $this->authorize('create', DetalleSalidaInventario::class);
         
@@ -156,11 +154,8 @@ class DetalleSalidaInventarioController extends Controller
             
             $this->flushCache();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Producto agregado a la salida exitosamente',
-                'data' => new DetalleSalidaInventarioResource($detalle->load('producto'))
-            ], 201);
+            return (new DetalleSalidaInventarioResource($detalle->load('producto')))
+                ->additional(['message' => 'Producto agregado a la salida exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -200,7 +195,7 @@ class DetalleSalidaInventarioController extends Controller
             new OA\Response(response: 404, description: 'Detalle no encontrado')
         ]
     )]
-    public function show(Request $request, int $id): JsonResponse
+    public function show(Request $request, int $id): DetalleSalidaInventarioResource|JsonResponse
     {
         $detalle = DetalleSalidaInventario::with(['producto', 'salidaInventario'])
             ->findOrFail($id);
@@ -215,10 +210,7 @@ class DetalleSalidaInventarioController extends Controller
         
         $this->authorize('view', $detalle);
 
-        return response()->json([
-            'success' => true,
-            'data' => new DetalleSalidaInventarioResource($detalle)
-        ]);
+        return new DetalleSalidaInventarioResource($detalle);
     }
 
     /**
@@ -264,7 +256,7 @@ class DetalleSalidaInventarioController extends Controller
             new OA\Response(response: 500, description: 'Error al actualizar')
         ]
     )]
-    public function update(UpdateDetalleSalidaInventarioRequest $request, int $id): JsonResponse
+    public function update(UpdateDetalleSalidaInventarioRequest $request, int $id): DetalleSalidaInventarioResource|JsonResponse
     {
         $empresaId = $this->getEmpresaId();
 
@@ -308,11 +300,8 @@ class DetalleSalidaInventarioController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Detalle actualizado exitosamente',
-                'data' => new DetalleSalidaInventarioResource($detalle->fresh('producto'))
-            ]);
+            return (new DetalleSalidaInventarioResource($detalle->fresh('producto')))
+                ->additional(['message' => 'Detalle actualizado exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -322,10 +311,7 @@ class DetalleSalidaInventarioController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-    }
-
-    /**
-     * Eliminar producto de la salida
+    }* Eliminar producto de la salida
      */
     #[OA\Delete(
         path: '/api/detalles-salidas-inventario/{id}',

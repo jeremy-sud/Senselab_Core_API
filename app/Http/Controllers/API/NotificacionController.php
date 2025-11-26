@@ -74,7 +74,7 @@ class NotificacionController extends Controller
             )
         ]
     )]
-    public function index(Request $request)
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('viewAny', Notificacion::class);
 
@@ -155,7 +155,7 @@ class NotificacionController extends Controller
             )
         ]
     )]
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('create', Notificacion::class);
 
@@ -219,7 +219,7 @@ class NotificacionController extends Controller
             )
         ]
     )]
-    public function show(string $id)
+    public function show(string $id): \Illuminate\Http\JsonResponse
     {
         $notificacion = Notificacion::findOrFail($id);
         $this->authorize('view', $notificacion);
@@ -258,7 +258,7 @@ class NotificacionController extends Controller
             )
         ]
     )]
-    public function marcarLeida(string $id)
+    public function marcarLeida(string $id): \Illuminate\Http\JsonResponse
     {
         $notificacion = Notificacion::findOrFail($id);
         $this->authorize('update', $notificacion);
@@ -288,7 +288,7 @@ class NotificacionController extends Controller
             )
         ]
     )]
-    public function marcarTodasLeidas()
+    public function marcarTodasLeidas(): \Illuminate\Http\JsonResponse
     {
         DB::beginTransaction();
         try {
@@ -341,7 +341,7 @@ class NotificacionController extends Controller
             )
         ]
     )]
-    public function destroy(string $id)
+    public function destroy(string $id): \Illuminate\Http\JsonResponse
     {
         $notificacion = Notificacion::findOrFail($id);
         $this->authorize('delete', $notificacion);

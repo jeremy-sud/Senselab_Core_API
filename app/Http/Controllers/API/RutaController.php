@@ -119,7 +119,7 @@ class RutaController extends Controller
      * Crear una nueva ruta
      *
      * @param StoreRutaRequest $request
-     * @return RutaResource
+     * @return JsonResponse
      */
     #[OA\Post(
         path: "/api/rutas",
@@ -149,7 +149,7 @@ class RutaController extends Controller
             new OA\Response(response: 401, description: "No autenticado")
         ]
     )]
-    public function store(StoreRutaRequest $request): RutaResource
+    public function store(StoreRutaRequest $request): JsonResponse
     {
         $this->authorize('create', Ruta::class);
         
@@ -169,7 +169,9 @@ class RutaController extends Controller
 
         $this->flushCache();
 
-        return new RutaResource($ruta->load(['empresa']));
+        return (new RutaResource($ruta->load(['empresa'])))
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**

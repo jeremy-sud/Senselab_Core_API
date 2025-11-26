@@ -204,7 +204,7 @@ class DetalleAsientoController extends Controller
             new OA\Response(response: 401, description: "No autenticado")
         ]
     )]
-    public function show(int $id, Request $request): JsonResponse
+    public function show(int $id, Request $request): DetalleAsientoResource
     {
         $empresaId = $this->getEmpresaId();
 
@@ -218,10 +218,7 @@ class DetalleAsientoController extends Controller
         
         $this->authorize('view', $detalle);
 
-        return response()->json([
-            'success' => true,
-            'data' => new DetalleAsientoResource($detalle)
-        ]);
+        return new DetalleAsientoResource($detalle);
     }
 
     /**

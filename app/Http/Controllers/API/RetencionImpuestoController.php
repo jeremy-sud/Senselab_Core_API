@@ -9,6 +9,8 @@ use App\Http\Requests\UpdateRetencionImpuestoRequest;
 use App\Http\Resources\RetencionImpuestoResource;
 use App\Traits\HasCacheableQueries;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -28,9 +30,9 @@ class RetencionImpuestoController extends Controller
      * Display a listing of the resource.
      * 
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return AnonymousResourceCollection|JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection|JsonResponse
     {
         $this->authorize('viewAny', RetencionImpuesto::class);
         
@@ -123,9 +125,9 @@ class RetencionImpuestoController extends Controller
      * Store a newly created resource in storage.
      * 
      * @param StoreRetencionImpuestoRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function store(StoreRetencionImpuestoRequest $request)
+    public function store(StoreRetencionImpuestoRequest $request): JsonResponse
     {
         $this->authorize('create', RetencionImpuesto::class);
         
@@ -161,9 +163,9 @@ class RetencionImpuestoController extends Controller
      * Display the specified resource.
      * 
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return RetencionImpuestoResource|JsonResponse
      */
-    public function show(int $id)
+    public function show(int $id): RetencionImpuestoResource|JsonResponse
     {
         try {
             $retencion = RetencionImpuesto::with([
@@ -191,9 +193,9 @@ class RetencionImpuestoController extends Controller
      * 
      * @param UpdateRetencionImpuestoRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function update(UpdateRetencionImpuestoRequest $request, int $id)
+    public function update(UpdateRetencionImpuestoRequest $request, int $id): JsonResponse
     {
         try {
             $retencion = RetencionImpuesto::findOrFail($id);
@@ -232,9 +234,9 @@ class RetencionImpuestoController extends Controller
      * Remove the specified resource from storage.
      * 
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function destroy(int $id)
+    public function destroy(int $id): JsonResponse
     {
         try {
             $retencion = RetencionImpuesto::findOrFail($id);
@@ -265,9 +267,9 @@ class RetencionImpuestoController extends Controller
      * Marcar retención como declarada
      * 
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function marcarComoDeclarada(int $id)
+    public function marcarComoDeclarada(int $id): JsonResponse
     {
         try {
             $retencion = RetencionImpuesto::findOrFail($id);

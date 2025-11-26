@@ -13,6 +13,8 @@ use App\Http\Resources\OrdenCompraResource;
 use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
 
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+
 class OrdenCompraController extends Controller
 {
     use HasCacheableQueries;
@@ -24,7 +26,7 @@ class OrdenCompraController extends Controller
      * Display a listing of the resource.
      * 
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return AnonymousResourceCollection
      */
     #[OA\Get(
         path: '/api/ordenes-compra',
@@ -44,7 +46,7 @@ class OrdenCompraController extends Controller
             new OA\Response(response: 200, description: 'Listado exitoso', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/OrdenCompra'))]))
         ]
     )]
-    public function index(Request $request): \Illuminate\Http\JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', OrdenCompra::class);
         
@@ -87,12 +89,9 @@ class OrdenCompraController extends Controller
                 }
             );
             
-            return OrdenCompraResource::collection($ordenes)->response();
+            return OrdenCompraResource::collection($ordenes);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener órdenes de compra',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 
@@ -225,7 +224,7 @@ class OrdenCompraController extends Controller
             new OA\Response(response: 404, description: 'No encontrada')
         ]
     )]
-    public function show(int $id): \Illuminate\Http\JsonResponse
+    public function show(int $id): OrdenCompraResource
     {
         try {
             $orden = OrdenCompra::with([
@@ -241,16 +240,11 @@ class OrdenCompraController extends Controller
             // Calcular saldo pendiente
             $orden->saldo_pendiente = $orden->calcularSaldoPendiente();
             
-            return (new OrdenCompraResource($orden))->response();
+            return new OrdenCompraResource($orden);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Orden de compra no encontrada'
-            ], 404);
+            throw $e;
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener orden de compra',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 
@@ -269,7 +263,7 @@ class OrdenCompraController extends Controller
         parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
         responses: [new OA\Response(response: 200, description: 'Actualizada')]
     )]
-    public function update(UpdateOrdenCompraRequest $request, int $id): \Illuminate\Http\JsonResponse
+    public function update(UpdateOrdenCompraRequest $request, int $id): OrdenCompraResource
     {
         try {
             $orden = OrdenCompra::findOrFail($id);
@@ -279,17 +273,11 @@ class OrdenCompraController extends Controller
             $orden->load(['proveedor', 'detalles.producto']);
             
             return (new OrdenCompraResource($orden))
-                ->additional(['message' => 'Orden de compra actualizada exitosamente'])
-                ->response();
+                ->additional(['message' => 'Orden de compra actualizada exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Orden de compra no encontrada'
-            ], 404);
+            throw $e;
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al actualizar orden de compra',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 

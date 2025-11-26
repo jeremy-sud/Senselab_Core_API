@@ -11,18 +11,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\ObtenerSiguienteConsecutivoRequest;
 use App\Http\Requests\ResetearConsecutivoRequest;
+use App\Traits\HasEmpresaContext;
 
 class ConsecutivoFEController extends Controller
 {
-    /**
-     * Obtener el ID de la empresa del usuario autenticado
-     */
-    private function getEmpresaId(): int
-    {
-        /** @var \App\Models\Usuario $user */
-        $user = auth()->user();
-        return $user->empresa_id;
-    }
+    use HasEmpresaContext; // Centraliza acceso a empresa
 
     /**
      * Display a listing of the resource.

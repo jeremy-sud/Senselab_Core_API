@@ -18,7 +18,7 @@ class PlanillaCcssController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('viewAny', PlanillaCcss::class);
 
@@ -61,7 +61,7 @@ class PlanillaCcssController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('create', PlanillaCcss::class);
 
@@ -112,7 +112,7 @@ class PlanillaCcssController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(PlanillaCcss $planillaCcss)
+    public function show(PlanillaCcss $planillaCcss): \Illuminate\Http\JsonResponse
     {
         $this->authorize('view', $planillaCcss);
 
@@ -124,7 +124,7 @@ class PlanillaCcssController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PlanillaCcss $planillaCcss)
+    public function update(Request $request, PlanillaCcss $planillaCcss): \Illuminate\Http\JsonResponse
     {
         $this->authorize('update', $planillaCcss);
 
@@ -178,7 +178,7 @@ class PlanillaCcssController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(PlanillaCcss $planillaCcss)
+    public function destroy(PlanillaCcss $planillaCcss): \Illuminate\Http\JsonResponse
     {
         $this->authorize('delete', $planillaCcss);
 

@@ -6,6 +6,7 @@ use App\Models\EntidadEtiqueta;
 use App\Http\Requests\StoreEntidadEtiquetaRequest;
 use App\Http\Requests\UpdateEntidadEtiquetaRequest;
 use App\Http\Resources\EntidadEtiquetaResource;
+use App\Traits\HasEmpresaContext;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\AsignarEtiquetasMultiplesRequest;
@@ -16,13 +17,14 @@ use App\Http\Requests\PorEtiquetaRequest;
 
 class EntidadEtiquetaController extends Controller
 {
+    use HasEmpresaContext;
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request): JsonResponse
     {
-        // Multi-tenancy: Filtrar por empresa del usuario autenticado
-        $empresaId = $request->user()->empresa_id;
+        // Multi-tenancy: uso centralizado del trait
+        $empresaId = $this->getEmpresaId();
         
         $query = EntidadEtiqueta::where('eliminado', 0)
             ->with('etiqueta')

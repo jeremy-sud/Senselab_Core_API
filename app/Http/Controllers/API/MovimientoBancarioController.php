@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+
 /**
  * Controller para gestionar movimientos bancarios
  * Depósitos, retiros, transferencias, comisiones e intereses
@@ -39,9 +41,9 @@ class MovimientoBancarioController extends Controller
      * Display a listing of the resource.
      * 
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return AnonymousResourceCollection
      */
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', MovimientoBancario::class);
         
@@ -108,23 +110,9 @@ class MovimientoBancarioController extends Controller
                                      ->paginate($perPage);
                 
                 return MovimientoBancarioResource::collection($movimientos);
-            }, [
-                'search' => $search,
-                'cuenta_bancaria_id' => $request->input('cuenta_bancaria_id'),
-                'tipo_movimiento' => $request->input('tipo_movimiento'),
-                'conciliados' => $request->boolean('conciliados'),
-                'pendientes_conciliacion' => $request->boolean('pendientes_conciliacion'),
-                'fecha_desde' => $request->input('fecha_desde'),
-                'fecha_hasta' => $request->input('fecha_hasta'),
-                'monto_minimo' => $request->input('monto_minimo'),
-                'monto_maximo' => $request->input('monto_maximo'),
-                'per_page' => $perPage
-            ]);
+            });
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener movimientos bancarios',
-                'error' => $e->getMessage()
-            ], 500);
+            abort(500, 'Error al obtener movimientos bancarios: ' . $e->getMessage());
         }
     }
 
@@ -134,7 +122,7 @@ class MovimientoBancarioController extends Controller
      * @param StoreMovimientoBancarioRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(StoreMovimientoBancarioRequest $request)
+    public function store(StoreMovimientoBancarioRequest $request): JsonResponse
     {
         $this->authorize('create', MovimientoBancario::class);
         
@@ -187,7 +175,7 @@ class MovimientoBancarioController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(int $id)
+    public function show(int $id): MovimientoBancarioResource
     {
         try {
             $movimiento = MovimientoBancario::with([
@@ -200,14 +188,9 @@ class MovimientoBancarioController extends Controller
             
             return new MovimientoBancarioResource($movimiento);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Movimiento bancario no encontrado'
-            ], 404);
+            abort(404, 'Movimiento bancario no encontrado');
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener movimiento bancario',
-                'error' => $e->getMessage()
-            ], 500);
+            abort(500, 'Error al obtener movimiento bancario: ' . $e->getMessage());
         }
     }
 
@@ -218,7 +201,7 @@ class MovimientoBancarioController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(UpdateMovimientoBancarioRequest $request, int $id)
+    public function update(UpdateMovimientoBancarioRequest $request, int $id): MovimientoBancarioResource
     {
         try {
             $movimiento = MovimientoBancario::findOrFail($id);
@@ -231,24 +214,14 @@ class MovimientoBancarioController extends Controller
             return (new MovimientoBancarioResource($movimiento))
                 ->additional(['message' => 'Movimiento bancario actualizado exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Movimiento bancario no encontrado'
-            ], 404);
+            abort(404, 'Movimiento bancario no encontrado');
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al actualizar movimiento bancario',
-                'error' => $e->getMessage()
-            ], 500);
+            abort(500, 'Error al actualizar movimiento bancario: ' . $e->getMessage());
         }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     * 
-     * @param int $id
+    }* @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(int $id)
+    public function destroy(int $id): JsonResponse
     {
         try {
             DB::beginTransaction();
@@ -290,15 +263,10 @@ class MovimientoBancarioController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-    }
-    
-    /**
-     * Conciliar un movimiento bancario
-     * 
-     * @param int $id
+    }* @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function conciliar(int $id)
+    public function conciliar(int $id): JsonResponse
     {
         try {
             $movimiento = MovimientoBancario::findOrFail($id);

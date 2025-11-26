@@ -81,7 +81,7 @@ class PagoCuentaCobrarController extends Controller
             )
         ]
     )]
-    public function index(Request $request)
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('viewAny', PagoCuentaCobrar::class);
 
@@ -149,7 +149,7 @@ class PagoCuentaCobrarController extends Controller
             new OA\Response(response: 422, description: 'Error de validación')
         ]
     )]
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('create', PagoCuentaCobrar::class);
 
@@ -225,7 +225,7 @@ class PagoCuentaCobrarController extends Controller
             )
         ]
     )]
-    public function show(string $id)
+    public function show(string $id): \Illuminate\Http\JsonResponse
     {
         $pago = PagoCuentaCobrar::with(['cuentaPorCobrar', 'formaPago'])->findOrFail($id);
         $this->authorize('view', $pago);
@@ -271,7 +271,7 @@ class PagoCuentaCobrarController extends Controller
             )
         ]
     )]
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): \Illuminate\Http\JsonResponse
     {
         $pago = PagoCuentaCobrar::findOrFail($id);
         $this->authorize('update', $pago);
@@ -327,7 +327,7 @@ class PagoCuentaCobrarController extends Controller
             )
         ]
     )]
-    public function destroy(string $id)
+    public function destroy(string $id): \Illuminate\Http\JsonResponse
     {
         $pago = PagoCuentaCobrar::findOrFail($id);
         $this->authorize('delete', $pago);

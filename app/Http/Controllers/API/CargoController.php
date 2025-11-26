@@ -122,16 +122,14 @@ class CargoController extends Controller
             )
         ]
     )]
-    public function store(StoreCargoRequest $request): JsonResponse
+    public function store(StoreCargoRequest $request): CargoResource
     {
         $this->authorize('create', Cargo::class);
         $cargo = Cargo::create($request->validated());
 
         $this->flushCache();
 
-        return (new CargoResource($cargo))
-            ->response()
-            ->setStatusCode(201);
+        return new CargoResource($cargo);
     }
 
     /**

@@ -4,9 +4,11 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\DeduccionLegal;
+use App\Http\Resources\DeduccionLegalResource;
 use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * Controlador para deducciones legales de nómina
@@ -22,7 +24,7 @@ class DeduccionLegalController extends Controller
     /**
      * Listar deducciones legales
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', DeduccionLegal::class);
 
@@ -33,7 +35,7 @@ class DeduccionLegalController extends Controller
             'per_page' => $request->input('per_page', 20)
         ]);
 
-        $deducciones = $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
+        return $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
             $query = DeduccionLegal::query();
 
             if ($request->filled('activa')) {
@@ -48,16 +50,16 @@ class DeduccionLegalController extends Controller
                 $query->where('es_obligatoria', $request->boolean('obligatoria'));
             }
 
-            return $query->orderBy('id')->paginate($request->input('per_page', 20));
+            $deducciones = $query->orderBy('id')->paginate($request->input('per_page', 20));
+            
+            return DeduccionLegalResource::collection($deducciones);
         });
-
-        return response()->json(['success' => true, 'data' => $deducciones]);
     }
 
     /**
      * Crear deducción legal
      */
-    public function store(Request $request): JsonResponse
+    public function store(Request $request): DeduccionLegalResource
     {
         $this->authorize('create', DeduccionLegal::class);
 
@@ -75,24 +77,24 @@ class DeduccionLegalController extends Controller
 
         $deduccion = DeduccionLegal::create($validated);
 
-        $this->flushCache(['deducciones-legales', 'nomina', 'catalogos']);
+        $this->flushCache();
 
-        return response()->json(['success' => true, 'data' => $deduccion], 201);
+        return new DeduccionLegalResource($deduccion);
     }
 
     /**
      * Mostrar deducción específica
      */
-    public function show(DeduccionLegal $deduccionLegal): JsonResponse
+    public function show(DeduccionLegal $deduccionLegal): DeduccionLegalResource
     {
         $this->authorize('view', $deduccionLegal);
-        return response()->json(['success' => true, 'data' => $deduccionLegal]);
+        return new DeduccionLegalResource($deduccionLegal);
     }
 
     /**
      * Actualizar deducción legal
      */
-    public function update(Request $request, DeduccionLegal $deduccionLegal): JsonResponse
+    public function update(Request $request, DeduccionLegal $deduccionLegal): DeduccionLegalResource
     {
         $this->authorize('update', $deduccionLegal);
 
@@ -110,9 +112,9 @@ class DeduccionLegalController extends Controller
 
         $deduccionLegal->update($validated);
 
-        $this->flushCache(['deducciones-legales', 'nomina', 'catalogos']);
+        $this->flushCache();
 
-        return response()->json(['success' => true, 'data' => $deduccionLegal]);
+        return new DeduccionLegalResource($deduccionLegal);
     }
 
     /**
@@ -124,7 +126,7 @@ class DeduccionLegalController extends Controller
 
         $deduccionLegal->update(['eliminado' => true, 'activa' => false]);
 
-        $this->flushCache(['deducciones-legales', 'nomina', 'catalogos']);
+        $this->flushCache();
 
         return response()->json(['success' => true, 'message' => 'Deducción eliminada exitosamente']);
     }

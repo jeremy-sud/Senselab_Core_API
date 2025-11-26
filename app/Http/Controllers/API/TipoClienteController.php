@@ -10,6 +10,8 @@ use App\Http\Resources\TipoClienteResource;
 use App\Traits\HasCacheableQueries;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * Controller para gestionar tipos de clientes
@@ -29,75 +31,68 @@ class TipoClienteController extends Controller
      * Display a listing of the resource.
      * 
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return AnonymousResourceCollection
      */
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', TipoCliente::class);
         
-        try {
-            $perPage = $request->input('per_page', 15);
-            $search = $request->input('search');
-            
-            $cacheKey = $this->getCacheKey('index', [
-                'per_page' => $perPage,
-                'search' => $search,
-                'activo' => $request->input('activo'),
-                'activos' => $request->input('activos'),
-                'con_descuento' => $request->boolean('con_descuento'),
-                'con_credito' => $request->boolean('con_credito')
-            ]);
+        $perPage = $request->input('per_page', 15);
+        $search = $request->input('search');
+        
+        $cacheKey = $this->getCacheKey('index', [
+            'per_page' => $perPage,
+            'search' => $search,
+            'activo' => $request->input('activo'),
+            'activos' => $request->input('activos'),
+            'con_descuento' => $request->boolean('con_descuento'),
+            'con_credito' => $request->boolean('con_credito')
+        ]);
 
-            $tiposCliente = $this->cacheQueryIfEnabled($cacheKey, function() use ($request, $search, $perPage) {
-                $query = TipoCliente::where('eliminado', false);
-                
-                if ($search) {
-                    $query->where(function($q) use ($search) {
-                        $q->where('nombre', 'like', "%{$search}%")
-                          ->orWhere('codigo', 'like', "%{$search}%")
-                          ->orWhere('descripcion', 'like', "%{$search}%");
-                    });
-                }
-                
-                // Filtro por estado activo
-                if ($request->has('activo') || $request->has('activos')) {
-                    $esActivo = $request->boolean('activo') || $request->boolean('activos');
-                    if ($esActivo) {
-                        $query->activos();
-                    } else {
-                        $query->where('activo', false);
-                    }
-                }
-                
-                // Filtros adicionales
-                if ($request->boolean('con_descuento')) {
-                    $query->conDescuento();
-                }
-                
-                if ($request->boolean('con_credito')) {
-                    $query->conCredito();
-                }
-                
-                return $query->orderBy('nombre', 'asc')
-                              ->paginate($perPage);
-            });
+        $tiposCliente = $this->cacheQueryIfEnabled($cacheKey, function() use ($request, $search, $perPage) {
+            $query = TipoCliente::where('eliminado', false);
             
-            return TipoClienteResource::collection($tiposCliente);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener tipos de cliente',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+            if ($search) {
+                $query->where(function($q) use ($search) {
+                    $q->where('nombre', 'like', "%{$search}%")
+                        ->orWhere('codigo', 'like', "%{$search}%")
+                        ->orWhere('descripcion', 'like', "%{$search}%");
+                });
+            }
+            
+            // Filtro por estado activo
+            if ($request->has('activo') || $request->has('activos')) {
+                $esActivo = $request->boolean('activo') || $request->boolean('activos');
+                if ($esActivo) {
+                    $query->activos();
+                } else {
+                    $query->where('activo', false);
+                }
+            }
+            
+            // Filtros adicionales
+            if ($request->boolean('con_descuento')) {
+                $query->conDescuento();
+            }
+            
+            if ($request->boolean('con_credito')) {
+                $query->conCredito();
+            }
+            
+            return $query->orderBy('nombre', 'asc')
+                            ->paginate($perPage);
+        });
+        
+        return TipoClienteResource::collection($tiposCliente);
     }
 
     /**
      * Store a newly created resource in storage.
      * 
      * @param StoreTipoClienteRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function store(StoreTipoClienteRequest $request)
+    public function store(StoreTipoClienteRequest $request): JsonResponse
     {
         $this->authorize('create', TipoCliente::class);
         
@@ -122,26 +117,15 @@ class TipoClienteController extends Controller
      * Display the specified resource.
      * 
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return TipoClienteResource
      */
-    public function show(int $id)
+    public function show(int $id): TipoClienteResource
     {
-        try {
-            $tipoCliente = TipoCliente::findOrFail($id);
-            
-            $this->authorize('view', $tipoCliente);
-            
-            return new TipoClienteResource($tipoCliente);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Tipo de cliente no encontrado'
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener tipo de cliente',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        $tipoCliente = TipoCliente::findOrFail($id);
+        
+        $this->authorize('view', $tipoCliente);
+        
+        return new TipoClienteResource($tipoCliente);
     }
 
     /**
@@ -149,9 +133,9 @@ class TipoClienteController extends Controller
      * 
      * @param UpdateTipoClienteRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function update(UpdateTipoClienteRequest $request, int $id)
+    public function update(UpdateTipoClienteRequest $request, int $id): JsonResponse
     {
         try {
             $tipoCliente = TipoCliente::findOrFail($id);
@@ -184,9 +168,9 @@ class TipoClienteController extends Controller
      * Remove the specified resource from storage.
      * 
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function destroy(int $id)
+    public function destroy(int $id): JsonResponse
     {
         try {
             $tipoCliente = TipoCliente::findOrFail($id);

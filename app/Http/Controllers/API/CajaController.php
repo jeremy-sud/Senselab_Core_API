@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
+use App\Http\Resources\CajaResource;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\JsonResponse;
 
 class CajaController extends Controller
 {
@@ -66,28 +69,28 @@ class CajaController extends Controller
             )
         ]
     )]
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Caja::class);
 
-        $cacheKey = $this->generateCacheKey('cajas.index', $request->all());
+        $cacheKey = $this->generateCacheKey('caja.index', $request->all());
 
         return $this->getCached($cacheKey, function () use ($request) {
             $perPage = $request->input('per_page', 15);
             
-            $query = Caja::with(['sucursal'])->activas();
+            $query = Caja::with(['sucursal', 'usuario']);
 
             if ($request->filled('sucursal_id')) {
-                $query->porSucursal($request->sucursal_id);
+                $query->where('sucursal_id', $request->sucursal_id);
             }
 
-            if ($request->filled('nombre')) {
-                $query->porNombre($request->nombre);
+            if ($request->filled('estado')) {
+                $query->where('estado', $request->estado);
             }
 
-            $cajas = $query->orderBy('id')->paginate($perPage);
+            $cajas = $query->orderBy('id', 'desc')->paginate($perPage);
 
-            return response()->json($cajas);
+            return CajaResource::collection($cajas);
         });
     }
 
@@ -124,7 +127,7 @@ class CajaController extends Controller
             )
         ]
     )]
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $this->authorize('create', Caja::class);
 
@@ -141,10 +144,10 @@ class CajaController extends Controller
             DB::commit();
             $this->clearCache();
 
-            return response()->json([
-                'message' => 'Caja creada exitosamente',
-                'data' => $caja->load('sucursal')
-            ], 201);
+            return (new CajaResource($caja->load('sucursal')))
+                ->additional(['message' => 'Caja creada exitosamente'])
+                ->response()
+                ->setStatusCode(201);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -180,15 +183,15 @@ class CajaController extends Controller
             )
         ]
     )]
-    public function show(string $id)
+    public function show(string $id): CajaResource
     {
-        $caja = Caja::with('sucursal')->findOrFail($id);
+        $caja = Caja::with(['sucursal', 'usuario', 'movimientos'])->findOrFail($id);
         $this->authorize('view', $caja);
 
-        $cacheKey = $this->generateCacheKey("cajas.show.{$id}");
+        $cacheKey = $this->generateCacheKey("caja.show.{$id}");
 
         return $this->getCached($cacheKey, function () use ($caja) {
-            return response()->json(['data' => $caja]);
+            return new CajaResource($caja);
         });
     }
 
@@ -227,7 +230,7 @@ class CajaController extends Controller
             )
         ]
     )]
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): CajaResource
     {
         $caja = Caja::findOrFail($id);
         $this->authorize('update', $caja);
@@ -245,17 +248,12 @@ class CajaController extends Controller
             DB::commit();
             $this->clearCache();
 
-            return response()->json([
-                'message' => 'Caja actualizada exitosamente',
-                'data' => $caja->fresh('sucursal')
-            ]);
+            return (new CajaResource($caja->fresh('sucursal')))
+                ->additional(['message' => 'Caja actualizada exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'message' => 'Error al actualizar caja',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 
@@ -284,7 +282,7 @@ class CajaController extends Controller
             )
         ]
     )]
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
         $caja = Caja::findOrFail($id);
         $this->authorize('delete', $caja);
