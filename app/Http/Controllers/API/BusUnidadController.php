@@ -374,6 +374,7 @@ class BusUnidadController extends Controller
             ),
             new OA\Response(response: 401, description: "No autenticado")
         ]
+    )]
     public function disponibles(Request $request): AnonymousResourceCollection
     {
         $empresaId = $this->getEmpresaId();
@@ -385,11 +386,9 @@ class BusUnidadController extends Controller
             ->whereDoesntHave('horariosRuta', function ($query) {
                 $query->where('estado', 'En Viaje');
             })
-            ->select('id', 'placa', 'modelo_id', 'capacidad_asientos', 'identificador_interno')
             ->get();
 
         return BusUnidadResource::collection($buses);
-    }   return response()->json($buses);
     }
 
     /**

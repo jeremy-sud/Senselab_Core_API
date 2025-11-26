@@ -204,12 +204,15 @@ class MovimientoBancarioController extends Controller
     public function update(UpdateMovimientoBancarioRequest $request, int $id): MovimientoBancarioResource
     {
         try {
-            $movimiento = MovimientoBancario::findOrFail($id);
+            $movimiento = MovimientoBancario::with([
+                'empresa',
+                'cuentaBancaria',
+                'asientoContable'
+            ])->findOrFail($id);
             
             $this->authorize('update', $movimiento);
             
             $movimiento->update($request->validated());
-            $movimiento->load(['empresa', 'cuentaBancaria', 'asientoContable']);
             
             return (new MovimientoBancarioResource($movimiento))
                 ->additional(['message' => 'Movimiento bancario actualizado exitosamente']);
@@ -226,7 +229,7 @@ class MovimientoBancarioController extends Controller
         try {
             DB::beginTransaction();
             
-            $movimiento = MovimientoBancario::findOrFail($id);
+            $movimiento = MovimientoBancario::with(['cuentaBancaria'])->findOrFail($id);
             
             $this->authorize('delete', $movimiento);
             

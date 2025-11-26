@@ -266,11 +266,14 @@ class OrdenCompraController extends Controller
     public function update(UpdateOrdenCompraRequest $request, int $id): OrdenCompraResource
     {
         try {
-            $orden = OrdenCompra::findOrFail($id);
+            $orden = OrdenCompra::with([
+                'proveedor',
+                'detalles.producto',
+                'empresa'
+            ])->findOrFail($id);
             $this->authorize('update', $orden);
 
             $orden->update($request->validated());
-            $orden->load(['proveedor', 'detalles.producto']);
             
             return (new OrdenCompraResource($orden))
                 ->additional(['message' => 'Orden de compra actualizada exitosamente']);
@@ -302,7 +305,7 @@ class OrdenCompraController extends Controller
     public function destroy(int $id): \Illuminate\Http\JsonResponse
     {
         try {
-            $orden = OrdenCompra::findOrFail($id);
+            $orden = OrdenCompra::with(['detalles'])->findOrFail($id);
             $this->authorize('delete', $orden);
 
             // Solo permitir eliminar en estado borrador

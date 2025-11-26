@@ -521,14 +521,20 @@ class VentaController extends Controller
     public function update(UpdateVentaRequest $request, int $id): VentaResource
     {
         try {
-            $venta = Venta::findOrFail($id);
+            $venta = Venta::with([
+                'cliente',
+                'detalles.producto',
+                'empresa',
+                'sucursal',
+                'usuario',
+                'formaPago'
+            ])->findOrFail($id);
             
             $this->authorize('update', $venta);
             $this->assertEmpresa($venta);
             
             // Solo permitir actualizar observaciones y estado
             $venta->update($request->validated());
-            $venta->load(['cliente', 'detalles.producto']);
             
             return (new VentaResource($venta))
                 ->additional(['message' => 'Venta actualizada exitosamente']);
@@ -594,7 +600,7 @@ class VentaController extends Controller
     public function destroy(int $id): \Illuminate\Http\JsonResponse
     {
         try {
-            $venta = Venta::findOrFail($id);
+            $venta = Venta::with(['empresa'])->findOrFail($id);
             
             $this->authorize('delete', $venta);
             $this->assertEmpresa($venta);
