@@ -36,24 +36,18 @@ class UsuarioResource extends JsonResource
                     return [
                         'id' => $rol->id,
                         'nombre' => $rol->nombre,
-                        'permisos' => $rol->whenLoaded('permisos', function () use ($rol) {
-                            return $rol->permisos->map(function ($permiso) {
+                        'permisos' => $rol->relationLoaded('permisos')
+                            ? $rol->permisos->map(function ($permiso) {
                                 return [
                                     'id' => $permiso->id,
                                     'slug' => $permiso->slug,
                                     'nombre' => $permiso->nombre,
                                     'modulo' => $permiso->modulo
                                 ];
-                            });
-                        })
+                            })
+                            : []
                     ];
                 });
-            }),
-            'empleado' => $this->whenLoaded('empleado', function () {
-                return $this->empleado ? [
-                    'id' => $this->empleado->id,
-                    'nombre_completo' => trim("{$this->empleado->nombre} {$this->empleado->primer_apellido} {$this->empleado->segundo_apellido}")
-                ] : null;
             }),
             'activo' => (bool) $this->activo,
             'eliminado' => (bool) $this->eliminado,

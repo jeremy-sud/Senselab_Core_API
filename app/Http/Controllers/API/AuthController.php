@@ -192,8 +192,11 @@ class AuthController extends Controller
             )
         ]
     )]
-    public function user(Request $request): UsuarioResource
+    public function me(Request $request): UsuarioResource
     {
-        return new UsuarioResource($request->user());
+        $usuario = $request->user();
+        $usuario->load(['roles.permisos', 'empresa', 'cargo']);
+        
+        return new UsuarioResource($usuario);
     }
 }
