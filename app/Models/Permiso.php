@@ -79,8 +79,11 @@ class Permiso extends Model
             if (isset($permiso->nombre)) {
                 $permiso->nombre = trim($permiso->nombre);
             }
+            // NO normalizar el slug - debe mantener el formato exacto incluyendo guiones bajos
+            // Los guiones bajos son importantes para distinguir módulos con múltiples palabras
+            // Ejemplo: 'ver-tipo_comprobante_fe' != 'ver-tipo-comprobante-fe'
             if (isset($permiso->slug)) {
-                $permiso->slug = Str::slug(trim($permiso->slug));
+                $permiso->slug = trim($permiso->slug);
             }
             if (isset($permiso->modulo)) {
                 $permiso->modulo = Str::ucfirst(Str::lower(trim($permiso->modulo)));

@@ -16,6 +16,20 @@ abstract class TestCase extends BaseTestCase
     use RefreshDatabase;
 
     /**
+     * Setup the test environment.
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        
+        // Limpiar cache de Redis antes de cada test para evitar conflictos
+        // con datos de tests anteriores
+        if (config('cache.default') === 'redis') {
+            \Illuminate\Support\Facades\Cache::flush();
+        }
+    }
+
+    /**
      * Crea una empresa de prueba
      */
     protected function createEmpresa(array $attributes = []): Empresa
