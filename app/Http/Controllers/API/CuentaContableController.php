@@ -229,7 +229,7 @@ class CuentaContableController extends Controller
             )
         ]
     )]
-    public function store(StoreCuentaContableRequest $request): JsonResponse
+    public function store(StoreCuentaContableRequest $request): CuentaContableResource|JsonResponse
     {
         $this->authorize('create', CuentaContable::class);
         $validated = $request->validated();
@@ -240,11 +240,11 @@ class CuentaContableController extends Controller
 
         $this->flushCache();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Cuenta contable creada exitosamente',
-            'data' => new CuentaContableResource($cuenta)
-        ], 201);
+        return (new CuentaContableResource($cuenta))
+            ->additional([
+                'success' => true,
+                'message' => 'Cuenta contable creada exitosamente'
+            ]);
     }
 
     /**
@@ -290,7 +290,7 @@ class CuentaContableController extends Controller
             )
         ]
     )]
-    public function show(int $id, Request $request): JsonResponse
+    public function show(int $id, Request $request): CuentaContableResource|JsonResponse
     {
         $empresaId = $this->getEmpresaId();
 
@@ -302,10 +302,8 @@ class CuentaContableController extends Controller
 
         $this->authorize('view', $cuenta);
 
-        return response()->json([
-            'success' => true,
-            'data' => new CuentaContableResource($cuenta)
-        ]);
+        return (new CuentaContableResource($cuenta))
+            ->additional(['success' => true]);
     }
 
     /**
@@ -371,7 +369,7 @@ class CuentaContableController extends Controller
             )
         ]
     )]
-    public function update(UpdateCuentaContableRequest $request, int $id): JsonResponse
+    public function update(UpdateCuentaContableRequest $request, int $id): CuentaContableResource|JsonResponse
     {
         $empresaId = $this->getEmpresaId();
 
@@ -387,11 +385,11 @@ class CuentaContableController extends Controller
 
         $this->flushCache();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Cuenta contable actualizada exitosamente',
-            'data' => new CuentaContableResource($cuenta)
-        ]);
+        return (new CuentaContableResource($cuenta))
+            ->additional([
+                'success' => true,
+                'message' => 'Cuenta contable actualizada exitosamente'
+            ]);
     }
 
     /**
@@ -512,7 +510,7 @@ class CuentaContableController extends Controller
             )
         ]
     )]
-    public function arbol(Request $request): JsonResponse
+    public function arbol(Request $request): AnonymousResourceCollection
     {
         $empresaId = $this->getEmpresaId();
 
@@ -526,10 +524,8 @@ class CuentaContableController extends Controller
             ->orderBy('codigo')
             ->get();
 
-        return response()->json([
-            'success' => true,
-            'data' => CuentaContableResource::collection($cuentasPrincipales)
-        ]);
+        return CuentaContableResource::collection($cuentasPrincipales)
+            ->additional(['success' => true]);
     }
 
     /**
@@ -568,6 +564,8 @@ class CuentaContableController extends Controller
     )]
     public function paraMovimientos(Request $request): JsonResponse
     {
+    public function paraMovimientos(Request $request): AnonymousResourceCollection
+    {
         $empresaId = $this->getEmpresaId();
 
         $cuentas = CuentaContable::where('empresa_id', $empresaId)
@@ -577,9 +575,6 @@ class CuentaContableController extends Controller
             ->orderBy('codigo')
             ->get();
 
-        return response()->json([
-            'success' => true,
-            'data' => CuentaContableResource::collection($cuentas)
-        ]);
+        return CuentaContableResource::collection($cuentas)
+            ->additional(['success' => true]);
     }
-}

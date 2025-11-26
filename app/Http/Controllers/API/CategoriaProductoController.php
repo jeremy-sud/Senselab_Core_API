@@ -62,22 +62,25 @@ class CategoriaProductoController extends Controller
     {
         $this->authorize('viewAny', CategoriaProducto::class);
 
-        $empresaId = auth('sanctum')->user()->empresa_id;
-        
-        $categorias = $this->cacheQueryIfEnabled(
-            $this->getCacheKey('index', array_merge($request->all(), ['empresa_id' => $empresaId])),
-            function() use ($request, $empresaId) {
-                $query = CategoriaProducto::where('empresa_id', $empresaId);
+        $cacheKey = $this->generateCacheKey('categoria_producto.index', $request->all());
 
-                if ($request->has('activo')) {
-                    $query->where('activo', $request->boolean('activo'));
-                }
+        return $this->getCached($cacheKey, function () use ($request) {
+            $perPage = $request->input('per_page', 15);
+            
+            $query = CategoriaProducto::query();
 
-                return $query->get();
+            if ($request->filled('nombre')) {
+                $query->where('nombre', 'like', "%{$request->nombre}%");
             }
-        );
 
-        return CategoriaProductoResource::collection($categorias);
+            if ($request->filled('activo')) {
+                $query->where('activo', $request->boolean('activo'));
+            }
+
+            $categorias = $query->orderBy('nombre')->paginate($perPage);
+
+            return CategoriaProductoResource::collection($categorias);
+        });
     }
 
     /**
@@ -116,20 +119,33 @@ class CategoriaProductoController extends Controller
             )
         ]
     )]
-    public function store(StoreCategoriaProductoRequest $request): JsonResponse
+    public function store(Request $request): CategoriaProductoResource|JsonResponse
     {
         $this->authorize('create', CategoriaProducto::class);
 
-        $validated = $request->validated();
-        $validated['empresa_id'] = auth('sanctum')->user()->empresa_id;
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:100|unique:categorias_productos,nombre',
+            'descripcion' => 'nullable|string',
+            'activo' => 'boolean'
+        ]);
 
-        $categoria = CategoriaProducto::create($validated);
-        
-        $this->flushCache();
+        DB::beginTransaction();
+        try {
+            $categoria = CategoriaProducto::create($validated);
 
-        return (new CategoriaProductoResource($categoria))
-            ->response()
-            ->setStatusCode(201);
+            DB::commit();
+            $this->clearCache();
+
+            return (new CategoriaProductoResource($categoria))
+                ->additional(['message' => 'Categoría creada exitosamente']);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Error al crear categoría',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -166,15 +182,16 @@ class CategoriaProductoController extends Controller
             )
         ]
     )]
-    public function show(int $id): CategoriaProductoResource
+    public function show(string $id): CategoriaProductoResource
     {
-        $empresaId = auth('sanctum')->user()->empresa_id;
-
-        $categoria = CategoriaProducto::where('empresa_id', $empresaId)
-            ->findOrFail($id);
+        $categoria = CategoriaProducto::findOrFail($id);
         $this->authorize('view', $categoria);
 
-        return new CategoriaProductoResource($categoria);
+        $cacheKey = $this->generateCacheKey("categoria_producto.show.{$id}");
+
+        return $this->getCached($cacheKey, function () use ($categoria) {
+            return new CategoriaProductoResource($categoria);
+        });
     }
 
     /**
@@ -225,18 +242,34 @@ class CategoriaProductoController extends Controller
             )
         ]
     )]
-    public function update(UpdateCategoriaProductoRequest $request, int $id): CategoriaProductoResource
+    public function update(Request $request, string $id): CategoriaProductoResource|JsonResponse
     {
-        $empresaId = auth('sanctum')->user()->empresa_id;
-
-        $categoria = CategoriaProducto::where('empresa_id', $empresaId)->findOrFail($id);
+        $categoria = CategoriaProducto::findOrFail($id);
         $this->authorize('update', $categoria);
 
-        $categoria->update($request->validated());
-        
-        $this->flushCache();
+        $validated = $request->validate([
+            'nombre' => 'sometimes|string|max:100|unique:categorias_productos,nombre,' . $id,
+            'descripcion' => 'nullable|string',
+            'activo' => 'sometimes|boolean'
+        ]);
 
-        return new CategoriaProductoResource($categoria);
+        DB::beginTransaction();
+        try {
+            $categoria->update($validated);
+
+            DB::commit();
+            $this->clearCache();
+
+            return (new CategoriaProductoResource($categoria->fresh()))
+                ->additional(['message' => 'Categoría actualizada exitosamente']);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Error al actualizar categoría',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -278,22 +311,28 @@ class CategoriaProductoController extends Controller
             )
         ]
     )]
-    public function destroy(int $id): JsonResponse
+    public function destroy(string $id): JsonResponse
     {
-        $empresaId = auth('sanctum')->user()->empresa_id;
-
-        $categoria = CategoriaProducto::where('empresa_id', $empresaId)->findOrFail($id);
+        $categoria = CategoriaProducto::findOrFail($id);
         $this->authorize('delete', $categoria);
 
-        $categoria->eliminado = 1;
-        $categoria->activo = 0;
-        $categoria->save();
-        
-        $this->flushCache();
+        DB::beginTransaction();
+        try {
+            $categoria->delete();
 
-        return response()->json([
-            'message' => 'Categoría eliminada exitosamente',
-            'data' => new CategoriaProductoResource($categoria)
-        ], 200);
+            DB::commit();
+            $this->clearCache();
+
+            return response()->json([
+                'message' => 'Categoría eliminada exitosamente'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Error al eliminar categoría',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

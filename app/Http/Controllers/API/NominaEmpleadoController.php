@@ -66,7 +66,7 @@ class NominaEmpleadoController extends Controller
             )
         ]
     )]
-    public function index(Request $request)
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('viewAny', NominaEmpleado::class);
 
@@ -132,7 +132,7 @@ class NominaEmpleadoController extends Controller
             )
         ]
     )]
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('create', NominaEmpleado::class);
 
@@ -216,7 +216,7 @@ class NominaEmpleadoController extends Controller
             )
         ]
     )]
-    public function show(string $id)
+    public function show(string $id): \Illuminate\Http\JsonResponse
     {
         $nomina = NominaEmpleado::with(['periodoNomina', 'empleado'])->findOrFail($id);
         $this->authorize('view', $nomina);
@@ -264,7 +264,7 @@ class NominaEmpleadoController extends Controller
             )
         ]
     )]
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): \Illuminate\Http\JsonResponse
     {
         $nomina = NominaEmpleado::findOrFail($id);
         $this->authorize('update', $nomina);
@@ -326,7 +326,7 @@ class NominaEmpleadoController extends Controller
             )
         ]
     )]
-    public function destroy(string $id)
+    public function destroy(string $id): \Illuminate\Http\JsonResponse
     {
         $nomina = NominaEmpleado::findOrFail($id);
         $this->authorize('delete', $nomina);

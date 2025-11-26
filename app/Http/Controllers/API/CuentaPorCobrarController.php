@@ -141,7 +141,7 @@ class CuentaPorCobrarController extends Controller
             new OA\Response(response: 201, description: 'Cuenta creada', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', ref: '#/components/schemas/CuentaPorCobrar')]))
         ]
     )]
-    public function store(StoreCuentaPorCobrarRequest $request): JsonResponse
+    public function store(StoreCuentaPorCobrarRequest $request): CuentaPorCobrarResource|JsonResponse
     {
         $this->authorize('create', CuentaPorCobrar::class);
 
@@ -152,11 +152,11 @@ class CuentaPorCobrarController extends Controller
         $cuenta->load(['cliente', 'venta', 'empresa']);
         $this->flushCache();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Cuenta por cobrar creada exitosamente',
-            'data' => new CuentaPorCobrarResource($cuenta)
-        ], 201);
+        return (new CuentaPorCobrarResource($cuenta))
+            ->additional([
+                'success' => true,
+                'message' => 'Cuenta por cobrar creada exitosamente'
+            ]);
     }
 
     /**
@@ -178,7 +178,7 @@ class CuentaPorCobrarController extends Controller
             new OA\Response(response: 404, description: 'No encontrada')
         ]
     )]
-    public function show(int $id, Request $request): JsonResponse
+    public function show(int $id, Request $request): CuentaPorCobrarResource|JsonResponse
     {
         $empresaId = $this->getEmpresaId();
 
@@ -189,10 +189,8 @@ class CuentaPorCobrarController extends Controller
             ->firstOrFail();
         $this->authorize('view', $cuenta);
 
-        return response()->json([
-            'success' => true,
-            'data' => new CuentaPorCobrarResource($cuenta)
-        ]);
+        return (new CuentaPorCobrarResource($cuenta))
+            ->additional(['success' => true]);
     }
 
     /**
@@ -210,7 +208,7 @@ class CuentaPorCobrarController extends Controller
         parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
         responses: [new OA\Response(response: 200, description: 'Actualizada')]
     )]
-    public function update(UpdateCuentaPorCobrarRequest $request, int $id): JsonResponse
+    public function update(UpdateCuentaPorCobrarRequest $request, int $id): CuentaPorCobrarResource|JsonResponse
     {
         $empresaId = $this->getEmpresaId();
 
@@ -224,11 +222,11 @@ class CuentaPorCobrarController extends Controller
         $cuenta->load(['cliente', 'venta', 'empresa']);
         $this->flushCache();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Cuenta por cobrar actualizada exitosamente',
-            'data' => new CuentaPorCobrarResource($cuenta)
-        ]);
+        return (new CuentaPorCobrarResource($cuenta))
+            ->additional([
+                'success' => true,
+                'message' => 'Cuenta por cobrar actualizada exitosamente'
+            ]);
     }
 
     /**

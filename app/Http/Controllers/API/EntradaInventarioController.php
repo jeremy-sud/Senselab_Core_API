@@ -78,29 +78,33 @@ class EntradaInventarioController extends Controller
             new OA\Response(response: 401, description: 'No autenticado')
         ]
     )]
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', EntradaInventario::class);
-        
-        $empresaId = $this->getEmpresaId();
 
-        $cacheKey = $this->getCacheKey('index', ['empresa_id' => $empresaId]);
+        $cacheKey = $this->generateCacheKey('entradas_inventario.index', $request->all());
 
-        return $this->cacheQueryIfEnabled($cacheKey, function () use ($empresaId) {
-            $entradas = EntradaInventario::where('empresa_id', $empresaId)
-                ->with(['almacen', 'proveedor', 'ordenCompra', 'detalles.producto'])
-                ->orderBy('fecha_entrada', 'desc')
-                ->paginate(15);
+        return $this->getCached($cacheKey, function () use ($request) {
+            $perPage = $request->input('per_page', 15);
+            
+            $query = EntradaInventario::with(['proveedor', 'bodega', 'usuario'])
+                ->activos();
 
-            return response()->json([
-                'success' => true,
-                'data' => EntradaInventarioResource::collection($entradas),
-                'meta' => [
-                    'current_page' => $entradas->currentPage(),
-                    'total' => $entradas->total(),
-                    'per_page' => $entradas->perPage()
-                ]
-            ]);
+            if ($request->filled('proveedor_id')) {
+                $query->where('proveedor_id', $request->proveedor_id);
+            }
+
+            if ($request->filled('bodega_id')) {
+                $query->where('bodega_id', $request->bodega_id);
+            }
+
+            if ($request->filled('fecha_inicio') && $request->filled('fecha_fin')) {
+                $query->whereBetween('fecha_entrada', [$request->fecha_inicio, $request->fecha_fin]);
+            }
+
+            $entradas = $query->orderBy('fecha_entrada', 'desc')->paginate($perPage);
+
+            return EntradaInventarioResource::collection($entradas);
         });
     }
 
@@ -145,41 +149,48 @@ class EntradaInventarioController extends Controller
             new OA\Response(response: 500, description: 'Error al crear la entrada')
         ]
     )]
-    public function store(StoreEntradaInventarioRequest $request): JsonResponse
+    public function store(Request $request): EntradaInventarioResource|JsonResponse
     {
         $this->authorize('create', EntradaInventario::class);
-        
-        $empresaId = $this->getEmpresaId();
+
+        $validated = $request->validate([
+            'proveedor_id' => 'required|exists:proveedores,id',
+            'bodega_id' => 'required|exists:bodegas,id',
+            'fecha_entrada' => 'required|date',
+            'numero_factura_proveedor' => 'nullable|string|max:50',
+            'observaciones' => 'nullable|string',
+            'detalles' => 'required|array|min:1',
+            'detalles.*.producto_id' => 'required|exists:productos,id',
+            'detalles.*.cantidad' => 'required|numeric|min:0.01',
+            'detalles.*.costo_unitario' => 'required|numeric|min:0',
+            'detalles.*.lote' => 'nullable|string|max:50',
+            'detalles.*.fecha_vencimiento' => 'nullable|date',
+        ]);
 
         DB::beginTransaction();
         try {
-            $entrada = EntradaInventario::create([
-                'empresa_id' => $empresaId,
-                'almacen_id' => $request->almacen_id,
-                'fecha_entrada' => $request->fecha_entrada,
-                'tipo_entrada' => $request->tipo_entrada,
-                'orden_compra_id' => $request->orden_compra_id,
-                'proveedor_id' => $request->proveedor_id,
-                'documento_referencia' => $request->documento_referencia,
-                'observaciones' => $request->observaciones,
-                'estado' => 'Pendiente',
-                'monto_total' => 0
-            ]);
+            $validated['usuario_id'] = auth('sanctum')->id();
+            $validated['estado'] = 'pendiente'; // Estado inicial
+            
+            $entrada = EntradaInventario::create($validated);
+
+            foreach ($validated['detalles'] as $detalle) {
+                $entrada->detalles()->create($detalle);
+            }
+            
+            // Actualizar total
+            $this->actualizarTotalEntrada($entrada->id);
 
             DB::commit();
-            $this->flushCache();
+            $this->clearCache();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Entrada de inventario creada exitosamente',
-                'data' => new EntradaInventarioResource($entrada->load(['almacen', 'proveedor']))
-            ], 201);
+            return (new EntradaInventarioResource($entrada->load(['proveedor', 'bodega', 'usuario', 'detalles.producto'])))
+                ->additional(['message' => 'Entrada de inventario creada exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
-                'success' => false,
-                'message' => 'Error al crear la entrada de inventario',
+                'message' => 'Error al crear entrada de inventario',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -212,20 +223,16 @@ class EntradaInventarioController extends Controller
             new OA\Response(response: 404, description: 'Entrada no encontrada')
         ]
     )]
-    public function show(Request $request, int $id): JsonResponse
+    public function show(string $id): EntradaInventarioResource
     {
-        $empresaId = $this->getEmpresaId();
-
-        $entrada = EntradaInventario::where('empresa_id', $empresaId)
-            ->with(['almacen', 'proveedor', 'ordenCompra', 'detalles.producto.unidadMedida'])
-            ->findOrFail($id);
-        
+        $entrada = EntradaInventario::with(['proveedor', 'bodega', 'usuario', 'detalles.producto'])->findOrFail($id);
         $this->authorize('view', $entrada);
 
-        return response()->json([
-            'success' => true,
-            'data' => new EntradaInventarioResource($entrada)
-        ]);
+        $cacheKey = $this->generateCacheKey("entradas_inventario.show.{$id}");
+
+        return $this->getCached($cacheKey, function () use ($entrada) {
+            return new EntradaInventarioResource($entrada);
+        });
     }
 
     /**
@@ -272,47 +279,37 @@ class EntradaInventarioController extends Controller
             new OA\Response(response: 500, description: 'Error al actualizar')
         ]
     )]
-    public function update(UpdateEntradaInventarioRequest $request, int $id): JsonResponse
+    public function update(Request $request, string $id): EntradaInventarioResource|JsonResponse
     {
-        $empresaId = $this->getEmpresaId();
-
-        $entrada = EntradaInventario::where('empresa_id', $empresaId)->findOrFail($id);
-        
+        $entrada = EntradaInventario::findOrFail($id);
         $this->authorize('update', $entrada);
 
-        if ($entrada->estado === 'Procesada') {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se puede modificar una entrada ya procesada'
-            ], 422);
+        if ($entrada->estado !== 'pendiente') {
+            return response()->json(['message' => 'No se puede modificar una entrada procesada o anulada'], 422);
         }
+
+        $validated = $request->validate([
+            'proveedor_id' => 'sometimes|exists:proveedores,id',
+            'bodega_id' => 'sometimes|exists:bodegas,id',
+            'fecha_entrada' => 'sometimes|date',
+            'numero_factura_proveedor' => 'nullable|string|max:50',
+            'observaciones' => 'nullable|string',
+        ]);
 
         DB::beginTransaction();
         try {
-            $entrada->update($request->only([
-                'almacen_id',
-                'fecha_entrada',
-                'tipo_entrada',
-                'orden_compra_id',
-                'proveedor_id',
-                'documento_referencia',
-                'observaciones'
-            ]));
-
+            $entrada->update($validated);
+            
             DB::commit();
-            $this->flushCache();
+            $this->clearCache();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Entrada de inventario actualizada exitosamente',
-                'data' => new EntradaInventarioResource($entrada->load(['almacen', 'proveedor']))
-            ]);
+            return (new EntradaInventarioResource($entrada->fresh(['proveedor', 'bodega', 'usuario'])))
+                ->additional(['message' => 'Entrada de inventario actualizada exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
-                'success' => false,
-                'message' => 'Error al actualizar la entrada',
+                'message' => 'Error al actualizar entrada de inventario',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -354,31 +351,24 @@ class EntradaInventarioController extends Controller
         
         $this->authorize('delete', $entrada);
 
-        if ($entrada->estado === 'Procesada') {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se puede eliminar una entrada ya procesada'
-            ], 422);
+        if ($entrada->estado !== 'pendiente') {
+            return response()->json(['message' => 'No se puede eliminar una entrada procesada o anulada'], 422);
         }
 
-        $entrada->delete();
-        $this->flushCache();
+        try {
+            $entrada->delete();
+            $this->clearCache();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Entrada de inventario eliminada exitosamente'
-        ]);
-    }
-
-    /**
-     * Procesar entrada de inventario (actualiza stock)
-     */
-    #[OA\Post(
-        path: '/api/entradas-inventario/{id}/procesar',
-        summary: 'Procesar entrada de inventario',
-        description: 'Cambia el estado de la entrada a Procesada y actualiza las cantidades en el inventario de cada producto. Esta acción es irreversible',
-        security: [['sanctum' => []]],
-        tags: ['Inventario - Entradas'],
+            return response()->json([
+                'message' => 'Entrada de inventario eliminada exitosamente'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al eliminar entrada de inventario',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }   tags: ['Inventario - Entradas'],
         parameters: [
             new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
         ],

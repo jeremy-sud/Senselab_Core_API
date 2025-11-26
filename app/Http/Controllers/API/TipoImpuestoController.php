@@ -205,7 +205,7 @@ class TipoImpuestoController extends Controller
      * Mostrar un tipo de impuesto específico
      *
      * @param int $id
-     * @return JsonResponse
+     * @return TipoImpuestoResource
      */
     #[OA\Get(
         path: "/api/tipos-impuesto/{id}",
@@ -243,7 +243,7 @@ class TipoImpuestoController extends Controller
             )
         ]
     )]
-    public function show(int $id): JsonResponse
+    public function show(int $id): TipoImpuestoResource
     {
         $tipo = TipoImpuesto::where('id', $id)
             ->where('eliminado', 0)
@@ -251,10 +251,7 @@ class TipoImpuestoController extends Controller
         
         $this->authorize('view', $tipo);
 
-        return response()->json([
-            'success' => true,
-            'data' => new TipoImpuestoResource($tipo)
-        ]);
+        return new TipoImpuestoResource($tipo);
     }
 
     /**
@@ -262,7 +259,7 @@ class TipoImpuestoController extends Controller
      *
      * @param UpdateTipoImpuestoRequest $request
      * @param int $id
-     * @return JsonResponse
+     * @return TipoImpuestoResource
      */
     #[OA\Put(
         path: "/api/tipos-impuesto/{id}",
@@ -317,7 +314,7 @@ class TipoImpuestoController extends Controller
             )
         ]
     )]
-    public function update(UpdateTipoImpuestoRequest $request, int $id): JsonResponse
+    public function update(UpdateTipoImpuestoRequest $request, int $id): TipoImpuestoResource
     {
         $tipo = TipoImpuesto::where('id', $id)
             ->where('eliminado', 0)
@@ -329,11 +326,7 @@ class TipoImpuestoController extends Controller
         
         $this->flushCache();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Tipo de impuesto actualizado exitosamente',
-            'data' => new TipoImpuestoResource($tipo)
-        ]);
+        return new TipoImpuestoResource($tipo);
     }
 
     /**

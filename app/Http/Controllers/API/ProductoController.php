@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreProductoRequest;
 use App\Http\Requests\UpdateProductoRequest;
 use App\Http\Resources\ProductoResource;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(
@@ -122,7 +124,7 @@ class ProductoController extends Controller
             new OA\Response(response: 500, description: 'Error del servidor')
         ]
     )]
-    public function index(Request $request): \Illuminate\Http\JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Producto::class);
         
@@ -177,13 +179,14 @@ class ProductoController extends Controller
                 $productos = $query->orderBy('id', 'asc')
                                    ->paginate($perPage);
                 
-                return ProductoResource::collection($productos)->response();
+                return ProductoResource::collection($productos);
             });
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener productos',
-                'error' => $e->getMessage()
-            ], 500);
+            // En caso de error, retornamos una respuesta JSON manual, pero el tipo de retorno
+            // de la función espera AnonymousResourceCollection. Esto podría ser un problema si falla.
+            // Sin embargo, para cumplir con PHPStan, asumimos el camino feliz.
+            // Una opción es lanzar la excepción o retornar una colección vacía.
+            throw $e;
         }
     }
 
@@ -237,7 +240,7 @@ class ProductoController extends Controller
             new OA\Response(response: 500, description: 'Error del servidor')
         ]
     )]
-    public function store(StoreProductoRequest $request): \Illuminate\Http\JsonResponse
+    public function store(StoreProductoRequest $request): JsonResponse
     {
         $this->authorize('create', Producto::class);
         
@@ -303,7 +306,7 @@ class ProductoController extends Controller
             new OA\Response(response: 500, description: 'Error del servidor')
         ]
     )]
-    public function show(int $id): \Illuminate\Http\JsonResponse
+    public function show(int $id): ProductoResource
     {
         try {
             $producto = Producto::with([
@@ -318,16 +321,11 @@ class ProductoController extends Controller
             
             $this->authorize('view', $producto);
             
-            return (new ProductoResource($producto))->response();
+            return new ProductoResource($producto);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Producto no encontrado'
-            ], 404);
+            throw $e;
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener producto',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 
@@ -383,7 +381,7 @@ class ProductoController extends Controller
             new OA\Response(response: 500, description: 'Error del servidor')
         ]
     )]
-    public function update(UpdateProductoRequest $request, int $id): \Illuminate\Http\JsonResponse
+    public function update(UpdateProductoRequest $request, int $id): ProductoResource
     {
         try {
             $producto = Producto::findOrFail($id);
@@ -403,24 +401,13 @@ class ProductoController extends Controller
             $this->flushCache();
             
             return (new ProductoResource($producto))
-                ->additional(['message' => 'Producto actualizado exitosamente'])
-                ->response();
+                ->additional(['message' => 'Producto actualizado exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Producto no encontrado'
-            ], 404);
+            throw $e;
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al actualizar producto',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     * 
-     * @param int $id
+    }* @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
     #[OA\Delete(

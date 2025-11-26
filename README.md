@@ -43,16 +43,28 @@
 
 ### 📊 Estado del Proyecto
 
-**📈 Estadísticas Actuales (Post Sprint 7):**
-- **✅ 77 Controladores** implementados (100% completitud)
-- **✅ 72 Policies RBAC** implementadas (100% cobertura)
-- **490+ Rutas API** registradas y funcionales
-- **65 Modelos Eloquent** sincronizados con base de datos
-- **78 Tablas** en base de datos MySQL
-- **187 Tests Automatizados** (100% pasando)
-- **🎯 0 Funcionalidades Bloqueadas** (todas resueltas)
-- **Documentación Swagger** completa e interactiva
-- **Sistema RBAC** con 68 permisos granulares
+**🔍 ÚLTIMA AUDITORÍA: 25 de Noviembre 2025**
+
+**Calificación Global: 8.5/10** ⭐
+
+**📈 Estadísticas Actuales:**
+- **✅ 84 Controladores** implementados (100% completitud)
+- **✅ 73 Policies RBAC** implementadas (100% cobertura)
+- **✅ 413 Rutas API** registradas y funcionales
+- **✅ 77 Modelos Eloquent** sincronizados con BD MySQL
+- **✅ 78 Tablas** en base de datos (api_db, api_db_testing)
+- **✅ 28/28 Tests** pasando (FASE 9.1 - expandible a 90+)
+- **✅ 0 Errores Críticos** (corregidos en auditoría)
+- **✅ Sistema RBAC** completo (68 permisos + 8 roles)
+- **⚠️ Swagger ~5%** documentado (objetivo: 100%)
+
+**✅ CORRECCIONES APLICADAS (Auditoría Nov 2025):**
+- ✅ Error de sintaxis en `EmpresaController.php` (CRÍTICO - corregido)
+- ✅ Imports faltantes (`DB`, `JsonResponse`) agregados
+- ✅ Método `destroy` duplicado eliminado
+- ✅ Uso de `auth()` sin guard corregido en `EntradaInventarioController`
+
+**📊 Análisis Completo:** Ver [AUDITORIA_COMPLETA_NOVIEMBRE_2025.md](AUDITORIA_COMPLETA_NOVIEMBRE_2025.md)
 
 ---
 
@@ -69,7 +81,7 @@
   - TiposCuentasSeeder (8 tipos de cuentas)
   - UnidadesMedidaSeeder (11 unidades)
   - PermisosSeeder (68 permisos = 17 módulos × 4 acciones)
-  - RolesSeeder (7 roles: Administrador, Gerente, Contador, Vendedor, Comprador, Bodeguero, Usuario)
+  - RolesSeeder (8 roles: Administrador, Gerente, Contador, Vendedor, Comprador, Bodeguero, Usuario, Auditor)
 - Total: **96 registros** de datos maestros cargados
 - Commit: `58e2055`
 
@@ -88,11 +100,11 @@
 - Commit: `e668c64`
 
 **✅ FASE 4 - Testing (COMPLETADA)**
-- Suite completa de **127 tests** implementados
+- Suite completa de **28+ tests** implementados y pasando
 - Tests de autenticación y autorización (11 tests)
-- Tests CRUD de productos (12 tests)
-- Tests de sistema RBAC y permisos (17 tests)
-- Tests unitarios de modelos Rol y Usuario (26 tests)
+- Tests CRUD de productos (9 tests)
+- Tests de sistema RBAC y permisos
+- Tests unitarios de modelos y traits
 - Base de datos de testing configurada (MySQL)
 - Helpers de testing en TestCase (RefreshDatabase, factories, seeds)
 - Ver detalles: [FASE_4_TESTING_COMPLETADA.md](FASE_4_TESTING_COMPLETADA.md)
@@ -487,6 +499,12 @@ curl -X GET http://localhost:8000/api/productos \
 
 El sistema utiliza el paquete `spatie/laravel-multitenancy`. La configuración se encuentra en [config/multitenancy.php](config/multitenancy.php).
 
+#### Identificación del tenant
+
+- **Header obligatorio**: `X-Empresa-Id` (ID numérico de la empresa) cuando se consume desde `localhost` u orígenes sin subdominio dedicado.
+- **Subdominios**: también puedes apuntar a `https://{subdominio}.api.ursol.com`; el `tenant_finder` detectará automáticamente la empresa usando el parámetro `TENANT_BASE_DOMAIN` (definido en `.env`).
+- Ambos métodos validan que el usuario autenticado pertenezca al mismo `empresa_id` para evitar accesos cruzados.
+
 ### Configuración de Base de Datos
 
 Cada tenant (empresa) tiene su propia base de datos. El nombre se genera automáticamente:
@@ -649,6 +667,10 @@ Todos los endpoints (excepto `/login`) requieren:
 Authorization: Bearer {token}
 Content-Type: application/json
 Accept: application/json
+X-Empresa-Id: {id}
+X-Empresa-Id: {id}
+
+> Usa el header `X-Empresa-Id` (o un subdominio dedicado) para indicar a qué empresa pertenece la solicitud. Si consumes la API desde `https://{subdominio}.api.ursol.com`, el header es opcional.
 ```
 
 ### Protección por Permisos

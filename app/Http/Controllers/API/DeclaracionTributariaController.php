@@ -10,6 +10,8 @@ use App\Http\Resources\DeclaracionTributariaResource;
 use App\Traits\HasCacheableQueries;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\JsonResponse;
 
 /**
  * Controller para gestionar declaraciones tributarias
@@ -28,9 +30,9 @@ class DeclaracionTributariaController extends Controller
      * Display a listing of the resource.
      * 
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return AnonymousResourceCollection
      */
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', DeclaracionTributaria::class);
         
@@ -129,10 +131,9 @@ class DeclaracionTributariaController extends Controller
                 
                 return DeclaracionTributariaResource::collection($declaraciones);
             } catch (\Exception $e) {
-                return response()->json([
-                    'message' => 'Error al obtener declaraciones tributarias',
-                    'error' => $e->getMessage()
-                ], 500);
+                // En caso de error, retornamos una colección vacía o lanzamos excepción
+                // Para mantener compatibilidad con el tipo de retorno, lanzamos excepción
+                throw $e;
             }
         });
     }
@@ -141,9 +142,9 @@ class DeclaracionTributariaController extends Controller
      * Store a newly created resource in storage.
      * 
      * @param StoreDeclaracionTributariaRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return DeclaracionTributariaResource|\Illuminate\Http\JsonResponse
      */
-    public function store(StoreDeclaracionTributariaRequest $request)
+    public function store(StoreDeclaracionTributariaRequest $request): DeclaracionTributariaResource|JsonResponse
     {
         $this->authorize('create', DeclaracionTributaria::class);
         
@@ -177,9 +178,7 @@ class DeclaracionTributariaController extends Controller
             $this->flushCache();
             
             return (new DeclaracionTributariaResource($declaracion))
-                ->additional(['message' => 'Declaración tributaria creada exitosamente'])
-                ->response()
-                ->setStatusCode(201);
+                ->additional(['message' => 'Declaración tributaria creada exitosamente']);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al crear declaración tributaria',
@@ -192,9 +191,9 @@ class DeclaracionTributariaController extends Controller
      * Display the specified resource.
      * 
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return DeclaracionTributariaResource|\Illuminate\Http\JsonResponse
      */
-    public function show(int $id)
+    public function show(int $id): DeclaracionTributariaResource|JsonResponse
     {
         try {
             $declaracion = DeclaracionTributaria::with(['empresa'])->findOrFail($id);
@@ -219,9 +218,9 @@ class DeclaracionTributariaController extends Controller
      * 
      * @param UpdateDeclaracionTributariaRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return DeclaracionTributariaResource|\Illuminate\Http\JsonResponse
      */
-    public function update(UpdateDeclaracionTributariaRequest $request, int $id)
+    public function update(UpdateDeclaracionTributariaRequest $request, int $id): DeclaracionTributariaResource|JsonResponse
     {
         try {
             $declaracion = DeclaracionTributaria::findOrFail($id);
@@ -279,7 +278,7 @@ class DeclaracionTributariaController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(int $id)
+    public function destroy(int $id): JsonResponse
     {
         try {
             $declaracion = DeclaracionTributaria::findOrFail($id);

@@ -12,6 +12,7 @@ use App\Traits\HasCacheableQueries;
 use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use OpenApi\Attributes as OA;
 
 /**
@@ -62,7 +63,7 @@ class DetallePresupuestoController extends Controller
             new OA\Response(response: 401, description: "No autenticado")
         ]
     )]
-    public function index(Request $request, int $presupuestoId): JsonResponse
+    public function index(Request $request, int $presupuestoId): AnonymousResourceCollection
     {
         $this->authorize('viewAny', DetallePresupuesto::class);
         
@@ -77,10 +78,7 @@ class DetallePresupuestoController extends Controller
                 ->with('cuentaContable')
                 ->get();
 
-            return response()->json([
-                'success' => true,
-                'data' => DetallePresupuestoResource::collection($detalles)
-            ]);
+            return DetallePresupuestoResource::collection($detalles);
         });
     }
 
@@ -111,7 +109,7 @@ class DetallePresupuestoController extends Controller
             new OA\Response(response: 401, description: "No autenticado")
         ]
     )]
-    public function store(StoreDetallePresupuestoRequest $request): JsonResponse
+    public function store(StoreDetallePresupuestoRequest $request): DetallePresupuestoResource|JsonResponse
     {
         $this->authorize('create', DetallePresupuesto::class);
         
@@ -135,11 +133,8 @@ class DetallePresupuestoController extends Controller
         
         $this->flushCache();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Cuenta agregada al presupuesto exitosamente',
-            'data' => new DetallePresupuestoResource($detalle->load('cuentaContable'))
-        ], 201);
+        return (new DetallePresupuestoResource($detalle->load('cuentaContable')))
+            ->additional(['message' => 'Cuenta agregada al presupuesto exitosamente']);
     }
 
     /**
@@ -167,7 +162,7 @@ class DetallePresupuestoController extends Controller
             new OA\Response(response: 401, description: "No autenticado")
         ]
     )]
-    public function show(Request $request, int $id): JsonResponse
+    public function show(Request $request, int $id): DetallePresupuestoResource|JsonResponse
     {
         $detalle = DetallePresupuesto::with(['presupuesto', 'cuentaContable'])
             ->findOrFail($id);
@@ -182,14 +177,8 @@ class DetallePresupuestoController extends Controller
         
         $this->authorize('view', $detalle);
 
-        return response()->json([
-            'success' => true,
-            'data' => new DetallePresupuestoResource($detalle)
-        ]);
-    }
-
-    /**
-     * Actualizar detalle de presupuesto
+        return new DetallePresupuestoResource($detalle);
+    }* Actualizar detalle de presupuesto
      */
     #[OA\Put(
         path: "/api/detalles-presupuestos/{id}",
@@ -223,7 +212,7 @@ class DetallePresupuestoController extends Controller
             new OA\Response(response: 401, description: "No autenticado")
         ]
     )]
-    public function update(UpdateDetallePresupuestoRequest $request, int $id): JsonResponse
+    public function update(UpdateDetallePresupuestoRequest $request, int $id): DetallePresupuestoResource|JsonResponse
     {
         $empresaId = $this->getEmpresaId();
 
@@ -252,15 +241,9 @@ class DetallePresupuestoController extends Controller
         
         $this->flushCache();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Detalle actualizado exitosamente',
-            'data' => new DetallePresupuestoResource($detalle->fresh('cuentaContable'))
-        ]);
-    }
-
-    /**
-     * Eliminar cuenta del presupuesto
+        return (new DetallePresupuestoResource($detalle->fresh('cuentaContable')))
+            ->additional(['message' => 'Detalle actualizado exitosamente']);
+    }* Eliminar cuenta del presupuesto
      */
     #[OA\Delete(
         path: "/api/detalles-presupuestos/{id}",

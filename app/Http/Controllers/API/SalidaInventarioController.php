@@ -216,7 +216,7 @@ class SalidaInventarioController extends Controller
             new OA\Response(response: 404, description: 'Salida no encontrada')
         ]
     )]
-    public function show(Request $request, int $id): JsonResponse
+    public function show(Request $request, int $id): SalidaInventarioResource
     {
         $empresaId = $this->getEmpresaId();
 
@@ -226,10 +226,7 @@ class SalidaInventarioController extends Controller
         
         $this->authorize('view', $salida);
 
-        return response()->json([
-            'success' => true,
-            'data' => new SalidaInventarioResource($salida)
-        ]);
+        return new SalidaInventarioResource($salida);
     }
 
     /**
@@ -278,7 +275,7 @@ class SalidaInventarioController extends Controller
             new OA\Response(response: 500, description: 'Error al actualizar')
         ]
     )]
-    public function update(UpdateSalidaInventarioRequest $request, int $id): JsonResponse
+    public function update(UpdateSalidaInventarioRequest $request, int $id): SalidaInventarioResource|JsonResponse
     {
         $empresaId = $this->getEmpresaId();
 
@@ -310,11 +307,8 @@ class SalidaInventarioController extends Controller
             DB::commit();
             $this->flushCache();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Salida de inventario actualizada exitosamente',
-                'data' => new SalidaInventarioResource($salida->load(['almacen', 'cliente']))
-            ]);
+            return (new SalidaInventarioResource($salida->load(['almacen', 'cliente'])))
+                ->additional(['message' => 'Salida de inventario actualizada exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -576,7 +570,7 @@ class SalidaInventarioController extends Controller
             new OA\Response(response: 401, description: 'No autenticado')
         ]
     )]
-    public function porCliente(Request $request, int $clienteId): JsonResponse
+    public function porCliente(Request $request, int $clienteId): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         $empresaId = $this->getEmpresaId();
 
@@ -586,16 +580,16 @@ class SalidaInventarioController extends Controller
             ->orderBy('fecha_salida', 'desc')
             ->paginate(15);
 
-        return response()->json([
-            'success' => true,
-            'data' => SalidaInventarioResource::collection($salidas),
-            'meta' => [
-                'current_page' => $salidas->currentPage(),
-                'total' => $salidas->total()
-            ]
-        ]);
+        return SalidaInventarioResource::collection($salidas);
     }
 
+    /**
+     * Obtener salidas por almacén
+     */
+    #[OA\Get(
+        path: '/api/salidas-inventario/almacen/{almacenId}',
+        summary: 'Obtener salidas por almacén',
+        description: 'Lista todas las salidas de inventario de un almacén específico',
     /**
      * Obtener salidas por almacén
      */
@@ -631,7 +625,7 @@ class SalidaInventarioController extends Controller
             new OA\Response(response: 401, description: 'No autenticado')
         ]
     )]
-    public function porAlmacen(Request $request, int $almacenId): JsonResponse
+    public function porAlmacen(Request $request, int $almacenId): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         $empresaId = $this->getEmpresaId();
 
@@ -641,22 +635,8 @@ class SalidaInventarioController extends Controller
             ->orderBy('fecha_salida', 'desc')
             ->paginate(15);
 
-        return response()->json([
-            'success' => true,
-            'data' => SalidaInventarioResource::collection($salidas),
-            'meta' => [
-                'current_page' => $salidas->currentPage(),
-                'total' => $salidas->total()
-            ]
-        ]);
-    }
-
-    /**
-     * Resumen de salidas por tipo
-     */
-    #[OA\Get(
-        path: '/api/salidas-inventario/resumen-por-tipo',
-        summary: 'Resumen de salidas por tipo',
+        return SalidaInventarioResource::collection($salidas);
+    }   summary: 'Resumen de salidas por tipo',
         description: 'Genera estadísticas agrupadas por tipo de salida mostrando cantidad total y monto total',
         security: [['sanctum' => []]],
         tags: ['Inventario - Salidas'],
@@ -707,6 +687,13 @@ class SalidaInventarioController extends Controller
         path: '/api/salidas-inventario/pendientes',
         summary: 'Obtener salidas pendientes',
         description: 'Lista todas las salidas de inventario en estado Pendiente ordenadas por fecha de salida ascendente',
+    /**
+     * Obtener salidas pendientes
+     */
+    #[OA\Get(
+        path: '/api/salidas-inventario/pendientes',
+        summary: 'Obtener salidas pendientes',
+        description: 'Lista todas las salidas de inventario en estado Pendiente ordenadas por fecha de salida ascendente',
         security: [['sanctum' => []]],
         tags: ['Inventario - Salidas'],
         responses: [
@@ -723,7 +710,7 @@ class SalidaInventarioController extends Controller
             new OA\Response(response: 401, description: 'No autenticado')
         ]
     )]
-    public function pendientes(Request $request): JsonResponse
+    public function pendientes(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         $empresaId = $this->getEmpresaId();
 
@@ -733,9 +720,5 @@ class SalidaInventarioController extends Controller
             ->orderBy('fecha_salida', 'asc')
             ->get();
 
-        return response()->json([
-            'success' => true,
-            'data' => SalidaInventarioResource::collection($salidas)
-        ]);
+        return SalidaInventarioResource::collection($salidas);
     }
-}

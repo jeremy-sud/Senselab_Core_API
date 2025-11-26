@@ -7,6 +7,7 @@ use App\Models\TipoCambioHistorial;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Traits\HasCacheableQueries;
+use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
 
 class TipoCambioHistorialController extends Controller
@@ -80,7 +81,7 @@ class TipoCambioHistorialController extends Controller
             )
         ]
     )]
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         $this->authorize('viewAny', TipoCambioHistorial::class);
 
@@ -141,7 +142,7 @@ class TipoCambioHistorialController extends Controller
             )
         ]
     )]
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $this->authorize('create', TipoCambioHistorial::class);
 
@@ -212,7 +213,7 @@ class TipoCambioHistorialController extends Controller
             )
         ]
     )]
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
         $tipoCambio = TipoCambioHistorial::findOrFail($id);
         $this->authorize('view', $tipoCambio);
@@ -263,7 +264,7 @@ class TipoCambioHistorialController extends Controller
             )
         ]
     )]
-    public function porFecha(Request $request)
+    public function porFecha(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'fecha' => 'required|date',
@@ -320,7 +321,7 @@ class TipoCambioHistorialController extends Controller
             )
         ]
     )]
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): JsonResponse
     {
         $tipoCambio = TipoCambioHistorial::findOrFail($id);
         $this->authorize('update', $tipoCambio);
@@ -377,7 +378,7 @@ class TipoCambioHistorialController extends Controller
             )
         ]
     )]
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
         $tipoCambio = TipoCambioHistorial::findOrFail($id);
         $this->authorize('delete', $tipoCambio);

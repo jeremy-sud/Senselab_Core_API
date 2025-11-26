@@ -213,18 +213,18 @@ class CabyController extends Controller
             )
         ]
     )]
-    public function store(StoreCabyRequest $request): JsonResponse
+    public function store(StoreCabyRequest $request): CabyResource|JsonResponse
     {
         $this->authorize('create', Cabys::class);
         $caby = Cabys::create($request->validated());
         
-        $this->flushCache(['cabys', 'catalogos', 'hacienda']);
+        $this->flushCache();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Código CAByS creado exitosamente',
-            'data' => new CabyResource($caby)
-        ], 201);
+        return (new CabyResource($caby))
+            ->additional([
+                'success' => true,
+                'message' => 'Código CAByS creado exitosamente'
+            ]);
     }
 
     /**
@@ -269,7 +269,7 @@ class CabyController extends Controller
             )
         ]
     )]
-    public function show(int $id): JsonResponse
+    public function show(int $id): CabyResource|JsonResponse
     {
         $caby = Cabys::where('id', $id)
             ->where('eliminado', 0)
@@ -277,10 +277,8 @@ class CabyController extends Controller
 
         $this->authorize('view', $caby);
 
-        return response()->json([
-            'success' => true,
-            'data' => new CabyResource($caby)
-        ]);
+        return (new CabyResource($caby))
+            ->additional(['success' => true]);
     }
 
     /**
@@ -342,7 +340,7 @@ class CabyController extends Controller
             )
         ]
     )]
-    public function update(UpdateCabyRequest $request, int $id): JsonResponse
+    public function update(UpdateCabyRequest $request, int $id): CabyResource|JsonResponse
     {
         $caby = Cabys::where('id', $id)
             ->where('eliminado', 0)
@@ -352,13 +350,13 @@ class CabyController extends Controller
 
         $caby->update($request->validated());
         
-        $this->flushCache(['cabys', 'catalogos', 'hacienda']);
+        $this->flushCache();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Código CAByS actualizado exitosamente',
-            'data' => new CabyResource($caby)
-        ]);
+        return (new CabyResource($caby))
+            ->additional([
+                'success' => true,
+                'message' => 'Código CAByS actualizado exitosamente'
+            ]);
     }
 
     /**
@@ -426,7 +424,7 @@ class CabyController extends Controller
 
         $caby->update(['eliminado' => 1, 'activo' => 0]);
         
-        $this->flushCache(['cabys', 'catalogos', 'hacienda']);
+        $this->flushCache();
 
         return response()->json([
             'success' => true,
@@ -481,7 +479,7 @@ class CabyController extends Controller
             )
         ]
     )]
-    public function buscar(BuscarCabyRequest $request): JsonResponse
+    public function buscar(BuscarCabyRequest $request): AnonymousResourceCollection
     {
         $termino = $request->termino;
 
@@ -494,10 +492,10 @@ class CabyController extends Controller
             ->limit(50)
             ->get();
 
-        return response()->json([
-            'success' => true,
-            'data' => CabyResource::collection($resultados),
-            'total' => $resultados->count()
-        ]);
+        return CabyResource::collection($resultados)
+            ->additional([
+                'success' => true,
+                'total' => $resultados->count()
+            ]);
     }
 }

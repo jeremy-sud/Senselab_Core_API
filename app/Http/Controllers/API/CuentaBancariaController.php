@@ -7,6 +7,7 @@ use App\Models\CuentaBancaria;
 use App\Http\Requests\StoreCuentaBancariaRequest;
 use App\Http\Requests\UpdateCuentaBancariaRequest;
 use App\Http\Resources\CuentaBancariaResource;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Traits\HasCacheableQueries;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,9 +29,9 @@ class CuentaBancariaController extends Controller
      * Display a listing of the resource.
      * 
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return AnonymousResourceCollection
      */
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection|JsonResponse
     {
         $this->authorize('viewAny', CuentaBancaria::class);
         
@@ -103,9 +104,9 @@ class CuentaBancariaController extends Controller
      * Store a newly created resource in storage.
      * 
      * @param StoreCuentaBancariaRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return CuentaBancariaResource|\Illuminate\Http\JsonResponse
      */
-    public function store(StoreCuentaBancariaRequest $request)
+    public function store(StoreCuentaBancariaRequest $request): CuentaBancariaResource|JsonResponse
     {
         $this->authorize('create', CuentaBancaria::class);
         
@@ -129,9 +130,7 @@ class CuentaBancariaController extends Controller
             $this->flushCache();
             
             return (new CuentaBancariaResource($cuentaBancaria))
-                ->additional(['message' => 'Cuenta bancaria creada exitosamente'])
-                ->response()
-                ->setStatusCode(201);
+                ->additional(['message' => 'Cuenta bancaria creada exitosamente']);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al crear cuenta bancaria',
@@ -144,9 +143,9 @@ class CuentaBancariaController extends Controller
      * Display the specified resource.
      * 
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return CuentaBancariaResource|\Illuminate\Http\JsonResponse
      */
-    public function show(int $id)
+    public function show(int $id): CuentaBancariaResource|JsonResponse
     {
         try {
             $cuentaBancaria = CuentaBancaria::with([
@@ -174,9 +173,9 @@ class CuentaBancariaController extends Controller
      * 
      * @param UpdateCuentaBancariaRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return CuentaBancariaResource|\Illuminate\Http\JsonResponse
      */
-    public function update(UpdateCuentaBancariaRequest $request, int $id)
+    public function update(UpdateCuentaBancariaRequest $request, int $id): CuentaBancariaResource|JsonResponse
     {
         try {
             $cuentaBancaria = CuentaBancaria::findOrFail($id);
@@ -221,7 +220,7 @@ class CuentaBancariaController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(int $id)
+    public function destroy(int $id): JsonResponse
     {
         try {
             $cuentaBancaria = CuentaBancaria::findOrFail($id);

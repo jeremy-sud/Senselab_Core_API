@@ -28,6 +28,7 @@ class Empresa extends Tenant
         'distrito',
         'telefono',
         'email',
+        'subdominio',
         'certificado_llave_fe',
         'pin_llave_fe_hash',
         'prefijo_orden_compra',

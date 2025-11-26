@@ -5,9 +5,12 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\DetalleVenta;
 use App\Models\Venta;
+use App\Http\Resources\DetalleVentaResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Traits\HasCacheableQueries;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
 
 class DetalleVentaController extends Controller
@@ -75,7 +78,7 @@ class DetalleVentaController extends Controller
             )
         ]
     )]
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', DetalleVenta::class);
 
@@ -97,7 +100,7 @@ class DetalleVentaController extends Controller
 
             $detalles = $query->orderBy('id', 'desc')->paginate($perPage);
 
-            return response()->json($detalles);
+            return DetalleVentaResource::collection($detalles);
         });
     }
 
@@ -141,7 +144,7 @@ class DetalleVentaController extends Controller
             new OA\Response(response: 422, description: 'Error de validación')
         ]
     )]
-    public function store(Request $request)
+    public function store(Request $request): DetalleVentaResource|JsonResponse
     {
         $this->authorize('create', DetalleVenta::class);
 
@@ -173,10 +176,8 @@ class DetalleVentaController extends Controller
             DB::commit();
             $this->clearCache();
 
-            return response()->json([
-                'message' => 'Detalle de venta creado exitosamente',
-                'data' => $detalle->load(['venta', 'producto', 'tipoImpuesto'])
-            ], 201);
+            return (new DetalleVentaResource($detalle->load(['venta', 'producto', 'tipoImpuesto'])))
+                ->additional(['message' => 'Detalle de venta creado exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -214,7 +215,7 @@ class DetalleVentaController extends Controller
             new OA\Response(response: 404, description: 'Detalle no encontrado')
         ]
     )]
-    public function show(string $id)
+    public function show(string $id): DetalleVentaResource
     {
         $detalle = DetalleVenta::with(['venta', 'producto', 'tipoImpuesto'])->findOrFail($id);
         $this->authorize('view', $detalle);
@@ -222,7 +223,7 @@ class DetalleVentaController extends Controller
         $cacheKey = $this->generateCacheKey("detalle_ventas.show.{$id}");
 
         return $this->getCached($cacheKey, function () use ($detalle) {
-            return response()->json(['data' => $detalle]);
+            return new DetalleVentaResource($detalle);
         });
     }
 
@@ -268,7 +269,7 @@ class DetalleVentaController extends Controller
             )
         ]
     )]
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): DetalleVentaResource|JsonResponse
     {
         $detalle = DetalleVenta::findOrFail($id);
         $this->authorize('update', $detalle);
@@ -291,10 +292,8 @@ class DetalleVentaController extends Controller
             DB::commit();
             $this->clearCache();
 
-            return response()->json([
-                'message' => 'Detalle de venta actualizado exitosamente',
-                'data' => $detalle->fresh(['venta', 'producto', 'tipoImpuesto'])
-            ]);
+            return (new DetalleVentaResource($detalle->fresh(['venta', 'producto', 'tipoImpuesto'])))
+                ->additional(['message' => 'Detalle de venta actualizado exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -333,7 +332,7 @@ class DetalleVentaController extends Controller
             )
         ]
     )]
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
         $detalle = DetalleVenta::findOrFail($id);
         $this->authorize('delete', $detalle);

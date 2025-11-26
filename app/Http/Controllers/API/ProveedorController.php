@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreProveedorRequest;
 use App\Http\Requests\UpdateProveedorRequest;
 use App\Http\Resources\ProveedorResource;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
 
@@ -21,7 +22,7 @@ class ProveedorController extends Controller
      * Display a listing of the resource.
      * 
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return AnonymousResourceCollection
      */
     #[OA\Get(
         path: '/api/proveedores',
@@ -102,7 +103,7 @@ class ProveedorController extends Controller
             )
         ]
     )]
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Proveedor::class);
         
@@ -213,7 +214,7 @@ class ProveedorController extends Controller
             )
         ]
     )]
-    public function store(StoreProveedorRequest $request)
+    public function store(StoreProveedorRequest $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('create', Proveedor::class);
         
@@ -239,7 +240,7 @@ class ProveedorController extends Controller
      * Display the specified resource.
      * 
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return ProveedorResource|\Illuminate\Http\JsonResponse
      */
     #[OA\Get(
         path: '/api/proveedores/{id}',
@@ -287,7 +288,7 @@ class ProveedorController extends Controller
             )
         ]
     )]
-    public function show(int $id)
+    public function show(int $id): ProveedorResource
     {
         try {
             $proveedor = Proveedor::with([
@@ -304,14 +305,9 @@ class ProveedorController extends Controller
             
             return new ProveedorResource($proveedor);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Proveedor no encontrado'
-            ], 404);
+            throw $e;
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener proveedor',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 
@@ -320,7 +316,7 @@ class ProveedorController extends Controller
      * 
      * @param UpdateProveedorRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return ProveedorResource|\Illuminate\Http\JsonResponse
      */
     #[OA\Put(
         path: '/api/proveedores/{id}',
@@ -399,7 +395,7 @@ class ProveedorController extends Controller
             )
         ]
     )]
-    public function update(UpdateProveedorRequest $request, int $id)
+    public function update(UpdateProveedorRequest $request, int $id): ProveedorResource
     {
         try {
             $proveedor = Proveedor::findOrFail($id);
@@ -414,14 +410,9 @@ class ProveedorController extends Controller
             return (new ProveedorResource($proveedor))
                 ->additional(['message' => 'Proveedor actualizado exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Proveedor no encontrado'
-            ], 404);
+            throw $e;
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al actualizar proveedor',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 
@@ -477,7 +468,7 @@ class ProveedorController extends Controller
             )
         ]
     )]
-    public function destroy(int $id)
+    public function destroy(int $id): \Illuminate\Http\JsonResponse
     {
         try {
             $proveedor = Proveedor::findOrFail($id);

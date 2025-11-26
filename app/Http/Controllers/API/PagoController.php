@@ -243,11 +243,10 @@ class PagoController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Pago registrado exitosamente',
-                'data' => new PagoResource($pago)
-            ], 201);
+            return (new PagoResource($pago))
+                ->additional(['message' => 'Pago registrado exitosamente'])
+                ->response()
+                ->setStatusCode(201);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -301,7 +300,7 @@ class PagoController extends Controller
             )
         ]
     )]
-    public function show(int $id, Request $request): JsonResponse
+    public function show(int $id, Request $request): PagoResource
     {
         $empresaId = $this->getEmpresaId();
 
@@ -313,10 +312,7 @@ class PagoController extends Controller
         
         $this->authorize('view', $pago);
 
-        return response()->json([
-            'success' => true,
-            'data' => new PagoResource($pago)
-        ]);
+        return new PagoResource($pago);
     }
 
     /**
@@ -386,7 +382,7 @@ class PagoController extends Controller
             )
         ]
     )]
-    public function update(UpdatePagoRequest $request, int $id): JsonResponse
+    public function update(UpdatePagoRequest $request, int $id): PagoResource
     {
         $empresaId = $this->getEmpresaId();
 
@@ -399,10 +395,7 @@ class PagoController extends Controller
 
         // No permitir modificar pagos ya procesados
         if ($pago->estado === 'Pagado') {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se puede modificar un pago que ya ha sido procesado'
-            ], 422);
+            abort(422, 'No se puede modificar un pago que ya ha sido procesado');
         }
 
         try {
@@ -428,23 +421,14 @@ class PagoController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Pago actualizado exitosamente',
-                'data' => new PagoResource($pago)
-            ]);
+            return (new PagoResource($pago))
+                ->additional(['message' => 'Pago actualizado exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al actualizar el pago: ' . $e->getMessage()
-            ], 500);
+            throw $e;
         }
-    }
-
-    /**
-     * Eliminar (soft delete) un pago
+    }* Eliminar (soft delete) un pago
      *
      * @param int $id
      * @param Request $request

@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
+use App\Http\Resources\ArchivoResource;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\JsonResponse;
 
 class ArchivoController extends Controller
 {
@@ -74,7 +77,7 @@ class ArchivoController extends Controller
             )
         ]
     )]
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Archivo::class);
 
@@ -101,7 +104,7 @@ class ArchivoController extends Controller
 
             $archivos = $query->orderBy('id', 'desc')->paginate($perPage);
 
-            return response()->json($archivos);
+            return ArchivoResource::collection($archivos);
         });
     }
 
@@ -142,7 +145,7 @@ class ArchivoController extends Controller
             )
         ]
     )]
-    public function store(Request $request)
+    public function store(Request $request): ArchivoResource|JsonResponse
     {
         $this->authorize('create', Archivo::class);
 
@@ -186,10 +189,8 @@ class ArchivoController extends Controller
             DB::commit();
             $this->clearCache();
 
-            return response()->json([
-                'message' => 'Archivo subido exitosamente',
-                'data' => $archivo->load(['empresa', 'usuario'])
-            ], 201);
+            return (new ArchivoResource($archivo->load(['empresa', 'usuario'])))
+                ->additional(['message' => 'Archivo subido exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -225,7 +226,7 @@ class ArchivoController extends Controller
             )
         ]
     )]
-    public function show(string $id)
+    public function show(string $id): ArchivoResource
     {
         $archivo = Archivo::with(['empresa', 'usuario'])->findOrFail($id);
         $this->authorize('view', $archivo);
@@ -233,7 +234,7 @@ class ArchivoController extends Controller
         $cacheKey = $this->generateCacheKey("archivos.show.{$id}");
 
         return $this->getCached($cacheKey, function () use ($archivo) {
-            return response()->json(['data' => $archivo]);
+            return new ArchivoResource($archivo);
         });
     }
 
@@ -263,7 +264,7 @@ class ArchivoController extends Controller
             )
         ]
     )]
-    public function descargar(string $id)
+    public function descargar(string $id): \Symfony\Component\HttpFoundation\BinaryFileResponse|JsonResponse
     {
         $archivo = Archivo::findOrFail($id);
         $this->authorize('view', $archivo);
@@ -311,7 +312,7 @@ class ArchivoController extends Controller
             )
         ]
     )]
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): ArchivoResource|JsonResponse
     {
         $archivo = Archivo::findOrFail($id);
         $this->authorize('update', $archivo);
@@ -327,10 +328,8 @@ class ArchivoController extends Controller
             DB::commit();
             $this->clearCache();
 
-            return response()->json([
-                'message' => 'Archivo actualizado exitosamente',
-                'data' => $archivo->fresh(['empresa', 'usuario'])
-            ]);
+            return (new ArchivoResource($archivo->fresh(['empresa', 'usuario'])))
+                ->additional(['message' => 'Archivo actualizado exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -366,7 +365,7 @@ class ArchivoController extends Controller
             )
         ]
     )]
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
         $archivo = Archivo::findOrFail($id);
         $this->authorize('delete', $archivo);

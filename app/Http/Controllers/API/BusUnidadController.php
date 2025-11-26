@@ -123,7 +123,7 @@ class BusUnidadController extends Controller
      * Crear un nuevo bus
      *
      * @param StoreBusUnidadRequest $request
-     * @return BusUnidadResource
+     * @return JsonResponse
      */
     #[OA\Post(
         path: "/api/buses-unidades",
@@ -150,7 +150,7 @@ class BusUnidadController extends Controller
             new OA\Response(response: 401, description: "No autenticado")
         ]
     )]
-    public function store(StoreBusUnidadRequest $request): BusUnidadResource
+    public function store(StoreBusUnidadRequest $request): JsonResponse
     {
         $this->authorize('create', BusUnidad::class);
         $empresaId = $this->getEmpresaId();
@@ -166,7 +166,10 @@ class BusUnidadController extends Controller
 
         $this->flushCache();
 
-        return new BusUnidadResource($bus->load(['empresa', 'modelo']));
+        return (new BusUnidadResource($bus->load(['empresa', 'modelo'])))
+            ->additional(['message' => 'Bus creado exitosamente'])
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
@@ -272,7 +275,8 @@ class BusUnidadController extends Controller
 
         $this->flushCache();
 
-        return new BusUnidadResource($bus->load(['empresa', 'modelo']));
+        return (new BusUnidadResource($bus->load(['empresa', 'modelo'])))
+            ->additional(['message' => 'Bus actualizado exitosamente']);
     }
 
     /**
@@ -370,8 +374,7 @@ class BusUnidadController extends Controller
             ),
             new OA\Response(response: 401, description: "No autenticado")
         ]
-    )]
-    public function disponibles(Request $request): JsonResponse
+    public function disponibles(Request $request): AnonymousResourceCollection
     {
         $empresaId = $this->getEmpresaId();
 
@@ -385,7 +388,8 @@ class BusUnidadController extends Controller
             ->select('id', 'placa', 'modelo_id', 'capacidad_asientos', 'identificador_interno')
             ->get();
 
-        return response()->json($buses);
+        return BusUnidadResource::collection($buses);
+    }   return response()->json($buses);
     }
 
     /**

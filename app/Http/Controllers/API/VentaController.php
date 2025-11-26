@@ -3,9 +3,15 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\GeneratePdfReportJob;
 use App\Models\Venta;
 use App\Models\DetalleVenta;
 use App\Models\InventarioProducto;
+use App\Models\Cliente;
+use App\Models\Sucursal;
+use App\Models\Usuario;
+use App\Models\Producto;
+use App\Models\Almacen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreVentaRequest;
@@ -13,7 +19,11 @@ use App\Http\Requests\UpdateVentaRequest;
 use App\Http\Resources\VentaResource;
 use App\Traits\HasCacheableQueries;
 use App\Traits\HasEmpresaContext;
-use App\Jobs\GeneratePdfReportJob;
+use Illuminate\Support\Collection;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
 
 class VentaController extends Controller
@@ -49,13 +59,6 @@ class VentaController extends Controller
                 in: 'query',
                 required: false,
                 schema: new OA\Schema(type: 'integer', default: 1, example: 1)
-            ),
-            new OA\Parameter(
-                name: 'empresa_id',
-                description: 'Filtrar por empresa',
-                in: 'query',
-                required: false,
-                schema: new OA\Schema(type: 'integer', example: 1)
             ),
             new OA\Parameter(
                 name: 'sucursal_id',
@@ -122,56 +125,55 @@ class VentaController extends Controller
             )
         ]
     )]
-    public function index(Request $request): \Illuminate\Http\JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Venta::class);
-        
-        try {
-            $perPage = $request->input('per_page', 15);
-            $empresaId = $request->input('empresa_id');
-            $sucursalId = $request->input('sucursal_id');
-            $clienteId = $request->input('cliente_id');
-            $fechaInicio = $request->input('fecha_inicio');
-            $fechaFin = $request->input('fecha_fin');
-            
-            $ventas = $this->cacheQueryIfEnabled(
-                $this->getCacheKey('index', $request->all()),
-                function() use ($request, $perPage, $empresaId, $sucursalId, $clienteId, $fechaInicio, $fechaFin) {
-                    $query = Venta::with([
-                        'empresa',
-                        'sucursal',
-                        'cliente',
-                        'usuario',
-                        'formaPago'
-                    ]);
-                    
-                    if ($empresaId) {
-                        $query->where('empresa_id', $empresaId);
-                    }
-                    
-                    if ($sucursalId) {
-                        $query->where('sucursal_id', $sucursalId);
-                    }
-                    
-                    if ($clienteId) {
-                        $query->where('cliente_id', $clienteId);
-                    }
-                    
-                    if ($fechaInicio && $fechaFin) {
-                        $query->whereBetween('fecha_venta', [$fechaInicio, $fechaFin]);
-                    }
-                    
-                    return $query->orderBy('id', 'desc')->paginate($perPage);
+
+        $empresaId = $this->resolveEmpresaOrFail($request->input('empresa_id'));
+        $perPage = (int) $request->input('per_page', 15);
+        $sucursalId = $request->input('sucursal_id');
+        $clienteId = $request->input('cliente_id');
+        $fechaInicio = $request->input('fecha_inicio');
+        $fechaFin = $request->input('fecha_fin');
+
+        $cachePayload = [
+            'empresa_id' => $empresaId,
+            'per_page' => $perPage,
+            'page' => (int) $request->input('page', 1),
+            'sucursal_id' => $sucursalId,
+            'cliente_id' => $clienteId,
+            'fecha_inicio' => $fechaInicio,
+            'fecha_fin' => $fechaFin,
+        ];
+
+        $ventas = $this->cacheQueryIfEnabled(
+            $this->getCacheKey('index', $cachePayload),
+            function () use ($perPage, $empresaId, $sucursalId, $clienteId, $fechaInicio, $fechaFin) {
+                $query = Venta::with([
+                    'empresa',
+                    'sucursal',
+                    'cliente',
+                    'usuario',
+                    'formaPago',
+                ])->where('empresa_id', $empresaId);
+
+                if ($sucursalId) {
+                    $query->where('sucursal_id', $sucursalId);
                 }
-            );
-            
-            return VentaResource::collection($ventas)->response();
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener ventas',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+
+                if ($clienteId) {
+                    $query->where('cliente_id', $clienteId);
+                }
+
+                if ($fechaInicio && $fechaFin) {
+                    $query->whereBetween('fecha_venta', [$fechaInicio, $fechaFin]);
+                }
+
+                return $query->orderBy('id', 'desc')->paginate($perPage);
+            }
+        );
+
+        return VentaResource::collection($ventas);
     }
 
     /**
@@ -189,10 +191,9 @@ class VentaController extends Controller
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
-                required: ['empresa_id', 'cliente_id', 'fecha_venta', 'tipo_comprobante', 'moneda', 'condicion_pago', 'detalles'],
+                required: ['sucursal_id', 'cliente_id', 'fecha_venta', 'tipo_comprobante', 'moneda', 'condicion_pago', 'detalles'],
                 properties: [
-                    new OA\Property(property: 'empresa_id', type: 'integer', example: 1),
-                    new OA\Property(property: 'sucursal_id', type: 'integer', nullable: true, example: 1),
+                    new OA\Property(property: 'sucursal_id', type: 'integer', example: 1),
                     new OA\Property(property: 'cliente_id', type: 'integer', example: 5),
                     new OA\Property(property: 'usuario_id', type: 'integer', nullable: true, example: 3),
                     new OA\Property(property: 'fecha_venta', type: 'string', format: 'date-time', example: '2024-01-15T10:30:00'),
@@ -253,112 +254,119 @@ class VentaController extends Controller
             )
         ]
     )]
-    public function store(StoreVentaRequest $request): \Illuminate\Http\JsonResponse
+    public function store(StoreVentaRequest $request): JsonResponse
     {
         $this->authorize('create', Venta::class);
         
+        $empresaId = $this->resolveEmpresaOrFail();
+        $sucursal = $this->ensureSucursal((int) $request->sucursal_id, $empresaId);
+        $cliente = $this->ensureCliente((int) $request->cliente_id, $empresaId);
+
+        $usuarioId = $request->input('usuario_id') ?? $request->user()?->id;
+
+        if (! $usuarioId) {
+            throw new AccessDeniedHttpException('No se pudo determinar el usuario que registra la venta.');
+        }
+
+        $usuario = $this->ensureUsuario((int) $usuarioId, $empresaId);
+        $almacen = $request->filled('almacen_id')
+            ? $this->ensureAlmacen((int) $request->almacen_id, $empresaId)
+            : null;
+
+        $detalles = collect($request->input('detalles', []));
+        $productos = $this->ensureProductos($detalles->pluck('producto_id')->all(), $empresaId);
+
+        DB::beginTransaction();
+
         try {
-            DB::beginTransaction();
-            
-            try {
-                // Validar stock si se proporciona almacen_id
-                if ($request->has('almacen_id')) {
-                    foreach ($request->detalles as $detalle) {
-                        $inventario = InventarioProducto::where('producto_id', $detalle['producto_id'])
-                            ->where('almacen_id', $request->almacen_id)
-                            ->first();
-
-                        if (!$inventario || $inventario->stock_actual < $detalle['cantidad']) {
-                            return response()->json([
-                                'message' => 'Stock insuficiente',
-                                'errors' => [
-                                    'stock' => ["No hay suficiente stock para el producto ID {$detalle['producto_id']}"]
-                                ]
-                            ], 422);
-                        }
-                    }
-                }
-
-                // Crear venta
-                $ventaData = $request->except('detalles');
-                $ventaData['numero_comprobante'] = $this->generarNumeroComprobante($request->empresa_id, $request->tipo_comprobante);
-                
-                $venta = Venta::create($ventaData);
-                
-                // Crear detalles y calcular totales
-                $montoSubtotal = 0;
-                $montoImpuestos = 0;
-                $montoDescuentos = 0;
-                
-                foreach ($request->detalles as $detalle) {
-                    $cantidad = $detalle['cantidad'];
-                    $precioUnitario = $detalle['precio_unitario'];
-                    $descuento = $detalle['descuento'] ?? 0;
-                    $porcentajeImpuesto = $detalle['porcentaje_impuesto'] ?? 0;
-                    
-                    $subtotal = $cantidad * $precioUnitario;
-                    $montoDescuentos += $descuento;
-                    $subtotalConDescuento = $subtotal - $descuento;
-                    $impuesto = $subtotalConDescuento * ($porcentajeImpuesto / 100);
-                    $total = $subtotalConDescuento + $impuesto;
-                    
-                    $montoSubtotal += $subtotal;
-                    $montoImpuestos += $impuesto;
-                    
-                    DetalleVenta::create([
-                        'venta_id' => $venta->id,
-                        'producto_id' => $detalle['producto_id'],
-                        'cantidad' => $cantidad,
-                        'precio_unitario' => $precioUnitario,
-                        'descuento' => $descuento,
-                        'porcentaje_impuesto' => $porcentajeImpuesto,
-                        'monto_impuesto' => $impuesto,
-                        'subtotal' => $subtotal,
-                        'total' => $total,
-                        'descripcion' => $detalle['descripcion'] ?? null,
-                    ]);
-
-                    // Actualizar inventario
-                    if ($request->has('almacen_id')) {
-                        $inventario = InventarioProducto::where('producto_id', $detalle['producto_id'])
-                            ->where('almacen_id', $request->almacen_id)
-                            ->first();
-                        
-                        if ($inventario) {
-                            $inventario->decrement('stock_actual', $cantidad);
-                        }
-                    }
-                }
-                
-                // Actualizar totales de la venta
-                $venta->update([
-                    'subtotal_bruto_total' => $montoSubtotal,
-                    'monto_descuento_total' => $montoDescuentos,
-                    'subtotal_neto_total' => $montoSubtotal - $montoDescuentos,
-                    'monto_impuesto_total' => $montoImpuestos,
-                    'monto_total_venta' => $montoSubtotal - $montoDescuentos + $montoImpuestos,
-                ]);
-                
-                $this->flushCache();
-                DB::commit();
-                
-                $venta->load(['cliente', 'detalles.producto']);
-                
-                return (new VentaResource($venta))
-                    ->additional(['message' => 'Venta creada exitosamente'])
-                    ->response()
-                    ->setStatusCode(201);
-                
-            } catch (\Exception $e) {
-                DB::rollBack();
-                throw $e;
+            if ($almacen) {
+                $this->assertStockDisponible($almacen->id, $detalles);
             }
-            
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al crear venta',
-                'error' => $e->getMessage()
-            ], 500);
+
+            $ventaData = array_merge(
+                $request->except(['detalles', 'empresa_id']),
+                [
+                    'empresa_id' => $empresaId,
+                    'sucursal_id' => $sucursal->id,
+                    'cliente_id' => $cliente->id,
+                    'usuario_id' => $usuario->id,
+                    'numero_comprobante' => $this->generarNumeroComprobante($empresaId, $request->tipo_comprobante),
+                ]
+            );
+
+            $venta = Venta::create($ventaData);
+
+            $montoSubtotal = 0;
+            $montoImpuestos = 0;
+            $montoDescuentos = 0;
+
+            foreach ($detalles as $index => $detalle) {
+                $productoId = (int) $detalle['producto_id'];
+                $producto = $productos->get($productoId);
+
+                $cantidad = (float) $detalle['cantidad'];
+                $precioUnitario = (float) $detalle['precio_unitario'];
+                $montoDescuento = (float) ($detalle['descuento'] ?? 0);
+                $tasaImpuesto = (float) ($detalle['porcentaje_impuesto'] ?? 0);
+
+                $subtotal = $cantidad * $precioUnitario;
+                $subtotalConDescuento = max(0, $subtotal - $montoDescuento);
+                $impuesto = $subtotalConDescuento * ($tasaImpuesto / 100);
+                $totalLinea = $subtotalConDescuento + $impuesto;
+                $porcentajeDescuento = $subtotal > 0 ? ($montoDescuento / $subtotal) * 100 : 0;
+
+                $montoSubtotal += $subtotal;
+                $montoDescuentos += $montoDescuento;
+                $montoImpuestos += $impuesto;
+
+                DetalleVenta::create([
+                    'venta_id' => $venta->id,
+                    'producto_id' => $producto->id,
+                    'numero_linea' => $index + 1,
+                    'cantidad' => $cantidad,
+                    'precio_unitario' => $precioUnitario,
+                    'subtotal_linea' => $subtotal,
+                    'porcentaje_descuento' => $porcentajeDescuento,
+                    'monto_descuento' => $montoDescuento,
+                    'subtotal_con_descuento' => $subtotalConDescuento,
+                    'tasa_impuesto' => $tasaImpuesto,
+                    'monto_impuesto' => $impuesto,
+                    'total_linea' => $totalLinea,
+                    'detalle_adicional' => $detalle['descripcion'] ?? null,
+                ]);
+
+                if ($almacen) {
+                    $inventario = InventarioProducto::where('almacen_id', $almacen->id)
+                        ->where('producto_id', $producto->id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if ($inventario) {
+                        $inventario->decrement('stock_actual', $cantidad);
+                    }
+                }
+            }
+
+            $venta->update([
+                'subtotal_bruto_total' => $montoSubtotal,
+                'monto_descuento_total' => $montoDescuentos,
+                'subtotal_neto_total' => $montoSubtotal - $montoDescuentos,
+                'monto_impuesto_total' => $montoImpuestos,
+                'monto_total_venta' => ($montoSubtotal - $montoDescuentos) + $montoImpuestos,
+            ]);
+
+            $this->flushCache();
+
+            DB::commit();
+
+            $venta->load(['cliente', 'detalles.producto']);
+
+            return (new VentaResource($venta))
+                ->response()
+                ->setStatusCode(201);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
         }
     }
 
@@ -366,7 +374,7 @@ class VentaController extends Controller
      * Display the specified resource.
      * 
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return VentaResource
      */
     #[OA\Get(
         path: '/api/ventas/{id}',
@@ -414,7 +422,7 @@ class VentaController extends Controller
             )
         ]
     )]
-    public function show(int $id): \Illuminate\Http\JsonResponse
+    public function show(int $id): VentaResource
     {
         try {
             $venta = Venta::with([
@@ -427,17 +435,13 @@ class VentaController extends Controller
             ])->findOrFail($id);
             
             $this->authorize('view', $venta);
+            $this->assertEmpresa($venta);
             
-            return (new VentaResource($venta))->response();
+            return new VentaResource($venta);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Venta no encontrada'
-            ], 404);
+            abort(404, 'Venta no encontrada');
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener venta',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 
@@ -446,7 +450,7 @@ class VentaController extends Controller
      * 
      * @param UpdateVentaRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return VentaResource
      */
     #[OA\Put(
         path: '/api/ventas/{id}',
@@ -514,29 +518,24 @@ class VentaController extends Controller
             )
         ]
     )]
-    public function update(UpdateVentaRequest $request, int $id): \Illuminate\Http\JsonResponse
+    public function update(UpdateVentaRequest $request, int $id): VentaResource
     {
         try {
             $venta = Venta::findOrFail($id);
             
             $this->authorize('update', $venta);
+            $this->assertEmpresa($venta);
             
             // Solo permitir actualizar observaciones y estado
             $venta->update($request->validated());
             $venta->load(['cliente', 'detalles.producto']);
             
             return (new VentaResource($venta))
-                ->additional(['message' => 'Venta actualizada exitosamente'])
-                ->response();
+                ->additional(['message' => 'Venta actualizada exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Venta no encontrada'
-            ], 404);
+            abort(404, 'Venta no encontrada');
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al actualizar venta',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 
@@ -598,6 +597,7 @@ class VentaController extends Controller
             $venta = Venta::findOrFail($id);
             
             $this->authorize('delete', $venta);
+            $this->assertEmpresa($venta);
             
             // Marcar como anulada en lugar de eliminar
             $venta->update([
@@ -650,6 +650,77 @@ class VentaController extends Controller
         
         return $prefijo . '-' . str_pad($numero, 8, '0', STR_PAD_LEFT);
     }
+
+            private function ensureSucursal(int $sucursalId, int $empresaId): Sucursal
+            {
+                return Sucursal::whereKey($sucursalId)
+                    ->where('empresa_id', $empresaId)
+                    ->firstOrFail();
+            }
+
+            private function ensureCliente(int $clienteId, int $empresaId): Cliente
+            {
+                return Cliente::whereKey($clienteId)
+                    ->where('empresa_id', $empresaId)
+                    ->firstOrFail();
+            }
+
+            private function ensureUsuario(int $usuarioId, int $empresaId): Usuario
+            {
+                $usuario = Usuario::whereKey($usuarioId)
+                    ->where('empresa_id', $empresaId)
+                    ->first();
+
+                if (! $usuario) {
+                    throw new AccessDeniedHttpException('El usuario seleccionado no pertenece a la empresa.');
+                }
+
+                return $usuario;
+            }
+
+            private function ensureAlmacen(int $almacenId, int $empresaId): Almacen
+            {
+                return Almacen::whereKey($almacenId)
+                    ->where('empresa_id', $empresaId)
+                    ->firstOrFail();
+            }
+
+            private function ensureProductos(array $productoIds, int $empresaId): Collection
+            {
+                if (empty($productoIds)) {
+                    throw ValidationException::withMessages([
+                        'detalles' => ['Debe incluir al menos un producto en la venta.'],
+                    ]);
+                }
+
+                $uniqueIds = array_unique($productoIds);
+
+                $productos = Producto::whereIn('id', $uniqueIds)
+                    ->where('empresa_id', $empresaId)
+                    ->get()
+                    ->keyBy('id');
+
+                if ($productos->count() !== count($uniqueIds)) {
+                    throw new AccessDeniedHttpException('Uno o más productos no pertenecen a la empresa actual.');
+                }
+
+                return $productos;
+            }
+
+            private function assertStockDisponible(int $almacenId, Collection $detalles): void
+            {
+                foreach ($detalles as $detalle) {
+                    $inventario = InventarioProducto::where('almacen_id', $almacenId)
+                        ->where('producto_id', $detalle['producto_id'])
+                        ->first();
+
+                    if (! $inventario || $inventario->stock_actual < $detalle['cantidad']) {
+                        throw ValidationException::withMessages([
+                            'stock' => ["No hay suficiente stock para el producto ID {$detalle['producto_id']}"]
+                        ]);
+                    }
+                }
+            }
     
     /**
      * Generar reporte PDF de ventas (async con Queue Job)
@@ -698,7 +769,7 @@ class VentaController extends Controller
             'sucursal_id' => 'nullable|exists:sucursales,id',
         ]);
 
-        $empresaId = $this->getEmpresaId();
+        $empresaId = $this->resolveEmpresaOrFail();
         
         // Dispatch job asíncrono (Sprint 8.4)
         $job = GeneratePdfReportJob::dispatch(

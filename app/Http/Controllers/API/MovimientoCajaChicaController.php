@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\MovimientoCajaChicaResource;
 use App\Models\MovimientoCajaChica;
 use App\Models\CajaChica;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
@@ -81,7 +84,7 @@ class MovimientoCajaChicaController extends Controller
             )
         ]
     )]
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', MovimientoCajaChica::class);
 
@@ -107,7 +110,7 @@ class MovimientoCajaChicaController extends Controller
 
             $movimientos = $query->orderBy('id', 'desc')->paginate($perPage);
 
-            return response()->json($movimientos);
+            return MovimientoCajaChicaResource::collection($movimientos);
         });
     }
 
@@ -148,7 +151,7 @@ class MovimientoCajaChicaController extends Controller
             )
         ]
     )]
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $this->authorize('create', MovimientoCajaChica::class);
 
@@ -196,11 +199,13 @@ class MovimientoCajaChicaController extends Controller
             DB::commit();
             $this->clearCache();
 
-            return response()->json([
-                'message' => 'Movimiento registrado exitosamente',
-                'data' => $movimiento->load(['cajaChica', 'cuentaContable']),
-                'saldo_actual' => $cajaChica->fresh()->saldo_actual
-            ], 201);
+            return (new MovimientoCajaChicaResource($movimiento->load(['cajaChica', 'cuentaContable'])))
+                ->additional([
+                    'message' => 'Movimiento registrado exitosamente',
+                    'saldo_actual' => $cajaChica->fresh()->saldo_actual
+                ])
+                ->response()
+                ->setStatusCode(201);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -236,7 +241,7 @@ class MovimientoCajaChicaController extends Controller
             )
         ]
     )]
-    public function show(string $id)
+    public function show(string $id): MovimientoCajaChicaResource
     {
         $movimiento = MovimientoCajaChica::with(['cajaChica', 'cuentaContable'])->findOrFail($id);
         $this->authorize('view', $movimiento);
@@ -244,7 +249,7 @@ class MovimientoCajaChicaController extends Controller
         $cacheKey = $this->generateCacheKey("movimientos_caja_chica.show.{$id}");
 
         return $this->getCached($cacheKey, function () use ($movimiento) {
-            return response()->json(['data' => $movimiento]);
+            return new MovimientoCajaChicaResource($movimiento);
         });
     }
 
@@ -282,7 +287,7 @@ class MovimientoCajaChicaController extends Controller
             )
         ]
     )]
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): MovimientoCajaChicaResource
     {
         $movimiento = MovimientoCajaChica::findOrFail($id);
         $this->authorize('update', $movimiento);
@@ -299,10 +304,8 @@ class MovimientoCajaChicaController extends Controller
             DB::commit();
             $this->clearCache();
 
-            return response()->json([
-                'message' => 'Movimiento actualizado exitosamente',
-                'data' => $movimiento->fresh(['cajaChica', 'cuentaContable'])
-            ]);
+            return (new MovimientoCajaChicaResource($movimiento->fresh(['cajaChica', 'cuentaContable'])))
+                ->additional(['message' => 'Movimiento actualizado exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -338,7 +341,7 @@ class MovimientoCajaChicaController extends Controller
             )
         ]
     )]
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
         $movimiento = MovimientoCajaChica::findOrFail($id);
         $this->authorize('delete', $movimiento);

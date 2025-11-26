@@ -201,7 +201,8 @@ class PagoNominaController extends Controller
             
             $this->flushCache();
 
-            return new PagoNominaResource($pago->load(['empresa', 'empleado', 'periodoNomina', 'metodoPago']));
+            return (new PagoNominaResource($pago->load(['empresa', 'empleado', 'periodoNomina', 'metodoPago'])))
+                ->additional(['message' => 'Pago creado exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -333,7 +334,8 @@ class PagoNominaController extends Controller
             
             $this->flushCache();
 
-            return new PagoNominaResource($pago->load(['empresa', 'empleado', 'periodoNomina', 'metodoPago']));
+            return (new PagoNominaResource($pago->load(['empresa', 'empleado', 'periodoNomina', 'metodoPago'])))
+                ->additional(['message' => 'Pago actualizado exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -458,7 +460,8 @@ class PagoNominaController extends Controller
             'fecha_pago' => $request->fecha_pago ?? now()
         ]);
 
-        return new PagoNominaResource($pago->load(['empresa', 'empleado', 'periodoNomina', 'metodoPago']));
+        return (new PagoNominaResource($pago->load(['empresa', 'empleado', 'periodoNomina', 'metodoPago'])))
+            ->additional(['message' => 'Pago marcado como pagado exitosamente']);
     }
 
     /**

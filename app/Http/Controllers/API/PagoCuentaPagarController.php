@@ -81,7 +81,7 @@ class PagoCuentaPagarController extends Controller
             )
         ]
     )]
-    public function index(Request $request)
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('viewAny', PagoCuentaPagar::class);
 
@@ -148,7 +148,7 @@ class PagoCuentaPagarController extends Controller
             )
         ]
     )]
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('create', PagoCuentaPagar::class);
 
@@ -222,7 +222,7 @@ class PagoCuentaPagarController extends Controller
             )
         ]
     )]
-    public function show(string $id)
+    public function show(string $id): \Illuminate\Http\JsonResponse
     {
         $pago = PagoCuentaPagar::with(['cuentaPorPagar', 'formaPago'])->findOrFail($id);
         $this->authorize('view', $pago);
@@ -268,7 +268,7 @@ class PagoCuentaPagarController extends Controller
             )
         ]
     )]
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): \Illuminate\Http\JsonResponse
     {
         $pago = PagoCuentaPagar::findOrFail($id);
         $this->authorize('update', $pago);
@@ -324,7 +324,7 @@ class PagoCuentaPagarController extends Controller
             )
         ]
     )]
-    public function destroy(string $id)
+    public function destroy(string $id): \Illuminate\Http\JsonResponse
     {
         $pago = PagoCuentaPagar::findOrFail($id);
         $this->authorize('delete', $pago);

@@ -20,8 +20,8 @@
 | **Modelos y BD** | ✅ Muy Bueno (verificado vs MySQL) | 🟢 Baja - Mantener |
 | **FormRequests** | ✅ Muy Bueno (todos corregidos) | 🟢 Baja - Mantener |
 | **Controllers** | ⚠️ Bueno (84 controllers) | 🟡 Media - Optimizar |
-| **Seguridad RBAC** | ⚠️ Mejorable (0 Policies) | 🔴 Alta - Implementar |
-| **Performance** | ⚠️ Sin optimizar | 🔴 Alta - Cachear |
+| **Seguridad RBAC** | ✅ Completo (73 policies registradas) | 🟢 Baja - Monitorear |
+| **Performance** | ⚠️ Cache parcial (Redis en catálogos, ventas optimizado) | 🟡 Media - Extender |
 | **Documentación Swagger** | ❌ Crítico (~5% documentado) | 🔴 Alta - Completar |
 | **Code Quality** | ⚠️ Mejorable | 🟡 Media - Refactor |
 
@@ -29,54 +29,22 @@
 
 ## 🔴 PROBLEMAS CRÍTICOS (Prioridad ALTA)
 
-### 1. ❌ **FALTA DE POLICIES - Autorización No Implementada**
+### 1. ❌ **Acceso cross-tenant en módulo de Ventas (Corregido)**
 
 **Impacto:** CRÍTICO 🔴  
-**Afectación:** 84 controllers sin control de autorización granular
+**Afectación:** `/api/ventas` permitía leer y crear registros de cualquier empresa manipulando `empresa_id` en query/body.
 
 **Problema Detectado:**
-```bash
-find app/Policies -name "*Policy.php" | wc -l
-# Resultado: 0 policies
-```
+- `VentaController@index` no obligaba `empresa_id` y el modelo `Venta` no tenía `BelongsToTenant`, por lo que un usuario podía listar facturas de otros tenants.
+- `POST /api/ventas` aceptaba `empresa_id`, `cliente_id`, `sucursal_id` y `producto_id` arbitrarios, actualizando inventarios ajenos y generando comprobantes con folios incorrectos.
+- El `tenant_finder` estaba deshabilitado, por lo que jobs y colas no mantenían contexto multi-tenant.
 
-**Consecuencias:**
-- ✅ Middleware `permission` aplicado a rutas (corregido anteriormente)
-- ❌ **PERO** no hay validación a nivel de controller/modelo
-- ❌ No se puede verificar "¿este usuario puede editar ESTE registro específico?"
-- ❌ Cualquier usuario con permiso `empresas.actualizar` puede editar CUALQUIER empresa (incluso de otros tenants en teoría)
+**Acciones Aplicadas:**
+- `Venta` ahora usa `BelongsToTenant` y el controller aplica `resolveEmpresaOrFail()` + `assertEmpresa()` en todos los endpoints críticos.
+- Se validan sucursales, clientes, usuarios, almacenes y productos contra el `empresa_id` activo antes de crear la venta; además se corrige la generación de detalles (`subtotal_linea`, `total_linea`, inventario con `lockForUpdate`).
+- Se habilitó `HeaderSubdomainTenantFinder`, el header `X-Empresa-Id` y el campo `empresas.subdominio` para aislar cada tenant incluso en background jobs (`GeneratePdfReportJob`).
 
-**Ejemplo del Problema:**
-```php
-// app/Http/Controllers/CuentaBancariaController.php
-public function update($id) {
-    // ❌ No hay verificación: "¿Este usuario puede editar ESTA cuenta?"
-    // Solo hay: "¿Tiene permiso general de actualizar cuentas?"
-    $cuenta = CuentaBancaria::withoutGlobalScope('tenant')->findOrFail($id);
-    $cuenta->update($request->validated());
-    return new CuentaBancariaResource($cuenta);
-}
-```
-
-**Solución Recomendada:**
-```bash
-# Crear policies para todos los modelos críticos
-php artisan make:policy EmpresaPolicy --model=Empresa
-php artisan make:policy ProductoPolicy --model=Producto
-php artisan make:policy CuentaBancariaPolicy --model=CuentaBancaria
-# ... x84 modelos más
-
-# Implementar autorización en controllers:
-public function update(UpdateCuentaBancariaRequest $request, $id) {
-    $cuenta = CuentaBancaria::withoutGlobalScope('tenant')->findOrFail($id);
-    
-    // ✅ Autorización específica
-    $this->authorize('update', $cuenta);
-    
-    $cuenta->update($request->validated());
-    return new CuentaBancariaResource($cuenta);
-}
-```
+**Seguimiento recomendado:** extender las mismas verificaciones a otros módulos de altas masivas (compras, inventario) y documentar el proceso de aprovisionamiento de subdominios.
 
 **Archivos Afectados:** 84 controllers  
 **Esfuerzo Estimado:** 20-30 horas  

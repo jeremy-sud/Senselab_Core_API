@@ -242,6 +242,287 @@
                 ]
             }
         },
+        "/api/archivos": {
+            "get": {
+                "tags": [
+                    "Archivos"
+                ],
+                "summary": "Listar archivos",
+                "description": "Obtiene un listado paginado de archivos adjuntos",
+                "operationId": "15e567e29677c552f66f0c7b7e1f75a0",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Cantidad de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    },
+                    {
+                        "name": "entidad_tipo",
+                        "in": "query",
+                        "description": "Filtrar por tipo de entidad",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "entidad_id",
+                        "in": "query",
+                        "description": "Filtrar por ID de entidad",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "categoria",
+                        "in": "query",
+                        "description": "Filtrar por categoría",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Archivos"
+                ],
+                "summary": "Subir archivo",
+                "description": "Sube un nuevo archivo y lo asocia a una entidad",
+                "operationId": "27f03b67840b9b99eada07691289ece5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "archivo",
+                                    "entidad_tipo",
+                                    "entidad_id"
+                                ],
+                                "properties": {
+                                    "archivo": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "entidad_tipo": {
+                                        "type": "string",
+                                        "example": "App\\Models\\Producto"
+                                    },
+                                    "entidad_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "categoria": {
+                                        "type": "string",
+                                        "example": "imagen"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Archivo subido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/archivos/{id}": {
+            "get": {
+                "tags": [
+                    "Archivos"
+                ],
+                "summary": "Obtener archivo específico",
+                "description": "Obtiene los metadatos de un archivo",
+                "operationId": "7643d0705ac6dfba177b76420904cd1e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del archivo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Archivo obtenido exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Archivos"
+                ],
+                "summary": "Actualizar metadatos de archivo",
+                "description": "Actualiza la categoría u otros metadatos",
+                "operationId": "60d881df3abf5081041fd0049821f779",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del archivo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "categoria": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Archivo actualizado exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Archivos"
+                ],
+                "summary": "Eliminar archivo",
+                "description": "Elimina el archivo del sistema",
+                "operationId": "994d157f55ddbf8942dcc6edb8d3c6c6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del archivo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Archivo eliminado exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/archivos/{id}/descargar": {
+            "get": {
+                "tags": [
+                    "Archivos"
+                ],
+                "summary": "Descargar archivo",
+                "description": "Descarga el archivo físico",
+                "operationId": "263bf4b0f2c8c778ba52c4d527b7a629",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del archivo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Archivo descargado",
+                        "content": {
+                            "application/octet-stream": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/asientos-contables": {
             "get": {
                 "tags": [
@@ -817,6 +1098,249 @@
                     },
                     "500": {
                         "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/auditoria-actividades": {
+            "get": {
+                "tags": [
+                    "Auditoría Actividades"
+                ],
+                "summary": "Listar auditorías de actividad",
+                "description": "Obtiene un listado de registros de auditoría (solo lectura)",
+                "operationId": "3e57ad08726fdc27d48aa1e1cc510fd6",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Cantidad de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    },
+                    {
+                        "name": "usuario_id",
+                        "in": "query",
+                        "description": "Filtrar por usuario",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "accion",
+                        "in": "query",
+                        "description": "Filtrar por acción (crear, actualizar, eliminar)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "crear",
+                                "actualizar",
+                                "eliminar"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "tabla",
+                        "in": "query",
+                        "description": "Filtrar por tabla",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "fecha_inicio",
+                        "in": "query",
+                        "description": "Fecha inicial del rango",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "fecha_fin",
+                        "in": "query",
+                        "description": "Fecha final del rango",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/auditoria-actividades/{id}": {
+            "get": {
+                "tags": [
+                    "Auditoría Actividades"
+                ],
+                "summary": "Obtener auditoría específica",
+                "description": "Obtiene los detalles de un registro de auditoría",
+                "operationId": "5d74e80e4fe562ecd819f3499e2ff43c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del registro de auditoría",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Auditoría obtenida exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/auditoria-actividades/estadisticas": {
+            "get": {
+                "tags": [
+                    "Auditoría Actividades"
+                ],
+                "summary": "Obtener estadísticas de auditoría",
+                "description": "Obtiene estadísticas resumidas de actividad",
+                "operationId": "ad6717808ae07b1ae29f9a95916cea24",
+                "parameters": [
+                    {
+                        "name": "fecha_inicio",
+                        "in": "query",
+                        "description": "Fecha inicial del rango",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "fecha_fin",
+                        "in": "query",
+                        "description": "Fecha final del rango",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Estadísticas obtenidas exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/auditoria-actividades/exportar": {
+            "get": {
+                "tags": [
+                    "Auditoría Actividades"
+                ],
+                "summary": "Exportar auditorías",
+                "description": "Exporta registros de auditoría en formato CSV",
+                "operationId": "25ba0441b0713c546c019f232640afc6",
+                "parameters": [
+                    {
+                        "name": "fecha_inicio",
+                        "in": "query",
+                        "description": "Fecha inicial del rango",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "fecha_fin",
+                        "in": "query",
+                        "description": "Fecha final del rango",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "usuario_id",
+                        "in": "query",
+                        "description": "Filtrar por usuario",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "tabla",
+                        "in": "query",
+                        "description": "Filtrar por tabla",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Exportación generada exitosamente",
+                        "content": {
+                            "text/csv": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -1420,7 +1944,7 @@
                 ],
                 "summary": "Resumen de flota",
                 "description": "Obtiene estadísticas agregadas de la flota: total de buses, activos, en viaje y capacidad total.",
-                "operationId": "a20cb76ea7e10c5eaad7c7220298fb21",
+                "operationId": "9852a78f27e98a06632f16f175b0f273",
                 "responses": {
                     "200": {
                         "description": "Resumen obtenido exitosamente",
@@ -1968,6 +2492,541 @@
                     },
                     "500": {
                         "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/caja-chica": {
+            "get": {
+                "tags": [
+                    "Caja Chica"
+                ],
+                "summary": "Listar fondos de caja chica",
+                "description": "Obtiene un listado paginado de fondos de caja chica",
+                "operationId": "a761ae17a887de1639e7893e7263e39c",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Cantidad de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    },
+                    {
+                        "name": "estado",
+                        "in": "query",
+                        "description": "Filtrar por estado",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "Abierta",
+                                "Cerrada",
+                                "Liquidada"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "responsable_id",
+                        "in": "query",
+                        "description": "Filtrar por responsable",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Caja Chica"
+                ],
+                "summary": "Crear fondo de caja chica",
+                "description": "Crea un nuevo fondo de caja chica",
+                "operationId": "2bb48653a2b2ff86ebc3142fccc41512",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "empresa_id",
+                                    "nombre",
+                                    "monto_inicial",
+                                    "responsable_id",
+                                    "fecha_apertura"
+                                ],
+                                "properties": {
+                                    "empresa_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Fondo Caja Chica Enero 2024"
+                                    },
+                                    "monto_inicial": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 50000
+                                    },
+                                    "responsable_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "fecha_apertura": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-01-01"
+                                    },
+                                    "observaciones": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Fondo creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/caja-chica/{id}": {
+            "get": {
+                "tags": [
+                    "Caja Chica"
+                ],
+                "summary": "Obtener fondo específico",
+                "description": "Obtiene los detalles de un fondo de caja chica",
+                "operationId": "2a9dd637f595ff929b1cee362983a3f3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del fondo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fondo obtenido exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Caja Chica"
+                ],
+                "summary": "Actualizar fondo",
+                "description": "Actualiza información de un fondo",
+                "operationId": "ae15160b785b3c274c3e2a22dae3ee23",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del fondo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string"
+                                    },
+                                    "observaciones": {
+                                        "type": "string"
+                                    },
+                                    "estado": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Abierta",
+                                            "Cerrada",
+                                            "Liquidada"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Fondo actualizado exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Caja Chica"
+                ],
+                "summary": "Eliminar fondo",
+                "description": "Elimina (soft delete) un fondo",
+                "operationId": "e5ea56e5768ecc3eb7b452e656084cf6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del fondo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fondo eliminado exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/caja-chica/{id}/cerrar": {
+            "post": {
+                "tags": [
+                    "Caja Chica"
+                ],
+                "summary": "Cerrar fondo",
+                "description": "Cierra un fondo de caja chica",
+                "operationId": "c29af1c9b79857835b1a5d02be37975a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del fondo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fondo cerrado exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/cajas": {
+            "get": {
+                "tags": [
+                    "Cajas"
+                ],
+                "summary": "Listar cajas registradoras",
+                "description": "Obtiene un listado paginado de cajas",
+                "operationId": "4fb3e933ae2388365915fba1a751579b",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Cantidad de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    },
+                    {
+                        "name": "sucursal_id",
+                        "in": "query",
+                        "description": "Filtrar por sucursal",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "nombre",
+                        "in": "query",
+                        "description": "Buscar por nombre",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Cajas"
+                ],
+                "summary": "Crear caja registradora",
+                "description": "Crea una nueva caja para una sucursal",
+                "operationId": "dc7d1684aa04357f55560fbb0c34fce7",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "sucursal_id",
+                                    "nombre"
+                                ],
+                                "properties": {
+                                    "sucursal_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Caja 1"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Caja principal mostrador"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Caja creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/cajas/{id}": {
+            "get": {
+                "tags": [
+                    "Cajas"
+                ],
+                "summary": "Obtener caja específica",
+                "description": "Obtiene los detalles de una caja",
+                "operationId": "5ff9220d5282873e7a3819981b2c111a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la caja",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Caja obtenida exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Cajas"
+                ],
+                "summary": "Actualizar caja",
+                "description": "Actualiza información de una caja",
+                "operationId": "29926dc48e5e71021bf5c9cef8833fb2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la caja",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string"
+                                    },
+                                    "descripcion": {
+                                        "type": "string"
+                                    },
+                                    "activo": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Caja actualizada exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Cajas"
+                ],
+                "summary": "Eliminar caja",
+                "description": "Elimina (soft delete) una caja",
+                "operationId": "01b639fbd862714c2da4db1c6aeba8b5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la caja",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Caja eliminada exitosamente"
                     }
                 },
                 "security": [
@@ -3189,7 +4248,7 @@
                     "Facturación Electrónica"
                 ],
                 "summary": "Listar comprobantes electrónicos recibidos",
-                "description": "Obtiene la lista paginada de comprobantes electrónicos recibidos de proveedores (facturas, notas de crédito, etc.) según normativa DGT.",
+                "description": "Listar comprobantes recibidos de la empresa",
                 "operationId": "ae1cba1da308569eb4d1c36a315f56df",
                 "responses": {
                     "200": {
@@ -3702,7 +4761,7 @@
                 ],
                 "summary": "Resumen por estado de Hacienda",
                 "description": "Obtiene estadísticas agregadas de comprobantes agrupados por estado de respuesta de Hacienda (Aceptado, Rechazado, Procesando).",
-                "operationId": "333ec30fce3d2fdfbbe0537390580003",
+                "operationId": "07559a1c53fcec5a34cfbe2f34cd26e1",
                 "responses": {
                     "200": {
                         "description": "Resumen obtenido exitosamente",
@@ -4173,6 +5232,326 @@
                                 }
                             }
                         }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/consecutivos-fe": {
+            "get": {
+                "tags": [
+                    "Consecutivos FE"
+                ],
+                "summary": "Listar consecutivos de facturación electrónica",
+                "description": "Obtiene un listado de consecutivos autorizados por DGT",
+                "operationId": "ae442172f663a295d4281aae829ec051",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Cantidad de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    },
+                    {
+                        "name": "empresa_id",
+                        "in": "query",
+                        "description": "Filtrar por empresa",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "tipo_comprobante",
+                        "in": "query",
+                        "description": "Filtrar por tipo de comprobante",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Consecutivos FE"
+                ],
+                "summary": "Crear consecutivo de FE",
+                "description": "Crea un nuevo consecutivo autorizado por DGT (CRÍTICO - Cumplimiento legal)",
+                "operationId": "52d107b8915a4580db0590db633da702",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "empresa_id",
+                                    "sucursal_id",
+                                    "tipo_comprobante",
+                                    "prefijo",
+                                    "consecutivo_inicial",
+                                    "consecutivo_final"
+                                ],
+                                "properties": {
+                                    "empresa_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "sucursal_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "tipo_comprobante": {
+                                        "description": "01=FE, 04=TE, etc",
+                                        "type": "string",
+                                        "example": "01"
+                                    },
+                                    "prefijo": {
+                                        "type": "string",
+                                        "example": "00100001"
+                                    },
+                                    "consecutivo_inicial": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "consecutivo_final": {
+                                        "type": "integer",
+                                        "example": 100000
+                                    },
+                                    "fecha_resolucion": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-01-01"
+                                    },
+                                    "numero_resolucion": {
+                                        "type": "string",
+                                        "example": "DGT-R-001-2024"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Consecutivo creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/consecutivos-fe/{id}": {
+            "get": {
+                "tags": [
+                    "Consecutivos FE"
+                ],
+                "summary": "Obtener consecutivo específico",
+                "description": "Obtiene los detalles de un consecutivo",
+                "operationId": "c45b5252f6ff9afb96abaa2c091009d7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del consecutivo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Consecutivo obtenido exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Consecutivos FE"
+                ],
+                "summary": "Actualizar consecutivo",
+                "description": "Actualiza información de un consecutivo (CUIDADO - operación crítica)",
+                "operationId": "b1248431b40dbf437f215d52794d48c9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del consecutivo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "consecutivo_final": {
+                                        "description": "Ampliar rango",
+                                        "type": "integer"
+                                    },
+                                    "numero_resolucion": {
+                                        "type": "string"
+                                    },
+                                    "activo": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Consecutivo actualizado exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Consecutivos FE"
+                ],
+                "summary": "Desactivar consecutivo",
+                "description": "Desactiva un consecutivo (no elimina por cumplimiento DGT)",
+                "operationId": "658b25c4512fd520dc6a7e45096fbf62",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del consecutivo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Consecutivo desactivado exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/consecutivos-fe/{id}/siguiente": {
+            "post": {
+                "tags": [
+                    "Consecutivos FE"
+                ],
+                "summary": "Obtener siguiente consecutivo",
+                "description": "Obtiene y reserva el siguiente número consecutivo (CRÍTICO - DGT)",
+                "operationId": "8dce85986ffc5738857a05d244ff0f7d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del consecutivo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Consecutivo obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "consecutivo": {
+                                            "type": "string",
+                                            "example": "0000000001"
+                                        },
+                                        "consecutivo_completo": {
+                                            "type": "string",
+                                            "example": "001000010000000001"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Consecutivo agotado o inactivo"
                     }
                 },
                 "security": [
@@ -6278,6 +7657,282 @@
                 ]
             }
         },
+        "/api/detalle-ordenes-compra": {
+            "get": {
+                "tags": [
+                    "Detalle Órdenes Compra"
+                ],
+                "summary": "Listar detalles de órdenes de compra",
+                "description": "Obtiene un listado paginado de detalles de órdenes de compra",
+                "operationId": "751068b8cdf3d365c85827644b732cff",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Cantidad de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    },
+                    {
+                        "name": "orden_compra_id",
+                        "in": "query",
+                        "description": "Filtrar por orden de compra",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "producto_id",
+                        "in": "query",
+                        "description": "Filtrar por producto",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Detalle Órdenes Compra"
+                ],
+                "summary": "Crear detalle de orden de compra",
+                "description": "Crea un nuevo detalle de orden de compra",
+                "operationId": "f684285efa35245cf4afd1b009ef0262",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "orden_compra_id",
+                                    "producto_id",
+                                    "cantidad",
+                                    "precio_unitario"
+                                ],
+                                "properties": {
+                                    "orden_compra_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "producto_id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "numero_linea": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "cantidad": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 50
+                                    },
+                                    "precio_unitario": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 125
+                                    },
+                                    "porcentaje_impuesto": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 13
+                                    },
+                                    "detalle_adicional": {
+                                        "type": "string",
+                                        "example": "Producto importado"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Detalle creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/detalle-ordenes-compra/{id}": {
+            "get": {
+                "tags": [
+                    "Detalle Órdenes Compra"
+                ],
+                "summary": "Obtener detalle de orden de compra",
+                "description": "Obtiene un detalle específico",
+                "operationId": "94452f4878f25be143bf6a0b6694e5c4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del detalle",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalle obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Detalle Órdenes Compra"
+                ],
+                "summary": "Actualizar detalle de orden de compra",
+                "description": "Actualiza un detalle existente",
+                "operationId": "0c8d2d0b9c1b63d04af5de2d9b4abb3a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del detalle",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "cantidad": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 75
+                                    },
+                                    "precio_unitario": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 130
+                                    },
+                                    "detalle_adicional": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Detalle actualizado exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Detalle Órdenes Compra"
+                ],
+                "summary": "Eliminar detalle de orden de compra",
+                "description": "Elimina (soft delete) un detalle",
+                "operationId": "6ff37b45cf9f67ad0966226b9a325b05",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del detalle",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalle eliminado exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/presupuestos/{presupuestoId}/detalles": {
             "get": {
                 "tags": [
@@ -6909,6 +8564,330 @@
                     },
                     "500": {
                         "description": "Error al eliminar"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/detalle-ventas": {
+            "get": {
+                "tags": [
+                    "Detalle Ventas"
+                ],
+                "summary": "Listar detalles de ventas",
+                "description": "Obtiene un listado paginado de detalles de ventas con filtros",
+                "operationId": "a797fdb88bc8755b5f3bc881040e815e",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Cantidad de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    },
+                    {
+                        "name": "venta_id",
+                        "in": "query",
+                        "description": "Filtrar por venta",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "producto_id",
+                        "in": "query",
+                        "description": "Filtrar por producto",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de detalles obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Detalle Ventas"
+                ],
+                "summary": "Crear detalle de venta",
+                "description": "Crea un nuevo detalle de venta",
+                "operationId": "1640246d3ac0a3f0d62d1a19262302fd",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "venta_id",
+                                    "producto_id",
+                                    "cantidad",
+                                    "precio_unitario"
+                                ],
+                                "properties": {
+                                    "venta_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "producto_id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "numero_linea": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "cantidad": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 10
+                                    },
+                                    "precio_unitario": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 150
+                                    },
+                                    "porcentaje_descuento": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 5
+                                    },
+                                    "tipo_impuesto_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "tasa_impuesto": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 13
+                                    },
+                                    "detalle_adicional": {
+                                        "type": "string",
+                                        "example": "Producto especial"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Detalle creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Detalle de venta creado exitosamente"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/detalle-ventas/{id}": {
+            "get": {
+                "tags": [
+                    "Detalle Ventas"
+                ],
+                "summary": "Obtener detalle de venta",
+                "description": "Obtiene un detalle de venta específico",
+                "operationId": "460eea2ca3989ca16ee23272e427d53f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del detalle",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalle obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Detalle no encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Detalle Ventas"
+                ],
+                "summary": "Actualizar detalle de venta",
+                "description": "Actualiza un detalle de venta existente",
+                "operationId": "68736bf0d1dfdb1f77582d6fcd8c844e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del detalle",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "cantidad": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 15
+                                    },
+                                    "precio_unitario": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 175
+                                    },
+                                    "porcentaje_descuento": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 10
+                                    },
+                                    "detalle_adicional": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Detalle actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Detalle Ventas"
+                ],
+                "summary": "Eliminar detalle de venta",
+                "description": "Elimina (soft delete) un detalle de venta",
+                "operationId": "eecd0961f60c4a5ca383fd971c8b0b44",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del detalle",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalle eliminado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -8282,6 +10261,233 @@
                     },
                     "401": {
                         "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/etiquetas": {
+            "get": {
+                "tags": [
+                    "Etiquetas"
+                ],
+                "summary": "Listar etiquetas",
+                "description": "Obtiene un listado de etiquetas para clasificación",
+                "operationId": "87d45c7851180b9ec81e0b1f78d1e11c",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Cantidad de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    },
+                    {
+                        "name": "nombre",
+                        "in": "query",
+                        "description": "Buscar por nombre",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Etiquetas"
+                ],
+                "summary": "Crear etiqueta",
+                "description": "Crea una nueva etiqueta para clasificación",
+                "operationId": "43f9c0e22da1b2837425f333eb9a8577",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nombre"
+                                ],
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Urgente"
+                                    },
+                                    "color_hex": {
+                                        "type": "string",
+                                        "pattern": "^#[0-9A-Fa-f]{6}$",
+                                        "example": "#FF0000"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Etiqueta creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/etiquetas/{id}": {
+            "get": {
+                "tags": [
+                    "Etiquetas"
+                ],
+                "summary": "Obtener etiqueta específica",
+                "description": "Obtiene los detalles de una etiqueta",
+                "operationId": "7326f3b413d6ed26c6dec23538efa20d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la etiqueta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Etiqueta obtenida exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Etiquetas"
+                ],
+                "summary": "Actualizar etiqueta",
+                "description": "Actualiza información de una etiqueta",
+                "operationId": "2076f6639c23988bb42c5e82bd18e3b5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la etiqueta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string"
+                                    },
+                                    "color_hex": {
+                                        "type": "string",
+                                        "pattern": "^#[0-9A-Fa-f]{6}$"
+                                    },
+                                    "activo": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Etiqueta actualizada exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Etiquetas"
+                ],
+                "summary": "Eliminar etiqueta",
+                "description": "Elimina (soft delete) una etiqueta",
+                "operationId": "d857f12b9c22c051939ae8bce0aed388",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la etiqueta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Etiqueta eliminada exitosamente"
                     }
                 },
                 "security": [
@@ -10283,6 +12489,869 @@
                 ]
             }
         },
+        "/api/movimientos-caja-chica": {
+            "get": {
+                "tags": [
+                    "Movimientos Caja Chica"
+                ],
+                "summary": "Listar movimientos de caja chica",
+                "description": "Obtiene un listado paginado de movimientos",
+                "operationId": "2416d76919ac2ea5a09bdf4adc28d23d",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Cantidad de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    },
+                    {
+                        "name": "caja_chica_id",
+                        "in": "query",
+                        "description": "Filtrar por fondo de caja chica",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "tipo_movimiento",
+                        "in": "query",
+                        "description": "Filtrar por tipo",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "Ingreso",
+                                "Egreso",
+                                "Reembolso",
+                                "Ajuste"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "fecha_desde",
+                        "in": "query",
+                        "description": "Filtrar desde fecha",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "fecha_hasta",
+                        "in": "query",
+                        "description": "Filtrar hasta fecha",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Movimientos Caja Chica"
+                ],
+                "summary": "Registrar movimiento de caja chica",
+                "description": "Registra un nuevo movimiento y actualiza el saldo",
+                "operationId": "91e013f610053b4f13580a34ba6bc7a0",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "caja_chica_id",
+                                    "fecha_movimiento",
+                                    "tipo_movimiento",
+                                    "monto",
+                                    "concepto"
+                                ],
+                                "properties": {
+                                    "caja_chica_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "fecha_movimiento": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-01-15"
+                                    },
+                                    "tipo_movimiento": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Ingreso",
+                                            "Egreso",
+                                            "Reembolso",
+                                            "Ajuste"
+                                        ],
+                                        "example": "Egreso"
+                                    },
+                                    "monto": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 5000
+                                    },
+                                    "numero_comprobante": {
+                                        "type": "string",
+                                        "example": "COMP-001"
+                                    },
+                                    "concepto": {
+                                        "type": "string",
+                                        "example": "Compra de útiles de oficina"
+                                    },
+                                    "cuenta_contable_id": {
+                                        "type": "integer",
+                                        "example": 10
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Movimiento registrado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/movimientos-caja-chica/{id}": {
+            "get": {
+                "tags": [
+                    "Movimientos Caja Chica"
+                ],
+                "summary": "Obtener movimiento específico",
+                "description": "Obtiene los detalles de un movimiento",
+                "operationId": "7b3431beaae5753b243afba3eb847602",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del movimiento",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Movimiento obtenido exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Movimientos Caja Chica"
+                ],
+                "summary": "Actualizar movimiento",
+                "description": "Actualiza información de un movimiento",
+                "operationId": "5cdd02c8f87ce3cd6600662f34d6cb0f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del movimiento",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "numero_comprobante": {
+                                        "type": "string"
+                                    },
+                                    "concepto": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Movimiento actualizado exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Movimientos Caja Chica"
+                ],
+                "summary": "Anular movimiento",
+                "description": "Anula un movimiento y revierte el saldo",
+                "operationId": "b021c79c121f1cf9ba6b3692b288de17",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del movimiento",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Movimiento anulado exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/nomina-empleados": {
+            "get": {
+                "tags": [
+                    "Nómina Empleados"
+                ],
+                "summary": "Listar nóminas de empleados",
+                "description": "Obtiene un listado paginado de nóminas",
+                "operationId": "9553fb0b9da8a4bc5fdd29b661873544",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Cantidad de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    },
+                    {
+                        "name": "periodo_nomina_id",
+                        "in": "query",
+                        "description": "Filtrar por periodo de nómina",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "empleado_id",
+                        "in": "query",
+                        "description": "Filtrar por empleado",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Nómina Empleados"
+                ],
+                "summary": "Crear nómina de empleado",
+                "description": "Crea un nuevo registro de nómina para un empleado",
+                "operationId": "3a2880ea5114e8eb55e20023c1b07984",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "periodo_nomina_id",
+                                    "empleado_id",
+                                    "salario_bruto"
+                                ],
+                                "properties": {
+                                    "periodo_nomina_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "empleado_id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "salario_bruto": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 450000
+                                    },
+                                    "horas_extras": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 10
+                                    },
+                                    "monto_horas_extras": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 15000
+                                    },
+                                    "bonificaciones": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 25000
+                                    },
+                                    "deducciones_ccss": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 45000
+                                    },
+                                    "deducciones_impuesto_renta": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 20000
+                                    },
+                                    "otras_deducciones": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 5000
+                                    },
+                                    "observaciones": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Nómina creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/nomina-empleados/{id}": {
+            "get": {
+                "tags": [
+                    "Nómina Empleados"
+                ],
+                "summary": "Obtener nómina específica",
+                "description": "Obtiene los detalles de una nómina",
+                "operationId": "53295078589d83e35c091fbc7bb0d5fe",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la nómina",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Nómina obtenida exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Nómina Empleados"
+                ],
+                "summary": "Actualizar nómina",
+                "description": "Actualiza una nómina existente",
+                "operationId": "7c16372c3b711858839c2f658fd28a79",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la nómina",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "horas_extras": {
+                                        "type": "number",
+                                        "format": "decimal"
+                                    },
+                                    "monto_horas_extras": {
+                                        "type": "number",
+                                        "format": "decimal"
+                                    },
+                                    "bonificaciones": {
+                                        "type": "number",
+                                        "format": "decimal"
+                                    },
+                                    "observaciones": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Nómina actualizada exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Nómina Empleados"
+                ],
+                "summary": "Eliminar nómina",
+                "description": "Elimina (soft delete) una nómina",
+                "operationId": "db9f40902d30d94cb3c563452c627f30",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la nómina",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Nómina eliminada exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/notificaciones": {
+            "get": {
+                "tags": [
+                    "Notificaciones"
+                ],
+                "summary": "Listar notificaciones",
+                "description": "Obtiene las notificaciones del usuario autenticado",
+                "operationId": "009d342446713d7972db962e185ffe35",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Cantidad de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    },
+                    {
+                        "name": "tipo",
+                        "in": "query",
+                        "description": "Filtrar por tipo",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "info",
+                                "warning",
+                                "error",
+                                "success"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "leida",
+                        "in": "query",
+                        "description": "Filtrar por estado de lectura",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "prioridad",
+                        "in": "query",
+                        "description": "Filtrar por prioridad mínima",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "enum": [
+                                0,
+                                1,
+                                2
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        },
+                                        "no_leidas_count": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Notificaciones"
+                ],
+                "summary": "Crear notificación",
+                "description": "Crea una nueva notificación para un usuario",
+                "operationId": "41d65cea4c009d5c8498efa5c4c8328b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "usuario_id",
+                                    "tipo",
+                                    "titulo",
+                                    "mensaje"
+                                ],
+                                "properties": {
+                                    "usuario_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "tipo": {
+                                        "type": "string",
+                                        "enum": [
+                                            "info",
+                                            "warning",
+                                            "error",
+                                            "success"
+                                        ],
+                                        "example": "info"
+                                    },
+                                    "titulo": {
+                                        "type": "string",
+                                        "example": "Nueva actualización"
+                                    },
+                                    "mensaje": {
+                                        "type": "string",
+                                        "example": "Se ha actualizado el sistema"
+                                    },
+                                    "datos": {
+                                        "type": "object",
+                                        "example": {
+                                            "extra": "data"
+                                        }
+                                    },
+                                    "url": {
+                                        "type": "string",
+                                        "example": "/ventas/123"
+                                    },
+                                    "prioridad": {
+                                        "type": "integer",
+                                        "enum": [
+                                            0,
+                                            1,
+                                            2
+                                        ],
+                                        "example": 0
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Notificación creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/notificaciones/{id}": {
+            "get": {
+                "tags": [
+                    "Notificaciones"
+                ],
+                "summary": "Obtener notificación específica",
+                "description": "Obtiene los detalles de una notificación",
+                "operationId": "51cf763d1e34cf1f9bf294d9047a5b1c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la notificación",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Notificación obtenida exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Notificaciones"
+                ],
+                "summary": "Eliminar notificación",
+                "description": "Elimina una notificación",
+                "operationId": "72c35237338bc0caba903154254725f8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la notificación",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Notificación eliminada exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/notificaciones/{id}/marcar-leida": {
+            "post": {
+                "tags": [
+                    "Notificaciones"
+                ],
+                "summary": "Marcar notificación como leída",
+                "description": "Marca una notificación como leída",
+                "operationId": "e0cc1b68affadcafbca36c433501afab",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la notificación",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Notificación marcada como leída"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/notificaciones/marcar-todas-leidas": {
+            "post": {
+                "tags": [
+                    "Notificaciones"
+                ],
+                "summary": "Marcar todas como leídas",
+                "description": "Marca todas las notificaciones del usuario como leídas",
+                "operationId": "9117f0e29f4e1d496f9ae998220ed330",
+                "responses": {
+                    "200": {
+                        "description": "Notificaciones marcadas como leídas"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/ordenes-compra": {
             "get": {
                 "tags": [
@@ -11064,6 +14133,572 @@
                     },
                     "500": {
                         "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/pagos-cuentas-cobrar": {
+            "get": {
+                "tags": [
+                    "Pagos Cuentas Cobrar"
+                ],
+                "summary": "Listar pagos de cuentas por cobrar",
+                "description": "Obtiene un listado paginado de pagos con filtros",
+                "operationId": "3e1d1cbaaba3967fad1e39e5d10bb82a",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Cantidad de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    },
+                    {
+                        "name": "cuenta_por_cobrar_id",
+                        "in": "query",
+                        "description": "Filtrar por cuenta por cobrar",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "forma_pago_id",
+                        "in": "query",
+                        "description": "Filtrar por forma de pago",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "fecha_desde",
+                        "in": "query",
+                        "description": "Filtrar desde fecha",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "fecha_hasta",
+                        "in": "query",
+                        "description": "Filtrar hasta fecha",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Pagos Cuentas Cobrar"
+                ],
+                "summary": "Registrar pago de cuenta por cobrar",
+                "description": "Registra un nuevo pago y actualiza el saldo de la cuenta",
+                "operationId": "16bd6ac9a8b84ad24f4bb9c43cf5f724",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "cuenta_por_cobrar_id",
+                                    "forma_pago_id",
+                                    "fecha_pago",
+                                    "monto_pago"
+                                ],
+                                "properties": {
+                                    "cuenta_por_cobrar_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "forma_pago_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "fecha_pago": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-01-15"
+                                    },
+                                    "monto_pago": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 5000
+                                    },
+                                    "numero_referencia": {
+                                        "type": "string",
+                                        "example": "REF-12345"
+                                    },
+                                    "moneda": {
+                                        "type": "string",
+                                        "example": "CRC"
+                                    },
+                                    "observaciones": {
+                                        "type": "string",
+                                        "example": "Pago parcial"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Pago registrado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/pagos-cuentas-cobrar/{id}": {
+            "get": {
+                "tags": [
+                    "Pagos Cuentas Cobrar"
+                ],
+                "summary": "Obtener pago específico",
+                "description": "Obtiene los detalles de un pago",
+                "operationId": "8026c9ef50b5bd5b7c52660dad4dfa4e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del pago",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pago obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Pagos Cuentas Cobrar"
+                ],
+                "summary": "Actualizar pago",
+                "description": "Actualiza la información de un pago existente",
+                "operationId": "3aa6069b33a5aebf1b39908686756214",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del pago",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "numero_referencia": {
+                                        "type": "string"
+                                    },
+                                    "observaciones": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Pago actualizado exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Pagos Cuentas Cobrar"
+                ],
+                "summary": "Anular pago",
+                "description": "Anula un pago y revierte el monto en la cuenta",
+                "operationId": "e0245960cfe7defc311563cdcdcb07a3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del pago",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pago anulado exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/pagos-cuentas-pagar": {
+            "get": {
+                "tags": [
+                    "Pagos Cuentas Pagar"
+                ],
+                "summary": "Listar pagos de cuentas por pagar",
+                "description": "Obtiene un listado paginado de pagos a proveedores",
+                "operationId": "2040d154d51c6bd6f55ce07b99eba152",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Cantidad de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    },
+                    {
+                        "name": "cuenta_por_pagar_id",
+                        "in": "query",
+                        "description": "Filtrar por cuenta por pagar",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "forma_pago_id",
+                        "in": "query",
+                        "description": "Filtrar por forma de pago",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "fecha_desde",
+                        "in": "query",
+                        "description": "Filtrar desde fecha",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "fecha_hasta",
+                        "in": "query",
+                        "description": "Filtrar hasta fecha",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Pagos Cuentas Pagar"
+                ],
+                "summary": "Registrar pago a proveedor",
+                "description": "Registra un nuevo pago y actualiza el saldo de la cuenta",
+                "operationId": "bdd1a0a8108d1671ee90f1ad3a7c1422",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "cuenta_por_pagar_id",
+                                    "forma_pago_id",
+                                    "fecha_pago",
+                                    "monto_pago"
+                                ],
+                                "properties": {
+                                    "cuenta_por_pagar_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "forma_pago_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "fecha_pago": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-01-15"
+                                    },
+                                    "monto_pago": {
+                                        "type": "number",
+                                        "format": "decimal",
+                                        "example": 25000
+                                    },
+                                    "numero_referencia": {
+                                        "type": "string",
+                                        "example": "SINPE-123456"
+                                    },
+                                    "moneda": {
+                                        "type": "string",
+                                        "example": "CRC"
+                                    },
+                                    "observaciones": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Pago registrado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/pagos-cuentas-pagar/{id}": {
+            "get": {
+                "tags": [
+                    "Pagos Cuentas Pagar"
+                ],
+                "summary": "Obtener pago específico",
+                "description": "Obtiene los detalles de un pago",
+                "operationId": "5cf294628c15c42ea969f2d10a851642",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del pago",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pago obtenido exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Pagos Cuentas Pagar"
+                ],
+                "summary": "Actualizar pago",
+                "description": "Actualiza información de un pago existente",
+                "operationId": "f1c1d3895206b49c3277e873fda5888f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del pago",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "numero_referencia": {
+                                        "type": "string"
+                                    },
+                                    "observaciones": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Pago actualizado exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Pagos Cuentas Pagar"
+                ],
+                "summary": "Anular pago",
+                "description": "Anula un pago y revierte el monto",
+                "operationId": "810e16a3875ee5161da81a8ca2120561",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del pago",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pago anulado exitosamente"
                     }
                 },
                 "security": [
@@ -14232,6 +17867,228 @@
                 ]
             }
         },
+        "/api/regimenes-tributarios": {
+            "get": {
+                "tags": [
+                    "Regímenes Tributarios"
+                ],
+                "summary": "Listar regímenes tributarios",
+                "description": "Obtiene un listado de regímenes tributarios disponibles",
+                "operationId": "d8cb9048359c3e9d12da074535e37bc1",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Cantidad de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Regímenes Tributarios"
+                ],
+                "summary": "Crear régimen tributario",
+                "description": "Crea un nuevo régimen tributario",
+                "operationId": "a616e5b4e6f73267d7b7844d4d617bf1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "codigo",
+                                    "nombre"
+                                ],
+                                "properties": {
+                                    "codigo": {
+                                        "description": "Código del régimen",
+                                        "type": "string",
+                                        "example": "ST"
+                                    },
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Simplified Tax"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Régimen simplificado tributario"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Régimen creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/regimenes-tributarios/{id}": {
+            "get": {
+                "tags": [
+                    "Regímenes Tributarios"
+                ],
+                "summary": "Obtener régimen tributario específico",
+                "description": "Obtiene los detalles de un régimen tributario",
+                "operationId": "e0f8bcb9cb19eaa5f3f16155d0ef2c4c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del régimen",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Régimen obtenido exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Regímenes Tributarios"
+                ],
+                "summary": "Actualizar régimen tributario",
+                "description": "Actualiza información de un régimen tributario",
+                "operationId": "1de539af2999c3ac4ddc27dcea19b691",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del régimen",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string"
+                                    },
+                                    "descripcion": {
+                                        "type": "string"
+                                    },
+                                    "activo": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Régimen actualizado exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Regímenes Tributarios"
+                ],
+                "summary": "Eliminar régimen tributario",
+                "description": "Elimina (soft delete) un régimen tributario",
+                "operationId": "41156c9cee940cb2d7ae60591a26368c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del régimen",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Régimen eliminado exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/roles": {
             "get": {
                 "tags": [
@@ -16770,6 +20627,339 @@
                     },
                     "500": {
                         "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/tipos-cambio-historial": {
+            "get": {
+                "tags": [
+                    "Tipos Cambio Historial"
+                ],
+                "summary": "Listar histórico de tipos de cambio",
+                "description": "Obtiene un histórico de tipos de cambio entre monedas",
+                "operationId": "b5f130bc835f7e877e57d9f3452efaa6",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Cantidad de registros por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    },
+                    {
+                        "name": "moneda_origen",
+                        "in": "query",
+                        "description": "Filtrar por moneda origen",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "USD"
+                        }
+                    },
+                    {
+                        "name": "moneda_destino",
+                        "in": "query",
+                        "description": "Filtrar por moneda destino",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "CRC"
+                        }
+                    },
+                    {
+                        "name": "fecha_inicio",
+                        "in": "query",
+                        "description": "Fecha inicial del rango",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "fecha_fin",
+                        "in": "query",
+                        "description": "Fecha final del rango",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Tipos Cambio Historial"
+                ],
+                "summary": "Registrar tipo de cambio",
+                "description": "Registra un tipo de cambio histórico",
+                "operationId": "435d0c65be3dae582c1e01caa94bcf13",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "fecha",
+                                    "moneda_origen",
+                                    "moneda_destino",
+                                    "tasa_compra",
+                                    "tasa_venta"
+                                ],
+                                "properties": {
+                                    "fecha": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-01-15"
+                                    },
+                                    "moneda_origen": {
+                                        "type": "string",
+                                        "example": "USD"
+                                    },
+                                    "moneda_destino": {
+                                        "type": "string",
+                                        "example": "CRC"
+                                    },
+                                    "tasa_compra": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 520.5
+                                    },
+                                    "tasa_venta": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 530.75
+                                    },
+                                    "fuente": {
+                                        "type": "string",
+                                        "example": "BCCR"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tipo de cambio registrado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/tipos-cambio-historial/{id}": {
+            "get": {
+                "tags": [
+                    "Tipos Cambio Historial"
+                ],
+                "summary": "Obtener tipo de cambio específico",
+                "description": "Obtiene un registro específico del historial",
+                "operationId": "7b31a684c23768695b01541bafcce9a7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del registro",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Registro obtenido exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Tipos Cambio Historial"
+                ],
+                "summary": "Actualizar tipo de cambio",
+                "description": "Actualiza las tasas de un tipo de cambio existente",
+                "operationId": "3cd60544feb9a5d2df88d9b17a82ad46",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del registro",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "tasa_compra": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "tasa_venta": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "fuente": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Tipo de cambio actualizado exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Tipos Cambio Historial"
+                ],
+                "summary": "Eliminar tipo de cambio",
+                "description": "Elimina un registro del historial",
+                "operationId": "04ec52df4578ad64bd65f8f8bc4e08b6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del registro",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tipo de cambio eliminado exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/tipos-cambio-historial/por-fecha": {
+            "get": {
+                "tags": [
+                    "Tipos Cambio Historial"
+                ],
+                "summary": "Obtener tipo de cambio por fecha",
+                "description": "Obtiene el tipo de cambio para una fecha y monedas específicas",
+                "operationId": "6673faf475979ee0f37c3f51310e35ec",
+                "parameters": [
+                    {
+                        "name": "fecha",
+                        "in": "query",
+                        "description": "Fecha a consultar",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "moneda_origen",
+                        "in": "query",
+                        "description": "Moneda origen",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "USD"
+                        }
+                    },
+                    {
+                        "name": "moneda_destino",
+                        "in": "query",
+                        "description": "Moneda destino",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "CRC"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tipo de cambio obtenido exitosamente"
                     }
                 },
                 "security": [
@@ -19482,6 +23672,78 @@
                                         },
                                         "error": {
                                             "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/ventas/reportes/pdf": {
+            "post": {
+                "tags": [
+                    "Ventas",
+                    "Reportes"
+                ],
+                "summary": "Generar reporte PDF de ventas (asíncrono)",
+                "description": "Encola un job para generar reporte PDF de ventas con filtros. El PDF se genera en background.",
+                "operationId": "f51397337dd0918ef7a2588c48c1cdc9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "fecha_inicio",
+                                    "fecha_fin"
+                                ],
+                                "properties": {
+                                    "fecha_inicio": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-01-01"
+                                    },
+                                    "fecha_fin": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-01-31"
+                                    },
+                                    "cliente_id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "sucursal_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "description": "Job encolado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Reporte PDF en proceso. Recibirás notificación cuando esté listo."
+                                        },
+                                        "job_id": {
+                                            "type": "string",
+                                            "example": "abc123"
                                         }
                                     },
                                     "type": "object"
@@ -22697,8 +26959,16 @@
             "description": "Almacenes"
         },
         {
+            "name": "Archivos",
+            "description": "Archivos"
+        },
+        {
             "name": "Contabilidad",
             "description": "Contabilidad"
+        },
+        {
+            "name": "Auditoría Actividades",
+            "description": "Auditoría Actividades"
         },
         {
             "name": "Autenticación",
@@ -22711,6 +26981,14 @@
         {
             "name": "Catálogos Fiscales",
             "description": "Catálogos Fiscales"
+        },
+        {
+            "name": "Caja Chica",
+            "description": "Caja Chica"
+        },
+        {
+            "name": "Cajas",
+            "description": "Cajas"
         },
         {
             "name": "Cargos",
@@ -22733,6 +27011,10 @@
             "description": "Configuraciones"
         },
         {
+            "name": "Consecutivos FE",
+            "description": "Consecutivos FE"
+        },
+        {
             "name": "Cuentas por Cobrar",
             "description": "Cuentas por Cobrar"
         },
@@ -22745,6 +27027,10 @@
             "description": "Inventario - Entradas"
         },
         {
+            "name": "Detalle Órdenes Compra",
+            "description": "Detalle Órdenes Compra"
+        },
+        {
             "name": "Presupuestos",
             "description": "Presupuestos"
         },
@@ -22753,12 +27039,20 @@
             "description": "Inventario - Salidas"
         },
         {
+            "name": "Detalle Ventas",
+            "description": "Detalle Ventas"
+        },
+        {
             "name": "Empleados",
             "description": "Empleados"
         },
         {
             "name": "Empresas",
             "description": "Empresas"
+        },
+        {
+            "name": "Etiquetas",
+            "description": "Etiquetas"
         },
         {
             "name": "Formas de Pago",
@@ -22773,12 +27067,32 @@
             "description": "Catálogos de Productos"
         },
         {
+            "name": "Movimientos Caja Chica",
+            "description": "Movimientos Caja Chica"
+        },
+        {
+            "name": "Nómina Empleados",
+            "description": "Nómina Empleados"
+        },
+        {
+            "name": "Notificaciones",
+            "description": "Notificaciones"
+        },
+        {
             "name": "Órdenes de Compra",
             "description": "Órdenes de Compra"
         },
         {
             "name": "Pagos",
             "description": "Pagos"
+        },
+        {
+            "name": "Pagos Cuentas Cobrar",
+            "description": "Pagos Cuentas Cobrar"
+        },
+        {
+            "name": "Pagos Cuentas Pagar",
+            "description": "Pagos Cuentas Pagar"
         },
         {
             "name": "Nómina",
@@ -22793,8 +27107,16 @@
             "description": "Proveedores"
         },
         {
+            "name": "Regímenes Tributarios",
+            "description": "Regímenes Tributarios"
+        },
+        {
             "name": "Sucursales",
             "description": "Sucursales"
+        },
+        {
+            "name": "Tipos Cambio Historial",
+            "description": "Tipos Cambio Historial"
         },
         {
             "name": "Catálogos Contables",
@@ -22807,6 +27129,10 @@
         {
             "name": "Ventas",
             "description": "Ventas"
+        },
+        {
+            "name": "Reportes",
+            "description": "Reportes"
         }
     ],
     "security": [

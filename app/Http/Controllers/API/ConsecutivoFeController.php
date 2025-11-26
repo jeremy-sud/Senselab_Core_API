@@ -7,6 +7,9 @@ use App\Models\ConsecutivoFe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Traits\HasCacheableQueries;
+use App\Http\Resources\ConsecutivoFeResource;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
 
 class ConsecutivoFeController extends Controller
@@ -66,7 +69,7 @@ class ConsecutivoFeController extends Controller
             )
         ]
     )]
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', ConsecutivoFe::class);
 
@@ -88,7 +91,7 @@ class ConsecutivoFeController extends Controller
 
             $consecutivos = $query->orderBy('id', 'desc')->paginate($perPage);
 
-            return response()->json($consecutivos);
+            return ConsecutivoFeResource::collection($consecutivos);
         });
     }
 
@@ -131,7 +134,7 @@ class ConsecutivoFeController extends Controller
             new OA\Response(response: 422, description: 'Error de validación')
         ]
     )]
-    public function store(Request $request)
+    public function store(Request $request): ConsecutivoFeResource|JsonResponse
     {
         $this->authorize('create', ConsecutivoFe::class);
 
@@ -163,10 +166,8 @@ class ConsecutivoFeController extends Controller
             DB::commit();
             $this->clearCache();
 
-            return response()->json([
-                'message' => 'Consecutivo de FE creado exitosamente',
-                'data' => $consecutivo->load(['empresa', 'sucursal'])
-            ], 201);
+            return (new ConsecutivoFeResource($consecutivo->load(['empresa', 'sucursal'])))
+                ->additional(['message' => 'Consecutivo de FE creado exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -202,7 +203,7 @@ class ConsecutivoFeController extends Controller
             )
         ]
     )]
-    public function show(string $id)
+    public function show(string $id): ConsecutivoFeResource
     {
         $consecutivo = ConsecutivoFe::with(['empresa', 'sucursal'])->findOrFail($id);
         $this->authorize('view', $consecutivo);
@@ -210,7 +211,7 @@ class ConsecutivoFeController extends Controller
         $cacheKey = $this->generateCacheKey("consecutivos_fe.show.{$id}");
 
         return $this->getCached($cacheKey, function () use ($consecutivo) {
-            return response()->json(['data' => $consecutivo]);
+            return new ConsecutivoFeResource($consecutivo);
         });
     }
 
@@ -249,7 +250,7 @@ class ConsecutivoFeController extends Controller
             )
         ]
     )]
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): ConsecutivoFeResource|JsonResponse
     {
         $consecutivo = ConsecutivoFe::findOrFail($id);
         $this->authorize('update', $consecutivo);
@@ -275,10 +276,8 @@ class ConsecutivoFeController extends Controller
             DB::commit();
             $this->clearCache();
 
-            return response()->json([
-                'message' => 'Consecutivo actualizado exitosamente',
-                'data' => $consecutivo->fresh(['empresa', 'sucursal'])
-            ]);
+            return (new ConsecutivoFeResource($consecutivo->fresh(['empresa', 'sucursal'])))
+                ->additional(['message' => 'Consecutivo actualizado exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -321,7 +320,7 @@ class ConsecutivoFeController extends Controller
             new OA\Response(response: 422, description: 'Consecutivo agotado o inactivo')
         ]
     )]
-    public function obtenerSiguiente(string $id)
+    public function obtenerSiguiente(string $id): JsonResponse
     {
         $consecutivo = ConsecutivoFe::findOrFail($id);
         $this->authorize('update', $consecutivo);
@@ -375,7 +374,7 @@ class ConsecutivoFeController extends Controller
             )
         ]
     )]
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
         $consecutivo = ConsecutivoFe::findOrFail($id);
         $this->authorize('delete', $consecutivo);
@@ -403,4 +402,3 @@ class ConsecutivoFeController extends Controller
             ], 500);
         }
     }
-}

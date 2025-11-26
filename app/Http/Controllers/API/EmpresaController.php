@@ -5,9 +5,12 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Empresa;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreEmpresaRequest;
 use App\Http\Requests\UpdateEmpresaRequest;
 use App\Http\Resources\EmpresaResource;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
 
@@ -21,7 +24,7 @@ class EmpresaController extends Controller
      * Display a listing of the resource.
      * 
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return AnonymousResourceCollection
      */
     #[OA\Get(
         path: '/api/empresas',
@@ -77,43 +80,34 @@ class EmpresaController extends Controller
             new OA\Response(response: 500, description: 'Error del servidor')
         ]
     )]
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Empresa::class);
-        
-        try {
+
+        $cacheKey = $this->generateCacheKey('empresas.index', $request->all());
+
+        return $this->getCached($cacheKey, function () use ($request) {
             $perPage = $request->input('per_page', 15);
-            $search = $request->input('search');
             
-            $empresas = $this->cacheQueryIfEnabled(
-                $this->getCacheKey('index', $request->all()),
-                function() use ($request, $perPage, $search) {
-                    $query = Empresa::with(['regimenTributario']);
-                    
-                    if ($search) {
-                        $query->where(function($q) use ($search) {
-                            $q->where('nombre', 'like', "%{$search}%")
-                              ->orWhere('razon_social', 'like', "%{$search}%")
-                              ->orWhere('num_identificacion_dgt', 'like', "%{$search}%")
-                              ->orWhere('email', 'like', "%{$search}%");
-                        });
-                    }
-                    
-                    if ($request->boolean('activos')) {
-                        $query->where('activo', true);
-                    }
-                    
-                    return $query->orderBy('id', 'desc')->paginate($perPage);
-                }
-            );
-            
+            $query = Empresa::query();
+
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('nombre_comercial', 'like', "%{$search}%")
+                      ->orWhere('razon_social', 'like', "%{$search}%")
+                      ->orWhere('identificacion_tributaria', 'like', "%{$search}%");
+                });
+            }
+
+            if ($request->filled('estado')) {
+                $query->where('estado', $request->estado);
+            }
+
+            $empresas = $query->orderBy('nombre_comercial')->paginate($perPage);
+
             return EmpresaResource::collection($empresas);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener empresas',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        });
     }
 
     /**
@@ -159,21 +153,37 @@ class EmpresaController extends Controller
             new OA\Response(response: 500, description: 'Error del servidor')
         ]
     )]
-    public function store(StoreEmpresaRequest $request)
+    public function store(Request $request): JsonResponse
     {
         $this->authorize('create', Empresa::class);
-        
+
+        $validated = $request->validate([
+            'nombre_comercial' => 'required|string|max:100',
+            'razon_social' => 'required|string|max:100',
+            'tipo_identificacion' => 'required|string|in:juridica,fisica,dimex,nite',
+            'identificacion_tributaria' => 'required|string|max:20|unique:empresas,identificacion_tributaria',
+            'direccion' => 'required|string',
+            'telefono' => 'required|string|max:20',
+            'email' => 'required|email|max:100',
+            'sitio_web' => 'nullable|url|max:100',
+            'moneda_principal' => 'required|string|size:3',
+            'logo_url' => 'nullable|string|max:255',
+        ]);
+
+        DB::beginTransaction();
         try {
-            $empresa = Empresa::create($request->validated());
-            $empresa->load('regimenTributario');
+            $empresa = Empresa::create($validated);
             
-            $this->flushCache();
-            
+            DB::commit();
+            $this->clearCache();
+
             return (new EmpresaResource($empresa))
                 ->additional(['message' => 'Empresa creada exitosamente'])
                 ->response()
                 ->setStatusCode(201);
+
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'message' => 'Error al crear empresa',
                 'error' => $e->getMessage()
@@ -185,7 +195,7 @@ class EmpresaController extends Controller
      * Display the specified resource.
      * 
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return EmpresaResource|\Illuminate\Http\JsonResponse
      */
     #[OA\Get(
         path: '/api/empresas/{id}',
@@ -216,29 +226,16 @@ class EmpresaController extends Controller
             new OA\Response(response: 500, description: 'Error del servidor')
         ]
     )]
-    public function show(int $id)
+    public function show(string $id): EmpresaResource
     {
-        try {
-            $empresa = Empresa::with([
-                'regimenTributario',
-                'sucursales',
-                'usuarios',
-                'configuraciones'
-            ])->findOrFail($id);
-            
-            $this->authorize('view', $empresa);
-            
+        $empresa = Empresa::findOrFail($id);
+        $this->authorize('view', $empresa);
+
+        $cacheKey = $this->generateCacheKey("empresas.show.{$id}");
+
+        return $this->getCached($cacheKey, function () use ($empresa) {
             return new EmpresaResource($empresa);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Empresa no encontrada'
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener empresa',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        });
     }
 
     /**
@@ -246,7 +243,7 @@ class EmpresaController extends Controller
      * 
      * @param UpdateEmpresaRequest $request
      * @param Empresa $empresa
-     * @return \Illuminate\Http\JsonResponse
+     * @return EmpresaResource
      */
     #[OA\Put(
         path: '/api/empresas/{empresa}',
@@ -291,23 +288,38 @@ class EmpresaController extends Controller
             new OA\Response(response: 500, description: 'Error del servidor')
         ]
     )]
-    public function update(UpdateEmpresaRequest $request, Empresa $empresa)
+    public function update(Request $request, string $id): EmpresaResource
     {
+        $empresa = Empresa::findOrFail($id);
         $this->authorize('update', $empresa);
-        
+
+        $validated = $request->validate([
+            'nombre_comercial' => 'sometimes|string|max:100',
+            'razon_social' => 'sometimes|string|max:100',
+            'tipo_identificacion' => 'sometimes|string|in:juridica,fisica,dimex,nite',
+            'identificacion_tributaria' => 'sometimes|string|max:20|unique:empresas,identificacion_tributaria,' . $id,
+            'direccion' => 'sometimes|string',
+            'telefono' => 'sometimes|string|max:20',
+            'email' => 'sometimes|email|max:100',
+            'sitio_web' => 'nullable|url|max:100',
+            'moneda_principal' => 'sometimes|string|size:3',
+            'logo_url' => 'nullable|string|max:255',
+            'estado' => 'sometimes|in:activa,inactiva,suspendida',
+        ]);
+
+        DB::beginTransaction();
         try {
-            $empresa->update($request->validated());
-            $empresa->load('regimenTributario');
+            $empresa->update($validated);
             
-            $this->flushCache();
-            
-            return (new EmpresaResource($empresa))
+            DB::commit();
+            $this->clearCache();
+
+            return (new EmpresaResource($empresa->fresh()))
                 ->additional(['message' => 'Empresa actualizada exitosamente']);
+
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al actualizar empresa',
-                'error' => $e->getMessage()
-            ], 500);
+            DB::rollBack();
+            throw $e;
         }
     }
 
@@ -346,28 +358,23 @@ class EmpresaController extends Controller
             new OA\Response(response: 500, description: 'Error del servidor')
         ]
     )]
-    public function destroy(int $id)
+    public function destroy(string $id): \Illuminate\Http\JsonResponse
     {
+        $empresa = Empresa::findOrFail($id);
+        $this->authorize('delete', $empresa);
+
         try {
-            $empresa = Empresa::findOrFail($id);
-            
-            $this->authorize('delete', $empresa);
-            
-            // Soft delete - marcar como inactivo
+            // Soft delete - marcar como inactivo y eliminado
             $empresa->update([
                 'activo' => false,
                 'eliminado' => true
             ]);
             
-            $this->flushCache();
-            
+            $this->clearCache();
+
             return response()->json([
                 'message' => 'Empresa eliminada exitosamente'
-            ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Empresa no encontrada'
-            ], 404);
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al eliminar empresa',

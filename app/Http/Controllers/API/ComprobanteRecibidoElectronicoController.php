@@ -12,6 +12,7 @@ use App\Traits\HasCacheableQueries;
 use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 use OpenApi\Attributes as OA;
 
@@ -62,7 +63,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
             new OA\Response(response: 401, description: "No autenticado")
         ]
     )]
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', ComprobanteRecibidoElectronico::class);
         
@@ -76,15 +77,8 @@ class ComprobanteRecibidoElectronicoController extends Controller
                 ->orderBy('fecha_recepcion_sistema', 'desc')
                 ->paginate(15);
 
-            return response()->json([
-                'success' => true,
-                'data' => ComprobanteRecibidoElectronicoResource::collection($comprobantes),
-                'meta' => [
-                    'current_page' => $comprobantes->currentPage(),
-                    'total' => $comprobantes->total(),
-                    'per_page' => $comprobantes->perPage()
-                ]
-            ]);
+            return ComprobanteRecibidoElectronicoResource::collection($comprobantes)
+                ->additional(['success' => true]);
         });
     }
 
@@ -122,7 +116,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
             new OA\Response(response: 401, description: "No autenticado")
         ]
     )]
-    public function store(StoreComprobanteRecibidoElectronicoRequest $request): JsonResponse
+    public function store(StoreComprobanteRecibidoElectronicoRequest $request): ComprobanteRecibidoElectronicoResource|JsonResponse
     {
         $this->authorize('create', ComprobanteRecibidoElectronico::class);
         
@@ -150,11 +144,11 @@ class ComprobanteRecibidoElectronicoController extends Controller
             
             $this->flushCache();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Comprobante electrónico registrado exitosamente',
-                'data' => new ComprobanteRecibidoElectronicoResource($comprobante->load('proveedor'))
-            ], 201);
+            return (new ComprobanteRecibidoElectronicoResource($comprobante->load('proveedor')))
+                ->additional([
+                    'success' => true,
+                    'message' => 'Comprobante electrónico registrado exitosamente'
+                ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -190,7 +184,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
             new OA\Response(response: 401, description: "No autenticado")
         ]
     )]
-    public function show(Request $request, int $id): JsonResponse
+    public function show(Request $request, int $id): ComprobanteRecibidoElectronicoResource
     {
         $empresaId = $this->getEmpresaId();
 
@@ -200,10 +194,8 @@ class ComprobanteRecibidoElectronicoController extends Controller
         
         $this->authorize('view', $comprobante);
 
-        return response()->json([
-            'success' => true,
-            'data' => new ComprobanteRecibidoElectronicoResource($comprobante)
-        ]);
+        return (new ComprobanteRecibidoElectronicoResource($comprobante))
+            ->additional(['success' => true]);
     }
 
     /**
@@ -244,6 +236,8 @@ class ComprobanteRecibidoElectronicoController extends Controller
     )]
     public function update(UpdateComprobanteRecibidoElectronicoRequest $request, int $id): JsonResponse
     {
+    public function update(UpdateComprobanteRecibidoElectronicoRequest $request, int $id): ComprobanteRecibidoElectronicoResource|JsonResponse
+    {
         $empresaId = $this->getEmpresaId();
 
         $comprobante = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)->findOrFail($id);
@@ -269,11 +263,11 @@ class ComprobanteRecibidoElectronicoController extends Controller
             
             $this->flushCache();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Comprobante actualizado exitosamente',
-                'data' => new ComprobanteRecibidoElectronicoResource($comprobante->load('proveedor'))
-            ]);
+            return (new ComprobanteRecibidoElectronicoResource($comprobante->load('proveedor')))
+                ->additional([
+                    'success' => true,
+                    'message' => 'Comprobante actualizado exitosamente'
+                ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -283,9 +277,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-    }
-
-    /**
+    }**
      * Eliminar comprobante
      */
     #[OA\Delete(
@@ -371,6 +363,8 @@ class ComprobanteRecibidoElectronicoController extends Controller
     )]
     public function confirmar(Request $request, int $id): JsonResponse
     {
+    public function confirmar(Request $request, int $id): ComprobanteRecibidoElectronicoResource|JsonResponse
+    {
         $empresaId = $this->getEmpresaId();
         $usuarioId = $request->user()->id;
 
@@ -389,14 +383,12 @@ class ComprobanteRecibidoElectronicoController extends Controller
             'usuario_confirmacion_id' => $usuarioId
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Comprobante confirmado exitosamente',
-            'data' => new ComprobanteRecibidoElectronicoResource($comprobante->fresh(['proveedor', 'usuarioConfirmacion']))
-        ]);
-    }
-
-    /**
+        return (new ComprobanteRecibidoElectronicoResource($comprobante->fresh(['proveedor', 'usuarioConfirmacion'])))
+            ->additional([
+                'success' => true,
+                'message' => 'Comprobante confirmado exitosamente'
+            ]);
+    }**
      * Rechazar comprobante por usuario
      */
     #[OA\Post(
@@ -422,6 +414,8 @@ class ComprobanteRecibidoElectronicoController extends Controller
     )]
     public function rechazar(Request $request, int $id): JsonResponse
     {
+    public function rechazar(Request $request, int $id): ComprobanteRecibidoElectronicoResource
+    {
         $empresaId = $this->getEmpresaId();
         $usuarioId = $request->user()->id;
 
@@ -433,14 +427,12 @@ class ComprobanteRecibidoElectronicoController extends Controller
             'usuario_confirmacion_id' => $usuarioId
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Comprobante rechazado exitosamente',
-            'data' => new ComprobanteRecibidoElectronicoResource($comprobante->fresh(['proveedor', 'usuarioConfirmacion']))
-        ]);
-    }
-
-    /**
+        return (new ComprobanteRecibidoElectronicoResource($comprobante->fresh(['proveedor', 'usuarioConfirmacion'])))
+            ->additional([
+                'success' => true,
+                'message' => 'Comprobante rechazado exitosamente'
+            ]);
+    }**
      * Obtener comprobantes por proveedor
      */
     #[OA\Get(
@@ -482,6 +474,8 @@ class ComprobanteRecibidoElectronicoController extends Controller
     )]
     public function porProveedor(Request $request, int $proveedorId): JsonResponse
     {
+    public function porProveedor(Request $request, int $proveedorId): AnonymousResourceCollection
+    {
         $empresaId = $this->getEmpresaId();
 
         $comprobantes = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)
@@ -490,17 +484,9 @@ class ComprobanteRecibidoElectronicoController extends Controller
             ->orderBy('fecha_emision_comprobante', 'desc')
             ->paginate(15);
 
-        return response()->json([
-            'success' => true,
-            'data' => ComprobanteRecibidoElectronicoResource::collection($comprobantes),
-            'meta' => [
-                'current_page' => $comprobantes->currentPage(),
-                'total' => $comprobantes->total()
-            ]
-        ]);
-    }
-
-    /**
+        return ComprobanteRecibidoElectronicoResource::collection($comprobantes)
+            ->additional(['success' => true]);
+    }**
      * Obtener comprobantes pendientes de confirmar
      */
     #[OA\Get(
@@ -529,21 +515,19 @@ class ComprobanteRecibidoElectronicoController extends Controller
 
         $comprobantes = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)
             ->where('confirmado_usuario', 0)
+    public function pendientes(Request $request): AnonymousResourceCollection
+    {
+        $empresaId = $this->getEmpresaId();
+
+        $comprobantes = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)
+            ->where('confirmado_usuario', 0)
             ->with(['proveedor'])
             ->orderBy('fecha_recepcion_sistema', 'asc')
             ->get();
 
-        return response()->json([
-            'success' => true,
-            'data' => ComprobanteRecibidoElectronicoResource::collection($comprobantes)
-        ]);
-    }
-
-    /**
-     * Resumen por estado de Hacienda
-     */
-    #[OA\Get(
-        path: "/api/comprobantes-recibidos-electronicos/resumen/por-estado",
+        return ComprobanteRecibidoElectronicoResource::collection($comprobantes)
+            ->additional(['success' => true]);
+    }   path: "/api/comprobantes-recibidos-electronicos/resumen/por-estado",
         summary: "Resumen por estado de Hacienda",
         description: "Obtiene estadísticas agregadas de comprobantes agrupados por estado de respuesta de Hacienda (Aceptado, Rechazado, Procesando).",
         security: [["sanctum" => []]],
@@ -632,15 +616,22 @@ class ComprobanteRecibidoElectronicoController extends Controller
 
         $comprobante->update([
             'xml_respuesta_hacienda' => $request->xml_respuesta_hacienda,
+    public function actualizarRespuestaHacienda(ActualizarRespuestaHaciendaRequest $request, int $id): ComprobanteRecibidoElectronicoResource
+    {
+        $empresaId = $this->getEmpresaId();
+
+        $comprobante = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)->findOrFail($id);
+
+        $comprobante->update([
+            'xml_respuesta_hacienda' => $request->xml_respuesta_hacienda,
             'estado_hacienda' => $request->estado_hacienda,
             'mensaje_hacienda' => $request->mensaje_hacienda,
             'fecha_respuesta_hacienda' => now()
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Respuesta de Hacienda actualizada exitosamente',
-            'data' => new ComprobanteRecibidoElectronicoResource($comprobante)
-        ]);
+        return (new ComprobanteRecibidoElectronicoResource($comprobante))
+            ->additional([
+                'success' => true,
+                'message' => 'Respuesta de Hacienda actualizada exitosamente'
+            ]);
     }
-}

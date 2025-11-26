@@ -30,9 +30,9 @@ class ModeloBus extends Model
     ];
 
     /**
-     * Relación con las unidades de este modelo.
+     * Relación con las unidades de este modelo (Alias para 'unidades' usado en controlador).
      */
-    public function unidades(): HasMany
+    public function busesUnidades(): HasMany
     {
         return $this->hasMany(BusUnidad::class, 'modelo_id');
     }

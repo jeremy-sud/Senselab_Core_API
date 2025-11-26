@@ -8,6 +8,10 @@ y este proyecto se adhiere a [Versionado Semántico](https://semver.org/lang/es/
 ## [Unreleased]
 
 ### Added
+- Resolución de tenant por encabezados/subdominio
+  - Nuevo `HeaderSubdomainTenantFinder` que prioriza `X-Empresa-Id`, `X-Empresa-Subdominio` o subdominio público y valida contra `empresas`
+  - Migración `2025_11_25_120000_add_subdominio_to_empresas_table` agrega el campo único `subdominio`
+  - Variables de entorno documentadas (`TENANT_BASE_DOMAIN`, `TENANT_HEADER_EMPRESA_ID`, etc.) y guía actualizada en `README.md`, `MULTI_TENANCY.md` y `API_DOCUMENTATION.md`
 - **FASE 9 - Nuevas Tablas para Costa Rica** (Diciembre 2024)
   - 12 nuevas tablas para mercado costarricense:
     * Facturación Electrónica (3): mensajes_hacienda, tipos_comprobantes_fe, codigos_actividad_economica
@@ -68,6 +72,10 @@ y este proyecto se adhiere a [Versionado Semántico](https://semver.org/lang/es/
 - Solucionados errores de "Duplicate entry" en tabla `roles_permisos` usando `sync()` en lugar de `attach()`
 
 ### Security
+- VentaController fuerza aislamiento multi-tenant
+  - Todas las operaciones (`index`, `store`, `show`, `update`, `destroy`, `generatePdfReport`) usan la empresa resuelta por el tenant finder
+  - Requests y modelos (`StoreVentaRequest`, `Venta`, traits `BelongsToTenant`/`HasEmpresaContext`) ahora eliminan `empresa_id` del payload y usan siempre el tenant activo
+  - Documentación y ejemplos de consumo enfatizan el uso obligatorio de los headers de empresa
 - Implementada protección por permisos en endpoints críticos del API
 - Validación estricta de permisos antes de permitir acceso a recursos
 - Configuración de Sentry para NO enviar información personal por defecto (SENTRY_SEND_DEFAULT_PII=false)

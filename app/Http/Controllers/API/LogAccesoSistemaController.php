@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\LogAccesoSistemaResource;
 use App\Models\LogAccesoSistema;
 use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * Controlador para logs de acceso al sistema
@@ -22,7 +24,7 @@ class LogAccesoSistemaController extends Controller
     /**
      * Listar logs de acceso
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', LogAccesoSistema::class);
 
@@ -56,7 +58,7 @@ class LogAccesoSistemaController extends Controller
                 ->paginate($request->input('per_page', 50));
         });
 
-        return response()->json(['success' => true, 'data' => $logs]);
+        return LogAccesoSistemaResource::collection($logs);
     }
 
     /**
@@ -79,25 +81,27 @@ class LogAccesoSistemaController extends Controller
 
         $log = LogAccesoSistema::create($validated);
 
-        $this->flushCache(['logs-acceso', 'auditoria']);
+        $this->flushCache();
 
-        return response()->json(['success' => true, 'data' => $log], 201);
+        return (new LogAccesoSistemaResource($log))
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
-     * Mostrar log específico
+     * Mostrar log de acceso
      */
-    public function show(LogAccesoSistema $logAccesoSistema): JsonResponse
+    public function show(LogAccesoSistema $logAccesoSistema): LogAccesoSistemaResource
     {
         $this->authorize('view', $logAccesoSistema);
         $logAccesoSistema->load('usuario');
-        return response()->json(['success' => true, 'data' => $logAccesoSistema]);
+        return new LogAccesoSistemaResource($logAccesoSistema);
     }
 
     /**
      * Actualizar log (solo duracion_sesion normalmente)
      */
-    public function update(Request $request, LogAccesoSistema $logAccesoSistema): JsonResponse
+    public function update(Request $request, LogAccesoSistema $logAccesoSistema): LogAccesoSistemaResource
     {
         $this->authorize('update', $logAccesoSistema);
 
@@ -109,9 +113,9 @@ class LogAccesoSistemaController extends Controller
 
         $logAccesoSistema->update($validated);
 
-        $this->flushCache(['logs-acceso', 'auditoria']);
+        $this->flushCache();
 
-        return response()->json(['success' => true, 'data' => $logAccesoSistema]);
+        return new LogAccesoSistemaResource($logAccesoSistema);
     }
 
     /**
@@ -123,7 +127,7 @@ class LogAccesoSistemaController extends Controller
 
         $logAccesoSistema->delete();
 
-        $this->flushCache(['logs-acceso', 'auditoria']);
+        $this->flushCache();
 
         return response()->json(['success' => true, 'message' => 'Log eliminado exitosamente']);
     }

@@ -9,6 +9,8 @@ use App\Http\Resources\UrlShortenerResource;
 use App\Models\UrlShortener;
 use App\Traits\HasCacheableQueries;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -28,61 +30,53 @@ class UrlShortenerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', UrlShortener::class);
         
-        try {
-            $cacheKey = $this->getCacheKey('index', [
-                'empresa_id' => $request->input('empresa_id'),
-                'usuario_id' => $request->input('usuario_id'),
-                'activo' => $request->input('activo'),
-                'no_expirados' => $request->input('no_expirados'),
-                'per_page' => $request->input('per_page', 15)
-            ]);
+        $cacheKey = $this->getCacheKey('index', [
+            'empresa_id' => $request->input('empresa_id'),
+            'usuario_id' => $request->input('usuario_id'),
+            'activo' => $request->input('activo'),
+            'no_expirados' => $request->input('no_expirados'),
+            'per_page' => $request->input('per_page', 15)
+        ]);
+        
+        $urls = $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
+            $query = UrlShortener::with(['empresa', 'usuario'])
+                ->where('eliminado', false);
             
-            $urls = $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
-                $query = UrlShortener::with(['empresa', 'usuario'])
-                    ->where('eliminado', false);
-                
-                // Filtrar por empresa
-                if ($request->has('empresa_id')) {
-                    $query->where('empresa_id', $request->empresa_id);
-                }
-                
-                // Filtrar por usuario
-                if ($request->has('usuario_id')) {
-                    $query->where('usuario_id', $request->usuario_id);
-                }
-                
-                // Filtrar por activos
-                if ($request->has('activo')) {
-                    $query->where('activo', $request->boolean('activo'));
-                }
-                
-                // Filtrar no expirados
-                if ($request->boolean('no_expirados')) {
-                    $query->noExpirados();
-                }
-                
-                $perPage = $request->input('per_page', 15);
-                return $query->orderBy('id', 'desc')->paginate($perPage);
-            });
+            // Filtro por empresa
+            if ($request->has('empresa_id')) {
+                $query->where('empresa_id', $request->empresa_id);
+            }
             
-            return UrlShortenerResource::collection($urls);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al obtener URLs',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+            // Filtro por usuario
+            if ($request->has('usuario_id')) {
+                $query->where('usuario_id', $request->usuario_id);
+            }
+            
+            // Filtro por activos
+            if ($request->has('activo')) {
+                $query->where('activo', $request->boolean('activo'));
+            }
+            
+            // Filtro no expirados
+            if ($request->boolean('no_expirados')) {
+                $query->noExpirados();
+            }
+            
+            $perPage = $request->input('per_page', 15);
+            return $query->orderBy('id', 'desc')->paginate($perPage);
+        });
+        
+        return UrlShortenerResource::collection($urls);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreUrlShortenerRequest $request)
+    public function store(StoreUrlShortenerRequest $request): JsonResponse
     {
         $this->authorize('create', UrlShortener::class);
         
@@ -99,7 +93,7 @@ class UrlShortenerController extends Controller
             
             $urlShortener = UrlShortener::create($validated);
             
-            $this->flushCache(['url-shortener', 'urls']);
+            $this->flushCache();
             
             return response()->json([
                 'success' => true,
@@ -124,7 +118,7 @@ class UrlShortenerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
         try {
             $url = UrlShortener::with(['empresa', 'usuario'])->findOrFail($id);
@@ -147,7 +141,7 @@ class UrlShortenerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUrlShortenerRequest $request, $id)
+    public function update(UpdateUrlShortenerRequest $request, $id): JsonResponse
     {
         try {
             $url = UrlShortener::findOrFail($id);
@@ -163,7 +157,7 @@ class UrlShortenerController extends Controller
             
             $url->update($validated);
             
-            $this->flushCache(['url-shortener', 'urls']);
+            $this->flushCache();
             
             return response()->json([
                 'success' => true,
@@ -188,7 +182,7 @@ class UrlShortenerController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
         try {
             $url = UrlShortener::findOrFail($id);
@@ -196,7 +190,7 @@ class UrlShortenerController extends Controller
             $this->authorize('delete', $url);
             $url->update(['eliminado' => true]);
             
-            $this->flushCache(['url-shortener', 'urls']);
+            $this->flushCache();
             
             return response()->json([
                 'success' => true,
@@ -214,7 +208,7 @@ class UrlShortenerController extends Controller
     /**
      * Redirigir usando el slug
      */
-    public function redirect(string $slug)
+    public function redirect(string $slug): \Illuminate\Http\RedirectResponse|JsonResponse
     {
         try {
             $url = UrlShortener::where('slug', $slug)
@@ -250,7 +244,7 @@ class UrlShortenerController extends Controller
     /**
      * Obtener estadísticas de una URL
      */
-    public function stats(string $id)
+    public function stats(string $id): JsonResponse
     {
         try {
             $url = UrlShortener::findOrFail($id);

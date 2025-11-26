@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreAlmacenRequest;
 use App\Http\Requests\UpdateAlmacenRequest;
 use App\Http\Resources\AlmacenResource;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
 
@@ -21,7 +22,7 @@ class AlmacenController extends Controller
      * Display a listing of the resource.
      * 
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return AnonymousResourceCollection
      */
     #[OA\Get(
         path: '/api/almacenes',
@@ -39,7 +40,7 @@ class AlmacenController extends Controller
             new OA\Response(response: 200, description: 'Listado exitoso', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/Almacen'))]))
         ]
     )]
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Almacen::class);
         
@@ -107,7 +108,7 @@ class AlmacenController extends Controller
         ),
         responses: [new OA\Response(response: 201, description: 'Almacén creado')]
     )]
-    public function store(StoreAlmacenRequest $request)
+    public function store(StoreAlmacenRequest $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('create', Almacen::class);
         
@@ -139,7 +140,7 @@ class AlmacenController extends Controller
      * Display the specified resource.
      * 
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return AlmacenResource
      */
     #[OA\Get(
         path: '/api/almacenes/{id}',
@@ -152,7 +153,7 @@ class AlmacenController extends Controller
             new OA\Response(response: 404, description: 'No encontrado')
         ]
     )]
-    public function show(int $id)
+    public function show(int $id): AlmacenResource
     {
         $almacen = Almacen::with([
             'empresa',
@@ -164,14 +165,9 @@ class AlmacenController extends Controller
             
             return new AlmacenResource($almacen);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Almacén no encontrado'
-            ], 404);
+            abort(404, 'Almacén no encontrado');
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener almacén',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 
@@ -180,7 +176,7 @@ class AlmacenController extends Controller
      * 
      * @param UpdateAlmacenRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return AlmacenResource
      */
     #[OA\Put(
         path: '/api/almacenes/{id}',
@@ -190,7 +186,7 @@ class AlmacenController extends Controller
         parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
         responses: [new OA\Response(response: 200, description: 'Actualizado')]
     )]
-    public function update(UpdateAlmacenRequest $request, int $id)
+    public function update(UpdateAlmacenRequest $request, int $id): AlmacenResource
     {
         $almacen = Almacen::findOrFail($id);
         $this->authorize('update', $almacen);
@@ -212,14 +208,9 @@ class AlmacenController extends Controller
             return (new AlmacenResource($almacen))
                 ->additional(['message' => 'Almacén actualizado exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Almacén no encontrado'
-            ], 404);
+            abort(404, 'Almacén no encontrado');
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al actualizar almacén',
-                'error' => $e->getMessage()
-            ], 500);
+            throw $e;
         }
     }
 
@@ -241,7 +232,7 @@ class AlmacenController extends Controller
             new OA\Response(response: 422, description: 'No se puede eliminar el principal')
         ]
     )]
-    public function destroy(int $id)
+    public function destroy(int $id): \Illuminate\Http\JsonResponse
     {
         $almacen = Almacen::findOrFail($id);
         $this->authorize('delete', $almacen);

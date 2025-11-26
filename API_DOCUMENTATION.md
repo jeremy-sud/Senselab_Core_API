@@ -397,6 +397,9 @@ $usuario->assignRoles(['Vendedor', 'Cajero']);
 Authorization: Bearer {token}
 Content-Type: application/json
 Accept: application/json
+X-Empresa-Id: {id}
+
+> Envía `X-Empresa-Id` cuando consumas la API desde `localhost` o dominios genéricos. Si usas un subdominio dedicado (`https://{subdominio}.api.ursol.com`), el identificador se infiere automáticamente.
 ```
 
 ### Ejemplo completo con cURL

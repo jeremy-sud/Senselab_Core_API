@@ -9,6 +9,8 @@ use App\Http\Requests\UpdateTipoComprobanteFeRequest;
 use App\Http\Resources\TipoComprobanteFeResource;
 use App\Traits\HasCacheableQueries;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * Controller para gestionar tipos de comprobantes de facturación electrónica
@@ -28,81 +30,74 @@ class TipoComprobanteFeController extends Controller
      * Display a listing of the resource.
      * 
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return AnonymousResourceCollection
      */
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', TipoComprobanteFe::class);
         
-        try {
-            $perPage = $request->input('per_page', 15);
-            $search = $request->input('search');
-            
-            $cacheKey = $this->getCacheKey('index', [
-                'per_page' => $perPage,
-                'search' => $search,
-                'activo' => $request->input('activo'),
-                'activos' => $request->input('activos'),
-                'requiere_referencia' => $request->boolean('requiere_referencia'),
-                'permite_exportacion' => $request->boolean('permite_exportacion'),
-                'codigo_dgt' => $request->input('codigo_dgt')
-            ]);
+        $perPage = $request->input('per_page', 15);
+        $search = $request->input('search');
+        
+        $cacheKey = $this->getCacheKey('index', [
+            'per_page' => $perPage,
+            'search' => $search,
+            'activo' => $request->input('activo'),
+            'activos' => $request->input('activos'),
+            'requiere_referencia' => $request->boolean('requiere_referencia'),
+            'permite_exportacion' => $request->boolean('permite_exportacion'),
+            'codigo_dgt' => $request->input('codigo_dgt')
+        ]);
 
-            $tiposComprobante = $this->cacheQueryIfEnabled($cacheKey, function() use ($request, $search, $perPage) {
-                $query = TipoComprobanteFe::where('eliminado', false);
-                
-                if ($search) {
-                    $query->where(function($q) use ($search) {
-                        $q->where('nombre', 'like', "%{$search}%")
-                          ->orWhere('codigo_dgt', 'like', "%{$search}%")
-                          ->orWhere('descripcion', 'like', "%{$search}%");
-                    });
-                }
-                
-                // Filtro por estado activo
-                if ($request->has('activo') || $request->has('activos')) {
-                    $esActivo = $request->boolean('activo') || $request->boolean('activos');
-                    if ($esActivo) {
-                        $query->activos();
-                    } else {
-                        $query->where('activo', false);
-                    }
-                }
-                
-                // Filtros específicos de FE
-                if ($request->boolean('requiere_referencia')) {
-                    $query->queRequierenReferencia();
-                }
-                
-                if ($request->boolean('permite_exportacion')) {
-                    $query->permiteExportacion();
-                }
-                
-                // Filtro por código DGT específico
-                if ($request->has('codigo_dgt')) {
-                    $query->porCodigo($request->input('codigo_dgt'));
-                }
-                
-                return $query->orderBy('codigo_dgt', 'asc')
-                              ->paginate($perPage);
-            });
+        $tiposComprobante = $this->cacheQueryIfEnabled($cacheKey, function() use ($request, $search, $perPage) {
+            $query = TipoComprobanteFe::where('eliminado', false);
             
-            return TipoComprobanteFeResource::collection($tiposComprobante);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener tipos de comprobante FE',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+            if ($search) {
+                $query->where(function($q) use ($search) {
+                    $q->where('nombre', 'like', "%{$search}%")
+                        ->orWhere('codigo_dgt', 'like', "%{$search}%")
+                        ->orWhere('descripcion', 'like', "%{$search}%");
+                });
+            }
+            
+            // Filtro por estado activo
+            if ($request->has('activo') || $request->has('activos')) {
+                $esActivo = $request->boolean('activo') || $request->boolean('activos');
+                if ($esActivo) {
+                    $query->activos();
+                } else {
+                    $query->where('activo', false);
+                }
+            }
+            
+            // Filtros específicos de FE
+            if ($request->boolean('requiere_referencia')) {
+                $query->queRequierenReferencia();
+            }
+            
+            if ($request->boolean('permite_exportacion')) {
+                $query->permiteExportacion();
+            }
+            
+            // Filtro por código DGT específico
+            if ($request->has('codigo_dgt')) {
+                $query->porCodigo($request->input('codigo_dgt'));
+            }
+            
+            return $query->orderBy('codigo_dgt', 'asc')
+                            ->paginate($perPage);
+        });
+        
+        return TipoComprobanteFeResource::collection($tiposComprobante);
     }
 
     /**
      * Store a newly created resource in storage.
      * 
      * @param StoreTipoComprobanteFeRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function store(StoreTipoComprobanteFeRequest $request)
+    public function store(StoreTipoComprobanteFeRequest $request): JsonResponse
     {
         $this->authorize('create', TipoComprobanteFe::class);
         
@@ -127,26 +122,15 @@ class TipoComprobanteFeController extends Controller
      * Display the specified resource.
      * 
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return TipoComprobanteFeResource
      */
-    public function show(int $id)
+    public function show(int $id): TipoComprobanteFeResource
     {
-        try {
-            $tipoComprobante = TipoComprobanteFe::findOrFail($id);
-            
-            $this->authorize('view', $tipoComprobante);
-            
-            return new TipoComprobanteFeResource($tipoComprobante);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Tipo de comprobante FE no encontrado'
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener tipo de comprobante FE',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        $tipoComprobante = TipoComprobanteFe::findOrFail($id);
+        
+        $this->authorize('view', $tipoComprobante);
+        
+        return new TipoComprobanteFeResource($tipoComprobante);
     }
 
     /**
@@ -154,9 +138,9 @@ class TipoComprobanteFeController extends Controller
      * 
      * @param UpdateTipoComprobanteFeRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function update(UpdateTipoComprobanteFeRequest $request, int $id)
+    public function update(UpdateTipoComprobanteFeRequest $request, int $id): JsonResponse
     {
         try {
             $tipoComprobante = TipoComprobanteFe::findOrFail($id);
@@ -183,9 +167,9 @@ class TipoComprobanteFeController extends Controller
      * Remove the specified resource from storage.
      * 
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function destroy(int $id)
+    public function destroy(int $id): JsonResponse
     {
         try {
             $tipoComprobante = TipoComprobanteFe::findOrFail($id);

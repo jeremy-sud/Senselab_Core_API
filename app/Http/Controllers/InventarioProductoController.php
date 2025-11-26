@@ -6,15 +6,17 @@ use App\Models\InventarioProducto;
 use App\Http\Requests\StoreInventarioProductoRequest;
 use App\Http\Requests\UpdateInventarioProductoRequest;
 use App\Http\Resources\InventarioProductoResource;
+use App\Traits\HasEmpresaContext;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 class InventarioProductoController extends Controller
 {
+    use HasEmpresaContext;
     public function index(Request $request): JsonResponse
     {
-        // Multi-tenancy: Filtrar por empresa del usuario autenticado
-        $empresaId = $request->user()->empresa_id;
+        // Multi-tenancy: uso centralizado del trait
+        $empresaId = $this->getEmpresaId();
         
         $query = InventarioProducto::where('eliminado', 0)
             ->whereHas('almacen', function ($q) use ($empresaId) {

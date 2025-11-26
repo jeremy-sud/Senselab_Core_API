@@ -11,6 +11,8 @@ use App\Traits\HasCacheableQueries;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+
 /**
  * Controller para gestionar zonas geográficas
  * Provincias, cantones, distritos, zonas de ventas y rutas
@@ -31,7 +33,7 @@ class ZonaGeograficaController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request): \Illuminate\Http\JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', ZonaGeografica::class);
         
@@ -154,31 +156,20 @@ class ZonaGeograficaController extends Controller
      * Display the specified resource.
      * 
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return ZonaGeograficaResource
      */
-    public function show(int $id)
+    public function show(int $id): ZonaGeograficaResource
     {
-        try {
-            $zonaGeografica = ZonaGeografica::with([
-                'empresa', 
-                'zonaPadre', 
-                'zonasHijas', 
-                'vendedorAsignado'
-            ])->findOrFail($id);
-            
-            $this->authorize('view', $zonaGeografica);
-            
-            return new ZonaGeograficaResource($zonaGeografica);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Zona geográfica no encontrada'
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener zona geográfica',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        $zonaGeografica = ZonaGeografica::with([
+            'empresa', 
+            'zonaPadre', 
+            'zonasHijas', 
+            'vendedorAsignado'
+        ])->findOrFail($id);
+        
+        $this->authorize('view', $zonaGeografica);
+        
+        return new ZonaGeograficaResource($zonaGeografica);
     }
 
     /**
@@ -186,32 +177,21 @@ class ZonaGeograficaController extends Controller
      * 
      * @param UpdateZonaGeograficaRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return ZonaGeograficaResource
      */
-    public function update(UpdateZonaGeograficaRequest $request, int $id)
+    public function update(UpdateZonaGeograficaRequest $request, int $id): ZonaGeograficaResource
     {
-        try {
-            $zonaGeografica = ZonaGeografica::findOrFail($id);
-            
-            $this->authorize('update', $zonaGeografica);
-            
-            $zonaGeografica->update($request->validated());
-            $zonaGeografica->load(['empresa', 'zonaPadre', 'vendedorAsignado']);
-            
-            $this->flushCache();
-            
-            return (new ZonaGeograficaResource($zonaGeografica))
-                ->additional(['message' => 'Zona geográfica actualizada exitosamente']);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Zona geográfica no encontrada'
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al actualizar zona geográfica',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        $zonaGeografica = ZonaGeografica::findOrFail($id);
+        
+        $this->authorize('update', $zonaGeografica);
+        
+        $zonaGeografica->update($request->validated());
+        $zonaGeografica->load(['empresa', 'zonaPadre', 'vendedorAsignado']);
+        
+        $this->flushCache();
+        
+        return (new ZonaGeograficaResource($zonaGeografica))
+            ->additional(['message' => 'Zona geográfica actualizada exitosamente']);
     }
 
     /**
@@ -220,7 +200,7 @@ class ZonaGeograficaController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(int $id)
+    public function destroy(int $id): \Illuminate\Http\JsonResponse
     {
         try {
             $zonaGeografica = ZonaGeografica::findOrFail($id);

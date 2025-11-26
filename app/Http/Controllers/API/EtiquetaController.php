@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\EtiquetaResource;
 use App\Models\Etiqueta;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
@@ -59,7 +62,7 @@ class EtiquetaController extends Controller
             )
         ]
     )]
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Etiqueta::class);
 
@@ -76,7 +79,7 @@ class EtiquetaController extends Controller
 
             $etiquetas = $query->orderBy('id')->paginate($perPage);
 
-            return response()->json($etiquetas);
+            return EtiquetaResource::collection($etiquetas);
         });
     }
 
@@ -112,7 +115,7 @@ class EtiquetaController extends Controller
             )
         ]
     )]
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $this->authorize('create', Etiqueta::class);
 
@@ -130,10 +133,10 @@ class EtiquetaController extends Controller
             DB::commit();
             $this->clearCache();
 
-            return response()->json([
-                'message' => 'Etiqueta creada exitosamente',
-                'data' => $etiqueta->load('empresa')
-            ], 201);
+            return (new EtiquetaResource($etiqueta->load('empresa')))
+                ->additional(['message' => 'Etiqueta creada exitosamente'])
+                ->response()
+                ->setStatusCode(201);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -169,7 +172,7 @@ class EtiquetaController extends Controller
             )
         ]
     )]
-    public function show(string $id)
+    public function show(string $id): EtiquetaResource
     {
         $etiqueta = Etiqueta::with('empresa')->findOrFail($id);
         $this->authorize('view', $etiqueta);
@@ -177,7 +180,7 @@ class EtiquetaController extends Controller
         $cacheKey = $this->generateCacheKey("etiquetas.show.{$id}");
 
         return $this->getCached($cacheKey, function () use ($etiqueta) {
-            return response()->json(['data' => $etiqueta]);
+            return new EtiquetaResource($etiqueta);
         });
     }
 
@@ -216,7 +219,7 @@ class EtiquetaController extends Controller
             )
         ]
     )]
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): EtiquetaResource
     {
         $etiqueta = Etiqueta::findOrFail($id);
         $this->authorize('update', $etiqueta);
@@ -234,10 +237,8 @@ class EtiquetaController extends Controller
             DB::commit();
             $this->clearCache();
 
-            return response()->json([
-                'message' => 'Etiqueta actualizada exitosamente',
-                'data' => $etiqueta->fresh('empresa')
-            ]);
+            return (new EtiquetaResource($etiqueta->fresh('empresa')))
+                ->additional(['message' => 'Etiqueta actualizada exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -273,7 +274,7 @@ class EtiquetaController extends Controller
             )
         ]
     )]
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
         $etiqueta = Etiqueta::findOrFail($id);
         $this->authorize('delete', $etiqueta);

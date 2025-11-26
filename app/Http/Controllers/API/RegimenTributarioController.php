@@ -7,6 +7,7 @@ use App\Models\RegimenTributario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Traits\HasCacheableQueries;
+use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
 
 class RegimenTributarioController extends Controller
@@ -52,7 +53,7 @@ class RegimenTributarioController extends Controller
             )
         ]
     )]
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         $this->authorize('viewAny', RegimenTributario::class);
 
@@ -103,7 +104,7 @@ class RegimenTributarioController extends Controller
             )
         ]
     )]
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $this->authorize('create', RegimenTributario::class);
 
@@ -159,7 +160,7 @@ class RegimenTributarioController extends Controller
             )
         ]
     )]
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
         $regimen = RegimenTributario::findOrFail($id);
         $this->authorize('view', $regimen);
@@ -206,7 +207,7 @@ class RegimenTributarioController extends Controller
             )
         ]
     )]
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): JsonResponse
     {
         $regimen = RegimenTributario::findOrFail($id);
         $this->authorize('update', $regimen);
@@ -264,7 +265,7 @@ class RegimenTributarioController extends Controller
             )
         ]
     )]
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
         $regimen = RegimenTributario::findOrFail($id);
         $this->authorize('delete', $regimen);

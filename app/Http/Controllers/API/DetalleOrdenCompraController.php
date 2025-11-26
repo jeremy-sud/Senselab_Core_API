@@ -5,9 +5,12 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\DetalleOrdenCompra;
 use App\Models\OrdenCompra;
+use App\Http\Resources\DetalleOrdenCompraResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Traits\HasCacheableQueries;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
 
 class DetalleOrdenCompraController extends Controller
@@ -75,7 +78,7 @@ class DetalleOrdenCompraController extends Controller
             )
         ]
     )]
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', DetalleOrdenCompra::class);
 
@@ -97,7 +100,7 @@ class DetalleOrdenCompraController extends Controller
 
             $detalles = $query->orderBy('id', 'desc')->paginate($perPage);
 
-            return response()->json($detalles);
+            return DetalleOrdenCompraResource::collection($detalles);
         });
     }
 
@@ -138,7 +141,7 @@ class DetalleOrdenCompraController extends Controller
             )
         ]
     )]
-    public function store(Request $request)
+    public function store(Request $request): DetalleOrdenCompraResource|JsonResponse
     {
         $this->authorize('create', DetalleOrdenCompra::class);
 
@@ -169,10 +172,8 @@ class DetalleOrdenCompraController extends Controller
             DB::commit();
             $this->clearCache();
 
-            return response()->json([
-                'message' => 'Detalle de orden de compra creado exitosamente',
-                'data' => $detalle->load(['ordenCompra', 'producto'])
-            ], 201);
+            return (new DetalleOrdenCompraResource($detalle->load(['ordenCompra', 'producto'])))
+                ->additional(['message' => 'Detalle de orden de compra creado exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -209,7 +210,7 @@ class DetalleOrdenCompraController extends Controller
             )
         ]
     )]
-    public function show(string $id)
+    public function show(string $id): DetalleOrdenCompraResource
     {
         $detalle = DetalleOrdenCompra::with(['ordenCompra', 'producto'])->findOrFail($id);
         $this->authorize('view', $detalle);
@@ -217,7 +218,7 @@ class DetalleOrdenCompraController extends Controller
         $cacheKey = $this->generateCacheKey("detalle_ordenes_compra.show.{$id}");
 
         return $this->getCached($cacheKey, function () use ($detalle) {
-            return response()->json(['data' => $detalle]);
+            return new DetalleOrdenCompraResource($detalle);
         });
     }
 
@@ -256,7 +257,7 @@ class DetalleOrdenCompraController extends Controller
             )
         ]
     )]
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): DetalleOrdenCompraResource|JsonResponse
     {
         $detalle = DetalleOrdenCompra::findOrFail($id);
         $this->authorize('update', $detalle);
@@ -278,10 +279,8 @@ class DetalleOrdenCompraController extends Controller
             DB::commit();
             $this->clearCache();
 
-            return response()->json([
-                'message' => 'Detalle actualizado exitosamente',
-                'data' => $detalle->fresh(['ordenCompra', 'producto'])
-            ]);
+            return (new DetalleOrdenCompraResource($detalle->fresh(['ordenCompra', 'producto'])))
+                ->additional(['message' => 'Detalle actualizado exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -317,7 +316,7 @@ class DetalleOrdenCompraController extends Controller
             )
         ]
     )]
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
         $detalle = DetalleOrdenCompra::findOrFail($id);
         $this->authorize('delete', $detalle);

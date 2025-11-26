@@ -12,6 +12,7 @@ use App\Traits\HasCacheableQueries;
 use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use OpenApi\Attributes as OA;
 
 /**
@@ -42,7 +43,7 @@ class ConfiguracionController extends Controller
             new OA\Response(response: 200, description: 'Listado exitoso', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/Configuracion'))]))
         ]
     )]
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Configuracion::class);
         $empresaId = $this->getEmpresaId();
@@ -56,10 +57,8 @@ class ConfiguracionController extends Controller
             }
         );
 
-        return response()->json([
-            'success' => true,
-            'data' => ConfiguracionResource::collection($configuraciones)
-        ]);
+        return ConfiguracionResource::collection($configuraciones)
+            ->additional(['success' => true]);
     }
 
     /**
@@ -87,7 +86,7 @@ class ConfiguracionController extends Controller
             new OA\Response(response: 201, description: 'Configuración creada', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', ref: '#/components/schemas/Configuracion')]))
         ]
     )]
-    public function store(StoreConfiguracionRequest $request): JsonResponse
+    public function store(StoreConfiguracionRequest $request): ConfiguracionResource
     {
         $this->authorize('create', Configuracion::class);
         $empresaId = $this->getEmpresaId();
@@ -102,11 +101,11 @@ class ConfiguracionController extends Controller
         
         $this->flushCache();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Configuración creada exitosamente',
-            'data' => new ConfiguracionResource($configuracion)
-        ], 201);
+        return (new ConfiguracionResource($configuracion))
+            ->additional([
+                'success' => true,
+                'message' => 'Configuración creada exitosamente'
+            ]);
     }
 
     /**
@@ -123,7 +122,7 @@ class ConfiguracionController extends Controller
             new OA\Response(response: 404, description: 'No encontrada')
         ]
     )]
-    public function show(Request $request, int $id): JsonResponse
+    public function show(Request $request, int $id): ConfiguracionResource
     {
         $empresaId = $this->getEmpresaId();
 
@@ -131,10 +130,8 @@ class ConfiguracionController extends Controller
 
         $this->authorize('view', $configuracion);
 
-        return response()->json([
-            'success' => true,
-            'data' => new ConfiguracionResource($configuracion)
-        ]);
+        return (new ConfiguracionResource($configuracion))
+            ->additional(['success' => true]);
     }
 
     /**
@@ -149,6 +146,8 @@ class ConfiguracionController extends Controller
         responses: [new OA\Response(response: 200, description: 'Actualizada')]
     )]
     public function update(UpdateConfiguracionRequest $request, int $id): JsonResponse
+    {
+    public function update(UpdateConfiguracionRequest $request, int $id): ConfiguracionResource
     {
         $empresaId = $this->getEmpresaId();
 
@@ -165,14 +164,12 @@ class ConfiguracionController extends Controller
         
         $this->flushCache();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Configuración actualizada exitosamente',
-            'data' => new ConfiguracionResource($configuracion)
-        ]);
-    }
-
-    /**
+        return (new ConfiguracionResource($configuracion))
+            ->additional([
+                'success' => true,
+                'message' => 'Configuración actualizada exitosamente'
+            ]);
+    }**
      * Eliminar configuración
      */
     #[OA\Delete(
@@ -216,7 +213,7 @@ class ConfiguracionController extends Controller
             new OA\Response(response: 404, description: 'No encontrada')
         ]
     )]
-    public function porClave(Request $request, string $clave): JsonResponse
+    public function porClave(Request $request, string $clave): ConfiguracionResource|JsonResponse
     {
         $empresaId = $this->getEmpresaId();
 
@@ -231,10 +228,8 @@ class ConfiguracionController extends Controller
             ], 404);
         }
 
-        return response()->json([
-            'success' => true,
-            'data' => new ConfiguracionResource($configuracion)
-        ]);
+        return (new ConfiguracionResource($configuracion))
+            ->additional(['success' => true]);
     }
 
     /**

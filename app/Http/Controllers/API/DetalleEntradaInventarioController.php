@@ -12,6 +12,7 @@ use App\Traits\HasCacheableQueries;
 use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 use OpenApi\Attributes as OA;
 
@@ -56,7 +57,7 @@ class DetalleEntradaInventarioController extends Controller
             new OA\Response(response: 404, description: 'Entrada no encontrada')
         ]
     )]
-    public function index(Request $request, int $entradaId): JsonResponse
+    public function index(Request $request, int $entradaId): AnonymousResourceCollection
     {
         $this->authorize('viewAny', DetalleEntradaInventario::class);
         
@@ -71,10 +72,7 @@ class DetalleEntradaInventarioController extends Controller
                 ->with(['producto.unidadMedida', 'producto.categoriaProducto'])
                 ->get();
 
-            return response()->json([
-                'success' => true,
-                'data' => DetalleEntradaInventarioResource::collection($detalles)
-            ]);
+            return DetalleEntradaInventarioResource::collection($detalles);
         });
     }
 
@@ -118,7 +116,7 @@ class DetalleEntradaInventarioController extends Controller
             new OA\Response(response: 500, description: 'Error al agregar el producto')
         ]
     )]
-    public function store(StoreDetalleEntradaInventarioRequest $request): JsonResponse
+    public function store(StoreDetalleEntradaInventarioRequest $request): DetalleEntradaInventarioResource|JsonResponse
     {
         $this->authorize('create', DetalleEntradaInventario::class);
         
@@ -155,11 +153,8 @@ class DetalleEntradaInventarioController extends Controller
             
             $this->flushCache();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Producto agregado a la entrada exitosamente',
-                'data' => new DetalleEntradaInventarioResource($detalle->load('producto'))
-            ], 201);
+            return (new DetalleEntradaInventarioResource($detalle->load('producto')))
+                ->additional(['message' => 'Producto agregado a la entrada exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -199,7 +194,7 @@ class DetalleEntradaInventarioController extends Controller
             new OA\Response(response: 404, description: 'Detalle no encontrado')
         ]
     )]
-    public function show(Request $request, int $id): JsonResponse
+    public function show(Request $request, int $id): DetalleEntradaInventarioResource|JsonResponse
     {
         $detalle = DetalleEntradaInventario::with(['producto', 'entradaInventario'])
             ->findOrFail($id);
@@ -214,10 +209,7 @@ class DetalleEntradaInventarioController extends Controller
         
         $this->authorize('view', $detalle);
 
-        return response()->json([
-            'success' => true,
-            'data' => new DetalleEntradaInventarioResource($detalle)
-        ]);
+        return new DetalleEntradaInventarioResource($detalle);
     }
 
     /**
@@ -263,7 +255,7 @@ class DetalleEntradaInventarioController extends Controller
             new OA\Response(response: 500, description: 'Error al actualizar')
         ]
     )]
-    public function update(UpdateDetalleEntradaInventarioRequest $request, int $id): JsonResponse
+    public function update(UpdateDetalleEntradaInventarioRequest $request, int $id): DetalleEntradaInventarioResource|JsonResponse
     {
         $empresaId = $this->getEmpresaId();
 
@@ -307,11 +299,8 @@ class DetalleEntradaInventarioController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Detalle actualizado exitosamente',
-                'data' => new DetalleEntradaInventarioResource($detalle->fresh('producto'))
-            ]);
+            return (new DetalleEntradaInventarioResource($detalle->fresh('producto')))
+                ->additional(['message' => 'Detalle actualizado exitosamente']);
 
         } catch (\Exception $e) {
             DB::rollBack();

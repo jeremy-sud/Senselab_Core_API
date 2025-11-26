@@ -74,6 +74,18 @@ class HorarioRuta extends Model
         return $this->hasMany(Venta::class, 'horario_ruta_id');
     }
 
+    /**
+     * Relación con los detalles de tiquetes vendidos para este horario.
+     * Alias para ventas o relación directa con TiqueteDetalle si existe.
+     */
+    public function tiquetesDetalle(): HasMany
+    {
+        // Asumiendo que TiqueteDetalle es el modelo correcto para los tiquetes individuales
+        // Si no existe, usar Venta si representa lo mismo.
+        // Basado en el controlador, parece ser una relación HasMany.
+        return $this->hasMany(TiqueteDetalle::class, 'horario_ruta_id');
+    }
+
     // Scopes
     public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {

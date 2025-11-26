@@ -26,7 +26,17 @@ trait HasEmpresaContext
     protected function getEmpresaId(): ?int
     {
         $user = Auth::guard('sanctum')->user();
-        return $user?->empresa_id;
+        if ($user?->empresa_id) {
+            return (int) $user->empresa_id;
+        }
+
+        $containerKey = config('multitenancy.current_tenant_container_key');
+
+        if ($containerKey && app()->has($containerKey)) {
+            return (int) app($containerKey)->getKey();
+        }
+
+        return null;
     }
 
     /**
@@ -53,5 +63,23 @@ trait HasEmpresaContext
         if ((int) $model->getAttribute('empresa_id') !== (int) $id) {
             throw new AccessDeniedHttpException('Acceso denegado: modelo no pertenece a la empresa.');
         }
+    }
+
+    /**
+     * Resuelve el ID de empresa activo validando que coincida con el solicitado.
+     */
+    protected function resolveEmpresaOrFail(?int $requestedEmpresaId = null): int
+    {
+        $currentEmpresaId = $this->getEmpresaId();
+
+        if ($currentEmpresaId === null) {
+            throw new AccessDeniedHttpException('Usuario sin empresa asociada.');
+        }
+
+        if ($requestedEmpresaId !== null && (int) $requestedEmpresaId !== (int) $currentEmpresaId) {
+            throw new AccessDeniedHttpException('No puedes operar sobre otra empresa.');
+        }
+
+        return (int) $currentEmpresaId;
     }
 }

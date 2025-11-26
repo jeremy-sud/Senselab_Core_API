@@ -23,7 +23,6 @@ class StoreVentaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'empresa_id' => ['required', 'exists:empresas,id'],
             'sucursal_id' => ['required', 'exists:sucursales,id'],
             'cliente_id' => ['required', 'exists:clientes,id'],
             'usuario_id' => ['required', 'exists:usuarios,id'],
@@ -47,7 +46,6 @@ class StoreVentaRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'empresa_id.required' => 'La empresa es obligatoria',
             'sucursal_id.required' => 'La sucursal es obligatoria',
             'cliente_id.required' => 'El cliente es obligatorio',
             'usuario_id.required' => 'El usuario es obligatorio',

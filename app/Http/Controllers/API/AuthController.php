@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use OpenApi\Attributes as OA;
+use App\Http\Resources\UserResource;
+use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
 {
@@ -75,7 +77,7 @@ class AuthController extends Controller
             )
         ]
     )]
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request): JsonResponse
     {
 
         $usuario = Usuario::where('email', $request->email)
@@ -101,7 +103,7 @@ class AuthController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Login exitoso',
-            'user' => $usuario,
+            'user' => new UserResource($usuario),
             'token' => $token,
             'permissions' => $usuario->getAllPermissions(),
         ]);
@@ -139,13 +141,12 @@ class AuthController extends Controller
             )
         ]
     )]
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
-            'success' => true,
-            'message' => 'Sesión cerrada exitosamente',
+            'message' => 'Sesión cerrada exitosamente'
         ]);
     }
 
@@ -191,21 +192,8 @@ class AuthController extends Controller
             )
         ]
     )]
-    public function me(Request $request)
+    public function user(Request $request): UserResource
     {
-        $usuario = $request->user();
-        $usuario->load(['roles.permisos', 'empresa', 'cargo']);
-
-        return response()->json([
-            'id' => $usuario->id,
-            'nombre' => $usuario->nombre,
-            'apellidos' => $usuario->apellidos,
-            'email' => $usuario->email,
-            'activo' => $usuario->activo,
-            'empresa' => $usuario->empresa,
-            'cargo' => $usuario->cargo,
-            'roles' => $usuario->roles,
-            'permissions' => $usuario->getAllPermissions(),
-        ]);
+        return new UserResource($request->user());
     }
 }
