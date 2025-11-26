@@ -199,10 +199,9 @@ class EmpresaTest extends TestCase
 
         $response->assertStatus(422)
                 ->assertJsonValidationErrors([
-                    'nombre_comercial',
-                    'razon_social',
-                    'tipo_identificacion',
-                    'identificacion_tributaria'
+                    'nombre',
+                    'num_identificacion_dgt',
+                    'regimen_tributario_id'
                 ]);
     }
 }
