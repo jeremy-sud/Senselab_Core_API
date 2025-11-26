@@ -1,26 +1,27 @@
 *.log
 .DS_Store
-.env
-.env.backup
-.env.production
-api_db.sql
-*.sql
+# Archivos sensibles ahora incluidos (repositorio privado)
+# .env
+# .env.backup
+# .env.production
+# api_db.sql
+# *.sql
 .phpactor.json
 .phpunit.result.cache
 /.fleet
 /.idea
 /.nova
 /.phpunit.cache
-/.vscode
+# /. vscode (permitir configuración VS Code)
 /.zed
-/auth.json
+# /auth.json (permitir credenciales composer)
 /node_modules
 /public/build
 /public/hot
 /public/storage
-/storage/*.key
+# /storage/*.key (permitir certificados)
 /storage/pail
-/vendor
+# /vendor (incluir dependencias)
 Homestead.json
 Homestead.yaml
 Thumbs.db
