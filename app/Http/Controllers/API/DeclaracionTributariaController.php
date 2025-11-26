@@ -96,9 +96,10 @@ class DeclaracionTributariaController extends Controller
                     }
                 }
                 
-                // Filtro por período fiscal
-                if ($request->has('periodo_fiscal')) {
-                    $query->porPeriodo($request->input('periodo_fiscal'));
+                // Filtro por período fiscal (acepta 'periodo' o 'periodo_fiscal')
+                if ($request->has('periodo_fiscal') || $request->has('periodo')) {
+                    $periodoValue = $request->input('periodo_fiscal') ?? $request->input('periodo');
+                    $query->porPeriodo($periodoValue);
                 }
                 
                 // Filtro por año fiscal

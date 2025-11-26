@@ -150,8 +150,10 @@ class TipoClienteController extends Controller
             
             $this->flushCache();
             
-            return (new TipoClienteResource($tipoCliente))
-                ->additional(['message' => 'Tipo de cliente actualizado exitosamente']);
+            return response()->json([
+                'data' => new TipoClienteResource($tipoCliente),
+                'message' => 'Tipo de cliente actualizado exitosamente'
+            ]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Tipo de cliente no encontrado'
