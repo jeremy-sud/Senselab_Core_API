@@ -82,8 +82,14 @@ class MovimientoBancarioController extends Controller
                     $query->porTipo($request->input('tipo_movimiento'));
                 }
                 
-                // Filtro por estado de conciliación
-                if ($request->boolean('conciliados')) {
+                // Filtro por estado de conciliación (acepta 'conciliado' o 'conciliados')
+                if ($request->has('conciliado')) {
+                    if ($request->boolean('conciliado')) {
+                        $query->conciliados();
+                    } else {
+                        $query->pendientesConciliacion();
+                    }
+                } elseif ($request->boolean('conciliados')) {
                     $query->conciliados();
                 }
                 

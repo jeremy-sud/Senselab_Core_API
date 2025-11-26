@@ -88,9 +88,10 @@ class RetencionImpuestoController extends Controller
                     $query->pendientesDeclaracion();
                 }
                 
-                // Filtro por período de declaración
-                if ($request->has('periodo_declaracion')) {
-                    $query->porPeriodo($request->input('periodo_declaracion'));
+                // Filtro por período de declaración (acepta 'periodo' o 'periodo_declaracion')
+                if ($request->has('periodo_declaracion') || $request->has('periodo')) {
+                    $periodoValue = $request->input('periodo_declaracion') ?? $request->input('periodo');
+                    $query->porPeriodo($periodoValue);
                 }
                 
                 // Filtro por rango de fechas
