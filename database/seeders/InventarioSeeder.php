@@ -3,12 +3,12 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Inventario;
+use App\Models\InventarioProducto;
 
 class InventarioSeeder extends Seeder
 {
     public function run(): void
     {
-        Inventario::factory()->count(40)->create();
+        InventarioProducto::factory()->count(40)->create();
     }
 }

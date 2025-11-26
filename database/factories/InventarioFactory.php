@@ -2,14 +2,14 @@
 
 namespace Database\Factories;
 
-use App\Models\Inventario;
+use App\Models\InventarioProducto;
 use App\Models\Almacen;
 use App\Models\Producto;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class InventarioFactory extends Factory
 {
-    protected $model = Inventario::class;
+    protected $model = InventarioProducto::class;
 
     public function definition(): array
     {

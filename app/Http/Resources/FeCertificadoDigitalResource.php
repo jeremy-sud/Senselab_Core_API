@@ -38,7 +38,7 @@ class FeCertificadoDigitalResource extends JsonResource
             // Archivo (oculto por seguridad, solo metadata)
             'nombre_archivo_original' => $this->nombre_archivo_original,
             'ruta_archivo' => $this->when(
-                $request->user()?->hasRole(['Administrador', 'Gerente']),
+                $request->user() && $request->user()->hasAnyRole(['Administrador', 'Gerente']),
                 $this->ruta_archivo
             ),
             

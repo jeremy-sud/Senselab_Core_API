@@ -22,7 +22,7 @@ class FeCertificadoDigitalController extends Controller
         $this->authorize('viewAny', FeCertificadoDigital::class);
 
         /** @var \App\Models\Usuario $user */
-        $user = auth()->user();
+        $user = $request->user();
 
         $query = FeCertificadoDigital::where('empresa_id', $user->empresa_id);
 
@@ -63,9 +63,9 @@ class FeCertificadoDigitalController extends Controller
         $this->authorize('create', FeCertificadoDigital::class);
 
         /** @var \App\Models\Usuario $user */
-        $user = auth()->user();
+        $user = $request->user();
 
-        $validated = $request->validated();
+        $data = $request->validated();
 
         // Manejar subida del archivo .p12
         if ($request->hasFile('archivo_certificado')) {
@@ -116,12 +116,12 @@ class FeCertificadoDigitalController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateFeCertificadoDigitalRequest $request, FeCertificadoDigital $certificado): JsonResponse
+    public function update(UpdateFeCertificadoDigitalRequest $request, FeCertificadoDigital $feCertificadoDigital): JsonResponse
     {
-        $this->authorize('update', $certificado);
+        $this->authorize('update', $feCertificadoDigital);
 
         /** @var \App\Models\Usuario $user */
-        $user = auth()->user();
+        $user = $request->user();
 
         $validated = $request->validated();
 

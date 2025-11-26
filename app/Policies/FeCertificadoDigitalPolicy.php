@@ -39,7 +39,7 @@ class FeCertificadoDigitalPolicy extends BasePolicy
     public function create(Usuario $user): bool
     {
         return $user->hasPermissionTo('crear-facturacion_electronica') 
-            && $user->hasRole(['Administrador', 'Gerente']);
+            && ($user->hasRole('Administrador') || $user->hasRole('Gerente'));
     }
 
     /**
@@ -52,7 +52,7 @@ class FeCertificadoDigitalPolicy extends BasePolicy
             return false;
         }
 
-        if (!$user->hasRole(['Administrador', 'Gerente'])) {
+        if (!$user->hasAnyRole(['Administrador', 'Gerente'])) {
             return false;
         }
 
@@ -113,7 +113,7 @@ class FeCertificadoDigitalPolicy extends BasePolicy
             return false;
         }
 
-        if (!$user->hasRole(['Administrador', 'Gerente'])) {
+        if (!$user->hasRole('Administrador') && !$user->hasRole('Gerente')) {
             return false;
         }
 
