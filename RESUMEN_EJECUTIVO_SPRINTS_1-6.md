@@ -4,6 +4,9 @@
 **Período**: Noviembre 2025  
 **Estado**: ✅ **6 SPRINTS COMPLETADOS AL 100%**
 
+> **📅 NOTA:** Este documento refleja el estado del proyecto en Noviembre 2025.  
+> Ver [ESTADO_ACTUAL_PROYECTO.md](ESTADO_ACTUAL_PROYECTO.md) para estadísticas actualizadas.
+
 ---
 
 ## 📊 Visión General

@@ -2,7 +2,15 @@
 
 **Fecha de Completado:** 23 de noviembre de 2025  
 **Desarrollado por:** Sistemas Ursol S.A.  
-**Estado:** ✅ **COMPLETADA** - 100% de tests pasando
+**Estado Histórico:** ✅ **COMPLETADA** - 100% de tests pasando en ese momento
+
+---
+
+> **⚠️ NOTA IMPORTANTE (Enero 2025):**  
+> Esta fase documentó el estado de tests en noviembre 2025 cuando 127 tests estaban al 100%.  
+> **Estado Actual:** 218 tests totales, 186 pasando (85.3%) - 32 tests fallando.  
+> El aumento de tests (127 → 218) detectó nuevas fallas que requieren corrección.  
+> Ver estado actual en: [INFORME_TESTS_POST_OPTIMIZACION.md](INFORME_TESTS_POST_OPTIMIZACION.md)
 
 ---
 
