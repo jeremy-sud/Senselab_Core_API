@@ -153,22 +153,11 @@ class EmpresaController extends Controller
             new OA\Response(response: 500, description: 'Error del servidor')
         ]
     )]
-    public function store(Request $request): JsonResponse
+    public function store(StoreEmpresaRequest $request): JsonResponse
     {
         $this->authorize('create', Empresa::class);
 
-        $validated = $request->validate([
-            'nombre_comercial' => 'required|string|max:100',
-            'razon_social' => 'required|string|max:100',
-            'tipo_identificacion' => 'required|string|in:juridica,fisica,dimex,nite',
-            'identificacion_tributaria' => 'required|string|max:20|unique:empresas,identificacion_tributaria',
-            'direccion' => 'required|string',
-            'telefono' => 'required|string|max:20',
-            'email' => 'required|email|max:100',
-            'sitio_web' => 'nullable|url|max:100',
-            'moneda_principal' => 'required|string|size:3',
-            'logo_url' => 'nullable|string|max:255',
-        ]);
+        $validated = $request->validated();
 
         DB::beginTransaction();
         try {
@@ -288,24 +277,12 @@ class EmpresaController extends Controller
             new OA\Response(response: 500, description: 'Error del servidor')
         ]
     )]
-    public function update(Request $request, string $id): EmpresaResource
+    public function update(UpdateEmpresaRequest $request, string $id): EmpresaResource
     {
         $empresa = Empresa::findOrFail($id);
         $this->authorize('update', $empresa);
 
-        $validated = $request->validate([
-            'nombre_comercial' => 'sometimes|string|max:100',
-            'razon_social' => 'sometimes|string|max:100',
-            'tipo_identificacion' => 'sometimes|string|in:juridica,fisica,dimex,nite',
-            'identificacion_tributaria' => 'sometimes|string|max:20|unique:empresas,identificacion_tributaria,' . $id,
-            'direccion' => 'sometimes|string',
-            'telefono' => 'sometimes|string|max:20',
-            'email' => 'sometimes|email|max:100',
-            'sitio_web' => 'nullable|url|max:100',
-            'moneda_principal' => 'sometimes|string|size:3',
-            'logo_url' => 'nullable|string|max:255',
-            'estado' => 'sometimes|in:activa,inactiva,suspendida',
-        ]);
+        $validated = $request->validated();
 
         DB::beginTransaction();
         try {
