@@ -7,6 +7,7 @@ use App\Models\FeLineaDetalle;
 use App\Http\Requests\StoreComprobanteElectronicoRequest;
 use App\Jobs\Hacienda\EnviarComprobanteJob;
 use App\Services\Hacienda\HaciendaApiClient;
+use App\Services\Hacienda\ClaveNumericaGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -85,12 +86,24 @@ class ComprobanteElectronicoController extends Controller
         try {
             DB::beginTransaction();
 
+            // Generar clave numérica
+            $fechaEmision = $request->fecha_emision ?? Carbon::now();
+            $empresa = $request->user()->empresa;
+            $generador = new ClaveNumericaGenerator();
+            $clave = $generador->generar(
+                $fechaEmision,
+                $empresa->num_identificacion_dgt,
+                $request->consecutivo,
+                $request->situacion ?? '1'
+            );
+
             // Crear comprobante
             $comprobante = ComprobanteElectronicoFe::create([
                 'empresa_id' => $request->user()->empresa_id,
                 'tipo_documento' => $request->tipo_documento,
+                'clave' => $clave,
                 'consecutivo' => $request->consecutivo,
-                'fecha_emision' => $request->fecha_emision ?? Carbon::now(),
+                'fecha_emision' => $fechaEmision,
                 'condicion_venta' => $request->condicion_venta,
                 'plazo_credito' => $request->plazo_credito,
                 'medio_pago' => $request->medio_pago,
@@ -109,7 +122,7 @@ class ComprobanteElectronicoController extends Controller
                 'receptor_otras_senas' => $request->receptor_otras_senas,
                 
                 // Moneda
-                'codigo_moneda' => $request->codigo_moneda ?? 'CRC',
+                'moneda' => $request->moneda ?? $request->codigo_moneda ?? 'CRC',
                 'tipo_cambio' => $request->tipo_cambio ?? 1.00000,
                 
                 // Observaciones
@@ -133,11 +146,25 @@ class ComprobanteElectronicoController extends Controller
             $totalImpuestos = 0;
 
             foreach ($request->lineas as $linea) {
+                // Procesar impuestos (tomar el primero si es un array)
+                $impuestoCodigo = null;
+                $impuestoCodigoTarifa = null;
+                $impuestoTarifa = null;
+                $impuestoMonto = null;
+                
+                if (isset($linea['impuestos']) && is_array($linea['impuestos']) && count($linea['impuestos']) > 0) {
+                    $primerImpuesto = $linea['impuestos'][0];
+                    $impuestoCodigo = $primerImpuesto['codigo'] ?? null;
+                    $impuestoCodigoTarifa = $primerImpuesto['codigo_tarifa'] ?? null;
+                    $impuestoTarifa = $primerImpuesto['tarifa'] ?? null;
+                    $impuestoMonto = $primerImpuesto['monto'] ?? null;
+                }
+                
                 $lineaDetalle = FeLineaDetalle::create([
                     'comprobante_id' => $comprobante->id,
                     'numero_linea' => $linea['numero_linea'],
-                    'codigo_tipo' => $linea['codigo_tipo'] ?? null,
-                    'codigo' => $linea['codigo'] ?? null,
+                    'codigo_tipo' => $linea['codigo_tipo'] ?? '04',
+                    'codigo' => $linea['codigo'],
                     'cantidad' => $linea['cantidad'],
                     'unidad_medida' => $linea['unidad_medida'] ?? 'Sp',
                     'detalle' => $linea['detalle'],
@@ -148,12 +175,14 @@ class ComprobanteElectronicoController extends Controller
                     'subtotal' => $linea['subtotal'],
                     'base_imponible' => $linea['base_imponible'] ?? $linea['subtotal'],
                     'monto_total_linea' => $linea['monto_total_linea'],
+                    'impuesto_codigo' => $impuestoCodigo,
+                    'impuesto_codigo_tarifa' => $impuestoCodigoTarifa,
+                    'impuesto_tarifa' => $impuestoTarifa,
+                    'impuesto_monto' => $impuestoMonto,
                 ]);
 
-                // Guardar impuestos
+                // Sumar impuestos al total
                 if (isset($linea['impuestos'])) {
-                    $lineaDetalle->update(['impuestos' => $linea['impuestos']]);
-                    
                     foreach ($linea['impuestos'] as $impuesto) {
                         $totalImpuestos += $impuesto['monto'];
                     }
@@ -169,10 +198,10 @@ class ComprobanteElectronicoController extends Controller
 
             // Actualizar totales del comprobante
             $comprobante->update([
-                'total_venta_bruta' => $totalVentaBruta,
+                'total_venta' => $totalVentaBruta,
                 'total_descuentos' => $totalDescuentos,
                 'total_venta_neta' => $totalVentaNeta,
-                'total_impuestos' => $totalImpuestos,
+                'total_impuesto' => $totalImpuestos,
                 'total_comprobante' => $totalComprobante,
             ]);
 
@@ -333,12 +362,24 @@ class ComprobanteElectronicoController extends Controller
         try {
             DB::beginTransaction();
 
+            // Generar consecutivo y clave para nota crédito
+            $consecutivo = $this->generarConsecutivo('03', $comprobanteOriginal->empresa_id);
+            $fechaEmision = Carbon::now();
+            $generador = new ClaveNumericaGenerator();
+            $clave = $generador->generar(
+                $fechaEmision,
+                $comprobanteOriginal->empresa->num_identificacion_dgt,
+                $consecutivo,
+                '1'
+            );
+
             // Crear nota crédito
             $notaCredito = ComprobanteElectronicoFe::create([
                 'empresa_id' => $comprobanteOriginal->empresa_id,
                 'tipo_documento' => '03', // Nota Crédito
-                'consecutivo' => $this->generarConsecutivo('03', $comprobanteOriginal->empresa_id),
-                'fecha_emision' => Carbon::now(),
+                'clave' => $clave,
+                'consecutivo' => $consecutivo,
+                'fecha_emision' => $fechaEmision,
                 'condicion_venta' => $comprobanteOriginal->condicion_venta,
                 'medio_pago' => $comprobanteOriginal->medio_pago,
                 
@@ -348,25 +389,29 @@ class ComprobanteElectronicoController extends Controller
                 'receptor_numero_identificacion' => $comprobanteOriginal->receptor_numero_identificacion,
                 'receptor_email' => $comprobanteOriginal->receptor_email,
                 
-                // Referencia al documento original
-                'tipo_documento_referencia' => $comprobanteOriginal->tipo_documento,
-                'numero_documento_referencia' => $comprobanteOriginal->consecutivo,
-                'fecha_emision_referencia' => $comprobanteOriginal->fecha_emision,
-                'codigo_referencia' => '01', // Anula documento de referencia
-                'razon_referencia' => $request->razon_anulacion,
-                
                 // Moneda
-                'codigo_moneda' => $comprobanteOriginal->codigo_moneda,
+                'moneda' => $comprobanteOriginal->moneda,
                 'tipo_cambio' => $comprobanteOriginal->tipo_cambio,
                 
                 // Totales (mismo del original)
-                'total_venta_bruta' => $comprobanteOriginal->total_venta_bruta,
+                'total_venta' => $comprobanteOriginal->total_venta,
                 'total_descuentos' => $comprobanteOriginal->total_descuentos,
                 'total_venta_neta' => $comprobanteOriginal->total_venta_neta,
-                'total_impuestos' => $comprobanteOriginal->total_impuestos,
+                'total_impuesto' => $comprobanteOriginal->total_impuesto,
                 'total_comprobante' => $comprobanteOriginal->total_comprobante,
                 
                 'estado' => 'pendiente',
+                
+                // Referencia al documento original (en metadata JSON)
+                'metadata' => [
+                    'documento_referencia' => [
+                        'tipo_documento' => $comprobanteOriginal->tipo_documento,
+                        'numero' => $comprobanteOriginal->consecutivo,
+                        'fecha_emision' => $comprobanteOriginal->fecha_emision->format('Y-m-d\TH:i:sP'),
+                        'codigo' => '01', // Anula documento de referencia
+                        'razon' => $request->razon_anulacion,
+                    ],
+                ],
             ]);
 
             // Copiar líneas de detalle
@@ -384,7 +429,10 @@ class ComprobanteElectronicoController extends Controller
                     'monto_descuento' => $linea->monto_descuento,
                     'subtotal' => $linea->subtotal,
                     'base_imponible' => $linea->base_imponible,
-                    'impuestos' => $linea->impuestos,
+                    'impuesto_codigo' => $linea->impuesto_codigo,
+                    'impuesto_codigo_tarifa' => $linea->impuesto_codigo_tarifa,
+                    'impuesto_tarifa' => $linea->impuesto_tarifa,
+                    'impuesto_monto' => $linea->impuesto_monto,
                     'monto_total_linea' => $linea->monto_total_linea,
                 ]);
             }

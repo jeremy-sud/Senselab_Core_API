@@ -347,11 +347,18 @@ class ComprobanteElectronicoControllerTest extends TestCase
             ]);
 
         // Verificar que se creó nota crédito
-        $this->assertDatabaseHas('comprobantes_electronicos_fe', [
-            'tipo_documento' => '03',
-            'tipo_documento_referencia' => '01',
-            'razon_referencia' => 'Error en facturación',
-        ]);
+        $notaCredito = ComprobanteElectronicoFe::where('tipo_documento', '03')
+            ->latest()
+            ->first();
+            
+        $this->assertNotNull($notaCredito);
+        $this->assertEquals('03', $notaCredito->tipo_documento);
+        
+        // Verificar referencia en metadata
+        $this->assertNotNull($notaCredito->metadata);
+        $this->assertArrayHasKey('documento_referencia', $notaCredito->metadata);
+        $this->assertEquals('01', $notaCredito->metadata['documento_referencia']['tipo_documento']);
+        $this->assertEquals('Error en facturación', $notaCredito->metadata['documento_referencia']['razon']);
 
         Queue::assertPushed(EnviarComprobanteJob::class);
     }

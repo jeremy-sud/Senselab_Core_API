@@ -22,20 +22,20 @@
 
 ## 📋 Tabla de Contenidos
 
-- [Acerca del Proyecto](#-acerca-del-proyecto)
-- [Características Principales](#-características-principales)
-- [Requisitos del Sistema](#-requisitos-del-sistema)
-- [Instalación](#-instalación)
-- [Cómo Probar la API](#-cómo-probar-la-api)
-- [Configuración](#️-configuración)
-- [Arquitectura](#-arquitectura)
-- [Módulos del Sistema](#-módulos-del-sistema)
-- [API Reference](#-api-reference)
-- [Testing](#-testing)
-- [Documentación Swagger](#-documentación-swagger)
-- [Despliegue](#-despliegue)
-- [Contribuir](#-contribuir)
-- [Licencia](#-licencia)
+-   [Acerca del Proyecto](#-acerca-del-proyecto)
+-   [Características Principales](#-características-principales)
+-   [Requisitos del Sistema](#-requisitos-del-sistema)
+-   [Instalación](#-instalación)
+-   [Cómo Probar la API](#-cómo-probar-la-api)
+-   [Configuración](#️-configuración)
+-   [Arquitectura](#-arquitectura)
+-   [Módulos del Sistema](#-módulos-del-sistema)
+-   [API Reference](#-api-reference)
+-   [Testing](#-testing)
+-   [Documentación Swagger](#-documentación-swagger)
+-   [Despliegue](#-despliegue)
+-   [Contribuir](#-contribuir)
+-   [Licencia](#-licencia)
 
 ## 🚀 Acerca del Proyecto
 
@@ -48,145 +48,157 @@
 **Calificación Global: 8.5/10** ⭐
 
 **📈 Estadísticas Actuales:**
-- **✅ 77 Controladores** implementados (100% completitud)
-- **✅ 72 Policies RBAC** implementadas (100% cobertura)
-- **✅ 490+ Rutas API** registradas y funcionales
-- **✅ 65 Modelos Eloquent** sincronizados con BD MySQL
-- **✅ 81 Tablas** en base de datos MySQL Docker (100% optimizadas: 123 FKs, 392 indexes)
-- **⚠️ 186/218 Tests** pasando (85.3% success rate - 32 fallando)
-- **✅ 0 Errores Críticos** de base de datos
-- **✅ Sistema RBAC** completo (68 permisos + 7 roles)
-- **✅ Entorno Docker** completamente funcional (Nginx, PHP-FPM, MySQL, Redis, PHPMyAdmin)
-- **⚠️ Swagger ~5%** documentado (objetivo: 100%)
+
+-   **✅ 77 Controladores** implementados (100% completitud)
+-   **✅ 72 Policies RBAC** implementadas (100% cobertura)
+-   **✅ 490+ Rutas API** registradas y funcionales
+-   **✅ 65 Modelos Eloquent** sincronizados con BD MySQL
+-   **✅ 81 Tablas** en base de datos MySQL Docker (100% optimizadas: 123 FKs, 392 indexes)
+-   **⚠️ 186/218 Tests** pasando (85.3% success rate - 32 fallando)
+-   **✅ 0 Errores Críticos** de base de datos
+-   **✅ Sistema RBAC** completo (68 permisos + 7 roles)
+-   **✅ Entorno Docker** completamente funcional (Nginx, PHP-FPM, MySQL, Redis, PHPMyAdmin)
+-   **⚠️ Swagger ~5%** documentado (objetivo: 100%)
 
 **✅ CORRECCIONES APLICADAS (Auditoría Nov 2025):**
-- ✅ Error de sintaxis en `EmpresaController.php` (CRÍTICO - corregido)
-- ✅ Imports faltantes (`DB`, `JsonResponse`) agregados
-- ✅ Método `destroy` duplicado eliminado
-- ✅ Uso de `auth()` sin guard corregido en `EntradaInventarioController`
+
+-   ✅ Error de sintaxis en `EmpresaController.php` (CRÍTICO - corregido)
+-   ✅ Imports faltantes (`DB`, `JsonResponse`) agregados
+-   ✅ Método `destroy` duplicado eliminado
+-   ✅ Uso de `auth()` sin guard corregido en `EntradaInventarioController`
 
 **📊 Análisis Completo:** Ver [AUDITORIA_COMPLETA_NOVIEMBRE_2025.md](AUDITORIA_COMPLETA_NOVIEMBRE_2025.md)
 
 ---
 
 **✅ FASE 1 - Correcciones Críticas (COMPLETADA)**
-- Corrección de campos en `AsientoContableController` (debe/haber)
-- Sincronización de campo `comentario` en `TipoImpuesto` con base de datos
-- Actualización de migraciones y FormRequests
-- Commit: `0dd7c39`
+
+-   Corrección de campos en `AsientoContableController` (debe/haber)
+-   Sincronización de campo `comentario` en `TipoImpuesto` con base de datos
+-   Actualización de migraciones y FormRequests
+-   Commit: `0dd7c39`
 
 **✅ FASE 2 - Datos Maestros (COMPLETADA)**
-- Implementación de 6 seeders principales:
-  - RegimenesTributariosSeeder (2 regímenes)
-  - FormasPagoSeeder (6 formas de pago)
-  - TiposCuentasSeeder (8 tipos de cuentas)
-  - UnidadesMedidaSeeder (11 unidades)
-  - PermisosSeeder (68 permisos = 17 módulos × 4 acciones)
-  - RolesSeeder (8 roles: Administrador, Gerente, Contador, Vendedor, Comprador, Bodeguero, Usuario, Auditor)
-- Total: **96 registros** de datos maestros cargados
-- Commit: `58e2055`
+
+-   Implementación de 6 seeders principales:
+    -   RegimenesTributariosSeeder (2 regímenes)
+    -   FormasPagoSeeder (6 formas de pago)
+    -   TiposCuentasSeeder (8 tipos de cuentas)
+    -   UnidadesMedidaSeeder (11 unidades)
+    -   PermisosSeeder (68 permisos = 17 módulos × 4 acciones)
+    -   RolesSeeder (8 roles: Administrador, Gerente, Contador, Vendedor, Comprador, Bodeguero, Usuario, Auditor)
+-   Total: **96 registros** de datos maestros cargados
+-   Commit: `58e2055`
 
 **✅ FASE 3 - Autenticación y Autorización (COMPLETADA)**
-- Sistema RBAC (Role-Based Access Control) implementado
-- Laravel Sanctum para autenticación por tokens
-- CheckPermission middleware para protección de rutas
-- Usuario model mejorado: Authenticatable + HasApiTokens + 5 métodos RBAC
-- AuthController con endpoints: login, logout, me
-- 3 seeders adicionales:
-  - CargosSeeder (7 cargos)
-  - EmpresaDemoSeeder (1 empresa + 1 sucursal)
-  - UsuarioAdminSeeder (1 usuario admin con 68 permisos)
-- Total adicional: **16 registros** (112 registros totales en BD)
-- Sistema de autenticación **100% funcional y probado**
-- Commit: `e668c64`
+
+-   Sistema RBAC (Role-Based Access Control) implementado
+-   Laravel Sanctum para autenticación por tokens
+-   CheckPermission middleware para protección de rutas
+-   Usuario model mejorado: Authenticatable + HasApiTokens + 5 métodos RBAC
+-   AuthController con endpoints: login, logout, me
+-   3 seeders adicionales:
+    -   CargosSeeder (7 cargos)
+    -   EmpresaDemoSeeder (1 empresa + 1 sucursal)
+    -   UsuarioAdminSeeder (1 usuario admin con 68 permisos)
+-   Total adicional: **16 registros** (112 registros totales en BD)
+-   Sistema de autenticación **100% funcional y probado**
+-   Commit: `e668c64`
 
 **✅ FASE 4 - Testing (COMPLETADA)**
-- Suite completa de **28+ tests** implementados y pasando
-- Tests de autenticación y autorización (11 tests)
-- Tests CRUD de productos (9 tests)
-- Tests de sistema RBAC y permisos
-- Tests unitarios de modelos y traits
-- Base de datos de testing configurada (MySQL)
-- Helpers de testing en TestCase (RefreshDatabase, factories, seeds)
-- Ver detalles: [FASE_4_TESTING_COMPLETADA.md](FASE_4_TESTING_COMPLETADA.md)
+
+-   Suite completa de **28+ tests** implementados y pasando
+-   Tests de autenticación y autorización (11 tests)
+-   Tests CRUD de productos (9 tests)
+-   Tests de sistema RBAC y permisos
+-   Tests unitarios de modelos y traits
+-   Base de datos de testing configurada (MySQL)
+-   Helpers de testing en TestCase (RefreshDatabase, factories, seeds)
+-   Ver detalles: [FASE_4_TESTING_COMPLETADA.md](FASE_4_TESTING_COMPLETADA.md)
 
 **✅ FASE 5 - Documentación API (COMPLETADA)**
-- Swagger/OpenAPI instalado y configurado (L5-Swagger 9.0.1)
-- Documentación interactiva en: `http://localhost:8000/api/documentation`
-- AuthController documentado (3 endpoints: login, logout, user)
-- ProductoController documentado (5 endpoints CRUD completos)
-- 10 schemas OpenAPI creados (Usuario, Rol, Permiso, Empresa, Producto, etc.)
-- Autenticación Bearer configurada en Swagger UI
+
+-   Swagger/OpenAPI instalado y configurado (L5-Swagger 9.0.1)
+-   Documentación interactiva en: `http://localhost:8000/api/documentation`
+-   AuthController documentado (3 endpoints: login, logout, user)
+-   ProductoController documentado (5 endpoints CRUD completos)
+-   10 schemas OpenAPI creados (Usuario, Rol, Permiso, Empresa, Producto, etc.)
+-   Autenticación Bearer configurada en Swagger UI
 
 **✅ FASE 6 - Correcciones de Modelos (COMPLETADA)**
-- Revisión y corrección de 65 modelos del sistema
-- Sincronización completa con esquema de base de datos MySQL
-- Correcciones en 10 modelos críticos: Cliente, Proveedor, Producto, OrdenCompra, EntradaInventario, Almacen, RolUsuario, UsuarioRol, Cabys, CategoriaProducto
-- Verificación de relaciones, fillable, casts y métodos
-- Eliminación de campos obsoletos y adición de campos faltantes
-- Sistema 100% sincronizado sin errores de compilación
+
+-   Revisión y corrección de 65 modelos del sistema
+-   Sincronización completa con esquema de base de datos MySQL
+-   Correcciones en 10 modelos críticos: Cliente, Proveedor, Producto, OrdenCompra, EntradaInventario, Almacen, RolUsuario, UsuarioRol, Cabys, CategoriaProducto
+-   Verificación de relaciones, fillable, casts y métodos
+-   Eliminación de campos obsoletos y adición de campos faltantes
+-   Sistema 100% sincronizado sin errores de compilación
 
 **✅ SPRINT 4 - Cache con Redis (COMPLETADO) 🚀**
-- Implementación de cache inteligente con Redis en 5 controladores críticos
-- **60-80% mejora en performance** de endpoints de catálogos frecuentes
-- Sistema de tags para invalidación selectiva de cache
-- Cache keys únicas basadas en parámetros de request
-- TTL optimizado: 1h para datos dinámicos, 24h para catálogos estáticos
-- **Bugs RBAC corregidos:**
-  - Usuario::hasPermission() ahora usa cache (hasCachedPermission)
-  - BasePolicy con formato de slugs correcto: 'ver-modulo' vs 'modulo.leer'
-  - PermisoController::grouped() con autorización
-- Tests unitarios: **72/72 (100%)** ✅
-- Ver detalles: [SPRINT_4_CACHE_REDIS_COMPLETADO.md](SPRINT_4_CACHE_REDIS_COMPLETADO.md)
-- Commit: `3c61f5f`
+
+-   Implementación de cache inteligente con Redis en 5 controladores críticos
+-   **60-80% mejora en performance** de endpoints de catálogos frecuentes
+-   Sistema de tags para invalidación selectiva de cache
+-   Cache keys únicas basadas en parámetros de request
+-   TTL optimizado: 1h para datos dinámicos, 24h para catálogos estáticos
+-   **Bugs RBAC corregidos:**
+    -   Usuario::hasPermission() ahora usa cache (hasCachedPermission)
+    -   BasePolicy con formato de slugs correcto: 'ver-modulo' vs 'modulo.leer'
+    -   PermisoController::grouped() con autorización
+-   Tests unitarios: **72/72 (100%)** ✅
+-   Ver detalles: [SPRINT_4_CACHE_REDIS_COMPLETADO.md](SPRINT_4_CACHE_REDIS_COMPLETADO.md)
+-   Commit: `3c61f5f`
 
 **✅ SPRINT 6 - Cache Optimization (COMPLETADO) 🎯**
-- **100% de cobertura** alcanzado: 56/56 controllers con cache
-- Trait `HasCacheableQueries` implementado en todos los controllers API
-- **Batches completados**: 16 (Batch 1-16)
-- **Controllers implementados**: 56 (excluye AuthController)
-- **Mejoras especiales**:
-  - 5 controllers CRUD completos desde skeleton (CodigoActividadEconomica, DeduccionLegal, LogAccesoSistema, MensajeHacienda, PlanillaCcss)
-  - Conversión de cache manual a trait (CabyController)
-  - Cache dual en InventarioController (entradas/salidas)
-- **Performance**:
-  - Catálogos DGT: 95%+ hit rate, 90-95% más rápido
-  - Transacciones: 60-75% hit rate, 55-70% más rápido
-  - RBAC: 90%+ hit rate, 85-92% más rápido
-- **TTL Strategy**: Optimizado desde 10min a 24h según volatilidad
-- **Tags por área**: 58 tags únicos para invalidación granular
-- Tests: **187/187 (100%)** ✅
-- Ver detalles: [SPRINT_6_CACHE_OPTIMIZATION.md](SPRINT_6_CACHE_OPTIMIZATION.md)
-- Commits: 7 batches (84af61e, 02e5dc9, 8c3f57a, dc535c8, 7e4a5c7, bc8a62c, 1ea43f2, 49ba9b6, 8d4de8d, cb6a3c1)
+
+-   **100% de cobertura** alcanzado: 56/56 controllers con cache
+-   Trait `HasCacheableQueries` implementado en todos los controllers API
+-   **Batches completados**: 16 (Batch 1-16)
+-   **Controllers implementados**: 56 (excluye AuthController)
+-   **Mejoras especiales**:
+    -   5 controllers CRUD completos desde skeleton (CodigoActividadEconomica, DeduccionLegal, LogAccesoSistema, MensajeHacienda, PlanillaCcss)
+    -   Conversión de cache manual a trait (CabyController)
+    -   Cache dual en InventarioController (entradas/salidas)
+-   **Performance**:
+    -   Catálogos DGT: 95%+ hit rate, 90-95% más rápido
+    -   Transacciones: 60-75% hit rate, 55-70% más rápido
+    -   RBAC: 90%+ hit rate, 85-92% más rápido
+-   **TTL Strategy**: Optimizado desde 10min a 24h según volatilidad
+-   **Tags por área**: 58 tags únicos para invalidación granular
+-   Tests: **187/187 (100%)** ✅
+-   Ver detalles: [SPRINT_6_CACHE_OPTIMIZATION.md](SPRINT_6_CACHE_OPTIMIZATION.md)
+-   Commits: 7 batches (84af61e, 02e5dc9, 8c3f57a, dc535c8, 7e4a5c7, bc8a62c, 1ea43f2, 49ba9b6, 8d4de8d, cb6a3c1)
 
 **✅ SPRINT 7 - Completitud Controllers y Policies (COMPLETADO) 🎯**
-- **15 Controllers** nuevos implementados (77 total - 100% completitud)
-- **15 Policies** nuevas implementadas (72 total - 100% cobertura RBAC)
-- **10 Funcionalidades Bloqueadas** resueltas (incluye DGT crítico)
-- **8,327 líneas** de código productivo agregadas
-- Cache strategy contextual (5min - 24h TTL)
-- OpenAPI completo en todos los endpoints
-- Controllers críticos: ConsecutivoFe (DGT), NominaEmpleado, CajaChica, Archivo, Auditoría
-- Ver detalles: [SPRINT_7_COMPLETITUD_CONTROLLERS_POLICIES.md](SPRINT_7_COMPLETITUD_CONTROLLERS_POLICIES.md)
+
+-   **15 Controllers** nuevos implementados (77 total - 100% completitud)
+-   **15 Policies** nuevas implementadas (72 total - 100% cobertura RBAC)
+-   **10 Funcionalidades Bloqueadas** resueltas (incluye DGT crítico)
+-   **8,327 líneas** de código productivo agregadas
+-   Cache strategy contextual (5min - 24h TTL)
+-   OpenAPI completo en todos los endpoints
+-   Controllers críticos: ConsecutivoFe (DGT), NominaEmpleado, CajaChica, Archivo, Auditoría
+-   Ver detalles: [SPRINT_7_COMPLETITUD_CONTROLLERS_POLICIES.md](SPRINT_7_COMPLETITUD_CONTROLLERS_POLICIES.md)
 
 **✅ FASE 11 - Facturación Electrónica Costa Rica (COMPLETADA) 🇨🇷**
-- **Sistema completo** de facturación electrónica según normativa DGT v4.3
-- **10 Fases implementadas al 100%**:
-  1. ✅ Configuración (.env + config/hacienda.php)
-  2. ✅ Base de datos (4 tablas: comprobantes, lineas_detalle, certificados, tokens)
-  3. ✅ Servicios base (HaciendaApiClient + OAuth + RateLimiter)
-  4. ✅ Generador de claves numéricas (50 caracteres - validado)
-  5. ✅ Constructor XML v4.3 (facturas, notas crédito/débito, tiquetes)
-  6. ✅ Firma digital XAdES-EPES (certificados .p12)
-  7. ✅ Jobs asíncronos (EnviarComprobante + ConsultarEstado + ProcesarRespuesta)
-  8. ✅ API REST (7 endpoints: CRUD + XML download + reenviar + anular + stats)
-  9. ✅ Tests automatizados (41 tests: 18 unit + 9 unit + 14 feature)
-  10. ✅ Documentación completa (Setup + API Reference + Troubleshooting)
-- **Componentes creados**: 23 archivos (4 modelos, 3 servicios, 3 jobs, 1 controller, 1 request, 3 tests, 3 factories, 5 docs)
-- **Líneas de código**: ~8,500 líneas de código productivo
-- **Integración Hacienda**: OAuth 2.0 + Rate limiting + Retry automático
-- **Ambientes**: Sandbox (ATV) y Producción configurables
-- Ver documentación: [FACTURACION_ELECTRONICA_SETUP.md](FACTURACION_ELECTRONICA_SETUP.md) | [FACTURACION_ELECTRONICA_API.md](FACTURACION_ELECTRONICA_API.md)
+
+-   **Sistema completo** de facturación electrónica según normativa DGT v4.3
+-   **10 Fases implementadas al 100%**:
+    1. ✅ Configuración (.env + config/hacienda.php)
+    2. ✅ Base de datos (4 tablas: comprobantes, lineas_detalle, certificados, tokens)
+    3. ✅ Servicios base (HaciendaApiClient + OAuth + RateLimiter)
+    4. ✅ Generador de claves numéricas (50 caracteres - validado)
+    5. ✅ Constructor XML v4.3 (facturas, notas crédito/débito, tiquetes)
+    6. ✅ Firma digital XAdES-EPES (certificados .p12)
+    7. ✅ Jobs asíncronos (EnviarComprobante + ConsultarEstado + ProcesarRespuesta)
+    8. ✅ API REST (7 endpoints: CRUD + XML download + reenviar + anular + stats)
+    9. ✅ Tests automatizados (41 tests: 18 unit + 9 unit + 14 feature)
+    10. ✅ Documentación completa (Setup + API Reference + Troubleshooting)
+-   **Componentes creados**: 23 archivos (4 modelos, 3 servicios, 3 jobs, 1 controller, 1 request, 3 tests, 3 factories, 5 docs)
+-   **Líneas de código**: ~8,500 líneas de código productivo
+-   **Integración Hacienda**: OAuth 2.0 + Rate limiting + Retry automático
+-   **Ambientes**: Sandbox (ATV) y Producción configurables
+-   Ver documentación: [FACTURACION_ELECTRONICA_SETUP.md](FACTURACION_ELECTRONICA_SETUP.md) | [FACTURACION_ELECTRONICA_API.md](FACTURACION_ELECTRONICA_API.md)
 
 ### 🔑 Credenciales de Prueba
 
@@ -204,112 +216,122 @@ Este usuario tiene acceso completo con **68 permisos** (todos los módulos del s
 Con **casi 30 años de experiencia** en el mercado costarricense, Sistemas Ursol S.A. es una empresa familiar que se distingue por su **ética inquebrantable**, **atención personalizada** y el **"Toque Humano"** en cada proyecto. Fundada y liderada por **Eduardo Alberto Ureña Solano**, quien aporta más de 35 años de experiencia en el sector tecnológico.
 
 **Nuestros Servicios:**
-- ✨ Soluciones Tecnológicas Empresariales
-- 💻 Desarrollo de Software (ERP, CRM, Sistemas a Medida)
-- 🎨 Diseño Web Profesional
-- 🖼️ Diseño Gráfico Corporativo
+
+-   ✨ Soluciones Tecnológicas Empresariales
+-   💻 Desarrollo de Software (ERP, CRM, Sistemas a Medida)
+-   🎨 Diseño Web Profesional
+-   🖼️ Diseño Gráfico Corporativo
 
 ### 🎯 Capacidades del Sistema
 
 Este ERP proporciona gestión integral de:
 
-- **Autenticación y Autorización** (Laravel Sanctum + RBAC con 68 permisos granulares)
-- **Facturación Electrónica** (integración completa con DGT/Hacienda de Costa Rica)
-- **Inventario Multi-Almacén** (control en tiempo real)
-- **Contabilidad** (plan de cuentas, asientos, reportes financieros)
-- **Recursos Humanos y Nómina** (gestión completa de empleados)
-- **Gestión de Transporte** (módulo especializado para empresas de buses)
-- **Multi-Tenancy** (soporte para múltiples empresas en una sola instalación)
+-   **Autenticación y Autorización** (Laravel Sanctum + RBAC con 68 permisos granulares)
+-   **Facturación Electrónica** (integración completa con DGT/Hacienda de Costa Rica)
+-   **Inventario Multi-Almacén** (control en tiempo real)
+-   **Contabilidad** (plan de cuentas, asientos, reportes financieros)
+-   **Recursos Humanos y Nómina** (gestión completa de empleados)
+-   **Gestión de Transporte** (módulo especializado para empresas de buses)
+-   **Multi-Tenancy** (soporte para múltiples empresas en una sola instalación)
 
 El sistema está diseñado con las mejores prácticas de desarrollo, siguiendo los estándares de Laravel y con enfoque en escalabilidad, seguridad y facilidad de mantenimiento.
 
 ## ✨ Características Principales
+
 ### Facturación Electrónica
-- ✅ **Emisión de comprobantes electrónicos** según normativa DGT v4.3
-- ✅ **Generación automática de claves** numéricas de 50 caracteres
-- ✅ **Construcción de XML** v4.3 (facturas, tiquetes, notas crédito/débito)
-- ✅ **Firma digital XAdES-EPES** con certificados .p12
-- ✅ **Integración completa con Hacienda** (OAuth 2.0 + Rate limiting)
-- ✅ **Procesamiento asíncrono** con Laravel Queue (envío + consulta + respuesta)
-- ✅ **7 endpoints REST API** (CRUD + download XML + reenviar + anular + estadísticas)
-- ✅ **Ambientes configurables**: Sandbox (ATV) y Producción
-- ✅ **Recepción de comprobantes** electrónicos de proveedores
-- ✅ **Gestión de consecutivos** de facturación
-- ✅ **Integración con códigos CAByS**
-- ✅ **Soporte completo** para tipos 01 (Factura), 02 (Nota Débito), 03 (Nota Crédito), 04 (Tiquete)
-- 📘 **Guías completas**: [Setup](FACTURACION_ELECTRONICA_SETUP.md) | [API](FACTURACION_ELECTRONICA_API.md)
-- ✅ **Laravel 12** con PHP 8.2+
-- ✅ **MySQL 8.0+** como motor de base de datos
-- ✅ **Arquitectura Multi-Tenant** con Spatie
-- ✅ **Swagger UI** para testing interactivo
+
+-   ✅ **Emisión de comprobantes electrónicos** según normativa DGT v4.3
+-   ✅ **Generación automática de claves** numéricas de 50 caracteres
+-   ✅ **Construcción de XML** v4.3 (facturas, tiquetes, notas crédito/débito)
+-   ✅ **Firma digital XAdES-EPES** con certificados .p12
+-   ✅ **Integración completa con Hacienda** (OAuth 2.0 + Rate limiting)
+-   ✅ **Procesamiento asíncrono** con Laravel Queue (envío + consulta + respuesta)
+-   ✅ **7 endpoints REST API** (CRUD + download XML + reenviar + anular + estadísticas)
+-   ✅ **Ambientes configurables**: Sandbox (ATV) y Producción
+-   ✅ **Recepción de comprobantes** electrónicos de proveedores
+-   ✅ **Gestión de consecutivos** de facturación
+-   ✅ **Integración con códigos CAByS**
+-   ✅ **Soporte completo** para tipos 01 (Factura), 02 (Nota Débito), 03 (Nota Crédito), 04 (Tiquete)
+-   📘 **Guías completas**: [Setup](FACTURACION_ELECTRONICA_SETUP.md) | [API](FACTURACION_ELECTRONICA_API.md)
+-   ✅ **Laravel 12** con PHP 8.2+
+-   ✅ **MySQL 8.0+** como motor de base de datos
+-   ✅ **Arquitectura Multi-Tenant** con Spatie
+-   ✅ **Swagger UI** para testing interactivo
 
 ### Autenticación y Autorización
-- ✅ Laravel Sanctum para autenticación por tokens API
-- ✅ Sistema RBAC (Role-Based Access Control) completo
-- ✅ 68 permisos granulares (17 módulos × 4 acciones: crear, leer, actualizar, eliminar)
-- ✅ 7 roles predefinidos con permisos configurables
-- ✅ Middleware `CheckPermission` para protección de rutas
-- ✅ Métodos helper en modelo Usuario: `hasPermission()`, `hasRole()`, `hasAnyRole()`, etc.
+
+-   ✅ Laravel Sanctum para autenticación por tokens API
+-   ✅ Sistema RBAC (Role-Based Access Control) completo
+-   ✅ 68 permisos granulares (17 módulos × 4 acciones: crear, leer, actualizar, eliminar)
+-   ✅ 7 roles predefinidos con permisos configurables
+-   ✅ Middleware `CheckPermission` para protección de rutas
+-   ✅ Métodos helper en modelo Usuario: `hasPermission()`, `hasRole()`, `hasAnyRole()`, etc.
 
 ### Facturación Electrónica
-- ✅ Emisión de facturas electrónicas según normativa DGT
-- ✅ Recepción y procesamiento de comprobantes electrónicos
-- ✅ Gestión de consecutivos de facturación
-- ✅ Integración con códigos CAByS
-- ✅ Soporte para múltiples tipos de documento (Factura, Tiquete, Nota de Crédito/Débito)
+
+-   ✅ Emisión de facturas electrónicas según normativa DGT
+-   ✅ Recepción y procesamiento de comprobantes electrónicos
+-   ✅ Gestión de consecutivos de facturación
+-   ✅ Integración con códigos CAByS
+-   ✅ Soporte para múltiples tipos de documento (Factura, Tiquete, Nota de Crédito/Débito)
 
 ### Inventario
-- ✅ Control multi-almacén
-- ✅ Seguimiento de stock en tiempo real
-- ✅ Gestión de entradas y salidas de inventario
-- ✅ Transferencias entre almacenes
-- ✅ Kardex detallado por producto
-- ✅ Categorización y clasificación de productos
+
+-   ✅ Control multi-almacén
+-   ✅ Seguimiento de stock en tiempo real
+-   ✅ Gestión de entradas y salidas de inventario
+-   ✅ Transferencias entre almacenes
+-   ✅ Kardex detallado por producto
+-   ✅ Categorización y clasificación de productos
 
 ### Contabilidad
-- ✅ Plan de cuentas configurable
-- ✅ Asientos contables automáticos y manuales
-- ✅ Cuentas por cobrar y por pagar
-- ✅ Caja chica
-- ✅ Reportes financieros
+
+-   ✅ Plan de cuentas configurable
+-   ✅ Asientos contables automáticos y manuales
+-   ✅ Cuentas por cobrar y por pagar
+-   ✅ Caja chica
+-   ✅ Reportes financieros
 
 ### Recursos Humanos
-- ✅ Gestión de empleados
-- ✅ Cálculo de nómina
-- ✅ Deducciones y bonificaciones
-- ✅ Periodos de pago configurables
+
+-   ✅ Gestión de empleados
+-   ✅ Cálculo de nómina
+-   ✅ Deducciones y bonificaciones
+-   ✅ Periodos de pago configurables
 
 ### Transporte
-- ✅ Gestión de rutas y horarios
-- ✅ Control de flota de buses
-- ✅ Asignación de unidades
-- ✅ Ventas de boletos
+
+-   ✅ Gestión de rutas y horarios
+-   ✅ Control de flota de buses
+-   ✅ Asignación de unidades
+-   ✅ Ventas de boletos
 
 ### Multi-Tenancy
-- ✅ Soporte para múltiples empresas
-- ✅ Aislamiento completo de datos
-- ✅ Configuraciones independientes por tenant
-- 📘 Guía y patrón de uso del contexto de empresa: ver `MULTI_TENANCY.md`
+
+-   ✅ Soporte para múltiples empresas
+-   ✅ Aislamiento completo de datos
+-   ✅ Configuraciones independientes por tenant
+-   📘 Guía y patrón de uso del contexto de empresa: ver `MULTI_TENANCY.md`
 
 ## 💻 Requisitos del Sistema
 
-- **PHP**: >= 8.2
-- **Composer**: >= 2.5
-- **Node.js**: >= 18.x
-- **NPM**: >= 9.x
-- **MySQL**: >= 8.0 o **MariaDB**: >= 10.6
-- **Redis** (opcional, recomendado para producción)
-- **Extensiones PHP requeridas**:
-  - OpenSSL
-  - PDO
-  - Mbstring
-  - Tokenizer
-  - XML
-  - Ctype
-  - JSON
-  - BCMath
-  - Fileinfo
-  - GD o Imagick (para procesamiento de imágenes)
+-   **PHP**: >= 8.2
+-   **Composer**: >= 2.5
+-   **Node.js**: >= 18.x
+-   **NPM**: >= 9.x
+-   **MySQL**: >= 8.0 o **MariaDB**: >= 10.6
+-   **Redis** (opcional, recomendado para producción)
+-   **Extensiones PHP requeridas**:
+    -   OpenSSL
+    -   PDO
+    -   Mbstring
+    -   Tokenizer
+    -   XML
+    -   Ctype
+    -   JSON
+    -   BCMath
+    -   Fileinfo
+    -   GD o Imagick (para procesamiento de imágenes)
 
 ## 🔧 Instalación
 
@@ -336,14 +358,15 @@ chmod +x docker-start.sh
 ```
 
 El script automáticamente:
-- ✅ Verifica Docker y Docker Compose
-- ✅ Construye contenedores optimizados
-- ✅ Crea archivo .env
-- ✅ Instala dependencias de Composer
-- ✅ Genera APP_KEY
-- ✅ Ejecuta migraciones y seeders
-- ✅ Genera documentación Swagger
-- ✅ Configura permisos
+
+-   ✅ Verifica Docker y Docker Compose
+-   ✅ Construye contenedores optimizados
+-   ✅ Crea archivo .env
+-   ✅ Instala dependencias de Composer
+-   ✅ Genera APP_KEY
+-   ✅ Ejecuta migraciones y seeders
+-   ✅ Genera documentación Swagger
+-   ✅ Configura permisos
 
 #### Usando Makefile
 
@@ -365,12 +388,12 @@ make swagger         # Regenerar Swagger
 
 #### Servicios Disponibles
 
-| Servicio | URL | Credenciales |
-|----------|-----|--------------|
-| API | http://localhost:8000 | - |
-| Swagger | http://localhost:8000/api/documentation | - |
-| PHPMyAdmin | http://localhost:8080 | ursol_user / ursol_password |
-| Mailhog | http://localhost:8025 | - |
+| Servicio   | URL                                     | Credenciales                |
+| ---------- | --------------------------------------- | --------------------------- |
+| API        | http://localhost:8000                   | -                           |
+| Swagger    | http://localhost:8000/api/documentation | -                           |
+| PHPMyAdmin | http://localhost:8080                   | ursol_user / ursol_password |
+| Mailhog    | http://localhost:8025                   | -                           |
 
 **📖 Guía completa:** [DOCKER_GUIDE.md](DOCKER_GUIDE.md)
 
@@ -418,9 +441,9 @@ Edita el archivo `.env` con tus credenciales:
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=####
-DB_USERNAME=####
-DB_PASSWORD=####
+DB_DATABASE=api_db
+DB_USERNAME=ursol_user
+DB_PASSWORD=ursol_password
 ```
 
 #### 5. Ejecutar Migraciones y Seeders
@@ -441,15 +464,16 @@ php artisan migrate:fresh --seed
 ```
 
 **Seeders incluidos:**
-- `RegimenesTributariosSeeder` - 2 regímenes tributarios
-- `FormasPagoSeeder` - 6 formas de pago
-- `TiposCuentasSeeder` - 8 tipos de cuentas contables
-- `UnidadesMedidaSeeder` - 11 unidades de medida
-- `PermisosSeeder` - 68 permisos del sistema (17 módulos)
-- `RolesSeeder` - 7 roles (Administrador, Gerente, Contador, etc.)
-- `CargosSeeder` - 7 cargos de empleados
-- `EmpresaDemoSeeder` - Empresa demo "Sistemas Ursol S.A." + sucursal
-- `UsuarioAdminSeeder` - Usuario admin con todos los permisos
+
+-   `RegimenesTributariosSeeder` - 2 regímenes tributarios
+-   `FormasPagoSeeder` - 6 formas de pago
+-   `TiposCuentasSeeder` - 8 tipos de cuentas contables
+-   `UnidadesMedidaSeeder` - 11 unidades de medida
+-   `PermisosSeeder` - 68 permisos del sistema (17 módulos)
+-   `RolesSeeder` - 7 roles (Administrador, Gerente, Contador, etc.)
+-   `CargosSeeder` - 7 cargos de empleados
+-   `EmpresaDemoSeeder` - Empresa demo "Sistemas Ursol S.A." + sucursal
+-   `UsuarioAdminSeeder` - Usuario admin con todos los permisos
 
 **Total de registros:** 112 (96 datos maestros + 16 datos demo/test)
 
@@ -529,9 +553,9 @@ El sistema utiliza el paquete `spatie/laravel-multitenancy`. La configuración s
 
 #### Identificación del tenant
 
-- **Header obligatorio**: `X-Empresa-Id` (ID numérico de la empresa) cuando se consume desde `localhost` u orígenes sin subdominio dedicado.
-- **Subdominios**: también puedes apuntar a `https://{subdominio}.api.ursol.com`; el `tenant_finder` detectará automáticamente la empresa usando el parámetro `TENANT_BASE_DOMAIN` (definido en `.env`).
-- Ambos métodos validan que el usuario autenticado pertenezca al mismo `empresa_id` para evitar accesos cruzados.
+-   **Header obligatorio**: `X-Empresa-Id` (ID numérico de la empresa) cuando se consume desde `localhost` u orígenes sin subdominio dedicado.
+-   **Subdominios**: también puedes apuntar a `https://{subdominio}.api.ursol.com`; el `tenant_finder` detectará automáticamente la empresa usando el parámetro `TENANT_BASE_DOMAIN` (definido en `.env`).
+-   Ambos métodos validan que el usuario autenticado pertenezca al mismo `empresa_id` para evitar accesos cruzados.
 
 ### Configuración de Base de Datos
 
@@ -582,75 +606,83 @@ ursol-cast-api/
 
 El proyecto sigue el patrón **MVC** (Model-View-Controller) con algunas extensiones:
 
-- **Models**: Lógica de negocio y relaciones de datos
-- **Controllers**: Manejo de requests HTTP
-- **Traits**: Comportamiento compartido (ej: `BelongsToTenant`)
-- **Service Providers**: Configuración de servicios
+-   **Models**: Lógica de negocio y relaciones de datos
+-   **Controllers**: Manejo de requests HTTP
+-   **Traits**: Comportamiento compartido (ej: `BelongsToTenant`)
+-   **Service Providers**: Configuración de servicios
 
 ### Base de Datos
 
 #### Arquitectura Multi-Tenant
 
-- **Base de datos central (landlord)**: Almacena información de empresas/tenants
-- **Bases de datos por tenant**: Cada empresa tiene su propia base de datos
+-   **Base de datos central (landlord)**: Almacena información de empresas/tenants
+-   **Bases de datos por tenant**: Cada empresa tiene su propia base de datos
 
 #### Convenciones de Nomenclatura
 
-- **Tablas**: plural, snake_case (ej: `ordenes_compra`)
-- **Columnas de timestamps**: `creado_en`, `actualizado_en`
-- **Soft deletes**: columna `eliminado` (boolean)
-- **Estado activo**: columna `activo` (boolean)
+-   **Tablas**: plural, snake_case (ej: `ordenes_compra`)
+-   **Columnas de timestamps**: `creado_en`, `actualizado_en`
+-   **Soft deletes**: columna `eliminado` (boolean)
+-   **Estado activo**: columna `activo` (boolean)
 
 ## 📦 Módulos del Sistema
 
 ### 1. Gestión de Empresas
-- **Modelos**: [`Empresa`](app/Models/Empresa.php), [`Sucursal`](app/Models/Sucursal.php), [`Configuracion`](app/Models/Configuracion.php)
-- **Funcionalidades**: Registro de empresas, gestión de sucursales, configuraciones personalizadas
+
+-   **Modelos**: [`Empresa`](app/Models/Empresa.php), [`Sucursal`](app/Models/Sucursal.php), [`Configuracion`](app/Models/Configuracion.php)
+-   **Funcionalidades**: Registro de empresas, gestión de sucursales, configuraciones personalizadas
 
 ### 2. Inventario
-- **Modelos**: [`Producto`](app/Models/Producto.php), [`Almacen`](app/Models/Almacen.php), [`EntradaInventario`](app/Models/EntradaInventario.php), [`SalidaInventario`](app/Models/SalidaInventario.php)
-- **Funcionalidades**: Control de stock, movimientos de inventario, categorización
+
+-   **Modelos**: [`Producto`](app/Models/Producto.php), [`Almacen`](app/Models/Almacen.php), [`EntradaInventario`](app/Models/EntradaInventario.php), [`SalidaInventario`](app/Models/SalidaInventario.php)
+-   **Funcionalidades**: Control de stock, movimientos de inventario, categorización
 
 ### 3. Ventas
-- **Modelos**: [`Venta`](app/Models/Venta.php), [`Cliente`](app/Models/Cliente.php), [`CuentaPorCobrar`](app/Models/CuentaPorCobrar.php)
-- **Funcionalidades**: Registro de ventas, gestión de clientes, cuentas por cobrar
+
+-   **Modelos**: [`Venta`](app/Models/Venta.php), [`Cliente`](app/Models/Cliente.php), [`CuentaPorCobrar`](app/Models/CuentaPorCobrar.php)
+-   **Funcionalidades**: Registro de ventas, gestión de clientes, cuentas por cobrar
 
 ### 4. Compras
-- **Modelos**: [`OrdenCompra`](app/Models/OrdenCompra.php), [`CuentaPorPagar`](app/Models/CuentaPorPagar.php), [`ComprobanteRecibidoElectronico`](app/Models/ComprobanteRecibidoElectronico.php)
-- **Funcionalidades**: Órdenes de compra, cuentas por pagar, recepción de comprobantes electrónicos
+
+-   **Modelos**: [`OrdenCompra`](app/Models/OrdenCompra.php), [`CuentaPorPagar`](app/Models/CuentaPorPagar.php), [`ComprobanteRecibidoElectronico`](app/Models/ComprobanteRecibidoElectronico.php)
+-   **Funcionalidades**: Órdenes de compra, cuentas por pagar, recepción de comprobantes electrónicos
 
 ### 5. Contabilidad
-- **Modelos**: [`CuentaContable`](app/Models/CuentaContable.php), [`AsientoContable`](app/Models/AsientoContable.php), [`CajaChica`](app/Models/CajaChica.php)
-- **Funcionalidades**: Plan de cuentas, asientos contables, caja chica
+
+-   **Modelos**: [`CuentaContable`](app/Models/CuentaContable.php), [`AsientoContable`](app/Models/AsientoContable.php), [`CajaChica`](app/Models/CajaChica.php)
+-   **Funcionalidades**: Plan de cuentas, asientos contables, caja chica
 
 ### 8. Facturación Electrónica
-- **Modelos**: [`ComprobanteElectronicoFe`](app/Models/ComprobanteElectronicoFe.php), [`FeLineaDetalle`](app/Models/FeLineaDetalle.php), [`FeCertificadoDigital`](app/Models/FeCertificadoDigital.php), [`FeOAuthToken`](app/Models/FeOAuthToken.php), [`ConsecutivoFe`](app/Models/ConsecutivoFe.php), [`Cabys`](app/Models/Cabys.php)
-- **Servicios**: [`HaciendaApiClient`](app/Services/Hacienda/HaciendaApiClient.php), [`ClaveNumericaGenerator`](app/Services/Hacienda/ClaveNumericaGenerator.php), [`XmlComprobanteBuilder`](app/Services/Hacienda/XmlComprobanteBuilder.php), [`FirmaDigitalService`](app/Services/Hacienda/FirmaDigitalService.php), [`OAuthTokenManager`](app/Services/Hacienda/OAuthTokenManager.php), [`RateLimiter`](app/Services/Hacienda/RateLimiter.php)
-- **Jobs**: [`EnviarComprobanteJob`](app/Jobs/Hacienda/EnviarComprobanteJob.php), [`ConsultarEstadoJob`](app/Jobs/Hacienda/ConsultarEstadoJob.php), [`ProcesarRespuestaJob`](app/Jobs/Hacienda/ProcesarRespuestaJob.php)
-- **Controller**: [`ComprobanteElectronicoController`](app/Http/Controllers/ComprobanteElectronicoController.php) (7 endpoints REST)
-- **Funcionalidades**: 
-  - Emisión de comprobantes electrónicos v4.3 (facturas, tiquetes, notas)
-  - Generación automática de claves numéricas de 50 caracteres
-  - Construcción y validación de XML según XSD oficial
-  - Firma digital XAdES-EPES con certificados .p12
-  - Envío asíncrono a API de Hacienda (OAuth 2.0)
-  - Consulta automática de estado (polling cada 30s)
-  - Procesamiento de respuestas (aceptado/rechazado)
-  - Descarga de XMLs (original, firmado, respuesta)
-  - Reenvío de comprobantes en error
-  - Anulación con notas de crédito
-  - Estadísticas y reportes
-  - Gestión de consecutivos
-  - Integración con códigos CAByS
-  - Soporte para ambientes Sandbox (ATV) y Producción
+
+-   **Modelos**: [`ComprobanteElectronicoFe`](app/Models/ComprobanteElectronicoFe.php), [`FeLineaDetalle`](app/Models/FeLineaDetalle.php), [`FeCertificadoDigital`](app/Models/FeCertificadoDigital.php), [`FeOAuthToken`](app/Models/FeOAuthToken.php), [`ConsecutivoFe`](app/Models/ConsecutivoFe.php), [`Cabys`](app/Models/Cabys.php)
+-   **Servicios**: [`HaciendaApiClient`](app/Services/Hacienda/HaciendaApiClient.php), [`ClaveNumericaGenerator`](app/Services/Hacienda/ClaveNumericaGenerator.php), [`XmlComprobanteBuilder`](app/Services/Hacienda/XmlComprobanteBuilder.php), [`FirmaDigitalService`](app/Services/Hacienda/FirmaDigitalService.php), [`OAuthTokenManager`](app/Services/Hacienda/OAuthTokenManager.php), [`RateLimiter`](app/Services/Hacienda/RateLimiter.php)
+-   **Jobs**: [`EnviarComprobanteJob`](app/Jobs/Hacienda/EnviarComprobanteJob.php), [`ConsultarEstadoJob`](app/Jobs/Hacienda/ConsultarEstadoJob.php), [`ProcesarRespuestaJob`](app/Jobs/Hacienda/ProcesarRespuestaJob.php)
+-   **Controller**: [`ComprobanteElectronicoController`](app/Http/Controllers/ComprobanteElectronicoController.php) (7 endpoints REST)
+-   **Funcionalidades**:
+    -   Emisión de comprobantes electrónicos v4.3 (facturas, tiquetes, notas)
+    -   Generación automática de claves numéricas de 50 caracteres
+    -   Construcción y validación de XML según XSD oficial
+    -   Firma digital XAdES-EPES con certificados .p12
+    -   Envío asíncrono a API de Hacienda (OAuth 2.0)
+    -   Consulta automática de estado (polling cada 30s)
+    -   Procesamiento de respuestas (aceptado/rechazado)
+    -   Descarga de XMLs (original, firmado, respuesta)
+    -   Reenvío de comprobantes en error
+    -   Anulación con notas de crédito
+    -   Estadísticas y reportes
+    -   Gestión de consecutivos
+    -   Integración con códigos CAByS
+    -   Soporte para ambientes Sandbox (ATV) y Producción
 
 ### 7. Transporte
-- **Modelos**: [`BusUnidad`](app/Models/BusUnidad.php), [`HorarioRuta`](app/Models/HorarioRuta.php)
-- **Funcionalidades**: Gestión de flota, rutas y horarios
+
+-   **Modelos**: [`BusUnidad`](app/Models/BusUnidad.php), [`HorarioRuta`](app/Models/HorarioRuta.php)
+-   **Funcionalidades**: Gestión de flota, rutas y horarios
 
 ### 8. Facturación Electrónica
-- **Modelos**: [`ConsecutivoFe`](app/Models/ConsecutivoFe.php), [`Cabys`](app/Models/Cabys.php)
-- **Funcionalidades**: Emisión de facturas electrónicas, gestión de consecutivos, códigos CAByS
+
+-   **Modelos**: [`ConsecutivoFe`](app/Models/ConsecutivoFe.php), [`Cabys`](app/Models/Cabys.php)
+-   **Funcionalidades**: Emisión de facturas electrónicas, gestión de consecutivos, códigos CAByS
 
 ## 🔌 API Reference
 
@@ -661,6 +693,7 @@ El sistema utiliza **Laravel Sanctum** para autenticación de API.
 **Endpoints de Autenticación:**
 
 #### Login
+
 ```http
 POST /api/login
 Content-Type: application/json
@@ -672,6 +705,7 @@ Content-Type: application/json
 ```
 
 **Respuesta:**
+
 ```json
 {
   "user": {
@@ -691,12 +725,14 @@ Content-Type: application/json
 ```
 
 #### Logout
+
 ```http
 POST /api/logout
 Authorization: Bearer {token}
 ```
 
 #### Usuario Actual
+
 ```http
 GET /api/me
 Authorization: Bearer {token}
@@ -733,10 +769,11 @@ Route::post('/ventas', [VentaController::class, 'store'])
 ```
 
 **Permisos disponibles (68 total):**
-- `{módulo}.crear` - Crear registros
-- `{módulo}.leer` - Ver/listar registros  
-- `{módulo}.actualizar` - Modificar registros
-- `{módulo}.eliminar` - Eliminar registros
+
+-   `{módulo}.crear` - Crear registros
+-   `{módulo}.leer` - Ver/listar registros
+-   `{módulo}.actualizar` - Modificar registros
+-   `{módulo}.eliminar` - Eliminar registros
 
 **Módulos:** empresas, sucursales, almacenes, productos, categorias_producto, clientes, proveedores, ventas, compras, inventario, cuentas_contables, asientos_contables, empleados, nomina, rutas, buses, facturacion_electronica
 
@@ -749,6 +786,7 @@ Por seguridad, el endpoint `/register` está **comentado**. Los usuarios se crea
 Ver documentación completa en [API_DOCUMENTATION.md](API_DOCUMENTATION.md)
 
 #### Almacenes
+
 ```http
 GET    /api/almacenes           # Listar almacenes
 POST   /api/almacenes           # Crear almacén
@@ -758,6 +796,7 @@ DELETE /api/almacenes/{id}      # Eliminar almacén
 ```
 
 #### Productos
+
 ```http
 GET    /api/productos           # Listar productos
 POST   /api/productos           # Crear producto
@@ -767,6 +806,7 @@ DELETE /api/productos/{id}      # Eliminar producto
 ```
 
 #### Ventas
+
 ```http
 GET    /api/ventas              # Listar ventas
 POST   /api/ventas              # Crear venta
@@ -776,6 +816,7 @@ DELETE /api/ventas/{id}         # Eliminar venta
 ```
 
 #### Clientes
+
 ```http
 GET    /api/clientes            # Listar clientes
 POST   /api/clientes            # Crear cliente
@@ -820,7 +861,7 @@ php artisan test
 
 # Tests específicos por clase
 php artisan test --filter AuthTest          # Tests de autenticación
-php artisan test --filter ProductoTest      # Tests de productos  
+php artisan test --filter ProductoTest      # Tests de productos
 php artisan test --filter PermissionTest    # Tests de permisos RBAC
 php artisan test --filter RoleTest          # Tests unitarios de Rol
 php artisan test --filter UsuarioTest       # Tests unitarios de Usuario
@@ -849,11 +890,12 @@ tests/
 ```
 
 **Estado Actual:**
-- ✅ **186/218 tests passing (85.3%)**
-- ⚠️ **32 tests failing:**
-  - 19 con errores 403 (permisos pendientes de corregir)
-  - 11 con errores 500 (controllers/resources)
-  - 2 con assertion failures (lógica de update)
+
+-   ✅ **186/218 tests passing (85.3%)**
+-   ⚠️ **32 tests failing:**
+    -   19 con errores 403 (permisos pendientes de corregir)
+    -   11 con errores 500 (controllers/resources)
+    -   2 con assertion failures (lógica de update)
 
 ### Documentación Completa
 
@@ -874,25 +916,27 @@ http://localhost:8000/api/documentation
 
 ### Características
 
-- ✅ **Documentación interactiva**: Prueba endpoints directamente desde el navegador
-- ✅ **Autenticación Bearer**: Configura tu token una vez y úsalo en todas las peticiones
-- ✅ **Schemas completos**: Modelos de datos documentados (Usuario, Producto, Rol, Permiso, etc.)
-- ✅ **Ejemplos de request/response**: Ve datos de ejemplo para cada endpoint
-- ✅ **Filtros y parámetros**: Documenta todos los query params disponibles
+-   ✅ **Documentación interactiva**: Prueba endpoints directamente desde el navegador
+-   ✅ **Autenticación Bearer**: Configura tu token una vez y úsalo en todas las peticiones
+-   ✅ **Schemas completos**: Modelos de datos documentados (Usuario, Producto, Rol, Permiso, etc.)
+-   ✅ **Ejemplos de request/response**: Ve datos de ejemplo para cada endpoint
+-   ✅ **Filtros y parámetros**: Documenta todos los query params disponibles
 
 ### Endpoints Documentados
 
 #### Autenticación
-- `POST /api/login` - Iniciar sesión y obtener token
-- `POST /api/logout` - Cerrar sesión
-- `GET /api/user` - Obtener usuario autenticado con permisos
+
+-   `POST /api/login` - Iniciar sesión y obtener token
+-   `POST /api/logout` - Cerrar sesión
+-   `GET /api/user` - Obtener usuario autenticado con permisos
 
 #### Productos
-- `GET /api/productos` - Listar productos (filtros, búsqueda, paginación)
-- `POST /api/productos` - Crear producto
-- `GET /api/productos/{id}` - Obtener producto
-- `PUT /api/productos/{id}` - Actualizar producto
-- `DELETE /api/productos/{id}` - Eliminar producto (soft delete)
+
+-   `GET /api/productos` - Listar productos (filtros, búsqueda, paginación)
+-   `POST /api/productos` - Crear producto
+-   `GET /api/productos/{id}` - Obtener producto
+-   `PUT /api/productos/{id}` - Actualizar producto
+-   `DELETE /api/productos/{id}` - Eliminar producto (soft delete)
 
 ### Usar Autenticación en Swagger
 
@@ -937,6 +981,7 @@ make optimize
 #### Preparación para Producción
 
 1. **Optimizar Configuración**
+
 ```bash
 php artisan config:cache
 php artisan route:cache
@@ -944,11 +989,13 @@ php artisan view:cache
 ```
 
 2. **Compilar Assets**
+
 ```bash
 npm run build
 ```
 
 3. **Configurar Variables de Entorno**
+
 ```env
 APP_ENV=production
 APP_DEBUG=false
@@ -961,6 +1008,7 @@ QUEUE_CONNECTION=redis
 ```
 
 4. **Configurar Permisos**
+
 ```bash
 chmod -R 775 storage bootstrap/cache
 chown -R www-data:www-data storage bootstrap/cache
@@ -1038,10 +1086,10 @@ Las contribuciones son bienvenidas. Por favor:
 
 ### Estándares de Código
 
-- Seguir [PSR-12](https://www.php-fig.org/psr/psr-12/) para código PHP
-- Usar nombres descriptivos en español para variables y métodos
-- Documentar funciones y clases con PHPDoc
-- Escribir tests para nuevas funcionalidades
+-   Seguir [PSR-12](https://www.php-fig.org/psr/psr-12/) para código PHP
+-   Usar nombres descriptivos en español para variables y métodos
+-   Documentar funciones y clases con PHPDoc
+-   Escribir tests para nuevas funcionalidades
 
 ## 📄 Licencia
 
@@ -1051,21 +1099,21 @@ Este proyecto está licenciado bajo la Licencia MIT. Ver archivo [LICENSE](LICEN
 
 Para soporte técnico, consultas y asistencia:
 
-- **📧 Email Corporativo**: [sistemas@ursol.com](mailto:sistemas@ursol.com)
-- **📧 Email Técnico/Desarrollo**: [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com)
-- **💬 WhatsApp**: [+506 8868-7765](https://wa.me/50688687765)
-- **🌐 Sitio Web**: [ursol.com](https://ursol.com) | [ursol.net](https://ursol.net)
-- **📚 Repositorio Oficial**: [Ursol Reposit for Developers](https://sites.google.com/view/repdevursol/home/repositorio) - Plataforma de desarrollo, distribución y documentación
-- **🐙 GitHub Organization**: [SistemasUrsol](https://github.com/orgs/SistemasUrsol)
-- **👨‍💻 Desarrollador Principal**: [Jeremy Arias Solano](https://github.com/jeremy-sud)
-- **🐛 Issues**: [GitHub Issues](https://github.com/SistemasUrsol/Ursol-CAST-API/issues)
+-   **📧 Email Corporativo**: [sistemas@ursol.com](mailto:sistemas@ursol.com)
+-   **📧 Email Técnico/Desarrollo**: [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com)
+-   **💬 WhatsApp**: [+506 8868-7765](https://wa.me/50688687765)
+-   **🌐 Sitio Web**: [ursol.com](https://ursol.com) | [ursol.net](https://ursol.net)
+-   **📚 Repositorio Oficial**: [Ursol Reposit for Developers](https://sites.google.com/view/repdevursol/home/repositorio) - Plataforma de desarrollo, distribución y documentación
+-   **🐙 GitHub Organization**: [SistemasUrsol](https://github.com/orgs/SistemasUrsol)
+-   **👨‍💻 Desarrollador Principal**: [Jeremy Arias Solano](https://github.com/jeremy-sud)
+-   **🐛 Issues**: [GitHub Issues](https://github.com/SistemasUrsol/Ursol-CAST-API/issues)
 
 ## 🙏 Agradecimientos
 
-- [Laravel Framework](https://laravel.com) - El framework PHP más elegante
-- [Spatie Laravel Multitenancy](https://github.com/spatie/laravel-multitenancy) - Solución robusta de multi-tenancy
-- Comunidad de desarrollo Laravel Costa Rica
-- Nuestros clientes que confían en Sistemas Ursol S.A.
+-   [Laravel Framework](https://laravel.com) - El framework PHP más elegante
+-   [Spatie Laravel Multitenancy](https://github.com/spatie/laravel-multitenancy) - Solución robusta de multi-tenancy
+-   Comunidad de desarrollo Laravel Costa Rica
+-   Nuestros clientes que confían en Sistemas Ursol S.A.
 
 ---
 
