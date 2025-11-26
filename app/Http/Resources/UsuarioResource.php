@@ -40,7 +40,7 @@ class UsuarioResource extends JsonResource
                             return $rol->permisos->map(function ($permiso) {
                                 return [
                                     'id' => $permiso->id,
-                                    'codigo_unico' => $permiso->codigo_unico,
+                                    'slug' => $permiso->slug,
                                     'nombre' => $permiso->nombre,
                                     'modulo' => $permiso->modulo
                                 ];

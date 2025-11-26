@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use OpenApi\Attributes as OA;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\UsuarioResource;
 use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
@@ -103,7 +103,7 @@ class AuthController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Login exitoso',
-            'user' => new UserResource($usuario),
+            'user' => new UsuarioResource($usuario),
             'token' => $token,
             'permissions' => $usuario->getAllPermissions(),
         ]);
@@ -192,8 +192,8 @@ class AuthController extends Controller
             )
         ]
     )]
-    public function user(Request $request): UserResource
+    public function user(Request $request): UsuarioResource
     {
-        return new UserResource($request->user());
+        return new UsuarioResource($request->user());
     }
 }
