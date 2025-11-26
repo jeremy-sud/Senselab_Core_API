@@ -18,7 +18,8 @@ class InventarioProductoController extends Controller
         // Multi-tenancy: uso centralizado del trait
         $empresaId = $this->getEmpresaId();
         
-        $query = InventarioProducto::where('eliminado', 0)
+        $query = InventarioProducto::with(['almacen', 'producto'])
+            ->where('eliminado', 0)
             ->whereHas('almacen', function ($q) use ($empresaId) {
                 $q->where('empresa_id', $empresaId);
             });
