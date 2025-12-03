@@ -19,6 +19,7 @@ class EmpresaFactory extends Factory
             'num_identificacion_dgt' => $this->faker->unique()->numerify('##########'),
             'tipo_identificacion' => '02', // Cédula Jurídica
             'actividad_economica_principal' => $this->faker->numerify('######'),
+            'proveedor_sistemas' => 'SISTEMA ERP', // Nuevo en v4.4 - Identificación del proveedor del sistema
             'direccion' => $this->faker->address(),
             'provincia' => (string) $this->faker->numberBetween(1, 7),
             'canton' => (string) $this->faker->numberBetween(1, 20),
