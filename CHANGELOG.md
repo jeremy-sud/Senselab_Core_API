@@ -5,6 +5,72 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.5.0] - 2025-12-02
+
+### ✨ Agregado - Facturación Electrónica v4.4 Hacienda CR
+
+**Actualización completa a especificación v4.4 del Ministerio de Hacienda**
+
+#### Firma Digital XAdES-EPES
+- `XadesEpesSigner` - Nueva clase para firma XAdES-EPES completa
+  - SignaturePolicyIdentifier con URL y hash de política v4.4
+  - SigningCertificate con digest SHA-256
+  - SignedProperties con timestamp y claims
+  - Algoritmos RSA-SHA256 y C14N exclusivo
+- Tests unitarios `XadesEpesSignerTest` (6 tests)
+
+#### XML Comprobantes v4.4
+- Namespace actualizado a v4.4 (ResolucionDGT-R-000-2024)
+- Campo `BaseImponible` obligatorio cuando hay impuesto
+- Campo `ImpuestoNeto` en líneas de detalle
+- `MedioPago` movido a `ResumenFactura` (antes estaba en nivel principal)
+- `CodigoActividadEmisor` renombrado según nueva especificación
+- `ProveedorSistemas` - Campo nuevo obligatorio
+
+#### Base de Datos
+- Migración `add_v44_fields_to_fe_tables`:
+  - `codigo_cabys` en `fe_lineas_detalle`
+  - `impuesto_neto` en `fe_lineas_detalle`
+- Modelo `FeLineaDetalle` actualizado con nuevos campos
+
+#### Configuración
+- Variables de entorno v4.4 en `.env.example`:
+  - `HACIENDA_PROVEEDOR_SISTEMAS`
+  - `HACIENDA_POLICY_URL`
+  - `HACIENDA_POLICY_HASH`
+
+### 🔧 Mejorado - Calidad de Código (SonarQube)
+
+#### Estilo de Código
+- Eliminados trailing whitespaces en **79 controladores**
+- Agregado newline al final de todos los archivos PHP
+- Import `OpenApi\Attributes as OA` agregado a `MovimientoBancarioController`
+
+#### Refactoring
+- `ApiConstants.php` creado con constantes comunes para mensajes API
+- Catch blocks simplificados en `OrdenCompraController`
+- Método `destroy()` reducido de 4 a 2 returns
+
+### 🐛 Corregido
+- `EtiquetaFactory.php` - Cambiado `\Str::slug` a `Str::slug` (import ya existía)
+- `FacturacionElectronicaE2ETest.php` - Corregidos namespaces:
+  - `App\Services\Hacienda\XmlComprobanteBuilder` → `App\Services\Hacienda\Xml\XmlComprobanteBuilder`
+  - `App\Services\Hacienda\FirmaDigitalService` → `App\Services\Hacienda\Xml\FirmaDigitalService`
+
+### 📝 Documentación
+- README.md actualizado con estadísticas diciembre 2025
+- CHANGELOG.md actualizado con v1.5.0
+
+### 📊 Estadísticas Proyecto
+- **74 Controladores API** (100% completitud)
+- **80 Policies RBAC** (100% cobertura)
+- **82 Modelos Eloquent**
+- **91 Migraciones** de base de datos
+- **78 Resources** para respuestas API
+- **36 Archivos de Tests**
+
+---
+
 ## [1.4.0] - 2025-11-26
 
 ### ✨ Agregado - Suite de Tests Completa (339 tests - 100%)
@@ -14,7 +80,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 #### Tests de Helpers (45 tests nuevos)
 - `StringHelpersTest` (15 tests) - Tests de Str helper de Laravel
   - slug, upper, lower, uuid, limit, starts/ends, snake/camel, etc.
-- `ArrayHelpersTest` (15 tests) - Tests de Arr helper de Laravel  
+- `ArrayHelpersTest` (15 tests) - Tests de Arr helper de Laravel
   - get, exists, only, except, flatten, prepend, first, last, etc.
 - `RateLimiterTest` (10 tests) - Tests de RateLimiter service
   - Límites de requests, esperas, contadores, reseteo
