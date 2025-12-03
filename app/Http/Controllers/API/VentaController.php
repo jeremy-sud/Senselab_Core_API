@@ -296,67 +296,18 @@ class VentaController extends Controller
 
             $venta = Venta::create($ventaData);
 
-            $montoSubtotal = 0;
-            $montoImpuestos = 0;
-            $montoDescuentos = 0;
-
-            foreach ($detalles as $index => $detalle) {
-                $productoId = (int) $detalle['producto_id'];
-                $producto = $productos->get($productoId);
-
-                $cantidad = (float) $detalle['cantidad'];
-                $precioUnitario = (float) $detalle['precio_unitario'];
-                $montoDescuento = (float) ($detalle['descuento'] ?? 0);
-                $tasaImpuesto = (float) ($detalle['porcentaje_impuesto'] ?? 0);
-
-                $subtotal = $cantidad * $precioUnitario;
-                $subtotalConDescuento = max(0, $subtotal - $montoDescuento);
-                $impuesto = $subtotalConDescuento * ($tasaImpuesto / 100);
-                $totalLinea = $subtotalConDescuento + $impuesto;
-                $porcentajeDescuento = $subtotal > 0 ? ($montoDescuento / $subtotal) * 100 : 0;
-
-                $montoSubtotal += $subtotal;
-                $montoDescuentos += $montoDescuento;
-                $montoImpuestos += $impuesto;
-
-                DetalleVenta::create([
-                    'venta_id' => $venta->id,
-                    'producto_id' => $producto->id,
-                    'numero_linea' => $index + 1,
-                    'cantidad' => $cantidad,
-                    'precio_unitario' => $precioUnitario,
-                    'subtotal_linea' => $subtotal,
-                    'porcentaje_descuento' => $porcentajeDescuento,
-                    'monto_descuento' => $montoDescuento,
-                    'subtotal_con_descuento' => $subtotalConDescuento,
-                    'tasa_impuesto' => $tasaImpuesto,
-                    'monto_impuesto' => $impuesto,
-                    'total_linea' => $totalLinea,
-                    'detalle_adicional' => $detalle['descripcion'] ?? null,
-                ]);
-
-                if ($almacen) {
-                    $inventario = InventarioProducto::where('almacen_id', $almacen->id)
-                        ->where('producto_id', $producto->id)
-                        ->lockForUpdate()
-                        ->first();
-
-                    if ($inventario) {
-                        $inventario->decrement('stock_actual', $cantidad);
-                    }
-                }
-            }
+            // Procesar detalles usando método auxiliar
+            $totales = $this->procesarDetallesVenta($venta, $detalles, $productos, $almacen);
 
             $venta->update([
-                'subtotal_bruto_total' => $montoSubtotal,
-                'monto_descuento_total' => $montoDescuentos,
-                'subtotal_neto_total' => $montoSubtotal - $montoDescuentos,
-                'monto_impuesto_total' => $montoImpuestos,
-                'monto_total_venta' => ($montoSubtotal - $montoDescuentos) + $montoImpuestos,
+                'subtotal_bruto_total' => $totales['subtotal'],
+                'monto_descuento_total' => $totales['descuentos'],
+                'subtotal_neto_total' => $totales['subtotal'] - $totales['descuentos'],
+                'monto_impuesto_total' => $totales['impuestos'],
+                'monto_total_venta' => ($totales['subtotal'] - $totales['descuentos']) + $totales['impuestos'],
             ]);
 
             $this->flushCache();
-
             DB::commit();
 
             $venta->load(['cliente', 'detalles.producto']);
@@ -657,76 +608,149 @@ class VentaController extends Controller
         return $prefijo . '-' . str_pad($numero, 8, '0', STR_PAD_LEFT);
     }
 
-            private function ensureSucursal(int $sucursalId, int $empresaId): Sucursal
-            {
-                return Sucursal::whereKey($sucursalId)
-                    ->where('empresa_id', $empresaId)
-                    ->firstOrFail();
-            }
+    private function ensureSucursal(int $sucursalId, int $empresaId): Sucursal
+    {
+        return Sucursal::whereKey($sucursalId)
+            ->where('empresa_id', $empresaId)
+            ->firstOrFail();
+    }
 
-            private function ensureCliente(int $clienteId, int $empresaId): Cliente
-            {
-                return Cliente::whereKey($clienteId)
-                    ->where('empresa_id', $empresaId)
-                    ->firstOrFail();
-            }
+    private function ensureCliente(int $clienteId, int $empresaId): Cliente
+    {
+        return Cliente::whereKey($clienteId)
+            ->where('empresa_id', $empresaId)
+            ->firstOrFail();
+    }
 
-            private function ensureUsuario(int $usuarioId, int $empresaId): Usuario
-            {
-                $usuario = Usuario::whereKey($usuarioId)
-                    ->where('empresa_id', $empresaId)
+    private function ensureUsuario(int $usuarioId, int $empresaId): Usuario
+    {
+        $usuario = Usuario::whereKey($usuarioId)
+            ->where('empresa_id', $empresaId)
+            ->first();
+
+        if (! $usuario) {
+            throw new AccessDeniedHttpException('El usuario seleccionado no pertenece a la empresa.');
+        }
+
+        return $usuario;
+    }
+
+    private function ensureAlmacen(int $almacenId, int $empresaId): Almacen
+    {
+        return Almacen::whereKey($almacenId)
+            ->where('empresa_id', $empresaId)
+            ->firstOrFail();
+    }
+
+    private function ensureProductos(array $productoIds, int $empresaId): Collection
+    {
+        if (empty($productoIds)) {
+            throw ValidationException::withMessages([
+                'detalles' => ['Debe incluir al menos un producto en la venta.'],
+            ]);
+        }
+
+        $uniqueIds = array_unique($productoIds);
+
+        $productos = Producto::whereIn('id', $uniqueIds)
+            ->where('empresa_id', $empresaId)
+            ->get()
+            ->keyBy('id');
+
+        if ($productos->count() !== count($uniqueIds)) {
+            throw new AccessDeniedHttpException('Uno o más productos no pertenecen a la empresa actual.');
+        }
+
+        return $productos;
+    }
+
+    private function assertStockDisponible(int $almacenId, Collection $detalles): void
+    {
+        foreach ($detalles as $detalle) {
+            $inventario = InventarioProducto::where('almacen_id', $almacenId)
+                ->where('producto_id', $detalle['producto_id'])
+                ->first();
+
+            if (! $inventario || $inventario->stock_actual < $detalle['cantidad']) {
+                throw ValidationException::withMessages([
+                    'stock' => ["No hay suficiente stock para el producto ID {$detalle['producto_id']}"]
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Procesar detalles de venta y calcular totales
+     *
+     * @param Venta $venta
+     * @param Collection $detalles
+     * @param Collection $productos
+     * @param Almacen|null $almacen
+     * @return array{subtotal: float, descuentos: float, impuestos: float}
+     */
+    private function procesarDetallesVenta(
+        Venta $venta,
+        Collection $detalles,
+        Collection $productos,
+        ?Almacen $almacen
+    ): array {
+        $montoSubtotal = 0;
+        $montoImpuestos = 0;
+        $montoDescuentos = 0;
+
+        foreach ($detalles as $index => $detalle) {
+            $productoId = (int) $detalle['producto_id'];
+            $producto = $productos->get($productoId);
+
+            $cantidad = (float) $detalle['cantidad'];
+            $precioUnitario = (float) $detalle['precio_unitario'];
+            $montoDescuento = (float) ($detalle['descuento'] ?? 0);
+            $tasaImpuesto = (float) ($detalle['porcentaje_impuesto'] ?? 0);
+
+            $subtotal = $cantidad * $precioUnitario;
+            $subtotalConDescuento = max(0, $subtotal - $montoDescuento);
+            $impuesto = $subtotalConDescuento * ($tasaImpuesto / 100);
+            $totalLinea = $subtotalConDescuento + $impuesto;
+            $porcentajeDescuento = $subtotal > 0 ? ($montoDescuento / $subtotal) * 100 : 0;
+
+            $montoSubtotal += $subtotal;
+            $montoDescuentos += $montoDescuento;
+            $montoImpuestos += $impuesto;
+
+            DetalleVenta::create([
+                'venta_id' => $venta->id,
+                'producto_id' => $producto->id,
+                'numero_linea' => $index + 1,
+                'cantidad' => $cantidad,
+                'precio_unitario' => $precioUnitario,
+                'subtotal_linea' => $subtotal,
+                'porcentaje_descuento' => $porcentajeDescuento,
+                'monto_descuento' => $montoDescuento,
+                'subtotal_con_descuento' => $subtotalConDescuento,
+                'tasa_impuesto' => $tasaImpuesto,
+                'monto_impuesto' => $impuesto,
+                'total_linea' => $totalLinea,
+                'detalle_adicional' => $detalle['descripcion'] ?? null,
+            ]);
+
+            if ($almacen) {
+                $inventario = InventarioProducto::where('almacen_id', $almacen->id)
+                    ->where('producto_id', $producto->id)
+                    ->lockForUpdate()
                     ->first();
 
-                if (! $usuario) {
-                    throw new AccessDeniedHttpException('El usuario seleccionado no pertenece a la empresa.');
-                }
-
-                return $usuario;
-            }
-
-            private function ensureAlmacen(int $almacenId, int $empresaId): Almacen
-            {
-                return Almacen::whereKey($almacenId)
-                    ->where('empresa_id', $empresaId)
-                    ->firstOrFail();
-            }
-
-            private function ensureProductos(array $productoIds, int $empresaId): Collection
-            {
-                if (empty($productoIds)) {
-                    throw ValidationException::withMessages([
-                        'detalles' => ['Debe incluir al menos un producto en la venta.'],
-                    ]);
-                }
-
-                $uniqueIds = array_unique($productoIds);
-
-                $productos = Producto::whereIn('id', $uniqueIds)
-                    ->where('empresa_id', $empresaId)
-                    ->get()
-                    ->keyBy('id');
-
-                if ($productos->count() !== count($uniqueIds)) {
-                    throw new AccessDeniedHttpException('Uno o más productos no pertenecen a la empresa actual.');
-                }
-
-                return $productos;
-            }
-
-            private function assertStockDisponible(int $almacenId, Collection $detalles): void
-            {
-                foreach ($detalles as $detalle) {
-                    $inventario = InventarioProducto::where('almacen_id', $almacenId)
-                        ->where('producto_id', $detalle['producto_id'])
-                        ->first();
-
-                    if (! $inventario || $inventario->stock_actual < $detalle['cantidad']) {
-                        throw ValidationException::withMessages([
-                            'stock' => ["No hay suficiente stock para el producto ID {$detalle['producto_id']}"]
-                        ]);
-                    }
+                if ($inventario) {
+                    $inventario->decrement('stock_actual', $cantidad);
                 }
             }
+        }
+
+        return [
+            'subtotal' => $montoSubtotal,
+            'descuentos' => $montoDescuentos,
+            'impuestos' => $montoImpuestos,
+        ];
+    }
 
     /**
      * Generar reporte PDF de ventas (async con Queue Job)

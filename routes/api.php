@@ -90,7 +90,7 @@ Route::post('/login', [AuthController::class, 'login'])
 
 // Rate limiting general: 120 requests por minuto para usuarios autenticados
 Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
-    
+
     // ------------------------------------------------------------------------
     // AUTENTICACIÓN Y PERFIL
     // ------------------------------------------------------------------------
@@ -263,7 +263,7 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     // ------------------------------------------------------------------------
     // CATÁLOGOS (Acceso general de lectura, solo admin puede modificar)
     // ------------------------------------------------------------------------
-    
+
     // Categorías de Productos
     Route::get('/categorias-productos', [CategoriaProductoController::class, 'index'])
         ->middleware('permission:ver-categorias_producto');
@@ -291,7 +291,7 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
         ->middleware('permission:editar-catalogos');
     Route::delete('/marcas/{marca}', [MarcaController::class, 'destroy'])
         ->middleware('permission:eliminar-catalogos');
-    
+
     // Unidades de Medida
     Route::get('/unidades-medida', [UnidadMedidaController::class, 'index'])
         ->middleware('permission:ver-catalogos');
@@ -305,7 +305,7 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
         ->middleware('permission:editar-catalogos');
     Route::delete('/unidades-medida/{unidadMedida}', [UnidadMedidaController::class, 'destroy'])
         ->middleware('permission:eliminar-catalogos');
-    
+
     // Formas de Pago
     Route::get('/formas-pago', [FormaPagoController::class, 'index'])
         ->middleware('permission:ver-catalogos');
@@ -319,7 +319,7 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
         ->middleware('permission:editar-catalogos');
     Route::delete('/formas-pago/{formaPago}', [FormaPagoController::class, 'destroy'])
         ->middleware('permission:eliminar-catalogos');
-    
+
     // Cargos
     Route::get('/cargos', [CargoController::class, 'index'])
         ->middleware('permission:ver-catalogos');
@@ -333,7 +333,7 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
         ->middleware('permission:editar-catalogos');
     Route::delete('/cargos/{cargo}', [CargoController::class, 'destroy'])
         ->middleware('permission:eliminar-catalogos');
-    
+
     // CAByS (Catálogo de Bienes y Servicios)
     Route::get('/cabys', [CabyController::class, 'index'])
         ->middleware('permission:ver-catalogos');
@@ -349,7 +349,7 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
         ->middleware('permission:eliminar-catalogos');
     Route::post('/cabys/buscar', [CabyController::class, 'buscar'])
         ->middleware('permission:ver-catalogos');
-    
+
     // Tipos de Impuesto
     Route::get('/tipos-impuesto', [TipoImpuestoController::class, 'index'])
         ->middleware('permission:ver-catalogos');
@@ -365,7 +365,7 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
         ->middleware('permission:eliminar-catalogos');
     Route::get('/tipos-impuesto/activos/list', [TipoImpuestoController::class, 'activos'])
         ->middleware('permission:ver-catalogos');
-    
+
     // Tasas de Impuesto
     Route::get('/tasas-impuesto', [TasaImpuestoController::class, 'index'])
         ->middleware('permission:ver-catalogos');
@@ -385,7 +385,7 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
         ->middleware('permission:ver-catalogos');
     Route::get('/tasas-impuesto/historico/{tipoImpuestoId}', [TasaImpuestoController::class, 'historico'])
         ->middleware('permission:ver-catalogos');
-    
+
     // Regímenes Tributarios (Catálogo DGT)
     Route::apiResource('regimenes-tributarios', RegimenTributarioController::class)
         ->parameters(['regimenes-tributarios' => 'regimenTributario']);
@@ -396,7 +396,7 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     // MÓDULO: INVENTARIO
     // Permisos: inventario.leer, inventario.crear, inventario.actualizar, inventario.eliminar
     // ------------------------------------------------------------------------
-    
+
     // Inventario - Entradas (InventarioController - Legacy)
     Route::get('/inventario/entradas', [InventarioController::class, 'indexEntradas'])
         ->middleware('permission:ver-inventario');
@@ -528,7 +528,7 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     // ------------------------------------------------------------------------
     // FINANZAS
     // ------------------------------------------------------------------------
-    
+
     // Cuentas por Cobrar
     Route::apiResource('cuentas-por-cobrar', CuentaPorCobrarController::class);
     Route::get('/cuentas-por-cobrar/vencidas/list', [CuentaPorCobrarController::class, 'vencidas']);
@@ -575,7 +575,7 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     // MÓDULO: NÓMINA
     // Permisos: nomina.leer, nomina.crear, nomina.actualizar, nomina.eliminar
     // ------------------------------------------------------------------------
-    
+
     // Períodos de Nómina
     Route::apiResource('periodos-nomina', PeriodoNominaController::class)
         ->middleware(['permission:ver-nomina,nomina.crear,nomina.actualizar,nomina.eliminar']);
@@ -616,7 +616,7 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     // Permisos: rutas.leer, rutas.crear, rutas.actualizar, rutas.eliminar
     // Permisos: buses.leer, buses.crear, buses.actualizar, buses.eliminar
     // ------------------------------------------------------------------------
-    
+
     // Buses/Unidades de Transporte
     Route::apiResource('buses-unidades', BusUnidadController::class)
         ->middleware(['permission:ver-buses,buses.crear,buses.actualizar,buses.eliminar']);
@@ -670,10 +670,10 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
 
     // ------------------------------------------------------------------------
     // MÓDULO: FACTURACIÓN ELECTRÓNICA
-    // Permisos: facturacion_electronica.leer, facturacion_electronica.crear, 
+    // Permisos: facturacion_electronica.leer, facturacion_electronica.crear,
     //           facturacion_electronica.actualizar, facturacion_electronica.eliminar
     // ------------------------------------------------------------------------
-    
+
     // Comprobantes Electrónicos Recibidos
     Route::apiResource('comprobantes-recibidos-electronicos', ComprobanteRecibidoElectronicoController::class)
         ->parameters(['comprobantes-recibidos-electronicos' => 'comprobante'])
@@ -712,7 +712,7 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     // ------------------------------------------------------------------------
     // OTROS MÓDULOS - UTILIDADES
     // ------------------------------------------------------------------------
-    
+
     // Configuraciones del Sistema (Solo Admin)
     Route::get('/configuraciones', [ConfiguracionController::class, 'index'])
         ->middleware('permission:ver-configuraciones');
@@ -887,7 +887,7 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     // MÓDULO: RBAC (Roles y Permisos)
     // Solo usuarios con permiso de administrador
     // ------------------------------------------------------------------------
-    
+
     // Roles
     Route::get('/roles', [RolController::class, 'index'])
         ->middleware('permission:ver-roles');
@@ -980,25 +980,25 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     // ============================================
     // FASE 9: Nuevos Módulos
     // ============================================
-    
+
     // Mensajes Hacienda
     Route::apiResource('mensajes-hacienda', \App\Http\Controllers\API\MensajeHaciendaController::class);
-    
+
     // Tipos Comprobantes FE
     Route::apiResource('tipos-comprobantes-fe', \App\Http\Controllers\API\TipoComprobanteFeController::class);
-    
+
     // Códigos Actividad Económica
     Route::apiResource('codigos-actividad-economica', \App\Http\Controllers\API\CodigoActividadEconomicaController::class);
-    
+
     // Declaraciones Tributarias
     Route::apiResource('declaraciones-tributarias', \App\Http\Controllers\API\DeclaracionTributariaController::class);
-    
+
     // Retenciones Impuesto
     Route::apiResource('retenciones-impuesto', \App\Http\Controllers\API\RetencionImpuestoController::class);
-    
+
     // Cuentas Bancarias
     Route::apiResource('cuentas-bancarias', \App\Http\Controllers\API\CuentaBancariaController::class);
-    
+
     // Movimientos Bancarios - Rate limiting en operaciones de escritura (60/min)
     Route::get('movimientos-bancarios', [\App\Http\Controllers\API\MovimientoBancarioController::class, 'index']);
     Route::post('movimientos-bancarios', [\App\Http\Controllers\API\MovimientoBancarioController::class, 'store'])
@@ -1010,20 +1010,20 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
         ->middleware('throttle:60,1');
     Route::delete('movimientos-bancarios/{movimientoBancario}', [\App\Http\Controllers\API\MovimientoBancarioController::class, 'destroy'])
         ->middleware('throttle:60,1');
-    
+
     // Deducciones Legales
     Route::apiResource('deducciones-legales', \App\Http\Controllers\API\DeduccionLegalController::class);
-    
+
     // Planillas CCSS
     Route::apiResource('planillas-ccss', \App\Http\Controllers\API\PlanillaCcssController::class);
-    
+
     // Tipos Cliente
     Route::apiResource('tipos-clientes', \App\Http\Controllers\API\TipoClienteController::class);
-    
+
     // Zonas Geográficas
     // Ajuste: controlador está en namespace API
     Route::apiResource('zonas-geograficas', \App\Http\Controllers\API\ZonaGeograficaController::class);
-    
+
     // Logs Acceso Sistema
     Route::apiResource('logs-acceso-sistema', \App\Http\Controllers\API\LogAccesoSistemaController::class);
 

@@ -1,0 +1,86 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [ develop ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: staging
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, json, zip
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction --no-dev --optimize-autoloader
+
+      - name: Run tests
+        run: vendor/bin/phpunit --stop-on-failure
+
+      - name: Build Docker image
+        run: |
+          docker build -t ursol-cast-api:staging-${{ github.sha }} .
+          docker tag ursol-cast-api:staging-${{ github.sha }} ursol-cast-api:staging-latest
+
+      - name: Deploy to staging server
+        env:
+          STAGING_SERVER: ${{ secrets.STAGING_SERVER }}
+          STAGING_USER: ${{ secrets.STAGING_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          echo "Deploying to staging server..."
+          # Configurar SSH
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $STAGING_SERVER >> ~/.ssh/known_hosts
+          
+          # Copiar archivos al servidor
+          rsync -avz --delete \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='storage/logs/*' \
+            --exclude='storage/framework/cache/*' \
+            ./ $STAGING_USER@$STAGING_SERVER:/var/www/ursol-cast-api-staging/
+          
+          # Ejecutar comandos en el servidor
+          ssh $STAGING_USER@$STAGING_SERVER << 'EOF'
+            cd /var/www/ursol-cast-api-staging
+            docker-compose -f docker-compose.staging.yml down
+            docker-compose -f docker-compose.staging.yml up -d --build
+            docker-compose -f docker-compose.staging.yml exec -T php php artisan migrate --force
+            docker-compose -f docker-compose.staging.yml exec -T php php artisan cache:clear
+            docker-compose -f docker-compose.staging.yml exec -T php php artisan config:clear
+            docker-compose -f docker-compose.staging.yml exec -T php php artisan route:cache
+            docker-compose -f docker-compose.staging.yml exec -T php php artisan view:cache
+          EOF
+
+      - name: Run smoke tests
+        run: |
+          echo "Running smoke tests on staging..."
+          curl -f https://staging.ursol-cast.com/api/health || exit 1
+
+      - name: Notify deployment
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: 'Staging deployment ${{ job.status }}'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}

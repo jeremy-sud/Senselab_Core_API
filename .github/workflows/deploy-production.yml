@@ -1,0 +1,125 @@
+name: Deploy to Production
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, json, zip
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction --no-dev --optimize-autoloader
+
+      - name: Run full test suite
+        run: vendor/bin/phpunit
+
+      - name: Build Docker image
+        run: |
+          docker build -t ursol-cast-api:${{ github.ref_name }} .
+          docker tag ursol-cast-api:${{ github.ref_name }} ursol-cast-api:latest
+
+      - name: Create backup
+        env:
+          PRODUCTION_SERVER: ${{ secrets.PRODUCTION_SERVER }}
+          PRODUCTION_USER: ${{ secrets.PRODUCTION_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $PRODUCTION_SERVER >> ~/.ssh/known_hosts
+          
+          ssh $PRODUCTION_USER@$PRODUCTION_SERVER << 'EOF'
+            BACKUP_DIR="/backups/$(date +%Y%m%d_%H%M%S)"
+            mkdir -p $BACKUP_DIR
+            docker-compose exec -T mysql mysqldump -u root -p$MYSQL_ROOT_PASSWORD ursol_cast > $BACKUP_DIR/database.sql
+            tar -czf $BACKUP_DIR/application.tar.gz /var/www/ursol-cast-api
+            echo "Backup created at $BACKUP_DIR"
+          EOF
+
+      - name: Deploy to production
+        env:
+          PRODUCTION_SERVER: ${{ secrets.PRODUCTION_SERVER }}
+          PRODUCTION_USER: ${{ secrets.PRODUCTION_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          rsync -avz --delete \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='storage/logs/*' \
+            --exclude='storage/framework/cache/*' \
+            ./ $PRODUCTION_USER@$PRODUCTION_SERVER:/var/www/ursol-cast-api/
+          
+          ssh $PRODUCTION_USER@$PRODUCTION_SERVER << 'EOF'
+            cd /var/www/ursol-cast-api
+            
+            # Poner aplicación en modo mantenimiento
+            docker-compose exec -T php php artisan down --retry=60
+            
+            # Actualizar contenedores
+            docker-compose down
+            docker-compose up -d --build
+            
+            # Ejecutar migraciones
+            docker-compose exec -T php php artisan migrate --force
+            
+            # Optimizar aplicación
+            docker-compose exec -T php php artisan optimize
+            docker-compose exec -T php php artisan route:cache
+            docker-compose exec -T php php artisan view:cache
+            docker-compose exec -T php php artisan config:cache
+            
+            # Salir de modo mantenimiento
+            docker-compose exec -T php php artisan up
+          EOF
+
+      - name: Run smoke tests
+        run: |
+          echo "Running smoke tests on production..."
+          curl -f https://api.ursol-cast.com/api/health || exit 1
+          curl -f https://api.ursol-cast.com/api/v1/ping || exit 1
+
+      - name: Rollback on failure
+        if: failure()
+        env:
+          PRODUCTION_SERVER: ${{ secrets.PRODUCTION_SERVER }}
+          PRODUCTION_USER: ${{ secrets.PRODUCTION_USER }}
+        run: |
+          echo "Deployment failed, rolling back..."
+          ssh $PRODUCTION_USER@$PRODUCTION_SERVER << 'EOF'
+            cd /var/www/ursol-cast-api
+            git reset --hard HEAD~1
+            docker-compose down
+            docker-compose up -d
+            docker-compose exec -T php php artisan migrate:rollback --force
+            docker-compose exec -T php php artisan up
+          EOF
+
+      - name: Notify deployment
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: 'Production deployment ${{ job.status }} - Version ${{ github.ref_name }}'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}

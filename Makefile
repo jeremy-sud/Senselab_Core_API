@@ -14,6 +14,33 @@ help: ## Mostrar esta ayuda
 	@echo ""
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "$(YELLOW)%-20s$(NC) %s\n", $$1, $$2}'
 
+# === CI/CD ===
+
+ci-test: ## Ejecutar tests como en CI
+	@echo "$(GREEN)Ejecutando tests (modo CI)...$(NC)"
+	docker exec ursol_php vendor/bin/phpunit --stop-on-failure --coverage-text
+
+ci-quality: ## Verificar calidad de código
+	@echo "$(GREEN)Verificando calidad de código...$(NC)"
+	@make phpstan
+	@make cs-check
+
+ci-security: ## Verificar seguridad
+	@echo "$(GREEN)Verificando seguridad...$(NC)"
+	docker exec ursol_php composer audit
+
+deploy-staging: ## Deploy a staging
+	@echo "$(GREEN)Desplegando a staging...$(NC)"
+	./scripts/deploy.sh staging
+
+deploy-prod: ## Deploy a producción
+	@echo "$(YELLOW)Desplegando a producción...$(NC)"
+	./scripts/deploy.sh production
+
+rollback: ## Rollback a versión anterior
+	@echo "$(RED)Iniciando rollback...$(NC)"
+	./scripts/rollback.sh production
+
 # === DOCKER ===
 
 build: ## Construir contenedores
