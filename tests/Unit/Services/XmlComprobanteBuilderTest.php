@@ -12,13 +12,15 @@ use Carbon\Carbon;
 
 /**
  * Tests para XmlComprobanteBuilder
- * 
+ *
  * Valida:
- * - Generación de XML v4.3 correcto
+ * - Generación de XML v4.4 correcto (actualizado desde v4.3)
  * - Estructura para cada tipo de documento
- * - Namespaces correctos
+ * - Namespaces correctos v4.4
  * - Formato de datos (decimales, fechas)
  * - Elementos opcionales y obligatorios
+ * - Nuevo campo ProveedorSistemas (obligatorio en v4.4)
+ * - Campo CodigoActividadEmisor (renombrado en v4.4)
  */
 class XmlComprobanteBuilderTest extends TestCase
 {
@@ -32,12 +34,14 @@ class XmlComprobanteBuilderTest extends TestCase
         parent::setUp();
         $this->builder = new XmlComprobanteBuilder();
         
-        // Crear empresa de prueba
+        // Crear empresa de prueba con campos v4.4
         $this->empresa = Empresa::factory()->create([
             'nombre_comercial' => 'Empresa Test',
             'razon_social' => 'Empresa Test S.A.',
             'num_identificacion_dgt' => '310112345678',
             'tipo_identificacion' => '02',
+            'actividad_economica_principal' => '620100', // Código actividad económica
+            'proveedor_sistemas' => 'SISTEMA ERP TEST', // Nuevo en v4.4
             'email' => 'test@empresa.com',
             'telefono' => '88887777',
             'provincia' => '1',
@@ -90,8 +94,12 @@ class XmlComprobanteBuilderTest extends TestCase
         $loaded = @$dom->loadXML($xml);
         $this->assertTrue($loaded, 'El XML generado no es válido');
 
-        // Verificar namespace correcto para factura
-        $this->assertStringContainsString('https://cdn.comprobanteselectronicos.go.cr/xml-schemas/v4.3/facturaElectronica', $xml);
+        // Verificar namespace correcto para factura v4.4
+        $this->assertStringContainsString('https://cdn.comprobanteselectronicos.go.cr/xml-schemas/v4.4/facturaElectronica', $xml);
+        
+        // Verificar campos nuevos v4.4
+        $this->assertStringContainsString('<CodigoActividadEmisor>620100</CodigoActividadEmisor>', $xml);
+        $this->assertStringContainsString('<ProveedorSistemas>SISTEMA ERP TEST</ProveedorSistemas>', $xml);
         
         // Verificar clave
         $this->assertStringContainsString('<Clave>52611202531011234567800000000000000000001154489877</Clave>', $xml);
