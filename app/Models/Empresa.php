@@ -22,6 +22,7 @@ class Empresa extends Tenant
         'num_identificacion_dgt',
         'tipo_identificacion',
         'actividad_economica_principal',
+        'proveedor_sistemas', // Nuevo en v4.4 - Identificación del proveedor del sistema
         'direccion',
         'provincia',
         'canton',

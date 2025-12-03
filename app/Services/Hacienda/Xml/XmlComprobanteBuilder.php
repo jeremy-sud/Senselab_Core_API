@@ -8,29 +8,44 @@ use DOMElement;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Constructor de XML para Comprobantes Electrónicos v4.3
- * 
+ * Constructor de XML para Comprobantes Electrónicos v4.4
+ *
  * Genera XMLs conforme al estándar del Ministerio de Hacienda de Costa Rica.
+ * Actualizado según DGT-R-000-2024 versión 4.4
+ *
  * Soporta:
  * - Facturas Electrónicas (01)
  * - Notas de Débito (02)
  * - Notas de Crédito (03)
  * - Tiquetes Electrónicos (04)
+ *
+ * Cambios principales v4.4:
+ * - Nuevo campo ProveedorSistemas (obligatorio)
+ * - CodigoActividad renombrado a CodigoActividadEmisor
+ * - Nuevos namespaces v4.4
+ * - TotalDesgloseImpuesto en ResumenFactura
+ *
+ * @see DGT-R-000-2024 Resolución de Comprobantes Electrónicos
  */
 class XmlComprobanteBuilder
 {
     /**
      * Versión del esquema XML
      */
-    const VERSION_ESQUEMA = '4.3';
+    const VERSION_ESQUEMA = '4.4';
 
     /**
-     * Namespaces XML
+     * Namespaces XML v4.4
      */
-    const NAMESPACE_FACTURA = 'https://cdn.comprobanteselectronicos.go.cr/xml-schemas/v4.3/facturaElectronica';
-    const NAMESPACE_NOTA_DEBITO = 'https://cdn.comprobanteselectronicos.go.cr/xml-schemas/v4.3/notaDebitoElectronica';
-    const NAMESPACE_NOTA_CREDITO = 'https://cdn.comprobanteselectronicos.go.cr/xml-schemas/v4.3/notaCreditoElectronica';
-    const NAMESPACE_TIQUETE = 'https://cdn.comprobanteselectronicos.go.cr/xml-schemas/v4.3/tiqueteElectronico';
+    const NAMESPACE_FACTURA = 'https://cdn.comprobanteselectronicos.go.cr/xml-schemas/v4.4/facturaElectronica';
+    const NAMESPACE_NOTA_DEBITO = 'https://cdn.comprobanteselectronicos.go.cr/xml-schemas/v4.4/notaDebitoElectronica';
+    const NAMESPACE_NOTA_CREDITO = 'https://cdn.comprobanteselectronicos.go.cr/xml-schemas/v4.4/notaCreditoElectronica';
+    const NAMESPACE_TIQUETE = 'https://cdn.comprobanteselectronicos.go.cr/xml-schemas/v4.4/tiqueteElectronico';
+
+    /**
+     * Proveedor de sistemas por defecto (debe ser configurado por empresa)
+     */
+    const DEFAULT_PROVEEDOR_SISTEMAS = 'SISTEMA ERP';
 
     /**
      * Documento XML
@@ -44,14 +59,14 @@ class XmlComprobanteBuilder
 
     /**
      * Construir XML desde modelo ComprobanteElectronicoFe
-     * 
+     *
      * @param ComprobanteElectronicoFe $comprobante Modelo del comprobante
      * @return string XML generado
      */
     public function build(ComprobanteElectronicoFe $comprobante): string
     {
         $this->tipoComprobante = $comprobante->tipo_documento;
-        
+
         // Crear documento XML
         $this->doc = new DOMDocument('1.0', 'UTF-8');
         $this->doc->formatOutput = true;
@@ -60,11 +75,12 @@ class XmlComprobanteBuilder
         // Crear elemento raíz según tipo de comprobante
         $root = $this->crearElementoRaiz();
 
-        // Agregar secciones principales
+        // Agregar secciones principales (orden según XSD v4.4)
         $this->agregarClave($root, $comprobante);
-        $this->agregarCodigoActividad($root, $comprobante);
+        $this->agregarCodigoActividadEmisor($root, $comprobante); // Renombrado en v4.4
         $this->agregarNumeroConsecutivo($root, $comprobante);
         $this->agregarFechaEmision($root, $comprobante);
+        $this->agregarProveedorSistemas($root, $comprobante); // Nuevo en v4.4
         $this->agregarEmisor($root, $comprobante);
         $this->agregarReceptor($root, $comprobante);
         $this->agregarCondicionVenta($root, $comprobante);
@@ -80,9 +96,10 @@ class XmlComprobanteBuilder
         // Generar XML string
         $xml = $this->doc->saveXML();
 
-        Log::info('XML generado exitosamente', [
+        Log::info('XML v4.4 generado exitosamente', [
             'tipo_documento' => $comprobante->tipo_documento,
             'clave' => $comprobante->clave,
+            'version' => self::VERSION_ESQUEMA,
             'xml_length' => strlen($xml),
         ]);
 
@@ -101,6 +118,7 @@ class XmlComprobanteBuilder
         $root->setAttribute('xmlns', $namespace);
         $root->setAttribute('xmlns:ds', 'http://www.w3.org/2000/09/xmldsig#');
         $root->setAttribute('xmlns:xsd', 'http://www.w3.org/2001/XMLSchema');
+        $root->setAttribute('xmlns:xades', 'http://uri.etsi.org/01903/v1.3.2#'); // Agregado para XAdES
 
         return $root;
     }
@@ -110,7 +128,7 @@ class XmlComprobanteBuilder
      */
     protected function obtenerNamespace(): string
     {
-        return match($this->tipoComprobante) {
+        return match ($this->tipoComprobante) {
             '01' => self::NAMESPACE_FACTURA,
             '02' => self::NAMESPACE_NOTA_DEBITO,
             '03' => self::NAMESPACE_NOTA_CREDITO,
@@ -124,7 +142,7 @@ class XmlComprobanteBuilder
      */
     protected function obtenerNombreRaiz(): string
     {
-        return match($this->tipoComprobante) {
+        return match ($this->tipoComprobante) {
             '01' => 'FacturaElectronica',
             '02' => 'NotaDebitoElectronica',
             '03' => 'NotaCreditoElectronica',
@@ -143,16 +161,20 @@ class XmlComprobanteBuilder
     }
 
     /**
-     * Agregar código de actividad económica
+     * Agregar código de actividad económica del emisor (v4.4)
+     *
+     * Nota: Renombrado de CodigoActividad a CodigoActividadEmisor en v4.4
      */
-    protected function agregarCodigoActividad(DOMElement $parent, ComprobanteElectronicoFe $comprobante): void
+    protected function agregarCodigoActividadEmisor(DOMElement $parent, ComprobanteElectronicoFe $comprobante): void
     {
         // Obtener código de actividad de la empresa o metadata
-        $codigoActividad = $comprobante->metadata['codigo_actividad'] 
-            ?? $comprobante->empresa->metadata['codigo_actividad'] 
+        $codigoActividad = $comprobante->metadata['codigo_actividad']
+            ?? $comprobante->empresa->actividad_economica_principal
+            ?? $comprobante->empresa->metadata['codigo_actividad']
             ?? '000000';
 
-        $element = $this->doc->createElement('CodigoActividad', $codigoActividad);
+        // v4.4: Campo renombrado a CodigoActividadEmisor
+        $element = $this->doc->createElement('CodigoActividadEmisor', $codigoActividad);
         $parent->appendChild($element);
     }
 
@@ -172,6 +194,23 @@ class XmlComprobanteBuilder
     {
         $fecha = $comprobante->fecha_emision->toIso8601String();
         $element = $this->doc->createElement('FechaEmision', $fecha);
+        $parent->appendChild($element);
+    }
+
+    /**
+     * Agregar identificación del proveedor del sistema (NUEVO v4.4)
+     *
+     * Este campo es OBLIGATORIO en v4.4 y identifica al proveedor
+     * del sistema de facturación electrónica.
+     */
+    protected function agregarProveedorSistemas(DOMElement $parent, ComprobanteElectronicoFe $comprobante): void
+    {
+        // Obtener proveedor del sistema de la empresa o configuración
+        $proveedorSistemas = $comprobante->empresa->proveedor_sistemas
+            ?? $comprobante->metadata['proveedor_sistemas']
+            ?? config('hacienda.proveedor_sistemas', self::DEFAULT_PROVEEDOR_SISTEMAS);
+
+        $element = $this->doc->createElement('ProveedorSistemas', $this->escaparXml($proveedorSistemas));
         $parent->appendChild($element);
     }
 
@@ -378,7 +417,9 @@ class XmlComprobanteBuilder
     }
 
     /**
-     * Agregar resumen de factura (totales)
+     * Agregar resumen de factura (totales) v4.4
+     *
+     * Incluye nuevo campo TotalDesgloseImpuesto para v4.4
      */
     protected function agregarResumenFactura(DOMElement $parent, ComprobanteElectronicoFe $comprobante): void
     {
@@ -438,6 +479,9 @@ class XmlComprobanteBuilder
         $totalVentaNeta = $this->doc->createElement('TotalVentaNeta', $this->formatearDecimal($comprobante->total_venta_neta));
         $resumen->appendChild($totalVentaNeta);
 
+        // TotalDesgloseImpuesto (NUEVO v4.4) - Desglose por tipo de impuesto
+        $this->agregarTotalDesgloseImpuesto($resumen, $comprobante);
+
         // Total impuesto
         $totalImpuesto = $this->doc->createElement('TotalImpuesto', $this->formatearDecimal($comprobante->total_impuesto));
         $resumen->appendChild($totalImpuesto);
@@ -447,6 +491,41 @@ class XmlComprobanteBuilder
         $resumen->appendChild($totalComprobante);
 
         $parent->appendChild($resumen);
+    }
+
+    /**
+     * Agregar desglose de impuestos (NUEVO v4.4)
+     *
+     * Agrupa los impuestos por código y calcula el total por tipo
+     */
+    protected function agregarTotalDesgloseImpuesto(DOMElement $resumen, ComprobanteElectronicoFe $comprobante): void
+    {
+        // Agrupar impuestos por código
+        $impuestosAgrupados = [];
+
+        foreach ($comprobante->lineasDetalle as $linea) {
+            if ($linea->impuesto_monto > 0) {
+                $codigoImpuesto = $linea->impuesto_codigo ?? '01';
+
+                if (!isset($impuestosAgrupados[$codigoImpuesto])) {
+                    $impuestosAgrupados[$codigoImpuesto] = 0;
+                }
+
+                $impuestosAgrupados[$codigoImpuesto] += $linea->impuesto_monto;
+            }
+        }
+
+        // Si hay impuestos, crear el desglose
+        if (!empty($impuestosAgrupados)) {
+            foreach ($impuestosAgrupados as $codigo => $monto) {
+                $desglose = $this->doc->createElement('TotalDesgloseImpuesto');
+                $codigoElement = $this->doc->createElement('Codigo', $codigo);
+                $montoElement = $this->doc->createElement('Monto', $this->formatearDecimal($monto));
+                $desglose->appendChild($codigoElement);
+                $desglose->appendChild($montoElement);
+                $resumen->appendChild($desglose);
+            }
+        }
     }
 
     /**

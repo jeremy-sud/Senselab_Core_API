@@ -3,11 +3,13 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Configuración API Hacienda Costa Rica - Facturación Electrónica
+    | Configuración API Hacienda Costa Rica - Facturación Electrónica v4.4
     |--------------------------------------------------------------------------
     |
     | Configuración para integración con el sistema de comprobantes electrónicos
     | del Ministerio de Hacienda de Costa Rica.
+    |
+    | Actualizado a versión 4.4 según DGT-R-000-2024
     |
     | Documentación oficial: https://www.hacienda.go.cr/docs/ComprobantesElectronicosAPI.html
     |
@@ -15,11 +17,55 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Versión del Esquema XML
+    |--------------------------------------------------------------------------
+    |
+    | Versión actual del esquema de comprobantes electrónicos.
+    | Actualizado a v4.4 según DGT-R-000-2024
+    |
+    */
+    'version_esquema' => env('HACIENDA_VERSION_ESQUEMA', '4.4'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Proveedor del Sistema
+    |--------------------------------------------------------------------------
+    |
+    | Identificación del proveedor del sistema de facturación electrónica.
+    | Este campo es OBLIGATORIO en la versión 4.4
+    |
+    */
+    'proveedor_sistemas' => env('HACIENDA_PROVEEDOR_SISTEMAS', 'SISTEMA ERP'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Configuración XAdES-EPES
+    |--------------------------------------------------------------------------
+    |
+    | Configuración para la firma XAdES-EPES según Anexo 2 de DGT-R-000-2024
+    |
+    */
+    'xades' => [
+        // URL de la política de firma v4.4
+        'policy_url' => env(
+            'HACIENDA_XADES_POLICY_URL',
+            'https://atv.hacienda.go.cr/ATV/ComprobanteElectronico/docs/esquemas/2016/v4.4/ResolucionComprobantesElectronicosDGT-R-000-2024.pdf'
+        ),
+
+        // Hash de la política de firma v4.4 (base64 de SHA256)
+        'policy_hash' => env(
+            'HACIENDA_XADES_POLICY_HASH',
+            'NmI5Njk1ZThkNzI0MmIzMGJmZDAyNDc4YjUwNzkzODM2NTBiOWUxNTBkMmI2YjgzYzZjM2I5NTZlNDQ4OWQzMQ=='
+        ),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Ambiente de Ejecución
     |--------------------------------------------------------------------------
     |
     | Valores permitidos: 'sandbox' (ATV), 'production'
-    | 
+    |
     | - sandbox: Ambiente de pruebas (ATV - Ambiente de Validación y Test)
     | - production: Ambiente productivo
     |

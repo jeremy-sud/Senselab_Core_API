@@ -14,8 +14,14 @@ use Carbon\Carbon;
 /**
  * Servicio de Firma Digital XAdES-EPES para Comprobantes Electrónicos
  * 
- * Implementa firma digital XML según estándar XAdES-EPES requerido por Hacienda CR.
+ * Implementa firma digital XML según estándar XAdES-EPES requerido por Hacienda CR v4.4.
  * Usa certificados digitales en formato .p12 (PKCS#12).
+ * 
+ * Esta clase actúa como fachada para el firmador XAdES-EPES, proporcionando
+ * integración con el sistema de certificados de la base de datos.
+ * 
+ * @see XadesEpesSigner Para la implementación de firma XAdES-EPES
+ * @see DGT-R-000-2024 Anexo 2 - Mecanismo de seguridad
  */
 class FirmaDigitalService
 {
@@ -41,14 +47,60 @@ class FirmaDigitalService
     protected $privateKey = null;
 
     /**
-     * Firmar XML de comprobante electrónico
+     * Instancia del firmador XAdES-EPES
+     */
+    protected ?XadesEpesSigner $xadesSigner = null;
+
+    /**
+     * Firmar XML de comprobante electrónico usando XAdES-EPES
      * 
-     * @param string $xmlString XML sin firmar
+     * Implementa la firma según el Anexo 2 de DGT-R-000-2024:
+     * - Firma XAdES-EPES (Extended-Electronic Signature con Policy)
+     * - SignaturePolicyIdentifier obligatorio
+     * - QualifyingProperties con SigningCertificate, DataObjectFormat
+     * 
+     * @param string $xmlString XML sin firmar (versión 4.4)
      * @param int $certificadoId ID del certificado a usar
-     * @return string XML firmado
+     * @return string XML firmado con XAdES-EPES
      * @throws \Exception
      */
     public function firmar(string $xmlString, int $certificadoId): string
+    {
+        // Cargar y validar certificado
+        $this->cargarCertificado($certificadoId);
+
+        // Obtener URL de política desde configuración
+        $policyUrl = config('hacienda.policy_url', 'https://www.hacienda.go.cr/ATV/ComprobanteElectronico/docs/esquemas/2016/v4.4/ResolucionComprobantesElectronicosDGT-R-48-2016_v4.4.pdf');
+
+        // Inicializar firmador XAdES-EPES
+        $this->xadesSigner = new XadesEpesSigner();
+
+        // Firmar documento usando método sign
+        $xmlFirmado = $this->xadesSigner->sign($xmlString, $this->privateKey, $this->certData['cert']);
+
+        Log::info('XML firmado con XAdES-EPES exitosamente', [
+            'certificado_id' => $certificadoId,
+            'certificado_sujeto' => $this->certificado->sujeto,
+            'policy_url' => $policyUrl,
+            'xml_length' => strlen($xmlFirmado),
+        ]);
+
+        return $xmlFirmado;
+    }
+
+    /**
+     * Firmar XML usando método legacy (XMLDSig básico)
+     * 
+     * DEPRECATED: Usar firmar() para XAdES-EPES completo
+     * Mantenido para compatibilidad con XML v4.3 existentes
+     * 
+     * @deprecated Use firmar() en su lugar
+     * @param string $xmlString XML sin firmar
+     * @param int $certificadoId ID del certificado a usar
+     * @return string XML firmado (sin XAdES-EPES completo)
+     * @throws \Exception
+     */
+    public function firmarLegacy(string $xmlString, int $certificadoId): string
     {
         // Cargar y validar certificado
         $this->cargarCertificado($certificadoId);
@@ -90,9 +142,8 @@ class FirmaDigitalService
         // Obtener XML firmado
         $xmlFirmado = $doc->saveXML();
 
-        Log::info('XML firmado exitosamente', [
+        Log::warning('XML firmado con método legacy (sin XAdES-EPES completo)', [
             'certificado_id' => $certificadoId,
-            'certificado_sujeto' => $this->certificado->sujeto,
             'xml_length' => strlen($xmlFirmado),
         ]);
 
