@@ -9,9 +9,25 @@ use App\Http\Resources\RolUsuarioResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\AsignarRolesUsuarioRequest;
+use OpenApi\Attributes as OA;
 
+
+#[OA\Tag(
+    name: 'Rol-Usuario',
+    description: 'Gestión de roles asignados a usuarios'
+)]
 class RolUsuarioController extends Controller
 {
+        #[OA\Get(
+        path: '/api/rol-usuario',
+        summary: 'Listar roles de usuarios',
+        security: [['sanctum' => []]],
+        tags: ['Rol-Usuario'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+        ]
+    )]
+
     public function index(Request $request): JsonResponse
     {
         $query = RolUsuario::where('activo', 1)->where('eliminado', 0);
@@ -37,6 +53,18 @@ class RolUsuarioController extends Controller
             ]
         ]);
     }
+
+        #[OA\Post(
+        path: '/api/rol-usuario',
+        summary: 'Asignar rol a usuario',
+        security: [['sanctum' => []]],
+        tags: ['Rol-Usuario'],
+        responses: [
+            new OA\Response(response: 201, description: 'Recurso creado'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
+
 
     public function store(StoreRolUsuarioRequest $request): JsonResponse
     {
@@ -67,6 +95,21 @@ class RolUsuarioController extends Controller
             'data' => new RolUsuarioResource($rolUsuario)
         ]);
     }
+
+        #[OA\Delete(
+        path: '/api/rol-usuario/{id}',
+        summary: 'Quitar rol de usuario',
+        security: [['sanctum' => []]],
+        tags: ['Rol-Usuario'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
+
 
     public function destroy(RolUsuario $rolUsuario): JsonResponse
     {

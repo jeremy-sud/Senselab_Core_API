@@ -18,13 +18,13 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 class OrdenCompraController extends Controller
 {
     use HasCacheableQueries;
-    
+
     /** @var array<int,string> */
     protected array $cacheTags = ['ordenes-compra', 'transacciones'];
     protected int $cacheTTL = 900; // 15 minutos
     /**
      * Display a listing of the resource.
-     * 
+     *
      * @param Request $request
      * @return AnonymousResourceCollection
      */
@@ -49,13 +49,13 @@ class OrdenCompraController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', OrdenCompra::class);
-        
+
         try {
             $perPage = $request->input('per_page', 15);
             $empresaId = $request->input('empresa_id');
             $proveedorId = $request->input('proveedor_id');
             $estado = $request->input('estado');
-            
+
             $ordenes = $this->cacheQueryIfEnabled(
                 $this->getCacheKey('index', $request->all()),
                 function() use ($request, $perPage, $empresaId, $proveedorId, $estado) {
@@ -64,31 +64,31 @@ class OrdenCompraController extends Controller
                         'proveedor',
                         'usuario'
                     ]);
-                    
+
                     if ($empresaId) {
                         $query->porEmpresa($empresaId);
                     }
-                    
+
                     if ($proveedorId) {
                         $query->porProveedor($proveedorId);
                     }
-                    
+
                     if ($estado) {
                         $query->where('estado', $estado);
                     }
-                    
+
                     if ($request->boolean('pendientes')) {
                         $query->pendientes();
                     }
-                    
+
                     if ($request->boolean('activas')) {
                         $query->activas();
                     }
-                    
+
                     return $query->orderBy('id', 'desc')->paginate($perPage);
                 }
             );
-            
+
             return OrdenCompraResource::collection($ordenes);
         } catch (\Exception $e) {
             throw $e;
@@ -97,7 +97,7 @@ class OrdenCompraController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param StoreOrdenCompraRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -142,29 +142,29 @@ class OrdenCompraController extends Controller
     public function store(StoreOrdenCompraRequest $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('create', OrdenCompra::class);
-        
+
         try {
             DB::beginTransaction();
-            
+
             try {
                 // Crear orden de compra
                 $ordenData = $request->except('detalles');
                 $ordenData['numero_orden'] = $this->generarNumeroOrden($request->empresa_id);
-                
+
                 $orden = OrdenCompra::create($ordenData);
-                
+
                 // Crear detalles
                 $montoSubtotal = 0;
                 $montoImpuestos = 0;
-                
+
                 foreach ($request->detalles as $detalle) {
                     $cantidad = $detalle['cantidad'];
                     $precioUnitario = $detalle['precio_unitario'];
                     $descuento = $detalle['descuento'] ?? 0;
-                    
+
                     $subtotal = ($cantidad * $precioUnitario) - $descuento;
                     $montoSubtotal += $subtotal;
-                    
+
                     DetalleOrdenCompra::create([
                         'orden_compra_id' => $orden->id,
                         'producto_id' => $detalle['producto_id'],
@@ -175,29 +175,29 @@ class OrdenCompraController extends Controller
                         'descripcion' => $detalle['descripcion'] ?? null,
                     ]);
                 }
-                
+
                 // Actualizar totales
                 $orden->update([
                     'subtotal' => $montoSubtotal,
                     'impuesto_total' => $montoImpuestos,
                     'total_orden' => $montoSubtotal + $montoImpuestos,
                 ]);
-                
+
                 $this->flushCache();
                 DB::commit();
-                
+
                 $orden->load(['proveedor', 'detalles.producto']);
-                
+
                 return (new OrdenCompraResource($orden))
                     ->additional(['message' => 'Orden de compra creada exitosamente'])
                     ->response()
                     ->setStatusCode(201);
-                
+
             } catch (\Exception $e) {
                 DB::rollBack();
                 throw $e;
             }
-            
+
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al crear orden de compra',
@@ -208,7 +208,7 @@ class OrdenCompraController extends Controller
 
     /**
      * Display the specified resource.
-     * 
+     *
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
@@ -239,7 +239,7 @@ class OrdenCompraController extends Controller
 
             // Calcular saldo pendiente
             $orden->saldo_pendiente = $orden->calcularSaldoPendiente();
-            
+
             return new OrdenCompraResource($orden);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             throw $e;
@@ -250,7 +250,7 @@ class OrdenCompraController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * 
+     *
      * @param Request $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
@@ -274,7 +274,7 @@ class OrdenCompraController extends Controller
             $this->authorize('update', $orden);
 
             $orden->update($request->validated());
-            
+
             return (new OrdenCompraResource($orden))
                 ->additional(['message' => 'Orden de compra actualizada exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -286,7 +286,7 @@ class OrdenCompraController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * 
+     *
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
@@ -314,31 +314,31 @@ class OrdenCompraController extends Controller
                     'message' => 'Solo se pueden eliminar órdenes en estado borrador'
                 ], 422);
             }
-            
+
             DB::beginTransaction();
-            
+
             try {
                 // Eliminar detalles
                 $orden->detalles()->delete();
-                
+
                 // Soft delete de la orden
                 $orden->update([
                     'activo' => false,
                     'eliminado' => true
                 ]);
-                
+
                 $this->flushCache();
                 DB::commit();
-                
+
                 return response()->json([
                     'message' => 'Orden de compra eliminada exitosamente'
                 ]);
-                
+
             } catch (\Exception $e) {
                 DB::rollBack();
                 throw $e;
             }
-            
+
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Orden de compra no encontrada'
@@ -350,10 +350,10 @@ class OrdenCompraController extends Controller
             ], 500);
         }
     }
-    
+
     /**
      * Generar número de orden único
-     * 
+     *
      * @param int $empresaId
      * @return string
      */
@@ -362,9 +362,9 @@ class OrdenCompraController extends Controller
         $ultimaOrden = OrdenCompra::where('empresa_id', $empresaId)
                                   ->orderBy('id', 'desc')
                                   ->first();
-        
+
         $numero = $ultimaOrden ? (int)substr($ultimaOrden->numero_orden, -6) + 1 : 1;
-        
+
         return 'OC-' . str_pad($numero, 6, '0', STR_PAD_LEFT);
     }
 }

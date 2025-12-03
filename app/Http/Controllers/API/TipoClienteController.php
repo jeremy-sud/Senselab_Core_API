@@ -16,10 +16,15 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 /**
  * Controller para gestionar tipos de clientes
  * Catálogo de tipos (Mayorista, Minorista, Gobierno, etc.)
- * 
+ *
  * @author GitHub Copilot
  * @copyright 2025 Sistemas Ursol S.A.
  */
+
+#[OA\Tag(
+    name: 'Tipos de Cliente',
+    description: 'Gestión de tipos/categorías de clientes (minorista, mayorista, etc)'
+)]
 class TipoClienteController extends Controller
 {
     use HasCacheableQueries;
@@ -29,17 +34,27 @@ class TipoClienteController extends Controller
 
     /**
      * Display a listing of the resource.
-     * 
+     *
      * @param Request $request
      * @return AnonymousResourceCollection
      */
+        #[OA\Get(
+        path: '/api/tipo-cliente',
+        summary: 'Listar tipos de cliente',
+        security: [['sanctum' => []]],
+        tags: ['Tipos de Cliente'],
+        responses: [
+            new OA\Response(response: 200, description: 'Listado de tipos de cliente'),
+        ]
+    )]
+
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', TipoCliente::class);
-        
+
         $perPage = $request->input('per_page', 15);
         $search = $request->input('search');
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'per_page' => $perPage,
             'search' => $search,
@@ -51,7 +66,7 @@ class TipoClienteController extends Controller
 
         $tiposCliente = $this->cacheQueryIfEnabled($cacheKey, function() use ($request, $search, $perPage) {
             $query = TipoCliente::where('eliminado', false);
-            
+
             if ($search) {
                 $query->where(function($q) use ($search) {
                     $q->where('nombre', 'like', "%{$search}%")
@@ -59,7 +74,7 @@ class TipoClienteController extends Controller
                         ->orWhere('descripcion', 'like', "%{$search}%");
                 });
             }
-            
+
             // Filtro por estado activo
             if ($request->has('activo') || $request->has('activos')) {
                 $esActivo = $request->boolean('activo') || $request->boolean('activos');
@@ -69,38 +84,49 @@ class TipoClienteController extends Controller
                     $query->where('activo', false);
                 }
             }
-            
+
             // Filtros adicionales
             if ($request->boolean('con_descuento')) {
                 $query->conDescuento();
             }
-            
+
             if ($request->boolean('con_credito')) {
                 $query->conCredito();
             }
-            
+
             return $query->orderBy('nombre', 'asc')
                             ->paginate($perPage);
         });
-        
+
         return TipoClienteResource::collection($tiposCliente);
     }
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param StoreTipoClienteRequest $request
      * @return JsonResponse
      */
+        #[OA\Post(
+        path: '/api/tipo-cliente',
+        summary: 'Crear tipo de cliente',
+        security: [['sanctum' => []]],
+        tags: ['Tipos de Cliente'],
+        responses: [
+            new OA\Response(response: 201, description: 'tipo de cliente creado'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
+
     public function store(StoreTipoClienteRequest $request): JsonResponse
     {
         $this->authorize('create', TipoCliente::class);
-        
+
         try {
             $tipoCliente = TipoCliente::create($request->validated());
-            
+
             $this->flushCache();
-            
+
             return (new TipoClienteResource($tipoCliente))
                 ->additional(['message' => 'Tipo de cliente creado exitosamente'])
                 ->response()
@@ -115,41 +141,70 @@ class TipoClienteController extends Controller
 
     /**
      * Display the specified resource.
-     * 
+     *
      * @param int $id
      * @return TipoClienteResource
      */
+        #[OA\Get(
+        path: '/api/tipo-cliente/{id}',
+        summary: 'Obtener tipo de cliente',
+        security: [['sanctum' => []]],
+        tags: ['Tipos de Cliente'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'tipo de cliente encontrado'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
+
     public function show(int $id): TipoClienteResource
     {
         $tipoCliente = TipoCliente::findOrFail($id);
-        
+
         $this->authorize('view', $tipoCliente);
-        
+
         return new TipoClienteResource($tipoCliente);
     }
 
     /**
      * Update the specified resource in storage.
-     * 
+     *
      * @param UpdateTipoClienteRequest $request
      * @param int $id
      * @return JsonResponse
      */
+        #[OA\Put(
+        path: '/api/tipo-cliente/{id}',
+        summary: 'Actualizar tipo de cliente',
+        security: [['sanctum' => []]],
+        tags: ['Tipos de Cliente'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'tipo de cliente actualizado'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
+
     public function update(UpdateTipoClienteRequest $request, int $id): JsonResponse
     {
         try {
             $tipoCliente = TipoCliente::findOrFail($id);
-            
+
             $this->authorize('update', $tipoCliente);
-            
+
             $validated = $request->validated();
             Log::info('Update TipoCliente', ['id' => $id, 'validated' => $validated]);
-            
+
             $tipoCliente->update($validated);
             $tipoCliente->refresh(); // Refrescar modelo después del update
-            
+
             $this->flushCache();
-            
+
             return response()->json([
                 'data' => new TipoClienteResource($tipoCliente),
                 'message' => 'Tipo de cliente actualizado exitosamente'
@@ -168,25 +223,39 @@ class TipoClienteController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * 
+     *
      * @param int $id
      * @return JsonResponse
      */
+        #[OA\Delete(
+        path: '/api/tipo-cliente/{id}',
+        summary: 'Eliminar tipo de cliente',
+        security: [['sanctum' => []]],
+        tags: ['Tipos de Cliente'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'tipo de cliente eliminado'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
+
     public function destroy(int $id): JsonResponse
     {
         try {
             $tipoCliente = TipoCliente::findOrFail($id);
-            
+
             $this->authorize('delete', $tipoCliente);
-            
+
             // Soft delete - marcar como inactivo
             $tipoCliente->update([
                 'activo' => false,
                 'eliminado' => true
             ]);
-            
+
             $this->flushCache();
-            
+
             return response()->json([
                 'message' => 'Tipo de cliente eliminado exitosamente'
             ]);

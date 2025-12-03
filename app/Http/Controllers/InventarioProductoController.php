@@ -9,10 +9,26 @@ use App\Http\Resources\InventarioProductoResource;
 use App\Traits\HasEmpresaContext;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use OpenApi\Attributes as OA;
 
+
+#[OA\Tag(
+    name: 'Inventario de Productos',
+    description: 'Gestión de inventario y existencias de productos por sucursal'
+)]
 class InventarioProductoController extends Controller
 {
     use HasEmpresaContext;
+        #[OA\Get(
+        path: '/api/inventario-producto',
+        summary: 'Listar inventario de productos',
+        security: [['sanctum' => []]],
+        tags: ['Inventario de Productos'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+        ]
+    )]
+
     public function index(Request $request): JsonResponse
     {
         // Multi-tenancy: uso centralizado del trait
@@ -48,6 +64,18 @@ class InventarioProductoController extends Controller
         ]);
     }
 
+        #[OA\Post(
+        path: '/api/inventario-producto',
+        summary: 'Crear registro de inventario',
+        security: [['sanctum' => []]],
+        tags: ['Inventario de Productos'],
+        responses: [
+            new OA\Response(response: 201, description: 'Recurso creado'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
+
+
     public function store(StoreInventarioProductoRequest $request): JsonResponse
     {
         $inventario = InventarioProducto::create($request->validated());
@@ -59,6 +87,21 @@ class InventarioProductoController extends Controller
         ], 201);
     }
 
+        #[OA\Get(
+        path: '/api/inventario-producto/{id}',
+        summary: 'Obtener inventario de producto',
+        security: [['sanctum' => []]],
+        tags: ['Inventario de Productos'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
+
+
     public function show(InventarioProducto $inventarioProducto): JsonResponse
     {
         return response()->json([
@@ -66,6 +109,21 @@ class InventarioProductoController extends Controller
             'data' => new InventarioProductoResource($inventarioProducto)
         ]);
     }
+
+        #[OA\Put(
+        path: '/api/inventario-producto/{id}',
+        summary: 'Actualizar inventario',
+        security: [['sanctum' => []]],
+        tags: ['Inventario de Productos'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
+
 
     public function update(UpdateInventarioProductoRequest $request, InventarioProducto $inventarioProducto): JsonResponse
     {

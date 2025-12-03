@@ -15,9 +15,9 @@ use OpenApi\Attributes as OA;
 
 /**
  * Controlador API para gestión de unidades de medida
- * 
+ *
  * Nota: Las unidades de medida son globales (sin empresa_id) según api_db.sql
- * 
+ *
  * @package App\Http\Controllers\API
  * @author Sistemas Ursol S.A.
  */
@@ -64,11 +64,11 @@ class UnidadMedidaController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', UnidadMedida::class);
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'activo' => $request->input('activo')
         ]);
-        
+
         $unidades = $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
             $query = UnidadMedida::query();
 
@@ -122,7 +122,7 @@ class UnidadMedidaController extends Controller
     {
         $this->authorize('create', UnidadMedida::class);
         $unidad = UnidadMedida::create($request->validated());
-        
+
         $this->flushCache();
 
         return (new UnidadMedidaResource($unidad))
@@ -228,7 +228,7 @@ class UnidadMedidaController extends Controller
         $this->authorize('update', $unidad);
 
         $unidad->update($request->validated());
-        
+
         $this->flushCache();
 
         return new UnidadMedidaResource($unidad);
@@ -282,7 +282,7 @@ class UnidadMedidaController extends Controller
         $unidad->eliminado = 1;
         $unidad->activo = 0;
         $unidad->save();
-        
+
         $this->flushCache();
 
         return response()->json([

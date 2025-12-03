@@ -30,7 +30,7 @@ class ClienteController extends Controller
     protected int $cacheTTL = 1800;
     /**
      * Display a listing of the resource.
-     * 
+     *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -123,16 +123,16 @@ class ClienteController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Cliente::class);
-        
+
         // Usar cache si está habilitado
         return $this->cacheQueryIfEnabled($request, function() use ($request) {
             $perPage = $request->input('per_page', 15);
             $search = $request->input('search');
             $empresaId = $request->input('empresa_id');
             $tipoIdentificacion = $request->input('tipo_identificacion');
-            
+
             $query = Cliente::with('empresa');
-            
+
             if ($search) {
                 $query->where(function($q) use ($search) {
                     $q->where('nombre', 'like', "%{$search}%")
@@ -142,29 +142,29 @@ class ClienteController extends Controller
                         ->orWhere('email', 'like', "%{$search}%");
                 });
             }
-            
+
             if ($empresaId) {
                 $query->where('empresa_id', $empresaId);
             }
-            
+
             if ($tipoIdentificacion) {
                 $query->porTipoIdentificacion($tipoIdentificacion);
             }
-            
+
             if ($request->boolean('activos')) {
                 $query->activos();
             }
-            
+
             $clientes = $query->orderBy('id', 'asc')
                                 ->paginate($perPage);
-            
+
             return ClienteResource::collection($clientes);
         });
     }
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param StoreClienteRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -237,14 +237,14 @@ class ClienteController extends Controller
     public function store(StoreClienteRequest $request): JsonResponse
     {
         $this->authorize('create', Cliente::class);
-        
+
         try {
             $cliente = Cliente::create($request->validated());
             $cliente->load('empresa');
-            
+
             // Invalidar cache de clientes
             $this->flushCache();
-            
+
             return (new ClienteResource($cliente))
                 ->additional(['message' => 'Cliente creado exitosamente'])
                 ->response()
@@ -259,7 +259,7 @@ class ClienteController extends Controller
 
     /**
      * Display the specified resource.
-     * 
+     *
      * @param int $id
      * @return ClienteResource
      */
@@ -321,9 +321,9 @@ class ClienteController extends Controller
                     $query->where('estado', 'pendiente');
                 }
             ])->findOrFail($id);
-            
+
             $this->authorize('view', $cliente);
-            
+
             return new ClienteResource($cliente);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404, 'Cliente no encontrado');
@@ -334,7 +334,7 @@ class ClienteController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * 
+     *
      * @param UpdateClienteRequest $request
      * @param int $id
      * @return ClienteResource
@@ -421,15 +421,15 @@ class ClienteController extends Controller
     {
         try {
             $cliente = Cliente::findOrFail($id);
-            
+
             $this->authorize('update', $cliente);
-            
+
             $cliente->update($request->validated());
             $cliente->load('empresa');
-            
+
             // Invalidar cache de clientes
             $this->flushCache();
-            
+
             return (new ClienteResource($cliente))
                 ->additional(['message' => 'Cliente actualizado exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -441,7 +441,7 @@ class ClienteController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * 
+     *
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
@@ -495,18 +495,18 @@ class ClienteController extends Controller
     {
         try {
             $cliente = Cliente::findOrFail($id);
-            
+
             $this->authorize('delete', $cliente);
-            
+
             // Soft delete - marcar como inactivo
             $cliente->update([
                 'activo' => false,
                 'eliminado' => true
             ]);
-            
+
             // Invalidar cache de clientes
             $this->flushCache();
-            
+
             return response()->json([
                 'message' => 'Cliente eliminado exitosamente'
             ]);

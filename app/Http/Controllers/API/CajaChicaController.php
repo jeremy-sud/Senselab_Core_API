@@ -15,7 +15,7 @@ use Illuminate\Http\JsonResponse;
 class CajaChicaController extends Controller
 {
     use HasCacheableQueries;
-    
+
     protected $cacheTags = ['caja_chica', 'tesoreria', 'fondos'];
     protected $cacheTTL = 900; // 15 minutos
 
@@ -77,7 +77,7 @@ class CajaChicaController extends Controller
 
         return $this->getCached($cacheKey, function () use ($request) {
             $perPage = $request->input('per_page', 15);
-            
+
             $query = CajaChica::with(['empresa', 'responsable'])->activos();
 
             if ($request->filled('estado')) {

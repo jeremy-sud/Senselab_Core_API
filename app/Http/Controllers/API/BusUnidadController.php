@@ -81,7 +81,7 @@ class BusUnidadController extends Controller
     {
         $this->authorize('viewAny', BusUnidad::class);
         $empresaId = $this->getEmpresaId();
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'empresa_id' => $empresaId,
             'modelo_id' => $request->get('modelo_id'),

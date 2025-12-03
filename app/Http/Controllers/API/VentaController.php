@@ -29,13 +29,13 @@ use OpenApi\Attributes as OA;
 class VentaController extends Controller
 {
     use HasCacheableQueries, HasEmpresaContext;
-    
+
     /** @var array<int,string> */
     protected array $cacheTags = ['ventas', 'transacciones'];
     protected int $cacheTTL = 600; // 10 minutos (datos muy dinámicos)
     /**
      * Display a listing of the resource.
-     * 
+     *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -178,7 +178,7 @@ class VentaController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param StoreVentaRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -257,7 +257,7 @@ class VentaController extends Controller
     public function store(StoreVentaRequest $request): JsonResponse
     {
         $this->authorize('create', Venta::class);
-        
+
         $empresaId = $this->resolveEmpresaOrFail();
         $sucursal = $this->ensureSucursal((int) $request->sucursal_id, $empresaId);
         $cliente = $this->ensureCliente((int) $request->cliente_id, $empresaId);
@@ -372,7 +372,7 @@ class VentaController extends Controller
 
     /**
      * Display the specified resource.
-     * 
+     *
      * @param int $id
      * @return VentaResource
      */
@@ -433,10 +433,10 @@ class VentaController extends Controller
                 'formaPago',
                 'detalles.producto'
             ])->findOrFail($id);
-            
+
             $this->authorize('view', $venta);
             $this->assertEmpresa($venta);
-            
+
             return new VentaResource($venta);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404, 'Venta no encontrada');
@@ -447,7 +447,7 @@ class VentaController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * 
+     *
      * @param UpdateVentaRequest $request
      * @param int $id
      * @return VentaResource
@@ -529,13 +529,13 @@ class VentaController extends Controller
                 'usuario',
                 'formaPago'
             ])->findOrFail($id);
-            
+
             $this->authorize('update', $venta);
             $this->assertEmpresa($venta);
-            
+
             // Solo permitir actualizar observaciones y estado
             $venta->update($request->validated());
-            
+
             return (new VentaResource($venta))
                 ->additional(['message' => 'Venta actualizada exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -547,7 +547,7 @@ class VentaController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * 
+     *
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
@@ -601,19 +601,19 @@ class VentaController extends Controller
     {
         try {
             $venta = Venta::with(['empresa'])->findOrFail($id);
-            
+
             $this->authorize('delete', $venta);
             $this->assertEmpresa($venta);
-            
+
             // Marcar como anulada en lugar de eliminar
             $venta->update([
                 'estado_venta' => 'anulada',
                 'activo' => false,
                 'eliminado' => true
             ]);
-            
+
             $this->flushCache();
-            
+
             return response()->json([
                 'message' => 'Venta anulada exitosamente'
             ]);
@@ -628,10 +628,10 @@ class VentaController extends Controller
             ], 500);
         }
     }
-    
+
     /**
      * Generar número de comprobante único
-     * 
+     *
      * @param int $empresaId
      * @param string $tipoComprobante
      * @return string
@@ -644,16 +644,16 @@ class VentaController extends Controller
             'nota_credito' => 'NC',
             'nota_debito' => 'ND',
         ];
-        
+
         $prefijo = $prefijos[$tipoComprobante] ?? 'DOC';
-        
+
         $ultimaVenta = Venta::where('empresa_id', $empresaId)
                             ->where('tipo_comprobante', $tipoComprobante)
                             ->orderBy('id', 'desc')
                             ->first();
-        
+
         $numero = $ultimaVenta ? (int)substr($ultimaVenta->numero_comprobante, -8) + 1 : 1;
-        
+
         return $prefijo . '-' . str_pad($numero, 8, '0', STR_PAD_LEFT);
     }
 
@@ -727,11 +727,11 @@ class VentaController extends Controller
                     }
                 }
             }
-    
+
     /**
      * Generar reporte PDF de ventas (async con Queue Job)
      * Sprint 8.4 - Queue Jobs
-     * 
+     *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -776,7 +776,7 @@ class VentaController extends Controller
         ]);
 
         $empresaId = $this->resolveEmpresaOrFail();
-        
+
         // Dispatch job asíncrono (Sprint 8.4)
         $job = GeneratePdfReportJob::dispatch(
             reportType: 'ventas',

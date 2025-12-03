@@ -127,7 +127,7 @@ class CuentaContableController extends Controller
     {
         $this->authorize('viewAny', CuentaContable::class);
         $empresaId = $this->getEmpresaId();
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'empresa_id' => $empresaId,
             'tipo_cuenta_id' => $request->get('tipo_cuenta_id'),

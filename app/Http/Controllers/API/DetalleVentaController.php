@@ -16,7 +16,7 @@ use OpenApi\Attributes as OA;
 class DetalleVentaController extends Controller
 {
     use HasCacheableQueries;
-    
+
     protected $cacheTags = ['detalle_ventas', 'ventas', 'transacciones'];
     protected $cacheTTL = 600; // 10 minutos (datos muy dinámicos)
 
@@ -24,7 +24,7 @@ class DetalleVentaController extends Controller
     {
         $this->middleware('auth:sanctum');
     }
-    
+
     /**
      * Alias para getCacheKey (compatibilidad)
      */
@@ -86,7 +86,7 @@ class DetalleVentaController extends Controller
 
         return $this->getCached($cacheKey, function () use ($request) {
             $perPage = $request->input('per_page', 15);
-            
+
             $query = DetalleVenta::with(['venta', 'producto', 'tipoImpuesto'])
                 ->activos();
 
@@ -169,7 +169,7 @@ class DetalleVentaController extends Controller
             }
 
             $detalle = DetalleVenta::create($validated);
-            
+
             // Actualizar totales de la venta
             $this->actualizarTotalesVenta($detalle->venta_id);
 
@@ -285,7 +285,7 @@ class DetalleVentaController extends Controller
         DB::beginTransaction();
         try {
             $detalle->update($validated);
-            
+
             // Actualizar totales de la venta
             $this->actualizarTotalesVenta($detalle->venta_id);
 
@@ -340,7 +340,7 @@ class DetalleVentaController extends Controller
         DB::beginTransaction();
         try {
             $ventaId = $detalle->venta_id;
-            
+
             $detalle->update([
                 'eliminado' => true,
                 'activo' => false
@@ -371,7 +371,7 @@ class DetalleVentaController extends Controller
     private function actualizarTotalesVenta($ventaId)
     {
         $venta = Venta::findOrFail($ventaId);
-        
+
         $detalles = DetalleVenta::where('venta_id', $ventaId)
             ->where('activo', true)
             ->where('eliminado', false)

@@ -18,9 +18,9 @@ use OpenApi\Attributes as OA;
 
 /**
  * Controlador para Detalle de Salidas de Inventario
- * 
+ *
  * Gestiona los productos específicos incluidos en cada salida de inventario.
- * 
+ *
  * @package App\Http\Controllers\API
  * @author Sistemas Ursol S.A. - Jeremy Arias Solano
  */
@@ -61,7 +61,7 @@ class DetalleSalidaInventarioController extends Controller
     public function index(Request $request, int $salidaId): AnonymousResourceCollection
     {
         $this->authorize('viewAny', DetalleSalidaInventario::class);
-        
+
         $empresaId = $this->getEmpresaId();
 
         $cacheKey = $this->getCacheKey('index', ['salida_id' => $salidaId]);
@@ -120,7 +120,7 @@ class DetalleSalidaInventarioController extends Controller
     public function store(StoreDetalleSalidaInventarioRequest $request): DetalleSalidaInventarioResource|JsonResponse
     {
         $this->authorize('create', DetalleSalidaInventario::class);
-        
+
         $empresaId = $this->getEmpresaId();
 
         $salida = SalidaInventario::where('empresa_id', $empresaId)
@@ -151,7 +151,7 @@ class DetalleSalidaInventarioController extends Controller
             $salida->increment('monto_total', $subtotal);
 
             DB::commit();
-            
+
             $this->flushCache();
 
             return (new DetalleSalidaInventarioResource($detalle->load('producto')))
@@ -207,7 +207,7 @@ class DetalleSalidaInventarioController extends Controller
                 'message' => 'No autorizado'
             ], 403);
         }
-        
+
         $this->authorize('view', $detalle);
 
         return new DetalleSalidaInventarioResource($detalle);
@@ -269,7 +269,7 @@ class DetalleSalidaInventarioController extends Controller
                 'message' => 'No autorizado'
             ], 403);
         }
-        
+
         $this->authorize('update', $detalle);
 
         if ($detalle->salidaInventario->estado === 'Procesada') {
@@ -356,7 +356,7 @@ class DetalleSalidaInventarioController extends Controller
                 'message' => 'No autorizado'
             ], 403);
         }
-        
+
         $this->authorize('delete', $detalle);
 
         if ($detalle->salidaInventario->estado === 'Procesada') {

@@ -13,7 +13,7 @@ use OpenApi\Attributes as OA;
 class PagoCuentaPagarController extends Controller
 {
     use HasCacheableQueries;
-    
+
     protected $cacheTags = ['pagos_cuentas_pagar', 'cuentas_pagar', 'transacciones'];
     protected $cacheTTL = 600; // 10 minutos
 
@@ -89,7 +89,7 @@ class PagoCuentaPagarController extends Controller
 
         return $this->getCached($cacheKey, function () use ($request) {
             $perPage = $request->input('per_page', 15);
-            
+
             $query = PagoCuentaPagar::with(['cuentaPorPagar', 'formaPago'])
                 ->activos();
 
@@ -176,7 +176,7 @@ class PagoCuentaPagarController extends Controller
             }
 
             $pago = PagoCuentaPagar::create($validated);
-            
+
             // Actualizar monto pagado
             $cuenta->increment('monto_pagado', $validated['monto_pago']);
 
@@ -333,7 +333,7 @@ class PagoCuentaPagarController extends Controller
         try {
             $cuenta = CuentaPorPagar::findOrFail($pago->cuenta_por_pagar_id);
             $cuenta->decrement('monto_pagado', $pago->monto_pago);
-            
+
             $pago->update([
                 'eliminado' => true,
                 'activo' => false

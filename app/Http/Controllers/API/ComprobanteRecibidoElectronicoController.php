@@ -18,10 +18,10 @@ use OpenApi\Attributes as OA;
 
 /**
  * Controlador para Comprobantes Electrónicos Recibidos
- * 
+ *
  * Gestiona los comprobantes electrónicos recibidos de proveedores (facturas,
  * notas de crédito, etc.) según normativa DGT de Costa Rica.
- * 
+ *
  * @package App\Http\Controllers\API
  * @author Sistemas Ursol S.A. - Jeremy Arias Solano
  */
@@ -66,7 +66,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', ComprobanteRecibidoElectronico::class);
-        
+
         $empresaId = $this->getEmpresaId();
 
         $cacheKey = $this->getCacheKey('index', ['empresa_id' => $empresaId]);
@@ -119,7 +119,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
     public function store(StoreComprobanteRecibidoElectronicoRequest $request): ComprobanteRecibidoElectronicoResource|JsonResponse
     {
         $this->authorize('create', ComprobanteRecibidoElectronico::class);
-        
+
         $empresaId = $this->getEmpresaId();
 
         DB::beginTransaction();
@@ -141,7 +141,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
             ]);
 
             DB::commit();
-            
+
             $this->flushCache();
 
             return (new ComprobanteRecibidoElectronicoResource($comprobante->load('proveedor')))
@@ -191,7 +191,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
         $comprobante = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)
             ->with(['proveedor', 'entradaInventario', 'usuarioConfirmacion'])
             ->findOrFail($id);
-        
+
         $this->authorize('view', $comprobante);
 
         return (new ComprobanteRecibidoElectronicoResource($comprobante))
@@ -239,7 +239,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
         $empresaId = $this->getEmpresaId();
 
         $comprobante = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)->findOrFail($id);
-        
+
         $this->authorize('update', $comprobante);
 
         if ($comprobante->confirmado_usuario == 1) {
@@ -258,7 +258,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
             ]));
 
             DB::commit();
-            
+
             $this->flushCache();
 
             return (new ComprobanteRecibidoElectronicoResource($comprobante->load('proveedor')))
@@ -316,7 +316,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
         $empresaId = $this->getEmpresaId();
 
         $comprobante = ComprobanteRecibidoElectronico::where('empresa_id', $empresaId)->findOrFail($id);
-        
+
         $this->authorize('delete', $comprobante);
 
         if ($comprobante->confirmado_usuario == 1) {
@@ -327,7 +327,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
         }
 
         $comprobante->delete();
-        
+
         $this->flushCache();
 
         return response()->json([

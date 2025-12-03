@@ -123,7 +123,7 @@ class AsientoContableController extends Controller
         $this->authorize('viewAny', AsientoContable::class);
 
         $empresaId = $this->getEmpresaId();
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'empresa_id' => $empresaId,
             'estado' => $request->estado,
@@ -134,7 +134,7 @@ class AsientoContableController extends Controller
             'sort_order' => $request->get('sort_order', 'desc'),
             'per_page' => $request->get('per_page', 15)
         ]);
-        
+
         return $this->cacheQueryIfEnabled($cacheKey, function () use ($request, $empresaId) {
             $query = AsientoContable::where('empresa_id', $empresaId)
                 ->where('eliminado', 0)
@@ -226,7 +226,7 @@ class AsientoContableController extends Controller
     public function store(StoreAsientoContableRequest $request): AsientoContableResource|JsonResponse
     {
         $this->authorize('create', AsientoContable::class);
-        
+
         try {
             DB::beginTransaction();
 

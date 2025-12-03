@@ -17,10 +17,10 @@ use OpenApi\Attributes as OA;
 
 /**
  * Controlador para Entradas de Inventario
- * 
+ *
  * Gestiona el registro de entradas de mercancía al inventario (compras,
  * ajustes positivos, devoluciones de clientes, etc.).
- * 
+ *
  * @package App\Http\Controllers\API
  * @author Sistemas Ursol S.A. - Jeremy Arias Solano
  */
@@ -87,7 +87,7 @@ class EntradaInventarioController extends Controller
 
         return $this->getCached($cacheKey, function () use ($request) {
             $perPage = $request->input('per_page', 15);
-            
+
             $query = EntradaInventario::with(['proveedor', 'bodega', 'usuario'])
                 ->activos();
 
@@ -172,13 +172,13 @@ class EntradaInventarioController extends Controller
         try {
             $validated['usuario_id'] = auth('sanctum')->id();
             $validated['estado'] = 'pendiente'; // Estado inicial
-            
+
             $entrada = EntradaInventario::create($validated);
 
             foreach ($validated['detalles'] as $detalle) {
                 $entrada->detalles()->create($detalle);
             }
-            
+
             // Actualizar total
             $this->actualizarTotalEntrada($entrada->id);
 
@@ -300,7 +300,7 @@ class EntradaInventarioController extends Controller
         DB::beginTransaction();
         try {
             $entrada->update($validated);
-            
+
             DB::commit();
             $this->clearCache();
 
@@ -349,7 +349,7 @@ class EntradaInventarioController extends Controller
         $empresaId = $this->getEmpresaId();
 
         $entrada = EntradaInventario::where('empresa_id', $empresaId)->findOrFail($id);
-        
+
         $this->authorize('delete', $entrada);
 
         if ($entrada->estado !== 'pendiente') {

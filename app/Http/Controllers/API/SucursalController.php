@@ -15,12 +15,12 @@ use OpenApi\Attributes as OA;
 class SucursalController extends Controller
 {
     use HasCacheableQueries;
-    
+
     protected $cacheTags = ['sucursales', 'catalogos'];
     protected $cacheTTL = 3600; // 1 hora
     /**
      * Display a listing of the resource.
-     * 
+     *
      * @param Request $request
      * @return AnonymousResourceCollection
      */
@@ -68,28 +68,28 @@ class SucursalController extends Controller
     public function index(Request $request): AnonymousResourceCollection|JsonResponse
     {
         $this->authorize('viewAny', Sucursal::class);
-        
+
         try {
             $perPage = $request->input('per_page', 15);
             $empresaId = $request->input('empresa_id');
-            
+
             $sucursales = $this->cacheQueryIfEnabled(
                 $this->getCacheKey('index', $request->all()),
                 function() use ($request, $perPage, $empresaId) {
                     $query = Sucursal::with('empresa');
-                    
+
                     if ($empresaId) {
                         $query->where('empresa_id', $empresaId);
                     }
-                    
+
                     if ($request->boolean('activos')) {
                         $query->where('activo', true);
                     }
-                    
+
                     return $query->orderBy('id', 'asc')->paginate($perPage);
                 }
             );
-            
+
             return SucursalResource::collection($sucursales);
         } catch (\Exception $e) {
             return response()->json([
@@ -101,7 +101,7 @@ class SucursalController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param StoreSucursalRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -146,19 +146,19 @@ class SucursalController extends Controller
     public function store(StoreSucursalRequest $request): JsonResponse
     {
         $this->authorize('create', Sucursal::class);
-        
+
         try {
             // Si es principal, desmarcar otras sucursales principales
             if ($request->boolean('es_principal')) {
                 Sucursal::where('empresa_id', $request->empresa_id)
                         ->update(['es_principal' => false]);
             }
-            
+
             $sucursal = Sucursal::create($request->validated());
             $sucursal->load('empresa');
-            
+
             $this->flushCache();
-            
+
             return (new SucursalResource($sucursal))
                 ->additional(['message' => 'Sucursal creada exitosamente'])
                 ->response()
@@ -173,7 +173,7 @@ class SucursalController extends Controller
 
     /**
      * Display the specified resource.
-     * 
+     *
      * @param int $id
      * @return SucursalResource
      */
@@ -215,7 +215,7 @@ class SucursalController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * 
+     *
      * @param UpdateSucursalRequest $request
      * @param int $id
      * @return SucursalResource
@@ -256,12 +256,12 @@ class SucursalController extends Controller
                         ->where('id', '!=', $id)
                         ->update(['es_principal' => false]);
             }
-            
+
             $sucursal->update($request->validated());
             $sucursal->load('empresa');
-            
+
             $this->flushCache();
-            
+
             return (new SucursalResource($sucursal))
                 ->additional(['message' => 'Sucursal actualizada exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -273,7 +273,7 @@ class SucursalController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * 
+     *
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
@@ -304,15 +304,15 @@ class SucursalController extends Controller
                     'message' => 'No se puede eliminar la sucursal principal'
                 ], 422);
             }
-            
+
             // Soft delete
             $sucursal->update([
                 'activo' => false,
                 'eliminado' => true
             ]);
-            
+
             $this->flushCache();
-            
+
             return response()->json([
                 'message' => 'Sucursal eliminada exitosamente'
             ]);

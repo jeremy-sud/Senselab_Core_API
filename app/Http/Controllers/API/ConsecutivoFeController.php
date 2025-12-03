@@ -15,7 +15,7 @@ use OpenApi\Attributes as OA;
 class ConsecutivoFeController extends Controller
 {
     use HasCacheableQueries;
-    
+
     protected $cacheTags = ['consecutivos_fe', 'facturacion_electronica', 'dgt'];
     protected $cacheTTL = 3600; // 1 hora (datos críticos pero estables)
 
@@ -77,7 +77,7 @@ class ConsecutivoFeController extends Controller
 
         return $this->getCached($cacheKey, function () use ($request) {
             $perPage = $request->input('per_page', 15);
-            
+
             $query = ConsecutivoFe::with(['empresa', 'sucursal'])
                 ->activos();
 

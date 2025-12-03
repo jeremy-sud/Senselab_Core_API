@@ -16,10 +16,10 @@ use OpenApi\Attributes as OA;
 
 /**
  * Controlador para Salidas de Inventario
- * 
+ *
  * Gestiona el registro de salidas de mercancía del inventario (ventas,
  * consumo interno, mermas, ajustes negativos, etc.).
- * 
+ *
  * @package App\Http\Controllers\API
  * @author Sistemas Ursol S.A. - Jeremy Arias Solano
  */
@@ -81,7 +81,7 @@ class SalidaInventarioController extends Controller
     public function index(Request $request): JsonResponse
     {
         $this->authorize('viewAny', SalidaInventario::class);
-        
+
         $empresaId = $this->getEmpresaId();
 
         $cacheKey = $this->getCacheKey('index', ['empresa_id' => $empresaId]);
@@ -150,7 +150,7 @@ class SalidaInventarioController extends Controller
     public function store(StoreSalidaInventarioRequest $request): JsonResponse
     {
         $this->authorize('create', SalidaInventario::class);
-        
+
         $empresaId = $this->getEmpresaId();
 
         DB::beginTransaction();
@@ -223,7 +223,7 @@ class SalidaInventarioController extends Controller
         $salida = SalidaInventario::where('empresa_id', $empresaId)
             ->with(['almacen', 'cliente', 'proveedor', 'venta', 'detalles.producto.unidadMedida'])
             ->findOrFail($id);
-        
+
         $this->authorize('view', $salida);
 
         return new SalidaInventarioResource($salida);
@@ -280,7 +280,7 @@ class SalidaInventarioController extends Controller
         $empresaId = $this->getEmpresaId();
 
         $salida = SalidaInventario::where('empresa_id', $empresaId)->findOrFail($id);
-        
+
         $this->authorize('update', $salida);
 
         if ($salida->estado === 'Procesada') {
@@ -353,7 +353,7 @@ class SalidaInventarioController extends Controller
         $empresaId = $this->getEmpresaId();
 
         $salida = SalidaInventario::where('empresa_id', $empresaId)->findOrFail($id);
-        
+
         $this->authorize('delete', $salida);
 
         if ($salida->estado === 'Procesada') {

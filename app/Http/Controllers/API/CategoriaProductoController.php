@@ -15,14 +15,14 @@ use OpenApi\Attributes as OA;
 
 /**
  * Controlador API para gestión de categorías de productos
- * 
+ *
  * @package App\Http\Controllers\API
  * @author Sistemas Ursol S.A.
  */
 class CategoriaProductoController extends Controller
 {
     use HasCacheableQueries;
-    
+
     protected $cacheTags = ['categorias-productos', 'catalogos'];
     protected $cacheTTL = 3600; // 1 hora
     /**
@@ -66,7 +66,7 @@ class CategoriaProductoController extends Controller
 
         return $this->getCached($cacheKey, function () use ($request) {
             $perPage = $request->input('per_page', 15);
-            
+
             $query = CategoriaProducto::query();
 
             if ($request->filled('nombre')) {

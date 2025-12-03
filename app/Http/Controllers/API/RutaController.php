@@ -80,9 +80,9 @@ class RutaController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Ruta::class);
-        
+
         $empresaId = $this->getEmpresaId();
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'empresa_id' => $empresaId,
             'origen' => $request->get('origen'),
@@ -152,7 +152,7 @@ class RutaController extends Controller
     public function store(StoreRutaRequest $request): JsonResponse
     {
         $this->authorize('create', Ruta::class);
-        
+
         $empresaId = $this->getEmpresaId();
 
         $ruta = Ruta::create([
@@ -210,7 +210,7 @@ class RutaController extends Controller
             ->where('eliminado', 0)
             ->with(['empresa', 'horariosRuta'])
             ->findOrFail($id);
-        
+
         $this->authorize('view', $ruta);
 
         return new RutaResource($ruta);
@@ -267,7 +267,7 @@ class RutaController extends Controller
         $ruta = Ruta::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
             ->findOrFail($id);
-        
+
         $this->authorize('update', $ruta);
 
         $ruta->update($request->only([
@@ -330,7 +330,7 @@ class RutaController extends Controller
         $ruta = Ruta::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
             ->findOrFail($id);
-        
+
         $this->authorize('delete', $ruta);
 
         // Validar que no tenga horarios activos

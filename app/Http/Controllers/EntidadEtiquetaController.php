@@ -14,13 +14,29 @@ use App\Http\Requests\RemoverEtiquetasMultiplesRequest;
 use App\Http\Requests\BuscarEntidadPorTipoRequest;
 use App\Http\Requests\SincronizarEtiquetasRequest;
 use App\Http\Requests\PorEtiquetaRequest;
+use OpenApi\Attributes as OA;
 
+
+#[OA\Tag(
+    name: 'Entidad-Etiqueta',
+    description: 'Gestión de relaciones muchos-a-muchos entre entidades y etiquetas'
+)]
 class EntidadEtiquetaController extends Controller
 {
     use HasEmpresaContext;
     /**
      * Display a listing of the resource.
      */
+        #[OA\Get(
+        path: '/api/entidad-etiqueta',
+        summary: 'Listar relaciones entidad-etiqueta',
+        security: [['sanctum' => []]],
+        tags: ['Entidad-Etiqueta'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+        ]
+    )]
+
     public function index(Request $request): JsonResponse
     {
         // Multi-tenancy: uso centralizado del trait
@@ -62,6 +78,17 @@ class EntidadEtiquetaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+        #[OA\Post(
+        path: '/api/entidad-etiqueta',
+        summary: 'Crear relación entidad-etiqueta',
+        security: [['sanctum' => []]],
+        tags: ['Entidad-Etiqueta'],
+        responses: [
+            new OA\Response(response: 201, description: 'Recurso creado'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
+
     public function store(StoreEntidadEtiquetaRequest $request): JsonResponse
     {
         // Verificar que no exista ya la relación
@@ -119,6 +146,20 @@ class EntidadEtiquetaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+        #[OA\Delete(
+        path: '/api/entidad-etiqueta/{id}',
+        summary: 'Eliminar relación entidad-etiqueta',
+        security: [['sanctum' => []]],
+        tags: ['Entidad-Etiqueta'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
+
     public function destroy(EntidadEtiqueta $entidadEtiqueta): JsonResponse
     {
         // Soft delete

@@ -18,12 +18,12 @@ use OpenApi\Attributes as OA;
 
 /**
  * Controlador API para gestión de movimientos de inventario
- * 
+ *
  * Maneja tanto entradas como salidas de inventario con:
  * - Filtrado por almacén, tipo de movimiento y fechas
  * - Control de estados (Pendiente, Procesada, Cancelada)
  * - Trazabilidad completa
- * 
+ *
  * @package App\Http\Controllers\API
  * @author Sistemas Ursol S.A.
  */
@@ -36,7 +36,7 @@ class InventarioController extends Controller
 
     /**
      * Listar todas las entradas de inventario
-     * 
+     *
      * GET /api/inventario/entradas
      */
     #[OA\Get(
@@ -100,9 +100,9 @@ class InventarioController extends Controller
     public function indexEntradas(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', EntradaInventario::class);
-        
+
         $empresaId = $this->getEmpresaId();
-        
+
         $cacheKey = $this->getCacheKey('entradas', [
             'empresa_id' => $empresaId,
             'almacen_id' => $request->input('almacen_id'),
@@ -111,7 +111,7 @@ class InventarioController extends Controller
             'fecha_desde' => $request->input('fecha_desde'),
             'fecha_hasta' => $request->input('fecha_hasta')
         ]);
-        
+
         $entradas = $this->cacheQueryIfEnabled($cacheKey, function() use ($request, $empresaId) {
             $query = EntradaInventario::where('empresa_id', $empresaId)
                 ->with(['almacen', 'ordenCompra', 'proveedor', 'detalles']);
@@ -145,7 +145,7 @@ class InventarioController extends Controller
 
     /**
      * Crear una nueva entrada de inventario
-     * 
+     *
      * POST /api/inventario/entradas
      */
     #[OA\Post(
@@ -191,7 +191,7 @@ class InventarioController extends Controller
     public function storeEntrada(StoreEntradaInventarioRequest $request): JsonResponse
     {
         $this->authorize('create', EntradaInventario::class);
-        
+
         $validated = $request->validated();
         $validated['empresa_id'] = $this->getEmpresaId();
 
@@ -205,7 +205,7 @@ class InventarioController extends Controller
 
     /**
      * Mostrar una entrada específica
-     * 
+     *
      * GET /api/inventario/entradas/{id}
      */
     #[OA\Get(
@@ -246,7 +246,7 @@ class InventarioController extends Controller
         $entrada = EntradaInventario::where('empresa_id', $empresaId)
             ->with(['almacen', 'ordenCompra', 'proveedor', 'detalles.producto'])
             ->findOrFail($id);
-        
+
         $this->authorize('view', $entrada);
 
         return new EntradaInventarioResource($entrada);
@@ -254,7 +254,7 @@ class InventarioController extends Controller
 
     /**
      * Listar todas las salidas de inventario
-     * 
+     *
      * GET /api/inventario/salidas
      */
     #[OA\Get(
@@ -318,9 +318,9 @@ class InventarioController extends Controller
     public function indexSalidas(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', SalidaInventario::class);
-        
+
         $empresaId = $this->getEmpresaId();
-        
+
         $cacheKey = $this->getCacheKey('salidas', [
             'empresa_id' => $empresaId,
             'almacen_id' => $request->input('almacen_id'),
@@ -329,7 +329,7 @@ class InventarioController extends Controller
             'fecha_desde' => $request->input('fecha_desde'),
             'fecha_hasta' => $request->input('fecha_hasta')
         ]);
-        
+
         $salidas = $this->cacheQueryIfEnabled($cacheKey, function() use ($request, $empresaId) {
             $query = SalidaInventario::where('empresa_id', $empresaId)
                 ->with(['almacen', 'venta', 'cliente', 'proveedor', 'detalles']);
@@ -363,7 +363,7 @@ class InventarioController extends Controller
 
     /**
      * Crear una nueva salida de inventario
-     * 
+     *
      * POST /api/inventario/salidas
      */
     #[OA\Post(
@@ -410,7 +410,7 @@ class InventarioController extends Controller
     public function storeSalida(StoreSalidaInventarioRequest $request): JsonResponse
     {
         $this->authorize('create', SalidaInventario::class);
-        
+
         $validated = $request->validated();
         $validated['empresa_id'] = $this->getEmpresaId();
 
@@ -424,7 +424,7 @@ class InventarioController extends Controller
 
     /**
      * Mostrar una salida específica
-     * 
+     *
      * GET /api/inventario/salidas/{id}
      */
     #[OA\Get(
@@ -465,7 +465,7 @@ class InventarioController extends Controller
         $salida = SalidaInventario::where('empresa_id', $empresaId)
             ->with(['almacen', 'venta', 'cliente', 'proveedor', 'detalles.producto'])
             ->findOrFail($id);
-        
+
         $this->authorize('view', $salida);
 
         return new SalidaInventarioResource($salida);
@@ -473,7 +473,7 @@ class InventarioController extends Controller
 
     /**
      * Cancelar una entrada de inventario
-     * 
+     *
      * POST /api/inventario/entradas/{id}/cancelar
      */
     #[OA\Post(
@@ -539,7 +539,7 @@ class InventarioController extends Controller
 
     /**
      * Cancelar una salida de inventario
-     * 
+     *
      * POST /api/inventario/salidas/{id}/cancelar
      */
     #[OA\Post(

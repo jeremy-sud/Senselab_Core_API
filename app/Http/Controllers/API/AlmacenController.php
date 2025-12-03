@@ -15,12 +15,12 @@ use OpenApi\Attributes as OA;
 class AlmacenController extends Controller
 {
     use HasCacheableQueries;
-    
+
     protected $cacheTags = ['almacenes', 'catalogos'];
     protected $cacheTTL = 1800; // 30 minutos
     /**
      * Display a listing of the resource.
-     * 
+     *
      * @param Request $request
      * @return AnonymousResourceCollection
      */
@@ -43,33 +43,33 @@ class AlmacenController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Almacen::class);
-        
+
         try {
             $perPage = $request->input('per_page', 15);
             $empresaId = $request->input('empresa_id');
             $sucursalId = $request->input('sucursal_id');
-            
+
             $almacenes = $this->cacheQueryIfEnabled(
                 $this->getCacheKey('index', $request->all()),
                 function() use ($request, $perPage, $empresaId, $sucursalId) {
                     $query = Almacen::with(['empresa', 'sucursal']);
-                    
+
                     if ($empresaId) {
                         $query->where('empresa_id', $empresaId);
                     }
-                    
+
                     if ($sucursalId) {
                         $query->where('sucursal_id', $sucursalId);
                     }
-                    
+
                     if ($request->boolean('activos')) {
                         $query->where('activo', true);
                     }
-                    
+
                     return $query->orderBy('id', 'asc')->paginate($perPage);
                 }
             );
-            
+
             return AlmacenResource::collection($almacenes);
         } catch (\Exception $e) {
             return response()->json([
@@ -81,7 +81,7 @@ class AlmacenController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param StoreAlmacenRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -111,19 +111,19 @@ class AlmacenController extends Controller
     public function store(StoreAlmacenRequest $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('create', Almacen::class);
-        
+
         try {
             // Si es principal, desmarcar otros almacenes principales de la sucursal
             if ($request->boolean('es_principal')) {
                 Almacen::where('sucursal_id', $request->sucursal_id)
                        ->update(['es_principal' => false]);
             }
-            
+
             $almacen = Almacen::create($request->validated());
             $almacen->load(['empresa', 'sucursal']);
-            
+
             $this->flushCache();
-            
+
             return (new AlmacenResource($almacen))
                 ->additional(['message' => 'Almacén creado exitosamente'])
                 ->response()
@@ -138,7 +138,7 @@ class AlmacenController extends Controller
 
     /**
      * Display the specified resource.
-     * 
+     *
      * @param int $id
      * @return AlmacenResource
      */
@@ -162,7 +162,7 @@ class AlmacenController extends Controller
         $this->authorize('view', $almacen);
 
         try {
-            
+
             return new AlmacenResource($almacen);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404, 'Almacén no encontrado');
@@ -173,7 +173,7 @@ class AlmacenController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * 
+     *
      * @param UpdateAlmacenRequest $request
      * @param int $id
      * @return AlmacenResource
@@ -192,19 +192,19 @@ class AlmacenController extends Controller
         $this->authorize('update', $almacen);
 
         try {
-            
+
             // Si es principal, desmarcar otros almacenes principales de la sucursal
             if ($request->has('es_principal') && $request->boolean('es_principal')) {
                 Almacen::where('sucursal_id', $almacen->sucursal_id)
                        ->where('id', '!=', $id)
                        ->update(['es_principal' => false]);
             }
-            
+
             $almacen->update($request->validated());
             $almacen->load(['empresa', 'sucursal']);
-            
+
             $this->flushCache();
-            
+
             return (new AlmacenResource($almacen))
                 ->additional(['message' => 'Almacén actualizado exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -216,7 +216,7 @@ class AlmacenController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * 
+     *
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
@@ -238,22 +238,22 @@ class AlmacenController extends Controller
         $this->authorize('delete', $almacen);
 
         try {
-            
+
             // No permitir eliminar almacén principal
             if ($almacen->es_principal) {
                 return response()->json([
                     'message' => 'No se puede eliminar el almacén principal'
                 ], 422);
             }
-            
+
             // Soft delete
             $almacen->update([
                 'activo' => false,
                 'eliminado' => true
             ]);
-            
+
             $this->flushCache();
-            
+
             return response()->json([
                 'message' => 'Almacén eliminado exitosamente'
             ]);

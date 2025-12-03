@@ -16,13 +16,13 @@ use OpenApi\Attributes as OA;
 
 /**
  * Controlador API para gestión de empleados
- * 
+ *
  * Maneja el CRUD completo de empleados con:
  * - Filtrado por empresa (multi-tenant)
  * - Validación de documentos únicos
  * - Relaciones con cargos y usuarios
  * - Soft deletes
- * 
+ *
  * @package App\Http\Controllers\API
  * @author Sistemas Ursol S.A.
  */
@@ -35,12 +35,12 @@ class EmpleadoController extends Controller
 
     /**
      * Listar todos los empleados de la empresa del usuario autenticado
-     * 
+     *
      * GET /api/empleados
      * Query params opcionales:
      * - activo: boolean (filtrar por estado)
      * - cargo_id: int (filtrar por cargo)
-     * 
+     *
      * @param Request $request
      * @return AnonymousResourceCollection
      */
@@ -86,7 +86,7 @@ class EmpleadoController extends Controller
 
         return $this->getCached($cacheKey, function () use ($request) {
             $perPage = $request->input('per_page', 15);
-            
+
             $query = Empleado::with(['usuario', 'departamento', 'cargo'])
                 ->activos();
 
@@ -117,9 +117,9 @@ class EmpleadoController extends Controller
 
     /**
      * Crear un nuevo empleado
-     * 
+     *
      * POST /api/empleados
-     * 
+     *
      * @param StoreEmpleadoRequest $request
      * @return JsonResponse
      */
@@ -173,7 +173,7 @@ class EmpleadoController extends Controller
         DB::beginTransaction();
         try {
             $empleado = Empleado::create($validated);
-            
+
             DB::commit();
             $this->clearCache();
 
@@ -193,9 +193,9 @@ class EmpleadoController extends Controller
 
     /**
      * Mostrar un empleado específico
-     * 
+     *
      * GET /api/empleados/{id}
-     * 
+     *
      * @param int $id
      * @return EmpleadoResource
      */
@@ -225,9 +225,9 @@ class EmpleadoController extends Controller
 
     /**
      * Actualizar un empleado existente
-     * 
+     *
      * PUT/PATCH /api/empleados/{id}
-     * 
+     *
      * @param UpdateEmpleadoRequest $request
      * @param int $id
      * @return EmpleadoResource
@@ -276,7 +276,7 @@ class EmpleadoController extends Controller
         DB::beginTransaction();
         try {
             $empleado->update($validated);
-            
+
             DB::commit();
             $this->clearCache();
 
@@ -291,9 +291,9 @@ class EmpleadoController extends Controller
 
     /**
      * Eliminar un empleado (soft delete)
-     * 
+     *
      * DELETE /api/empleados/{id}
-     * 
+     *
      * @param int $id
      * @return JsonResponse
      */

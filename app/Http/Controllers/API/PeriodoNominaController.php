@@ -82,16 +82,16 @@ class PeriodoNominaController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', PeriodoNomina::class);
-        
+
         $empresaId = $this->getEmpresaId();
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'empresa_id' => $empresaId,
             'estado' => $request->estado,
             'anio' => $request->anio,
             'mes' => $request->mes
         ]);
-        
+
         return $this->cacheQueryIfEnabled($cacheKey, function() use ($request, $empresaId) {
             $query = PeriodoNomina::where('empresa_id', $empresaId)
                 ->where('eliminado', 0)
@@ -154,7 +154,7 @@ class PeriodoNominaController extends Controller
     public function store(StorePeriodoNominaRequest $request): PeriodoNominaResource
     {
         $this->authorize('create', PeriodoNomina::class);
-        
+
         $empresaId = $this->getEmpresaId();
 
         $periodo = PeriodoNomina::create([
@@ -167,7 +167,7 @@ class PeriodoNominaController extends Controller
             'observaciones' => $request->observaciones,
             'activo' => $request->activo ?? 1
         ]);
-        
+
         $this->flushCache();
 
         return new PeriodoNominaResource($periodo->load(['empresa']));
@@ -209,7 +209,7 @@ class PeriodoNominaController extends Controller
             ->where('eliminado', 0)
             ->with(['empresa', 'pagosNomina.empleado', 'pagosNomina.metodoPago'])
             ->findOrFail($id);
-        
+
         $this->authorize('view', $periodo);
 
         return new PeriodoNominaResource($periodo);
@@ -265,7 +265,7 @@ class PeriodoNominaController extends Controller
         $periodo = PeriodoNomina::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
             ->findOrFail($id);
-        
+
         $this->authorize('update', $periodo);
 
         // Validar que no esté procesado
@@ -282,7 +282,7 @@ class PeriodoNominaController extends Controller
             'observaciones',
             'activo'
         ]));
-        
+
         $this->flushCache();
 
         return new PeriodoNominaResource($periodo->load(['empresa']));
@@ -332,7 +332,7 @@ class PeriodoNominaController extends Controller
         $periodo = PeriodoNomina::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
             ->findOrFail($id);
-        
+
         $this->authorize('delete', $periodo);
 
         // Validar que no tenga pagos asociados
@@ -343,7 +343,7 @@ class PeriodoNominaController extends Controller
         }
 
         $periodo->update(['eliminado' => 1, 'activo' => 0]);
-        
+
         $this->flushCache();
 
         return response()->json([
