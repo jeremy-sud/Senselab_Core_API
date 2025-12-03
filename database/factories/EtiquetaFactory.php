@@ -14,7 +14,7 @@ class EtiquetaFactory extends Factory
     {
         return [
             'nombre' => $this->faker->unique()->word(),
-            'slug' => fn (array $attributes) => \Str::slug($attributes['nombre']),
+            'slug' => fn (array $attributes) => Str::slug($attributes['nombre']),
             'color' => $this->faker->hexColor(),
             'descripcion' => $this->faker->optional()->sentence(),
             'icono' => $this->faker->optional()->randomElement(['tag', 'star', 'flag', 'bookmark']),
