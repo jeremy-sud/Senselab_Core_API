@@ -91,6 +91,7 @@ class OrdenCompraController extends Controller
 
             return OrdenCompraResource::collection($ordenes);
         } catch (\Exception $e) {
+            report($e);
             throw $e;
         }
     }
@@ -242,9 +243,7 @@ class OrdenCompraController extends Controller
 
             return new OrdenCompraResource($orden);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            throw $e;
-        } catch (\Exception $e) {
-            throw $e;
+            abort(404, 'Orden de compra no encontrada');
         }
     }
 
@@ -278,9 +277,7 @@ class OrdenCompraController extends Controller
             return (new OrdenCompraResource($orden))
                 ->additional(['message' => 'Orden de compra actualizada exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            throw $e;
-        } catch (\Exception $e) {
-            throw $e;
+            abort(404, 'Orden de compra no encontrada');
         }
     }
 
@@ -304,50 +301,37 @@ class OrdenCompraController extends Controller
     )]
     public function destroy(int $id): \Illuminate\Http\JsonResponse
     {
+        $orden = OrdenCompra::with(['detalles'])->findOrFail($id);
+        $this->authorize('delete', $orden);
+
+        // Solo permitir eliminar en estado borrador
+        if ($orden->estado !== 'borrador') {
+            return response()->json([
+                'message' => 'Solo se pueden eliminar órdenes en estado borrador'
+            ], 422);
+        }
+
+        DB::beginTransaction();
         try {
-            $orden = OrdenCompra::with(['detalles'])->findOrFail($id);
-            $this->authorize('delete', $orden);
+            // Eliminar detalles
+            $orden->detalles()->delete();
 
-            // Solo permitir eliminar en estado borrador
-            if ($orden->estado !== 'borrador') {
-                return response()->json([
-                    'message' => 'Solo se pueden eliminar órdenes en estado borrador'
-                ], 422);
-            }
+            // Soft delete de la orden
+            $orden->update([
+                'activo' => false,
+                'eliminado' => true
+            ]);
 
-            DB::beginTransaction();
+            $this->flushCache();
+            DB::commit();
 
-            try {
-                // Eliminar detalles
-                $orden->detalles()->delete();
-
-                // Soft delete de la orden
-                $orden->update([
-                    'activo' => false,
-                    'eliminado' => true
-                ]);
-
-                $this->flushCache();
-                DB::commit();
-
-                return response()->json([
-                    'message' => 'Orden de compra eliminada exitosamente'
-                ]);
-
-            } catch (\Exception $e) {
-                DB::rollBack();
-                throw $e;
-            }
-
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
-                'message' => 'Orden de compra no encontrada'
-            ], 404);
+                'message' => 'Orden de compra eliminada exitosamente'
+            ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al eliminar orden de compra',
-                'error' => $e->getMessage()
-            ], 500);
+            DB::rollBack();
+            report($e);
+            throw $e;
         }
     }
 
