@@ -182,10 +182,7 @@ class ProductoController extends Controller
                 return ProductoResource::collection($productos);
             });
         } catch (\Exception $e) {
-            // En caso de error, retornamos una respuesta JSON manual, pero el tipo de retorno
-            // de la función espera AnonymousResourceCollection. Esto podría ser un problema si falla.
-            // Sin embargo, para cumplir con PHPStan, asumimos el camino feliz.
-            // Una opción es lanzar la excepción o retornar una colección vacía.
+            report($e);
             throw $e;
         }
     }
@@ -323,9 +320,7 @@ class ProductoController extends Controller
 
             return new ProductoResource($producto);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            throw $e;
-        } catch (\Exception $e) {
-            throw $e;
+            abort(404, 'Producto no encontrado');
         }
     }
 
@@ -383,30 +378,24 @@ class ProductoController extends Controller
     )]
     public function update(UpdateProductoRequest $request, int $id): ProductoResource
     {
-        try {
-            $producto = Producto::findOrFail($id);
+        $producto = Producto::findOrFail($id);
 
-            $this->authorize('update', $producto);
+        $this->authorize('update', $producto);
 
-            $producto->update($request->validated());
-            $producto->load([
-                'empresa',
-                'categoria',
-                'unidadMedida',
-                'marca',
-                'tipoImpuesto'
-            ]);
+        $producto->update($request->validated());
+        $producto->load([
+            'empresa',
+            'categoria',
+            'unidadMedida',
+            'marca',
+            'tipoImpuesto'
+        ]);
 
-            // Invalidar cache de productos
-            $this->flushCache();
+        // Invalidar cache de productos
+        $this->flushCache();
 
-            return (new ProductoResource($producto))
-                ->additional(['message' => 'Producto actualizado exitosamente']);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            throw $e;
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        return (new ProductoResource($producto))
+            ->additional(['message' => 'Producto actualizado exitosamente']);
     }
 
     /**

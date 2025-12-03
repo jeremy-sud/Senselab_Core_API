@@ -417,19 +417,18 @@ class EntradaInventarioController extends Controller
             ->with('detalles.producto')
             ->findOrFail($id);
 
-        if ($entrada->estado === 'Procesada') {
-            return response()->json([
-                'success' => false,
-                'message' => 'La entrada ya fue procesada anteriormente'
-            ], 422);
-        }
+        // Validaciones con abort para reducir returns
+        abort_if(
+            $entrada->estado === 'Procesada',
+            422,
+            'La entrada ya fue procesada anteriormente'
+        );
 
-        if ($entrada->detalles->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se puede procesar una entrada sin productos'
-            ], 422);
-        }
+        abort_if(
+            $entrada->detalles->isEmpty(),
+            422,
+            'No se puede procesar una entrada sin productos'
+        );
 
         DB::beginTransaction();
         try {
@@ -457,7 +456,6 @@ class EntradaInventarioController extends Controller
             }
 
             $entrada->update(['estado' => 'Procesada']);
-
             DB::commit();
 
             return response()->json([
@@ -465,14 +463,10 @@ class EntradaInventarioController extends Controller
                 'message' => 'Entrada procesada exitosamente, stock actualizado',
                 'data' => new EntradaInventarioResource($entrada->fresh(['almacen', 'proveedor', 'detalles']))
             ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al procesar la entrada',
-                'error' => $e->getMessage()
-            ], 500);
+            report($e);
+            abort(500, 'Error al procesar la entrada: ' . $e->getMessage());
         }
     }
 

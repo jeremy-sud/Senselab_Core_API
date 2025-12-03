@@ -419,19 +419,18 @@ class SalidaInventarioController extends Controller
             ->with('detalles.producto')
             ->findOrFail($id);
 
-        if ($salida->estado === 'Procesada') {
-            return response()->json([
-                'success' => false,
-                'message' => 'La salida ya fue procesada anteriormente'
-            ], 422);
-        }
+        // Validaciones con abort para reducir returns
+        abort_if(
+            $salida->estado === 'Procesada',
+            422,
+            'La salida ya fue procesada anteriormente'
+        );
 
-        if ($salida->detalles->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se puede procesar una salida sin productos'
-            ], 422);
-        }
+        abort_if(
+            $salida->detalles->isEmpty(),
+            422,
+            'No se puede procesar una salida sin productos'
+        );
 
         DB::beginTransaction();
         try {
@@ -444,10 +443,7 @@ class SalidaInventarioController extends Controller
 
                 if (!$inventario || $inventario->cantidad_actual < $detalle->cantidad) {
                     DB::rollBack();
-                    return response()->json([
-                        'success' => false,
-                        'message' => "Stock insuficiente para el producto ID: {$detalle->producto_id}"
-                    ], 422);
+                    abort(422, "Stock insuficiente para el producto ID: {$detalle->producto_id}");
                 }
 
                 DB::table('inventarios')
@@ -456,7 +452,6 @@ class SalidaInventarioController extends Controller
             }
 
             $salida->update(['estado' => 'Procesada']);
-
             DB::commit();
 
             return response()->json([
@@ -464,14 +459,10 @@ class SalidaInventarioController extends Controller
                 'message' => 'Salida procesada exitosamente, stock actualizado',
                 'data' => new SalidaInventarioResource($salida->fresh(['almacen', 'cliente', 'detalles']))
             ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al procesar la salida',
-                'error' => $e->getMessage()
-            ], 500);
+            report($e);
+            abort(500, 'Error al procesar la salida: ' . $e->getMessage());
         }
     }
 
