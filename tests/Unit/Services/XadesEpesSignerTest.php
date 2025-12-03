@@ -24,8 +24,8 @@ class XadesEpesSignerTest extends TestCase
     /**
      * Certificado de prueba autofirmado para tests
      */
-    protected string $testPrivateKey;
-    protected string $testCertificate;
+    protected string $testPrivateKey = '';
+    protected string $testCertificate = '';
 
     protected function setUp(): void
     {

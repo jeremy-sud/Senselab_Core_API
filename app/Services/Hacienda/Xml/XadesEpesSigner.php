@@ -113,10 +113,11 @@ class XadesEpesSigner
         $this->certificate = $certificate;
         
         // Parsear información del certificado
-        $this->certInfo = openssl_x509_parse($certificate);
-        if ($this->certInfo === false) {
+        $certInfo = openssl_x509_parse($certificate);
+        if ($certInfo === false) {
             throw new \Exception('No se pudo parsear el certificado X.509');
         }
+        $this->certInfo = $certInfo;
         
         // Generar ID único para la firma
         $this->signatureId = 'id-' . $this->generateUuid();

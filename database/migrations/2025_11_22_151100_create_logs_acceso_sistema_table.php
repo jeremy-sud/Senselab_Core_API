@@ -30,10 +30,10 @@ return new class extends Migration
             $table->foreign('usuario_id')->references('id')->on('usuarios')->onDelete('set null');
 
             // Indexes
-            $table->index(['usuario_id', 'creado_en'], 'idx_usuario_fecha');
-            $table->index('tipo_evento', 'idx_tipo_evento');
-            $table->index('ip_address', 'idx_ip');
-            $table->index('creado_en', 'idx_fecha');
+            $table->index(['usuario_id', 'creado_en'], 'idx_logs_acceso_usuario_fecha');
+            $table->index('tipo_evento', 'idx_logs_acceso_tipo_evento');
+            $table->index('ip_address', 'idx_logs_acceso_ip');
+            $table->index('creado_en', 'idx_logs_acceso_fecha');
         });
     }
 

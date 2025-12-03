@@ -23,8 +23,8 @@ return new class extends Migration
             $table->timestamps();
 
             // Indexes
-            $table->index('codigo_dgt', 'idx_codigo_dgt');
-            $table->index('activo', 'idx_activo');
+            $table->index('codigo_dgt', 'idx_tipos_comp_fe_codigo_dgt');
+            $table->index('activo', 'idx_tipos_comp_fe_activo');
         });
     }
 

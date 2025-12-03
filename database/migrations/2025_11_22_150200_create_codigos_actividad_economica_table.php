@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -21,8 +22,12 @@ return new class extends Migration
             $table->timestamps();
 
             // Indexes
-            $table->index('codigo', 'idx_codigo');
-            $table->fullText('descripcion', 'idx_fulltext_descripcion');
+            $table->index('codigo', 'idx_codigos_act_econ_codigo');
+            
+            // Fulltext index only for MySQL/MariaDB (not supported by SQLite)
+            if (DB::connection()->getDriverName() !== 'sqlite') {
+                $table->fullText('descripcion', 'idx_fulltext_descripcion');
+            }
         });
     }
 

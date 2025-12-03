@@ -36,9 +36,9 @@ return new class extends Migration
             $table->foreign('asiento_contable_id')->references('id')->on('asientos_contables')->onDelete('set null');
 
             // Indexes
-            $table->index(['cuenta_bancaria_id', 'fecha_movimiento'], 'idx_cuenta_fecha');
-            $table->index('conciliado', 'idx_conciliado');
-            $table->index('tipo_movimiento', 'idx_tipo');
+            $table->index(['cuenta_bancaria_id', 'fecha_movimiento'], 'idx_mov_banc_cuenta_fecha');
+            $table->index('conciliado', 'idx_mov_banc_conciliado');
+            $table->index('tipo_movimiento', 'idx_mov_banc_tipo');
         });
     }
 

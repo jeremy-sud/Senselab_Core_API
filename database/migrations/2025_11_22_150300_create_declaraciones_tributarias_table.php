@@ -37,9 +37,9 @@ return new class extends Migration
             $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
 
             // Indexes
-            $table->unique(['empresa_id', 'tipo_declaracion', 'periodo_fiscal'], 'idx_empresa_tipo_periodo');
-            $table->index('periodo_fiscal', 'idx_periodo_fiscal');
-            $table->index('estado', 'idx_estado');
+            $table->unique(['empresa_id', 'tipo_declaracion', 'periodo_fiscal'], 'idx_decl_trib_empresa_tipo_periodo');
+            $table->index('periodo_fiscal', 'idx_decl_trib_periodo_fiscal');
+            $table->index('estado', 'idx_decl_trib_estado');
         });
     }
 

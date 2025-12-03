@@ -26,8 +26,8 @@ return new class extends Migration
             $table->timestamps();
 
             // Indexes
-            $table->index('tipo', 'idx_tipo');
-            $table->index('activa', 'idx_activa');
+            $table->index('tipo', 'idx_deducciones_tipo');
+            $table->index('activa', 'idx_deducciones_activa');
         });
     }
 

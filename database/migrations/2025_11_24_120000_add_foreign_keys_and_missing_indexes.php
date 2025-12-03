@@ -10,6 +10,9 @@ return new class extends Migration {
      * Tablas que tienen columna empresa_id sin foreign key explícita.
      * Se agregan índices faltantes y FKs hacia empresas(id) si no existen.
      * Política: ON UPDATE CASCADE, ON DELETE RESTRICT para no borrar datos históricos accidentalmente.
+     * 
+     * NOTA: Esta migración usa queries específicas de MySQL (information_schema),
+     * por lo que se omite en SQLite (tests).
      */
     private array $empresaTables = [
         'almacenes','archivos','asientos_contables','buses_unidades','caja_chica','clientes',
@@ -32,6 +35,10 @@ return new class extends Migration {
 
     public function up(): void
     {
+        // Skip migration for SQLite (tests) - this migration uses MySQL-specific information_schema queries
+        if (DB::connection()->getDriverName() === 'sqlite') {
+            return;
+        }
         // Agregar índices simples si no existen
         foreach ($this->simpleIndexes as $table => $columns) {
             if (!Schema::hasTable($table)) { continue; }
@@ -81,6 +88,11 @@ return new class extends Migration {
 
     public function down(): void
     {
+        // Skip migration for SQLite (tests) - this migration uses MySQL-specific information_schema queries
+        if (DB::connection()->getDriverName() === 'sqlite') {
+            return;
+        }
+
         // Revertir solo FKs e índices agregados (sin eliminar otros existentes)
         foreach ($this->empresaTables as $table) {
             if (!Schema::hasTable($table)) { continue; }
@@ -89,7 +101,11 @@ return new class extends Migration {
                 $blueprint->dropForeign([$table.'_empresa_id_foreign']); // Silencioso si no existe
                 // Índice creado por la migración (nombre consistente)
                 if (Schema::hasColumn($table, 'empresa_id')) {
-                    try { $blueprint->dropIndex($table.'_empresa_id_idx'); } catch (Throwable $e) {}
+                    try {
+                        $blueprint->dropIndex($table.'_empresa_id_idx');
+                    } catch (\Throwable) {
+                        // Index may not exist
+                    }
                 }
             });
         }
@@ -98,7 +114,11 @@ return new class extends Migration {
             if (!Schema::hasTable($table)) { continue; }
             Schema::table($table, function (Blueprint $blueprint) use ($table, $columns) {
                 foreach ($columns as $col) {
-                    try { $blueprint->dropIndex($table.'_'.$col.'_idx'); } catch (Throwable $e) {}
+                    try {
+                        $blueprint->dropIndex($table.'_'.$col.'_idx');
+                    } catch (\Throwable) {
+                        // Index may not exist
+                    }
                 }
             });
         }

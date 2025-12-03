@@ -23,7 +23,7 @@ return new class extends Migration
             $table->timestamps();
 
             // Indexes
-            $table->index('activo', 'idx_activo');
+            $table->index('activo', 'idx_tipos_clientes_activo');
         });
     }
 

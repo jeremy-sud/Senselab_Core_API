@@ -37,8 +37,8 @@ return new class extends Migration
             $table->foreign('periodo_nomina_id')->references('id')->on('periodos_nomina')->onDelete('set null');
 
             // Indexes
-            $table->unique(['empresa_id', 'periodo'], 'idx_empresa_periodo');
-            $table->index('estado', 'idx_estado');
+            $table->unique(['empresa_id', 'periodo'], 'idx_planilla_ccss_empresa_periodo');
+            $table->index('estado', 'idx_planilla_ccss_estado');
         });
     }
 

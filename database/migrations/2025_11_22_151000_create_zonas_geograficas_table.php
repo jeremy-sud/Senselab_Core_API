@@ -30,8 +30,8 @@ return new class extends Migration
             $table->foreign('vendedor_asignado_id')->references('id')->on('empleados')->onDelete('set null');
 
             // Indexes
-            $table->index('tipo', 'idx_tipo');
-            $table->index('empresa_id', 'idx_empresa');
+            $table->index('tipo', 'idx_zonas_geo_tipo');
+            $table->index('empresa_id', 'idx_zonas_geo_empresa');
         });
     }
 
