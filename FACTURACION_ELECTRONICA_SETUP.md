@@ -47,7 +47,7 @@ cd Ursol-CAST-API
 ### 2. Instalar Dependencias
 ```bash
 composer install
-npm install
+pnpm install  # Usamos pnpm por seguridad
 ```
 
 ### 3. Configurar Entorno

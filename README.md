@@ -431,8 +431,8 @@ cd Ursol-CAST-API
 # Dependencias de PHP
 composer install
 
-# Dependencias de Node.js
-npm install
+# Dependencias de Node.js (usamos pnpm por seguridad)
+pnpm install
 ```
 
 #### 3. Configurar Variables de Entorno
@@ -493,10 +493,10 @@ php artisan migrate:fresh --seed
 
 ```bash
 # Desarrollo
-npm run dev
+pnpm run dev
 
 # Producción
-npm run build
+pnpm run build
 ```
 
 #### 7. Iniciar Servidor de Desarrollo
@@ -1093,7 +1093,7 @@ php artisan view:cache
 2. **Compilar Assets**
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 3. **Configurar Variables de Entorno**

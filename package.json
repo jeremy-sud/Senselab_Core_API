@@ -5,6 +5,11 @@
     "description": "Sistema ERP Multi-Tenant con Facturación Electrónica para Costa Rica - Desarrollado por Sistemas Ursol S.A.",
     "private": true,
     "type": "module",
+    "packageManager": "pnpm@9.15.0",
+    "engines": {
+        "node": ">=20.0.0",
+        "pnpm": ">=9.0.0"
+    },
     "author": {
         "name": "Sistemas Ursol S.A.",
         "email": "sistemas@ursol.com",

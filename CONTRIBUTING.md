@@ -45,7 +45,7 @@ git checkout -b fix/descripcion-del-fix
 ```bash
 # Instalar dependencias
 composer install
-npm install
+pnpm install  # Usamos pnpm por seguridad (no npm)
 
 # Copiar .env y configurar
 cp .env.example .env
