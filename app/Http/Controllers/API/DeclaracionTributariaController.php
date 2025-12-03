@@ -16,10 +16,15 @@ use Illuminate\Http\JsonResponse;
 /**
  * Controller para gestionar declaraciones tributarias
  * D104 (IVA), D101 (Renta), D103, D150, D151 ante Hacienda
- * 
+ *
  * @author GitHub Copilot
  * @copyright 2025 Sistemas Ursol S.A.
  */
+
+#[OA\Tag(
+    name: 'Declaraciones Tributarias',
+    description: 'Gestión de declaraciones tributarias (D104, D101, etc)'
+)]
 class DeclaracionTributariaController extends Controller
 {
     use HasCacheableQueries;
@@ -28,14 +33,24 @@ class DeclaracionTributariaController extends Controller
     protected int $cacheTTL = 2700; // 45min - tax filing queries, semi-stable
     /**
      * Display a listing of the resource.
-     * 
+     *
      * @param Request $request
      * @return AnonymousResourceCollection
      */
+        #[OA\Get(
+        path: '/api/declaracion-tributaria',
+        summary: 'Listar declaraciones tributarias',
+        security: [['sanctum' => []]],
+        tags: ['Declaraciones Tributarias'],
+        responses: [
+            new OA\Response(response: 200, description: 'Listado de declaraciones tributarias'),
+        ]
+    )]
+
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', DeclaracionTributaria::class);
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'search' => $request->input('search'),
             'tipo_declaracion' => $request->input('tipo_declaracion'),
@@ -50,17 +65,17 @@ class DeclaracionTributariaController extends Controller
             'con_saldo_favor' => $request->boolean('con_saldo_favor'),
             'per_page' => $request->input('per_page', 15)
         ]);
-        
+
         return $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
             try {
                 $perPage = $request->input('per_page', 15);
                 $search = $request->input('search');
                 $empresaId = Auth::user()->empresa_id;
-                
+
                 $query = DeclaracionTributaria::with(['empresa'])
                                               ->where('empresa_id', $empresaId)
                                               ->where('eliminado', false);
-                
+
                 if ($search) {
                     $query->where(function($q) use ($search) {
                         $q->where('periodo_fiscal', 'like', "%{$search}%")
@@ -68,25 +83,25 @@ class DeclaracionTributariaController extends Controller
                           ->orWhere('notas', 'like', "%{$search}%");
                     });
                 }
-                
+
                 // Filtro por tipo de declaración
                 if ($request->has('tipo_declaracion')) {
                     $query->porTipo($request->input('tipo_declaracion'));
                 }
-                
+
                 // Filtros rápidos por tipo
                 if ($request->boolean('solo_iva')) {
                     $query->porTipo('D104');
                 }
-                
+
                 if ($request->boolean('solo_renta')) {
                     $query->porTipo('D101');
                 }
-                
+
                 // Filtro por estado
                 if ($request->has('estado')) {
                     $estado = $request->input('estado');
-                    
+
                     if ($estado === 'borrador') {
                         $query->borradores();
                     } elseif ($estado === 'enviada') {
@@ -95,41 +110,41 @@ class DeclaracionTributariaController extends Controller
                         $query->aceptadas();
                     }
                 }
-                
+
                 // Filtro por período fiscal (acepta 'periodo' o 'periodo_fiscal')
                 if ($request->has('periodo_fiscal') || $request->has('periodo')) {
                     $periodoValue = $request->input('periodo_fiscal') ?? $request->input('periodo');
                     $query->porPeriodo($periodoValue);
                 }
-                
+
                 // Filtro por año fiscal
                 if ($request->has('anio_fiscal')) {
                     $query->where('periodo_fiscal', 'like', $request->input('anio_fiscal') . '%');
                 }
-                
+
                 // Filtro por rango de fechas
                 if ($request->has('fecha_desde')) {
                     $query->where('fecha_inicio_periodo', '>=', $request->input('fecha_desde'));
                 }
-                
+
                 if ($request->has('fecha_hasta')) {
                     $query->where('fecha_fin_periodo', '<=', $request->input('fecha_hasta'));
                 }
-                
+
                 // Filtro por declaraciones con saldo a pagar
                 if ($request->boolean('con_saldo_pagar')) {
                     $query->where('monto_a_pagar', '>', 0);
                 }
-                
+
                 // Filtro por declaraciones con saldo a favor
                 if ($request->boolean('con_saldo_favor')) {
                     $query->where('monto_a_favor', '>', 0);
                 }
-                
+
                 $declaraciones = $query->orderBy('fecha_inicio_periodo', 'desc')
                                        ->orderBy('created_at', 'desc')
                                        ->paginate($perPage);
-                
+
                 return DeclaracionTributariaResource::collection($declaraciones);
             } catch (\Exception $e) {
                 // En caso de error, retornamos una colección vacía o lanzamos excepción
@@ -141,29 +156,40 @@ class DeclaracionTributariaController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param StoreDeclaracionTributariaRequest $request
      * @return DeclaracionTributariaResource|\Illuminate\Http\JsonResponse
      */
+        #[OA\Post(
+        path: '/api/declaracion-tributaria',
+        summary: 'Crear declaración tributaria',
+        security: [['sanctum' => []]],
+        tags: ['Declaraciones Tributarias'],
+        responses: [
+            new OA\Response(response: 201, description: 'declaración tributaria creado'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
+
     public function store(StoreDeclaracionTributariaRequest $request): DeclaracionTributariaResource|JsonResponse
     {
         $this->authorize('create', DeclaracionTributaria::class);
-        
+
         try {
             $data = $request->validated();
-            
+
             // Asignar empresa_id del usuario autenticado
             $data['empresa_id'] = Auth::user()->empresa_id;
-            
+
             // Asignar estado borrador por defecto si no viene
             if (!isset($data['estado'])) {
                 $data['estado'] = 'borrador';
             }
-            
+
             // Calcular monto a pagar o a favor si no vienen
             if (!isset($data['monto_a_pagar']) && !isset($data['monto_a_favor'])) {
                 $saldoNeto = ($data['monto_debitos'] ?? 0) - ($data['monto_creditos'] ?? 0);
-                
+
                 if ($saldoNeto > 0) {
                     $data['monto_a_pagar'] = $saldoNeto;
                     $data['monto_a_favor'] = 0;
@@ -172,12 +198,12 @@ class DeclaracionTributariaController extends Controller
                     $data['monto_a_favor'] = abs($saldoNeto);
                 }
             }
-            
+
             $declaracion = DeclaracionTributaria::create($data);
             $declaracion->load(['empresa']);
-            
+
             $this->flushCache();
-            
+
             return (new DeclaracionTributariaResource($declaracion))
                 ->additional(['message' => 'Declaración tributaria creada exitosamente']);
         } catch (\Exception $e) {
@@ -190,17 +216,31 @@ class DeclaracionTributariaController extends Controller
 
     /**
      * Display the specified resource.
-     * 
+     *
      * @param int $id
      * @return DeclaracionTributariaResource|\Illuminate\Http\JsonResponse
      */
+        #[OA\Get(
+        path: '/api/declaracion-tributaria/{id}',
+        summary: 'Obtener declaración tributaria',
+        security: [['sanctum' => []]],
+        tags: ['Declaraciones Tributarias'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'declaración tributaria encontrado'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
+
     public function show(int $id): DeclaracionTributariaResource|JsonResponse
     {
         try {
             $declaracion = DeclaracionTributaria::with(['empresa'])->findOrFail($id);
-            
+
             $this->authorize('view', $declaracion);
-            
+
             return new DeclaracionTributariaResource($declaracion);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
@@ -216,35 +256,50 @@ class DeclaracionTributariaController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * 
+     *
      * @param UpdateDeclaracionTributariaRequest $request
      * @param int $id
      * @return DeclaracionTributariaResource|\Illuminate\Http\JsonResponse
      */
+        #[OA\Put(
+        path: '/api/declaracion-tributaria/{id}',
+        summary: 'Actualizar declaración tributaria',
+        security: [['sanctum' => []]],
+        tags: ['Declaraciones Tributarias'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'declaración tributaria actualizado'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
+
     public function update(UpdateDeclaracionTributariaRequest $request, int $id): DeclaracionTributariaResource|JsonResponse
     {
         try {
             $declaracion = DeclaracionTributaria::findOrFail($id);
-            
+
             $this->authorize('update', $declaracion);
-            
+
             // No permitir edición si ya fue aceptada
             if ($declaracion->fueAceptada()) {
                 return response()->json([
                     'message' => 'No se puede editar una declaración aceptada por Hacienda'
                 ], 422);
             }
-            
+
             $data = $request->validated();
-            
+
             // Recalcular saldo neto si cambiaron débitos o créditos
-            if ((isset($data['monto_debitos']) || isset($data['monto_creditos'])) && 
+            if ((isset($data['monto_debitos']) || isset($data['monto_creditos'])) &&
                 !isset($data['monto_a_pagar']) && !isset($data['monto_a_favor'])) {
-                
+
                 $debitos = $data['monto_debitos'] ?? $declaracion->monto_debitos;
                 $creditos = $data['monto_creditos'] ?? $declaracion->monto_creditos;
                 $saldoNeto = $debitos - $creditos;
-                
+
                 if ($saldoNeto > 0) {
                     $data['monto_a_pagar'] = $saldoNeto;
                     $data['monto_a_favor'] = 0;
@@ -253,12 +308,12 @@ class DeclaracionTributariaController extends Controller
                     $data['monto_a_favor'] = abs($saldoNeto);
                 }
             }
-            
+
             $declaracion->update($data);
             $declaracion->load(['empresa']);
-            
+
             $this->flushCache();
-            
+
             return (new DeclaracionTributariaResource($declaracion))
                 ->additional(['message' => 'Declaración tributaria actualizada exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -275,29 +330,43 @@ class DeclaracionTributariaController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * 
+     *
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
+        #[OA\Delete(
+        path: '/api/declaracion-tributaria/{id}',
+        summary: 'Eliminar declaración tributaria',
+        security: [['sanctum' => []]],
+        tags: ['Declaraciones Tributarias'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'declaración tributaria eliminado'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
+
     public function destroy(int $id): JsonResponse
     {
         try {
             $declaracion = DeclaracionTributaria::findOrFail($id);
-            
+
             $this->authorize('delete', $declaracion);
-            
+
             // No permitir eliminación si ya fue aceptada
             if ($declaracion->fueAceptada()) {
                 return response()->json([
                     'message' => 'No se puede eliminar una declaración aceptada por Hacienda'
                 ], 422);
             }
-            
+
             // Soft delete
             $declaracion->update(['eliminado' => true]);
-            
+
             $this->flushCache();
-            
+
             return response()->json([
                 'message' => 'Declaración tributaria eliminada exitosamente'
             ]);

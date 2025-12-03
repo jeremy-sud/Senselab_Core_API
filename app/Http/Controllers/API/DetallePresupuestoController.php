@@ -17,9 +17,9 @@ use OpenApi\Attributes as OA;
 
 /**
  * Controlador para Detalle de Presupuestos
- * 
+ *
  * Gestiona las cuentas contables específicas de cada presupuesto con sus montos.
- * 
+ *
  * @package App\Http\Controllers\API
  * @author Sistemas Ursol S.A. - Jeremy Arias Solano
  */
@@ -66,7 +66,7 @@ class DetallePresupuestoController extends Controller
     public function index(Request $request, int $presupuestoId): AnonymousResourceCollection
     {
         $this->authorize('viewAny', DetallePresupuesto::class);
-        
+
         $empresaId = $this->getEmpresaId();
 
         $cacheKey = $this->getCacheKey('index', ['presupuesto_id' => $presupuestoId]);
@@ -112,7 +112,7 @@ class DetallePresupuestoController extends Controller
     public function store(StoreDetallePresupuestoRequest $request): DetallePresupuestoResource|JsonResponse
     {
         $this->authorize('create', DetallePresupuesto::class);
-        
+
         $empresaId = $this->getEmpresaId();
 
         $presupuesto = Presupuesto::where('empresa_id', $empresaId)
@@ -130,7 +130,7 @@ class DetallePresupuestoController extends Controller
             'cuenta_contable_id' => $request->cuenta_contable_id,
             'monto_presupuestado' => $request->monto_presupuestado
         ]);
-        
+
         $this->flushCache();
 
         return (new DetallePresupuestoResource($detalle->load('cuentaContable')))
@@ -174,7 +174,7 @@ class DetallePresupuestoController extends Controller
                 'message' => 'No autorizado'
             ], 403);
         }
-        
+
         $this->authorize('view', $detalle);
 
         return new DetallePresupuestoResource($detalle);
@@ -228,7 +228,7 @@ class DetallePresupuestoController extends Controller
                 'message' => 'No autorizado'
             ], 403);
         }
-        
+
         $this->authorize('update', $detalle);
 
         if ($detalle->presupuesto->estado === 'Finalizado') {
@@ -241,7 +241,7 @@ class DetallePresupuestoController extends Controller
         $detalle->update([
             'monto_presupuestado' => $request->monto_presupuestado
         ]);
-        
+
         $this->flushCache();
 
         return (new DetallePresupuestoResource($detalle->fresh('cuentaContable')))
@@ -296,7 +296,7 @@ class DetallePresupuestoController extends Controller
                 'message' => 'No autorizado'
             ], 403);
         }
-        
+
         $this->authorize('delete', $detalle);
 
         if ($detalle->presupuesto->estado === 'Finalizado') {
@@ -307,7 +307,7 @@ class DetallePresupuestoController extends Controller
         }
 
         $detalle->delete();
-        
+
         $this->flushCache();
 
         return response()->json([

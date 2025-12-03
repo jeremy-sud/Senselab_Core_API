@@ -16,10 +16,10 @@ use OpenApi\Attributes as OA;
 
 /**
  * Controlador API para gestión de roles (RBAC)
- * 
+ *
  * Los roles definen niveles de acceso en el sistema.
  * Nota: Tabla global sin empresa_id según api_db.sql
- * 
+ *
  * @package App\Http\Controllers\API
  * @author Sistemas Ursol S.A.
  */
@@ -32,7 +32,7 @@ class RolController extends Controller
 
     /**
      * Listar todos los roles activos
-     * 
+     *
      * GET /api/roles
      */
     #[OA\Get(
@@ -51,7 +51,7 @@ class RolController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Rol::class);
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'activo' => $request->input('activo')
         ]);
@@ -71,7 +71,7 @@ class RolController extends Controller
 
     /**
      * Crear un nuevo rol
-     * 
+     *
      * POST /api/roles
      */
     #[OA\Post(
@@ -99,9 +99,9 @@ class RolController extends Controller
     public function store(StoreRolRequest $request): JsonResponse
     {
         $this->authorize('create', Rol::class);
-        
+
         $validated = $request->validated();
-        
+
         $rol = Rol::create([
             'nombre' => $validated['nombre'],
             'descripcion' => $validated['descripcion'] ?? null,
@@ -124,7 +124,7 @@ class RolController extends Controller
 
     /**
      * Mostrar un rol específico
-     * 
+     *
      * GET /api/roles/{id}
      */
     #[OA\Get(
@@ -142,15 +142,15 @@ class RolController extends Controller
     public function show(int $id): RolResource
     {
         $rol = Rol::with(['permisos', 'usuarios'])->findOrFail($id);
-        
+
         $this->authorize('view', $rol);
-        
+
         return new RolResource($rol);
     }
 
     /**
      * Actualizar un rol existente
-     * 
+     *
      * PUT/PATCH /api/roles/{id}
      */
     #[OA\Put(
@@ -164,9 +164,9 @@ class RolController extends Controller
     public function update(UpdateRolRequest $request, int $id): RolResource
     {
         $rol = Rol::findOrFail($id);
-        
+
         $this->authorize('update', $rol);
-        
+
         $validated = $request->validated();
 
         $rol->update([
@@ -189,7 +189,7 @@ class RolController extends Controller
 
     /**
      * Eliminar un rol (soft delete)
-     * 
+     *
      * DELETE /api/roles/{id}
      */
     #[OA\Delete(
@@ -207,7 +207,7 @@ class RolController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $rol = Rol::findOrFail($id);
-        
+
         $this->authorize('delete', $rol);
 
         // Validar que no tenga usuarios asignados
@@ -231,7 +231,7 @@ class RolController extends Controller
 
     /**
      * Asignar permisos a un rol
-     * 
+     *
      * POST /api/roles/{id}/permisos
      */
     #[OA\Post(

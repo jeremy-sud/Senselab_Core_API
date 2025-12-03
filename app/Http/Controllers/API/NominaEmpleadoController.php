@@ -12,7 +12,7 @@ use OpenApi\Attributes as OA;
 class NominaEmpleadoController extends Controller
 {
     use HasCacheableQueries;
-    
+
     protected $cacheTags = ['nomina_empleados', 'nomina', 'rrhh'];
     protected $cacheTTL = 900; // 15 minutos
 
@@ -74,7 +74,7 @@ class NominaEmpleadoController extends Controller
 
         return $this->getCached($cacheKey, function () use ($request) {
             $perPage = $request->input('per_page', 15);
-            
+
             $query = NominaEmpleado::with(['periodoNomina', 'empleado'])
                 ->activos();
 

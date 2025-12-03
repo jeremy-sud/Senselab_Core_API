@@ -16,10 +16,10 @@ use OpenApi\Attributes as OA;
 
 /**
  * Controlador API para gestión de formas de pago
- * 
+ *
  * Gestiona métodos de pago (Efectivo, Tarjeta, Transferencia, SINPE, etc.)
  * Nota: Tabla global sin empresa_id según api_db.sql
- * 
+ *
  * @package App\Http\Controllers\API
  * @author Sistemas Ursol S.A.
  */
@@ -32,7 +32,7 @@ class FormaPagoController extends Controller
 
     /**
      * Listar todas las formas de pago
-     * 
+     *
      * GET /api/formas-pago
      */
     #[OA\Get(
@@ -52,12 +52,12 @@ class FormaPagoController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', FormaPago::class);
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'activo' => $request->input('activo'),
             'tipo' => $request->input('tipo')
         ]);
-        
+
         $formasPago = $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
             $query = FormaPago::query();
 
@@ -77,7 +77,7 @@ class FormaPagoController extends Controller
 
     /**
      * Crear una nueva forma de pago
-     * 
+     *
      * POST /api/formas-pago
      */
     #[OA\Post(
@@ -106,7 +106,7 @@ class FormaPagoController extends Controller
     {
         $this->authorize('create', FormaPago::class);
         $formaPago = FormaPago::create($request->validated());
-        
+
         $this->flushCache();
 
         return (new FormaPagoResource($formaPago))
@@ -116,7 +116,7 @@ class FormaPagoController extends Controller
 
     /**
      * Mostrar una forma de pago específica
-     * 
+     *
      * GET /api/formas-pago/{id}
      */
     #[OA\Get(
@@ -141,7 +141,7 @@ class FormaPagoController extends Controller
 
     /**
      * Actualizar una forma de pago existente
-     * 
+     *
      * PUT/PATCH /api/formas-pago/{id}
      */
     #[OA\Put(
@@ -159,7 +159,7 @@ class FormaPagoController extends Controller
         $this->authorize('update', $formaPago);
 
         $formaPago->update($request->validated());
-        
+
         // Invalidar cache de formas de pago
         Cache::tags(['formas_pago', 'catalogos'])->flush();
 
@@ -168,7 +168,7 @@ class FormaPagoController extends Controller
 
     /**
      * Eliminar una forma de pago (soft delete)
-     * 
+     *
      * DELETE /api/formas-pago/{id}
      */
     #[OA\Delete(
@@ -189,7 +189,7 @@ class FormaPagoController extends Controller
         $formaPago->eliminado = 1;
         $formaPago->activo = 0;
         $formaPago->save();
-        
+
         // Invalidar cache de formas de pago
         Cache::tags(['formas_pago', 'catalogos'])->flush();
 

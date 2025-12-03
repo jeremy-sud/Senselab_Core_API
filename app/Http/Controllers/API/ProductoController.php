@@ -34,7 +34,7 @@ class ProductoController extends Controller
     protected int $cacheTTL = 3600;
     /**
      * Display a listing of the resource.
-     * 
+     *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -127,7 +127,7 @@ class ProductoController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Producto::class);
-        
+
         try {
             // Usar cache si está habilitado
             return $this->cacheQueryIfEnabled($request, function() use ($request) {
@@ -136,7 +136,7 @@ class ProductoController extends Controller
                 $empresaId = $request->input('empresa_id');
                 $categoriaId = $request->input('categoria_id');
                 $tipo = $request->input('tipo');
-                
+
                 $query = Producto::with([
                     'empresa',
                     'categoria',
@@ -144,7 +144,7 @@ class ProductoController extends Controller
                     'marca',
                     'tipoImpuesto'
                 ])->where('productos.eliminado', false);
-                
+
                 if ($search) {
                     $query->where(function($q) use ($search) {
                         $q->where('nombre', 'like', "%{$search}%")
@@ -153,19 +153,19 @@ class ProductoController extends Controller
                           ->orWhere('descripcion', 'like', "%{$search}%");
                     });
                 }
-                
+
                 if ($empresaId) {
                     $query->porEmpresa($empresaId);
                 }
-                
+
                 if ($categoriaId) {
                     $query->porCategoria($categoriaId);
                 }
-                
+
                 if ($tipo) {
                     $query->porTipo($tipo);
                 }
-                
+
                 // Filtro por estado activo (soporta 'activo' y 'activos')
                 if ($request->has('activo') || $request->has('activos')) {
                     $esActivo = $request->boolean('activo') || $request->boolean('activos');
@@ -175,10 +175,10 @@ class ProductoController extends Controller
                         $query->where('productos.activo', false);
                     }
                 }
-                
+
                 $productos = $query->orderBy('id', 'asc')
                                    ->paginate($perPage);
-                
+
                 return ProductoResource::collection($productos);
             });
         } catch (\Exception $e) {
@@ -192,7 +192,7 @@ class ProductoController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param StoreProductoRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -243,7 +243,7 @@ class ProductoController extends Controller
     public function store(StoreProductoRequest $request): JsonResponse
     {
         $this->authorize('create', Producto::class);
-        
+
         try {
             $producto = Producto::create($request->validated());
             $producto->load([
@@ -253,10 +253,10 @@ class ProductoController extends Controller
                 'marca',
                 'tipoImpuesto',
             ]);
-            
+
             // Invalidar cache de productos
             $this->flushCache();
-            
+
             return (new ProductoResource($producto))
                 ->additional(['message' => 'Producto creado exitosamente'])
                 ->response()
@@ -271,7 +271,7 @@ class ProductoController extends Controller
 
     /**
      * Display the specified resource.
-     * 
+     *
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
@@ -318,9 +318,9 @@ class ProductoController extends Controller
                 'tipoImpuesto',
                 'cabys'
             ])->findOrFail($id);
-            
+
             $this->authorize('view', $producto);
-            
+
             return new ProductoResource($producto);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             throw $e;
@@ -331,7 +331,7 @@ class ProductoController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * 
+     *
      * @param UpdateProductoRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
@@ -385,9 +385,9 @@ class ProductoController extends Controller
     {
         try {
             $producto = Producto::findOrFail($id);
-            
+
             $this->authorize('update', $producto);
-            
+
             $producto->update($request->validated());
             $producto->load([
                 'empresa',
@@ -396,10 +396,10 @@ class ProductoController extends Controller
                 'marca',
                 'tipoImpuesto'
             ]);
-            
+
             // Invalidar cache de productos
             $this->flushCache();
-            
+
             return (new ProductoResource($producto))
                 ->additional(['message' => 'Producto actualizado exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -411,7 +411,7 @@ class ProductoController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * 
+     *
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
@@ -450,18 +450,18 @@ class ProductoController extends Controller
     {
         try {
             $producto = Producto::findOrFail($id);
-            
+
             $this->authorize('delete', $producto);
-            
+
             // Soft delete - marcar como inactivo
             $producto->update([
                 'activo' => false,
                 'eliminado' => true
             ]);
-            
+
             // Invalidar cache de productos
             $this->flushCache();
-            
+
             return response()->json([
                 'message' => 'Producto eliminado exitosamente'
             ]);

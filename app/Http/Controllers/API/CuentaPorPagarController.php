@@ -69,7 +69,7 @@ class CuentaPorPagarController extends Controller
         $this->authorize('viewAny', CuentaPorPagar::class);
 
         $empresaId = $this->getEmpresaId();
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'empresa_id' => $empresaId,
             'estado' => $request->estado,
@@ -78,7 +78,7 @@ class CuentaPorPagarController extends Controller
             'desde' => $request->desde,
             'hasta' => $request->hasta
         ]);
-        
+
         return $this->cacheQueryIfEnabled($cacheKey, function () use ($request, $empresaId) {
             $query = CuentaPorPagar::where('empresa_id', $empresaId)
                 ->where('eliminado', 0)

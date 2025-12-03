@@ -7,7 +7,13 @@ use App\Models\PlanillaCcss;
 use App\Traits\HasCacheableQueries;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 
+
+#[OA\Tag(
+    name: 'Planillas CCSS',
+    description: 'Gestión de planillas de Caja Costarricense de Seguro Social'
+)]
 class PlanillaCcssController extends Controller
 {
     use HasCacheableQueries;
@@ -18,6 +24,16 @@ class PlanillaCcssController extends Controller
     /**
      * Display a listing of the resource.
      */
+        #[OA\Get(
+        path: '/api/planilla-ccss',
+        summary: 'Listar planillas CCSS',
+        security: [['sanctum' => []]],
+        tags: ['Planillas CCSS'],
+        responses: [
+            new OA\Response(response: 200, description: 'Listado de planillas CCSS'),
+        ]
+    )]
+
     public function index(Request $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('viewAny', PlanillaCcss::class);
@@ -61,6 +77,17 @@ class PlanillaCcssController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+        #[OA\Post(
+        path: '/api/planilla-ccss',
+        summary: 'Crear planilla CCSS',
+        security: [['sanctum' => []]],
+        tags: ['Planillas CCSS'],
+        responses: [
+            new OA\Response(response: 201, description: 'planilla CCSS creado'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
+
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('create', PlanillaCcss::class);
@@ -112,6 +139,20 @@ class PlanillaCcssController extends Controller
     /**
      * Display the specified resource.
      */
+        #[OA\Get(
+        path: '/api/planilla-ccss/{id}',
+        summary: 'Obtener planilla CCSS',
+        security: [['sanctum' => []]],
+        tags: ['Planillas CCSS'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'planilla CCSS encontrado'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
+
     public function show(PlanillaCcss $planillaCcss): \Illuminate\Http\JsonResponse
     {
         $this->authorize('view', $planillaCcss);
@@ -124,6 +165,21 @@ class PlanillaCcssController extends Controller
     /**
      * Update the specified resource in storage.
      */
+        #[OA\Put(
+        path: '/api/planilla-ccss/{id}',
+        summary: 'Actualizar planilla CCSS',
+        security: [['sanctum' => []]],
+        tags: ['Planillas CCSS'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'planilla CCSS actualizado'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
+
     public function update(Request $request, PlanillaCcss $planillaCcss): \Illuminate\Http\JsonResponse
     {
         $this->authorize('update', $planillaCcss);
@@ -178,6 +234,20 @@ class PlanillaCcssController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+        #[OA\Delete(
+        path: '/api/planilla-ccss/{id}',
+        summary: 'Eliminar planilla CCSS',
+        security: [['sanctum' => []]],
+        tags: ['Planillas CCSS'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'planilla CCSS eliminado'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
+
     public function destroy(PlanillaCcss $planillaCcss): \Illuminate\Http\JsonResponse
     {
         $this->authorize('delete', $planillaCcss);

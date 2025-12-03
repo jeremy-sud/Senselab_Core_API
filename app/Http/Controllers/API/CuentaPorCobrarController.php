@@ -69,7 +69,7 @@ class CuentaPorCobrarController extends Controller
         $this->authorize('viewAny', CuentaPorCobrar::class);
 
         $empresaId = $this->getEmpresaId();
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'estado' => $request->estado,
             'cliente_id' => $request->cliente_id,
@@ -77,7 +77,7 @@ class CuentaPorCobrarController extends Controller
             'desde' => $request->desde,
             'hasta' => $request->hasta
         ]);
-        
+
         return $this->cacheQueryIfEnabled($cacheKey, function () use ($request, $empresaId) {
             $query = CuentaPorCobrar::where('empresa_id', $empresaId)
                 ->where('eliminado', 0)

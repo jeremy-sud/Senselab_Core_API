@@ -11,12 +11,28 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Requests\AsignarPermisosRequest;
 use App\Http\Requests\RemoverPermisosRequest;
 use App\Http\Requests\SincronizarPermisosRequest;
+use OpenApi\Attributes as OA;
 
+
+#[OA\Tag(
+    name: 'Rol-Permiso',
+    description: 'Gestión de permisos asignados a roles (control de acceso)'
+)]
 class RolPermisoController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+        #[OA\Get(
+        path: '/api/rol-permiso',
+        summary: 'Listar permisos de roles',
+        security: [['sanctum' => []]],
+        tags: ['Rol-Permiso'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+        ]
+    )]
+
     public function index(Request $request): JsonResponse
     {
         $query = RolPermiso::query();
@@ -52,6 +68,17 @@ class RolPermisoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+        #[OA\Post(
+        path: '/api/rol-permiso',
+        summary: 'Asignar permiso a rol',
+        security: [['sanctum' => []]],
+        tags: ['Rol-Permiso'],
+        responses: [
+            new OA\Response(response: 201, description: 'Recurso creado'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
+
     public function store(StoreRolPermisoRequest $request): JsonResponse
     {
         // Verificar que no exista ya la relación
@@ -106,6 +133,20 @@ class RolPermisoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+        #[OA\Delete(
+        path: '/api/rol-permiso/{id}',
+        summary: 'Quitar permiso de rol',
+        security: [['sanctum' => []]],
+        tags: ['Rol-Permiso'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
+
     public function destroy(RolPermiso $rolPermiso): JsonResponse
     {
         $rolPermiso->delete();

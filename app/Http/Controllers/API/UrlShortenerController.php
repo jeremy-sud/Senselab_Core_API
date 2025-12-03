@@ -16,10 +16,15 @@ use Illuminate\Validation\ValidationException;
 
 /**
  * Controlador para gestión de URLs acortadas
- * 
+ *
  * @author Jeremy Arias Solano <deadmooncr@gmail.com>
  * @copyright 2025 Sistemas Ursol S.A.
  */
+
+#[OA\Tag(
+    name: 'URL Shortener',
+    description: 'Servicio de acortamiento de URLs para compartir enlaces'
+)]
 class UrlShortenerController extends Controller
 {
     use HasCacheableQueries;
@@ -30,10 +35,20 @@ class UrlShortenerController extends Controller
     /**
      * Display a listing of the resource.
      */
+        #[OA\Get(
+        path: '/api/url-shortener',
+        summary: 'Listar URLs acortadas',
+        security: [['sanctum' => []]],
+        tags: ['URL Shortener'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+        ]
+    )]
+
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', UrlShortener::class);
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'empresa_id' => $request->input('empresa_id'),
             'usuario_id' => $request->input('usuario_id'),
@@ -41,60 +56,71 @@ class UrlShortenerController extends Controller
             'no_expirados' => $request->input('no_expirados'),
             'per_page' => $request->input('per_page', 15)
         ]);
-        
+
         $urls = $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
             $query = UrlShortener::with(['empresa', 'usuario'])
                 ->where('eliminado', false);
-            
+
             // Filtro por empresa
             if ($request->has('empresa_id')) {
                 $query->where('empresa_id', $request->empresa_id);
             }
-            
+
             // Filtro por usuario
             if ($request->has('usuario_id')) {
                 $query->where('usuario_id', $request->usuario_id);
             }
-            
+
             // Filtro por activos
             if ($request->has('activo')) {
                 $query->where('activo', $request->boolean('activo'));
             }
-            
+
             // Filtro no expirados
             if ($request->boolean('no_expirados')) {
                 $query->noExpirados();
             }
-            
+
             $perPage = $request->input('per_page', 15);
             return $query->orderBy('id', 'desc')->paginate($perPage);
         });
-        
+
         return UrlShortenerResource::collection($urls);
     }
 
     /**
      * Store a newly created resource in storage.
      */
+        #[OA\Post(
+        path: '/api/url-shortener',
+        summary: 'Crear URL corta',
+        security: [['sanctum' => []]],
+        tags: ['URL Shortener'],
+        responses: [
+            new OA\Response(response: 201, description: 'Recurso creado'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
+
     public function store(StoreUrlShortenerRequest $request): JsonResponse
     {
         $this->authorize('create', UrlShortener::class);
-        
+
         try {
             $validated = $request->validated();
-            
+
             // Generar slug si no se proporciona
             if (empty($validated['slug'])) {
                 $validated['slug'] = $this->generateUniqueSlug();
             }
-            
+
             // Generar URL corta
             $validated['url_corta'] = url('/s/' . $validated['slug']);
-            
+
             $urlShortener = UrlShortener::create($validated);
-            
+
             $this->flushCache();
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'URL acortada creada exitosamente',
@@ -118,13 +144,27 @@ class UrlShortenerController extends Controller
     /**
      * Display the specified resource.
      */
+        #[OA\Get(
+        path: '/api/url-shortener/{id}',
+        summary: 'Obtener URL corta',
+        security: [['sanctum' => []]],
+        tags: ['URL Shortener'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
+
     public function show(string $id): JsonResponse
     {
         try {
             $url = UrlShortener::with(['empresa', 'usuario'])->findOrFail($id);
-            
+
             $this->authorize('view', $url);
-            
+
             return response()->json([
                 'success' => true,
                 'data' => new UrlShortenerResource($url)
@@ -145,20 +185,20 @@ class UrlShortenerController extends Controller
     {
         try {
             $url = UrlShortener::findOrFail($id);
-            
+
             $this->authorize('update', $url);
-            
+
             $validated = $request->validated();
-            
+
             // Si se actualiza el slug, actualizar también la URL corta
             if (isset($validated['slug'])) {
                 $validated['url_corta'] = url('/s/' . $validated['slug']);
             }
-            
+
             $url->update($validated);
-            
+
             $this->flushCache();
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'URL actualizada exitosamente',
@@ -182,16 +222,30 @@ class UrlShortenerController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+        #[OA\Delete(
+        path: '/api/url-shortener/{id}',
+        summary: 'Eliminar URL corta',
+        security: [['sanctum' => []]],
+        tags: ['URL Shortener'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
+
     public function destroy(string $id): JsonResponse
     {
         try {
             $url = UrlShortener::findOrFail($id);
-            
+
             $this->authorize('delete', $url);
             $url->update(['eliminado' => true]);
-            
+
             $this->flushCache();
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'URL eliminada exitosamente'
@@ -216,10 +270,10 @@ class UrlShortenerController extends Controller
                 ->noEliminados()
                 ->noExpirados()
                 ->firstOrFail();
-            
+
             // Incrementar contador de clicks
             $url->incrementClicks();
-            
+
             return redirect($url->url_original);
         } catch (\Exception $e) {
             return response()->json([
@@ -237,7 +291,7 @@ class UrlShortenerController extends Controller
         do {
             $slug = Str::random($length);
         } while (UrlShortener::where('slug', $slug)->exists());
-        
+
         return $slug;
     }
 
@@ -248,7 +302,7 @@ class UrlShortenerController extends Controller
     {
         try {
             $url = UrlShortener::findOrFail($id);
-            
+
             return response()->json([
                 'success' => true,
                 'data' => [

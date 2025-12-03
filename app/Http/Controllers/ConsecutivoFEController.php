@@ -12,7 +12,13 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Requests\ObtenerSiguienteConsecutivoRequest;
 use App\Http\Requests\ResetearConsecutivoRequest;
 use App\Traits\HasEmpresaContext;
+use OpenApi\Attributes as OA;
 
+
+#[OA\Tag(
+    name: 'Consecutivos FE',
+    description: 'Gestión de consecutivos de facturación electrónica por tipo de documento'
+)]
 class ConsecutivoFEController extends Controller
 {
     use HasEmpresaContext; // Centraliza acceso a empresa
@@ -20,6 +26,16 @@ class ConsecutivoFEController extends Controller
     /**
      * Display a listing of the resource.
      */
+        #[OA\Get(
+        path: '/api/consecutivo-fe',
+        summary: 'Listar consecutivos FE',
+        security: [['sanctum' => []]],
+        tags: ['Consecutivos FE'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+        ]
+    )]
+
     public function index(Request $request): JsonResponse
     {
         $query = ConsecutivoFE::where('empresa_id', $this->getEmpresaId())
@@ -59,6 +75,17 @@ class ConsecutivoFEController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+        #[OA\Post(
+        path: '/api/consecutivo-fe',
+        summary: 'Crear consecutivo FE',
+        security: [['sanctum' => []]],
+        tags: ['Consecutivos FE'],
+        responses: [
+            new OA\Response(response: 201, description: 'Recurso creado'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
+
     public function store(StoreConsecutivoFERequest $request): JsonResponse
     {
         $consecutivo = ConsecutivoFE::create([
@@ -81,6 +108,20 @@ class ConsecutivoFEController extends Controller
     /**
      * Display the specified resource.
      */
+        #[OA\Get(
+        path: '/api/consecutivo-fe/{id}',
+        summary: 'Obtener consecutivo FE',
+        security: [['sanctum' => []]],
+        tags: ['Consecutivos FE'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
+
     public function show(ConsecutivoFE $consecutivoFe): JsonResponse
     {
         if ($consecutivoFe->empresa_id !== $this->getEmpresaId()) {
@@ -99,6 +140,20 @@ class ConsecutivoFEController extends Controller
     /**
      * Update the specified resource in storage.
      */
+        #[OA\Put(
+        path: '/api/consecutivo-fe/{id}',
+        summary: 'Actualizar consecutivo FE',
+        security: [['sanctum' => []]],
+        tags: ['Consecutivos FE'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
+
     public function update(UpdateConsecutivoFERequest $request, ConsecutivoFE $consecutivoFe): JsonResponse
     {
         if ($consecutivoFe->empresa_id !== $this->getEmpresaId()) {
@@ -123,6 +178,20 @@ class ConsecutivoFEController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+        #[OA\Delete(
+        path: '/api/consecutivo-fe/{id}',
+        summary: 'Eliminar consecutivo FE',
+        security: [['sanctum' => []]],
+        tags: ['Consecutivos FE'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
+
     public function destroy(ConsecutivoFE $consecutivoFe): JsonResponse
     {
         if ($consecutivoFe->empresa_id !== $this->getEmpresaId()) {

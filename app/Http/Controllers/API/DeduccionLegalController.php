@@ -14,6 +14,11 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
  * Controlador para deducciones legales de nómina
  * Gestiona CCSS, INS, LPT y otras deducciones obligatorias
  */
+
+#[OA\Tag(
+    name: 'Deducciones Legales',
+    description: 'Gestión de deducciones legales aplicables a nómina'
+)]
 class DeduccionLegalController extends Controller
 {
     use HasCacheableQueries;
@@ -24,6 +29,16 @@ class DeduccionLegalController extends Controller
     /**
      * Listar deducciones legales
      */
+        #[OA\Get(
+        path: '/api/deduccion-legal',
+        summary: 'Listar deducciones legales',
+        security: [['sanctum' => []]],
+        tags: ['Deducciones Legales'],
+        responses: [
+            new OA\Response(response: 200, description: 'Listado de deducciones legales'),
+        ]
+    )]
+
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', DeduccionLegal::class);
@@ -51,7 +66,7 @@ class DeduccionLegalController extends Controller
             }
 
             $deducciones = $query->orderBy('id')->paginate($request->input('per_page', 20));
-            
+
             return DeduccionLegalResource::collection($deducciones);
         });
     }
@@ -59,6 +74,17 @@ class DeduccionLegalController extends Controller
     /**
      * Crear deducción legal
      */
+        #[OA\Post(
+        path: '/api/deduccion-legal',
+        summary: 'Crear deducción legal',
+        security: [['sanctum' => []]],
+        tags: ['Deducciones Legales'],
+        responses: [
+            new OA\Response(response: 201, description: 'deducción legal creado'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
+
     public function store(Request $request): DeduccionLegalResource
     {
         $this->authorize('create', DeduccionLegal::class);
@@ -85,6 +111,20 @@ class DeduccionLegalController extends Controller
     /**
      * Mostrar deducción específica
      */
+        #[OA\Get(
+        path: '/api/deduccion-legal/{id}',
+        summary: 'Obtener deducción legal',
+        security: [['sanctum' => []]],
+        tags: ['Deducciones Legales'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'deducción legal encontrado'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
+
     public function show(DeduccionLegal $deduccionLegal): DeduccionLegalResource
     {
         $this->authorize('view', $deduccionLegal);
@@ -94,6 +134,21 @@ class DeduccionLegalController extends Controller
     /**
      * Actualizar deducción legal
      */
+        #[OA\Put(
+        path: '/api/deduccion-legal/{id}',
+        summary: 'Actualizar deducción legal',
+        security: [['sanctum' => []]],
+        tags: ['Deducciones Legales'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'deducción legal actualizado'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
+
     public function update(Request $request, DeduccionLegal $deduccionLegal): DeduccionLegalResource
     {
         $this->authorize('update', $deduccionLegal);
@@ -120,6 +175,20 @@ class DeduccionLegalController extends Controller
     /**
      * Eliminar deducción legal
      */
+        #[OA\Delete(
+        path: '/api/deduccion-legal/{id}',
+        summary: 'Eliminar deducción legal',
+        security: [['sanctum' => []]],
+        tags: ['Deducciones Legales'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'deducción legal eliminado'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
+
     public function destroy(DeduccionLegal $deduccionLegal): JsonResponse
     {
         $this->authorize('delete', $deduccionLegal);

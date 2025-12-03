@@ -15,12 +15,12 @@ use OpenApi\Attributes as OA;
 class ProveedorController extends Controller
 {
     use HasCacheableQueries;
-    
+
     protected $cacheTags = ['proveedores', 'catalogos'];
     protected $cacheTTL = 1800; // 30 minutos
     /**
      * Display a listing of the resource.
-     * 
+     *
      * @param Request $request
      * @return AnonymousResourceCollection
      */
@@ -106,17 +106,17 @@ class ProveedorController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Proveedor::class);
-        
+
         try {
             $perPage = $request->input('per_page', 15);
             $search = $request->input('search');
             $empresaId = $request->input('empresa_id');
-            
+
             $proveedores = $this->cacheQueryIfEnabled(
                 $this->getCacheKey('index', $request->all()),
                 function() use ($request, $perPage, $search, $empresaId) {
                     $query = Proveedor::with('empresa');
-                    
+
                     if ($search) {
                         $query->where(function($q) use ($search) {
                             $q->where('nombre', 'like', "%{$search}%")
@@ -125,19 +125,19 @@ class ProveedorController extends Controller
                               ->orWhere('email', 'like', "%{$search}%");
                         });
                     }
-                    
+
                     if ($empresaId) {
                         $query->where('empresa_id', $empresaId);
                     }
-                    
+
                     if ($request->boolean('activos')) {
                         $query->where('activo', true);
                     }
-                    
+
                     return $query->orderBy('id', 'asc')->paginate($perPage);
                 }
             );
-            
+
             return ProveedorResource::collection($proveedores);
         } catch (\Exception $e) {
             return response()->json([
@@ -149,7 +149,7 @@ class ProveedorController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param StoreProveedorRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -217,13 +217,13 @@ class ProveedorController extends Controller
     public function store(StoreProveedorRequest $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('create', Proveedor::class);
-        
+
         try {
             $proveedor = Proveedor::create($request->validated());
             $proveedor->load('empresa');
-            
+
             $this->flushCache();
-            
+
             return (new ProveedorResource($proveedor))
                 ->additional(['message' => 'Proveedor creado exitosamente'])
                 ->response()
@@ -238,7 +238,7 @@ class ProveedorController extends Controller
 
     /**
      * Display the specified resource.
-     * 
+     *
      * @param int $id
      * @return ProveedorResource|\Illuminate\Http\JsonResponse
      */
@@ -300,9 +300,9 @@ class ProveedorController extends Controller
                     $query->where('estado', 'pendiente');
                 }
             ])->findOrFail($id);
-            
+
             $this->authorize('view', $proveedor);
-            
+
             return new ProveedorResource($proveedor);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             throw $e;
@@ -313,7 +313,7 @@ class ProveedorController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * 
+     *
      * @param UpdateProveedorRequest $request
      * @param int $id
      * @return ProveedorResource|\Illuminate\Http\JsonResponse
@@ -399,14 +399,14 @@ class ProveedorController extends Controller
     {
         try {
             $proveedor = Proveedor::findOrFail($id);
-            
+
             $this->authorize('update', $proveedor);
-            
+
             $proveedor->update($request->validated());
             $proveedor->load('empresa');
-            
+
             $this->flushCache();
-            
+
             return (new ProveedorResource($proveedor))
                 ->additional(['message' => 'Proveedor actualizado exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -418,7 +418,7 @@ class ProveedorController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * 
+     *
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
@@ -472,17 +472,17 @@ class ProveedorController extends Controller
     {
         try {
             $proveedor = Proveedor::findOrFail($id);
-            
+
             $this->authorize('delete', $proveedor);
-            
+
             // Soft delete
             $proveedor->update([
                 'activo' => false,
                 'eliminado' => true
             ]);
-            
+
             $this->flushCache();
-            
+
             return response()->json([
                 'message' => 'Proveedor eliminado exitosamente'
             ]);

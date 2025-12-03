@@ -10,7 +10,13 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 
+
+#[OA\Tag(
+    name: 'Mensajes Hacienda',
+    description: 'Gestión de mensajes de respuesta de Hacienda (aceptación/rechazo de comprobantes)'
+)]
 class MensajeHaciendaController extends Controller
 {
     use HasCacheableQueries;
@@ -21,6 +27,16 @@ class MensajeHaciendaController extends Controller
     /**
      * Display a listing of the resource.
      */
+        #[OA\Get(
+        path: '/api/mensaje-hacienda',
+        summary: 'Listar mensajes de hacienda',
+        security: [['sanctum' => []]],
+        tags: ['Mensajes Hacienda'],
+        responses: [
+            new OA\Response(response: 200, description: 'Listado de mensajes de hacienda'),
+        ]
+    )]
+
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', MensajeHacienda::class);
@@ -69,6 +85,17 @@ class MensajeHaciendaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+        #[OA\Post(
+        path: '/api/mensaje-hacienda',
+        summary: 'Crear mensaje de hacienda',
+        security: [['sanctum' => []]],
+        tags: ['Mensajes Hacienda'],
+        responses: [
+            new OA\Response(response: 201, description: 'mensaje de hacienda creado'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
+
     public function store(Request $request): JsonResponse
     {
         $this->authorize('create', MensajeHacienda::class);
@@ -116,6 +143,20 @@ class MensajeHaciendaController extends Controller
     /**
      * Display the specified resource.
      */
+        #[OA\Get(
+        path: '/api/mensaje-hacienda/{id}',
+        summary: 'Obtener mensaje de hacienda',
+        security: [['sanctum' => []]],
+        tags: ['Mensajes Hacienda'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'mensaje de hacienda encontrado'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
+
     public function show(MensajeHacienda $mensajeHacienda): MensajeHaciendaResource
     {
         $this->authorize('view', $mensajeHacienda);
@@ -128,6 +169,21 @@ class MensajeHaciendaController extends Controller
     /**
      * Update the specified resource in storage.
      */
+        #[OA\Put(
+        path: '/api/mensaje-hacienda/{id}',
+        summary: 'Actualizar mensaje de hacienda',
+        security: [['sanctum' => []]],
+        tags: ['Mensajes Hacienda'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'mensaje de hacienda actualizado'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
+
     public function update(Request $request, MensajeHacienda $mensajeHacienda): MensajeHaciendaResource
     {
         $this->authorize('update', $mensajeHacienda);
@@ -167,6 +223,20 @@ class MensajeHaciendaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+        #[OA\Delete(
+        path: '/api/mensaje-hacienda/{id}',
+        summary: 'Eliminar mensaje de hacienda',
+        security: [['sanctum' => []]],
+        tags: ['Mensajes Hacienda'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'mensaje de hacienda eliminado'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
+
     public function destroy(MensajeHacienda $mensajeHacienda): JsonResponse
     {
         $this->authorize('delete', $mensajeHacienda);

@@ -16,9 +16,9 @@ use OpenApi\Attributes as OA;
 
 /**
  * Controlador para Presupuestos Financieros
- * 
+ *
  * Gestiona presupuestos maestros con sus períodos y estados.
- * 
+ *
  * @package App\Http\Controllers\API
  * @author Sistemas Ursol S.A. - Jeremy Arias Solano
  */
@@ -63,7 +63,7 @@ class PresupuestoController extends Controller
     public function index(Request $request): JsonResponse
     {
         $this->authorize('viewAny', Presupuesto::class);
-        
+
         $empresaId = $this->getEmpresaId();
 
         $cacheKey = $this->getCacheKey('index', ['empresa_id' => $empresaId]);
@@ -125,7 +125,7 @@ class PresupuestoController extends Controller
     public function store(StorePresupuestoRequest $request): JsonResponse
     {
         $this->authorize('create', Presupuesto::class);
-        
+
         $empresaId = $this->getEmpresaId();
 
         DB::beginTransaction();
@@ -139,7 +139,7 @@ class PresupuestoController extends Controller
             ]);
 
             DB::commit();
-            
+
             $this->flushCache();
 
             return response()->json([
@@ -198,7 +198,7 @@ class PresupuestoController extends Controller
         $presupuesto = Presupuesto::where('empresa_id', $empresaId)
             ->with('detalles.cuentaContable')
             ->findOrFail($id);
-        
+
         $this->authorize('view', $presupuesto);
 
         return response()->json([
@@ -257,7 +257,7 @@ class PresupuestoController extends Controller
         $empresaId = $this->getEmpresaId();
 
         $presupuesto = Presupuesto::where('empresa_id', $empresaId)->findOrFail($id);
-        
+
         $this->authorize('update', $presupuesto);
 
         if ($presupuesto->estado === 'Finalizado') {
@@ -276,7 +276,7 @@ class PresupuestoController extends Controller
             ]));
 
             DB::commit();
-            
+
             $this->flushCache();
 
             return response()->json([
@@ -334,7 +334,7 @@ class PresupuestoController extends Controller
         $empresaId = $this->getEmpresaId();
 
         $presupuesto = Presupuesto::where('empresa_id', $empresaId)->findOrFail($id);
-        
+
         $this->authorize('delete', $presupuesto);
 
         if ($presupuesto->estado === 'Activo') {
@@ -345,7 +345,7 @@ class PresupuestoController extends Controller
         }
 
         $presupuesto->delete();
-        
+
         $this->flushCache();
 
         return response()->json([

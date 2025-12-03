@@ -95,9 +95,9 @@ class PagoNominaController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', PagoNomina::class);
-        
+
         $empresaId = $this->getEmpresaId();
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'empleado_id' => $request->empleado_id,
             'periodo_nomina_id' => $request->periodo_nomina_id,
@@ -105,7 +105,7 @@ class PagoNominaController extends Controller
             'desde' => $request->desde,
             'hasta' => $request->hasta
         ]);
-        
+
         return $this->cacheQueryIfEnabled($cacheKey, function() use ($request, $empresaId) {
             $query = PagoNomina::where('empresa_id', $empresaId)
                 ->where('eliminado', 0)
@@ -176,7 +176,7 @@ class PagoNominaController extends Controller
     public function store(StorePagoNominaRequest $request): PagoNominaResource
     {
         $this->authorize('create', PagoNomina::class);
-        
+
         $empresaId = $this->getEmpresaId();
 
         DB::beginTransaction();
@@ -198,7 +198,7 @@ class PagoNominaController extends Controller
             ]);
 
             DB::commit();
-            
+
             $this->flushCache();
 
             return (new PagoNominaResource($pago->load(['empresa', 'empleado', 'periodoNomina', 'metodoPago'])))
@@ -246,7 +246,7 @@ class PagoNominaController extends Controller
             ->where('eliminado', 0)
             ->with(['empresa', 'empleado', 'periodoNomina', 'metodoPago'])
             ->findOrFail($id);
-        
+
         $this->authorize('view', $pago);
 
         return new PagoNominaResource($pago);
@@ -305,7 +305,7 @@ class PagoNominaController extends Controller
         $pago = PagoNomina::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
             ->findOrFail($id);
-        
+
         $this->authorize('update', $pago);
 
         // Validar que no esté pagado
@@ -331,7 +331,7 @@ class PagoNominaController extends Controller
             ]));
 
             DB::commit();
-            
+
             $this->flushCache();
 
             return (new PagoNominaResource($pago->load(['empresa', 'empleado', 'periodoNomina', 'metodoPago'])))
@@ -387,7 +387,7 @@ class PagoNominaController extends Controller
         $pago = PagoNomina::where('empresa_id', $empresaId)
             ->where('eliminado', 0)
             ->findOrFail($id);
-        
+
         $this->authorize('delete', $pago);
 
         // Validar que no esté pagado
@@ -398,7 +398,7 @@ class PagoNominaController extends Controller
         }
 
         $pago->update(['eliminado' => 1, 'activo' => 0]);
-        
+
         $this->flushCache();
 
         return response()->json([

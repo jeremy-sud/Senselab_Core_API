@@ -111,7 +111,7 @@ class TipoCuentaController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', TipoCuenta::class);
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'naturaleza' => $request->get('naturaleza'),
             'activo' => $request->get('activo'),
@@ -197,7 +197,7 @@ class TipoCuentaController extends Controller
     public function store(StoreTipoCuentaRequest $request): JsonResponse
     {
         $this->authorize('create', TipoCuenta::class);
-        
+
         $tipo = TipoCuenta::create($request->validated());
 
         $this->flushCache();
@@ -259,7 +259,7 @@ class TipoCuentaController extends Controller
                 $query->where('eliminado', 0);
             }])
             ->firstOrFail();
-        
+
         $this->authorize('view', $tipo);
 
         return response()->json([
@@ -332,7 +332,7 @@ class TipoCuentaController extends Controller
         $tipo = TipoCuenta::where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
-        
+
         $this->authorize('update', $tipo);
 
         $tipo->update($request->validated());
@@ -397,7 +397,7 @@ class TipoCuentaController extends Controller
         $tipo = TipoCuenta::where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
-        
+
         $this->authorize('delete', $tipo);
 
         // Validar que no tenga cuentas contables asignadas

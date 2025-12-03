@@ -56,7 +56,7 @@ class ModeloBusController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', ModeloBus::class);
-        
+
         $cacheKey = $this->getCacheKey('index', []);
 
         return $this->cacheQueryIfEnabled($cacheKey, function () {
@@ -98,7 +98,7 @@ class ModeloBusController extends Controller
     public function store(StoreModeloBusRequest $request): JsonResponse
     {
         $this->authorize('create', ModeloBus::class);
-        
+
         $modelo = ModeloBus::create([
             'nombre' => $request->nombre
         ]);
@@ -142,7 +142,7 @@ class ModeloBusController extends Controller
     {
         $modelo = ModeloBus::withCount('busesUnidades')
             ->findOrFail($id);
-        
+
         $this->authorize('view', $modelo);
 
         return new ModeloBusResource($modelo);
@@ -189,7 +189,7 @@ class ModeloBusController extends Controller
     public function update(UpdateModeloBusRequest $request, int $id): ModeloBusResource
     {
         $modelo = ModeloBus::findOrFail($id);
-        
+
         $this->authorize('update', $modelo);
 
         $modelo->update([
@@ -241,7 +241,7 @@ class ModeloBusController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $modelo = ModeloBus::findOrFail($id);
-        
+
         $this->authorize('delete', $modelo);
 
         // Validar que no tenga buses asociados

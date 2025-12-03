@@ -16,7 +16,7 @@ use Illuminate\Http\JsonResponse;
 class ArchivoController extends Controller
 {
     use HasCacheableQueries;
-    
+
     protected $cacheTags = ['archivos', 'documentos'];
     protected $cacheTTL = 1800; // 30 minutos
 
@@ -85,7 +85,7 @@ class ArchivoController extends Controller
 
         return $this->getCached($cacheKey, function () use ($request) {
             $perPage = $request->input('per_page', 15);
-            
+
             $query = Archivo::with(['empresa', 'usuario'])
                 ->activos()
                 ->noEliminados();
@@ -159,18 +159,18 @@ class ArchivoController extends Controller
         DB::beginTransaction();
         try {
             $file = $request->file('archivo');
-            
+
             // Generar nombre único
             $nombreOriginal = $file->getClientOriginalName();
             $extension = $file->getClientOriginalExtension();
             $nombreAlmacenado = uniqid() . '_' . time() . '.' . $extension;
-            
+
             // Almacenar archivo
             $ruta = $file->storeAs('archivos', $nombreAlmacenado, 'private');
-            
+
             // Calcular hash
             $hashSha256 = hash_file('sha256', $file->getRealPath());
-            
+
             $archivo = Archivo::create([
                 'empresa_id' => auth('sanctum')->user()->empresa_id,
                 'usuario_id' => auth('sanctum')->id(),

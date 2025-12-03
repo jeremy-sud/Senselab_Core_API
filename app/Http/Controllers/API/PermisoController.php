@@ -15,10 +15,10 @@ use OpenApi\Attributes as OA;
 
 /**
  * Controlador API para gestión de permisos (RBAC)
- * 
+ *
  * Los permisos definen acciones específicas en el sistema.
  * Nota: Tabla global sin empresa_id según api_db.sql
- * 
+ *
  * @package App\Http\Controllers\API
  * @author Sistemas Ursol S.A.
  */
@@ -31,7 +31,7 @@ class PermisoController extends Controller
 
     /**
      * Listar todos los permisos
-     * 
+     *
      * GET /api/permisos
      */
     #[OA\Get(
@@ -51,12 +51,12 @@ class PermisoController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Permiso::class);
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'activo' => $request->input('activo'),
             'modulo' => $request->input('modulo')
         ]);
-        
+
         $permisos = $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
             $query = Permiso::query();
 
@@ -76,15 +76,15 @@ class PermisoController extends Controller
 
     /**
      * Obtener permisos agrupados por módulo
-     * 
+     *
      * GET /api/permisos/grouped
      */
     public function grouped(): JsonResponse
     {
         $this->authorize('viewAny', Permiso::class);
-        
+
         $cacheKey = $this->getCacheKey('grouped', []);
-        
+
         $permisos = $this->cacheQueryIfEnabled($cacheKey, function() {
             return Permiso::where('activo', true)
                 ->where('eliminado', false)
@@ -109,7 +109,7 @@ class PermisoController extends Controller
 
     /**
      * Crear un nuevo permiso
-     * 
+     *
      * POST /api/permisos
      */
     #[OA\Post(
@@ -138,9 +138,9 @@ class PermisoController extends Controller
     public function store(StorePermisoRequest $request): JsonResponse
     {
         $this->authorize('create', Permiso::class);
-        
+
         $permiso = Permiso::create($request->validated());
-        
+
         $this->flushCache();
 
         return (new PermisoResource($permiso))
@@ -150,7 +150,7 @@ class PermisoController extends Controller
 
     /**
      * Mostrar un permiso específico
-     * 
+     *
      * GET /api/permisos/{id}
      */
     #[OA\Get(
@@ -168,15 +168,15 @@ class PermisoController extends Controller
     public function show(int $id): PermisoResource
     {
         $permiso = Permiso::with('roles')->findOrFail($id);
-        
+
         $this->authorize('view', $permiso);
-        
+
         return new PermisoResource($permiso);
     }
 
     /**
      * Actualizar un permiso existente
-     * 
+     *
      * PUT/PATCH /api/permisos/{id}
      */
     #[OA\Put(
@@ -190,11 +190,11 @@ class PermisoController extends Controller
     public function update(UpdatePermisoRequest $request, int $id): PermisoResource
     {
         $permiso = Permiso::findOrFail($id);
-        
+
         $this->authorize('update', $permiso);
-        
+
         $permiso->update($request->validated());
-        
+
         $this->flushCache();
 
         return new PermisoResource($permiso);
@@ -202,7 +202,7 @@ class PermisoController extends Controller
 
     /**
      * Eliminar un permiso (soft delete)
-     * 
+     *
      * DELETE /api/permisos/{id}
      */
     #[OA\Delete(
@@ -220,7 +220,7 @@ class PermisoController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $permiso = Permiso::findOrFail($id);
-        
+
         $this->authorize('delete', $permiso);
 
         // Validar que no esté asignado a ningún rol
@@ -233,7 +233,7 @@ class PermisoController extends Controller
         $permiso->eliminado = 1;
         $permiso->activo = 0;
         $permiso->save();
-        
+
         $this->flushCache();
 
         return response()->json([
@@ -244,7 +244,7 @@ class PermisoController extends Controller
 
     /**
      * Obtener todos los módulos disponibles
-     * 
+     *
      * GET /api/permisos/modulos
      */
     #[OA\Get(

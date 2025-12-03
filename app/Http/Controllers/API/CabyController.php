@@ -120,7 +120,7 @@ class CabyController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Cabys::class);
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'buscar' => $request->input('buscar'),
             'codigo' => $request->input('codigo'),
@@ -130,7 +130,7 @@ class CabyController extends Controller
             'sort_order' => $request->input('sort_order', 'asc'),
             'per_page' => $request->input('per_page', 15)
         ]);
-        
+
         $cabys = $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
             $query = Cabys::where('eliminado', 0);
 
@@ -217,7 +217,7 @@ class CabyController extends Controller
     {
         $this->authorize('create', Cabys::class);
         $caby = Cabys::create($request->validated());
-        
+
         $this->flushCache();
 
         return (new CabyResource($caby))
@@ -349,7 +349,7 @@ class CabyController extends Controller
         $this->authorize('update', $caby);
 
         $caby->update($request->validated());
-        
+
         $this->flushCache();
 
         return (new CabyResource($caby))
@@ -423,7 +423,7 @@ class CabyController extends Controller
         }
 
         $caby->update(['eliminado' => 1, 'activo' => 0]);
-        
+
         $this->flushCache();
 
         return response()->json([

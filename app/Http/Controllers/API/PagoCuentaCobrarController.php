@@ -13,7 +13,7 @@ use OpenApi\Attributes as OA;
 class PagoCuentaCobrarController extends Controller
 {
     use HasCacheableQueries;
-    
+
     protected $cacheTags = ['pagos_cuentas_cobrar', 'cuentas_cobrar', 'transacciones'];
     protected $cacheTTL = 600; // 10 minutos
 
@@ -89,7 +89,7 @@ class PagoCuentaCobrarController extends Controller
 
         return $this->getCached($cacheKey, function () use ($request) {
             $perPage = $request->input('per_page', 15);
-            
+
             $query = PagoCuentaCobrar::with(['cuentaPorCobrar', 'formaPago'])
                 ->activos();
 
@@ -178,7 +178,7 @@ class PagoCuentaCobrarController extends Controller
 
             // Crear el pago
             $pago = PagoCuentaCobrar::create($validated);
-            
+
             // Actualizar monto pagado en la cuenta
             $cuenta->increment('monto_pagado', $validated['monto_pago']);
 
@@ -337,7 +337,7 @@ class PagoCuentaCobrarController extends Controller
             // Revertir monto pagado en la cuenta
             $cuenta = CuentaPorCobrar::findOrFail($pago->cuenta_por_cobrar_id);
             $cuenta->decrement('monto_pagado', $pago->monto_pago);
-            
+
             // Soft delete del pago
             $pago->update([
                 'eliminado' => true,

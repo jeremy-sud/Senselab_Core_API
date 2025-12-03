@@ -16,7 +16,7 @@ use OpenApi\Attributes as OA;
 class DetalleOrdenCompraController extends Controller
 {
     use HasCacheableQueries;
-    
+
     protected $cacheTags = ['detalle_ordenes_compra', 'ordenes_compra', 'compras'];
     protected $cacheTTL = 1200; // 20 minutos
 
@@ -24,7 +24,7 @@ class DetalleOrdenCompraController extends Controller
     {
         $this->middleware('auth:sanctum');
     }
-    
+
     /**
      * Alias para getCacheKey (compatibilidad)
      */
@@ -86,7 +86,7 @@ class DetalleOrdenCompraController extends Controller
 
         return $this->getCached($cacheKey, function () use ($request) {
             $perPage = $request->input('per_page', 15);
-            
+
             $query = DetalleOrdenCompra::with(['ordenCompra', 'producto'])
                 ->activos();
 
@@ -165,7 +165,7 @@ class DetalleOrdenCompraController extends Controller
             }
 
             $detalle = DetalleOrdenCompra::create($validated);
-            
+
             // Actualizar totales de la orden
             $this->actualizarTotalesOrden($detalle->orden_compra_id);
 
@@ -272,7 +272,7 @@ class DetalleOrdenCompraController extends Controller
         DB::beginTransaction();
         try {
             $detalle->update($validated);
-            
+
             // Actualizar totales de la orden
             $this->actualizarTotalesOrden($detalle->orden_compra_id);
 
@@ -324,7 +324,7 @@ class DetalleOrdenCompraController extends Controller
         DB::beginTransaction();
         try {
             $ordenId = $detalle->orden_compra_id;
-            
+
             $detalle->update([
                 'eliminado' => true,
                 'activo' => false
@@ -355,7 +355,7 @@ class DetalleOrdenCompraController extends Controller
     private function actualizarTotalesOrden($ordenId)
     {
         $orden = OrdenCompra::findOrFail($ordenId);
-        
+
         $detalles = DetalleOrdenCompra::where('orden_compra_id', $ordenId)
             ->where('activo', true)
             ->where('eliminado', false)

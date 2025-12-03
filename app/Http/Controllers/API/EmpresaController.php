@@ -17,12 +17,12 @@ use OpenApi\Attributes as OA;
 class EmpresaController extends Controller
 {
     use HasCacheableQueries;
-    
+
     protected $cacheTags = ['empresas', 'tenants'];
     protected $cacheTTL = 3600; // 1 hora
     /**
      * Display a listing of the resource.
-     * 
+     *
      * @param Request $request
      * @return AnonymousResourceCollection
      */
@@ -88,7 +88,7 @@ class EmpresaController extends Controller
 
         return $this->getCached($cacheKey, function () use ($request) {
             $perPage = $request->input('per_page', 15);
-            
+
             $query = Empresa::query();
 
             if ($request->filled('search')) {
@@ -112,7 +112,7 @@ class EmpresaController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param StoreEmpresaRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -162,7 +162,7 @@ class EmpresaController extends Controller
         DB::beginTransaction();
         try {
             $empresa = Empresa::create($validated);
-            
+
             DB::commit();
             $this->clearCache();
 
@@ -182,7 +182,7 @@ class EmpresaController extends Controller
 
     /**
      * Display the specified resource.
-     * 
+     *
      * @param int $id
      * @return EmpresaResource|\Illuminate\Http\JsonResponse
      */
@@ -229,7 +229,7 @@ class EmpresaController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * 
+     *
      * @param UpdateEmpresaRequest $request
      * @param Empresa $empresa
      * @return EmpresaResource
@@ -287,7 +287,7 @@ class EmpresaController extends Controller
         DB::beginTransaction();
         try {
             $empresa->update($validated);
-            
+
             DB::commit();
             $this->clearCache();
 
@@ -302,7 +302,7 @@ class EmpresaController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * 
+     *
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
@@ -346,7 +346,7 @@ class EmpresaController extends Controller
                 'activo' => false,
                 'eliminado' => true
             ]);
-            
+
             $this->clearCache();
 
             return response()->json([

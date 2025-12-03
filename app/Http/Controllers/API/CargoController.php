@@ -15,10 +15,10 @@ use OpenApi\Attributes as OA;
 
 /**
  * Controlador API para gestión de cargos de empleados
- * 
+ *
  * Define posiciones laborales (Gerente, Vendedor, Contador, etc.)
  * Nota: Tabla global sin empresa_id según api_db.sql
- * 
+ *
  * @package App\Http\Controllers\API
  * @author Sistemas Ursol S.A.
  */
@@ -31,7 +31,7 @@ class CargoController extends Controller
 
     /**
      * Listar todos los cargos
-     * 
+     *
      * GET /api/cargos
      */
     #[OA\Get(
@@ -67,7 +67,7 @@ class CargoController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Cargo::class);
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'activo' => $request->input('activo')
         ]);
@@ -87,7 +87,7 @@ class CargoController extends Controller
 
     /**
      * Crear un nuevo cargo
-     * 
+     *
      * POST /api/cargos
      */
     #[OA\Post(
@@ -134,7 +134,7 @@ class CargoController extends Controller
 
     /**
      * Mostrar un cargo específico
-     * 
+     *
      * GET /api/cargos/{id}
      */
     #[OA\Get(
@@ -179,7 +179,7 @@ class CargoController extends Controller
 
     /**
      * Actualizar un cargo existente
-     * 
+     *
      * PUT/PATCH /api/cargos/{id}
      */
     #[OA\Put(
@@ -241,7 +241,7 @@ class CargoController extends Controller
 
     /**
      * Eliminar un cargo (soft delete)
-     * 
+     *
      * DELETE /api/cargos/{id}
      */
     #[OA\Delete(

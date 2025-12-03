@@ -111,7 +111,7 @@ class HorarioRutaController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', HorarioRuta::class);
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'ruta_id' => $request->ruta_id,
             'bus_id' => $request->bus_id,
@@ -120,7 +120,7 @@ class HorarioRutaController extends Controller
             'desde' => $request->desde,
             'hasta' => $request->hasta
         ]);
-        
+
         return $this->cacheQueryIfEnabled($cacheKey, function () use ($request) {
             $query = HorarioRuta::with(['ruta', 'bus'])
                 ->where('eliminado', 0);
@@ -196,7 +196,7 @@ class HorarioRutaController extends Controller
     public function store(StoreHorarioRutaRequest $request): JsonResponse
     {
         $this->authorize('create', HorarioRuta::class);
-        
+
         DB::beginTransaction();
 
         try {
@@ -261,7 +261,7 @@ class HorarioRutaController extends Controller
         $horario = HorarioRuta::where('eliminado', 0)
             ->with(['ruta', 'bus', 'tiquetesDetalle'])
             ->findOrFail($id);
-        
+
         $this->authorize('view', $horario);
 
         return new HorarioRutaResource($horario);
@@ -315,7 +315,7 @@ class HorarioRutaController extends Controller
     {
         $horario = HorarioRuta::where('eliminado', 0)
             ->findOrFail($id);
-        
+
         $this->authorize('update', $horario);
 
         // Validar que no esté en viaje o finalizado
@@ -380,7 +380,7 @@ class HorarioRutaController extends Controller
     {
         $horario = HorarioRuta::where('eliminado', 0)
             ->findOrFail($id);
-        
+
         $this->authorize('delete', $horario);
 
         // Validar que no tenga tiquetes vendidos
@@ -582,7 +582,7 @@ class HorarioRutaController extends Controller
             'capacidad_total' => $horario->bus->capacidad_asientos,
             'tiquetes_vendidos' => $tiquetesVendidos,
             'asientos_disponibles' => $asientosDisponibles,
-            'porcentaje_ocupacion' => $horario->bus->capacidad_asientos > 0 
+            'porcentaje_ocupacion' => $horario->bus->capacidad_asientos > 0
                 ? round(($tiquetesVendidos / $horario->bus->capacidad_asientos) * 100, 2)
                 : 0
         ]);

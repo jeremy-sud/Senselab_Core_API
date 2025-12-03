@@ -19,22 +19,22 @@ use OpenApi\Attributes as OA;
 
 /**
  * Controlador API para gestión de usuarios del sistema
- * 
+ *
  * Gestiona cuentas de acceso, autenticación y asignación de roles.
  * Multi-tenant por empresa_id
- * 
+ *
  * @package App\Http\Controllers\API
  * @author Sistemas Ursol S.A.
  */
 class UsuarioController extends Controller
 {
     use HasCacheableQueries;
-    
+
     protected $cacheTags = ['usuarios', 'auth'];
     protected $cacheTTL = 900; // 15 minutos
     /**
      * Listar todos los usuarios de la empresa
-     * 
+     *
      * GET /api/usuarios
      */
     #[OA\Get(
@@ -54,9 +54,9 @@ class UsuarioController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Usuario::class);
-        
+
         $empresaId = auth('sanctum')->user()->empresa_id;
-        
+
         $usuarios = $this->cacheQueryIfEnabled(
             $this->getCacheKey('index', array_merge($request->all(), ['empresa_id' => $empresaId])),
             function() use ($request, $empresaId) {
@@ -80,7 +80,7 @@ class UsuarioController extends Controller
 
     /**
      * Crear un nuevo usuario
-     * 
+     *
      * POST /api/usuarios
      */
     #[OA\Post(
@@ -112,7 +112,7 @@ class UsuarioController extends Controller
     public function store(StoreUsuarioRequest $request): JsonResponse
     {
         $this->authorize('create', Usuario::class);
-        
+
         $validated = $request->validated();
         $validated['empresa_id'] = auth('sanctum')->user()->empresa_id;
         $validated['password_hash'] = Hash::make($validated['password']);
@@ -126,7 +126,7 @@ class UsuarioController extends Controller
         }
 
         $usuario->load(['roles', 'cargo', 'empresa']);
-        
+
         $this->flushCache();
 
         return (new UsuarioResource($usuario))
@@ -136,7 +136,7 @@ class UsuarioController extends Controller
 
     /**
      * Mostrar un usuario específico
-     * 
+     *
      * GET /api/usuarios/{id}
      */
     #[OA\Get(
@@ -158,7 +158,7 @@ class UsuarioController extends Controller
         $usuario = Usuario::where('empresa_id', $empresaId)
             ->with(['roles.permisos', 'cargo', 'empresa', 'empleado'])
             ->findOrFail($id);
-        
+
         $this->authorize('view', $usuario);
 
         return new UsuarioResource($usuario);
@@ -166,7 +166,7 @@ class UsuarioController extends Controller
 
     /**
      * Actualizar un usuario existente
-     * 
+     *
      * PUT/PATCH /api/usuarios/{id}
      */
     #[OA\Put(
@@ -182,9 +182,9 @@ class UsuarioController extends Controller
         $empresaId = auth('sanctum')->user()->empresa_id;
 
         $usuario = Usuario::where('empresa_id', $empresaId)->findOrFail($id);
-        
+
         $this->authorize('update', $usuario);
-        
+
         $validated = $request->validated();
 
         // Si se proporciona nueva contraseña, hashearla
@@ -201,7 +201,7 @@ class UsuarioController extends Controller
         }
 
         $usuario->load(['roles', 'cargo', 'empresa']);
-        
+
         $this->flushCache();
 
         return new UsuarioResource($usuario);
@@ -209,7 +209,7 @@ class UsuarioController extends Controller
 
     /**
      * Eliminar un usuario (soft delete)
-     * 
+     *
      * DELETE /api/usuarios/{id}
      */
     #[OA\Delete(
@@ -229,7 +229,7 @@ class UsuarioController extends Controller
         $empresaId = auth('sanctum')->user()->empresa_id;
 
         $usuario = Usuario::where('empresa_id', $empresaId)->findOrFail($id);
-        
+
         $this->authorize('delete', $usuario);
 
         // No permitir que el usuario se elimine a sí mismo
@@ -245,7 +245,7 @@ class UsuarioController extends Controller
 
         // Revocar todos los tokens de acceso
         $usuario->tokens()->delete();
-        
+
         $this->flushCache();
 
         return response()->json([
@@ -256,7 +256,7 @@ class UsuarioController extends Controller
 
     /**
      * Asignar roles a un usuario
-     * 
+     *
      * POST /api/usuarios/{id}/roles
      */
     #[OA\Post(
@@ -285,7 +285,7 @@ class UsuarioController extends Controller
 
         $usuario->roles()->sync($request->roles);
         $usuario->load('roles');
-        
+
         $this->flushCache();
 
         return response()->json([
@@ -296,7 +296,7 @@ class UsuarioController extends Controller
 
     /**
      * Cambiar contraseña de un usuario
-     * 
+     *
      * POST /api/usuarios/{id}/cambiar-password
      */
     #[OA\Post(

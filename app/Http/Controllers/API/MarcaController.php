@@ -15,9 +15,9 @@ use OpenApi\Attributes as OA;
 
 /**
  * Controlador API para gestión de marcas de productos
- * 
+ *
  * Nota: Las marcas son globales (sin empresa_id) según api_db.sql
- * 
+ *
  * @package App\Http\Controllers\API
  * @author Sistemas Ursol S.A.
  */
@@ -64,7 +64,7 @@ class MarcaController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Marca::class);
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'activo' => $request->input('activo')
         ]);

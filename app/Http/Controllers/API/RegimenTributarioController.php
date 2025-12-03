@@ -13,7 +13,7 @@ use OpenApi\Attributes as OA;
 class RegimenTributarioController extends Controller
 {
     use HasCacheableQueries;
-    
+
     protected $cacheTags = ['regimenes_tributarios', 'configuracion'];
     protected $cacheTTL = 86400; // 24 horas (datos muy estables)
 
@@ -61,7 +61,7 @@ class RegimenTributarioController extends Controller
 
         return $this->getCached($cacheKey, function () use ($request) {
             $perPage = $request->input('per_page', 15);
-            
+
             $regimenes = RegimenTributario::activos()
                 ->noEliminados()
                 ->orderBy('nombre')

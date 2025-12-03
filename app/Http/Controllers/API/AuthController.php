@@ -146,7 +146,7 @@ class AuthController extends Controller
     {
         /** @var \App\Models\Usuario $user */
         $user = Auth::user();
-        
+
         // Revocar solo el token actual
         $request->user()->currentAccessToken()->delete();
 
@@ -201,7 +201,7 @@ class AuthController extends Controller
     {
         $usuario = $request->user();
         $usuario->load(['roles.permisos', 'empresa', 'cargo']);
-        
+
         return new UsuarioResource($usuario);
     }
 }

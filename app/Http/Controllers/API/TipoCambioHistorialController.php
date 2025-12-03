@@ -13,7 +13,7 @@ use OpenApi\Attributes as OA;
 class TipoCambioHistorialController extends Controller
 {
     use HasCacheableQueries;
-    
+
     protected $cacheTags = ['tipos_cambio_historial', 'finanzas'];
     protected $cacheTTL = 3600; // 1 hora
 
@@ -89,7 +89,7 @@ class TipoCambioHistorialController extends Controller
 
         return $this->getCached($cacheKey, function () use ($request) {
             $perPage = $request->input('per_page', 15);
-            
+
             $query = TipoCambioHistorial::query();
 
             if ($request->filled('moneda_origen') && $request->filled('moneda_destino')) {

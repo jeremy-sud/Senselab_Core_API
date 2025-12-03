@@ -16,7 +16,7 @@ use OpenApi\Attributes as OA;
 class MovimientoCajaChicaController extends Controller
 {
     use HasCacheableQueries;
-    
+
     protected $cacheTags = ['movimientos_caja_chica', 'caja_chica', 'tesoreria'];
     protected $cacheTTL = 600; // 10 minutos
 
@@ -92,7 +92,7 @@ class MovimientoCajaChicaController extends Controller
 
         return $this->getCached($cacheKey, function () use ($request) {
             $perPage = $request->input('per_page', 15);
-            
+
             $query = MovimientoCajaChica::with(['cajaChica', 'cuentaContable'])
                 ->activos();
 
@@ -188,7 +188,7 @@ class MovimientoCajaChicaController extends Controller
 
             // Crear movimiento
             $movimiento = MovimientoCajaChica::create($validated);
-            
+
             // Actualizar saldo de caja chica
             if ($validated['tipo_movimiento'] === MovimientoCajaChica::TIPO_EGRESO) {
                 $cajaChica->decrement('saldo_actual', $validated['monto']);
@@ -356,7 +356,7 @@ class MovimientoCajaChicaController extends Controller
             } else {
                 $cajaChica->decrement('saldo_actual', $movimiento->monto);
             }
-            
+
             // Soft delete
             $movimiento->update([
                 'eliminado' => true,

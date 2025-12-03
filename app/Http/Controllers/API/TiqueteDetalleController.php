@@ -96,13 +96,13 @@ class TiqueteDetalleController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', TiqueteDetalle::class);
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'horario_ruta_id' => $request->horario_ruta_id,
             'estado' => $request->estado,
             'buscar_pasajero' => $request->buscar_pasajero
         ]);
-        
+
         return $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
             $query = TiqueteDetalle::with(['horarioRuta.ruta', 'horarioRuta.bus', 'detalleVenta'])
                 ->where('eliminado', 0);
@@ -170,7 +170,7 @@ class TiqueteDetalleController extends Controller
     public function store(StoreTiqueteDetalleRequest $request): TiqueteDetalleResource
     {
         $this->authorize('create', TiqueteDetalle::class);
-        
+
         DB::beginTransaction();
 
         try {
@@ -190,7 +190,7 @@ class TiqueteDetalleController extends Controller
             $horario->decrement('asientos_disponibles');
 
             DB::commit();
-            
+
             $this->flushCache();
 
             return new TiqueteDetalleResource($tiquete->load(['horarioRuta.ruta', 'horarioRuta.bus']));
@@ -233,7 +233,7 @@ class TiqueteDetalleController extends Controller
         $tiquete = TiqueteDetalle::where('eliminado', 0)
             ->with(['horarioRuta.ruta', 'horarioRuta.bus', 'detalleVenta'])
             ->findOrFail($id);
-        
+
         $this->authorize('view', $tiquete);
 
         return new TiqueteDetalleResource($tiquete);
@@ -283,7 +283,7 @@ class TiqueteDetalleController extends Controller
     {
         $tiquete = TiqueteDetalle::where('eliminado', 0)
             ->findOrFail($id);
-        
+
         $this->authorize('update', $tiquete);
 
         // Validar que no esté usado
@@ -297,7 +297,7 @@ class TiqueteDetalleController extends Controller
             'estado',
             'activo'
         ]));
-        
+
         $this->flushCache();
 
         return new TiqueteDetalleResource($tiquete->load(['horarioRuta.ruta', 'horarioRuta.bus']));

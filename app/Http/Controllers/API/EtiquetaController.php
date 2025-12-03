@@ -15,7 +15,7 @@ use OpenApi\Attributes as OA;
 class EtiquetaController extends Controller
 {
     use HasCacheableQueries;
-    
+
     protected $cacheTags = ['etiquetas', 'catalogos'];
     protected $cacheTTL = 7200; // 2 horas
 
@@ -70,7 +70,7 @@ class EtiquetaController extends Controller
 
         return $this->getCached($cacheKey, function () use ($request) {
             $perPage = $request->input('per_page', 15);
-            
+
             $query = Etiqueta::with('empresa')->activas();
 
             if ($request->filled('nombre')) {
@@ -127,7 +127,7 @@ class EtiquetaController extends Controller
         DB::beginTransaction();
         try {
             $validated['empresa_id'] = auth('sanctum')->user()->empresa_id;
-            
+
             $etiqueta = Etiqueta::create($validated);
 
             DB::commit();

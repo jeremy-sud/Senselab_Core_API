@@ -13,7 +13,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 class AuditoriaActividadController extends Controller
 {
     use HasCacheableQueries;
-    
+
     protected $cacheTags = ['auditoria_actividades', 'auditoria'];
     protected $cacheTTL = 1800; // 30 minutos
 
@@ -96,7 +96,7 @@ class AuditoriaActividadController extends Controller
 
         return $this->getCached($cacheKey, function () use ($request) {
             $perPage = $request->input('per_page', 15);
-            
+
             $query = AuditoriaActividad::with(['usuario', 'empresa']);
 
             // Filtros
@@ -164,7 +164,7 @@ class AuditoriaActividadController extends Controller
         return $this->getCached($cacheKey, function () use ($auditoria) {
             // Incluir cambios calculados
             $auditoria->cambios = $auditoria->cambios;
-            
+
             return new AuditoriaActividadResource($auditoria);
         });
     }
@@ -311,7 +311,7 @@ class AuditoriaActividadController extends Controller
 
         // Generar CSV
         $csv = "ID,Fecha,Usuario,Empresa,Acción,Tabla,Registro ID,IP,User Agent\n";
-        
+
         foreach ($auditorias as $auditoria) {
             $csv .= sprintf(
                 "%d,%s,%s,%s,%s,%s,%s,%s,%s\n",

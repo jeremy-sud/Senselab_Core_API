@@ -12,7 +12,7 @@ use OpenApi\Attributes as OA;
 class NotificacionController extends Controller
 {
     use HasCacheableQueries;
-    
+
     protected $cacheTags = ['notificaciones'];
     protected $cacheTTL = 300; // 5 minutos (muy dinámico)
 
@@ -85,7 +85,7 @@ class NotificacionController extends Controller
 
         return $this->getCached($cacheKey, function () use ($request) {
             $perPage = $request->input('per_page', 15);
-            
+
             $query = Notificacion::where('usuario_id', auth('sanctum')->id());
 
             if ($request->filled('tipo')) {
@@ -105,7 +105,7 @@ class NotificacionController extends Controller
             }
 
             $notificaciones = $query->orderBy('id', 'desc')->paginate($perPage);
-            
+
             // Contar no leídas
             $noLeidasCount = Notificacion::where('usuario_id', auth('sanctum')->id())
                 ->noLeidas()

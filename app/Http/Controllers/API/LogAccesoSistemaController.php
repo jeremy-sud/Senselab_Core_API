@@ -14,6 +14,11 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
  * Controlador para logs de acceso al sistema
  * Auditoría de login, logout y intentos fallidos
  */
+
+#[OA\Tag(
+    name: 'Logs de Acceso',
+    description: 'Registro de accesos al sistema (auditoría de login/logout)'
+)]
 class LogAccesoSistemaController extends Controller
 {
     use HasCacheableQueries;
@@ -24,6 +29,16 @@ class LogAccesoSistemaController extends Controller
     /**
      * Listar logs de acceso
      */
+        #[OA\Get(
+        path: '/api/log-acceso-sistema',
+        summary: 'Listar logs de acceso',
+        security: [['sanctum' => []]],
+        tags: ['Logs de Acceso'],
+        responses: [
+            new OA\Response(response: 200, description: 'Listado de logs de acceso'),
+        ]
+    )]
+
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', LogAccesoSistema::class);
@@ -64,6 +79,17 @@ class LogAccesoSistemaController extends Controller
     /**
      * Crear log de acceso (normalmente automático)
      */
+        #[OA\Post(
+        path: '/api/log-acceso-sistema',
+        summary: 'Crear log de acceso',
+        security: [['sanctum' => []]],
+        tags: ['Logs de Acceso'],
+        responses: [
+            new OA\Response(response: 201, description: 'log de acceso creado'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
+
     public function store(Request $request): JsonResponse
     {
         $this->authorize('create', LogAccesoSistema::class);
@@ -91,6 +117,20 @@ class LogAccesoSistemaController extends Controller
     /**
      * Mostrar log de acceso
      */
+        #[OA\Get(
+        path: '/api/log-acceso-sistema/{id}',
+        summary: 'Obtener log de acceso',
+        security: [['sanctum' => []]],
+        tags: ['Logs de Acceso'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'log de acceso encontrado'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
+
     public function show(LogAccesoSistema $logAccesoSistema): LogAccesoSistemaResource
     {
         $this->authorize('view', $logAccesoSistema);
@@ -101,6 +141,21 @@ class LogAccesoSistemaController extends Controller
     /**
      * Actualizar log (solo duracion_sesion normalmente)
      */
+        #[OA\Put(
+        path: '/api/log-acceso-sistema/{id}',
+        summary: 'Actualizar log de acceso',
+        security: [['sanctum' => []]],
+        tags: ['Logs de Acceso'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'log de acceso actualizado'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
+
     public function update(Request $request, LogAccesoSistema $logAccesoSistema): LogAccesoSistemaResource
     {
         $this->authorize('update', $logAccesoSistema);
@@ -121,6 +176,20 @@ class LogAccesoSistemaController extends Controller
     /**
      * Eliminar log (soft delete para auditoría)
      */
+        #[OA\Delete(
+        path: '/api/log-acceso-sistema/{id}',
+        summary: 'Eliminar log de acceso',
+        security: [['sanctum' => []]],
+        tags: ['Logs de Acceso'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'log de acceso eliminado'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
+
     public function destroy(LogAccesoSistema $logAccesoSistema): JsonResponse
     {
         $this->authorize('delete', $logAccesoSistema);

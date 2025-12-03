@@ -17,16 +17,16 @@ use OpenApi\Attributes as OA;
 
 /**
  * Controlador para Configuraciones del Sistema
- * 
+ *
  * Gestiona configuraciones clave-valor por empresa (moneda, idioma, tasas, etc.).
- * 
+ *
  * @package App\Http\Controllers\API
  * @author Sistemas Ursol S.A. - Jeremy Arias Solano
  */
 class ConfiguracionController extends Controller
 {
     use HasCacheableQueries, HasEmpresaContext;
-    
+
     /** @var array<string> */
     protected array $cacheTags = ['configuraciones', 'settings'];
     protected int $cacheTTL = 7200; // 2 horas (cambia poco)
@@ -98,7 +98,7 @@ class ConfiguracionController extends Controller
             'tipo_dato' => $request->tipo_dato,
             'descripcion' => $request->descripcion
         ]);
-        
+
         $this->flushCache();
 
         return (new ConfiguracionResource($configuracion))
@@ -159,7 +159,7 @@ class ConfiguracionController extends Controller
             'tipo_dato',
             'descripcion'
         ]));
-        
+
         $this->flushCache();
 
         return (new ConfiguracionResource($configuracion))
@@ -189,7 +189,7 @@ class ConfiguracionController extends Controller
         $this->authorize('delete', $configuracion);
 
         $configuracion->delete();
-        
+
         $this->flushCache();
 
         return response()->json([

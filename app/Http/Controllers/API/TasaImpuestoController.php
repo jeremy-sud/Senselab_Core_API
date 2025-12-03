@@ -113,7 +113,7 @@ class TasaImpuestoController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', TasaImpuesto::class);
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'tipo_impuesto_id' => $request->get('tipo_impuesto_id'),
             'activo' => $request->get('activo'),
@@ -206,7 +206,7 @@ class TasaImpuestoController extends Controller
     public function store(StoreTasaImpuestoRequest $request): JsonResponse
     {
         $this->authorize('create', TasaImpuesto::class);
-        
+
         $tasa = TasaImpuesto::create($request->validated());
         $tasa->load('tipoImpuesto');
 
@@ -267,7 +267,7 @@ class TasaImpuestoController extends Controller
             ->where('eliminado', 0)
             ->with('tipoImpuesto')
             ->firstOrFail();
-        
+
         $this->authorize('view', $tasa);
 
         return response()->json([
@@ -342,7 +342,7 @@ class TasaImpuestoController extends Controller
         $tasa = TasaImpuesto::where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
-        
+
         $this->authorize('update', $tasa);
 
         $tasa->update($request->validated());
@@ -404,7 +404,7 @@ class TasaImpuestoController extends Controller
         $tasa = TasaImpuesto::where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
-        
+
         $this->authorize('delete', $tasa);
 
         $tasa->update(['eliminado' => 1, 'activo' => 0]);

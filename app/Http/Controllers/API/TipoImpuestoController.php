@@ -104,7 +104,7 @@ class TipoImpuestoController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', TipoImpuesto::class);
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'activo' => $request->input('activo'),
             'buscar' => $request->input('buscar'),
@@ -112,7 +112,7 @@ class TipoImpuestoController extends Controller
             'sort_order' => $request->get('sort_order', 'asc'),
             'per_page' => $request->get('per_page', 15)
         ]);
-        
+
         $tipos = $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
             $query = TipoImpuesto::where('eliminado', 0);
 
@@ -189,9 +189,9 @@ class TipoImpuestoController extends Controller
     public function store(StoreTipoImpuestoRequest $request): JsonResponse
     {
         $this->authorize('create', TipoImpuesto::class);
-        
+
         $tipo = TipoImpuesto::create($request->validated());
-        
+
         $this->flushCache();
 
         return response()->json([
@@ -248,7 +248,7 @@ class TipoImpuestoController extends Controller
         $tipo = TipoImpuesto::where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
-        
+
         $this->authorize('view', $tipo);
 
         return new TipoImpuestoResource($tipo);
@@ -319,11 +319,11 @@ class TipoImpuestoController extends Controller
         $tipo = TipoImpuesto::where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
-        
+
         $this->authorize('update', $tipo);
 
         $tipo->update($request->validated());
-        
+
         $this->flushCache();
 
         return new TipoImpuestoResource($tipo);
@@ -380,7 +380,7 @@ class TipoImpuestoController extends Controller
         $tipo = TipoImpuesto::where('id', $id)
             ->where('eliminado', 0)
             ->firstOrFail();
-        
+
         $this->authorize('delete', $tipo);
 
         // Validar que no sea el IVA (código 01) que no debe borrarse
@@ -392,7 +392,7 @@ class TipoImpuestoController extends Controller
         }
 
         $tipo->update(['eliminado' => 1, 'activo' => 0]);
-        
+
         $this->flushCache();
 
         return response()->json([
@@ -436,7 +436,7 @@ class TipoImpuestoController extends Controller
     public function activos(): JsonResponse
     {
         $cacheKey = $this->getCacheKey('activos', []);
-        
+
         $tipos = $this->cacheQueryIfEnabled($cacheKey, function() {
             return TipoImpuesto::where('eliminado', 0)
                 ->where('activo', 1)

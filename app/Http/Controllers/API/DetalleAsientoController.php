@@ -118,9 +118,9 @@ class DetalleAsientoController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', DetalleAsiento::class);
-        
+
         $empresaId = $this->getEmpresaId();
-        
+
         $cacheKey = $this->getCacheKey('index', [
             'asiento_contable_id' => $request->asiento_contable_id,
             'cuenta_contable_id' => $request->cuenta_contable_id,
@@ -130,7 +130,7 @@ class DetalleAsientoController extends Controller
             'sort_order' => $request->get('sort_order', 'desc'),
             'per_page' => $request->get('per_page', 15)
         ]);
-        
+
         return $this->cacheQueryIfEnabled($cacheKey, function() use ($request, $empresaId) {
             $query = DetalleAsiento::whereHas('asientoContable', function ($q) use ($empresaId) {
                     $q->where('empresa_id', $empresaId);
@@ -215,7 +215,7 @@ class DetalleAsientoController extends Controller
             ->where('eliminado', 0)
             ->with(['asientoContable', 'cuentaContable'])
             ->firstOrFail();
-        
+
         $this->authorize('view', $detalle);
 
         return new DetalleAsientoResource($detalle);
@@ -380,7 +380,7 @@ class DetalleAsientoController extends Controller
         $query = DetalleAsiento::whereHas('asientoContable', function ($q) use ($empresaId, $request) {
                 $q->where('empresa_id', $empresaId)
                   ->where('estado', 'Mayorizado');
-                
+
                 if ($request->filled('desde') && $request->filled('hasta')) {
                     $q->whereBetween('fecha', [$request->desde, $request->hasta]);
                 }
@@ -395,7 +395,7 @@ class DetalleAsientoController extends Controller
         $libroMayor = $query->groupBy('cuenta_contable_id')->map(function ($detalles) {
             $totalDebe = $detalles->sum('debe');
             $totalHaber = $detalles->sum('haber');
-            
+
             return [
                 'cuenta_contable' => $detalles->first()->cuentaContable,
                 'movimientos' => DetalleAsientoResource::collection($detalles),
@@ -491,7 +491,7 @@ class DetalleAsientoController extends Controller
         $query = DetalleAsiento::whereHas('asientoContable', function ($q) use ($empresaId, $request) {
                 $q->where('empresa_id', $empresaId)
                   ->where('estado', 'Mayorizado');
-                
+
                 if ($request->filled('desde') && $request->filled('hasta')) {
                     $q->whereBetween('fecha', [$request->desde, $request->hasta]);
                 }
@@ -504,7 +504,7 @@ class DetalleAsientoController extends Controller
 
         $balance = $query->map(function ($item) {
             $saldo = $item->total_debe - $item->total_haber;
-            
+
             return [
                 'cuenta_contable' => $item->cuentaContable,
                 'total_debe' => $item->total_debe,
