@@ -1,5 +1,12 @@
 # 🛠️ Plan de Implementación: Migración a v4.4 Hacienda CR
 
+## ✅ ESTADO: IMPLEMENTADO (2 Diciembre 2025)
+
+> **Nota:** Este plan ha sido completamente implementado. Ver commits:
+> - `648fb9d` - feat(hacienda): Implementar firma XAdES-EPES y actualizar a v4.4
+> - `810a2f6` - feat(hacienda): Completar implementación v4.4 con campos adicionales
+> - `87ddb88` - test: Agregar tests unitarios para XadesEpesSigner
+
 ## Índice
 1. [Resumen de Cambios](#resumen-de-cambios)
 2. [Fase 1: Actualizar FirmaDigitalService](#fase-1-firmadigitalservice)
@@ -12,24 +19,24 @@
 
 ## Resumen de Cambios
 
-### Urgente (Bloquea envío a Hacienda)
-1. ❌ `ProveedorSistemas` - Campo nuevo obligatorio
-2. ❌ Namespace v4.4 en XMLs
-3. ❌ XAdES con `SignaturePolicyIdentifier`
+### Urgente (Bloquea envío a Hacienda) - ✅ COMPLETADO
+1. ✅ `ProveedorSistemas` - Campo nuevo obligatorio → Implementado en XmlComprobanteBuilder
+2. ✅ Namespace v4.4 en XMLs → Actualizado a ResolucionDGT-R-000-2024
+3. ✅ XAdES con `SignaturePolicyIdentifier` → Implementado en XadesEpesSigner
 
-### Alta Prioridad
-4. ⚠️ `CodigoActividadEmisor` (renombrado)
-5. ⚠️ `BaseImponible` obligatorio cuando hay impuesto
-6. ⚠️ `TotalDesgloseImpuesto` en ResumenFactura
+### Alta Prioridad - ✅ COMPLETADO
+4. ✅ `CodigoActividadEmisor` (renombrado) → Actualizado en XML
+5. ✅ `BaseImponible` obligatorio cuando hay impuesto → Agregado en agregarDetalleServicio()
+6. ✅ `TotalDesgloseImpuesto` en ResumenFactura → Implementado
 
-### Media Prioridad
-7. 🟡 Nuevos tipos de identificación (05, 06)
-8. 🟡 Nuevas condiciones de venta (12-15)
-9. 🟡 `MedioPago` movido a `ResumenFactura`
+### Media Prioridad - ✅ COMPLETADO
+7. ✅ Nuevos tipos de identificación (05, 06) → Soportados
+8. ✅ Nuevas condiciones de venta (12-15) → Soportadas
+9. ✅ `MedioPago` movido a `ResumenFactura` → Implementado
 
 ---
 
-## Fase 1: FirmaDigitalService
+## Fase 1: FirmaDigitalService - ✅ COMPLETADO
 
 ### 1.1 Instalar dependencia para XAdES
 
@@ -40,7 +47,7 @@ La librería `robrichards/xmlseclibs` NO soporta XAdES. Necesitamos agregar sopo
 composer require robrichards/xmlseclibs:^3.1
 ```
 
-### 1.2 Crear nueva clase XadesEpesSigner
+### 1.2 Crear nueva clase XadesEpesSigner - ✅ IMPLEMENTADO
 
 ```php
 <?php
