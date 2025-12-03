@@ -61,6 +61,15 @@ fi
 COMPOSER_VERSION=$(composer -V | cut -d ' ' -f 3)
 print_success "Composer $COMPOSER_VERSION instalado"
 
+# Verificar pnpm (opcional pero recomendado)
+if command -v pnpm &> /dev/null; then
+    PNPM_VERSION=$(pnpm --version)
+    print_success "pnpm $PNPM_VERSION instalado"
+else
+    print_info "pnpm no instalado (opcional - solo para frontend)"
+    print_info "Para instalar: npm install -g pnpm"
+fi
+
 # Verificar MySQL
 if ! command -v mysql &> /dev/null; then
     print_error "MySQL no está instalado"
@@ -143,7 +152,7 @@ echo ""
 # 6. Ejecutar migraciones
 echo "Paso 6: Ejecutando migraciones..."
 php artisan migrate --force
-print_success "Migraciones ejecutadas (66 tablas creadas)"
+print_success "Migraciones ejecutadas (82 tablas creadas)"
 echo ""
 
 # 7. Ejecutar seeders
@@ -215,11 +224,12 @@ echo ""
 echo "📚 Documentación:"
 echo "   README.md              - Documentación principal"
 echo "   INSTALLATION_GUIDE.md  - Guía de instalación detallada"
-echo "   API_DOCUMENTATION.md   - Endpoints (413 rutas)"
+echo "   API_DOCUMENTATION.md   - Endpoints (420+ rutas)"
+echo "   SECURITY.md            - Guía de seguridad OWASP Top 10"
 echo "   TESTING_GUIDE.md       - Guía de testing"
 echo ""
 echo "🧪 Tests:"
-echo "   php artisan test       - Ejecutar suite de tests (81 tests)"
+echo "   php artisan test       - Ejecutar suite de tests (100+ tests)"
 echo ""
 print_success "¡Listo para desarrollar!"
 echo ""

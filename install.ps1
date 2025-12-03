@@ -54,6 +54,15 @@ try {
     exit 1
 }
 
+# Verificar pnpm (opcional pero recomendado)
+try {
+    $pnpmVersion = pnpm --version 2>$null
+    Print-Success "pnpm $pnpmVersion instalado"
+} catch {
+    Print-Info "pnpm no instalado (opcional - solo para frontend)"
+    Print-Info "Para instalar: npm install -g pnpm"
+}
+
 Write-Host ""
 
 # 2. Instalar dependencias de Composer
@@ -130,7 +139,7 @@ Write-Host ""
 # 6. Ejecutar migraciones
 Write-Host "Paso 6: Ejecutando migraciones..."
 php artisan migrate --force
-Print-Success "Migraciones ejecutadas (66 tablas creadas)"
+Print-Success "Migraciones ejecutadas (82 tablas creadas)"
 Write-Host ""
 
 # 7. Ejecutar seeders
@@ -200,11 +209,12 @@ Write-Host ""
 Write-Host "📚 Documentación:" -ForegroundColor Cyan
 Write-Host "   README.md              - Documentación principal"
 Write-Host "   INSTALLATION_GUIDE.md  - Guía de instalación detallada"
-Write-Host "   API_DOCUMENTATION.md   - Endpoints (413 rutas)"
+Write-Host "   API_DOCUMENTATION.md   - Endpoints (420+ rutas)"
+Write-Host "   SECURITY.md            - Guía de seguridad OWASP Top 10"
 Write-Host "   TESTING_GUIDE.md       - Guía de testing"
 Write-Host ""
 Write-Host "🧪 Tests:" -ForegroundColor Cyan
-Write-Host "   php artisan test       - Ejecutar suite de tests (81 tests)"
+Write-Host "   php artisan test       - Ejecutar suite de tests (100+ tests)"
 Write-Host ""
 Print-Success "¡Listo para desarrollar!"
 Write-Host ""
