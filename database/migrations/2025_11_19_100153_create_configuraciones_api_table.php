@@ -25,10 +25,10 @@ return new class extends Migration
             $table->timestamp('actualizado_en')->useCurrent()->useCurrentOnUpdate();
 
             // Índices
-            $table->unique(['empresa_id', 'clave'], 'unique_empresa_clave');
-            $table->index('empresa_id');
-            $table->index('categoria');
-            $table->index('activo');
+            $table->unique(['empresa_id', 'clave'], 'unique_config_api_empresa_clave');
+            $table->index('empresa_id', 'idx_config_api_empresa');
+            $table->index('categoria', 'idx_config_api_categoria');
+            $table->index('activo', 'idx_config_api_activo');
 
             // Foreign Keys
             $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');

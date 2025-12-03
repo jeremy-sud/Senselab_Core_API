@@ -33,9 +33,9 @@ return new class extends Migration
             $table->foreign('comprobante_id')->references('id')->on('comprobantes_recibidos_electronicos')->onDelete('set null');
 
             // Indexes
-            $table->index(['empresa_id', 'fecha_emision'], 'idx_empresa_fecha');
-            $table->index('clave_numerica', 'idx_clave_numerica');
-            $table->index('estado', 'idx_estado');
+            $table->index(['empresa_id', 'fecha_emision'], 'idx_msj_hacienda_empresa_fecha');
+            $table->index('clave_numerica', 'idx_msj_hacienda_clave_num');
+            $table->index('estado', 'idx_msj_hacienda_estado');
         });
     }
 

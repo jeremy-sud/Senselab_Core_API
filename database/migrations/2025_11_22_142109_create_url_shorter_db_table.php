@@ -27,11 +27,11 @@ return new class extends Migration
             $table->timestamp('actualizado_en')->useCurrent()->useCurrentOnUpdate();
             
             // Índices
-            $table->index('empresa_id', 'idx_empresa');
-            $table->index('usuario_id', 'idx_usuario');
-            $table->index('slug', 'idx_slug');
-            $table->index('activo', 'idx_activo');
-            $table->index('eliminado', 'idx_eliminado');
+            $table->index('empresa_id', 'idx_url_shorter_empresa');
+            $table->index('usuario_id', 'idx_url_shorter_usuario');
+            $table->index('slug', 'idx_url_shorter_slug');
+            $table->index('activo', 'idx_url_shorter_activo');
+            $table->index('eliminado', 'idx_url_shorter_eliminado');
             
             // Foreign Keys
             $table->foreign('empresa_id', 'fk_url_shorter_empresa')

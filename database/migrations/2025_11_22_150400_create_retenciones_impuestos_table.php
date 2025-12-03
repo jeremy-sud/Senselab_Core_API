@@ -34,10 +34,10 @@ return new class extends Migration
             $table->foreign('proveedor_id')->references('id')->on('proveedores')->onDelete('set null');
 
             // Indexes
-            $table->index(['empresa_id', 'periodo_declaracion'], 'idx_empresa_periodo');
-            $table->index('proveedor_id', 'idx_proveedor');
-            $table->index('fecha_retencion', 'idx_fecha');
-            $table->index('declarado', 'idx_declarado');
+            $table->index(['empresa_id', 'periodo_declaracion'], 'idx_ret_imp_empresa_periodo');
+            $table->index('proveedor_id', 'idx_ret_imp_proveedor');
+            $table->index('fecha_retencion', 'idx_ret_imp_fecha');
+            $table->index('declarado', 'idx_ret_imp_declarado');
         });
     }
 
