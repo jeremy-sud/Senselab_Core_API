@@ -85,9 +85,9 @@ class XmlComprobanteBuilder
         $this->agregarReceptor($root, $comprobante);
         $this->agregarCondicionVenta($root, $comprobante);
         $this->agregarPlazoCredito($root, $comprobante);
-        $this->agregarMedioPago($root, $comprobante);
+        // MedioPago se movió a ResumenFactura en v4.4
         $this->agregarDetalleServicio($root, $comprobante);
-        $this->agregarResumenFactura($root, $comprobante);
+        $this->agregarResumenFactura($root, $comprobante); // Incluye MedioPago
         $this->agregarInformacionReferencia($root, $comprobante);
         $this->agregarOtros($root, $comprobante);
 
@@ -327,15 +327,6 @@ class XmlComprobanteBuilder
     }
 
     /**
-     * Agregar medio de pago
-     */
-    protected function agregarMedioPago(DOMElement $parent, ComprobanteElectronicoFe $comprobante): void
-    {
-        $medioPago = $this->doc->createElement('MedioPago', $comprobante->medio_pago);
-        $parent->appendChild($medioPago);
-    }
-
-    /**
      * Agregar detalle de servicio (líneas del comprobante)
      */
     protected function agregarDetalleServicio(DOMElement $parent, ComprobanteElectronicoFe $comprobante): void
@@ -391,6 +382,13 @@ class XmlComprobanteBuilder
             $subtotal = $this->doc->createElement('SubTotal', $this->formatearDecimal($linea->subtotal));
             $lineaDetalle->appendChild($subtotal);
 
+            // BaseImponible (NUEVO v4.4 - Obligatorio cuando hay impuesto)
+            if ($linea->impuesto_monto > 0) {
+                $baseImponible = $linea->base_imponible ?? $linea->subtotal;
+                $baseElement = $this->doc->createElement('BaseImponible', $this->formatearDecimal($baseImponible));
+                $lineaDetalle->appendChild($baseElement);
+            }
+
             // Impuesto (si aplica)
             if ($linea->impuesto_monto > 0) {
                 $impuesto = $this->doc->createElement('Impuesto');
@@ -398,12 +396,17 @@ class XmlComprobanteBuilder
                 $codigoTarifa = $this->doc->createElement('CodigoTarifa', $linea->impuesto_codigo_tarifa ?? '08');
                 $tarifaImpuesto = $this->doc->createElement('Tarifa', $this->formatearDecimal($linea->impuesto_tarifa));
                 $montoImpuesto = $this->doc->createElement('Monto', $this->formatearDecimal($linea->impuesto_monto));
-                
+
                 $impuesto->appendChild($codigoImpuesto);
                 $impuesto->appendChild($codigoTarifa);
                 $impuesto->appendChild($tarifaImpuesto);
                 $impuesto->appendChild($montoImpuesto);
                 $lineaDetalle->appendChild($impuesto);
+
+                // ImpuestoNeto (v4.4)
+                $impuestoNeto = $linea->impuesto_neto ?? $linea->impuesto_monto;
+                $impuestoNetoElement = $this->doc->createElement('ImpuestoNeto', $this->formatearDecimal($impuestoNeto));
+                $lineaDetalle->appendChild($impuestoNetoElement);
             }
 
             // Monto total de línea
@@ -486,11 +489,34 @@ class XmlComprobanteBuilder
         $totalImpuesto = $this->doc->createElement('TotalImpuesto', $this->formatearDecimal($comprobante->total_impuesto));
         $resumen->appendChild($totalImpuesto);
 
+        // MedioPago v4.4 - Ahora va dentro de ResumenFactura con estructura diferente
+        $this->agregarMedioPagoEnResumen($resumen, $comprobante);
+
         // Total comprobante
         $totalComprobante = $this->doc->createElement('TotalComprobante', $this->formatearDecimal($comprobante->total_comprobante));
         $resumen->appendChild($totalComprobante);
 
         $parent->appendChild($resumen);
+    }
+
+    /**
+     * Agregar MedioPago dentro de ResumenFactura (NUEVA estructura v4.4)
+     *
+     * En v4.4, MedioPago se movió dentro de ResumenFactura con estructura:
+     * - TipoMedioPago: Código del medio de pago
+     * - TotalMedioPago: Monto pagado con este medio
+     */
+    protected function agregarMedioPagoEnResumen(DOMElement $resumen, ComprobanteElectronicoFe $comprobante): void
+    {
+        $medioPago = $this->doc->createElement('MedioPago');
+
+        $tipoMedioPago = $this->doc->createElement('TipoMedioPago', $comprobante->medio_pago);
+        $medioPago->appendChild($tipoMedioPago);
+
+        $totalMedioPago = $this->doc->createElement('TotalMedioPago', $this->formatearDecimal($comprobante->total_comprobante));
+        $medioPago->appendChild($totalMedioPago);
+
+        $resumen->appendChild($medioPago);
     }
 
     /**

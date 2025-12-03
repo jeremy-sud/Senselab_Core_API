@@ -28,6 +28,7 @@ class FeLineaDetalle extends Model
         'numero_linea',
         'codigo_tipo',
         'codigo',
+        'codigo_cabys', // Nuevo v4.4 - Código CABYS
         'codigo_comercial',
         'detalle',
         'cantidad',
@@ -38,11 +39,12 @@ class FeLineaDetalle extends Model
         'monto_descuento',
         'naturaleza_descuento',
         'subtotal',
-        'base_imponible',
+        'base_imponible', // v4.4 - Obligatorio cuando hay impuesto
         'impuesto_codigo',
         'impuesto_codigo_tarifa',
         'impuesto_tarifa',
         'impuesto_monto',
+        'impuesto_neto', // Nuevo v4.4
         'exoneracion_tipo_documento',
         'exoneracion_numero_documento',
         'exoneracion_nombre_institucion',
@@ -66,6 +68,7 @@ class FeLineaDetalle extends Model
         'base_imponible' => 'decimal:5',
         'impuesto_tarifa' => 'decimal:2',
         'impuesto_monto' => 'decimal:5',
+        'impuesto_neto' => 'decimal:5', // Nuevo v4.4
         'exoneracion_fecha_emision' => 'date',
         'exoneracion_porcentaje' => 'decimal:2',
         'exoneracion_monto' => 'decimal:5',
