@@ -17,7 +17,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'permission' => \App\Http\Middleware\CheckPermission::class,
+            'security.headers' => \App\Http\Middleware\SecurityHeaders::class,
         ]);
+
+        // Security Headers - OWASP Top 10 compliance
+        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
         
         // Sprint 8.5 - Rate Limiting
         // Configurar límites de tasa para proteger la API
