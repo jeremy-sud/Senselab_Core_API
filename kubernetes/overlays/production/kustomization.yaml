@@ -1,0 +1,51 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: ursol-cast-prod
+
+resources:
+  - ../../base
+
+namePrefix: prod-
+
+patches:
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 3
+    target:
+      kind: Deployment
+      name: ursol-cast-api
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 3
+    target:
+      kind: Deployment
+      name: ursol-cast-queue-worker
+  - patch: |-
+      - op: replace
+        path: /spec/minReplicas
+        value: 3
+      - op: replace
+        path: /spec/maxReplicas
+        value: 20
+    target:
+      kind: HorizontalPodAutoscaler
+      name: ursol-cast-api-hpa
+  - patch: |-
+      - op: replace
+        path: /spec/resources/requests/storage
+        value: 50Gi
+    target:
+      kind: PersistentVolumeClaim
+      name: mysql-pvc
+
+configMapGenerator:
+  - name: ursol-cast-config
+    behavior: merge
+    literals:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_URL=https://api.ursol.com
+      - LOG_LEVEL=warning

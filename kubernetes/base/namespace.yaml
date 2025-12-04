@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ursol-cast
+  labels:
+    app.kubernetes.io/name: ursol-cast-api
+    app.kubernetes.io/part-of: ursol-cast
