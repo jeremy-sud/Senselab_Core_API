@@ -119,8 +119,8 @@ class XadesEpesSignerTest extends TestCase
         $xml = $this->getSampleXml();
         $xmlFirmado = $this->signer->sign($xml, $this->testPrivateKey, $this->testCertificate);
 
-        // Verificar ds:SignatureValue
-        $this->assertStringContainsString('<ds:SignatureValue>', $xmlFirmado);
+        // Verificar ds:SignatureValue (puede tener atributo Id)
+        $this->assertMatchesRegularExpression('/<ds:SignatureValue/', $xmlFirmado);
         $this->assertStringContainsString('</ds:SignatureValue>', $xmlFirmado);
     }
 
@@ -156,8 +156,8 @@ class XadesEpesSignerTest extends TestCase
         // Verificar xades:SignedProperties
         $this->assertStringContainsString('<xades:SignedProperties', $xmlFirmado);
 
-        // Verificar xades:SignedSignatureProperties
-        $this->assertStringContainsString('<xades:SignedSignatureProperties>', $xmlFirmado);
+        // Verificar xades:SignedSignatureProperties (puede tener atributos xmlns)
+        $this->assertMatchesRegularExpression('/<xades:SignedSignatureProperties/', $xmlFirmado);
     }
 
     /** @test */
@@ -176,11 +176,11 @@ class XadesEpesSignerTest extends TestCase
         $xml = $this->getSampleXml();
         $xmlFirmado = $this->signer->sign($xml, $this->testPrivateKey, $this->testCertificate);
 
-        // Verificar xades:SigningCertificate
-        $this->assertStringContainsString('<xades:SigningCertificate>', $xmlFirmado);
-        $this->assertStringContainsString('<xades:Cert>', $xmlFirmado);
-        $this->assertStringContainsString('<xades:CertDigest>', $xmlFirmado);
-        $this->assertStringContainsString('<xades:IssuerSerial>', $xmlFirmado);
+        // Verificar xades:SigningCertificate (puede tener atributos xmlns adicionales)
+        $this->assertMatchesRegularExpression('/<xades:SigningCertificate/', $xmlFirmado);
+        $this->assertMatchesRegularExpression('/<xades:Cert/', $xmlFirmado);
+        $this->assertMatchesRegularExpression('/<xades:CertDigest/', $xmlFirmado);
+        $this->assertMatchesRegularExpression('/<xades:IssuerSerial/', $xmlFirmado);
     }
 
     /** @test */
@@ -190,11 +190,11 @@ class XadesEpesSignerTest extends TestCase
         $xmlFirmado = $this->signer->sign($xml, $this->testPrivateKey, $this->testCertificate);
 
         // Verificar xades:SignaturePolicyIdentifier (obligatorio para XAdES-EPES)
-        $this->assertStringContainsString('<xades:SignaturePolicyIdentifier>', $xmlFirmado);
-        $this->assertStringContainsString('<xades:SignaturePolicyId>', $xmlFirmado);
-        $this->assertStringContainsString('<xades:SigPolicyId>', $xmlFirmado);
-        $this->assertStringContainsString('<xades:Identifier>', $xmlFirmado);
-        $this->assertStringContainsString('<xades:SigPolicyHash>', $xmlFirmado);
+        $this->assertMatchesRegularExpression('/<xades:SignaturePolicyIdentifier/', $xmlFirmado);
+        $this->assertMatchesRegularExpression('/<xades:SignaturePolicyId/', $xmlFirmado);
+        $this->assertMatchesRegularExpression('/<xades:SigPolicyId/', $xmlFirmado);
+        $this->assertMatchesRegularExpression('/<xades:Identifier/', $xmlFirmado);
+        $this->assertMatchesRegularExpression('/<xades:SigPolicyHash/', $xmlFirmado);
     }
 
     /** @test */

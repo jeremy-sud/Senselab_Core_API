@@ -220,12 +220,10 @@ class XadesEpesSigner
         // Transforms
         $transforms = $this->doc->createElementNS(self::NS_DS, 'ds:Transforms');
 
-        // Transform 1: XPath para excluir el nodo Signature
-        $transformXpath = $this->doc->createElementNS(self::NS_DS, 'ds:Transform');
-        $transformXpath->setAttribute('Algorithm', self::ALGO_XPATH);
-        $xpath = $this->doc->createElementNS(self::NS_DS, 'ds:XPath', 'not(ancestor-or-self::ds:Signature)');
-        $transformXpath->appendChild($xpath);
-        $transforms->appendChild($transformXpath);
+        // Transform 1: Enveloped Signature (requerido para firmas empaquetadas)
+        $transformEnveloped = $this->doc->createElementNS(self::NS_DS, 'ds:Transform');
+        $transformEnveloped->setAttribute('Algorithm', self::ALGO_ENVELOPED);
+        $transforms->appendChild($transformEnveloped);
 
         // Transform 2: Canonicalización C14N
         $transformC14n = $this->doc->createElementNS(self::NS_DS, 'ds:Transform');
@@ -520,8 +518,13 @@ class XadesEpesSigner
         $dataFormat = $this->doc->createElementNS(self::NS_XADES, 'xades:DataObjectFormat');
         $dataFormat->setAttribute('ObjectReference', '#r-id-1');
 
-        $mimeType = $this->doc->createElementNS(self::NS_XADES, 'xades:MimeType', 'application/octet-stream');
+        // MimeType - text/xml para comprobantes electrónicos XML
+        $mimeType = $this->doc->createElementNS(self::NS_XADES, 'xades:MimeType', 'text/xml');
         $dataFormat->appendChild($mimeType);
+
+        // Encoding opcional pero recomendado
+        $encoding = $this->doc->createElementNS(self::NS_XADES, 'xades:Encoding', 'UTF-8');
+        $dataFormat->appendChild($encoding);
 
         $props->appendChild($dataFormat);
 

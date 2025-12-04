@@ -57,10 +57,13 @@ abstract class TestCase extends BaseTestCase
      */
     protected function createEmpresa(array $attributes = []): Empresa
     {
-        // Crear régimen tributario si no existe
+        // Crear régimen tributario si no existe (buscar por código único)
         $regimen = \App\Models\RegimenTributario::firstOrCreate(
-            ['nombre' => 'Régimen General'],
-            ['descripcion' => 'Régimen General de Tributación']
+            ['codigo' => '01'],
+            [
+                'nombre' => 'Régimen General',
+                'descripcion' => 'Régimen General de Tributación'
+            ]
         );
 
         return Empresa::create(array_merge([
