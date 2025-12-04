@@ -9886,13 +9886,13 @@
             }
         },
         "/api/entradas-inventario/{id}/procesar": {
-            "post": {
+            "put": {
                 "tags": [
                     "Inventario - Entradas"
                 ],
                 "summary": "Procesar entrada de inventario",
-                "description": "Cambia el estado de la entrada a Procesada y actualiza las cantidades en el inventario de cada producto. Esta acción es irreversible",
-                "operationId": "f251ee5eb95a2122827326604f8da286",
+                "description": "Procesar entrada de inventario",
+                "operationId": "795e1a4337a1aabcd7011cdd9195b1a4",
                 "parameters": [
                     {
                         "name": "id",
@@ -10488,6 +10488,299 @@
                 "responses": {
                     "200": {
                         "description": "Etiqueta eliminada exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/fe-certificados-digitales": {
+            "get": {
+                "tags": [
+                    "Certificados Digitales FE"
+                ],
+                "summary": "Listar certificados digitales",
+                "description": "Obtener listado de certificados digitales de la empresa con filtros por estado, ambiente y vigencia",
+                "operationId": "b67ee0581d25dba3dc2ec024bec7ecfb",
+                "parameters": [
+                    {
+                        "name": "activo",
+                        "in": "query",
+                        "description": "Filtrar por estado activo",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "ambiente",
+                        "in": "query",
+                        "description": "Ambiente (produccion/stg)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "produccion",
+                                "stg"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "solo_vigentes",
+                        "in": "query",
+                        "description": "Solo certificados vigentes",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "dias_vencimiento",
+                        "in": "query",
+                        "description": "Certificados que vencen en X días",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de certificados",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "nombre": {
+                                                        "type": "string",
+                                                        "example": "Certificado Producción 2024"
+                                                    },
+                                                    "ambiente": {
+                                                        "type": "string",
+                                                        "example": "produccion"
+                                                    },
+                                                    "activo": {
+                                                        "type": "boolean",
+                                                        "example": true
+                                                    },
+                                                    "fecha_vencimiento": {
+                                                        "type": "string",
+                                                        "format": "date"
+                                                    },
+                                                    "pin": {
+                                                        "description": "PIN encriptado/oculto",
+                                                        "type": "string",
+                                                        "example": "****"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Certificados Digitales FE"
+                ],
+                "summary": "Crear certificado digital",
+                "description": "Subir y registrar certificado digital .p12 para firma de comprobantes electrónicos",
+                "operationId": "bd43e58ea110a22452badb20f155fb5d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "nombre",
+                                    "pin",
+                                    "ambiente",
+                                    "fecha_vencimiento",
+                                    "archivo_certificado"
+                                ],
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Certificado Producción 2024"
+                                    },
+                                    "pin": {
+                                        "description": "PIN del certificado (se encripta)",
+                                        "type": "string",
+                                        "example": "1234"
+                                    },
+                                    "ambiente": {
+                                        "type": "string",
+                                        "enum": [
+                                            "produccion",
+                                            "stg"
+                                        ],
+                                        "example": "produccion"
+                                    },
+                                    "fecha_vencimiento": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-12-31"
+                                    },
+                                    "activo": {
+                                        "description": "Marcar como activo (desactiva otros)",
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "archivo_certificado": {
+                                        "description": "Archivo .p12 del certificado",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Certificado creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Certificado digital creado exitosamente"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validación fallida"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/fe-certificados-digitales/{id}/activar": {
+            "post": {
+                "tags": [
+                    "Certificados Digitales FE"
+                ],
+                "summary": "Activar certificado digital",
+                "description": "Activar certificado y desactivar otros del mismo ambiente. No se puede activar un certificado vencido.",
+                "operationId": "b70f1cfd4756a6c95785aadcea6461df",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del certificado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Certificado activado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Certificado activado exitosamente"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Certificado vencido"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/fe-certificados-digitales/activo": {
+            "get": {
+                "tags": [
+                    "Certificados Digitales FE"
+                ],
+                "summary": "Obtener certificado activo",
+                "description": "Obtener el certificado activo para un ambiente específico (produccion/stg)",
+                "operationId": "eab0c1ed418e089ec105205fe6536c54",
+                "parameters": [
+                    {
+                        "name": "ambiente",
+                        "in": "query",
+                        "description": "Ambiente del certificado",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "produccion",
+                            "enum": [
+                                "produccion",
+                                "stg"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Certificado activo encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No hay certificado activo para el ambiente"
                     }
                 },
                 "security": [
@@ -12215,6 +12508,145 @@
                 ]
             }
         },
+        "/api/mensaje-hacienda": {
+            "get": {
+                "tags": [
+                    "Mensajes Hacienda"
+                ],
+                "summary": "Listar mensajes de hacienda",
+                "description": "Display a listing of the resource.",
+                "operationId": "331a2c3a7956b9186842cd227ef140b6",
+                "responses": {
+                    "200": {
+                        "description": "Listado de mensajes de hacienda"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Mensajes Hacienda"
+                ],
+                "summary": "Crear mensaje de hacienda",
+                "description": "Store a newly created resource in storage.",
+                "operationId": "0b95da81ec904a4b7da698222ec96b16",
+                "responses": {
+                    "201": {
+                        "description": "mensaje de hacienda creado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/mensaje-hacienda/{id}": {
+            "get": {
+                "tags": [
+                    "Mensajes Hacienda"
+                ],
+                "summary": "Obtener mensaje de hacienda",
+                "description": "Display the specified resource.",
+                "operationId": "9ba7657ba2113fb41e81f0bb3636ae36",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "mensaje de hacienda encontrado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Mensajes Hacienda"
+                ],
+                "summary": "Actualizar mensaje de hacienda",
+                "description": "Update the specified resource in storage.",
+                "operationId": "63ccaad482befa022b64462b4e5c3c12",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "mensaje de hacienda actualizado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Mensajes Hacienda"
+                ],
+                "summary": "Eliminar mensaje de hacienda",
+                "description": "Remove the specified resource from storage.",
+                "operationId": "63ba4709121198143d957864db45cb16",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "mensaje de hacienda eliminado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/modelos-buses": {
             "get": {
                 "tags": [
@@ -12480,6 +12912,145 @@
                     },
                     "401": {
                         "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/movimiento-bancario": {
+            "get": {
+                "tags": [
+                    "Movimientos Bancarios"
+                ],
+                "summary": "Listar movimientos bancarios",
+                "description": "Display a listing of the resource.",
+                "operationId": "ba3b64d8fda77d4990352acc14437958",
+                "responses": {
+                    "200": {
+                        "description": "Listado de movimientos bancarios"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Movimientos Bancarios"
+                ],
+                "summary": "Crear movimiento bancario",
+                "description": "Store a newly created resource in storage.",
+                "operationId": "5e95c5d0955184141f34443b4890ae70",
+                "responses": {
+                    "201": {
+                        "description": "movimiento bancario creado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/movimiento-bancario/{id}": {
+            "get": {
+                "tags": [
+                    "Movimientos Bancarios"
+                ],
+                "summary": "Obtener movimiento bancario",
+                "description": "Display the specified resource.",
+                "operationId": "27adb8e0b10c8fd04b6dbb2a113d9d18",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "movimiento bancario encontrado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Movimientos Bancarios"
+                ],
+                "summary": "Actualizar movimiento bancario",
+                "description": "Update the specified resource in storage.",
+                "operationId": "fc250b5fc2472f455f34ae57c5c44b15",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "movimiento bancario actualizado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Movimientos Bancarios"
+                ],
+                "summary": "Eliminar movimiento bancario",
+                "description": "Remove the specified resource from storage.",
+                "operationId": "f7ed72aaa947ee9ef6f1a1970569a1f3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "movimiento bancario eliminado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
                     }
                 },
                 "security": [
@@ -16201,6 +16772,145 @@
                 ]
             }
         },
+        "/api/planilla-ccss": {
+            "get": {
+                "tags": [
+                    "Planillas CCSS"
+                ],
+                "summary": "Listar planillas CCSS",
+                "description": "Display a listing of the resource.",
+                "operationId": "0b7fdb8fccb8c3175067136d4e52583c",
+                "responses": {
+                    "200": {
+                        "description": "Listado de planillas CCSS"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Planillas CCSS"
+                ],
+                "summary": "Crear planilla CCSS",
+                "description": "Store a newly created resource in storage.",
+                "operationId": "99d96e0a5b6460e4b27a12baa955f341",
+                "responses": {
+                    "201": {
+                        "description": "planilla CCSS creado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/planilla-ccss/{id}": {
+            "get": {
+                "tags": [
+                    "Planillas CCSS"
+                ],
+                "summary": "Obtener planilla CCSS",
+                "description": "Display the specified resource.",
+                "operationId": "af3114f957080c3c769fb45d5259e3cf",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "planilla CCSS encontrado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Planillas CCSS"
+                ],
+                "summary": "Actualizar planilla CCSS",
+                "description": "Update the specified resource in storage.",
+                "operationId": "a80d9a605a33deae9de6878ce0c25a54",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "planilla CCSS actualizado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Planillas CCSS"
+                ],
+                "summary": "Eliminar planilla CCSS",
+                "description": "Remove the specified resource from storage.",
+                "operationId": "8df73583692ece7668ef7cba5c9fb577",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "planilla CCSS eliminado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/presupuestos": {
             "get": {
                 "tags": [
@@ -19667,14 +20377,14 @@
                 ]
             }
         },
-        "/api/salidas-inventario/resumen-por-tipo": {
+        "/api/salidas-inventario/resumen/por-tipo": {
             "get": {
                 "tags": [
                     "Inventario - Salidas"
                 ],
                 "summary": "Resumen de salidas por tipo",
                 "description": "Genera estadísticas agrupadas por tipo de salida mostrando cantidad total y monto total",
-                "operationId": "59dadadbeaeb995436cd03731e1bb4a5",
+                "operationId": "eea3543bfc7ae3f8acb38966ba0e390b",
                 "responses": {
                     "200": {
                         "description": "Resumen estadístico",
@@ -23091,16 +23801,6 @@
                         }
                     },
                     {
-                        "name": "empresa_id",
-                        "in": "query",
-                        "description": "Filtrar por empresa",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    },
-                    {
                         "name": "sucursal_id",
                         "in": "query",
                         "description": "Filtrar por sucursal",
@@ -23222,7 +23922,7 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "empresa_id",
+                                    "sucursal_id",
                                     "cliente_id",
                                     "fecha_venta",
                                     "tipo_comprobante",
@@ -23231,14 +23931,9 @@
                                     "detalles"
                                 ],
                                 "properties": {
-                                    "empresa_id": {
-                                        "type": "integer",
-                                        "example": 1
-                                    },
                                     "sucursal_id": {
                                         "type": "integer",
-                                        "example": 1,
-                                        "nullable": true
+                                        "example": 1
                                     },
                                     "cliente_id": {
                                         "type": "integer",
@@ -23750,6 +24445,1383 @@
                                 }
                             }
                         }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/comprobantes": {
+            "get": {
+                "tags": [
+                    "Facturación Electrónica"
+                ],
+                "summary": "Listar comprobantes electrónicos",
+                "description": "Obtener listado paginado de comprobantes con filtros avanzados (tipo, estado, fechas, receptor)",
+                "operationId": "e1f0bd433c33729646d8bb204af35411",
+                "parameters": [
+                    {
+                        "name": "tipo_documento",
+                        "in": "query",
+                        "description": "Tipo de documento (01=Factura, 02=Nota Débito, 03=Nota Crédito, 04=Tiquete)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "01",
+                                "02",
+                                "03",
+                                "04"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "estado",
+                        "in": "query",
+                        "description": "Estado del comprobante",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "pendiente",
+                                "procesando",
+                                "aceptado",
+                                "rechazado",
+                                "error"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "fecha_desde",
+                        "in": "query",
+                        "description": "Fecha de emisión desde (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "fecha_hasta",
+                        "in": "query",
+                        "description": "Fecha de emisión hasta (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "clave",
+                        "in": "query",
+                        "description": "Búsqueda parcial por clave numérica de 50 dígitos",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "consecutivo",
+                        "in": "query",
+                        "description": "Búsqueda parcial por consecutivo",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "receptor_numero_identificacion",
+                        "in": "query",
+                        "description": "Número de identificación del receptor",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "Campo para ordenamiento",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "fecha_emision"
+                        }
+                    },
+                    {
+                        "name": "sort_order",
+                        "in": "query",
+                        "description": "Orden ascendente o descendente",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "desc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Resultados por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de comprobantes paginado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "tipo_documento": {
+                                                        "type": "string",
+                                                        "example": "01"
+                                                    },
+                                                    "clave": {
+                                                        "type": "string",
+                                                        "example": "50621011800012345678901234567890123456789012345678"
+                                                    },
+                                                    "consecutivo": {
+                                                        "type": "string",
+                                                        "example": "00000000000000000001"
+                                                    },
+                                                    "fecha_emision": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "estado": {
+                                                        "type": "string",
+                                                        "example": "aceptado"
+                                                    },
+                                                    "receptor_nombre": {
+                                                        "type": "string",
+                                                        "example": "Cliente Ejemplo"
+                                                    },
+                                                    "total_comprobante": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 11800
+                                                    },
+                                                    "empresa": {
+                                                        "type": "object"
+                                                    },
+                                                    "lineasDetalle": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "current_page": {
+                                            "type": "integer"
+                                        },
+                                        "per_page": {
+                                            "type": "integer"
+                                        },
+                                        "total": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Facturación Electrónica"
+                ],
+                "summary": "Crear y enviar comprobante electrónico",
+                "description": "Crear comprobante (factura, nota crédito, tiquete) y enviarlo automáticamente a Hacienda mediante cola asíncrona",
+                "operationId": "ab1caa1064a11563e0af8246f511eaf2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "tipo_documento",
+                                    "consecutivo",
+                                    "receptor_nombre",
+                                    "receptor_tipo_identificacion",
+                                    "receptor_numero_identificacion",
+                                    "condicion_venta",
+                                    "medio_pago",
+                                    "lineas",
+                                    "certificado_id"
+                                ],
+                                "properties": {
+                                    "tipo_documento": {
+                                        "description": "01=Factura, 02=Nota Débito, 03=Nota Crédito, 04=Tiquete",
+                                        "type": "string",
+                                        "enum": [
+                                            "01",
+                                            "02",
+                                            "03",
+                                            "04"
+                                        ],
+                                        "example": "01"
+                                    },
+                                    "consecutivo": {
+                                        "description": "Consecutivo de 20 dígitos",
+                                        "type": "string",
+                                        "example": "00000000000000000001"
+                                    },
+                                    "fecha_emision": {
+                                        "description": "Fecha ISO 8601 (opcional, usa actual si no se envía)",
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2024-01-15T10:30:00-06:00"
+                                    },
+                                    "condicion_venta": {
+                                        "description": "01=Contado, 02=Crédito, 03=Consignación, 04=Apartado",
+                                        "type": "string",
+                                        "enum": [
+                                            "01",
+                                            "02",
+                                            "03",
+                                            "04"
+                                        ],
+                                        "example": "01"
+                                    },
+                                    "plazo_credito": {
+                                        "description": "Días de crédito (requerido si condicion_venta=02)",
+                                        "type": "integer",
+                                        "example": 30
+                                    },
+                                    "medio_pago": {
+                                        "description": "01=Efectivo, 02=Tarjeta, 03=Cheque, 04=Transferencia, 05=Otros",
+                                        "type": "string",
+                                        "enum": [
+                                            "01",
+                                            "02",
+                                            "03",
+                                            "04",
+                                            "05"
+                                        ],
+                                        "example": "01"
+                                    },
+                                    "situacion": {
+                                        "description": "1=Normal, 2=Contingencia, 3=Sin Internet",
+                                        "type": "string",
+                                        "enum": [
+                                            "1",
+                                            "2",
+                                            "3"
+                                        ],
+                                        "example": "1"
+                                    },
+                                    "receptor_nombre": {
+                                        "type": "string",
+                                        "example": "Cliente Ejemplo S.A."
+                                    },
+                                    "receptor_tipo_identificacion": {
+                                        "description": "01=Física, 02=Jurídica, 03=DIMEX, 04=NITE",
+                                        "type": "string",
+                                        "enum": [
+                                            "01",
+                                            "02",
+                                            "03",
+                                            "04"
+                                        ],
+                                        "example": "01"
+                                    },
+                                    "receptor_numero_identificacion": {
+                                        "type": "string",
+                                        "example": "304560789"
+                                    },
+                                    "receptor_email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "cliente@example.com"
+                                    },
+                                    "receptor_telefono": {
+                                        "type": "string",
+                                        "example": "88889999"
+                                    },
+                                    "receptor_provincia": {
+                                        "type": "string",
+                                        "example": "1"
+                                    },
+                                    "receptor_canton": {
+                                        "type": "string",
+                                        "example": "01"
+                                    },
+                                    "receptor_distrito": {
+                                        "type": "string",
+                                        "example": "01"
+                                    },
+                                    "receptor_barrio": {
+                                        "type": "string",
+                                        "example": "01"
+                                    },
+                                    "receptor_otras_senas": {
+                                        "type": "string",
+                                        "example": "100m norte de la iglesia"
+                                    },
+                                    "codigo_moneda": {
+                                        "description": "USD, EUR, CRC",
+                                        "type": "string",
+                                        "example": "CRC"
+                                    },
+                                    "tipo_cambio": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 1
+                                    },
+                                    "observaciones": {
+                                        "type": "string",
+                                        "example": "Observaciones adicionales"
+                                    },
+                                    "lineas": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "numero_linea": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "codigo_tipo": {
+                                                    "description": "Tipo de código del producto",
+                                                    "type": "string",
+                                                    "example": "04"
+                                                },
+                                                "codigo": {
+                                                    "type": "string",
+                                                    "example": "PROD001"
+                                                },
+                                                "cantidad": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 2
+                                                },
+                                                "unidad_medida": {
+                                                    "description": "Unidad de medida",
+                                                    "type": "string",
+                                                    "example": "Sp"
+                                                },
+                                                "detalle": {
+                                                    "type": "string",
+                                                    "example": "Producto ejemplo"
+                                                },
+                                                "precio_unitario": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 5000
+                                                },
+                                                "monto_total": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 10000
+                                                },
+                                                "monto_descuento": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 0
+                                                },
+                                                "subtotal": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 10000
+                                                },
+                                                "base_imponible": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 10000
+                                                },
+                                                "monto_total_linea": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 11300
+                                                },
+                                                "impuestos": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "codigo": {
+                                                                "description": "01=IVA",
+                                                                "type": "string",
+                                                                "example": "01"
+                                                            },
+                                                            "codigo_tarifa": {
+                                                                "description": "Código de tarifa Hacienda",
+                                                                "type": "string",
+                                                                "example": "08"
+                                                            },
+                                                            "tarifa": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 13
+                                                            },
+                                                            "monto": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 1300
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "certificado_id": {
+                                        "description": "ID del certificado digital a usar para firmar",
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Comprobante creado y enviado a cola de procesamiento",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Comprobante creado y enviado a cola de procesamiento"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "tipo_documento": {
+                                                    "type": "string",
+                                                    "example": "01"
+                                                },
+                                                "clave": {
+                                                    "type": "string",
+                                                    "example": "50621011800012345678901234567890123456789012345678"
+                                                },
+                                                "consecutivo": {
+                                                    "type": "string",
+                                                    "example": "00000000000000000001"
+                                                },
+                                                "estado": {
+                                                    "type": "string",
+                                                    "example": "pendiente"
+                                                },
+                                                "total_comprobante": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 11300
+                                                },
+                                                "lineasDetalle": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Datos de validación inválidos"
+                    },
+                    "500": {
+                        "description": "Error al crear comprobante"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/comprobantes/{id}": {
+            "get": {
+                "tags": [
+                    "Facturación Electrónica"
+                ],
+                "summary": "Obtener comprobante específico",
+                "description": "Obtener detalles completos de un comprobante incluyendo líneas de detalle y empresa",
+                "operationId": "77107385d0ee9d4e2057f74c5644d079",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del comprobante",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comprobante encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "tipo_documento": {
+                                            "type": "string"
+                                        },
+                                        "clave": {
+                                            "type": "string"
+                                        },
+                                        "consecutivo": {
+                                            "type": "string"
+                                        },
+                                        "estado": {
+                                            "type": "string"
+                                        },
+                                        "fecha_emision": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "total_comprobante": {
+                                            "type": "number",
+                                            "format": "float"
+                                        },
+                                        "empresa": {
+                                            "type": "object"
+                                        },
+                                        "lineasDetalle": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "No autorizado - comprobante de otra empresa"
+                    },
+                    "404": {
+                        "description": "Comprobante no encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/comprobantes/{id}/xml": {
+            "get": {
+                "tags": [
+                    "Facturación Electrónica"
+                ],
+                "summary": "Descargar XML del comprobante",
+                "description": "Descargar XML original o firmado del comprobante electrónico",
+                "operationId": "4534191ae059f8d02fbaf6c1264c6457",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del comprobante",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "tipo",
+                        "in": "query",
+                        "description": "Tipo de XML a descargar",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "firmado",
+                            "enum": [
+                                "original",
+                                "firmado"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Archivo XML descargado",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "No autorizado"
+                    },
+                    "404": {
+                        "description": "XML no disponible"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/comprobantes/{id}/reenviar": {
+            "post": {
+                "tags": [
+                    "Facturación Electrónica"
+                ],
+                "summary": "Reenviar comprobante a Hacienda",
+                "description": "Reenviar comprobante en estado error, rechazado o pendiente a Hacienda",
+                "operationId": "9e57f75a14f69ac2cb31a45d7746b28f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del comprobante",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "certificado_id"
+                                ],
+                                "properties": {
+                                    "certificado_id": {
+                                        "description": "ID del certificado digital",
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Comprobante enviado a cola de procesamiento",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Comprobante enviado a cola de procesamiento"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "No se puede reenviar comprobante en este estado"
+                    },
+                    "403": {
+                        "description": "No autorizado"
+                    },
+                    "404": {
+                        "description": "Comprobante no encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/comprobantes/{id}/anular": {
+            "post": {
+                "tags": [
+                    "Facturación Electrónica"
+                ],
+                "summary": "Anular comprobante (crear nota crédito)",
+                "description": "Crear nota crédito electrónica para anular un comprobante aceptado",
+                "operationId": "5a13c85d8b38d01e9b3ee43c5211bd9c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del comprobante a anular",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "razon_anulacion",
+                                    "certificado_id"
+                                ],
+                                "properties": {
+                                    "razon_anulacion": {
+                                        "description": "Razón de la anulación (máx 180 caracteres)",
+                                        "type": "string",
+                                        "maxLength": 180,
+                                        "example": "Anulación por solicitud del cliente"
+                                    },
+                                    "certificado_id": {
+                                        "description": "ID del certificado digital",
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Nota crédito creada y enviada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Nota crédito creada y enviada"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "tipo_documento": {
+                                                    "type": "string",
+                                                    "example": "03"
+                                                },
+                                                "clave": {
+                                                    "type": "string"
+                                                },
+                                                "estado": {
+                                                    "type": "string",
+                                                    "example": "pendiente"
+                                                },
+                                                "lineasDetalle": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Solo se pueden anular comprobantes aceptados"
+                    },
+                    "403": {
+                        "description": "No autorizado"
+                    },
+                    "404": {
+                        "description": "Comprobante no encontrado"
+                    },
+                    "500": {
+                        "description": "Error al crear nota crédito"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/comprobantes/estadisticas": {
+            "get": {
+                "tags": [
+                    "Facturación Electrónica"
+                ],
+                "summary": "Estadísticas de comprobantes",
+                "description": "Obtener estadísticas de comprobantes por estado, tipo y total de ventas en un rango de fechas",
+                "operationId": "4c1ea9b15bb91e56975d10a401074747",
+                "parameters": [
+                    {
+                        "name": "fecha_desde",
+                        "in": "query",
+                        "description": "Fecha desde (default: hace 1 mes)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "fecha_hasta",
+                        "in": "query",
+                        "description": "Fecha hasta (default: hoy)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Estadísticas de comprobantes",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "total_comprobantes": {
+                                            "type": "integer",
+                                            "example": 150
+                                        },
+                                        "por_estado": {
+                                            "type": "object",
+                                            "example": {
+                                                "aceptado": 120,
+                                                "pendiente": 15,
+                                                "rechazado": 10,
+                                                "error": 5
+                                            }
+                                        },
+                                        "por_tipo": {
+                                            "type": "object",
+                                            "example": {
+                                                "01": 100,
+                                                "03": 30,
+                                                "04": 20
+                                            }
+                                        },
+                                        "total_ventas": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 2500000
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/consecutivo-fe": {
+            "get": {
+                "tags": [
+                    "Consecutivos FE"
+                ],
+                "summary": "Listar consecutivos FE",
+                "description": "Display a listing of the resource.",
+                "operationId": "04349b19ea765f21c51790f45e7c2b54",
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Consecutivos FE"
+                ],
+                "summary": "Crear consecutivo FE",
+                "description": "Store a newly created resource in storage.",
+                "operationId": "8230a20daf6a98ed3a65ece29a8f88c4",
+                "responses": {
+                    "201": {
+                        "description": "Recurso creado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/consecutivo-fe/{id}": {
+            "get": {
+                "tags": [
+                    "Consecutivos FE"
+                ],
+                "summary": "Obtener consecutivo FE",
+                "description": "Display the specified resource.",
+                "operationId": "96880315c38d54bb1c7e7a70da98416a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Consecutivos FE"
+                ],
+                "summary": "Actualizar consecutivo FE",
+                "description": "Update the specified resource in storage.",
+                "operationId": "953e86126fdb58bc71ecb70cf3990dbf",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Consecutivos FE"
+                ],
+                "summary": "Eliminar consecutivo FE",
+                "description": "Remove the specified resource from storage.",
+                "operationId": "1b9e47161fc089f67ded2c60191ef903",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/entidad-etiqueta": {
+            "get": {
+                "tags": [
+                    "Entidad-Etiqueta"
+                ],
+                "summary": "Listar relaciones entidad-etiqueta",
+                "description": "Display a listing of the resource.",
+                "operationId": "ed353a6ecadbfdf353e18c331a46a163",
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Entidad-Etiqueta"
+                ],
+                "summary": "Crear relación entidad-etiqueta",
+                "description": "Store a newly created resource in storage.",
+                "operationId": "e5a41d98c970bae02cf61ba31846b75c",
+                "responses": {
+                    "201": {
+                        "description": "Recurso creado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/entidad-etiqueta/{id}": {
+            "delete": {
+                "tags": [
+                    "Entidad-Etiqueta"
+                ],
+                "summary": "Eliminar relación entidad-etiqueta",
+                "description": "Remove the specified resource from storage.",
+                "operationId": "0970ff24d925aa7277318bdee9a329bc",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/inventario-producto": {
+            "get": {
+                "tags": [
+                    "Inventario de Productos"
+                ],
+                "summary": "Listar inventario de productos",
+                "operationId": "14d4c07e3bec145820ceeed88d5ecaba",
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Inventario de Productos"
+                ],
+                "summary": "Crear registro de inventario",
+                "operationId": "2c70eddee102afd7cacf5a6605b1508e",
+                "responses": {
+                    "201": {
+                        "description": "Recurso creado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/inventario-producto/{id}": {
+            "get": {
+                "tags": [
+                    "Inventario de Productos"
+                ],
+                "summary": "Obtener inventario de producto",
+                "operationId": "d332dfebbd3705f6d0a1aae54de68233",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Inventario de Productos"
+                ],
+                "summary": "Actualizar inventario",
+                "operationId": "fb1669d3da3eb505bfba60db1503c2ff",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/rol-permiso": {
+            "get": {
+                "tags": [
+                    "Rol-Permiso"
+                ],
+                "summary": "Listar permisos de roles",
+                "description": "Display a listing of the resource.",
+                "operationId": "db579b6f2064258859edf7408c08095d",
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Rol-Permiso"
+                ],
+                "summary": "Asignar permiso a rol",
+                "description": "Store a newly created resource in storage.",
+                "operationId": "5603377bf037e5854c20289d8f8f9637",
+                "responses": {
+                    "201": {
+                        "description": "Recurso creado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/rol-permiso/{id}": {
+            "delete": {
+                "tags": [
+                    "Rol-Permiso"
+                ],
+                "summary": "Quitar permiso de rol",
+                "description": "Remove the specified resource from storage.",
+                "operationId": "94707c0102beb31f5fe4cbe57ecca45b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/rol-usuario": {
+            "get": {
+                "tags": [
+                    "Rol-Usuario"
+                ],
+                "summary": "Listar roles de usuarios",
+                "operationId": "ac31854a76af432e86dcfa48e3fa5ffb",
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Rol-Usuario"
+                ],
+                "summary": "Asignar rol a usuario",
+                "operationId": "238010744c1f04b3a15a2bb77353471e",
+                "responses": {
+                    "201": {
+                        "description": "Recurso creado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/rol-usuario/{id}": {
+            "delete": {
+                "tags": [
+                    "Rol-Usuario"
+                ],
+                "summary": "Quitar rol de usuario",
+                "operationId": "4d357b778ed124030750700ef5d560c1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    },
+                    "404": {
+                        "description": "No encontrado"
                     }
                 },
                 "security": [
@@ -26951,8 +29023,48 @@
     },
     "tags": [
         {
+            "name": "Certificados Digitales FE",
+            "description": "Gestión de certificados digitales para firma de comprobantes electrónicos"
+        },
+        {
+            "name": "Mensajes Hacienda",
+            "description": "Gestión de mensajes de respuesta de Hacienda (aceptación/rechazo de comprobantes)"
+        },
+        {
+            "name": "Movimientos Bancarios",
+            "description": "Gestión de movimientos bancarios (depósitos, retiros, transferencias)"
+        },
+        {
+            "name": "Planillas CCSS",
+            "description": "Gestión de planillas de Caja Costarricense de Seguro Social"
+        },
+        {
             "name": "Productos",
             "description": "Gestión de productos del inventario"
+        },
+        {
+            "name": "Facturación Electrónica",
+            "description": "Gestión de comprobantes electrónicos (FE) - Facturas, Notas de Crédito, Tiquetes"
+        },
+        {
+            "name": "Consecutivos FE",
+            "description": "Gestión de consecutivos de facturación electrónica por tipo de documento"
+        },
+        {
+            "name": "Entidad-Etiqueta",
+            "description": "Gestión de relaciones muchos-a-muchos entre entidades y etiquetas"
+        },
+        {
+            "name": "Inventario de Productos",
+            "description": "Gestión de inventario y existencias de productos por sucursal"
+        },
+        {
+            "name": "Rol-Permiso",
+            "description": "Gestión de permisos asignados a roles (control de acceso)"
+        },
+        {
+            "name": "Rol-Usuario",
+            "description": "Gestión de roles asignados a usuarios"
         },
         {
             "name": "Almacenes",
@@ -27003,16 +29115,8 @@
             "description": "Clientes"
         },
         {
-            "name": "Facturación Electrónica",
-            "description": "Facturación Electrónica"
-        },
-        {
             "name": "Configuraciones",
             "description": "Configuraciones"
-        },
-        {
-            "name": "Consecutivos FE",
-            "description": "Consecutivos FE"
         },
         {
             "name": "Cuentas por Cobrar",
