@@ -1,0 +1,37 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: ursol-cast-dev
+
+resources:
+  - ../../base
+
+namePrefix: dev-
+
+patches:
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: Deployment
+      name: ursol-cast-api
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: Deployment
+      name: ursol-cast-queue-worker
+
+configMapGenerator:
+  - name: ursol-cast-config
+    behavior: merge
+    literals:
+      - APP_ENV=development
+      - APP_DEBUG=true
+      - APP_URL=https://dev-api.ursol.com
+      - LOG_LEVEL=debug
+      - HACIENDA_ENV=staging
+      - HACIENDA_API_URL=https://api-sandbox.comprobanteselectronicos.go.cr
+      - HACIENDA_IDP_URL=https://idp-sandbox.comprobanteselectronicos.go.cr
