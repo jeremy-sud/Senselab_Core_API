@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
 // Importar modelos
@@ -224,5 +227,38 @@ class AppServiceProvider extends ServiceProvider
         foreach ($this->policies as $model => $policy) {
             Gate::policy($model, $policy);
         }
+        
+        // Sprint 8.5 - Rate Limiters personalizados
+        $this->configureRateLimiting();
+    }
+    
+    /**
+     * Configure rate limiters for the application.
+     */
+    protected function configureRateLimiting(): void
+    {
+        // Rate limiter por defecto para API
+        RateLimiter::for('api', function (Request $request) {
+            // 60 requests por minuto para usuarios autenticados
+            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        });
+        
+        // Rate limiter para reportes pesados
+        RateLimiter::for('reports', function (Request $request) {
+            // 10 requests por minuto para reportes
+            return Limit::perMinute(10)->by($request->user()?->id ?: $request->ip());
+        });
+        
+        // Rate limiter para importaciones
+        RateLimiter::for('imports', function (Request $request) {
+            // 5 requests por minuto para importaciones
+            return Limit::perMinute(5)->by($request->user()?->id ?: $request->ip());
+        });
+        
+        // Rate limiter para Hacienda API
+        RateLimiter::for('hacienda', function (Request $request) {
+            // 20 requests por minuto para Hacienda
+            return Limit::perMinute(20)->by($request->user()?->id ?: $request->ip());
+        });
     }
 }
