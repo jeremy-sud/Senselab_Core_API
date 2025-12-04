@@ -10,10 +10,11 @@ parameters:
     paths:
         - app
     
-    # Exclude paths
+    # Exclude paths (optional - may not exist)
     excludePaths:
-        - app/Console/Kernel.php (?)
-        - app/Http/Middleware/TrustProxies.php (?)
+        analyseAndScan:
+            - app/Console/Kernel.php (?)
+            - app/Http/Middleware/TrustProxies.php (?)
     
     # Ignore errors until fixed
     ignoreErrors:
