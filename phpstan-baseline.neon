@@ -997,54 +997,6 @@ parameters:
 			path: app/Http/Controllers/API/CuentaPorPagarController.php
 
 		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Delete does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/DeclaracionTributariaController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Get does not exist\.$#'
-			identifier: attribute.notFound
-			count: 2
-			path: app/Http/Controllers/API/DeclaracionTributariaController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Post does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/DeclaracionTributariaController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Put does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/DeclaracionTributariaController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Tag does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/DeclaracionTributariaController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Parameter not found\.$#'
-			identifier: class.notFound
-			count: 3
-			path: app/Http/Controllers/API/DeclaracionTributariaController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Response not found\.$#'
-			identifier: class.notFound
-			count: 10
-			path: app/Http/Controllers/API/DeclaracionTributariaController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Schema not found\.$#'
-			identifier: class.notFound
-			count: 3
-			path: app/Http/Controllers/API/DeclaracionTributariaController.php
-
-		-
 			message: '#^Method App\\Http\\Controllers\\API\\DeclaracionTributariaController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -2803,54 +2755,6 @@ parameters:
 			path: app/Http/Controllers/API/RegimenTributarioController.php
 
 		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Delete does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/RetencionImpuestoController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Get does not exist\.$#'
-			identifier: attribute.notFound
-			count: 2
-			path: app/Http/Controllers/API/RetencionImpuestoController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Post does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/RetencionImpuestoController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Put does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/RetencionImpuestoController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Tag does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/RetencionImpuestoController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Parameter not found\.$#'
-			identifier: class.notFound
-			count: 3
-			path: app/Http/Controllers/API/RetencionImpuestoController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Response not found\.$#'
-			identifier: class.notFound
-			count: 10
-			path: app/Http/Controllers/API/RetencionImpuestoController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Schema not found\.$#'
-			identifier: class.notFound
-			count: 3
-			path: app/Http/Controllers/API/RetencionImpuestoController.php
-
-		-
 			message: '#^Method App\\Http\\Controllers\\API\\RetencionImpuestoController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -3149,54 +3053,6 @@ parameters:
 			identifier: argument.templateType
 			count: 1
 			path: app/Http/Controllers/API/TipoCambioHistorialController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Delete does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/TipoClienteController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Get does not exist\.$#'
-			identifier: attribute.notFound
-			count: 2
-			path: app/Http/Controllers/API/TipoClienteController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Post does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/TipoClienteController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Put does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/TipoClienteController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Tag does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/TipoClienteController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Parameter not found\.$#'
-			identifier: class.notFound
-			count: 3
-			path: app/Http/Controllers/API/TipoClienteController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Response not found\.$#'
-			identifier: class.notFound
-			count: 10
-			path: app/Http/Controllers/API/TipoClienteController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Schema not found\.$#'
-			identifier: class.notFound
-			count: 3
-			path: app/Http/Controllers/API/TipoClienteController.php
 
 		-
 			message: '#^Method App\\Http\\Controllers\\API\\TipoClienteController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
