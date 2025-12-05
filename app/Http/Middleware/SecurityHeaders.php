@@ -58,8 +58,8 @@ class SecurityHeaders
         }
 
         // Content Security Policy básica para API
-        // Ajustar según necesidades del frontend
-        if ($request->is('api/*')) {
+        // Excluir rutas de documentación Swagger
+        if ($request->is('api/*') && !$request->is('api/documentation*') && !$request->is('docs*')) {
             $response->headers->set(
                 'Content-Security-Policy',
                 "default-src 'none'; frame-ancestors 'none'"

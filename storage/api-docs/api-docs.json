@@ -6800,6 +6800,145 @@
                 ]
             }
         },
+        "/api/declaracion-tributaria": {
+            "get": {
+                "tags": [
+                    "Declaraciones Tributarias"
+                ],
+                "summary": "Listar declaraciones tributarias",
+                "description": "Display a listing of the resource.",
+                "operationId": "384f76d519cac5b638732d770adb7ddf",
+                "responses": {
+                    "200": {
+                        "description": "Listado de declaraciones tributarias"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Declaraciones Tributarias"
+                ],
+                "summary": "Crear declaración tributaria",
+                "description": "Store a newly created resource in storage.",
+                "operationId": "506fac781dc27512d9f880650ba8780c",
+                "responses": {
+                    "201": {
+                        "description": "declaración tributaria creado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/declaracion-tributaria/{id}": {
+            "get": {
+                "tags": [
+                    "Declaraciones Tributarias"
+                ],
+                "summary": "Obtener declaración tributaria",
+                "description": "Display the specified resource.",
+                "operationId": "082b4a00b2651db792107678631418e3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "declaración tributaria encontrado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Declaraciones Tributarias"
+                ],
+                "summary": "Actualizar declaración tributaria",
+                "description": "Update the specified resource in storage.",
+                "operationId": "2932292d2f7b2bfdd42d48685131eaaf",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "declaración tributaria actualizado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Declaraciones Tributarias"
+                ],
+                "summary": "Eliminar declaración tributaria",
+                "description": "Remove the specified resource from storage.",
+                "operationId": "1ec67c8f6d2ffde677b18054dc77092a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "declaración tributaria eliminado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/detalles-asientos": {
             "get": {
                 "tags": [
@@ -18799,6 +18938,145 @@
                 ]
             }
         },
+        "/api/retencion-impuesto": {
+            "get": {
+                "tags": [
+                    "Retenciones de Impuesto"
+                ],
+                "summary": "Listar retenciones de impuesto",
+                "description": "Display a listing of the resource.",
+                "operationId": "226cf4dde3ef46c87691f063e24293e2",
+                "responses": {
+                    "200": {
+                        "description": "Listado de retenciones de impuesto"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Retenciones de Impuesto"
+                ],
+                "summary": "Crear retención de impuesto",
+                "description": "Store a newly created resource in storage.",
+                "operationId": "421b74afbb02e679cf689219cc4d3598",
+                "responses": {
+                    "201": {
+                        "description": "retención de impuesto creado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/retencion-impuesto/{id}": {
+            "get": {
+                "tags": [
+                    "Retenciones de Impuesto"
+                ],
+                "summary": "Obtener retención de impuesto",
+                "description": "Display the specified resource.",
+                "operationId": "1fd354f8a99bd2dbb3e4f003ef4c30d7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "retención de impuesto encontrado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Retenciones de Impuesto"
+                ],
+                "summary": "Actualizar retención de impuesto",
+                "description": "Update the specified resource in storage.",
+                "operationId": "bc10842c07b8f90bb2555301f6b65538",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "retención de impuesto actualizado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Retenciones de Impuesto"
+                ],
+                "summary": "Eliminar retención de impuesto",
+                "description": "Remove the specified resource from storage.",
+                "operationId": "f192317954e6d25f03a91882aabafdf4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "retención de impuesto eliminado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/roles": {
             "get": {
                 "tags": [
@@ -21670,6 +21948,145 @@
                 "responses": {
                     "200": {
                         "description": "Tipo de cambio obtenido exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/tipo-cliente": {
+            "get": {
+                "tags": [
+                    "Tipos de Cliente"
+                ],
+                "summary": "Listar tipos de cliente",
+                "description": "Display a listing of the resource.",
+                "operationId": "f119177fc3ec6c0bbdc03024d2cf5b53",
+                "responses": {
+                    "200": {
+                        "description": "Listado de tipos de cliente"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Tipos de Cliente"
+                ],
+                "summary": "Crear tipo de cliente",
+                "description": "Store a newly created resource in storage.",
+                "operationId": "eb47f2a60e192142a289ba8495c0b626",
+                "responses": {
+                    "201": {
+                        "description": "tipo de cliente creado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/tipo-cliente/{id}": {
+            "get": {
+                "tags": [
+                    "Tipos de Cliente"
+                ],
+                "summary": "Obtener tipo de cliente",
+                "description": "Display the specified resource.",
+                "operationId": "02a8d097423bc4be14fe98c262bf74ae",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "tipo de cliente encontrado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Tipos de Cliente"
+                ],
+                "summary": "Actualizar tipo de cliente",
+                "description": "Update the specified resource in storage.",
+                "operationId": "315053fd6cf3d84041d9ffd89914376e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "tipo de cliente actualizado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Tipos de Cliente"
+                ],
+                "summary": "Eliminar tipo de cliente",
+                "description": "Remove the specified resource from storage.",
+                "operationId": "b307759bb0f647991677a4a4ed4eb49a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "tipo de cliente eliminado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
                     }
                 },
                 "security": [
@@ -29015,13 +29432,17 @@
         "securitySchemes": {
             "sanctum": {
                 "type": "http",
-                "description": "Laravel Sanctum Bearer Token Authentication",
-                "scheme": "bearer",
-                "bearerFormat": "JWT"
+                "description": "Laravel Sanctum Bearer Token. Obtén el token mediante POST /api/login",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
             }
         }
     },
     "tags": [
+        {
+            "name": "Declaraciones Tributarias",
+            "description": "Gestión de declaraciones tributarias (D104, D101, etc)"
+        },
         {
             "name": "Certificados Digitales FE",
             "description": "Gestión de certificados digitales para firma de comprobantes electrónicos"
@@ -29041,6 +29462,14 @@
         {
             "name": "Productos",
             "description": "Gestión de productos del inventario"
+        },
+        {
+            "name": "Retenciones de Impuesto",
+            "description": "Gestión de retenciones de impuesto sobre renta"
+        },
+        {
+            "name": "Tipos de Cliente",
+            "description": "Gestión de tipos/categorías de clientes (minorista, mayorista, etc)"
         },
         {
             "name": "Facturación Electrónica",
@@ -29237,11 +29666,6 @@
         {
             "name": "Reportes",
             "description": "Reportes"
-        }
-    ],
-    "security": [
-        {
-            "sanctum": []
         }
     ]
 }
