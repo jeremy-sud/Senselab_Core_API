@@ -11,6 +11,7 @@ use App\Traits\HasCacheableQueries;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use OpenApi\Attributes as OA;
 
 /**
  * Controller para gestionar tipos de comprobantes de facturación electrónica

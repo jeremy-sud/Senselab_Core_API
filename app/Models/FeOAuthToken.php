@@ -119,6 +119,14 @@ class FeOAuthToken extends Model
     }
 
     /**
+     * Accessor: Verificar si el token es válido (activo y no expirado).
+     */
+    public function getValidoAttribute(): bool
+    {
+        return $this->activo && !$this->expirado;
+    }
+
+    /**
      * Accessor: Segundos restantes hasta expiración.
      */
     public function getSegundosRestantesAttribute(): int

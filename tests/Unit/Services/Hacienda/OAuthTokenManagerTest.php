@@ -233,8 +233,9 @@ class OAuthTokenManagerTest extends TestCase
             'activo' => true,
         ]);
 
-        $this->assertTrue($tokenExpirado->esta_expirado);
-        $this->assertFalse($tokenExpirado->valido);
+        $this->assertTrue($tokenExpirado->expirado);
+        // Token expirado no debería aparecer en scope validos
+        $this->assertEquals(0, FeOAuthToken::validos()->count());
     }
 
     /** @test */

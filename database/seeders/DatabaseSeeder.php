@@ -40,10 +40,11 @@ class DatabaseSeeder extends Seeder
 
         $this->command->info('🌱 Iniciando seeders de datos demo...');
 
-        // Seeders de datos demo (empresa, usuario admin)
+        // Seeders de datos demo (empresa, usuarios fundadores)
         $this->call([
             CargosSeeder::class,
             EmpresaDemoSeeder::class,
+            FoundersSeeder::class,
             UsuarioAdminSeeder::class,
         ]);
 
