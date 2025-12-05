@@ -14,6 +14,12 @@ class RolesSeeder extends Seeder
     {
         $roles = [
             [
+                'nombre' => 'Super Administrador',
+                'descripcion' => 'Acceso total absoluto al sistema - Solo fundadores',
+                'activo' => true,
+                'eliminado' => false,
+            ],
+            [
                 'nombre' => 'Administrador',
                 'descripcion' => 'Acceso total al sistema',
                 'activo' => true,

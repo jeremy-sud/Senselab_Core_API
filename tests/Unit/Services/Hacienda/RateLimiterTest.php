@@ -116,13 +116,16 @@ class RateLimiterTest extends TestCase
         $rateLimiter->recordRequest();
         $rateLimiter->recordRequest();
 
-        $stats = $rateLimiter->getStats();
+        $stats = $rateLimiter->getEstadisticas();
 
-        $this->assertArrayHasKey('requests_this_second', $stats);
-        $this->assertArrayHasKey('requests_this_minute', $stats);
-        $this->assertArrayHasKey('max_per_second', $stats);
-        $this->assertArrayHasKey('max_per_minute', $stats);
+        $this->assertArrayHasKey('current_second', $stats);
+        $this->assertArrayHasKey('current_minute', $stats);
+        $this->assertArrayHasKey('enabled', $stats);
         $this->assertArrayHasKey('can_make_request', $stats);
+        
+        // Verificar estructura interna
+        $this->assertArrayHasKey('requests', $stats['current_second']);
+        $this->assertArrayHasKey('limit', $stats['current_second']);
     }
 
     /** @test */

@@ -124,6 +124,14 @@ class ComprobanteElectronicoFe extends Model
     }
 
     /**
+     * Alias para lineasDetalle (compatibilidad).
+     */
+    public function lineas(): HasMany
+    {
+        return $this->lineasDetalle();
+    }
+
+    /**
      * Scope: Filtrar por estado.
      */
     public function scopeEstado($query, string $estado)

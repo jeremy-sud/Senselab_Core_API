@@ -462,7 +462,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         ]);
 
         $this->assertTrue($token->valido);
-        $this->assertFalse($token->esta_expirado);
+        $this->assertFalse($token->expirado);
     }
 
     /** @test */

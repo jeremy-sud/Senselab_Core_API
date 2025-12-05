@@ -4242,6 +4242,145 @@
                 ]
             }
         },
+        "/api/codigo-actividad-economica": {
+            "get": {
+                "tags": [
+                    "Códigos Actividad Económica"
+                ],
+                "summary": "Listar códigos de actividad económica",
+                "description": "Listar códigos de actividad económica",
+                "operationId": "ce8daa344fe1c7146fa01d2f9e0506d1",
+                "responses": {
+                    "200": {
+                        "description": "Listado de códigos de actividad económica"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Códigos Actividad Económica"
+                ],
+                "summary": "Crear código de actividad económica",
+                "description": "Crear código de actividad económica",
+                "operationId": "da6de9d0854cef8ad45d906fcdc07344",
+                "responses": {
+                    "201": {
+                        "description": "código de actividad económica creado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/codigo-actividad-economica/{id}": {
+            "get": {
+                "tags": [
+                    "Códigos Actividad Económica"
+                ],
+                "summary": "Obtener código de actividad económica",
+                "description": "Mostrar código específico",
+                "operationId": "170655dda4298cda24cd0c0edb4bb650",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "código de actividad económica encontrado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Códigos Actividad Económica"
+                ],
+                "summary": "Actualizar código de actividad económica",
+                "description": "Actualizar código de actividad económica",
+                "operationId": "d0e9000225d90d941a3f7e43725203eb",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "código de actividad económica actualizado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Códigos Actividad Económica"
+                ],
+                "summary": "Eliminar código de actividad económica",
+                "description": "Eliminar código de actividad económica",
+                "operationId": "bdcdddc82544bc7c9b3cf1eaa1f71ea3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "código de actividad económica eliminado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/comprobantes-recibidos-electronicos": {
             "get": {
                 "tags": [
@@ -5552,6 +5691,145 @@
                     },
                     "422": {
                         "description": "Consecutivo agotado o inactivo"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/cuenta-bancaria": {
+            "get": {
+                "tags": [
+                    "Cuentas Bancarias"
+                ],
+                "summary": "Listar cuentas bancarias",
+                "description": "Display a listing of the resource.",
+                "operationId": "a4ae912d2746447448d8b0b7e2d9a5a6",
+                "responses": {
+                    "200": {
+                        "description": "Listado de cuentas bancarias"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Cuentas Bancarias"
+                ],
+                "summary": "Crear cuenta bancaria",
+                "description": "Store a newly created resource in storage.",
+                "operationId": "e6a9e8325132df4f5804a9a5a65e33ba",
+                "responses": {
+                    "201": {
+                        "description": "cuenta bancaria creado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/cuenta-bancaria/{id}": {
+            "get": {
+                "tags": [
+                    "Cuentas Bancarias"
+                ],
+                "summary": "Obtener cuenta bancaria",
+                "description": "Display the specified resource.",
+                "operationId": "26b0c10963afe472b9366fe55cda21b0",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "cuenta bancaria encontrado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Cuentas Bancarias"
+                ],
+                "summary": "Actualizar cuenta bancaria",
+                "description": "Update the specified resource in storage.",
+                "operationId": "49134e498c03b10c4c66a842895e43db",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "cuenta bancaria actualizado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Cuentas Bancarias"
+                ],
+                "summary": "Eliminar cuenta bancaria",
+                "description": "Remove the specified resource from storage.",
+                "operationId": "3940fec1f52807895d0d9176374c0e0b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "cuenta bancaria eliminado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
                     }
                 },
                 "security": [
@@ -6927,6 +7205,145 @@
                 "responses": {
                     "200": {
                         "description": "declaración tributaria eliminado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/deduccion-legal": {
+            "get": {
+                "tags": [
+                    "Deducciones Legales"
+                ],
+                "summary": "Listar deducciones legales",
+                "description": "Listar deducciones legales",
+                "operationId": "811f29a34447f39b07696000ff6028a8",
+                "responses": {
+                    "200": {
+                        "description": "Listado de deducciones legales"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Deducciones Legales"
+                ],
+                "summary": "Crear deducción legal",
+                "description": "Crear deducción legal",
+                "operationId": "3e2b6612dc0ac39a4537370d0326b80f",
+                "responses": {
+                    "201": {
+                        "description": "deducción legal creado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/deduccion-legal/{id}": {
+            "get": {
+                "tags": [
+                    "Deducciones Legales"
+                ],
+                "summary": "Obtener deducción legal",
+                "description": "Mostrar deducción específica",
+                "operationId": "85c056a22f74bea3f407a7863e4652fd",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "deducción legal encontrado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Deducciones Legales"
+                ],
+                "summary": "Actualizar deducción legal",
+                "description": "Actualizar deducción legal",
+                "operationId": "bfb8f59422c5319ab2ea9bf9f8951175",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "deducción legal actualizado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Deducciones Legales"
+                ],
+                "summary": "Eliminar deducción legal",
+                "description": "Eliminar deducción legal",
+                "operationId": "c3fd373b8ee6ca72322a31b6b9b0c6d2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "deducción legal eliminado"
                     },
                     "404": {
                         "description": "No encontrado"
@@ -12376,6 +12793,145 @@
                     },
                     "500": {
                         "description": "Error interno del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/log-acceso-sistema": {
+            "get": {
+                "tags": [
+                    "Logs de Acceso"
+                ],
+                "summary": "Listar logs de acceso",
+                "description": "Listar logs de acceso",
+                "operationId": "1f93f4f3c52dd6cefff48e3fd110ff56",
+                "responses": {
+                    "200": {
+                        "description": "Listado de logs de acceso"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Logs de Acceso"
+                ],
+                "summary": "Crear log de acceso",
+                "description": "Crear log de acceso (normalmente automático)",
+                "operationId": "ecd71f6fafca6bb1b8562afd97623ed7",
+                "responses": {
+                    "201": {
+                        "description": "log de acceso creado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/log-acceso-sistema/{id}": {
+            "get": {
+                "tags": [
+                    "Logs de Acceso"
+                ],
+                "summary": "Obtener log de acceso",
+                "description": "Mostrar log de acceso",
+                "operationId": "2fce0684217b2c676a9eb927264ae67b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "log de acceso encontrado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Logs de Acceso"
+                ],
+                "summary": "Actualizar log de acceso",
+                "description": "Actualizar log (solo duracion_sesion normalmente)",
+                "operationId": "83782b2fc918ca067ede18bacf4d6060",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "log de acceso actualizado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Logs de Acceso"
+                ],
+                "summary": "Eliminar log de acceso",
+                "description": "Eliminar log (soft delete para auditoría)",
+                "operationId": "c57ce80f480e58825aa3458212481dc8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "log de acceso eliminado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
                     }
                 },
                 "security": [
@@ -22096,6 +22652,145 @@
                 ]
             }
         },
+        "/api/tipo-comprobante-fe": {
+            "get": {
+                "tags": [
+                    "Tipos de Comprobante FE"
+                ],
+                "summary": "Listar tipos de comprobante",
+                "description": "Display a listing of the resource.",
+                "operationId": "1e47a18d2f3edd614de6c801bf14be02",
+                "responses": {
+                    "200": {
+                        "description": "Listado de tipos de comprobante"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Tipos de Comprobante FE"
+                ],
+                "summary": "Crear tipo de comprobante",
+                "description": "Store a newly created resource in storage.",
+                "operationId": "4b33a8738ca464fb0f72873d7706facd",
+                "responses": {
+                    "201": {
+                        "description": "tipo de comprobante creado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/tipo-comprobante-fe/{id}": {
+            "get": {
+                "tags": [
+                    "Tipos de Comprobante FE"
+                ],
+                "summary": "Obtener tipo de comprobante",
+                "description": "Display the specified resource.",
+                "operationId": "602a49c26bd8dffa7f910bf96beb8366",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "tipo de comprobante encontrado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Tipos de Comprobante FE"
+                ],
+                "summary": "Actualizar tipo de comprobante",
+                "description": "Update the specified resource in storage.",
+                "operationId": "3b4deba4e6c217bbae14785ffb250e6d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "tipo de comprobante actualizado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Tipos de Comprobante FE"
+                ],
+                "summary": "Eliminar tipo de comprobante",
+                "description": "Remove the specified resource from storage.",
+                "operationId": "22ad8c789f79089c484d076be8b8c00e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "tipo de comprobante eliminado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/tipos-cuenta": {
             "get": {
                 "tags": [
@@ -23831,6 +24526,111 @@
                 ]
             }
         },
+        "/api/url-shortener": {
+            "get": {
+                "tags": [
+                    "URL Shortener"
+                ],
+                "summary": "Listar URLs acortadas",
+                "description": "Display a listing of the resource.",
+                "operationId": "857bb524411f0e7d83186b79af17d4d2",
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "URL Shortener"
+                ],
+                "summary": "Crear URL corta",
+                "description": "Store a newly created resource in storage.",
+                "operationId": "cef76da136746997e95615bb37259aea",
+                "responses": {
+                    "201": {
+                        "description": "Recurso creado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/url-shortener/{id}": {
+            "get": {
+                "tags": [
+                    "URL Shortener"
+                ],
+                "summary": "Obtener URL corta",
+                "description": "Display the specified resource.",
+                "operationId": "056232d2a803fc2e509448a2e81c9812",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "URL Shortener"
+                ],
+                "summary": "Eliminar URL corta",
+                "description": "Remove the specified resource from storage.",
+                "operationId": "3d8e3f59ab92db534a2578eecce5f205",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/usuarios": {
             "get": {
                 "tags": [
@@ -24862,6 +25662,145 @@
                                 }
                             }
                         }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/zona-geografica": {
+            "get": {
+                "tags": [
+                    "Zonas Geográficas"
+                ],
+                "summary": "Listar zonas geográficas",
+                "description": "Display a listing of the resource.",
+                "operationId": "2da2b885884aaf680a0a477d2b4da7b9",
+                "responses": {
+                    "200": {
+                        "description": "Listado de zonas geográficas"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Zonas Geográficas"
+                ],
+                "summary": "Crear zona geográfica",
+                "description": "Store a newly created resource in storage.",
+                "operationId": "9a41c1d8697fbfaadc35c4459cff769f",
+                "responses": {
+                    "201": {
+                        "description": "zona geográfica creado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/zona-geografica/{id}": {
+            "get": {
+                "tags": [
+                    "Zonas Geográficas"
+                ],
+                "summary": "Obtener zona geográfica",
+                "description": "Display the specified resource.",
+                "operationId": "c498f648cb8c67a7e73eb97f5c451ab8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "zona geográfica encontrado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Zonas Geográficas"
+                ],
+                "summary": "Actualizar zona geográfica",
+                "description": "Update the specified resource in storage.",
+                "operationId": "b002fb29dd6fa605de3eea2db98df055",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "zona geográfica actualizado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Zonas Geográficas"
+                ],
+                "summary": "Eliminar zona geográfica",
+                "description": "Remove the specified resource from storage.",
+                "operationId": "1969805f3b599b7c51dd75ef80da4fad",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "zona geográfica eliminado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
                     }
                 },
                 "security": [
@@ -29440,12 +30379,28 @@
     },
     "tags": [
         {
+            "name": "Códigos Actividad Económica",
+            "description": "Catálogo de códigos de actividad económica del Ministerio de Hacienda"
+        },
+        {
+            "name": "Cuentas Bancarias",
+            "description": "Gestión de cuentas bancarias de la empresa"
+        },
+        {
             "name": "Declaraciones Tributarias",
             "description": "Gestión de declaraciones tributarias (D104, D101, etc)"
         },
         {
+            "name": "Deducciones Legales",
+            "description": "Gestión de deducciones legales aplicables a nómina"
+        },
+        {
             "name": "Certificados Digitales FE",
             "description": "Gestión de certificados digitales para firma de comprobantes electrónicos"
+        },
+        {
+            "name": "Logs de Acceso",
+            "description": "Registro de accesos al sistema (auditoría de login/logout)"
         },
         {
             "name": "Mensajes Hacienda",
@@ -29470,6 +30425,18 @@
         {
             "name": "Tipos de Cliente",
             "description": "Gestión de tipos/categorías de clientes (minorista, mayorista, etc)"
+        },
+        {
+            "name": "Tipos de Comprobante FE",
+            "description": "Gestión de tipos de comprobantes de facturación electrónica (Factura, Nota Crédito, Tiquete, etc)"
+        },
+        {
+            "name": "URL Shortener",
+            "description": "Servicio de acortamiento de URLs para compartir enlaces"
+        },
+        {
+            "name": "Zonas Geográficas",
+            "description": "Gestión de zonas geográficas de cobertura (provincias, cantones, distritos)"
         },
         {
             "name": "Facturación Electrónica",

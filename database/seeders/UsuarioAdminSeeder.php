@@ -14,7 +14,7 @@ class UsuarioAdminSeeder extends Seeder
     public function run(): void
     {
         // Obtener empresa demo
-        $empresa = DB::table('empresas')->where('num_identificacion_dgt', '3-101-123456')->first();
+        $empresa = DB::table('empresas')->where('nombre', 'Sistemas Ursol S.A.')->first();
         
         if (!$empresa) {
             $this->command->error('✗ Error: Empresa demo no encontrada. Ejecuta EmpresaDemoSeeder primero.');
