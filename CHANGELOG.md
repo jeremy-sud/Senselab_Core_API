@@ -5,6 +5,66 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.6.0] - 2025-12-05
+
+### ✨ Agregado - Módulo Completo de Inteligencia Artificial (Sprint 8)
+
+**Implementación completa de 10 servicios de IA con 32 endpoints API**
+
+#### Servicios de IA Nuevos (`app/Services/AI/`)
+- `AnomalyDetectionService` - Detección de fraudes, errores contables y transacciones sospechosas
+- `ContentGeneratorService` - Generación automática de emails, reportes y notificaciones
+- `CabysClassifierService` - Clasificación de códigos CABYS para productos (Costa Rica)
+- `CreditScoringService` - Scoring crediticio de clientes con escala 0-100
+
+#### Controladores de IA Nuevos (`app/Http/Controllers/Api/V1/AI/`)
+- `AnomalyController` - 4 endpoints para detección de anomalías
+- `ContentController` - 5 endpoints para generación de contenido
+- `CabysController` - 5 endpoints para clasificación CABYS
+- `CreditController` - 6 endpoints para credit scoring
+
+#### Endpoints API (32 total bajo `/api/ai/`)
+- **OCR**: `POST /ocr/invoice`, `POST /ocr/batch`, `GET /ocr/capabilities`
+- **Chat**: `POST /chat`, `GET /chat/suggestions`, `DELETE /chat/history`
+- **Predicciones**: 6 endpoints para demanda, stock y alertas
+- **Anomalías**: 4 endpoints para detección de fraudes y errores
+- **Contenido**: 5 endpoints para generación de emails y reportes
+- **CABYS**: 5 endpoints para clasificación tributaria
+- **Crédito**: 6 endpoints para scoring y análisis de riesgo
+
+### 🔧 Mejorado
+
+#### Servicios Existentes
+- `GeminiService` - Agregados métodos `embeddings()` y `getUsageStats()` para cumplir interfaz
+- `OpenAIService` - Corregido manejo de API key nullable
+- `PredictionService` - Corregida referencia a modelo `InventarioProducto` (antes `Inventario`)
+
+#### Configuración
+- Eliminado uso de `env()` fuera de config/ en 6 servicios AI (cumplimiento Larastan)
+- Todos los servicios ahora usan `config()` para obtener configuración
+
+### 🐛 Corregido
+- `ContentGeneratorService` - Corregida sintaxis de heredocs con operador `??`
+- `TestCase.php` - Cambiado `rand()` a `uniqid()` en `createProducto()` para evitar duplicados
+- Corregidos 4 controllers AI para usar métodos correctos de los servicios
+
+### 📊 Estadísticas Actualizadas
+- **88 Controladores API** (antes 74, +14 nuevos)
+- **559 Rutas API** (antes 490+, +69 nuevas)
+- **83 Modelos Eloquent** (antes 82, +1)
+- **18 Servicios** (antes 8, +10 de IA)
+- **40 Archivos de Tests** (antes 36, +4)
+- **405 Tests Pasando** (antes 369, +36)
+- **32 Endpoints de IA** nuevos
+
+### 📝 Documentación Actualizada
+- `README.md` - Estadísticas diciembre 2025 con módulo IA
+- `ESTADO_ACTUAL_PROYECTO.md` - Estado completo con servicios IA
+- `IA_FUNCIONALIDADES.md` - Documentación completa de 10 servicios y 32 endpoints
+- `CHANGELOG.md` - Entrada v1.6.0
+
+---
+
 ## [1.5.0] - 2025-12-02
 
 ### ✨ Agregado - Facturación Electrónica v4.4 Hacienda CR

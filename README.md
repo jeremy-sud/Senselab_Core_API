@@ -47,41 +47,61 @@
 
 ## 🚀 Acerca del Proyecto
 
-**Ursol CAST API** es un sistema ERP completo desarrollado por **Sistemas Ursol S.A.** con Laravel 11, diseñado específicamente para empresas costarricenses que requieren soluciones tecnológicas robustas y escalables.
+**Ursol CAST API** es un sistema ERP completo desarrollado por **Sistemas Ursol S.A.** con Laravel 12, diseñado específicamente para empresas costarricenses que requieren soluciones tecnológicas robustas y escalables.
 
 ### 📊 Estado del Proyecto
 
-**🔍 ÚLTIMA AUDITORÍA: 2 de Diciembre 2025**
+**🔍 ÚLTIMA AUDITORÍA: 5 de Diciembre 2025**
 
-**Calificación Global: 9.0/10** ⭐
+**Calificación Global: 9.5/10** ⭐
 
 **📈 Estadísticas Actuales:**
 
--   **✅ 74 Controladores API** implementados (100% completitud)
+-   **✅ 88 Controladores API** implementados (100% completitud)
 -   **✅ 80 Policies RBAC** implementadas (100% cobertura)
--   **✅ 490+ Rutas API** registradas y funcionales
--   **✅ 82 Modelos Eloquent** sincronizados con BD MySQL
+-   **✅ 559 Rutas API** registradas y funcionales
+-   **✅ 83 Modelos Eloquent** sincronizados con BD MySQL
 -   **✅ 91 Migraciones** de base de datos
 -   **✅ 78 Resources** para transformación de respuestas
--   **✅ 36 Archivos de Tests** automatizados
+-   **✅ 40 Archivos de Tests** automatizados (405 tests pasando)
+-   **✅ 18 Servicios** incluyendo 10 servicios de IA
 -   **✅ 0 Errores Críticos** de base de datos
 -   **✅ Sistema RBAC** completo (68 permisos + 7 roles)
 -   **✅ Entorno Docker** completamente funcional (Nginx, PHP-FPM, MySQL, Redis, PHPMyAdmin)
 -   **✅ Facturación Electrónica v4.4** implementada (XAdES-EPES)
--   **✅ Calidad de Código** SonarQube - trailing whitespaces eliminados
+-   **✅ Módulo de IA** con 10 servicios y 32 endpoints (Google Gemini gratuito)
+-   **✅ Calidad de Código** PHPStan nivel 5 - Sin errores críticos
 
-**✅ CORRECCIONES APLICADAS (Diciembre 2025):**
+**✅ FUNCIONALIDADES IA IMPLEMENTADAS (Diciembre 2025):**
 
--   ✅ Implementación completa de firma XAdES-EPES para Hacienda v4.4
--   ✅ Campos v4.4 agregados: BaseImponible, ImpuestoNeto, MedioPago en ResumenFactura
--   ✅ Migración BD para campos codigo_cabys, impuesto_neto
--   ✅ Eliminados trailing whitespaces en 79 controladores (SonarQube)
--   ✅ Corregidos imports y namespaces incorrectos
--   ✅ ApiConstants.php creado para constantes comunes
+-   ✅ **OCR de Facturas** - Escaneo automático con Gemini Vision
+-   ✅ **Chatbot ERP** - Asistente virtual con consultas en lenguaje natural
+-   ✅ **Predicciones de Inventario** - Análisis de demanda y alertas de stock
+-   ✅ **Detección de Anomalías** - Fraudes, errores contables, transacciones sospechosas
+-   ✅ **Generación de Contenido** - Emails de cobro, agradecimiento, reportes
+-   ✅ **Clasificación CABYS** - Códigos tributarios automáticos para Costa Rica
+-   ✅ **Credit Scoring** - Calificación de riesgo crediticio de clientes (0-100)
 
-**📊 Análisis Completo:** Ver [AUDITORIA_COMPLETA_NOVIEMBRE_2025.md](AUDITORIA_COMPLETA_NOVIEMBRE_2025.md)
+**📊 Análisis Completo:** Ver [ESTADO_ACTUAL_PROYECTO.md](ESTADO_ACTUAL_PROYECTO.md)
 
 ---
+
+**✅ SPRINT 8 - Módulo de Inteligencia Artificial (COMPLETADO) 🤖**
+
+-   **10 Servicios de IA** implementados con Google Gemini (gratuito)
+-   **32 Endpoints API** bajo `/api/ai/`
+-   **4 Controllers AI** nuevos: Anomaly, Content, Cabys, Credit
+-   **Funcionalidades**:
+    -   OCR de facturas con visión por computadora
+    -   Chatbot ERP con detección de intenciones
+    -   Predicciones de demanda e inventario
+    -   Detección de anomalías y fraudes
+    -   Generación automática de contenido
+    -   Clasificación CABYS para productos
+    -   Credit scoring de clientes
+-   **Tecnología**: Google Gemini 2.0 Flash (gratuito) + fallback OpenAI
+-   Tests: **405/405 (100%)** ✅
+-   Ver detalles: [IA_FUNCIONALIDADES.md](IA_FUNCIONALIDADES.md)
 
 **✅ FASE 1 - Correcciones Críticas (COMPLETADA)**
 

@@ -338,12 +338,16 @@ abstract class TestCase extends BaseTestCase
         $categoria = $this->getCategoriaProducto($empresa);
         $unidad = $this->getUnidadMedida();
 
+        // Usar uniqid para evitar colisiones
+        $uniqueId = uniqid('', true);
+        $shortId = substr(md5($uniqueId), 0, 8);
+
         return \App\Models\Producto::create(array_merge([
             'empresa_id' => $empresa->id,
             'categoria_id' => $categoria->id,
             'unidad_medida_id' => $unidad->id,
-            'nombre' => 'Producto Test ' . rand(1000, 9999),
-            'codigo' => 'PROD' . rand(1000, 9999),
+            'nombre' => 'Producto Test ' . $shortId,
+            'codigo' => 'PROD' . strtoupper($shortId),
             'tipo' => 'producto',
             'precio_venta' => 1000.00,
             'activo' => true,
