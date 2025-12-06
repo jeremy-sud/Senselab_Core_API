@@ -70,6 +70,7 @@
 -   **✅ Entorno Docker** completamente funcional (Nginx, PHP-FPM, MySQL, Redis, PHPMyAdmin)
 -   **✅ Facturación Electrónica v4.4** implementada (XAdES-EPES)
 -   **✅ Módulo de IA** con 10 servicios y 32 endpoints (Google Gemini gratuito)
+-   **✅ Generador de Módulos** `make:erp-module` para crear módulos completos
 -   **✅ Calidad de Código** PHPStan nivel 5 - Sin errores críticos
 
 **✅ FUNCIONALIDADES IA IMPLEMENTADAS (Diciembre 2025):**
@@ -85,6 +86,21 @@
 **📊 Análisis Completo:** Ver [ESTADO_ACTUAL_PROYECTO.md](ESTADO_ACTUAL_PROYECTO.md)
 
 ---
+
+**✅ SPRINT 9 - Generador de Módulos ERP (COMPLETADO) 🛠️**
+
+-   **Comando Artisan** `make:erp-module` para generar módulos completos
+-   **9 Componentes** generados automáticamente por módulo:
+    -   Modelo con traits multi-tenant
+    -   Controller API con cache y OpenAPI
+    -   Policy RBAC
+    -   FormRequests (Store/Update)
+    -   Resource
+    -   Migration
+    -   Factory
+    -   Test Feature
+-   **Opciones flexibles**: `--fields`, `--relations`, `--no-migration`, `--no-test`
+-   Ver documentación: [GENERADOR_MODULOS.md](docs/guides/GENERADOR_MODULOS.md)
 
 **✅ SPRINT 8 - Módulo de Inteligencia Artificial (COMPLETADO) 🤖**
 

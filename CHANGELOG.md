@@ -5,6 +5,48 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.6.1] - 2025-12-05
+
+### ✨ Agregado - Generador de Módulos ERP
+
+**Nuevo comando Artisan para scaffolding completo de módulos de negocio**
+
+#### Comando `make:erp-module`
+- `app/Console/Commands/MakeErpModule.php` - Generador completo (1480+ líneas)
+- Genera automáticamente 9 componentes por módulo:
+  - Modelo con traits (BelongsToTenant, HasCacheableQueries, etc.)
+  - Controller CRUD con cache Redis y documentación OpenAPI
+  - Policy RBAC extendiendo BasePolicy
+  - StoreRequest y UpdateRequest con validaciones
+  - Resource para transformación de respuestas
+  - Migration con campos de auditoría
+  - Factory para testing
+  - Tests Feature completos
+
+#### Opciones Disponibles
+- `--fields` - Definir campos personalizados con tipos y modificadores
+- `--relations` - Definir relaciones (belongsTo, hasMany, etc.)
+- `--no-migration` - Omitir generación de migración
+- `--no-factory` - Omitir generación de factory
+- `--no-test` - Omitir generación de tests
+- `--no-routes` - No agregar rutas automáticamente
+- `--force` - Sobrescribir archivos existentes
+
+#### Tipos de Campo Soportados
+- Básicos: string, text, integer, bigInteger, decimal, float, boolean
+- Fechas: date, datetime, timestamp
+- Especiales: json, email, foreignId
+- Modificadores: `:nullable`, `:default:valor`
+
+### 📝 Documentación Nueva
+- `docs/guides/GENERADOR_MODULOS.md` - Guía completa del generador
+
+### 📊 Estadísticas
+- **1 Comando Artisan** nuevo para desarrollo
+- **9 Componentes** generados automáticamente por módulo
+
+---
+
 ## [1.6.0] - 2025-12-05
 
 ### ✨ Agregado - Módulo Completo de Inteligencia Artificial (Sprint 8)
