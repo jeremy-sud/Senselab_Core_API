@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json.schemastore.org/sonarlintrc",
+  "rules": {
+    "php:S1192": {
+      "level": "off",
+      "comment": "String literals duplication in OpenAPI annotations is acceptable"
+    },
+    "php:S138": {
+      "level": "off", 
+      "comment": "Long functions in route files are Laravel convention"
+    }
+  },
+  "fileExclusions": [
+    "**/vendor/**",
+    "**/storage/**",
+    "**/bootstrap/cache/**",
+    "**/database/migrations/**",
+    "**/public/**"
+  ]
+}
