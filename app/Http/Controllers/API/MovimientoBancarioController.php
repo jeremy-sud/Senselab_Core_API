@@ -31,6 +31,8 @@ class MovimientoBancarioController extends Controller
 {
     use HasCacheableQueries;
 
+    private const MSG_NOT_FOUND = 'Movimiento bancario no encontrado';
+
     /**
      * Tags para invalidación de cache
      * @var array<string>
@@ -63,78 +65,132 @@ class MovimientoBancarioController extends Controller
     {
         $this->authorize('viewAny', MovimientoBancario::class);
 
-        try {
-            $perPage = $request->input('per_page', 15);
-            $search = $request->input('search');
-            $empresaId = Auth::user()->empresa_id;
+        $perPage = $request->input('per_page', 15);
+        $empresaId = Auth::user()->empresa_id;
 
-            $cacheKey = $this->getCacheKey('index', [
-                'search' => $search,
-                'cuenta_bancaria_id' => $request->input('cuenta_bancaria_id'),
-                'tipo_movimiento' => $request->input('tipo_movimiento'),
-                'per_page' => $perPage
-            ]);
+        $cacheKey = $this->getCacheKey('index', $this->getIndexCacheParams($request, $perPage));
 
-            return $this->cacheQueryIfEnabled($cacheKey, function () use ($request, $empresaId, $search, $perPage) {
-                $query = MovimientoBancario::with(['empresa', 'cuentaBancaria', 'asientoContable'])
-                                           ->where('empresa_id', $empresaId)
-                                           ->where('eliminado', false);
+        return $this->cacheQueryIfEnabled($cacheKey, function () use ($request, $empresaId, $perPage) {
+            $query = $this->buildBaseQuery($empresaId);
+            $this->applyFilters($query, $request);
 
-                if ($search) {
-                    $query->where(function($q) use ($search) {
-                        $q->where('descripcion', 'like', "%{$search}%")
-                          ->orWhere('numero_referencia', 'like', "%{$search}%")
-                          ->orWhere('beneficiario', 'like', "%{$search}%");
-                    });
-                }
+            $movimientos = $query->orderBy('fecha_movimiento', 'desc')
+                                 ->orderBy('created_at', 'desc')
+                                 ->paginate($perPage);
 
-                // Filtro por cuenta bancaria
-                if ($request->has('cuenta_bancaria_id')) {
-                    $query->where('cuenta_bancaria_id', $request->input('cuenta_bancaria_id'));
-                }
+            return MovimientoBancarioResource::collection($movimientos);
+        });
+    }
 
-                // Filtro por tipo de movimiento
-                if ($request->has('tipo_movimiento')) {
-                    $query->porTipo($request->input('tipo_movimiento'));
-                }
+    /**
+     * Build base query for movimientos bancarios
+     */
+    private function buildBaseQuery(int $empresaId): \Illuminate\Database\Eloquent\Builder
+    {
+        return MovimientoBancario::with(['empresa', 'cuentaBancaria', 'asientoContable'])
+            ->where('empresa_id', $empresaId)
+            ->where('eliminado', false);
+    }
 
-                // Filtro por estado de conciliación (acepta 'conciliado' o 'conciliados')
-                if ($request->has('conciliado')) {
-                    if ($request->boolean('conciliado')) {
-                        $query->conciliados();
-                    } else {
-                        $query->pendientesConciliacion();
-                    }
-                } elseif ($request->boolean('conciliados')) {
-                    $query->conciliados();
-                }
+    /**
+     * Get cache parameters for index
+     */
+    private function getIndexCacheParams(Request $request, int $perPage): array
+    {
+        return [
+            'search' => $request->input('search'),
+            'cuenta_bancaria_id' => $request->input('cuenta_bancaria_id'),
+            'tipo_movimiento' => $request->input('tipo_movimiento'),
+            'per_page' => $perPage
+        ];
+    }
 
-                if ($request->boolean('pendientes_conciliacion')) {
-                    $query->pendientesConciliacion();
-                }
+    /**
+     * Apply all filters to query
+     */
+    private function applyFilters(\Illuminate\Database\Eloquent\Builder $query, Request $request): void
+    {
+        $this->applySearchFilter($query, $request->input('search'));
+        $this->applyCuentaBancariaFilter($query, $request);
+        $this->applyTipoMovimientoFilter($query, $request);
+        $this->applyConciliacionFilter($query, $request);
+        $this->applyFechaFilter($query, $request);
+        $this->applyMontoFilter($query, $request);
+    }
 
-                // Filtro por rango de fechas
-                if ($request->has('fecha_desde') && $request->has('fecha_hasta')) {
-                    $query->entreFechas($request->input('fecha_desde'), $request->input('fecha_hasta'));
-                }
+    /**
+     * Apply search filter
+     */
+    private function applySearchFilter(\Illuminate\Database\Eloquent\Builder $query, ?string $search): void
+    {
+        if (!$search) {
+            return;
+        }
 
-                // Filtro por monto mínimo/máximo
-                if ($request->has('monto_minimo')) {
-                    $query->where('monto', '>=', $request->input('monto_minimo'));
-                }
+        $query->where(function ($q) use ($search) {
+            $q->where('descripcion', 'like', "%{$search}%")
+              ->orWhere('numero_referencia', 'like', "%{$search}%")
+              ->orWhere('beneficiario', 'like', "%{$search}%");
+        });
+    }
 
-                if ($request->has('monto_maximo')) {
-                    $query->where('monto', '<=', $request->input('monto_maximo'));
-                }
+    /**
+     * Apply cuenta bancaria filter
+     */
+    private function applyCuentaBancariaFilter(\Illuminate\Database\Eloquent\Builder $query, Request $request): void
+    {
+        if ($request->has('cuenta_bancaria_id')) {
+            $query->where('cuenta_bancaria_id', $request->input('cuenta_bancaria_id'));
+        }
+    }
 
-                $movimientos = $query->orderBy('fecha_movimiento', 'desc')
-                                     ->orderBy('created_at', 'desc')
-                                     ->paginate($perPage);
+    /**
+     * Apply tipo movimiento filter
+     */
+    private function applyTipoMovimientoFilter(\Illuminate\Database\Eloquent\Builder $query, Request $request): void
+    {
+        if ($request->has('tipo_movimiento')) {
+            $query->porTipo($request->input('tipo_movimiento'));
+        }
+    }
 
-                return MovimientoBancarioResource::collection($movimientos);
-            });
-        } catch (\Exception $e) {
-            abort(500, 'Error al obtener movimientos bancarios: ' . $e->getMessage());
+    /**
+     * Apply conciliacion filter
+     */
+    private function applyConciliacionFilter(\Illuminate\Database\Eloquent\Builder $query, Request $request): void
+    {
+        if ($request->has('conciliado')) {
+            $request->boolean('conciliado') ? $query->conciliados() : $query->pendientesConciliacion();
+        } elseif ($request->boolean('conciliados')) {
+            $query->conciliados();
+        }
+
+        if ($request->boolean('pendientes_conciliacion')) {
+            $query->pendientesConciliacion();
+        }
+    }
+
+    /**
+     * Apply fecha filter
+     */
+    private function applyFechaFilter(\Illuminate\Database\Eloquent\Builder $query, Request $request): void
+    {
+        if ($request->has('fecha_desde') && $request->has('fecha_hasta')) {
+            $query->entreFechas($request->input('fecha_desde'), $request->input('fecha_hasta'));
+        }
+    }
+
+    /**
+     * Apply monto filter
+     */
+    private function applyMontoFilter(\Illuminate\Database\Eloquent\Builder $query, Request $request): void
+    {
+        if ($request->has('monto_minimo')) {
+            $query->where('monto', '>=', $request->input('monto_minimo'));
+        }
+
+        if ($request->has('monto_maximo')) {
+            $query->where('monto', '<=', $request->input('monto_maximo'));
         }
     }
 
@@ -235,7 +291,7 @@ class MovimientoBancarioController extends Controller
 
             return new MovimientoBancarioResource($movimiento);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404, 'Movimiento bancario no encontrado');
+            abort(404, self::MSG_NOT_FOUND);
         } catch (\Exception $e) {
             abort(500, 'Error al obtener movimiento bancario: ' . $e->getMessage());
         }
@@ -279,7 +335,7 @@ class MovimientoBancarioController extends Controller
             return (new MovimientoBancarioResource($movimiento))
                 ->additional(['message' => 'Movimiento bancario actualizado exitosamente']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404, 'Movimiento bancario no encontrado');
+            abort(404, self::MSG_NOT_FOUND);
         } catch (\Exception $e) {
             abort(500, 'Error al actualizar movimiento bancario: ' . $e->getMessage());
         }
@@ -337,7 +393,7 @@ class MovimientoBancarioController extends Controller
             DB::rollBack();
 
             return response()->json([
-                'message' => 'Movimiento bancario no encontrado'
+                'message' => self::MSG_NOT_FOUND
             ], 404);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -370,7 +426,7 @@ class MovimientoBancarioController extends Controller
             ]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
-                'message' => 'Movimiento bancario no encontrado'
+                'message' => self::MSG_NOT_FOUND
             ], 404);
         } catch (\Exception $e) {
             return response()->json([
