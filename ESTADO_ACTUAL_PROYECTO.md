@@ -25,6 +25,12 @@
 - **32 Endpoints de IA** implementados con Google Gemini
 - **🎯 0 Funcionalidades Bloqueadas** (todas resueltas)
 
+### Herramientas de Desarrollo 🛠️
+- **✅ Generador de Módulos** (`make:erp-module`) - Scaffolding completo
+  - Genera: Modelo, Controller, Policy, FormRequests, Resource, Migration, Factory, Tests
+  - Soporta: campos personalizados, relaciones, soft deletes, multi-tenancy
+  - Documentación: [docs/guides/GENERADOR_MODULOS.md](docs/guides/GENERADOR_MODULOS.md)
+
 ### Módulo de Inteligencia Artificial 🤖
 - **10 Servicios de IA** en `app/Services/AI/`:
   - `GeminiService` - Integración Google Gemini (GRATUITO)

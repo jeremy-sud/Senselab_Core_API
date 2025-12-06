@@ -48,6 +48,7 @@ docs/
 - [Contributing](guides/CONTRIBUTING.md) - Guía de contribución
 - [Testing Guide](guides/TESTING_GUIDE.md) - Cómo ejecutar tests
 - [Como Probar API](guides/COMO_PROBAR_API.md) - Probar endpoints
+- **[Generador de Módulos](guides/GENERADOR_MODULOS.md)** - Crear nuevos módulos ERP automáticamente 🆕
 
 ### API
 - [API Documentation](api/API_DOCUMENTATION.md) - Endpoints completos
