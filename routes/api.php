@@ -1045,4 +1045,87 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
         ->middleware(['permission:crear-facturacion_electronica', 'throttle:20,1']);
     Route::get('/comprobantes/estadisticas/resumen', [\App\Http\Controllers\ComprobanteElectronicoController::class, 'estadisticas'])
         ->middleware('permission:ver-facturacion_electronica');
+
+    // ========================================================================
+    // MÓDULO: INTELIGENCIA ARTIFICIAL (IA)
+    // Endpoints para OCR, Chatbot y Predicciones con IA
+    // ========================================================================
+    Route::prefix('ai')->group(function () {
+        
+        // --------------------------------------------------------------------
+        // OCR - Escaneo de Facturas con GPT-4 Vision
+        // --------------------------------------------------------------------
+        Route::post('/ocr/invoice', [\App\Http\Controllers\API\AI\OCRController::class, 'scanInvoice'])
+            ->middleware('throttle:30,1');
+        Route::post('/ocr/batch', [\App\Http\Controllers\API\AI\OCRController::class, 'batchScan'])
+            ->middleware('throttle:10,1');
+        Route::get('/ocr/capabilities', [\App\Http\Controllers\API\AI\OCRController::class, 'capabilities']);
+        
+        // --------------------------------------------------------------------
+        // Chatbot - Asistente Virtual ERP
+        // --------------------------------------------------------------------
+        Route::post('/chat', [\App\Http\Controllers\API\AI\ChatbotController::class, 'chat'])
+            ->middleware('throttle:60,1');
+        Route::get('/chat/suggestions', [\App\Http\Controllers\API\AI\ChatbotController::class, 'suggestions']);
+        Route::delete('/chat/history', [\App\Http\Controllers\API\AI\ChatbotController::class, 'clearHistory']);
+        
+        // --------------------------------------------------------------------
+        // Predicciones - Demanda e Inventario
+        // --------------------------------------------------------------------
+        Route::get('/predictions/product/{productoId}', [\App\Http\Controllers\API\AI\PredictionController::class, 'predictProduct']);
+        Route::get('/predictions/alerts', [\App\Http\Controllers\API\AI\PredictionController::class, 'alerts']);
+        Route::get('/predictions/recommendations', [\App\Http\Controllers\API\AI\PredictionController::class, 'recommendations']);
+        Route::get('/predictions/trends', [\App\Http\Controllers\API\AI\PredictionController::class, 'trends']);
+        Route::get('/predictions/revenue', [\App\Http\Controllers\API\AI\PredictionController::class, 'revenue']);
+        Route::get('/predictions/dashboard', [\App\Http\Controllers\API\AI\PredictionController::class, 'dashboard']);
+        
+        // --------------------------------------------------------------------
+        // Detección de Anomalías - Auditoría Financiera
+        // --------------------------------------------------------------------
+        Route::post('/anomalies/sales', [\App\Http\Controllers\Api\V1\AI\AnomalyController::class, 'detectSalesAnomalies'])
+            ->middleware('throttle:20,1');
+        Route::post('/anomalies/cash-flow', [\App\Http\Controllers\Api\V1\AI\AnomalyController::class, 'detectCashFlowAnomalies'])
+            ->middleware('throttle:20,1');
+        Route::post('/anomalies/accounting', [\App\Http\Controllers\Api\V1\AI\AnomalyController::class, 'detectAccountingAnomalies'])
+            ->middleware('throttle:20,1');
+        Route::post('/anomalies/audit', [\App\Http\Controllers\Api\V1\AI\AnomalyController::class, 'runFullAudit'])
+            ->middleware('throttle:10,1');
+        
+        // --------------------------------------------------------------------
+        // Generación de Contenido - Emails y Reportes
+        // --------------------------------------------------------------------
+        Route::post('/content/payment-reminder', [\App\Http\Controllers\Api\V1\AI\ContentController::class, 'generatePaymentReminder'])
+            ->middleware('throttle:30,1');
+        Route::post('/content/thank-you', [\App\Http\Controllers\Api\V1\AI\ContentController::class, 'generateThankYouEmail'])
+            ->middleware('throttle:30,1');
+        Route::post('/content/invoice-email', [\App\Http\Controllers\Api\V1\AI\ContentController::class, 'generateInvoiceEmail'])
+            ->middleware('throttle:30,1');
+        Route::post('/content/report', [\App\Http\Controllers\Api\V1\AI\ContentController::class, 'generateReport'])
+            ->middleware('throttle:20,1');
+        Route::post('/content/custom', [\App\Http\Controllers\Api\V1\AI\ContentController::class, 'generateCustomContent'])
+            ->middleware('throttle:20,1');
+        
+        // --------------------------------------------------------------------
+        // Clasificación CABYS - Códigos de Bienes y Servicios CR
+        // --------------------------------------------------------------------
+        Route::post('/cabys/classify', [\App\Http\Controllers\Api\V1\AI\CabysController::class, 'classifyProduct'])
+            ->middleware('throttle:30,1');
+        Route::post('/cabys/batch', [\App\Http\Controllers\Api\V1\AI\CabysController::class, 'batchClassify'])
+            ->middleware('throttle:10,1');
+        Route::get('/cabys/search', [\App\Http\Controllers\Api\V1\AI\CabysController::class, 'searchByDescription']);
+        Route::get('/cabys/validate/{code}', [\App\Http\Controllers\Api\V1\AI\CabysController::class, 'validateCode']);
+        Route::get('/cabys/suggest/{productoId}', [\App\Http\Controllers\Api\V1\AI\CabysController::class, 'suggestForProduct']);
+        
+        // --------------------------------------------------------------------
+        // Credit Scoring - Análisis de Riesgo de Clientes
+        // --------------------------------------------------------------------
+        Route::get('/credit/score/{clienteId}', [\App\Http\Controllers\Api\V1\AI\CreditController::class, 'calculateScore']);
+        Route::get('/credit/analysis/{clienteId}', [\App\Http\Controllers\Api\V1\AI\CreditController::class, 'getDetailedAnalysis']);
+        Route::get('/credit/limit/{clienteId}', [\App\Http\Controllers\Api\V1\AI\CreditController::class, 'recommendCreditLimit']);
+        Route::post('/credit/batch', [\App\Http\Controllers\Api\V1\AI\CreditController::class, 'batchCalculate'])
+            ->middleware('throttle:10,1');
+        Route::get('/credit/ranking', [\App\Http\Controllers\Api\V1\AI\CreditController::class, 'getRanking']);
+        Route::post('/credit/evaluate', [\App\Http\Controllers\Api\V1\AI\CreditController::class, 'evaluateTransaction'])
+            ->middleware('throttle:60,1');
+    });
 });

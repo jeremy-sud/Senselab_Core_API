@@ -1,5 +1,7 @@
 # 📚 Documentación del Proyecto Ursol CAST API
 
+**Última actualización:** 5 de Diciembre 2025
+
 Este directorio contiene toda la documentación organizada del proyecto.
 
 ## 📁 Estructura
@@ -20,8 +22,20 @@ docs/
 |---------|-------------|
 | [README.md](../README.md) | Documentación principal del proyecto |
 | [ESTADO_ACTUAL_PROYECTO.md](../ESTADO_ACTUAL_PROYECTO.md) | Estado actual con métricas reales |
+| [IA_FUNCIONALIDADES.md](../IA_FUNCIONALIDADES.md) | Módulo de Inteligencia Artificial |
 | [CHANGELOG.md](../CHANGELOG.md) | Historial de cambios |
 | [SECURITY.md](../SECURITY.md) | Políticas de seguridad |
+
+## 📊 Estado Actual (Diciembre 2025)
+
+| Métrica | Valor |
+|---------|-------|
+| **Controladores API** | 88 |
+| **Rutas API** | 559 |
+| **Modelos Eloquent** | 83 |
+| **Tests Pasando** | 405 |
+| **Servicios** | 18 (10 de IA) |
+| **Endpoints IA** | 32 |
 
 ## 🚀 Guías Rápidas
 
@@ -39,6 +53,12 @@ docs/
 - [API Documentation](api/API_DOCUMENTATION.md) - Endpoints completos
 - [Controllers Summary](api/CONTROLLERS_SUMMARY.md) - Resumen de controllers
 - [Models Relations](api/MODELS_RELATIONS.md) - Relaciones de modelos
+
+### Inteligencia Artificial 🤖
+- [IA Funcionalidades](../IA_FUNCIONALIDADES.md) - Documentación completa de IA
+- **10 Servicios**: OCR, Chatbot, Predicciones, Anomalías, Contenido, CABYS, Credit Scoring
+- **32 Endpoints** bajo `/api/ai/`
+- **Gratuito**: Usa Google Gemini API
 
 ### Hacienda Costa Rica
 - [Facturación Electrónica Setup](hacienda/FACTURACION_ELECTRONICA_SETUP.md) - Configuración FE
@@ -62,8 +82,7 @@ Los documentos de sprints completados están en `sprints/`:
 | Sprint 5 | ✅ | [RBAC Tests](sprints/SPRINT_5_RBAC_TESTS_100_COMPLETADO.md) |
 | Sprint 6 | ✅ | [Cache Optimization](sprints/SPRINT_6_CACHE_OPTIMIZATION.md) |
 | Sprint 7 | ✅ | [Controllers/Policies](sprints/SPRINT_7_COMPLETITUD_CONTROLLERS_POLICIES.md) |
-| Sprint 8 | ✅ | [Multi-tenancy & Jobs](sprints/SPRINT_8_COMPLETO_FINAL.md) |
-| Sprint 9.1 | ✅ | [PHPUnit Attributes](sprints/SPRINT_9.1_PHPUNIT_ATTRIBUTES.md) |
+| Sprint 8 | ✅ | [Módulo IA Completo](../IA_FUNCIONALIDADES.md) |
 
 ## 📦 Archivos Históricos
 
@@ -73,7 +92,3 @@ La carpeta `archive/` contiene documentación histórica que ya no es activa per
 - Resúmenes de sesiones de trabajo
 - Auditorías y análisis anteriores
 - Documentos de progreso/iteración
-
----
-
-**Última actualización:** 4 de Diciembre 2025
