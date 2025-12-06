@@ -25,6 +25,7 @@ docs/
 | [IA_FUNCIONALIDADES.md](../IA_FUNCIONALIDADES.md) | Módulo de Inteligencia Artificial |
 | [CHANGELOG.md](../CHANGELOG.md) | Historial de cambios |
 | [SECURITY.md](../SECURITY.md) | Políticas de seguridad |
+| [KNOWN_WARNINGS.md](KNOWN_WARNINGS.md) | Warnings conocidos y aceptados 🆕 |
 
 ## 📊 Estado Actual (Diciembre 2025)
 
