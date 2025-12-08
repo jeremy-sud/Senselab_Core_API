@@ -4,9 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Traits\BelongsToTenant;
+use App\Traits\HasCustomSoftDeletes;
+use App\Traits\HasAuditFields;
+use App\Traits\HasActiveScope;
 
 class Ruta extends Model
 {
+    use BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
     /**
      * Tabla asociada al modelo.
      *

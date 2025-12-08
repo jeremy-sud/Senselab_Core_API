@@ -261,7 +261,9 @@ class ComprobanteElectronicoControllerTest extends TestCase
         $response = $this->actingAs($this->user)
             ->getJson("/api/comprobantes/{$comprobante->id}");
 
-        $response->assertForbidden();
+        // Con BelongsToTenant, el comprobante de otra empresa no existe para este usuario
+        // El comportamiento correcto de multi-tenancy es 404 (no encontrado) en lugar de 403
+        $response->assertNotFound();
     }
 
     /** @test */

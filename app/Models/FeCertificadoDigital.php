@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Carbon\Carbon;
+use App\Traits\BelongsToTenant;
 
 /**
  * Modelo para Certificados Digitales de Firma Electrónica
@@ -15,7 +16,7 @@ use Carbon\Carbon;
  */
 class FeCertificadoDigital extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, BelongsToTenant;
 
     /**
      * Nombre de la tabla en la base de datos.

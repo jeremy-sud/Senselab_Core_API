@@ -1,0 +1,58 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - phpstan-baseline.neon
+
+parameters:
+    # Level 8 - Full type checking (nullable, mixed types)
+    level: 8
+    
+    # Paths to analyze
+    paths:
+        - app
+    
+    # Exclude paths
+    excludePaths:
+        analyseAndScan:
+            - app/Console/Kernel.php
+    
+    # Memory limit
+    memoryLimit: 2G
+    
+    # Report unmatched ignored errors
+    reportUnmatchedIgnoredErrors: false
+    
+    # Check generic types in iterables - disable for gradual adoption
+    checkGenericClassInNonGenericObjectType: false
+    checkMissingIterableValueType: false
+    
+    # Treat phpdoc types as certain
+    treatPhpDocTypesAsCertain: false
+    
+    # Larastan specific
+    checkModelProperties: true
+    
+    # Ignore errors until fixed
+    ignoreErrors:
+        # Eloquent dynamic properties
+        - '#Access to an undefined property App\\Models\\[a-zA-Z]+::\$[a-zA-Z_]+#'
+        # Eloquent Builder generics
+        - '#Method .* return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types#'
+        - '#has parameter .* with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types#'
+        # HasMany/BelongsTo generics
+        - '#return type with generic class Illuminate\\Database\\Eloquent\\Relations\\(HasMany|BelongsTo|HasOne|BelongsToMany|MorphMany|MorphOne) does not specify its types#'
+        # Factory methods
+        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Factories\\Factory#'
+        # Dynamic scopes
+        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::#'
+        # Sanctum user type
+        - '#Cannot access property .* on Illuminate\\Contracts\\Auth\\Authenticatable#'
+        # Collection generics
+        - '#Unable to resolve the template type T(Key|Value) in call to function collect#'
+        # Array value types - will be fixed gradually
+        - '#has no value type specified in iterable type array#'
+        # Property types - will be fixed gradually
+        - '#Property .* has no type specified#'
+        # Return type array
+        - '#return type has no value type specified in iterable type array#'
+        # Parameter array
+        - '#has parameter .* with no value type specified in iterable type array#'
