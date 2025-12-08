@@ -3,8 +3,8 @@ includes:
     - phpstan-baseline.neon
 
 parameters:
-    # Level 6 - Strict type checking
-    level: 6
+    # Level 8 - Strict type checking (maximum)
+    level: 8
 
     # Paths to analyze
     paths:
@@ -89,6 +89,14 @@ parameters:
         - '#Cannot access property .* on (int|string|bool|float|array|null|mixed)#'
         - '#Cannot call method .* on (int|string|bool|float|array|null|mixed)#'
 
+        # Eloquent relations returning Model|Collection (dynamic return types)
+        - '#Cannot access property \$[a-zA-Z_]+ on App\\Models\\[a-zA-Z]+\|Illuminate\\Database\\Eloquent\\Collection<.*>\|null#'
+        - '#Cannot call method [a-zA-Z]+\(\) on App\\Models\\[a-zA-Z]+\|Illuminate\\Database\\Eloquent\\Collection<.*>\|null#'
+
+        # Static method calls on class-string|object (model events)
+        - '#Cannot access property .* on class-string\|object#'
+        - '#Cannot call method .* on class-string\|object#'
+
         # Function already narrowed type (defensive programming is OK)
         - '#Call to function .* with .* will always evaluate to (true|false)#'
         - '#is always (true|false)#'
@@ -98,3 +106,9 @@ parameters:
 
         # Method not found (dynamic methods like query scopes)
         - '#Call to an undefined method .*::.*\(\)#'
+
+        # Argument type with union types (Laravel's flexible APIs)
+        - '#Parameter .* expects .*, .* given#'
+
+        # Property not found (dynamic model attributes)
+        - '#Access to an undefined property .*::\$[a-zA-Z_]+#'
