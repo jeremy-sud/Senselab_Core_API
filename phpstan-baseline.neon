@@ -13,6 +13,36 @@ parameters:
 			path: app/Console/Commands/FixModelTimestamps.php
 
 		-
+			message: '#^Property App\\Console\\Commands\\MakeErpModule\:\:\$fields type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Console/Commands/MakeErpModule.php
+
+		-
+			message: '#^Property App\\Console\\Commands\\MakeErpModule\:\:\$generatedFiles type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Console/Commands/MakeErpModule.php
+
+		-
+			message: '#^Property App\\Console\\Commands\\MakeErpModule\:\:\$relations type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Console/Commands/MakeErpModule.php
+
+		-
+			message: '#^Unable to resolve the template type TKey in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Http/Controllers/API/AI/PredictionController.php
+
+		-
+			message: '#^Unable to resolve the template type TValue in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Http/Controllers/API/AI/PredictionController.php
+
+		-
 			message: '#^Method App\\Http\\Controllers\\API\\AlmacenController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -511,54 +541,6 @@ parameters:
 			path: app/Http/Controllers/API/ClienteController.php
 
 		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Delete does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/CodigoActividadEconomicaController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Get does not exist\.$#'
-			identifier: attribute.notFound
-			count: 2
-			path: app/Http/Controllers/API/CodigoActividadEconomicaController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Post does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/CodigoActividadEconomicaController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Put does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/CodigoActividadEconomicaController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Tag does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/CodigoActividadEconomicaController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Parameter not found\.$#'
-			identifier: class.notFound
-			count: 3
-			path: app/Http/Controllers/API/CodigoActividadEconomicaController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Response not found\.$#'
-			identifier: class.notFound
-			count: 10
-			path: app/Http/Controllers/API/CodigoActividadEconomicaController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Schema not found\.$#'
-			identifier: class.notFound
-			count: 3
-			path: app/Http/Controllers/API/CodigoActividadEconomicaController.php
-
-		-
 			message: '#^Method App\\Http\\Controllers\\API\\CodigoActividadEconomicaController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -707,54 +689,6 @@ parameters:
 			identifier: argument.templateType
 			count: 1
 			path: app/Http/Controllers/API/ConsecutivoFeController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Delete does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/CuentaBancariaController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Get does not exist\.$#'
-			identifier: attribute.notFound
-			count: 2
-			path: app/Http/Controllers/API/CuentaBancariaController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Post does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/CuentaBancariaController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Put does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/CuentaBancariaController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Tag does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/CuentaBancariaController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Parameter not found\.$#'
-			identifier: class.notFound
-			count: 3
-			path: app/Http/Controllers/API/CuentaBancariaController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Response not found\.$#'
-			identifier: class.notFound
-			count: 10
-			path: app/Http/Controllers/API/CuentaBancariaController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Schema not found\.$#'
-			identifier: class.notFound
-			count: 3
-			path: app/Http/Controllers/API/CuentaBancariaController.php
 
 		-
 			message: '#^Method App\\Http\\Controllers\\API\\CuentaBancariaController\:\:destroy\(\) has invalid return type App\\Http\\Controllers\\API\\JsonResponse\.$#'
@@ -1025,54 +959,6 @@ parameters:
 			identifier: argument.templateType
 			count: 1
 			path: app/Http/Controllers/API/DeclaracionTributariaController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Delete does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/DeduccionLegalController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Get does not exist\.$#'
-			identifier: attribute.notFound
-			count: 2
-			path: app/Http/Controllers/API/DeduccionLegalController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Post does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/DeduccionLegalController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Put does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/DeduccionLegalController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Tag does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/DeduccionLegalController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Parameter not found\.$#'
-			identifier: class.notFound
-			count: 3
-			path: app/Http/Controllers/API/DeduccionLegalController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Response not found\.$#'
-			identifier: class.notFound
-			count: 10
-			path: app/Http/Controllers/API/DeduccionLegalController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Schema not found\.$#'
-			identifier: class.notFound
-			count: 3
-			path: app/Http/Controllers/API/DeduccionLegalController.php
 
 		-
 			message: '#^Method App\\Http\\Controllers\\API\\DeduccionLegalController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
@@ -1819,54 +1705,6 @@ parameters:
 			path: app/Http/Controllers/API/InventarioController.php
 
 		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Delete does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/LogAccesoSistemaController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Get does not exist\.$#'
-			identifier: attribute.notFound
-			count: 2
-			path: app/Http/Controllers/API/LogAccesoSistemaController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Post does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/LogAccesoSistemaController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Put does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/LogAccesoSistemaController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Tag does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/LogAccesoSistemaController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Parameter not found\.$#'
-			identifier: class.notFound
-			count: 3
-			path: app/Http/Controllers/API/LogAccesoSistemaController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Response not found\.$#'
-			identifier: class.notFound
-			count: 10
-			path: app/Http/Controllers/API/LogAccesoSistemaController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Schema not found\.$#'
-			identifier: class.notFound
-			count: 3
-			path: app/Http/Controllers/API/LogAccesoSistemaController.php
-
-		-
 			message: '#^Method App\\Http\\Controllers\\API\\LogAccesoSistemaController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -2023,6 +1861,78 @@ parameters:
 			path: app/Http/Controllers/API/MovimientoBancarioController.php
 
 		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:conciliados\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Http/Controllers/API/MovimientoBancarioController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:entreFechas\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/API/MovimientoBancarioController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:pendientesConciliacion\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Http/Controllers/API/MovimientoBancarioController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:porTipo\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/API/MovimientoBancarioController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\API\\MovimientoBancarioController\:\:applyConciliacionFilter\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/Controllers/API/MovimientoBancarioController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\API\\MovimientoBancarioController\:\:applyCuentaBancariaFilter\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/Controllers/API/MovimientoBancarioController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\API\\MovimientoBancarioController\:\:applyFechaFilter\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/Controllers/API/MovimientoBancarioController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\API\\MovimientoBancarioController\:\:applyFilters\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/Controllers/API/MovimientoBancarioController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\API\\MovimientoBancarioController\:\:applyMontoFilter\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/Controllers/API/MovimientoBancarioController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\API\\MovimientoBancarioController\:\:applySearchFilter\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/Controllers/API/MovimientoBancarioController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\API\\MovimientoBancarioController\:\:applyTipoMovimientoFilter\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/Controllers/API/MovimientoBancarioController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\API\\MovimientoBancarioController\:\:buildBaseQuery\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/Controllers/API/MovimientoBancarioController.php
+
+		-
 			message: '#^Method App\\Http\\Controllers\\API\\MovimientoBancarioController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -2036,6 +1946,12 @@ parameters:
 
 		-
 			message: '#^Method App\\Http\\Controllers\\API\\MovimientoBancarioController\:\:getCacheTags\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Controllers/API/MovimientoBancarioController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\API\\MovimientoBancarioController\:\:getIndexCacheParams\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Http/Controllers/API/MovimientoBancarioController.php
@@ -3085,54 +3001,6 @@ parameters:
 			path: app/Http/Controllers/API/TipoClienteController.php
 
 		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Delete does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/TipoComprobanteFeController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Get does not exist\.$#'
-			identifier: attribute.notFound
-			count: 2
-			path: app/Http/Controllers/API/TipoComprobanteFeController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Post does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/TipoComprobanteFeController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Put does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/TipoComprobanteFeController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Tag does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/TipoComprobanteFeController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Parameter not found\.$#'
-			identifier: class.notFound
-			count: 3
-			path: app/Http/Controllers/API/TipoComprobanteFeController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Response not found\.$#'
-			identifier: class.notFound
-			count: 10
-			path: app/Http/Controllers/API/TipoComprobanteFeController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Schema not found\.$#'
-			identifier: class.notFound
-			count: 3
-			path: app/Http/Controllers/API/TipoComprobanteFeController.php
-
-		-
 			message: '#^Method App\\Http\\Controllers\\API\\TipoComprobanteFeController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -3319,48 +3187,6 @@ parameters:
 			path: app/Http/Controllers/API/UnidadMedidaController.php
 
 		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Delete does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/UrlShortenerController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Get does not exist\.$#'
-			identifier: attribute.notFound
-			count: 2
-			path: app/Http/Controllers/API/UrlShortenerController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Post does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/UrlShortenerController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Tag does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/UrlShortenerController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Parameter not found\.$#'
-			identifier: class.notFound
-			count: 2
-			path: app/Http/Controllers/API/UrlShortenerController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Response not found\.$#'
-			identifier: class.notFound
-			count: 7
-			path: app/Http/Controllers/API/UrlShortenerController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Schema not found\.$#'
-			identifier: class.notFound
-			count: 2
-			path: app/Http/Controllers/API/UrlShortenerController.php
-
-		-
 			message: '#^Method App\\Http\\Controllers\\API\\UrlShortenerController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -3545,54 +3371,6 @@ parameters:
 			identifier: argument.templateType
 			count: 1
 			path: app/Http/Controllers/API/VentaController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Delete does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/ZonaGeograficaController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Get does not exist\.$#'
-			identifier: attribute.notFound
-			count: 2
-			path: app/Http/Controllers/API/ZonaGeograficaController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Post does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/ZonaGeograficaController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Put does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/ZonaGeograficaController.php
-
-		-
-			message: '#^Attribute class App\\Http\\Controllers\\API\\OA\\Tag does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: app/Http/Controllers/API/ZonaGeograficaController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Parameter not found\.$#'
-			identifier: class.notFound
-			count: 3
-			path: app/Http/Controllers/API/ZonaGeograficaController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Response not found\.$#'
-			identifier: class.notFound
-			count: 10
-			path: app/Http/Controllers/API/ZonaGeograficaController.php
-
-		-
-			message: '#^Instantiated class App\\Http\\Controllers\\API\\OA\\Schema not found\.$#'
-			identifier: class.notFound
-			count: 3
-			path: app/Http/Controllers/API/ZonaGeograficaController.php
 
 		-
 			message: '#^Method App\\Http\\Controllers\\API\\ZonaGeograficaController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
@@ -14815,13 +14593,31 @@ parameters:
 			path: app/Models/CodigoActividadEconomica.php
 
 		-
+			message: '#^Access to an undefined property Illuminate\\Contracts\\Auth\\Authenticatable\:\:\$empresa_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/ComprobanteElectronicoFe.php
+
+		-
 			message: '#^Class App\\Models\\ComprobanteElectronicoFe uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
 			path: app/Models/ComprobanteElectronicoFe.php
 
 		-
+			message: '#^Method App\\Models\\ComprobanteElectronicoFe\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/ComprobanteElectronicoFe.php
+
+		-
 			message: '#^Method App\\Models\\ComprobanteElectronicoFe\:\:empresa\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/ComprobanteElectronicoFe.php
+
+		-
+			message: '#^Method App\\Models\\ComprobanteElectronicoFe\:\:lineas\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
 			identifier: missingType.generics
 			count: 1
 			path: app/Models/ComprobanteElectronicoFe.php
@@ -18817,8 +18613,20 @@ parameters:
 			path: app/Models/Etiqueta.php
 
 		-
+			message: '#^Access to an undefined property Illuminate\\Contracts\\Auth\\Authenticatable\:\:\$empresa_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/FeCertificadoDigital.php
+
+		-
 			message: '#^Class App\\Models\\FeCertificadoDigital uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
+			count: 1
+			path: app/Models/FeCertificadoDigital.php
+
+		-
+			message: '#^Method App\\Models\\FeCertificadoDigital\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
+			identifier: missingType.return
 			count: 1
 			path: app/Models/FeCertificadoDigital.php
 
@@ -20599,8 +20407,20 @@ parameters:
 			path: app/Models/NominaEmpleado.php
 
 		-
+			message: '#^Access to an undefined property Illuminate\\Contracts\\Auth\\Authenticatable\:\:\$empresa_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Notificacion.php
+
+		-
 			message: '#^Class App\\Models\\Notificacion uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
+			count: 1
+			path: app/Models/Notificacion.php
+
+		-
+			message: '#^Method App\\Models\\Notificacion\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
+			identifier: missingType.return
 			count: 1
 			path: app/Models/Notificacion.php
 
@@ -24253,13 +24073,109 @@ parameters:
 			path: app/Models/RolUsuario.php
 
 		-
+			message: '#^Access to an undefined property Illuminate\\Contracts\\Auth\\Authenticatable\:\:\$empresa_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Ruta.php
+
+		-
+			message: '#^Call to function is_null\(\) with string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: app/Models/Ruta.php
+
+		-
+			message: '#^Call to function method_exists\(\) with class\-string\<static\(App\\Models\\Ruta\)\> and ''restored'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Models/Ruta.php
+
+		-
+			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Models/Ruta.php
+
+		-
+			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/Ruta.php
+
+		-
+			message: '#^Method App\\Models\\Ruta\:\:actualizador\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Ruta.php
+
+		-
+			message: '#^Method App\\Models\\Ruta\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/Ruta.php
+
+		-
+			message: '#^Method App\\Models\\Ruta\:\:creador\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Ruta.php
+
+		-
+			message: '#^Method App\\Models\\Ruta\:\:eliminador\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Ruta.php
+
+		-
 			message: '#^Method App\\Models\\Ruta\:\:empresa\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
 			identifier: missingType.generics
 			count: 1
 			path: app/Models/Ruta.php
 
 		-
+			message: '#^Method App\\Models\\Ruta\:\:historialAuditoria\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Ruta.php
+
+		-
+			message: '#^Method App\\Models\\Ruta\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/Ruta.php
+
+		-
 			message: '#^Method App\\Models\\Ruta\:\:horariosRuta\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Ruta.php
+
+		-
+			message: '#^Method App\\Models\\Ruta\:\:onlyTrashed\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Ruta.php
+
+		-
+			message: '#^Method App\\Models\\Ruta\:\:registrarAuditoria\(\) has parameter \$datosAnteriores with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/Ruta.php
+
+		-
+			message: '#^Method App\\Models\\Ruta\:\:registrarAuditoria\(\) has parameter \$datosNuevos with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/Ruta.php
+
+		-
+			message: '#^Method App\\Models\\Ruta\:\:scopeActivo\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Ruta.php
+
+		-
+			message: '#^Method App\\Models\\Ruta\:\:scopeActivo\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
 			identifier: missingType.generics
 			count: 1
 			path: app/Models/Ruta.php
@@ -24277,6 +24193,30 @@ parameters:
 			path: app/Models/Ruta.php
 
 		-
+			message: '#^Method App\\Models\\Ruta\:\:scopeConInactivos\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Ruta.php
+
+		-
+			message: '#^Method App\\Models\\Ruta\:\:scopeConInactivos\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Ruta.php
+
+		-
+			message: '#^Method App\\Models\\Ruta\:\:scopeInactivo\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Ruta.php
+
+		-
+			message: '#^Method App\\Models\\Ruta\:\:scopeInactivo\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Ruta.php
+
+		-
 			message: '#^Method App\\Models\\Ruta\:\:scopeNoEliminados\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
 			identifier: missingType.generics
 			count: 1
@@ -24284,6 +24224,12 @@ parameters:
 
 		-
 			message: '#^Method App\\Models\\Ruta\:\:scopeNoEliminados\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Ruta.php
+
+		-
+			message: '#^Method App\\Models\\Ruta\:\:withTrashed\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
 			identifier: missingType.generics
 			count: 1
 			path: app/Models/Ruta.php
@@ -24311,6 +24257,12 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Models/Ruta.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Contracts\\Auth\\Authenticatable\:\:\$empresa_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/SalidaInventario.php
 
 		-
 			message: '#^Call to function is_null\(\) with string will always evaluate to false\.$#'
@@ -24345,6 +24297,12 @@ parameters:
 		-
 			message: '#^Method App\\Models\\SalidaInventario\:\:almacen\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
 			identifier: missingType.generics
+			count: 1
+			path: app/Models/SalidaInventario.php
+
+		-
+			message: '#^Method App\\Models\\SalidaInventario\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
+			identifier: missingType.return
 			count: 1
 			path: app/Models/SalidaInventario.php
 
@@ -24691,6 +24649,12 @@ parameters:
 			path: app/Models/SesionUsuario.php
 
 		-
+			message: '#^Access to an undefined property Illuminate\\Contracts\\Auth\\Authenticatable\:\:\$empresa_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Sucursal.php
+
+		-
 			message: '#^Call to function is_null\(\) with string will always evaluate to false\.$#'
 			identifier: function.impossibleType
 			count: 1
@@ -24723,6 +24687,12 @@ parameters:
 		-
 			message: '#^Method App\\Models\\Sucursal\:\:almacenes\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
 			identifier: missingType.generics
+			count: 1
+			path: app/Models/Sucursal.php
+
+		-
+			message: '#^Method App\\Models\\Sucursal\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
+			identifier: missingType.return
 			count: 1
 			path: app/Models/Sucursal.php
 
@@ -26053,7 +26023,103 @@ parameters:
 			path: app/Models/UnidadMedida.php
 
 		-
+			message: '#^Access to an undefined property Illuminate\\Contracts\\Auth\\Authenticatable\:\:\$empresa_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/UrlShortener.php
+
+		-
+			message: '#^Call to function is_null\(\) with string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: app/Models/UrlShortener.php
+
+		-
+			message: '#^Call to function method_exists\(\) with class\-string\<static\(App\\Models\\UrlShortener\)\> and ''restored'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Models/UrlShortener.php
+
+		-
+			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Models/UrlShortener.php
+
+		-
+			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/UrlShortener.php
+
+		-
+			message: '#^Method App\\Models\\UrlShortener\:\:actualizador\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/UrlShortener.php
+
+		-
+			message: '#^Method App\\Models\\UrlShortener\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/UrlShortener.php
+
+		-
+			message: '#^Method App\\Models\\UrlShortener\:\:creador\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/UrlShortener.php
+
+		-
+			message: '#^Method App\\Models\\UrlShortener\:\:eliminador\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/UrlShortener.php
+
+		-
 			message: '#^Method App\\Models\\UrlShortener\:\:empresa\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/UrlShortener.php
+
+		-
+			message: '#^Method App\\Models\\UrlShortener\:\:historialAuditoria\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/UrlShortener.php
+
+		-
+			message: '#^Method App\\Models\\UrlShortener\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/UrlShortener.php
+
+		-
+			message: '#^Method App\\Models\\UrlShortener\:\:onlyTrashed\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/UrlShortener.php
+
+		-
+			message: '#^Method App\\Models\\UrlShortener\:\:registrarAuditoria\(\) has parameter \$datosAnteriores with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/UrlShortener.php
+
+		-
+			message: '#^Method App\\Models\\UrlShortener\:\:registrarAuditoria\(\) has parameter \$datosNuevos with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/UrlShortener.php
+
+		-
+			message: '#^Method App\\Models\\UrlShortener\:\:scopeActivo\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/UrlShortener.php
+
+		-
+			message: '#^Method App\\Models\\UrlShortener\:\:scopeActivo\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
 			identifier: missingType.generics
 			count: 1
 			path: app/Models/UrlShortener.php
@@ -26066,6 +26132,30 @@ parameters:
 
 		-
 			message: '#^Method App\\Models\\UrlShortener\:\:scopeActivos\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/UrlShortener.php
+
+		-
+			message: '#^Method App\\Models\\UrlShortener\:\:scopeConInactivos\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/UrlShortener.php
+
+		-
+			message: '#^Method App\\Models\\UrlShortener\:\:scopeConInactivos\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/UrlShortener.php
+
+		-
+			message: '#^Method App\\Models\\UrlShortener\:\:scopeInactivo\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/UrlShortener.php
+
+		-
+			message: '#^Method App\\Models\\UrlShortener\:\:scopeInactivo\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
 			identifier: missingType.generics
 			count: 1
 			path: app/Models/UrlShortener.php
@@ -26101,9 +26191,27 @@ parameters:
 			path: app/Models/UrlShortener.php
 
 		-
+			message: '#^Method App\\Models\\UrlShortener\:\:withTrashed\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/UrlShortener.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: app/Models/UrlShortener.php
+
+		-
 			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\UrlShortener\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
 			identifier: property.phpDocType
 			count: 1
+			path: app/Models/UrlShortener.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 2
 			path: app/Models/UrlShortener.php
 
 		-
@@ -27259,6 +27367,948 @@ parameters:
 			path: app/Policies/TipoCambioHistorialPolicy.php
 
 		-
+			message: '#^Method App\\Services\\AI\\AIServiceInterface\:\:analyzeImage\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/AIServiceInterface.php
+
+		-
+			message: '#^Method App\\Services\\AI\\AIServiceInterface\:\:analyzeImage\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/AIServiceInterface.php
+
+		-
+			message: '#^Method App\\Services\\AI\\AIServiceInterface\:\:chat\(\) has parameter \$context with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/AIServiceInterface.php
+
+		-
+			message: '#^Method App\\Services\\AI\\AIServiceInterface\:\:chat\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/AIServiceInterface.php
+
+		-
+			message: '#^Method App\\Services\\AI\\AIServiceInterface\:\:chat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/AIServiceInterface.php
+
+		-
+			message: '#^Method App\\Services\\AI\\AIServiceInterface\:\:embeddings\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/AIServiceInterface.php
+
+		-
+			message: '#^Method App\\Services\\AI\\AIServiceInterface\:\:embeddings\(\) has parameter \$text with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/AIServiceInterface.php
+
+		-
+			message: '#^Method App\\Services\\AI\\AIServiceInterface\:\:embeddings\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/AIServiceInterface.php
+
+		-
+			message: '#^Method App\\Services\\AI\\AIServiceInterface\:\:getUsageStats\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/AIServiceInterface.php
+
+		-
+			message: '#^Method App\\Services\\AI\\AnomalyDetectionService\:\:calculateStats\(\) has parameter \$values with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/AnomalyDetectionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\AnomalyDetectionService\:\:calculateStats\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/AnomalyDetectionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\AnomalyDetectionService\:\:detectCashAnomalies\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/AnomalyDetectionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\AnomalyDetectionService\:\:detectDiscountAnomalies\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/AnomalyDetectionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\AnomalyDetectionService\:\:detectSalesAnomalies\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/AnomalyDetectionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\AnomalyDetectionService\:\:detectSuspiciousPatterns\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/AnomalyDetectionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\AnomalyDetectionService\:\:detectUnusualHours\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/AnomalyDetectionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\AnomalyDetectionService\:\:explainAnomaly\(\) has parameter \$anomaly with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/AnomalyDetectionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\AnomalyDetectionService\:\:explainAnomaly\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/AnomalyDetectionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\AnomalyDetectionService\:\:runFullAnalysis\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/AnomalyDetectionService.php
+
+		-
+			message: '#^Property App\\Services\\AI\\AnomalyDetectionService\:\:\$thresholds type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/AnomalyDetectionService.php
+
+		-
+			message: '#^Comparison operation "\>" between int\<1, max\> and 0 is always true\.$#'
+			identifier: greater.alwaysTrue
+			count: 1
+			path: app/Services/AI/CabysClassifierService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CabysClassifierService\:\:classifyBatch\(\) has parameter \$productos with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CabysClassifierService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CabysClassifierService\:\:classifyBatch\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CabysClassifierService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CabysClassifierService\:\:classifyProduct\(\) has parameter \$producto with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CabysClassifierService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CabysClassifierService\:\:classifyProduct\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CabysClassifierService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CabysClassifierService\:\:classifyWithAI\(\) has parameter \$candidatos with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CabysClassifierService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CabysClassifierService\:\:classifyWithAI\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CabysClassifierService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CabysClassifierService\:\:getCabysInfo\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CabysClassifierService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CabysClassifierService\:\:getMainCategories\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CabysClassifierService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CabysClassifierService\:\:searchByKeywords\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CabysClassifierService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CabysClassifierService\:\:searchCabys\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CabysClassifierService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CabysClassifierService\:\:searchExactMatch\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CabysClassifierService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CabysClassifierService\:\:validateCabys\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CabysClassifierService.php
+
+		-
+			message: '#^Property App\\Services\\AI\\CabysClassifierService\:\:\$mainCategories type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CabysClassifierService.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 7
+			path: app/Services/AI/ChatbotService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ChatbotService\:\:buildSystemPrompt\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ChatbotService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ChatbotService\:\:fetchRelevantData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ChatbotService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ChatbotService\:\:getCustomerStats\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ChatbotService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ChatbotService\:\:getDailyStats\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ChatbotService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ChatbotService\:\:getInventoryStatus\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ChatbotService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ChatbotService\:\:getLowStockProducts\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ChatbotService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ChatbotService\:\:getMonthlyStats\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ChatbotService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ChatbotService\:\:getPendingInvoices\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ChatbotService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ChatbotService\:\:getSalesSummary\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ChatbotService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ChatbotService\:\:getTopCustomers\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ChatbotService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ChatbotService\:\:getTopProducts\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ChatbotService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ChatbotService\:\:processMessage\(\) has parameter \$context with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ChatbotService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ChatbotService\:\:processMessage\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ChatbotService.php
+
+		-
+			message: '#^Property App\\Services\\AI\\ChatbotService\:\:\$availableFunctions type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ChatbotService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ContentGeneratorService\:\:generateBatchReminders\(\) has parameter \$cuentasCobrar with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ContentGeneratorService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ContentGeneratorService\:\:generateBatchReminders\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ContentGeneratorService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ContentGeneratorService\:\:generateFormalLetter\(\) has parameter \$cuentaCobrar with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ContentGeneratorService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ContentGeneratorService\:\:generateFormalLetter\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ContentGeneratorService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ContentGeneratorService\:\:generateNotification\(\) has parameter \$datos with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ContentGeneratorService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ContentGeneratorService\:\:generateNotification\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ContentGeneratorService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ContentGeneratorService\:\:generatePaymentReminder\(\) has parameter \$cuentaCobrar with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ContentGeneratorService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ContentGeneratorService\:\:generatePaymentReminder\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ContentGeneratorService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ContentGeneratorService\:\:generateProductDescription\(\) has parameter \$producto with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ContentGeneratorService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ContentGeneratorService\:\:generateProductDescription\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ContentGeneratorService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ContentGeneratorService\:\:generateWhatsAppMessage\(\) has parameter \$cuentaCobrar with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ContentGeneratorService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ContentGeneratorService\:\:generateWhatsAppMessage\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ContentGeneratorService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\ContentGeneratorService\:\:setEmpresa\(\) has parameter \$empresaInfo with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ContentGeneratorService.php
+
+		-
+			message: '#^Property App\\Services\\AI\\ContentGeneratorService\:\:\$empresaInfo type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ContentGeneratorService.php
+
+		-
+			message: '#^Property App\\Services\\AI\\ContentGeneratorService\:\:\$templates type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/ContentGeneratorService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CreditScoringService\:\:calculateAllScores\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CreditScoringService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CreditScoringService\:\:calculateCreditLimit\(\) has parameter \$metricas with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CreditScoringService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CreditScoringService\:\:calculateDefaultProbability\(\) has parameter \$metricas with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CreditScoringService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CreditScoringService\:\:calculateMetrics\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CreditScoringService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CreditScoringService\:\:calculateScore\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CreditScoringService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CreditScoringService\:\:determineRiskLevel\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CreditScoringService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CreditScoringService\:\:generateRecommendations\(\) has parameter \$metricas with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CreditScoringService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CreditScoringService\:\:generateRecommendations\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CreditScoringService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CreditScoringService\:\:getHighRiskClients\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CreditScoringService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CreditScoringService\:\:scoreAntiguedad\(\) has parameter \$metricas with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CreditScoringService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CreditScoringService\:\:scoreDeudaActual\(\) has parameter \$metricas with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CreditScoringService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CreditScoringService\:\:scoreFrecuenciaCompras\(\) has parameter \$metricas with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CreditScoringService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CreditScoringService\:\:scoreHistorialPagos\(\) has parameter \$metricas with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CreditScoringService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CreditScoringService\:\:scoreMontoPromedio\(\) has parameter \$metricas with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CreditScoringService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CreditScoringService\:\:scoreVolumenCompras\(\) has parameter \$metricas with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CreditScoringService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\CreditScoringService\:\:simulateCredit\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CreditScoringService.php
+
+		-
+			message: '#^Parameter \#1 \$array \(list\) of array_values is already a list, call has no effect\.$#'
+			identifier: arrayValues.list
+			count: 1
+			path: app/Services/AI/CreditScoringService.php
+
+		-
+			message: '#^Property App\\Services\\AI\\CreditScoringService\:\:\$riskLevels type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CreditScoringService.php
+
+		-
+			message: '#^Property App\\Services\\AI\\CreditScoringService\:\:\$weights type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/CreditScoringService.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: app/Services/AI/GeminiService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\GeminiService\:\:analyzeImage\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/GeminiService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\GeminiService\:\:analyzeImage\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/GeminiService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\GeminiService\:\:chat\(\) has parameter \$context with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/GeminiService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\GeminiService\:\:chat\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/GeminiService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\GeminiService\:\:chat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/GeminiService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\GeminiService\:\:convertPdfToImage\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/GeminiService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\GeminiService\:\:embeddings\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/GeminiService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\GeminiService\:\:embeddings\(\) has parameter \$text with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/GeminiService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\GeminiService\:\:embeddings\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/GeminiService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\GeminiService\:\:extractData\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/GeminiService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\GeminiService\:\:extractData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/GeminiService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\GeminiService\:\:generateEmbedding\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/GeminiService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\GeminiService\:\:generateEmbedding\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/GeminiService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\GeminiService\:\:getUsageStats\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/GeminiService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\GeminiService\:\:handleError\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/GeminiService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\GeminiService\:\:listModels\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/GeminiService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\GeminiService\:\:makeRequest\(\) has parameter \$payload with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/GeminiService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\GeminiService\:\:prepareImageData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/GeminiService.php
+
+		-
+			message: '#^Property App\\Services\\AI\\GeminiService\:\:\$config type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/GeminiService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OCRService\:\:getSchema\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OCRService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OCRService\:\:parseResponse\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OCRService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OCRService\:\:scanInvoice\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OCRService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OCRService\:\:scanMultiple\(\) has parameter \$files with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OCRService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OCRService\:\:scanMultiple\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OCRService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OCRService\:\:validateExtractedData\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OCRService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OCRService\:\:validateExtractedData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OCRService.php
+
+		-
+			message: '#^Property App\\Services\\AI\\OCRService\:\:\$invoiceSchema type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OCRService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OpenAIService\:\:analyzeImage\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OpenAIService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OpenAIService\:\:analyzeImage\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OpenAIService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OpenAIService\:\:chat\(\) has parameter \$context with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OpenAIService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OpenAIService\:\:chat\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OpenAIService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OpenAIService\:\:chat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OpenAIService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OpenAIService\:\:classify\(\) has parameter \$categories with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OpenAIService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OpenAIService\:\:classify\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OpenAIService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OpenAIService\:\:classify\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OpenAIService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OpenAIService\:\:embeddings\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OpenAIService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OpenAIService\:\:embeddings\(\) has parameter \$text with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OpenAIService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OpenAIService\:\:embeddings\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OpenAIService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OpenAIService\:\:getUsageStats\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OpenAIService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OpenAIService\:\:makeRequest\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OpenAIService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OpenAIService\:\:makeRequest\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OpenAIService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OpenAIService\:\:parseToJson\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OpenAIService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OpenAIService\:\:parseToJson\(\) has parameter \$schema with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OpenAIService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OpenAIService\:\:parseToJson\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OpenAIService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OpenAIService\:\:prepareImageContent\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OpenAIService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\OpenAIService\:\:trackUsage\(\) has parameter \$response with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OpenAIService.php
+
+		-
+			message: '#^Property App\\Services\\AI\\OpenAIService\:\:\$config type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OpenAIService.php
+
+		-
+			message: '#^Property App\\Services\\AI\\OpenAIService\:\:\$usageStats type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/OpenAIService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\PredictionService\:\:analyzeSalesTrends\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\PredictionService\:\:buildPurchaseContext\(\) has parameter \$alerts with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\PredictionService\:\:buildPurchaseContext\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\PredictionService\:\:calculateLinearTrend\(\) has parameter \$values with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\PredictionService\:\:calculateLinearTrend\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\PredictionService\:\:calculatePrediction\(\) has parameter \$salesHistory with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\PredictionService\:\:calculatePrediction\(\) has parameter \$stats with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\PredictionService\:\:calculatePrediction\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\PredictionService\:\:calculateReorderPoint\(\) has parameter \$stats with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\PredictionService\:\:calculateSalesStatistics\(\) has parameter \$salesHistory with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\PredictionService\:\:calculateSalesStatistics\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\PredictionService\:\:calculateSuggestedOrder\(\) has parameter \$stats with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\PredictionService\:\:determineUrgency\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\PredictionService\:\:fallbackRecommendations\(\) has parameter \$alerts with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\PredictionService\:\:fallbackRecommendations\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\PredictionService\:\:generatePurchaseRecommendations\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\PredictionService\:\:getLowStockAlerts\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\PredictionService\:\:getSalesHistory\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\PredictionService\:\:getTopByTrend\(\) has parameter \$trends with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\PredictionService\:\:getTopByTrend\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\PredictionService\:\:predictProductDemand\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\PredictionService\:\:predictRevenue\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Method App\\Services\\AI\\PredictionService\:\:standardDeviation\(\) has parameter \$values with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Offset ''alto''\|''bajo''\|''critico''\|''medio'' on array\{critico\: 1, alto\: 2, medio\: 3, bajo\: 4\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 2
+			path: app/Services/AI/PredictionService.php
+
+		-
+			message: '#^Property App\\Services\\AI\\PredictionService\:\:\$config type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
 			message: '#^Method App\\Services\\Hacienda\\ClaveNumericaGenerator\:\:extraerInformacion\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -27611,3 +28661,9 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/PermissionService.php
+
+		-
+			message: '#^Trait App\\Traits\\HasSafeErrorHandling is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: app/Traits/HasSafeErrorHandling.php

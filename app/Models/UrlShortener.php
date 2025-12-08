@@ -4,9 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Traits\BelongsToTenant;
+use App\Traits\HasCustomSoftDeletes;
+use App\Traits\HasAuditFields;
+use App\Traits\HasActiveScope;
 
 class UrlShortener extends Model
 {
+    use BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
     /**
      * Nombre de la tabla asociada al modelo.
      *

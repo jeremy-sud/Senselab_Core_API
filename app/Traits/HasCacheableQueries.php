@@ -1,20 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Traits;
 
 use Illuminate\Support\Facades\Cache;
 
 /**
  * Trait HasCacheableQueries
- * 
+ *
  * Proporciona funcionalidad de cache estandarizada para controladores.
  * Implementa un patrón consistente para cachear consultas de índice
  * con invalidación automática en operaciones de escritura.
- * 
+ *
  * IMPORTANTE: Define estas propiedades en tu controlador:
  * - protected array $cacheTags = ['tag1', 'tag2'];
  * - protected int $cacheTTL = 3600;
- * 
+ *
  * @package App\Traits
  * @author Sistemas Ursol S.A.
  */
@@ -23,8 +25,6 @@ trait HasCacheableQueries
     /**
      * Prefijo para las claves de cache
      * Se genera automáticamente basado en el nombre de la clase
-     * 
-     * @return string
      */
     protected function getCachePrefix(): string
     {
@@ -34,22 +34,23 @@ trait HasCacheableQueries
 
     /**
      * Genera una clave de cache única basada en parámetros
-     * 
+     *
      * @param string $method Nombre del método (ej: 'index', 'show')
-     * @param array $params Parámetros para generar la clave
-     * @return string
+     * @param array<string, mixed> $params Parámetros para generar la clave
      */
     protected function getCacheKey(string $method, array $params = []): string
     {
         $prefix = $this->getCachePrefix();
-        
+
         // Agregar empresa_id del usuario autenticado si existe
         if (auth('sanctum')->check() && !isset($params['empresa_id'])) {
-            $params['empresa_id'] = auth('sanctum')->user()->empresa_id ?? null;
+            /** @var \App\Models\Usuario|null $user */
+            $user = auth('sanctum')->user();
+            $params['empresa_id'] = $user?->empresa_id;
         }
-        
-        $hash = md5(json_encode($params));
-        
+
+        $hash = md5((string) json_encode($params));
+
         return "{$prefix}:{$method}:{$hash}";
     }
 
@@ -57,33 +58,36 @@ trait HasCacheableQueries
      * Obtiene el TTL del cache
      * Por defecto: 1 hora
      * Puede ser sobrescrito definiendo $cacheTTL en el controlador
-     * 
-     * @return int Segundos de duración del cache
      */
     protected function getCacheTTL(): int
     {
-        return $this->cacheTTL ?? 3600;
+        /** @var int $ttl */
+        $ttl = $this->cacheTTL ?? 3600;
+        return $ttl;
     }
 
     /**
      * Obtiene los tags del cache
      * Puede ser sobrescrito definiendo $cacheTags en el controlador
-     * 
-     * @return array
+     *
+     * @return array<int, string>
      */
     protected function getCacheTags(): array
     {
-        return $this->cacheTags ?? [$this->getCachePrefix(), 'catalogos'];
+        /** @var array<int, string> $tags */
+        $tags = $this->cacheTags ?? [$this->getCachePrefix(), 'catalogos'];
+        return $tags;
     }
 
     /**
      * Ejecuta una consulta con cache
-     * 
+     *
+     * @template T
      * @param string $cacheKey Clave de cache ya generada
-     * @param callable $callback Función que retorna los datos a cachear
-     * @return mixed
+     * @param callable(): T $callback Función que retorna los datos a cachear
+     * @return T
      */
-    protected function cacheQuery(string $cacheKey, callable $callback)
+    protected function cacheQuery(string $cacheKey, callable $callback): mixed
     {
         $cacheTags = $this->getCacheTags();
         $cacheTTL = $this->getCacheTTL();
@@ -94,8 +98,6 @@ trait HasCacheableQueries
     /**
      * Invalida todo el cache relacionado a este controlador
      * Se debe llamar en operaciones de escritura (create, update, delete)
-     * 
-     * @return void
      */
     protected function flushCache(): void
     {
