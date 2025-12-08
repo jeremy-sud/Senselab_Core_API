@@ -31,6 +31,18 @@ parameters:
 			path: app/Console/Commands/MakeErpModule.php
 
 		-
+			message: '#^Method App\\Console\\Commands\\PermissionCacheCommand\:\:handle\(\) should return int but returns int\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Console/Commands/PermissionCacheCommand.php
+
+		-
+			message: '#^Method App\\Console\\Commands\\ValidateDatabaseIntegrity\:\:validateReferentialIntegrity\(\) should return int but returns float\|int\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Console/Commands/ValidateDatabaseIntegrity.php
+
+		-
 			message: '#^Method App\\Http\\Controllers\\API\\AlmacenController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -511,12 +523,6 @@ parameters:
 			path: app/Http/Controllers/API/DetalleEntradaInventarioController.php
 
 		-
-			message: '#^Parameter \#2 \$amount of method Illuminate\\Database\\Eloquent\\Model\:\:decrement\(\) expects float\|int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/API/DetalleEntradaInventarioController.php
-
-		-
 			message: '#^Property App\\Http\\Controllers\\API\\DetalleEntradaInventarioController\:\:\$cacheTags type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -871,18 +877,6 @@ parameters:
 			path: app/Http/Controllers/API/MovimientoCajaChicaController.php
 
 		-
-			message: '#^Parameter \#2 \$amount of method App\\Models\\CajaChica\:\:decrement\(\) expects float\|int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/API/MovimientoCajaChicaController.php
-
-		-
-			message: '#^Parameter \#2 \$amount of method App\\Models\\CajaChica\:\:increment\(\) expects float\|int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/API/MovimientoCajaChicaController.php
-
-		-
 			message: '#^Property App\\Http\\Controllers\\API\\MovimientoCajaChicaController\:\:\$cacheTTL has no type specified\.$#'
 			identifier: missingType.property
 			count: 1
@@ -949,12 +943,6 @@ parameters:
 			path: app/Http/Controllers/API/OrdenCompraController.php
 
 		-
-			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/API/OrdenCompraController.php
-
-		-
 			message: '#^Relation ''detalles'' is not found in App\\Models\\OrdenCompra model\.$#'
 			identifier: larastan.relationExistence
 			count: 3
@@ -973,26 +961,8 @@ parameters:
 			path: app/Http/Controllers/API/PagoController.php
 
 		-
-			message: '#^Parameter \#2 \$monto of method App\\Http\\Controllers\\API\\PagoController\:\:actualizarCuentaPorCobrar\(\) expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/API/PagoController.php
-
-		-
-			message: '#^Parameter \#2 \$monto of method App\\Http\\Controllers\\API\\PagoController\:\:actualizarCuentaPorPagar\(\) expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/API/PagoController.php
-
-		-
 			message: '#^Method App\\Http\\Controllers\\API\\PagoCuentaCobrarController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/API/PagoCuentaCobrarController.php
-
-		-
-			message: '#^Parameter \#2 \$amount of method App\\Models\\CuentaPorCobrar\:\:decrement\(\) expects float\|int, string given\.$#'
-			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/API/PagoCuentaCobrarController.php
 
@@ -1011,12 +981,6 @@ parameters:
 		-
 			message: '#^Method App\\Http\\Controllers\\API\\PagoCuentaPagarController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/API/PagoCuentaPagarController.php
-
-		-
-			message: '#^Parameter \#2 \$amount of method App\\Models\\CuentaPorPagar\:\:decrement\(\) expects float\|int, string given\.$#'
-			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/API/PagoCuentaPagarController.php
 
@@ -1063,20 +1027,8 @@ parameters:
 			path: app/Http/Controllers/API/PermisoController.php
 
 		-
-			message: '#^Anonymous function should return Illuminate\\Support\\Collection\<int, array\{id\: int, nombre\: string, slug\: string, descripcion\: string\|null\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: int, nombre\: string, slug\: string, descripcion\: string\|null\}\>\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Http/Controllers/API/PermisoController.php
-
-		-
 			message: '#^Method App\\Http\\Controllers\\API\\PermisoController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/API/PermisoController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Permiso\>\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Permiso\>, int\|string\)\: Illuminate\\Support\\Collection\<int, array\{id\: int, nombre\: string, slug\: string, descripcion\: string\|null\}\>, Closure\(mixed\)\: Illuminate\\Support\\Collection\<int, array\{id\: int, nombre\: string, slug\: string, descripcion\: string\|null\}\> given\.$#'
-			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/API/PermisoController.php
 
@@ -1519,12 +1471,6 @@ parameters:
 			path: app/Http/Controllers/API/VentaController.php
 
 		-
-			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/API/VentaController.php
-
-		-
 			message: '#^Method App\\Http\\Controllers\\API\\ZonaGeograficaController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -1549,12 +1495,6 @@ parameters:
 			path: app/Http/Controllers/API/ZonaGeograficaController.php
 
 		-
-			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/ComprobanteElectronicoController.php
-
-		-
 			message: '#^Class App\\Http\\Resources\\ConsecutivoFeResource referenced with incorrect case\: App\\Http\\Resources\\ConsecutivoFEResource\.$#'
 			identifier: class.nameCase
 			count: 9
@@ -1564,12 +1504,6 @@ parameters:
 			message: '#^Class App\\Models\\ConsecutivoFe referenced with incorrect case\: App\\Models\\ConsecutivoFE\.$#'
 			identifier: class.nameCase
 			count: 12
-			path: app/Http/Controllers/ConsecutivoFEController.php
-
-		-
-			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
-			identifier: argument.type
-			count: 1
 			path: app/Http/Controllers/ConsecutivoFEController.php
 
 		-
@@ -2161,12 +2095,6 @@ parameters:
 			path: app/Http/Requests/StoreNotificacionRequest.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\CuentaPorCobrar\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\CuentaPorCobrar\>\:\:\$saldo_pendiente\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Requests/StorePagoCuentaCobrarRequest.php
-
-		-
 			message: '#^Method App\\Http\\Requests\\StorePagoCuentaCobrarRequest\:\:attributes\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -2189,12 +2117,6 @@ parameters:
 			identifier: missingType.parameter
 			count: 1
 			path: app/Http/Requests/StorePagoCuentaCobrarRequest.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\CuentaPorPagar\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\CuentaPorPagar\>\:\:\$saldo_pendiente\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Requests/StorePagoCuentaPagarRequest.php
 
 		-
 			message: '#^Method App\\Http\\Requests\\StorePagoCuentaPagarRequest\:\:attributes\(\) return type has no value type specified in iterable type array\.$#'
@@ -3457,18 +3379,6 @@ parameters:
 			path: app/Jobs/SyncHaciendaJob.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/Almacen.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/Almacen.php
-
-		-
 			message: '#^Class App\\Models\\Almacen uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -3581,18 +3491,6 @@ parameters:
 			identifier: missingType.parameter
 			count: 1
 			path: app/Models/Archivo.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/AsientoContable.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/AsientoContable.php
 
 		-
 			message: '#^Class App\\Models\\AsientoContable uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
@@ -3895,18 +3793,6 @@ parameters:
 			path: app/Models/BusUnidad.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/Cabys.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/Cabys.php
-
-		-
 			message: '#^Class App\\Models\\Cabys uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -3985,18 +3871,6 @@ parameters:
 			path: app/Models/Cabys.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/Caja.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/Caja.php
-
-		-
 			message: '#^Class App\\Models\\Caja uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -4069,18 +3943,6 @@ parameters:
 			path: app/Models/Caja.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/CajaChica.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/CajaChica.php
-
-		-
 			message: '#^Class App\\Models\\CajaChica uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -4147,18 +4009,6 @@ parameters:
 			path: app/Models/CajaChica.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/Cargo.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/Cargo.php
-
-		-
 			message: '#^Class App\\Models\\Cargo uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -4201,18 +4051,6 @@ parameters:
 			path: app/Models/Cargo.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/CategoriaProducto.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/CategoriaProducto.php
-
-		-
 			message: '#^Class App\\Models\\CategoriaProducto uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -4253,18 +4091,6 @@ parameters:
 			identifier: missingType.parameter
 			count: 1
 			path: app/Models/CategoriaProducto.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/Cliente.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/Cliente.php
 
 		-
 			message: '#^Class App\\Models\\Cliente uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
@@ -4367,18 +4193,6 @@ parameters:
 			identifier: missingType.parameter
 			count: 1
 			path: app/Models/Cliente.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/CodigoActividadEconomica.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/CodigoActividadEconomica.php
 
 		-
 			message: '#^Class App\\Models\\CodigoActividadEconomica uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
@@ -4903,24 +4717,6 @@ parameters:
 			path: app/Models/ConsecutivoFe.php
 
 		-
-			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Models/ConsecutivoFe.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/CuentaBancaria.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/CuentaBancaria.php
-
-		-
 			message: '#^Class App\\Models\\CuentaBancaria uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -4991,18 +4787,6 @@ parameters:
 			identifier: missingType.parameter
 			count: 1
 			path: app/Models/CuentaBancaria.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/CuentaContable.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/CuentaContable.php
 
 		-
 			message: '#^Class App\\Models\\CuentaContable uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
@@ -5119,18 +4903,6 @@ parameters:
 			path: app/Models/CuentaContable.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/CuentaPorCobrar.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/CuentaPorCobrar.php
-
-		-
 			message: '#^Method App\\Models\\CuentaPorCobrar\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -5173,18 +4945,6 @@ parameters:
 			path: app/Models/CuentaPorCobrar.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/CuentaPorPagar.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/CuentaPorPagar.php
-
-		-
 			message: '#^Method App\\Models\\CuentaPorPagar\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -5225,18 +4985,6 @@ parameters:
 			identifier: property.phpDocType
 			count: 1
 			path: app/Models/CuentaPorPagar.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/DeclaracionTributaria.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/DeclaracionTributaria.php
 
 		-
 			message: '#^Class App\\Models\\DeclaracionTributaria uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
@@ -5335,18 +5083,6 @@ parameters:
 			path: app/Models/DeclaracionTributaria.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/DeduccionLegal.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/DeduccionLegal.php
-
-		-
 			message: '#^Class App\\Models\\DeduccionLegal uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -5419,18 +5155,6 @@ parameters:
 			path: app/Models/DeduccionLegal.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/DetalleAsiento.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/DetalleAsiento.php
-
-		-
 			message: '#^Method App\\Models\\DetalleAsiento\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
 			identifier: return.type
 			count: 1
@@ -5459,18 +5183,6 @@ parameters:
 			identifier: property.phpDocType
 			count: 1
 			path: app/Models/DetalleAsiento.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/DetalleEntradaInventario.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/DetalleEntradaInventario.php
 
 		-
 			message: '#^Method App\\Models\\DetalleEntradaInventario\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
@@ -5503,18 +5215,6 @@ parameters:
 			path: app/Models/DetalleEntradaInventario.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/DetalleOrdenCompra.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/DetalleOrdenCompra.php
-
-		-
 			message: '#^Method App\\Models\\DetalleOrdenCompra\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
 			identifier: return.type
 			count: 1
@@ -5543,18 +5243,6 @@ parameters:
 			identifier: property.phpDocType
 			count: 1
 			path: app/Models/DetalleOrdenCompra.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/DetallePresupuesto.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/DetallePresupuesto.php
 
 		-
 			message: '#^Method App\\Models\\DetallePresupuesto\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
@@ -5593,18 +5281,6 @@ parameters:
 			path: app/Models/DetallePresupuesto.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/DetalleSalidaInventario.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/DetalleSalidaInventario.php
-
-		-
 			message: '#^Method App\\Models\\DetalleSalidaInventario\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
 			identifier: return.type
 			count: 1
@@ -5633,18 +5309,6 @@ parameters:
 			identifier: property.phpDocType
 			count: 1
 			path: app/Models/DetalleSalidaInventario.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/DetalleVenta.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/DetalleVenta.php
 
 		-
 			message: '#^Method App\\Models\\DetalleVenta\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
@@ -5693,18 +5357,6 @@ parameters:
 			identifier: property.phpDocType
 			count: 1
 			path: app/Models/DetalleVenta.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/Empleado.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/Empleado.php
 
 		-
 			message: '#^Method App\\Models\\Empleado\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
@@ -5809,18 +5461,6 @@ parameters:
 			path: app/Models/Empleado.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/Empresa.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/Empresa.php
-
-		-
 			message: '#^Class App\\Models\\Empresa uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -5843,18 +5483,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Models/Empresa.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/EntidadEtiqueta.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/EntidadEtiqueta.php
 
 		-
 			message: '#^Method App\\Models\\EntidadEtiqueta\:\:entidad\(\) has no return type specified\.$#'
@@ -5935,18 +5563,6 @@ parameters:
 			path: app/Models/EntidadEtiqueta.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/EntradaInventario.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/EntradaInventario.php
-
-		-
 			message: '#^Class App\\Models\\EntradaInventario uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -6005,18 +5621,6 @@ parameters:
 			identifier: missingType.parameter
 			count: 1
 			path: app/Models/EntradaInventario.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/Etiqueta.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/Etiqueta.php
 
 		-
 			message: '#^Method App\\Models\\Etiqueta\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
@@ -6133,6 +5737,12 @@ parameters:
 			path: app/Models/FeOAuthToken.php
 
 		-
+			message: '#^Method App\\Models\\FeOAuthToken\:\:getSegundosRestantesAttribute\(\) should return int but returns float\|int\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/FeOAuthToken.php
+
+		-
 			message: '#^Method App\\Models\\FeOAuthToken\:\:scopeActivos\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -6179,18 +5789,6 @@ parameters:
 			identifier: missingType.parameter
 			count: 1
 			path: app/Models/FeOAuthToken.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/FormaPago.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/FormaPago.php
 
 		-
 			message: '#^Method App\\Models\\FormaPago\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
@@ -6241,12 +5839,6 @@ parameters:
 			path: app/Models/HorarioRuta.php
 
 		-
-			message: '#^Parameter \#1 \$related of method Illuminate\\Database\\Eloquent\\Model\:\:belongsTo\(\) expects class\-string\<Illuminate\\Database\\Eloquent\\Model\>, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Models/HorarioRuta.php
-
-		-
 			message: '#^Property App\\Models\\HorarioRuta\:\:\$rules has no type specified\.$#'
 			identifier: missingType.property
 			count: 1
@@ -6257,18 +5849,6 @@ parameters:
 			identifier: argument.templateType
 			count: 1
 			path: app/Models/HorarioRuta.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/InventarioProducto.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/InventarioProducto.php
 
 		-
 			message: '#^Class App\\Models\\InventarioProducto uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
@@ -6433,18 +6013,6 @@ parameters:
 			path: app/Models/LogAccesoSistema.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/Marca.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/Marca.php
-
-		-
 			message: '#^Method App\\Models\\Marca\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
 			identifier: return.type
 			count: 1
@@ -6485,18 +6053,6 @@ parameters:
 			identifier: missingType.property
 			count: 1
 			path: app/Models/Marca.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/MensajeHacienda.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/MensajeHacienda.php
 
 		-
 			message: '#^Class App\\Models\\MensajeHacienda uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
@@ -6613,18 +6169,6 @@ parameters:
 			path: app/Models/ModeloBus.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/MovimientoBancario.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/MovimientoBancario.php
-
-		-
 			message: '#^Class App\\Models\\MovimientoBancario uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -6721,18 +6265,6 @@ parameters:
 			path: app/Models/MovimientoBancario.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/MovimientoCajaChica.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/MovimientoCajaChica.php
-
-		-
 			message: '#^Class App\\Models\\MovimientoCajaChica uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -6821,18 +6353,6 @@ parameters:
 			identifier: missingType.parameter
 			count: 1
 			path: app/Models/MovimientoCajaChica.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/NominaEmpleado.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/NominaEmpleado.php
 
 		-
 			message: '#^Class App\\Models\\NominaEmpleado uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
@@ -7147,18 +6667,6 @@ parameters:
 			path: app/Models/Notificacion.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/OrdenCompra.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/OrdenCompra.php
-
-		-
 			message: '#^Class App\\Models\\OrdenCompra uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -7273,18 +6781,6 @@ parameters:
 			path: app/Models/OrdenCompra.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/Pago.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/Pago.php
-
-		-
 			message: '#^Class App\\Models\\Pago uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -7375,18 +6871,6 @@ parameters:
 			path: app/Models/Pago.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/PagoCuentaCobrar.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/PagoCuentaCobrar.php
-
-		-
 			message: '#^Class App\\Models\\PagoCuentaCobrar uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -7471,18 +6955,6 @@ parameters:
 			path: app/Models/PagoCuentaCobrar.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/PagoCuentaPagar.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/PagoCuentaPagar.php
-
-		-
 			message: '#^Class App\\Models\\PagoCuentaPagar uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -7565,18 +7037,6 @@ parameters:
 			identifier: missingType.parameter
 			count: 1
 			path: app/Models/PagoCuentaPagar.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/PagoNomina.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/PagoNomina.php
 
 		-
 			message: '#^Class App\\Models\\PagoNomina uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
@@ -7693,18 +7153,6 @@ parameters:
 			path: app/Models/PagoNomina.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/PeriodoNomina.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/PeriodoNomina.php
-
-		-
 			message: '#^Class App\\Models\\PeriodoNomina uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -7789,18 +7237,6 @@ parameters:
 			path: app/Models/PeriodoNomina.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/Permiso.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/Permiso.php
-
-		-
 			message: '#^Class App\\Models\\Permiso uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -7859,18 +7295,6 @@ parameters:
 			identifier: missingType.property
 			count: 1
 			path: app/Models/Permiso.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/PlanillaCcss.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/PlanillaCcss.php
 
 		-
 			message: '#^Class App\\Models\\PlanillaCcss uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
@@ -7943,18 +7367,6 @@ parameters:
 			identifier: missingType.parameter
 			count: 1
 			path: app/Models/PlanillaCcss.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/Presupuesto.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/Presupuesto.php
 
 		-
 			message: '#^Class App\\Models\\Presupuesto uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
@@ -8051,18 +7463,6 @@ parameters:
 			identifier: missingType.property
 			count: 1
 			path: app/Models/Presupuesto.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/Producto.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/Producto.php
 
 		-
 			message: '#^Class App\\Models\\Producto uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
@@ -8167,18 +7567,6 @@ parameters:
 			path: app/Models/Producto.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/Proveedor.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/Proveedor.php
-
-		-
 			message: '#^Class App\\Models\\Proveedor uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -8245,18 +7633,6 @@ parameters:
 			path: app/Models/Proveedor.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/RegimenTributario.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/RegimenTributario.php
-
-		-
 			message: '#^Method App\\Models\\RegimenTributario\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
 			identifier: return.type
 			count: 1
@@ -8297,18 +7673,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Models/RegimenTributario.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/RetencionImpuesto.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/RetencionImpuesto.php
 
 		-
 			message: '#^Class App\\Models\\RetencionImpuesto uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
@@ -8399,18 +7763,6 @@ parameters:
 			identifier: missingType.parameter
 			count: 1
 			path: app/Models/RetencionImpuesto.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/Rol.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/Rol.php
 
 		-
 			message: '#^Class App\\Models\\Rol uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
@@ -8515,18 +7867,6 @@ parameters:
 			path: app/Models/Rol.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/RolPermiso.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/RolPermiso.php
-
-		-
 			message: '#^Method App\\Models\\RolPermiso\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
 			identifier: return.type
 			count: 1
@@ -8567,18 +7907,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Models/RolPermiso.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/RolUsuario.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/RolUsuario.php
 
 		-
 			message: '#^Class App\\Models\\RolUsuario uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
@@ -8641,18 +7969,6 @@ parameters:
 			path: app/Models/RolUsuario.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/Ruta.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/Ruta.php
-
-		-
 			message: '#^Method App\\Models\\Ruta\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -8699,18 +8015,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Models/Ruta.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/SalidaInventario.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/SalidaInventario.php
 
 		-
 			message: '#^Method App\\Models\\SalidaInventario\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
@@ -8773,150 +8077,6 @@ parameters:
 			path: app/Models/SesionUsuario.php
 
 		-
-			message: '#^Method App\\Models\\SesionUsuario\:\:activar\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/SesionUsuario.php
-
-		-
-			message: '#^Method App\\Models\\SesionUsuario\:\:actualizarAcceso\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/SesionUsuario.php
-
-		-
-			message: '#^Method App\\Models\\SesionUsuario\:\:cerrarSesionesUsuario\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/SesionUsuario.php
-
-		-
-			message: '#^Method App\\Models\\SesionUsuario\:\:cerrarSesionesUsuario\(\) has parameter \$usuarioId with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/SesionUsuario.php
-
-		-
-			message: '#^Method App\\Models\\SesionUsuario\:\:crearSesion\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/SesionUsuario.php
-
-		-
-			message: '#^Method App\\Models\\SesionUsuario\:\:crearSesion\(\) has parameter \$token with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/SesionUsuario.php
-
-		-
-			message: '#^Method App\\Models\\SesionUsuario\:\:crearSesion\(\) has parameter \$usuarioId with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/SesionUsuario.php
-
-		-
-			message: '#^Method App\\Models\\SesionUsuario\:\:desactivar\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/SesionUsuario.php
-
-		-
-			message: '#^Method App\\Models\\SesionUsuario\:\:estaExpirada\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/SesionUsuario.php
-
-		-
-			message: '#^Method App\\Models\\SesionUsuario\:\:estaExpirada\(\) has parameter \$horas with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/SesionUsuario.php
-
-		-
-			message: '#^Method App\\Models\\SesionUsuario\:\:getNavegadorAttribute\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/SesionUsuario.php
-
-		-
-			message: '#^Method App\\Models\\SesionUsuario\:\:getSistemaOperativoAttribute\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/SesionUsuario.php
-
-		-
-			message: '#^Method App\\Models\\SesionUsuario\:\:limpiarExpiradas\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/SesionUsuario.php
-
-		-
-			message: '#^Method App\\Models\\SesionUsuario\:\:limpiarExpiradas\(\) has parameter \$horas with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/SesionUsuario.php
-
-		-
-			message: '#^Method App\\Models\\SesionUsuario\:\:porToken\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/SesionUsuario.php
-
-		-
-			message: '#^Method App\\Models\\SesionUsuario\:\:porToken\(\) has parameter \$token with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/SesionUsuario.php
-
-		-
-			message: '#^Method App\\Models\\SesionUsuario\:\:scopeExpiradas\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/SesionUsuario.php
-
-		-
-			message: '#^Method App\\Models\\SesionUsuario\:\:scopeExpiradas\(\) has parameter \$horas with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/SesionUsuario.php
-
-		-
-			message: '#^Method App\\Models\\SesionUsuario\:\:scopeExpiradas\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/SesionUsuario.php
-
-		-
-			message: '#^Method App\\Models\\SesionUsuario\:\:scopePorUsuario\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/SesionUsuario.php
-
-		-
-			message: '#^Method App\\Models\\SesionUsuario\:\:scopePorUsuario\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/SesionUsuario.php
-
-		-
-			message: '#^Method App\\Models\\SesionUsuario\:\:scopePorUsuario\(\) has parameter \$usuarioId with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/SesionUsuario.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/Sucursal.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/Sucursal.php
-
-		-
 			message: '#^Method App\\Models\\Sucursal\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -8963,18 +8123,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Models/Sucursal.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/TasaImpuesto.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/TasaImpuesto.php
 
 		-
 			message: '#^Method App\\Models\\TasaImpuesto\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
@@ -9091,18 +8239,6 @@ parameters:
 			path: app/Models/TipoCambioHistorial.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/TipoCliente.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/TipoCliente.php
-
-		-
 			message: '#^Class App\\Models\\TipoCliente uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -9137,18 +8273,6 @@ parameters:
 			identifier: missingType.return
 			count: 1
 			path: app/Models/TipoCliente.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/TipoComprobanteFe.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/TipoComprobanteFe.php
 
 		-
 			message: '#^Class App\\Models\\TipoComprobanteFe uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
@@ -9217,18 +8341,6 @@ parameters:
 			path: app/Models/TipoComprobanteFe.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/TipoCuenta.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/TipoCuenta.php
-
-		-
 			message: '#^Method App\\Models\\TipoCuenta\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
 			identifier: return.type
 			count: 1
@@ -9269,18 +8381,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Models/TipoCuenta.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/TipoImpuesto.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/TipoImpuesto.php
 
 		-
 			message: '#^Method App\\Models\\TipoImpuesto\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
@@ -9361,18 +8461,6 @@ parameters:
 			path: app/Models/Traits/CustomTimestamps.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/UnidadMedida.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/UnidadMedida.php
-
-		-
 			message: '#^Method App\\Models\\UnidadMedida\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
 			identifier: return.type
 			count: 1
@@ -9415,18 +8503,6 @@ parameters:
 			path: app/Models/UnidadMedida.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/UrlShortener.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/UrlShortener.php
-
-		-
 			message: '#^Method App\\Models\\UrlShortener\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -9455,18 +8531,6 @@ parameters:
 			identifier: property.phpDocType
 			count: 1
 			path: app/Models/UrlShortener.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/Usuario.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/Usuario.php
 
 		-
 			message: '#^Class App\\Models\\Usuario uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
@@ -9565,18 +8629,6 @@ parameters:
 			path: app/Models/Usuario.php
 
 		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/UsuarioRol.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/UsuarioRol.php
-
-		-
 			message: '#^Method App\\Models\\UsuarioRol\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
 			identifier: return.type
 			count: 1
@@ -9617,18 +8669,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Models/UsuarioRol.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/Venta.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/Venta.php
 
 		-
 			message: '#^Class App\\Models\\Venta uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
@@ -9683,18 +8723,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Models/Venta.php
-
-		-
-			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/ZonaGeografica.php
-
-		-
-			message: '#^Cannot call method isForceDeleting\(\) on class\-string\|object\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/ZonaGeografica.php
 
 		-
 			message: '#^Class App\\Models\\ZonaGeografica uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
@@ -9769,22 +8797,16 @@ parameters:
 			path: app/Models/ZonaGeografica.php
 
 		-
-			message: '#^Method App\\Multitenancy\\TenantFinder\\HeaderSubdomainTenantFinder\:\:headerKeys\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
+			message: '#^Cannot cast array\<string, array\<int, string\|null\>\>\|non\-empty\-string to string\.$#'
+			identifier: cast.string
 			count: 1
 			path: app/Multitenancy/TenantFinder/HeaderSubdomainTenantFinder.php
 
 		-
-			message: '#^Parameter \#1 \$rol of method App\\Services\\PermissionService\:\:clearRolePermissionCache\(\) expects App\\Models\\Rol, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
+			message: '#^Method App\\Multitenancy\\TenantFinder\\HeaderSubdomainTenantFinder\:\:headerKeys\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
 			count: 1
-			path: app/Observers/PermisoObserver.php
-
-		-
-			message: '#^Parameter \#1 \$usuario of method App\\Services\\PermissionService\:\:clearUserPermissionCache\(\) expects App\\Models\\Usuario, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Observers/RolObserver.php
+			path: app/Multitenancy/TenantFinder/HeaderSubdomainTenantFinder.php
 
 		-
 			message: '#^Method App\\Services\\AI\\AIServiceInterface\:\:analyzeImage\(\) has parameter \$options with no value type specified in iterable type array\.$#'
@@ -10073,6 +9095,12 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/AI/ChatbotService.php
+
+		-
+			message: '#^Cannot call method isoFormat\(\) on Carbon\\Carbon\|string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/AI/ContentGeneratorService.php
 
 		-
 			message: '#^Method App\\Services\\AI\\ContentGeneratorService\:\:generateBatchReminders\(\) has parameter \$cuentasCobrar with no value type specified in iterable type array\.$#'
@@ -10573,6 +9601,12 @@ parameters:
 			path: app/Services/AI/OpenAIService.php
 
 		-
+			message: '#^Cannot access property \$monthName on Carbon\\Carbon\|string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Services/AI/PredictionService.php
+
+		-
 			message: '#^Method App\\Services\\AI\\PredictionService\:\:analyzeSalesTrends\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -10873,8 +9907,32 @@ parameters:
 			path: app/Services/Hacienda/RateLimiter.php
 
 		-
+			message: '#^Cannot access property \$length on DOMNodeList\<DOMNameSpaceNode\|DOMNode\>\|false\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: app/Services/Hacienda/Xml/FirmaDigitalService.php
+
+		-
+			message: '#^Cannot access property \$nodeValue on DOMNameSpaceNode\|DOMNode\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Services/Hacienda/Xml/FirmaDigitalService.php
+
+		-
+			message: '#^Cannot call method item\(\) on DOMNodeList\<DOMNameSpaceNode\|DOMNode\>\|false\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: app/Services/Hacienda/Xml/FirmaDigitalService.php
+
+		-
 			message: '#^Method App\\Services\\Hacienda\\Xml\\FirmaDigitalService\:\:extraerCertificado\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Hacienda/Xml/FirmaDigitalService.php
+
+		-
+			message: '#^Method App\\Services\\Hacienda\\Xml\\FirmaDigitalService\:\:firmarLegacy\(\) should return string but returns string\|false\.$#'
+			identifier: return.type
 			count: 1
 			path: app/Services/Hacienda/Xml/FirmaDigitalService.php
 
@@ -10882,6 +9940,12 @@ parameters:
 			message: '#^Method App\\Services\\Hacienda\\Xml\\FirmaDigitalService\:\:getInformacionCertificado\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
+			path: app/Services/Hacienda/Xml/FirmaDigitalService.php
+
+		-
+			message: '#^Offset ''cert'' might not exist on array\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 3
 			path: app/Services/Hacienda/Xml/FirmaDigitalService.php
 
 		-
@@ -10903,20 +9967,38 @@ parameters:
 			path: app/Services/Hacienda/Xml/FirmaDigitalService.php
 
 		-
+			message: '#^Argument of an invalid type DOMNodeList\<DOMNameSpaceNode\|DOMNode\>\|false supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: app/Services/Hacienda/Xml/XadesEpesSigner.php
+
+		-
+			message: '#^Cannot call method C14N\(\) on DOMElement\|null\.$#'
+			identifier: method.nonObject
+			count: 3
+			path: app/Services/Hacienda/Xml/XadesEpesSigner.php
+
+		-
+			message: '#^Method App\\Services\\Hacienda\\Xml\\XadesEpesSigner\:\:sign\(\) should return string but returns string\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/Hacienda/Xml/XadesEpesSigner.php
+
+		-
 			message: '#^Property App\\Services\\Hacienda\\Xml\\XadesEpesSigner\:\:\$certInfo type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/Hacienda/Xml/XadesEpesSigner.php
 
 		-
-			message: '#^Method App\\Services\\Hacienda\\Xml\\XmlComprobanteBuilder\:\:formatearDecimal\(\) has parameter \$valor with no type specified\.$#'
-			identifier: missingType.parameter
+			message: '#^Method App\\Services\\Hacienda\\Xml\\XmlComprobanteBuilder\:\:build\(\) should return string but returns string\|false\.$#'
+			identifier: return.type
 			count: 1
 			path: app/Services/Hacienda/Xml/XmlComprobanteBuilder.php
 
 		-
-			message: '#^Parameter \#2 \$value of method DOMDocument\:\:createElement\(\) expects string, int\<min, \-1\>\|int\<1, max\> given\.$#'
-			identifier: argument.type
+			message: '#^Method App\\Services\\Hacienda\\Xml\\XmlComprobanteBuilder\:\:formatearDecimal\(\) has parameter \$valor with no type specified\.$#'
+			identifier: missingType.parameter
 			count: 1
 			path: app/Services/Hacienda/Xml/XmlComprobanteBuilder.php
 
