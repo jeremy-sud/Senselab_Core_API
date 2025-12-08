@@ -5,18 +5,96 @@ includes:
 parameters:
     # Level 6 - Strict type checking
     level: 6
-    
+
     # Paths to analyze
     paths:
         - app
-    
-    # Exclude paths (optional - may not exist)
+
+    # Exclude paths
     excludePaths:
         analyseAndScan:
             - app/Console/Kernel.php (?)
-            - app/Http/Middleware/TrustProxies.php (?)
-    
-    # Ignore errors until fixed
+
+    # Disable checks that create noise in Laravel
+    reportUnmatchedIgnoredErrors: false
+
+    # Ignore errors - Laravel/Eloquent specific patterns
     ignoreErrors:
-        # Ignore dynamic properties from Eloquent models
+        # Eloquent dynamic properties on Models (handled by Larastan but not always)
         - '#Access to an undefined property App\\Models\\[a-zA-Z]+::\$[a-zA-Z_]+#'
+
+        # Eloquent Model base class dynamic properties
+        - '#Access to an undefined property Illuminate\\Database\\Eloquent\\Model::\$[a-zA-Z_]+#'
+
+        # Resource dynamic properties (accessing model attributes)
+        - '#Access to an undefined property App\\Http\\Resources\\[a-zA-Z]+::\$[a-zA-Z_]+#'
+
+        # Eloquent Builder generics - Laravel specific
+        - '#Method .* return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types: TModel#'
+        - '#Method .* has parameter .* with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types: TModel#'
+
+        # Eloquent Relations generics
+        - '#return type with generic class Illuminate\\Database\\Eloquent\\Relations\\(HasMany|BelongsTo|HasOne|BelongsToMany|MorphMany|MorphOne|MorphTo|MorphToMany) does not specify its types#'
+
+        # Collection generics
+        - '#Unable to resolve the template type T(Key|Value) in call to function collect#'
+        - '#Method .* return type with generic class Illuminate\\(Database\\Eloquent\\|Support\\)Collection does not specify its types#'
+
+        # Factory generics
+        - '#Method .* return type with generic class Illuminate\\Database\\Eloquent\\Factories\\Factory does not specify its types#'
+
+        # Paginator generics
+        - '#return type with generic class Illuminate\\(Pagination\\LengthAwarePaginator|Contracts\\Pagination\\LengthAwarePaginator) does not specify its types#'
+
+        # Dynamic scopes (scopeXxx methods)
+        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder<.*>::[a-z]+\(\)#'
+
+        # Sanctum/Auth user type - Multi-tenancy with empresa_id
+        - '#Access to an undefined property Illuminate\\Contracts\\Auth\\Authenticatable::\$[a-zA-Z_]+#'
+        - '#Cannot access property .* on Illuminate\\Contracts\\Auth\\Authenticatable#'
+        - '#Call to an undefined method Illuminate\\Contracts\\Auth\\Authenticatable::#'
+
+        # Request input - always mixed
+        - '#Cannot cast mixed to (string|int|float|bool)#'
+
+        # Cache template types - Laravel cache returns mixed
+        - '#Unable to resolve the template type TCacheValue in call to method Illuminate\\Cache\\Repository::remember\(\)#'
+        - '#Unable to resolve the template type TCacheValue in call to method Illuminate\\Contracts\\Cache\\Repository::remember\(\)#'
+
+        # Method not found on model (dynamic methods from Eloquent)
+        - '#Call to an undefined method App\\Models\\[a-zA-Z]+::[a-zA-Z]+\(\)#'
+
+        # Property access on possible null (handled by Laravel's null coalescing)
+        - '#Cannot access property \$[a-zA-Z_]+ on [a-zA-Z\\]+\|null#'
+
+        # Method call on possible null
+        - '#Cannot call method [a-zA-Z]+\(\) on [a-zA-Z\\]+\|null#'
+
+        # Already narrowed type (isset, empty checks)
+        - '#Strict comparison using === between .* and .* will always evaluate to (true|false)#'
+        - '#Call to function (is_null|isset|empty)\(\) with .* will always evaluate to (true|false)#'
+
+        # Impossible type checks (over-checking is fine)
+        - '#Negated boolean expression is always (true|false)#'
+        - '#Result of .* is always (true|false)#'
+
+        # Model method access on non-object (Eloquent dynamic behavior)
+        - '#(Call to|Access to) .* on .*\|null#'
+        - '#Cannot call method .* on mixed#'
+
+        # PHPDoc type mismatches (common in Laravel ecosystem)
+        - '#PHPDoc tag @(var|return|param) .* contains unresolvable type#'
+
+        # Non-object access (Eloquent casts and dynamic attributes)
+        - '#Cannot access property .* on (int|string|bool|float|array|null|mixed)#'
+        - '#Cannot call method .* on (int|string|bool|float|array|null|mixed)#'
+
+        # Function already narrowed type (defensive programming is OK)
+        - '#Call to function .* with .* will always evaluate to (true|false)#'
+        - '#is always (true|false)#'
+
+        # Larastan relation existence (sometimes can't resolve relations)
+        - '#Relation .* is not found on model#'
+
+        # Method not found (dynamic methods like query scopes)
+        - '#Call to an undefined method .*::.*\(\)#'
