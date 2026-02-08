@@ -31,6 +31,11 @@ class HaciendaController extends ApiController
     public function generar(Comprobante $comprobante, Request $request): JsonResponse
     {
         try {
+            // Este endpoint crea el registro de `HaciendaComprobante` que
+            // representa el flujo de envío de un comprobante a Hacienda.
+            // No genera ni firma el XML aquí; solo prepara el registro y
+            // calcula la `clave` única. Pasos posteriores (generarXml,
+            // firmar, enviar) realizan el resto del flujo.
             $tipo = $request->input('tipo', HaciendaIntegrationService::TYPE_FACTURA);
 
             $haciendaComprobante = HaciendaIntegrationService::generateComprobante($comprobante, $tipo);
@@ -60,6 +65,9 @@ class HaciendaController extends ApiController
     public function generarXml(HaciendaComprobante $haciendaComprobante): JsonResponse
     {
         try {
+            // Genera el XML conforme al esquema y lo guarda en el registro.
+            // Retorna una vista previa del XML (primeros 500 caracteres)
+            // para facilitar inspección rápida en el cliente.
             if (! HaciendaIntegrationService::generateXml($haciendaComprobante)) {
                 return $this->error('No se pudo generar el XML', 422);
             }
@@ -84,6 +92,10 @@ class HaciendaController extends ApiController
     public function firmar(HaciendaComprobante $haciendaComprobante, Request $request): JsonResponse
     {
         try {
+            // Valida que se proporcionen ruta y contraseña del certificado.
+            // En entornos reales, la ruta al certificado debería estar
+            // protegida y/o almacenada en un HSM. Aquí se acepta ruta local
+            // para entornos controlados.
             $request->validate([
                 'certificado_ruta' => 'required|string',
                 'certificado_password' => 'required|string',
@@ -116,6 +128,9 @@ class HaciendaController extends ApiController
     public function enviar(HaciendaComprobante $haciendaComprobante): JsonResponse
     {
         try {
+            // Envía el XML firmado a Hacienda usando la URL configurada
+            // en `config/hacienda.php`. Se espera que `sendToHacienda`
+            // persista la respuesta para auditoría.
             if (! HaciendaIntegrationService::sendToHacienda($haciendaComprobante)) {
                 return $this->error('No se pudo enviar el comprobante a Hacienda', 422);
             }
@@ -140,6 +155,8 @@ class HaciendaController extends ApiController
     public function getEstado(HaciendaComprobante $haciendaComprobante): JsonResponse
     {
         try {
+            // Consulta el estado actual del comprobante en Hacienda y
+            // sincroniza el estado local si es necesario.
             $status = HaciendaIntegrationService::getStatus($haciendaComprobante);
 
             if (! $status) {
@@ -161,6 +178,8 @@ class HaciendaController extends ApiController
     public function estadisticas(): JsonResponse
     {
         try {
+            // Devuelve métricas agregadas sobre los comprobantes: totales
+            // por estado. Útil para dashboards operativos.
             $stats = HaciendaIntegrationService::getStatistics();
 
             return $this->success($stats, 'Estadísticas de comprobantes');
@@ -179,6 +198,9 @@ class HaciendaController extends ApiController
     public function index(Request $request): JsonResponse
     {
         try {
+            // Lista comprobantes con filtros comunes (estado, tipo, empresa,
+            // clave) y paginación. Devuelve recursos paginados para uso
+            // eficiente en UI.
             $query = HaciendaComprobante::with('comprobante', 'empresa');
 
             // Filtros
@@ -216,6 +238,9 @@ class HaciendaController extends ApiController
     public function show(HaciendaComprobante $haciendaComprobante): JsonResponse
     {
         try {
+            // Detalle conciso del comprobante para vistas de administrador
+            // o conciliación. Decodifica la respuesta de Hacienda para
+            // facilitar inspección desde el cliente.
             return $this->success([
                 'id' => $haciendaComprobante->id,
                 'comprobante_id' => $haciendaComprobante->comprobante_id,

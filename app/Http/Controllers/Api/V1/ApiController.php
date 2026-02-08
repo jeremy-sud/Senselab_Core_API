@@ -24,6 +24,9 @@ class ApiController extends Controller
         int $code = 200,
         array $headers = []
     ): JsonResponse {
+        // Respuesta estándar para todas las APIs: estructura consistente
+        // { success: true, message: '', data: ... }
+        // Esto facilita el consumo por clientes front-end y móviles.
         return response()->json([
             'success' => true,
             'message' => $message,
@@ -49,6 +52,8 @@ class ApiController extends Controller
             $response['errors'] = $errors;
         }
 
+        // Error response standardized. Optionally incluye detalles de
+        // validación o información adicional en `errors` para debug.
         return response()->json($response, $code, $headers);
     }
 
@@ -57,6 +62,8 @@ class ApiController extends Controller
      */
     protected function validationError(array $errors, string $message = 'Validation failed'): JsonResponse
     {
+        // Respuesta específica para errores de validación. Usar cuando
+        // la carga del request no cumple las reglas de negocio.
         return response()->json([
             'success' => false,
             'message' => $message,
@@ -102,6 +109,8 @@ class ApiController extends Controller
      */
     protected function paginated($items, string $message = 'Success'): JsonResponse
     {
+        // Formato de respuesta para listas paginadas. Devuelve los items
+        // y un bloque `pagination` con metadatos útiles para la UI.
         return response()->json([
             'success' => true,
             'message' => $message,

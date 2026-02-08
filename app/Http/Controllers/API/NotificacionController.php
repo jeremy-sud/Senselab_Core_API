@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * API Controller para `Notificacion`.
+ *
+ * Maneja listado, creación y gestión de notificaciones dirigidas a usuarios.
+ * Implementa caching y autorización via policies.
+ */
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;

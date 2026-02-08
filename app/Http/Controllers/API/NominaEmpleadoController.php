@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * API Controller para `NominaEmpleado`.
+ *
+ * Provee endpoints para gestionar nóminas por empleado: listados,
+ * creación y consultas por periodo. Operaciones sensibles a permisos.
+ */
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;

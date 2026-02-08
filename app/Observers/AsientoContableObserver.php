@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Observador para `AsientoContable`.
+ *
+ * Lugar para reaccionar ante la creación/actualización/eliminación de asientos
+ * contables (ej. sincronizar libros, emitir alertas, validar integridad).
+ */
 namespace App\Observers;
 
 use App\Models\AsientoContable;

@@ -99,6 +99,12 @@ class HaciendaComprobante extends Model
     }
 
     /**
+     * Nota: Los scopes devuelven queries para encadenar filtros y mantener
+     * el código de control limpio en controladores/servicios. Ejemplo:
+     * HaciendaComprobante::byEmpresa(1)->pending()->get();
+     */
+
+    /**
      * Scope: Filtrar por tipo de comprobante
      */
     public function scopeByTipo($query, string $tipo)
@@ -185,6 +191,9 @@ class HaciendaComprobante extends Model
      */
     public function updateEstado(string $nuevoEstado, ?string $mensaje = null): bool
     {
+        // Actualiza el estado interno y opcionalmente asigna un mensaje de error.
+        // Este método centraliza la lógica de transición de estados para
+        // mantener consistencia y punto único de modificación.
         $this->estado = $nuevoEstado;
         if ($mensaje) {
             $this->mensaje_error = $mensaje;
@@ -197,6 +206,8 @@ class HaciendaComprobante extends Model
      */
     public function markAsSigned(): bool
     {
+        // Marca el comprobante como firmado. Se utiliza después de aplicar
+        // la firma XAdES-EPES sobre el XML y persistir el XML firmado.
         return $this->updateEstado('signed');
     }
 
@@ -205,6 +216,8 @@ class HaciendaComprobante extends Model
      */
     public function markAsSent(): bool
     {
+        // Indica que el comprobante fue transmitido a Hacienda (estado sent).
+        // No implica aceptación; Hacienda puede responder aceptando o rechazando.
         return $this->updateEstado('sent');
     }
 
@@ -216,6 +229,9 @@ class HaciendaComprobante extends Model
         if ($numeroSecuencia) {
             $this->numero_secuencia = $numeroSecuencia;
         }
+        // Cuando Hacienda acepta el comprobante se puede asignar un número
+        // de secuencia que la entidad emite. Guardarlo aquí facilita la
+        // conciliación y trazabilidad del comprobante.
         return $this->updateEstado('accepted');
     }
 
@@ -224,6 +240,7 @@ class HaciendaComprobante extends Model
      */
     public function markAsRejected(string $motivo): bool
     {
+        // Registrar motivo de rechazo para auditoría y acciones correctivas.
         return $this->updateEstado('rejected', $motivo);
     }
 

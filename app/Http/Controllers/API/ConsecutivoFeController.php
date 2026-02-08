@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * API Controller para `ConsecutivoFe` (consecutivos de facturación electrónica).
+ *
+ * Administra la creación y consulta de rangos autorizados por la DGT.
+ * Este recurso es crítico para cumplimiento legal; validaciones estrictas
+ * se aplican en `store`.
+ */
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;

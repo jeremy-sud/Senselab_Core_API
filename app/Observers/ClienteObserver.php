@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Observador para el modelo `Cliente`.
+ *
+ * Ideal para añadir comportamiento como limpieza de cache, validaciones
+ * adicionales o disparar eventos de integración cuando cambia información
+ * crítica del cliente.
+ */
 namespace App\Observers;
 
 use App\Models\Cliente;

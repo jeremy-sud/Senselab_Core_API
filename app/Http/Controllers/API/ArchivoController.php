@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Controlador API para gestión de archivos adjuntos (`Archivo`).
+ *
+ * Centraliza subida, listado, descarga y manejo de metadatos de archivos.
+ * Implementa almacenamiento en disco privado y cálculo de hash para integridad.
+ */
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
