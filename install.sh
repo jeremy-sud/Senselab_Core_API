@@ -118,6 +118,12 @@ DB_NAME=${DB_NAME:-api_db}
 read -r -p "Nombre de la base de datos de testing [api_db_testing]: " DB_TEST_NAME
 DB_TEST_NAME=${DB_TEST_NAME:-api_db_testing}
 
+read -r -p "Host de MySQL [127.0.0.1]: " DB_HOST
+DB_HOST=${DB_HOST:-127.0.0.1}
+
+read -r -p "Puerto de MySQL [3306]: " DB_PORT
+DB_PORT=${DB_PORT:-3306}
+
 # Función robusta para actualizar o añadir claves en .env (escapa / adecuadamente)
 update_env() {
     local key="$1"
@@ -142,23 +148,36 @@ echo ""
 # 5. Crear bases de datos
 echo "Paso 5: Creando bases de datos..."
 
-# Crear base de datos principal
-mysql -u "$DB_USER" -p"$DB_PASS" -e "CREATE DATABASE IF NOT EXISTS $DB_NAME CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" 2>/dev/null
-if [ $? -eq 0 ]; then
+# Crear un archivo temporal de configuración MySQL para evitar exponer la contraseña en la línea de comandos
+MYSQL_CNF=$(mktemp)
+trap 'rm -f "${MYSQL_CNF}"' EXIT
+cat > "${MYSQL_CNF}" <<EOF
+[client]
+user=${DB_USER}
+password=${DB_PASS}
+host=${DB_HOST}
+port=${DB_PORT}
+EOF
+
+# Crear base de datos principal usando --defaults-extra-file
+if mysql --defaults-extra-file="${MYSQL_CNF}" -e "CREATE DATABASE IF NOT EXISTS \\`${DB_NAME}\\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" 2>/dev/null; then
     print_success "Base de datos '$DB_NAME' creada"
 else
     print_error "Error al crear base de datos '$DB_NAME'"
-    print_info "Verifica que las credenciales de MySQL sean correctas"
+    print_info "Verifica que las credenciales de MySQL sean correctas o que el servidor esté accesible"
+    rm -f "${MYSQL_CNF}"
     exit 1
 fi
 
 # Crear base de datos de testing
-mysql -u "$DB_USER" -p"$DB_PASS" -e "CREATE DATABASE IF NOT EXISTS $DB_TEST_NAME CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" 2>/dev/null
-if [ $? -eq 0 ]; then
+if mysql --defaults-extra-file="${MYSQL_CNF}" -e "CREATE DATABASE IF NOT EXISTS \\`${DB_TEST_NAME}\\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" 2>/dev/null; then
     print_success "Base de datos '$DB_TEST_NAME' creada"
 else
     print_error "Error al crear base de datos de testing '$DB_TEST_NAME'"
 fi
+
+# Remover archivo temporal (trap eliminará si el script sale prematuramente)
+rm -f "${MYSQL_CNF}"
 
 echo ""
 
