@@ -67,8 +67,15 @@ RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
     && docker-php-ext-enable redis \
     && apk del .build-deps
 
+# Instalar XDebug para desarrollo/debug
+RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+    && pecl install xdebug \
+    && docker-php-ext-enable xdebug \
+    && apk del .build-deps
+
 # Configuración de PHP personalizada
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/custom.ini
+COPY docker/php/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 COPY docker/php/php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
 
 # Crear usuario para Laravel

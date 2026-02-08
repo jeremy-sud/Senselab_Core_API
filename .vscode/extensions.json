@@ -3,12 +3,13 @@
     "humao.rest-client",
     "arjun.swagger-viewer",
     "rangav.vscode-thunder-client",
-    "intelephense.intelephense",
     "eamodio.gitlens",
     "aaron-bond.better-comments",
+    "intelephense.intelephense",
+    "xdebug.php-debug",
     "phpstan.phpstan",
     "junstyle.php-cs-fixer",
-    "GitHub.copilot",
-    "xdebug.php-debug"
+    "GitHub.copilot"
   ]
 }
+
