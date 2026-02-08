@@ -1047,6 +1047,53 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
         ->middleware('permission:ver-facturacion_electronica');
 
     // ========================================================================
+    // MÓDULO: HACIENDA COSTA RICA - FACTURACIÓN ELECTRÓNICA (v4.4)
+    // Integración con Ministerio de Hacienda
+    // Permisos: hacienda.*
+    // ========================================================================
+    Route::prefix('v1/hacienda')->group(function () {
+        // Listar comprobantes con filtrado y paginación
+        Route::get('/', [\App\Http\Controllers\Api\V1\HaciendaController::class, 'index'])
+            ->name('api.hacienda.index')
+            ->middleware('permission:ver-hacienda');
+        
+        // Generar nuevo comprobante
+        Route::post('/generar', [\App\Http\Controllers\Api\V1\HaciendaController::class, 'generar'])
+            ->name('api.hacienda.generar')
+            ->middleware(['permission:crear-hacienda', 'throttle:hacienda']);
+        
+        // Generar XML del comprobante
+        Route::post('/{id}/generar-xml', [\App\Http\Controllers\Api\V1\HaciendaController::class, 'generarXml'])
+            ->name('api.hacienda.generar-xml')
+            ->middleware(['permission:editar-hacienda', 'throttle:hacienda']);
+        
+        // Firmar comprobante con certificado
+        Route::post('/{id}/firmar', [\App\Http\Controllers\Api\V1\HaciendaController::class, 'firmar'])
+            ->name('api.hacienda.firmar')
+            ->middleware(['permission:editar-hacienda', 'throttle:hacienda']);
+        
+        // Enviar a Hacienda
+        Route::post('/{id}/enviar', [\App\Http\Controllers\Api\V1\HaciendaController::class, 'enviar'])
+            ->name('api.hacienda.enviar')
+            ->middleware(['permission:editar-hacienda', 'throttle:hacienda']);
+        
+        // Obtener estado actual
+        Route::get('/{id}/estado', [\App\Http\Controllers\Api\V1\HaciendaController::class, 'getEstado'])
+            ->name('api.hacienda.estado')
+            ->middleware('permission:ver-hacienda');
+        
+        // Estadísticas de comprobantes
+        Route::get('/estadisticas/resumen', [\App\Http\Controllers\Api\V1\HaciendaController::class, 'estadisticas'])
+            ->name('api.hacienda.estadisticas')
+            ->middleware('permission:ver-hacienda');
+        
+        // Ver detalle de comprobante
+        Route::get('/{id}', [\App\Http\Controllers\Api\V1\HaciendaController::class, 'show'])
+            ->name('api.hacienda.show')
+            ->middleware('permission:ver-hacienda');
+    });
+
+    // ========================================================================
     // MÓDULO: INTELIGENCIA ARTIFICIAL (IA)
     // Endpoints para OCR, Chatbot y Predicciones con IA
     // ========================================================================
