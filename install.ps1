@@ -103,10 +103,18 @@ if ([string]::IsNullOrWhiteSpace($dbName)) { $dbName = "api_db" }
 $dbTestName = Read-Host "Nombre de la base de datos de testing [api_db_testing]"
 if ([string]::IsNullOrWhiteSpace($dbTestName)) { $dbTestName = "api_db_testing" }
 
-# Actualizar .env
-(Get-Content .env) -replace 'DB_USERNAME=.*', "DB_USERNAME=$dbUser" | Set-Content .env
-(Get-Content .env) -replace 'DB_PASSWORD=.*', "DB_PASSWORD=$dbPass" | Set-Content .env
-(Get-Content .env) -replace 'DB_DATABASE=.*', "DB_DATABASE=$dbName" | Set-Content .env
+# Actualizar .env de forma segura (reemplaza solo las claves necesarias)
+$envPath = Join-Path -Path (Get-Location) -ChildPath '.env'
+$lines = Get-Content $envPath -ErrorAction Stop
+for ($i = 0; $i -lt $lines.Length; $i++) {
+    if ($lines[$i] -match '^DB_USERNAME=') { $lines[$i] = "DB_USERNAME=$dbUser" }
+    if ($lines[$i] -match '^DB_PASSWORD=') { $lines[$i] = "DB_PASSWORD=$dbPass" }
+    if ($lines[$i] -match '^DB_DATABASE=') { $lines[$i] = "DB_DATABASE=$dbName" }
+}
+# Asegurar que exista DB_DATABASE_TEST
+if ($lines -notmatch '^DB_DATABASE_TEST=') { $lines += "DB_DATABASE_TEST=$dbTestName" }
+
+Set-Content -Path $envPath -Value $lines -Encoding UTF8
 
 Print-Success "Archivo .env actualizado con credenciales de BD"
 Write-Host ""
