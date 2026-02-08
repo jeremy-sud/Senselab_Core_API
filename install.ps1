@@ -103,6 +103,12 @@ if ([string]::IsNullOrWhiteSpace($dbName)) { $dbName = "api_db" }
 $dbTestName = Read-Host "Nombre de la base de datos de testing [api_db_testing]"
 if ([string]::IsNullOrWhiteSpace($dbTestName)) { $dbTestName = "api_db_testing" }
 
+$dbHost = Read-Host "Host de MySQL [127.0.0.1]"
+if ([string]::IsNullOrWhiteSpace($dbHost)) { $dbHost = "127.0.0.1" }
+
+$dbPort = Read-Host "Puerto de MySQL [3306]"
+if ([string]::IsNullOrWhiteSpace($dbPort)) { $dbPort = "3306" }
+
 # Actualizar .env de forma segura (reemplaza solo las claves necesarias)
 $envPath = Join-Path -Path (Get-Location) -ChildPath '.env'
 $lines = Get-Content $envPath -ErrorAction Stop
@@ -122,25 +128,39 @@ Write-Host ""
 # 5. Crear bases de datos
 Write-Host "Paso 5: Creando bases de datos..."
 
-# Crear base de datos principal
-$createDbQuery = "CREATE DATABASE IF NOT EXISTS ``$dbName`` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+# Crear un archivo temporal con credenciales para mysql (evita exponer la contraseña en la línea de comando)
+$tmpFile = [System.IO.Path]::Combine($env:TEMP, "mysql_creds_$(Get-Random).cnf")
+$cnfContent = @"
+[client]
+user=$dbUser
+password=$dbPass
+host=$dbHost
+port=$dbPort
+"@
+
+Set-Content -Path $tmpFile -Value $cnfContent -Encoding ASCII
+
 try {
-    mysql -u $dbUser -p$dbPass -e $createDbQuery 2>$null
+    $createDbQuery = "CREATE DATABASE IF NOT EXISTS `$dbName` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+    mysql --defaults-extra-file="$tmpFile" -e $createDbQuery 2>$null
     Print-Success "Base de datos '$dbName' creada"
 } catch {
     Print-Error "Error al crear base de datos '$dbName'"
-    Print-Info "Verifica que las credenciales de MySQL sean correctas"
+    Print-Info "Verifica que las credenciales de MySQL sean correctas o que el servidor esté accesible"
+    Remove-Item -Path $tmpFile -ErrorAction SilentlyContinue
     exit 1
 }
 
-# Crear base de datos de testing
-$createTestDbQuery = "CREATE DATABASE IF NOT EXISTS ``$dbTestName`` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 try {
-    mysql -u $dbUser -p$dbPass -e $createTestDbQuery 2>$null
+    $createTestDbQuery = "CREATE DATABASE IF NOT EXISTS `$dbTestName` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+    mysql --defaults-extra-file="$tmpFile" -e $createTestDbQuery 2>$null
     Print-Success "Base de datos '$dbTestName' creada"
 } catch {
     Print-Error "Error al crear base de datos de testing '$dbTestName'"
 }
+
+# Eliminar archivo temporal
+Remove-Item -Path $tmpFile -ErrorAction SilentlyContinue
 
 Write-Host ""
 
