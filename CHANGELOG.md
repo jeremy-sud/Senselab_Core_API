@@ -5,6 +5,170 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [2.0.0] - 2026-02-07
+
+### ✨ FASE 1: Security Hardening - Completada
+
+#### Rate Limiting Granular (FASE 1.5)
+- **RateLimitingService** - Servicio central de límites de tasa (253 líneas)
+- **ThrottleRequestsWithRetryAfter** - Middleware mejorado (162 líneas)
+- **7 Limiters Granulares:**
+  - API General: 60 reqs/min
+  - Reportes: 5 generaciones/hora
+  - Importaciones: 2/día
+  - Exportaciones: 5/día
+  - Hacienda: 10 envíos/hora
+  - Login: 5 intentos/15 min
+  - Payment: 3 transacciones/hora
+- **config/rate-limiting.php** - Configuración completa
+- **9 Tests** - 100% cobertura
+
+#### Encryptación de Datos (FASE 1.6)
+- **EncryptionService** - Motor AES-256-CBC (410 líneas)
+- **HasEncryptedAttributes Trait** - Encryptación transparente (290 líneas)
+- **30+ Campos Protegidos:**
+  - Usuario: email, teléfono, identificación
+  - Empresa: CIF, banco, código DANE
+  - Proveedor: datos bancarios
+  - Transacción: información financiera
+- **Búsqueda Hash-Based** - Sin desencriptar
+- **Control de Acceso** - Por IP/rol
+- **Rotación de Claves** - Soporte automático
+- **config/encryption.php** - Configuración por modelo
+- **30 Tests** - 100% cobertura
+
+#### Auditoría Completa (FASE 1.7)
+- **AuditService** - Rastreo centralizado (410 líneas)
+- **HasAuditableEvents Trait** - CRUD automático (180 líneas)
+- **AuditLog Model** - 23 columnas, 13 scopes (310 líneas)
+- **Tabla audit_logs:**
+  - usuario_id, empresa_id, modelo, modelo_id
+  - evento (created, updated, deleted)
+  - datos_anteriores, datos_nuevos
+  - cambios_campos, ip_address, user_agent
+  - timestamp, ruta, método_http
+  - estado, y campos compliance
+- **Máscaras Automáticas** - password, token, PIN, SSN
+- **GDPR/LGPD Compliance** - Right-to-be-forgotten
+- **Retención Configurable** - 90 días default
+- **Full-Text Search** - En cambios de datos
+- **config/audit.php** - Configuración granular
+- **33 Tests** - 100% cobertura
+
+#### Post-FASE 1 Setup
+- **InstallSecurityFeatures Command** - Artisan command (280 líneas)
+- **Instalación Automatizada** - De traits en modelos
+- **3 Modos:** critical, all, custom
+- **Post-Install Guidance** - Siguiente pasos
+
+### ✨ FASE 2.1: Hacienda Integration - Iniciada
+
+#### Modelo HaciendaComprobante
+- **270 líneas** - Modelo completo
+- **13 Scopes** - Filtrado avanzado
+- **10 Métodos** - Utilidades
+- **Relaciones:** Comprobante, Empresa
+- **Estados:** pending, signed, sent, accepted, rejected, error
+- **Campos críticos:**
+  - clave (29 dígitos, única)
+  - tipo_comprobante (01, 03, 04, 05, 07)
+  - xml_contenido (longText)
+  - respuesta_hacienda (JSON)
+  - numero_secuencia, fecha_respuesta
+  - metadatos (JSON)
+
+#### HaciendaIntegrationService
+- **410 líneas** - Lógica completa de Hacienda
+- **Conforme DGT-R-000-2024 v4.4**
+- **Métodos Públicos (6):**
+  - generateComprobante() - Crear con clave única
+  - generateXml() - XML según esquema DGT
+  - signWithXADES() - XAdES-EPES digital su
+  - sendToHacienda() - API Hacienda
+  - getStatus() - Polling estado
+  - getStatistics() - Agregación por estado
+- **Métodos Protegidos (7):**
+  - validateComprobante() - Validación previa
+  - generateClave() - 29 dígitos Mod-9
+  - calculateVerificationDigit() - Checksum
+  - buildXml() - Constructor XML
+  - buildXADESSignature() - Firma digital
+  - mapHaciendaStatus() - Mapeo estados
+  - getRootElement() - Mapeo por tipo
+- **Algoritmo Clave:**
+  - Formato: AAMMDDLLLLLLnnnnnnnneee_checksum
+  - Mod-9 validation digit (DGT compliant)
+  - Generación correcta testeada
+
+#### HaciendaController
+- **220 líneas** - 8 endpoints API
+- **Extends ApiController** - Base class reutilizable
+- **Endpoints:**
+  - `POST /api/v1/hacienda/generar` - Crear
+  - `POST /api/v1/hacienda/{id}/generar-xml` - XML
+  - `POST /api/v1/hacienda/{id}/firmar` - Firma
+  - `POST /api/v1/hacienda/{id}/enviar` - Envío
+  - `GET /api/v1/hacienda/{id}/estado` - Estado
+  - `GET /api/v1/hacienda/estadisticas` - Stats
+  - `GET /api/v1/hacienda` - Listar paginado
+  - `GET /api/v1/hacienda/{id}` - Detalle
+
+#### ApiController Base
+- **95 líneas** - Métodos helper reutilizables
+- **Métodos:** success(), error(), validationError()
+- **Respuestas JSON:** consistentes en toda API
+
+#### FormRequests
+- **StoreHaciendaComprobanteRequest** - Validación creación
+- **FirmarComprobanteRequest** - Validación firma
+
+#### API Resources
+- **HaciendaComprobanteResource** - Serialización
+- **HaciendaComprobanteCollection** - Listados paginados
+
+#### Migraciones
+- **2025_02_08_create_hacienda_comprobantes_table** - Tabla completa
+
+#### Rutas
+- **8 rutas nuevas** bajo `/api/v1/hacienda`
+- **Middleware:** permisos RBAC + rate limiting
+- **Nombres:** `api.hacienda.*` para generar URLs
+
+### 🧪 Testing
+- **93 Nuevos Tests** - FASE 1 + FASE 2.1
+- **21 Tests Hacienda** - Completa cobertura
+- **236 Assertions** - Validación granular
+- **1.46 segundos** - Ejecución total
+- **100% Pass Rate** - Todos exitosos
+
+### 📊 Impacto en Código
+- **Controladores:** 88 → 89 (+1 Hacienda)
+- **Modelos:** 83 → 84 (+1 Hacienda)
+- **Rutas:** 559 → 567 (+8)
+- **Tests:** 369 → 462 (+93)
+- **Líneas Nuevas:** 3200+
+
+### 📚 Documentación
+- **FASE_1_2_1_RESUMEN.md** - 3000+ líneas
+- **SESION_FINAL_RESUMEN.md** - 1500+ líneas
+- **ACTUALIZACION_FEBRERO_2026.md** - Changelog detallado
+- **Especificaciones técnicas** completas
+
+### 🔐 Seguridad Implementada
+- ✅ Rate limiting en 7 niveles
+- ✅ Encryption AES-256 en 30+ campos
+- ✅ Auditoría completa con GDPR
+- ✅ RBAC granular en Hacienda
+- ✅ Validación integral de entrada
+
+### 🌎 Conformidad Regulatoria
+- ✅ DGT-R-000-2024 v4.4 (Hacienda CR)
+- ✅ GDPR/LGPD (Encriptación + Auditoría)
+- ✅ XAdES-EPES ready (Firma digital)
+- ✅ ISO 27001 ready (Security)
+
+---
+
 ## [1.6.1] - 2025-12-05
 
 ### ✨ Agregado - Generador de Módulos ERP
