@@ -1,5 +1,140 @@
 {
     "terminal.integrated.suggest.enabled": true,
     "files.readonlyInclude": {},
-    "files.readonlyFromPermissions": false
+    "files.readonlyFromPermissions": false,
+    
+    "[php]": {
+        "editor.defaultFormatter": "junstyle.php-cs-fixer",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll.phpstan": "explicit"
+        }
+    },
+    
+    "php-cs-fixer.executablePath": "${workspaceRoot}/vendor/bin/php-cs-fixer",
+    "php-cs-fixer.onsave": true,
+    "php-cs-fixer.rules": "@PSR12",
+    
+    "phpstan.enabled": true,
+    "phpstan.level": 8,
+    "phpstan.configFile": "${workspaceRoot}/phpstan.neon",
+    "phpstan.paths": ["${workspaceRoot}/app", "${workspaceRoot}/tests"],
+    
+    "intelephense.diagnostics.undefinedMethods": false,
+    "intelephense.files.maxSize": 5242880,
+    "intelephense.completion.fullyQualifyGlobalConstantsAndFunctions": true,
+    
+    "better-comments.multilineComments": true,
+    "better-comments.highlightPlainText": false,
+    "better-comments.tags": [
+        {
+            "tag": "!",
+            "color": "#FF2D00",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": true,
+            "italic": false
+        },
+        {
+            "tag": "?",
+            "color": "#3498DB",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": true,
+            "italic": false
+        },
+        {
+            "tag": "TODO",
+            "color": "#FF8C00",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": true,
+            "italic": false
+        },
+        {
+            "tag": "FIXME",
+            "color": "#FF2D00",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": true,
+            "italic": false
+        },
+        {
+            "tag": "RATE_LIMITING",
+            "color": "#FF6B9D",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": true,
+            "italic": true
+        },
+        {
+            "tag": "ENCRYPTION",
+            "color": "#C239B3",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": true,
+            "italic": true
+        },
+        {
+            "tag": "AUDIT",
+            "color": "#17E9B2",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": true,
+            "italic": true
+        },
+        {
+            "tag": "HACIENDA",
+            "color": "#FFB800",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": true,
+            "italic": true
+        }
+    ],
+    
+    "gitlens.hovers.currentLine.enabled": true,
+    "gitlens.blame.heatmap.enabled": true,
+    "gitlens.codeLens.enabled": true,
+    
+    "restClient.useStrictSSLVerification": false,
+    "restClient.defaultHeaders": {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+    },
+    "restClient.environmentVariables": {
+        "$shared": {
+            "protocol": "http",
+            "host": "localhost",
+            "port": "8000",
+            "baseUrl": "http://localhost:8000/api"
+        },
+        "local": {
+            "token": "local_bearer_token_here"
+        },
+        "dev": {
+            "token": "dev_bearer_token_here"
+        }
+    },
+    
+    "files.exclude": {
+        "**/node_modules": true,
+        "**/.git": true,
+        "**/vendor": false
+    },
+    
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/vendor": true,
+        "**/.git": true,
+        "**/storage": true
+    }
 }

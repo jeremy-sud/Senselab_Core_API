@@ -1,0 +1,206 @@
+### REST Client Examples for Ursol CAST API
+### Variables and Environment Setup
+
+@baseUrl = http://localhost:8000/api/v1
+@token = your_bearer_token_here
+@contentType = application/json
+
+###
+### ============================================
+### HACIENDA INTEGRATION - COMPROBANTES ENDPOINTS
+### ============================================
+###
+
+### 1. Crear Comprobante (POST)
+POST {{baseUrl}}/hacienda/comprobantes
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "tipo_comprobante": 1,
+  "numero_documento_emisor": "10102050126",
+  "numero_documento_receptor": "40202180003",
+  "monto_total": 25000.00,
+  "monto_impuesto": 5000.00,
+  "moneda": "CRC",
+  "referencia": "INV-001-2025",
+  "descripcion": "Venta de servicios de consultoría",
+  "datos_adicionales": {
+    "fecha_servicio": "2025-02-08",
+    "condiciones_pago": "Contado",
+    "cliente_nombre": "ACME Corporation"
+  }
+}
+
+### 2. Listar todos los Comprobantes (GET)
+GET {{baseUrl}}/hacienda/comprobantes
+Authorization: Bearer {{token}}
+
+### 3. Listar Comprobantes con paginación
+GET {{baseUrl}}/hacienda/comprobantes?page=1&per_page=15
+Authorization: Bearer {{token}}
+
+### 4. Filtrar Comprobantes por estado
+GET {{baseUrl}}/hacienda/comprobantes?estado=pendiente
+Authorization: Bearer {{token}}
+
+### 5. Obtener Comprobante específico (GET)
+GET {{baseUrl}}/hacienda/comprobantes/1
+Authorization: Bearer {{token}}
+
+### 6. Actualizar Comprobante (PUT)
+PUT {{baseUrl}}/hacienda/comprobantes/1
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "numero_documento_receptor": "40202180003",
+  "monto_total": 30000.00,
+  "monto_impuesto": 6000.00,
+  "descripcion": "Venta de servicios - updated"
+}
+
+### 7. Devolver Comprobante (DELETE)
+DELETE {{baseUrl}}/hacienda/comprobantes/1
+Authorization: Bearer {{token}}
+
+###
+### ============================================
+### HACIENDA - FIRMA CON XADES-EPES
+### ============================================
+###
+
+### 8. Firmar Comprobante con certificado digital
+POST {{baseUrl}}/hacienda/comprobantes/1/firmar
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "certificado_numero": "3010600030103",
+  "pin": "1234",
+  "fecha_firma": "2025-02-08T14:30:00Z",
+  "tipo_firma": "xades-epes"
+}
+
+### 9. Verificar estado de firma
+GET {{baseUrl}}/hacienda/comprobantes/1/estado-firma
+Authorization: Bearer {{token}}
+
+### 10. Obtener XML generado
+GET {{baseUrl}}/hacienda/comprobantes/1/xml
+Authorization: Bearer {{token}}
+
+###
+### ============================================
+### RATE LIMITING - TEST ENDPOINTS
+### ============================================
+###
+
+### Test Rate Limiting - API (60 requests/minute)
+GET {{baseUrl}}/hacienda/comprobantes
+Authorization: Bearer {{token}}
+
+@@ 
+# Repetir 5 veces seguidas para probar rate limiting
+GET {{baseUrl}}/hacienda/comprobantes
+Authorization: Bearer {{token}}
+
+@@ 
+GET {{baseUrl}}/hacienda/comprobantes
+Authorization: Bearer {{token}}
+
+@@ 
+GET {{baseUrl}}/hacienda/comprobantes
+Authorization: Bearer {{token}}
+
+@@ 
+GET {{baseUrl}}/hacienda/comprobantes
+Authorization: Bearer {{token}}
+
+###
+### ============================================
+### ENCRYPTION TEST - DATOS SENSIBLES
+### ============================================
+###
+
+### Crear Comprobante con datos encriptados
+POST {{baseUrl}}/hacienda/comprobantes
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "tipo_comprobante": 1,
+  "numero_documento_emisor": "10102050126",
+  "numero_documento_receptor": "40202180003",
+  "monto_total": 50000.00,
+  "monto_impuesto": 10000.00,
+  "email_receptor": "cliente@example.com",
+  "telefono_receptor": "87654321",
+  "banco_numero_cuenta": "12345678901",
+  "banco_codigo_swift": "BANCES2R",
+  "banco_cif": "A12345678"
+}
+
+###
+### ============================================
+### AUDIT LOG - HISTORIAL DE CAMBIOS
+### ============================================
+###
+
+### Obtener logs de auditoría para Comprobantes
+GET {{baseUrl}}/audit-logs?model=HaciendaComprobante&action=created
+Authorization: Bearer {{token}}
+
+### Obtener logs por usuario
+GET {{baseUrl}}/audit-logs?user_id=1
+Authorization: Bearer {{token}}
+
+### Obtener logs por tipo de operación
+GET {{baseUrl}}/audit-logs?action=updated&limit=50
+Authorization: Bearer {{token}}
+
+###
+### ============================================
+### ESTATÍSTICAS Y REPORTES
+### ============================================
+###
+
+### Obtener estadísticas de Hacienda
+GET {{baseUrl}}/hacienda/comprobantes/estadisticas
+Authorization: Bearer {{token}}
+
+### Obtener resumen por período
+GET {{baseUrl}}/hacienda/comprobantes/estadisticas?fecha_inicio=2025-01-01&fecha_fin=2025-02-28
+Authorization: Bearer {{token}}
+
+### Descargar reporte en Excel
+GET {{baseUrl}}/hacienda/comprobantes/export/excel?formato=xlsx
+Authorization: Bearer {{token}}
+
+###
+### ============================================
+### ERROR HANDLING - TEST CASOS DE ERROR
+### ============================================
+###
+
+### Test 404 - Comprobante no existe
+GET {{baseUrl}}/hacienda/comprobantes/99999
+Authorization: Bearer {{token}}
+
+### Test 422 - Validación fallida (monto negativo)
+POST {{baseUrl}}/hacienda/comprobantes
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "tipo_comprobante": 1,
+  "numero_documento_emisor": "10102050126",
+  "numero_documento_receptor": "40202180003",
+  "monto_total": -1000.00,
+  "monto_impuesto": -200.00
+}
+
+### Test 429 - Rate limit exceeded (después de muchas llamadas)
+GET {{baseUrl}}/hacienda/comprobantes
+Authorization: Bearer {{token}}
+
