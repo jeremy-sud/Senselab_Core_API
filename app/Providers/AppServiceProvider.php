@@ -237,28 +237,83 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function configureRateLimiting(): void
     {
-        // Rate limiter por defecto para API
-        RateLimiter::for('api', function (Request $request) {
-            // 60 requests por minuto para usuarios autenticados
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        // FASE 1.5: Rate Limiting Granular
+        // Importar configuración centralizada
+        $userLimits = config('rate-limiting.users');
+
+        // Rate limiter para API general
+        RateLimiter::for('api', function (Request $request) use ($userLimits) {
+            $isAuthenticated = $request->user() !== null;
+            $userType = $isAuthenticated ? 'authenticated' : 'guest';
+            $limit = $userLimits[$userType]['api'] ?? 60;
+            
+            return Limit::perMinute($limit)
+                ->by($request->user()?->id ?: $request->ip())
+                ->response(function (Request $request, array $headers) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Demasiadas solicitudes. Por favor, intenta más tarde.',
+                        'error' => 'rate_limit_exceeded',
+                        'retry_after' => $headers['Retry-After'] ?? null,
+                    ], 429, $headers);
+                });
         });
-        
+
         // Rate limiter para reportes pesados
-        RateLimiter::for('reports', function (Request $request) {
-            // 10 requests por minuto para reportes
-            return Limit::perMinute(10)->by($request->user()?->id ?: $request->ip());
+        RateLimiter::for('reports', function (Request $request) use ($userLimits) {
+            $isAuthenticated = $request->user() !== null;
+            $userType = $isAuthenticated ? 'authenticated' : 'guest';
+            $limit = $userLimits[$userType]['reports'] ?? 10;
+
+            return Limit::perMinute($limit)
+                ->by($request->user()?->id ?: $request->ip());
         });
-        
+
         // Rate limiter para importaciones
-        RateLimiter::for('imports', function (Request $request) {
-            // 5 requests por minuto para importaciones
-            return Limit::perMinute(5)->by($request->user()?->id ?: $request->ip());
+        RateLimiter::for('imports', function (Request $request) use ($userLimits) {
+            $isAuthenticated = $request->user() !== null;
+            $userType = $isAuthenticated ? 'authenticated' : 'guest';
+            $limit = $userLimits[$userType]['imports'] ?? 5;
+
+            return Limit::perMinute($limit)
+                ->by($request->user()?->id ?: $request->ip());
         });
-        
+
         // Rate limiter para Hacienda API
-        RateLimiter::for('hacienda', function (Request $request) {
-            // 20 requests por minuto para Hacienda
-            return Limit::perMinute(20)->by($request->user()?->id ?: $request->ip());
+        RateLimiter::for('hacienda', function (Request $request) use ($userLimits) {
+            $isAuthenticated = $request->user() !== null;
+            $userType = $isAuthenticated ? 'authenticated' : 'guest';
+            $limit = $userLimits[$userType]['hacienda'] ?? 20;
+
+            return Limit::perMinute($limit)
+                ->by($request->user()?->id ?: $request->ip());
+        });
+
+        // Rate limiter para login (muy restrictivo)
+        RateLimiter::for('login', function (Request $request) {
+            return Limit::perMinute(5)
+                ->by($request->ip());
+        });
+
+        // Rate limiter para pagos (crítico, muy restrictivo)
+        RateLimiter::for('payment_process', function (Request $request) {
+            $isAuthenticated = $request->user() !== null;
+            if (!$isAuthenticated) {
+                return Limit::perMinute(0); // Bloquear guests
+            }
+
+            return Limit::perMinute(5)
+                ->by($request->user()->id);
+        });
+
+        // Rate limiter para exportaciones
+        RateLimiter::for('exports', function (Request $request) use ($userLimits) {
+            $isAuthenticated = $request->user() !== null;
+            $userType = $isAuthenticated ? 'authenticated' : 'guest';
+            $limit = $userLimits[$userType]['exports'] ?? 10;
+
+            return Limit::perMinute($limit)
+                ->by($request->user()?->id ?: $request->ip());
         });
     }
 }

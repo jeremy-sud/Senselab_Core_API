@@ -127,6 +127,78 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
+        /**
+         * CORS Logging Channel (FASE 1.2)
+         *
+         * Canal separado para logging de CORS requests
+         * Útil para auditoría, debugging y detección de ataques
+         */
+        'cors' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/cors.log'),
+            'level' => env('LOG_CORS_LEVEL', 'debug'),
+            'days' => env('LOG_CORS_DAYS', 30),
+            'replace_placeholders' => true,
+        ],
+
+        /**
+         * Security Logging Channel (FASE 1.3)
+         *
+         * Canal para logging estructurado de seguridad, requests HTTP y eventos críticos
+         * Formato JSON para análisis automático
+         * Retención: 30 días
+         */
+        'security' => [
+            'driver' => 'monolog',
+            'level' => env('LOG_SECURITY_LEVEL', 'debug'),
+            'handler' => \Monolog\Handler\RotatingFileHandler::class,
+            'handler_with' => [
+                'filename' => storage_path('logs/security.log'),
+                'maxFiles' => 30,
+            ],
+            'formatter' => \Monolog\Formatter\JsonFormatter::class,
+            'processors' => [
+                \Monolog\Processor\UidProcessor::class,
+                \Monolog\Processor\InvocationProcessor::class,
+            ],
+        ],
+
+        /**
+         * Audit Logging Channel (FASE 1.3)
+         *
+         * Canal para auditoría de cambios en datos (CRUD operations)
+         * Retención extendida: 90 días
+         */
+        'audit' => [
+            'driver' => 'monolog',
+            'level' => 'info',
+            'handler' => \Monolog\Handler\RotatingFileHandler::class,
+            'handler_with' => [
+                'filename' => storage_path('logs/audit.log'),
+                'maxFiles' => 90,
+            ],
+            'formatter' => \Monolog\Formatter\JsonFormatter::class,
+            'processors' => [
+                \Monolog\Processor\UidProcessor::class,
+            ],
+        ],
+
+        /**
+         * Performance Logging Channel (FASE 1.3)
+         *
+         * Canal para métricas de rendimiento (queries lentas, requests lentos)
+         */
+        'performance' => [
+            'driver' => 'monolog',
+            'level' => 'debug',
+            'handler' => \Monolog\Handler\RotatingFileHandler::class,
+            'handler_with' => [
+                'filename' => storage_path('logs/performance.log'),
+                'maxFiles' => 30,
+            ],
+            'formatter' => \Monolog\Formatter\JsonFormatter::class,
+        ],
+
     ],
 
 ];
