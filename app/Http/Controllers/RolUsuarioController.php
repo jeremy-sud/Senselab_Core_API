@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Controlador para asignaciones `RolUsuario`.
+ *
+ * Proporciona endpoints para asignar roles a usuarios, listarlos y remover
+ * asignaciones. Usa `OpenApi` attributes para documentación automática.
+ */
 namespace App\Http\Controllers;
 
 use App\Models\RolUsuario;

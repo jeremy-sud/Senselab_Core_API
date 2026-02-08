@@ -50,6 +50,9 @@ class HaciendaIntegrationService
     public static function generateComprobante(Comprobante $comprobante, string $tipo = self::TYPE_FACTURA): ?HaciendaComprobante
     {
         try {
+            // Paso 1: Validación preliminar de los datos del comprobante.
+            // Si faltan campos obligatorios no tiene sentido continuar.
+            // Los logs ayudan a diagnosticar problemas en producción.
             // Validar datos del comprobante
             if (! static::validateComprobante($comprobante)) {
                 Log::error('Validación fallida para comprobante', ['id' => $comprobante->id]);
@@ -63,10 +66,15 @@ class HaciendaIntegrationService
                 return $existing;
             }
 
-            // Generar clave única (numero de comprobante electrónico)
+            // Paso 2: Generar la clave única del comprobante.
+            // La clave contiene información codificada (fecha, sucursal,
+            // correlativo y tipo) y termina con un dígito de control (módulo 9).
+            // Usamos un método centralizado para mantener consistencia con Hacienda.
             $clave = static::generateClave($comprobante, $tipo);
 
-            // Crear registro en BD
+            // Paso 3: Crear el registro en la base de datos para rastrear el flujo
+            // del comprobante (pendiente -> firmado -> enviado -> aceptado/rechazado).
+            // `xml_content` y `xml_firmado` se llenarán en pasos posteriores.
             $haciendaComprobante = HaciendaComprobante::create([
                 'comprobante_id' => $comprobante->id,
                 'empresa_id' => $comprobante->empresa_id,
@@ -106,7 +114,9 @@ class HaciendaIntegrationService
             $comprobante = $haciendaComprobante->comprobante;
             $empresa = $comprobante->empresa;
 
-            // Construir XML base
+            // Construir XML base siguiendo el esquema DGT-R-000-2024 v4.4.
+            // `buildXml` encapsula el mapeo entre nuestro modelo y el esquema requerido.
+            // Aquí no se firma el XML; solo se genera la representación que será firmada.
             $xml = static::buildXml($haciendaComprobante, $comprobante, $empresa);
 
             if (! $xml) {
@@ -170,7 +180,10 @@ class HaciendaIntegrationService
             }
 
             // Generar firma XAdES-EPES
-            // Nota: En producción, usar librería especializada como xades-php o similar
+            // ADVERTENCIA: La implementación actual es un placeholder y NO
+            // realiza una firma válida. Para producción se debe integrar una
+            // librería probada (ej. xades-php, xmlseclibs) que implemente
+            // correctamente los nodos Signature y las referencias requeridas.
             $signedXml = static::buildXADESSignature(
                 $haciendaComprobante->xml_content,
                 $certificate,
@@ -223,7 +236,10 @@ class HaciendaIntegrationService
                 return false;
             }
 
-            // Preparar payload
+            // Preparar payload que la API de Hacienda espera.
+            // Se codifica el XML firmado en Base64 para transportarlo como
+            // un campo dentro de un JSON. Revisar la especificación de la API
+            // para campos adicionales (token, cabeceras, etc.).
             $payload = [
                 'clave' => $haciendaComprobante->clave,
                 'fecha' => now()->format('Y-m-d'),
@@ -242,7 +258,9 @@ class HaciendaIntegrationService
                 return false;
             }
 
-            // Procesar respuesta
+            // Procesar respuesta: persistir la respuesta de Hacienda para
+            // auditoría y diagnóstico. Normalmente la respuesta contendrá
+            // un identificador y un estado que debe mapearse a nuestros estados.
             $respuestaData = $response->json();
 
             $haciendaComprobante->update([
@@ -290,7 +308,9 @@ class HaciendaIntegrationService
 
             $statusData = $response->json();
 
-            // Actualizar estado en BD si cambió
+            // Actualizar estado en BD si cambió. Se mapeará el estado textual
+            // que devuelve Hacienda a nuestros estados internos usando
+            // `mapHaciendaStatus` para mantener abstracción.
             if (isset($statusData['status'])) {
                 $newStatus = static::mapHaciendaStatus($statusData['status']);
                 
@@ -323,7 +343,9 @@ class HaciendaIntegrationService
      */
     protected static function validateComprobante(Comprobante $comprobante): bool
     {
-        // Verificar campos obligatorios
+        // Validaciones mínimas antes de procesar el comprobante.
+        // Aquí no se realizan validaciones fiscales completas, sólo
+        // comprobaciones que evitan errores en later stages.
         if (! $comprobante->empresa_id) {
             Log::warning('Empresa no especificada');
             return false;
@@ -381,6 +403,9 @@ class HaciendaIntegrationService
         );
 
         // Construir clave
+        // La `claveBase` es la porción sin el dígito de control. Se construye
+        // concatenando las secciones definidas por la normativa. El dígito
+        // de control se calcula con `calculateVerificationDigit`.
         $claveBase = $aam . $ddl . $sucursal . $correlativo . $tipo;
 
         // Calcular dígito de control (módulo 9)
@@ -400,6 +425,10 @@ class HaciendaIntegrationService
         $suma = 0;
         $pesos = [2, 3, 4, 5, 6, 7, 2, 3, 4, 5, 6, 7, 2, 3, 4, 5, 6, 7, 2, 3];
 
+        // El algoritmo aplica pesos cíclicos a cada dígito de la clave y
+        // calcula un dígito de verificación tipo módulo 10 (similar a Luhn
+        // pero con pesos distintos). Esto ayuda a detectar errores de
+        // transcripción de la clave.
         for ($i = 0; $i < strlen($clave); $i++) {
             $suma += intval($clave[$i]) * $pesos[$i];
         }

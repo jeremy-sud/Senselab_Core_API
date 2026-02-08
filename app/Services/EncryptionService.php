@@ -30,6 +30,10 @@ class EncryptionService
     protected static function getEncrypter(): Encrypter
     {
         if (! static::$encrypter) {
+            // Obtener la instancia global de encrypter suministrada por Laravel.
+            // Esto utiliza la clave definida en `config/app.php`/`.env` y el
+            // cifrado configurado (por ejemplo AES-256-CBC). Reuse la misma
+            // instancia para evitar recrear objetos en llamadas repetidas.
             static::$encrypter = app('encrypter');
         }
 
@@ -55,6 +59,9 @@ class EncryptionService
 
             // Log si está habilitado
             if (config('encryption.options.log_decryption_access')) {
+                // Registrar el acceso al cifrado para auditoría mínima. No
+                // registramos el valor real, sólo un marcador `***` para
+                // evitar filtrar datos sensibles en los logs.
                 static::logEncryptionAccess('encryption', $value === '' ? null : '***');
             }
 
@@ -83,6 +90,10 @@ class EncryptionService
 
         try {
             // Verificar permisos de desencriptación
+            // Antes de intentar desencriptar, asegurarse de que el actor
+            // (user/IP/roles) esté autorizado a ver datos sensibles. Si no lo
+            // está, devolvemos un marcador en lugar de lanzar una excepción
+            // que podría filtrar información.
             if (! static::canDecrypt()) {
                 Log::warning('Decryption denied - insufficient permissions', [
                     'user_id' => Auth::id(),
@@ -125,6 +136,7 @@ class EncryptionService
 
         // Verificar IP whitelist
         $ipWhitelist = config('encryption.trusted_decryptors.ip_whitelist', []);
+        // Si la petición proviene de una IP de confianza, permitir desencriptar
         if (in_array(request()->ip(), $ipWhitelist)) {
             return true;
         }
@@ -137,6 +149,7 @@ class EncryptionService
 
         $trustedRoles = config('encryption.trusted_decryptors.roles', []);
         foreach ($trustedRoles as $role) {
+            // Revisar roles asignados al usuario (ej. admin, security_officer)
             if ($user->hasRole($role)) {
                 return true;
             }
@@ -145,6 +158,7 @@ class EncryptionService
         // Verificar permisos específicos
         $trustedPermissions = config('encryption.trusted_decryptors.permissions', []);
         foreach ($trustedPermissions as $permission) {
+            // Permisos finos (ej. 'view_sensitive_data') permiten acceso
             if ($user->hasPermission($permission)) {
                 return true;
             }
@@ -171,6 +185,10 @@ class EncryptionService
                 // Generar hash para búsqueda rápida
                 if (config('encryption.options.use_hashed_lookup')) {
                     $hashColumn = $fieldName . config('encryption.options.hash_column_suffix', '_hash');
+                    // Para facilitar búsquedas sin desencriptar, almacenamos
+                    // un hash del valor encriptado. Importante: la búsqueda se
+                    // realiza contra este hash, por lo que para buscar se
+                    // debe hashear el valor de entrada igual que aquí.
                     $data[$hashColumn] = hash(
                         config('encryption.options.hash_algorithm', 'sha256'),
                         $data[$fieldName] ?? ''
@@ -216,6 +234,10 @@ class EncryptionService
             throw new \RuntimeException('Hash lookup is disabled in encryption config');
         }
 
+        // Para buscar por un campo encriptado, primero se encripta el valor
+        // de búsqueda con la misma lógica que al guardar y luego se aplica
+        // el hash configurado. Esto evita la necesidad de desencriptar
+        // filas durante búsquedas.
         return hash(
             config('encryption.options.hash_algorithm', 'sha256'),
             static::encrypt($searchValue) ?? ''
@@ -252,6 +274,9 @@ class EncryptionService
         $key = static::getCacheKey($modelClass, $fieldName, $recordId);
         $ttl = config('encryption.performance.cache_ttl', 0);
 
+        // Devolver el valor descifrado en caché si existe. Atención: el uso
+        // de caché para datos sensibles requiere políticas de expiración y
+        // borrado cuidadoso cuando se actualizan permisos o el propio dato.
         return Cache::get($key);
     }
 
@@ -274,6 +299,9 @@ class EncryptionService
         $ttl = config('encryption.performance.cache_ttl', 0);
 
         if ($ttl > 0) {
+            // Guardar el valor descifrado temporalmente. Asegurarse de que
+            // el `cache_ttl` sea corto y que exista lógica para invalidar
+            // entradas cuando cambie el dato o los permisos.
             Cache::put($key, $value, $ttl);
         }
     }
@@ -301,6 +329,9 @@ class EncryptionService
 
         // Guardar en tabla de auditoría si está habilitada
         if (config('encryption.audit.enabled') && config('encryption.audit.log_access')) {
+            // Además del log por canal, grabar un registro estructurado en
+            // la tabla de auditoría para informes forenses si está
+            // configurado. Aquí se guarda un resumen (no el valor real).
             static::recordAuditLog($action, $user?->id, $value);
         }
     }
@@ -380,6 +411,10 @@ class EncryptionService
 
         // Obtener modelo
         $model = new $modelClass();
+        // Nota: este método realiza una rotación sencilla recorriendo todos
+        // los registros. Para datasets grandes o producción, se recomienda
+        // paginar, usar transacciones parciales, bloquear filas y/o ejecutar
+        // el proceso fuera de línea para evitar inconsistencias.
         $records = $model->all();
         $count = 0;
 

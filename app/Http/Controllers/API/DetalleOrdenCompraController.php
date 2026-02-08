@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * API Controller para `DetalleOrdenCompra`.
+ *
+ * Administra las líneas de detalle asociadas a órdenes de compra. Incluye
+ * endpoints paginados y operaciones de creación con validaciones.
+ */
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;

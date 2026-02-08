@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * API Controller para `DetalleVenta`.
+ *
+ * Gestiona las líneas de detalle de ventas: listado, creación y consultas
+ * paginadas. Usa caching para mejorar rendimiento en endpoints frecuentes.
+ */
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;

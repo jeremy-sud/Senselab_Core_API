@@ -50,6 +50,9 @@ class RateLimitingService
             ];
         }
 
+        // Determinar si el solicitante está autenticado y seleccionar
+        // la política correspondiente. Esto permite límites más altos
+        // para usuarios autenticados frente a invitados.
         $isAuthenticated = $request->user() !== null;
         $userType = $isAuthenticated ? 'authenticated' : 'guest';
         
@@ -63,6 +66,9 @@ class RateLimitingService
      */
     public static function getIdentifier(Request $request): string|int
     {
+        // Identificador único por el que se aplicará el rate limit.
+        // Preferimos user_id cuando exista para limitar por cuenta;
+        // en caso contrario usamos la IP del cliente.
         return $request->user()?->id ?? $request->ip();
     }
 
@@ -111,6 +117,8 @@ class RateLimitingService
         $cacheKey = "rate_limit:{$key}:{$identifier}";
 
         $attempts = (int) Cache::get($cacheKey, 0);
+        // Devuelve el número de intentos que quedan antes de alcanzar
+        // el límite. Útil para cabeceras como `X-RateLimit-Remaining`.
         return max(0, $limit - $attempts);
     }
 
@@ -155,7 +163,8 @@ class RateLimitingService
             $context
         );
 
-        // Implementar bloqueo por IP si se exceden threshold
+        // Registrar la violación y evaluar si la IP debe ser bloqueada
+        // por múltiples violaciones repetidas.
         self::checkAndBlockIP($request);
     }
 

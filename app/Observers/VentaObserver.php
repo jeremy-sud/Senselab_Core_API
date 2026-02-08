@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Observador para eventos del modelo `Venta`.
+ *
+ * Punto central para agregar lógica reactiva cuando se crean/actualizan
+ * o eliminan ventas del sistema (ej. invalidar caché, auditar, notificar).
+ * Actualmente los métodos están preparados como hooks vacíos para extender
+ * con comportamiento específico del negocio.
+ */
 namespace App\Observers;
 
 use App\Models\Venta;
