@@ -4,7 +4,7 @@
 # Sistemas Ursol S.A.
 # Para Ubuntu/Debian - Bash
 
-set -e  # Detener si hay errores
+set -euo pipefail  # Detener si hay errores, evitar uso de variables no inicializadas
 
 echo "=================================================="
 echo "  URSOL CAST API - Instalación Automatizada"
@@ -106,22 +106,35 @@ echo ""
 echo "Paso 4: Configuración de Base de Datos"
 echo "----------------------------------------"
 
-read -p "Usuario de MySQL [root]: " DB_USER
+read -r -p "Usuario de MySQL [root]: " DB_USER
 DB_USER=${DB_USER:-root}
 
-read -sp "Password de MySQL: " DB_PASS
+read -r -s -p "Password de MySQL: " DB_PASS
 echo ""
 
-read -p "Nombre de la base de datos [api_db]: " DB_NAME
+read -r -p "Nombre de la base de datos [api_db]: " DB_NAME
 DB_NAME=${DB_NAME:-api_db}
 
-read -p "Nombre de la base de datos de testing [api_db_testing]: " DB_TEST_NAME
+read -r -p "Nombre de la base de datos de testing [api_db_testing]: " DB_TEST_NAME
 DB_TEST_NAME=${DB_TEST_NAME:-api_db_testing}
 
-# Actualizar .env
-sed -i "s/DB_USERNAME=.*/DB_USERNAME=$DB_USER/" .env
-sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$DB_PASS/" .env
-sed -i "s/DB_DATABASE=.*/DB_DATABASE=$DB_NAME/" .env
+# Función robusta para actualizar o añadir claves en .env (escapa / adecuadamente)
+update_env() {
+    local key="$1"
+    local value="$2"
+    if grep -qE "^${key}=" .env; then
+        # usar # como delimitador para evitar problemas con /
+        sed -i "s#^${key}=.*#${key}=${value}#" .env
+    else
+        printf "%s=%s\n" "${key}" "${value}" >> .env
+    fi
+}
+
+# Actualizar .env de forma segura
+update_env "DB_USERNAME" "$DB_USER"
+update_env "DB_PASSWORD" "$DB_PASS"
+update_env "DB_DATABASE" "$DB_NAME"
+update_env "DB_DATABASE_TEST" "$DB_TEST_NAME"
 
 print_success "Archivo .env actualizado con credenciales de BD"
 echo ""
