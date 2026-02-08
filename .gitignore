@@ -12,6 +12,7 @@
 /.idea
 /.nova
 /.phpunit.cache
+/vendor/_laravel_ide/
 # /. vscode (permitir configuración VS Code)
 /.zed
 # /auth.json (permitir credenciales composer)
