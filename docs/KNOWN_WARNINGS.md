@@ -211,4 +211,4 @@ Este documento debe actualizarse cuando:
 
 ---
 
-**Nota:** Los warnings aquí documentados NO son bugs ni vulnerabilidades de seguridad. Son sugerencias de mejora de código que, en el contexto específico de este proyecto (Laravel API con Swagger), representan falsos positivos o decisiones de diseño aceptadas.
+**Nota:** Los warnings aquí documentados NO son bugs ni vulnerabilidades de seguridad. Son sugerencias de mejora de código que, en el contexto específico de este proyecto (Laravel API con Swagger), representan falsos positivos o decisiones de diseño aceptadas. Pero si en algún momento se decide refactorizar para eliminar estos warnings, se debe actualizar este documento y la configuración de supresión correspondiente.
