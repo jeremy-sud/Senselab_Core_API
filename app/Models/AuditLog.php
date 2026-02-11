@@ -3,289 +3,299 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Carbon\Carbon;
 
 /**
- * Modelo AuditLog - Auditoría Completa de Cambios
+ * Modelo AuditLog - Auditoría Completa FASE 3
  *
- * Almacena todos los eventos de create, update, delete, etc.
- * en registros auditados. Proporciona trazabilidad completa de cambios.
+ * Almacena todos los eventos en registros auditados inmutables.
+ * Proporciona trazabilidad completa de cambios para compliance GDPR.
+ * Registro es append-only (UPDATED_AT = null).
  *
  * @package App\Models
- * @version 1.0.0
+ * @version 3.0.0 - FASE 3 Compliance
  */
 class AuditLog extends Model
 {
-    const UPDATED_AT = null; // Auditoría nunca se actualiza, solo se crea
+    const UPDATED_AT = null; // Auditoría es immutable, solo created_at
 
     protected $table = 'audit_logs';
 
     protected $fillable = [
-        'event',
-        'model_type',
-        'model_id',
-        'model_name',
         'user_id',
         'user_email',
         'user_name',
+        'auditable_type',
+        'auditable_id',
+        'action',
         'old_values',
         'new_values',
-        'changed_fields',
         'ip_address',
         'user_agent',
-        'http_method',
-        'url',
-        'route_action',
-        'empresa_id',
-        'tenant_id',
-        'description',
+        'request_method',
+        'request_path',
+        'involves_sensitive_data',
+        'sensitive_fields_mask',
+        'retention_expires_at',
+        'is_archived',
+        'archived_at',
+        'change_reason',
         'metadata',
-        'execution_time_ms',
     ];
 
     protected $casts = [
         'old_values' => 'array',
         'new_values' => 'array',
-        'changed_fields' => 'array',
+        'sensitive_fields_mask' => 'array',
         'metadata' => 'array',
         'created_at' => 'datetime',
+        'retention_expires_at' => 'datetime',
+        'archived_at' => 'datetime',
+        'involves_sensitive_data' => 'boolean',
+        'is_archived' => 'boolean',
     ];
 
     /**
      * Relación: Usuario que realizó el cambio
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(Usuario::class);
+        return $this->belongsTo(User::class);
     }
 
     /**
-     * Relación: Empresa del cambio
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * Obtener la entidad auditada (polymorphic)
      */
-    public function empresa(): BelongsTo
+    public function auditable()
     {
-        return $this->belongsTo(Empresa::class);
+        return $this->morphTo();
     }
 
+    // ════════════════════════════════════════════════════════════════
+    // SCOPES - Filtrado Avanzado
+    // ════════════════════════════════════════════════════════════════
+
     /**
-     * Scope: Filtrar por tipo de evento
+     * Scope: Registros recientes
      */
-    public function scopeEvent($query, string $event)
+    public function scopeRecent($query)
     {
-        return $query->where('event', $event);
+        return $query->orderBy('created_at', 'desc');
     }
 
     /**
-     * Scope: Filtrar por modelo
+     * Scope: Solo cambios de datos sensibles
      */
-    public function scopeForModel($query, string $modelType, ?int $modelId = null)
+    public function scopeSensitiveOnly($query)
     {
-        $query = $query->where('model_type', $modelType);
-        
-        if ($modelId !== null) {
-            $query = $query->where('model_id', $modelId);
-        }
-
-        return $query;
+        return $query->where('involves_sensitive_data', true);
     }
 
     /**
-     * Scope: Filtrar por usuario
+     * Scope: Registros vencidos para retención
      */
-    public function scopeByUser($query, int $userId)
+    public function scopeExpiredRetention($query)
+    {
+        return $query->where('retention_expires_at', '<=', Carbon::now())
+                     ->where('is_archived', false);
+    }
+
+    /**
+     * Scope: Por usuario
+     */
+    public function scopeByUser($query, $userId)
     {
         return $query->where('user_id', $userId);
     }
 
     /**
-     * Scope: Filtrar por empresa
+     * Scope: Por modelo
      */
-    public function scopeByEmpresa($query, int $empresaId)
+    public function scopeForModel($query, string $modelType, ?int $modelId = null)
     {
-        return $query->where('empresa_id', $empresaId);
-    }
-
-    /**
-     * Scope: Filtrar por rango de fechas
-     */
-    public function scopeDateRange($query, string $startDate, string $endDate)
-    {
-        return $query->whereBetween('created_at', [$startDate, $endDate]);
-    }
-
-    /**
-     * Scope: Filtrar por IP
-     */
-    public function scopeByIp($query, string $ipAddress)
-    {
-        return $query->where('ip_address', $ipAddress);
-    }
-
-    /**
-     * Scope: Filtrar por cambios en campo específico
-     */
-    public function scopeChangedField($query, string $field)
-    {
-        return $query->whereJsonContains('changed_fields', $field);
-    }
-
-    /**
-     * Scope: Solo eventos críticos (create, delete)
-     */
-    public function scopeCritical($query)
-    {
-        return $query->whereIn('event', ['created', 'deleted']);
-    }
-
-    /**
-     * Scope: Búsqueda de texto completo
-     */
-    public function scopeSearch($query, string $term)
-    {
-        return $query->whereFullText(['description'], $term);
-    }
-
-    /**
-     * Obtener descripción legible del cambio
-     *
-     * @return string
-     */
-    public function getReadableDescriptionAttribute(): string
-    {
-        if ($this->description) {
-            return $this->description;
+        $query->where('auditable_type', $modelType);
+        
+        if ($modelId) {
+            $query->where('auditable_id', $modelId);
         }
-
-        $event = strtoupper($this->event);
-        $model = class_basename($this->model_type);
-
-        return "{$event} {$model} #{$this->model_id} by {$this->user_email}";
+        
+        return $query;
     }
 
     /**
-     * Obtener los campos que cambiaron con sus valores old/new
-     *
-     * @return array
+     * Scope: Por acción
      */
-    public function getFieldChangesAttribute(): array
+    public function scopeByAction($query, string $action)
     {
-        if (! $this->changed_fields) {
-            return [];
-        }
-
-        $changes = [];
-
-        foreach ($this->changed_fields as $field) {
-            $changes[$field] = [
-                'old' => $this->old_values[$field] ?? null,
-                'new' => $this->new_values[$field] ?? null,
-            ];
-        }
-
-        return $changes;
+        return $query->where('action', $action);
     }
 
     /**
-     * Verificar si fue un cambio sensible (en campos sensibles)
-     *
-     * @return bool
+     * Scope: Rango de fechas
      */
-    public function isSensitiveChange(): bool
+    public function scopeDateRange($query, Carbon $from, Carbon $to)
     {
-        $sensitivePatterns = config('audit.changes.sensitive_patterns', []);
-
-        foreach ($this->changed_fields ?? [] as $field) {
-            foreach ($sensitivePatterns as $pattern) {
-                if (str_contains(strtolower($field), strtolower($pattern))) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return $query->whereBetween('created_at', [$from, $to]);
     }
 
     /**
-     * Obtener un resumen JSON del cambio
-     *
-     * @return array
+     * Scope: Por dirección IP
      */
-    public function toSummary(): array
+    public function scopeByIp($query, string $ip)
+    {
+        return $query->where('ip_address', $ip);
+    }
+
+    // ════════════════════════════════════════════════════════════════
+    // MÉTODOS - Análisis y Transformación
+    // ════════════════════════════════════════════════════════════════
+
+    /**
+     * Obtener cambios legibles antes/después
+     */
+    public function getReadableChanges(): array
     {
         return [
-            'id' => $this->id,
-            'event' => $this->event,
-            'model' => [
-                'type' => $this->model_type,
-                'id' => $this->model_id,
-                'name' => $this->model_name,
-            ],
-            'user' => [
-                'id' => $this->user_id,
-                'email' => $this->user_email,
-                'name' => $this->user_name,
-            ],
-            'changes' => $this->field_changes,
-            'timestamp' => $this->created_at?->toIso8601String(),
-            'ip' => $this->ip_address,
-            'is_sensitive' => $this->isSensitiveChange(),
+            'before' => $this->old_values ?? [],
+            'after' => $this->new_values ?? [],
+            'changed_fields' => $this->getChangedFields(),
         ];
     }
 
     /**
-     * Obtener la URL del modelo auditado
-     *
-     * @return string|null
+     * Obtener solo campos que cambiaron
      */
-    public function getModelUrlAttribute(): ?string
+    public function getChangedFields(): array
     {
-        if (! $this->model_id) {
-            return null;
+        if (!$this->old_values || !$this->new_values) {
+            return [];
         }
 
-        $path = str_ireplace('App\\Models\\', '', $this->model_type);
-        $path = strtolower(preg_replace('/([A-Z])/', '-$1', $path));
-        $path = ltrim($path, '-');
+        $changed = [];
+        foreach ($this->new_values as $field => $newValue) {
+            $oldValue = $this->old_values[$field] ?? null;
+            if ($oldValue !== $newValue) {
+                $changed[$field] = [
+                    'from' => $oldValue,
+                    'to' => $newValue,
+                ];
+            }
+        }
 
-        return route("api.v1.{$path}.show", $this->model_id) ?? null;
+        return $changed;
     }
 
     /**
-     * Formatear para API response
-     *
-     * @return array
+     * Obtener resumen legible de la acción para reportes
+     */
+    public function getSummary(): string
+    {
+        $userName = $this->user_name ?? 'System';
+        $summary = "{$userName} ";
+        
+        switch ($this->action) {
+            case 'created':
+                $summary .= "creó un nuevo {$this->auditable_type}";
+                break;
+            case 'updated':
+                $changed = count($this->getChangedFields());
+                $summary .= "actualizó {$changed} campo(s) en {$this->auditable_type}";
+                break;
+            case 'deleted':
+                $summary .= "eliminó {$this->auditable_type}";
+                break;
+            case 'restored':
+                $summary .= "restauró {$this->auditable_type}";
+                break;
+            case 'forceDeleted':
+                $summary .= "eliminó permanentemente {$this->auditable_type}";
+                break;
+        }
+
+        if ($this->involves_sensitive_data) {
+            $summary .= " [SENSIBLE]";
+        }
+
+        return $summary;
+    }
+
+    /**
+     * Enmascarar valores sensibles para la visualización
+     */
+    public function maskSensitiveValues(): void
+    {
+        if (!$this->involves_sensitive_data || !$this->sensitive_fields_mask) {
+            return;
+        }
+
+        $fieldsToMask = $this->sensitive_fields_mask;
+
+        if ($this->old_values) {
+            foreach ($fieldsToMask as $field) {
+                if (isset($this->old_values[$field])) {
+                    $this->old_values[$field] = '***MASKED***';
+                }
+            }
+        }
+
+        if ($this->new_values) {
+            foreach ($fieldsToMask as $field) {
+                if (isset($this->new_values[$field])) {
+                    $this->new_values[$field] = '***MASKED***';
+                }
+            }
+        }
+
+        $this->save();
+    }
+
+    /**
+     * Archivar registro antiguo para cumplimiento de retención
+     */
+    public function archive(): void
+    {
+        $this->update([
+            'is_archived' => true,
+            'archived_at' => Carbon::now(),
+        ]);
+    }
+
+    /**
+     * Obtener registros que expiraron y necesitan archivarse
+     */
+    public static function getExpiredRecords()
+    {
+        return static::expiredRetention()->get();
+    }
+
+    /**
+     * Formatear para respuesta de API
      */
     public function toApiResponse(): array
     {
         return [
             'id' => $this->id,
-            'event' => $this->event,
-            'model_type' => $this->model_type,
-            'model_id' => $this->model_id,
-            'model_name' => $this->model_name,
+            'action' => $this->action,
+            'model' => [
+                'type' => class_basename($this->auditable_type),
+                'id' => $this->auditable_id,
+            ],
             'user' => [
                 'id' => $this->user_id,
                 'email' => $this->user_email,
                 'name' => $this->user_name,
             ],
-            'old_values' => $this->old_values,
-            'new_values' => $this->new_values,
-            'changed_fields' => $this->changed_fields,
+            'changes' => $this->getReadableChanges(),
             'context' => [
-                'ip_address' => $this->ip_address,
-                'user_agent' => $this->user_agent,
-                'http_method' => $this->http_method,
-                'url' => $this->url,
-                'route_action' => $this->route_action,
+                'ip' => $this->ip_address,
+                'method' => $this->request_method,
+                'path' => $this->request_path,
             ],
-            'metadata' => $this->metadata,
-            'execution_time_ms' => $this->execution_time_ms,
-            'created_at' => $this->created_at?->toIso8601String(),
+            'sensitive' => $this->involves_sensitive_data,
+            'reason' => $this->change_reason,
+            'timestamp' => $this->created_at->toIso8601String(),
         ];
     }
 }
+

@@ -48,6 +48,15 @@ use App\Models\HorarioRuta;
 use App\Models\LogAccesoSistema;
 use App\Models\Marca;
 use App\Models\MensajeHacienda;
+
+// Importar Observers
+use App\Observers\PermisoObserver;
+use App\Observers\RolObserver;
+use App\Observers\ProductoObserver;
+use App\Observers\VentaObserver;
+use App\Observers\ClienteObserver;
+use App\Observers\AsientoContableObserver;
+use App\Observers\AuditObserver;
 use App\Models\ModeloBus;
 use App\Models\Pago;
 use App\Models\PagoNomina;
@@ -222,6 +231,19 @@ class AppServiceProvider extends ServiceProvider
         Venta::observe(VentaObserver::class);
         Cliente::observe(ClienteObserver::class);
         AsientoContable::observe(AsientoContableObserver::class);
+        
+        // FASE 3: Auditoría Completa - Aplicar AuditObserver a modelos críticos
+        Usuario::observe(AuditObserver::class);
+        Cliente::observe(AuditObserver::class);
+        CuentaBancaria::observe(AuditObserver::class);
+        DeclaracionTributaria::observe(AuditObserver::class);
+        Permiso::observe(AuditObserver::class);
+        CuentaPorCobrar::observe(AuditObserver::class);
+        CuentaPorPagar::observe(AuditObserver::class);
+        MovimientoBancario::observe(AuditObserver::class);
+        RetencionImpuesto::observe(AuditObserver::class);
+        CajaChica::observe(AuditObserver::class);
+        AsientoContable::observe(AuditObserver::class);
         
         // Registrar policies
         foreach ($this->policies as $model => $policy) {
