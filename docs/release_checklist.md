@@ -126,4 +126,4 @@ ls -la storage api-docs
 
 **Notas finales:**
 - Mantener checklist en `docs/` y agregar un paso del pipeline CI que ejecute el grep de secretos y falle si encuentra coincidencias.
-- Si quieres, genero un PDF y lo subo a `docs/`.
+- Documentar cualquier cambio de última hora en el release notes.
