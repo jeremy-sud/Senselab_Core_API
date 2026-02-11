@@ -1,6 +1,7 @@
-MIT License
+LICENCIA DE PROPIEDAD EXCLUSIVA
+================================
 
-Copyright (c) 2025 Sistemas Ursol S.A.
+Copyright © 2025 Sistemas Ursol S.A. - Todos los Derechos Reservados
 
 Desarrollado por:
 - Sistemas Ursol S.A. (sistemas@ursol.com)
@@ -14,20 +15,73 @@ Website: https://ursol.com | https://ursol.net
 GitHub: https://github.com/SistemasUrsol
 Contact: +506 8868-7765 (WhatsApp)
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+TÉRMINOS Y CONDICIONES
+======================
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Este software ("Ursol-CAST-API") es propiedad exclusiva de Sistemas Ursol S.A.
+Todos los derechos están reservados. No se permite la reproducción, distribución,
+modificación, adaptación, traducción o uso de este software sin autorización
+explícita y por escrito de Sistemas Ursol S.A.
+
+RESTRICCIONES DE USO:
+====================
+
+1. PROHIBICIONES GENERALES:
+   - No se permite copiar, descargar, distribuir o transmitir este software
+     a terceros sin autorización explícita.
+   - No se permite modificar, adaptar, traducir, descompilar, hacer ingeniería
+     inversa o crear trabajos derivados basados en este software.
+   - No se permite revender, sublicenciar o transferir los derechos de este software.
+   - No se permite publicar o divulgar este software en repositorios públicos,
+     redes de distribución o cualquier medio sin permiso escrito.
+
+2. USO EXCLUSIVO:
+   - Este software está destinado exclusivamente para uso interno de Sistemas Ursol S.A.
+   - Los empleados y contratistas autorizados podrán acceder al código fuente
+     únicamente bajo acuerdos de confidencialidad.
+   - Cualquier acceso al código fuente implica la aceptación de estos términos.
+
+3. PROTECCIÓN DE DATOS (IMPORTANTE PARA ARQUITECTURA MULTITENANT):
+   - Este es un sistema ERP Multitenant. Los datos de los clientes están bajo
+     protección máxima.
+   - Los clientes tienen licencia de USO del software, pero NUNCA propiedad
+     sobre el código fuente ni sobre la infraestructura subyacente.
+   - Los contratos de servicio (SLA) especifican que Sistemas Ursol S.A. es
+     propietaria del código, la arquitectura y todos los derechos de propiedad intelectual.
+   - Se prohíbe cualquier intento de acceso no autorizado a datos de otros clientes.
+   - Se prohíbe completamente cualquier extracción, copia o transferencia de código
+     que pudiera permitir a un ex-empleado o tercero crear versiones competidoras.
+
+4. PENALIDADES:
+   - Cualquier violación de estos términos resultará en acciones legales, incluyendo
+     pero no limitado a demandas civiles, penales y acciones de protección de
+     propiedad intelectual.
+   - Se reserva el derecho de perseguir legalmente el uso no autorizado con toda
+     la severidad que permita la ley aplicable en Costa Rica y jurisdicciones
+     internacionales.
+
+
+EXENCIÓN DE RESPONSABILIDAD
+============================
+
+EL SOFTWARE SE PROPORCIONA "TAL CUAL", SIN GARANTÍA DE NINGÚN TIPO, EXPRESA O
+IMPLÍCITA, INCLUYENDO PERO NO LIMITADO A LAS GARANTÍAS DE COMERCIABILIDAD,
+APTITUD PARA UN PROPÓSITO PARTICULAR Y NO INCUMPLIMIENTO. EN NINGÚN CASO
+SISTEMAS URSOL S.A. SERÁ RESPONSABLE DE DAÑOS DIRECTOS, INDIRECTOS,
+INCIDENTALES, ESPECIALES, EJEMPLARES O CONSECUENTES, INCLUIDA PÉRDIDA DE
+GANANCIAS, INCLUSO SI SE ADVIERTE DE LA POSIBILIDAD DE DICHOS DAÑOS.
+
+
+CONTACTO PARA AUTORIZACIONES
+=============================
+
+Para solicitar autorización de uso, distribución o modificación de este software:
+Email: sistemas@ursol.com
+Teléfono: +506 8868-7765 (WhatsApp)
+Website: https://ursol.com
+
+
+Última modificación: 11 de febrero de 2026
+Ley aplicable: Leyes de Costa Rica y disposiciones internacionales de
+propiedad intelectual.
