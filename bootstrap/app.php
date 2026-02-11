@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'cors.advanced' => \App\Http\Middleware\HandleCorsAdvanced::class,
             'log.request' => \App\Http\Middleware\LogRequest::class,
             'throttle.granular' => \App\Http\Middleware\ThrottleRequestsWithRetryAfter::class,
+            'metrics.request' => \App\Http\Middleware\RequestMetricsMiddleware::class,
         ]);
 
         // CORS - Cross-Origin Resource Sharing (FASE 1.2)
@@ -32,6 +33,10 @@ return Application::configure(basePath: dirname(__DIR__))
         // Request Logging - Logging estructurado (FASE 1.3)
         // Registra entrada/salida de requests con trace_id para correlación
         $middleware->append(\App\Http\Middleware\LogRequest::class);
+
+        // Request Metrics - Métricas de requests HTTP (FASE 2.3)
+        // Registra duración, memoria, status codes para observabilidad
+        $middleware->append(\App\Http\Middleware\RequestMetricsMiddleware::class);
 
         // CORS Avanzado - Logging y auditoría personalizada (FASE 1.2)
         // Se ejecuta DESPUÉS de HandleCors para registrar detalles de CORS

@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\HealthCheckController;
+use App\Http\Controllers\MetricsController;
 use App\Http\Controllers\API\AlmacenController;
 use App\Http\Controllers\API\ProductoController;
 use App\Http\Controllers\API\VentaController;
@@ -1176,3 +1178,34 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
             ->middleware('throttle:60,1');
     });
 });
+
+// ================================================================================
+// FASE 2: OBSERVABILIDAD - Health Check y Métricas
+// ================================================================================
+
+Route::prefix('health')->group(function () {
+    // Liveness probe - ¿Está el servicio vivo?
+    Route::get('/live', [HealthCheckController::class, 'liveness'])
+        ->name('health.liveness');
+
+    // Readiness probe - ¿Está listo para recibir traffic?
+    Route::get('/ready', [HealthCheckController::class, 'readiness'])
+        ->name('health.readiness');
+
+    // Métricas rápidas sin auth
+    Route::get('/metrics', [HealthCheckController::class, 'metrics'])
+        ->name('health.metrics');
+
+    // Detalles del sistema (requiere autenticación)
+    Route::get('/details', [HealthCheckController::class, 'details'])
+        ->middleware('auth:sanctum')
+        ->name('health.details');
+});
+
+// Metrics endpoint (Prometheus format)
+Route::get('/metrics', [MetricsController::class, 'index'])
+    ->middleware('throttle:60,1')
+    ->name('metrics.prometheus');
+
+Route::get('/metrics/health', [MetricsController::class, 'health'])
+    ->name('metrics.health');
