@@ -31,7 +31,7 @@ return [
     | Recomendación: Solo rutas API, no rutas web
     |
     */
-    'paths' => env('CORS_PATHS', ['api/*', 'sanctum/csrf-cookie']),
+    'paths' => explode(',', env('CORS_PATHS', 'api/*,sanctum/csrf-cookie')),
 
     /*
     |--------------------------------------------------------------------------

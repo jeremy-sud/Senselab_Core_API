@@ -135,14 +135,6 @@ use App\Policies\UrlShortenerPolicy;
 use App\Policies\ZonaGeograficaPolicy;
 use App\Policies\InventarioPolicy;
 
-// Importar observers
-use App\Observers\PermisoObserver;
-use App\Observers\RolObserver;
-use App\Observers\ProductoObserver;
-use App\Observers\VentaObserver;
-use App\Observers\ClienteObserver;
-use App\Observers\AsientoContableObserver;
-
 class AppServiceProvider extends ServiceProvider
 {
     /**

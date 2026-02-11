@@ -2,7 +2,14 @@
 # Multi-stage build para optimización
 
 # Etapa 1: Dependencias de Composer
-FROM composer:2.7 AS composer
+# Etapa 1: Dependencias de Composer
+FROM php:8.4-alpine AS composer
+
+# Install Composer
+COPY --from=composer/composer:2-bin /composer /usr/bin/composer
+
+# Install unzip explicitly needed for composer
+RUN apk add --no-cache unzip
 
 WORKDIR /app
 
@@ -24,7 +31,7 @@ COPY . .
 RUN composer dump-autoload --optimize --classmap-authoritative
 
 # Etapa 2: Imagen final PHP-FPM
-FROM php:8.2-fpm-alpine
+FROM php:8.4-fpm-alpine
 
 # Metadata
 LABEL maintainer="Sistemas Ursol S.A. <sistemas@ursol.com>"
@@ -45,7 +52,8 @@ RUN apk add --no-cache \
     oniguruma-dev \
     postgresql-dev \
     zip \
-    unzip
+    unzip \
+    linux-headers
 
 # Instalar extensiones de PHP
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
