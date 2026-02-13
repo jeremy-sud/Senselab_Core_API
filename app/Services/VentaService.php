@@ -11,7 +11,7 @@ use App\Models\Venta;
 use App\Models\Producto;
 use App\Models\DetalleVenta;
 use App\Models\InventarioProducto;
-use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -104,7 +104,7 @@ class VentaService
     /**
      * Listar ventas con paginación
      */
-    public function listar(int $perPage = 15): Paginator
+    public function listar(int $perPage = 15): LengthAwarePaginator
     {
         return Venta::with(['empresa', 'sucursal', 'cliente'])
             ->orderBy('id', 'desc')
@@ -114,7 +114,7 @@ class VentaService
     /**
      * Ventas por cliente
      */
-    public function porCliente(int $clienteId, int $perPage = 15): Paginator
+    public function porCliente(int $clienteId, int $perPage = 15): LengthAwarePaginator
     {
         return Venta::where('cliente_id', $clienteId)
             ->with(['detalles.producto', 'cliente'])
@@ -125,7 +125,7 @@ class VentaService
     /**
      * Ventas entre fechas
      */
-    public function entreFechas(\DateTime $inicio, \DateTime $fin, int $perPage = 15): Paginator
+    public function entreFechas(\DateTime $inicio, \DateTime $fin, int $perPage = 15): LengthAwarePaginator
     {
         return Venta::whereBetween('fecha_venta', [
             $inicio->format('Y-m-d'),

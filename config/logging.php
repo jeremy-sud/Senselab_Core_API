@@ -159,7 +159,6 @@ return [
             'formatter' => \Monolog\Formatter\JsonFormatter::class,
             'processors' => [
                 \Monolog\Processor\UidProcessor::class,
-                \Monolog\Processor\InvocationProcessor::class,
             ],
         ],
 

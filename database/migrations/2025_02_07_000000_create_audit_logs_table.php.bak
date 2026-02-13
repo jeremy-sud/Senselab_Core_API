@@ -60,7 +60,11 @@ return new class extends Migration
             $table->index('user_id');
             $table->index('empresa_id');
             $table->index('created_at');
-            $table->fullText(['description']); // Búsqueda de texto completo
+            
+            // Fulltext solo en MySQL (no en SQLite para tests)
+            if (config('database.default') === 'mysql') {
+                $table->fullText(['description']);
+            }
         });
     }
 
