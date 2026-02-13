@@ -28,7 +28,7 @@ final class ClienteCreateDTO
             identificacion: trim($request->string('identificacion')),
             email: trim($request->string('email')),
             telefono: trim($request->string('telefono')),
-            direccion: $request->string('direccion')?->toString() ?? null,
+            direccion: $request->input('direccion'),
             es_empresa: (bool) $request->input('es_empresa', false),
         );
     }

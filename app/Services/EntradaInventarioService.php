@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\DTOs\API\EntradaInventarioCreateDTO;
 use App\Models\EntradaInventario;
-use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * Servicio para gestionar Entradas de Inventario
@@ -26,7 +26,7 @@ class EntradaInventarioService
             $entrada->detalles()->create($detalle);
         }
         
-        return $entrada->fresh('detalles');
+        return $entrada->fresh('detalles') ?? $entrada;
     }
 
     /**
@@ -40,7 +40,7 @@ class EntradaInventarioService
     /**
      * Listar entradas con paginación
      */
-    public function listar(int $perPage = 15): Paginator
+    public function listar(int $perPage = 15): LengthAwarePaginator
     {
         return EntradaInventario::with('detalles')->paginate($perPage);
     }
@@ -48,7 +48,7 @@ class EntradaInventarioService
     /**
      * Entradas por almacén
      */
-    public function porAlmacen(int $almacenId, int $perPage = 15): Paginator
+    public function porAlmacen(int $almacenId, int $perPage = 15): LengthAwarePaginator
     {
         return EntradaInventario::where('almacen_id', $almacenId)
             ->with('detalles')
@@ -58,7 +58,7 @@ class EntradaInventarioService
     /**
      * Entradas entre fechas
      */
-    public function entreFechas(\DateTime $inicio, \DateTime $fin, int $perPage = 15): Paginator
+    public function entreFechas(\DateTime $inicio, \DateTime $fin, int $perPage = 15): LengthAwarePaginator
     {
         return EntradaInventario::whereBetween('fecha', [$inicio->format('Y-m-d'), $fin->format('Y-m-d')])
             ->with('detalles')

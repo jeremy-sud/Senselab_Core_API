@@ -127,6 +127,36 @@ parameters:
 			path: app/DTOs/API/CategoriaProductoCreateDTO.php
 
 		-
+			message: '#^Method App\\DTOs\\API\\Cliente\\ClienteCreateDTO\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Cliente/ClienteCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Cliente\\ClienteCreateDTO\:\:toModelData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Cliente/ClienteCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Cliente\\ClienteUpdateDTO\:\:messages\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Cliente/ClienteUpdateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Cliente\\ClienteUpdateDTO\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Cliente/ClienteUpdateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Cliente\\ClienteUpdateDTO\:\:toModelData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Cliente/ClienteUpdateDTO.php
+
+		-
 			message: '#^Method App\\DTOs\\API\\ClienteCreateDTO\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -161,6 +191,72 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 2
 			path: app/DTOs/API/ComprobanteElectronicoCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\ComprobanteFE\\ComprobanteFECreateDTO\:\:__construct\(\) has parameter \$detalles with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/ComprobanteFE/ComprobanteFECreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\ComprobanteFE\\ComprobanteFECreateDTO\:\:messages\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/ComprobanteFE/ComprobanteFECreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\ComprobanteFE\\ComprobanteFECreateDTO\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/ComprobanteFE/ComprobanteFECreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\ComprobanteFE\\ComprobanteFECreateDTO\:\:toModelData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/ComprobanteFE/ComprobanteFECreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Contabilidad\\AsientoContableCreateDTO\:\:__construct\(\) has parameter \$detalles with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Contabilidad/AsientoContableCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Contabilidad\\AsientoContableCreateDTO\:\:messages\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Contabilidad/AsientoContableCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Contabilidad\\AsientoContableCreateDTO\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Contabilidad/AsientoContableCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Contabilidad\\AsientoContableCreateDTO\:\:toModelData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Contabilidad/AsientoContableCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Contabilidad\\CuentaContableCreateDTO\:\:messages\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Contabilidad/CuentaContableCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Contabilidad\\CuentaContableCreateDTO\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Contabilidad/CuentaContableCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Contabilidad\\CuentaContableCreateDTO\:\:toModelData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Contabilidad/CuentaContableCreateDTO.php
 
 		-
 			message: '#^Method App\\DTOs\\API\\CuentaCobrarCreateDTO\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
@@ -199,6 +295,54 @@ parameters:
 			path: app/DTOs/API/CuentaPagarCreateDTO.php
 
 		-
+			message: '#^Method App\\DTOs\\API\\CuentasCobrar\\CuentaCobrarCreateDTO\:\:__construct\(\) has parameter \$cuotas with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/CuentasCobrar/CuentaCobrarCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\CuentasCobrar\\CuentaCobrarCreateDTO\:\:messages\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/CuentasCobrar/CuentaCobrarCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\CuentasCobrar\\CuentaCobrarCreateDTO\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/CuentasCobrar/CuentaCobrarCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\CuentasCobrar\\CuentaCobrarCreateDTO\:\:toModelData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/CuentasCobrar/CuentaCobrarCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\CuentasPagar\\CuentaPagarCreateDTO\:\:__construct\(\) has parameter \$cuotas with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/CuentasPagar/CuentaPagarCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\CuentasPagar\\CuentaPagarCreateDTO\:\:messages\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/CuentasPagar/CuentaPagarCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\CuentasPagar\\CuentaPagarCreateDTO\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/CuentasPagar/CuentaPagarCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\CuentasPagar\\CuentaPagarCreateDTO\:\:toModelData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/CuentasPagar/CuentaPagarCreateDTO.php
+
+		-
 			message: '#^Method App\\DTOs\\API\\EntradaInventarioCreateDTO\:\:__construct\(\) has parameter \$detalles with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -229,6 +373,84 @@ parameters:
 			path: app/DTOs/API/EntradaInventarioCreateDTO.php
 
 		-
+			message: '#^Method App\\DTOs\\API\\Inventario\\EntradaInventarioCreateDTO\:\:__construct\(\) has parameter \$lotes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Inventario/EntradaInventarioCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Inventario\\EntradaInventarioCreateDTO\:\:messages\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Inventario/EntradaInventarioCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Inventario\\EntradaInventarioCreateDTO\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Inventario/EntradaInventarioCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Inventario\\EntradaInventarioCreateDTO\:\:toModelData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Inventario/EntradaInventarioCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Inventario\\SalidaInventarioCreateDTO\:\:__construct\(\) has parameter \$lotes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Inventario/SalidaInventarioCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Inventario\\SalidaInventarioCreateDTO\:\:messages\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Inventario/SalidaInventarioCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Inventario\\SalidaInventarioCreateDTO\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Inventario/SalidaInventarioCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Inventario\\SalidaInventarioCreateDTO\:\:toModelData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Inventario/SalidaInventarioCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Nomina\\NominaEmpleadoCreateDTO\:\:__construct\(\) has parameter \$aportes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Nomina/NominaEmpleadoCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Nomina\\NominaEmpleadoCreateDTO\:\:__construct\(\) has parameter \$deducciones with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Nomina/NominaEmpleadoCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Nomina\\NominaEmpleadoCreateDTO\:\:messages\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Nomina/NominaEmpleadoCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Nomina\\NominaEmpleadoCreateDTO\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Nomina/NominaEmpleadoCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Nomina\\NominaEmpleadoCreateDTO\:\:toModelData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Nomina/NominaEmpleadoCreateDTO.php
+
+		-
 			message: '#^Method App\\DTOs\\API\\PagoCreateDTO\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -251,6 +473,30 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/DTOs/API/PagoNominaCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Pagos\\PagoCreateDTO\:\:__construct\(\) has parameter \$cuentas_cobrar_pagadas with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Pagos/PagoCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Pagos\\PagoCreateDTO\:\:messages\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Pagos/PagoCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Pagos\\PagoCreateDTO\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Pagos/PagoCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Pagos\\PagoCreateDTO\:\:toModelData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Pagos/PagoCreateDTO.php
 
 		-
 			message: '#^Method App\\DTOs\\API\\PeriodoNominaCreateDTO\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
@@ -295,6 +541,54 @@ parameters:
 			path: app/DTOs/API/PresupuestoCreateDTO.php
 
 		-
+			message: '#^Method App\\DTOs\\API\\Producto\\CategoriaProductoCreateDTO\:\:messages\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Producto/CategoriaProductoCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Producto\\CategoriaProductoCreateDTO\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Producto/CategoriaProductoCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Producto\\CategoriaProductoCreateDTO\:\:toModelData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Producto/CategoriaProductoCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Producto\\ProductoCreateDTO\:\:messages\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Producto/ProductoCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Producto\\ProductoCreateDTO\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Producto/ProductoCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Producto\\ProductoCreateDTO\:\:toModelData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Producto/ProductoCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Producto\\ProductoUpdateDTO\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Producto/ProductoUpdateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Producto\\ProductoUpdateDTO\:\:toModelData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Producto/ProductoUpdateDTO.php
+
+		-
 			message: '#^Method App\\DTOs\\API\\ProductoCreateDTO\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -311,6 +605,30 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/DTOs/API/ProductoUpdateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Proveedor\\ProveedorUpdateDTO\:\:__construct\(\) has parameter \$contactos with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Proveedor/ProveedorUpdateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Proveedor\\ProveedorUpdateDTO\:\:messages\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Proveedor/ProveedorUpdateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Proveedor\\ProveedorUpdateDTO\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Proveedor/ProveedorUpdateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Proveedor\\ProveedorUpdateDTO\:\:toModelData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Proveedor/ProveedorUpdateDTO.php
 
 		-
 			message: '#^Method App\\DTOs\\API\\ProveedorCreateDTO\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
@@ -361,6 +679,78 @@ parameters:
 			path: app/DTOs/API/SalidaInventarioCreateDTO.php
 
 		-
+			message: '#^Method App\\DTOs\\API\\Venta\\DetalleVentaDTO\:\:fromArray\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Venta/DetalleVentaDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Venta\\DetalleVentaDTO\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Venta/DetalleVentaDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Venta\\DetalleVentaDTO\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Venta/DetalleVentaDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Venta\\VentaCreateDTO\:\:calcularTotales\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Venta/VentaCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Venta\\VentaCreateDTO\:\:getDetallesData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Venta/VentaCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Venta\\VentaCreateDTO\:\:messages\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Venta/VentaCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Venta\\VentaCreateDTO\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Venta/VentaCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Venta\\VentaCreateDTO\:\:toModelData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Venta/VentaCreateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Venta\\VentaUpdateDTO\:\:__construct\(\) has parameter \$detalles with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Venta/VentaUpdateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Venta\\VentaUpdateDTO\:\:messages\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Venta/VentaUpdateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Venta\\VentaUpdateDTO\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Venta/VentaUpdateDTO.php
+
+		-
+			message: '#^Method App\\DTOs\\API\\Venta\\VentaUpdateDTO\:\:toModelData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/DTOs/API/Venta/VentaUpdateDTO.php
+
+		-
 			message: '#^Method App\\DTOs\\API\\VentaCreateDTO\:\:__construct\(\) has parameter \$detalles with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -373,21 +763,15 @@ parameters:
 			path: app/DTOs/API/VentaCreateDTO.php
 
 		-
-			message: '#^Method App\\DTOs\\API\\VentaCreateDTO\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method App\\DTOs\\API\\VentaCreateDTO\:\:getProductoIds\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/DTOs/API/VentaCreateDTO.php
 
 		-
-			message: '#^Method Illuminate\\Http\\Request\:\:array\(\) invoked with 2 parameters, 0\-1 required\.$#'
-			identifier: arguments.count
+			message: '#^Method App\\DTOs\\API\\VentaCreateDTO\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
 			count: 1
-			path: app/DTOs/API/VentaCreateDTO.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Support\\Stringable\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 2
 			path: app/DTOs/API/VentaCreateDTO.php
 
 		-
@@ -761,24 +1145,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Http/Controllers/API/ConfiguracionController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\API\\ConsecutivoFeController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/API/ConsecutivoFeController.php
-
-		-
-			message: '#^Property App\\Http\\Controllers\\API\\ConsecutivoFeController\:\:\$cacheTTL has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: app/Http/Controllers/API/ConsecutivoFeController.php
-
-		-
-			message: '#^Property App\\Http\\Controllers\\API\\ConsecutivoFeController\:\:\$cacheTags has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: app/Http/Controllers/API/ConsecutivoFeController.php
 
 		-
 			message: '#^Method App\\Http\\Controllers\\API\\CuentaBancariaController\:\:destroy\(\) has invalid return type App\\Http\\Controllers\\API\\JsonResponse\.$#'
@@ -1873,42 +2239,6 @@ parameters:
 			path: app/Http/Controllers/API/UsuarioController.php
 
 		-
-			message: '#^Method App\\Http\\Controllers\\API\\VentaController\:\:assertStockDisponible\(\) has parameter \$detalles with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Http/Controllers/API/VentaController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\API\\VentaController\:\:ensureProductos\(\) has parameter \$productoIds with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/API/VentaController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\API\\VentaController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/API/VentaController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\API\\VentaController\:\:procesarDetallesVenta\(\) has parameter \$detalles with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Http/Controllers/API/VentaController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\API\\VentaController\:\:procesarDetallesVenta\(\) has parameter \$productos with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Http/Controllers/API/VentaController.php
-
-		-
-			message: '#^PHPDoc tag @return with type Illuminate\\Http\\JsonResponse is incompatible with native type Illuminate\\Http\\Resources\\Json\\AnonymousResourceCollection\.$#'
-			identifier: return.phpDocType
-			count: 1
-			path: app/Http/Controllers/API/VentaController.php
-
-		-
 			message: '#^Method App\\Http\\Controllers\\API\\ZonaGeograficaController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -1955,12 +2285,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Http/Controllers/Api/V1/ApiController.php
-
-		-
-			message: '#^Parameter \$comprobante of method App\\Http\\Controllers\\Api\\V1\\HaciendaController\:\:generar\(\) has invalid type App\\Models\\Comprobante\.$#'
-			identifier: class.notFound
-			count: 2
-			path: app/Http/Controllers/Api/V1/HaciendaController.php
 
 		-
 			message: '#^Cannot call method toIso8601String\(\) on Carbon\\Carbon\|null\.$#'
@@ -2015,12 +2339,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Http/Controllers/ComplianceDashboardController.php
-
-		-
-			message: '#^Class App\\Http\\Resources\\ConsecutivoFeResource referenced with incorrect case\: App\\Http\\Resources\\ConsecutivoFEResource\.$#'
-			identifier: class.nameCase
-			count: 9
-			path: app/Http/Controllers/ConsecutivoFEController.php
 
 		-
 			message: '#^Class App\\Models\\ConsecutivoFe referenced with incorrect case\: App\\Models\\ConsecutivoFE\.$#'
@@ -3853,12 +4171,6 @@ parameters:
 			path: app/Http/Resources/CategoriaProductoResource.php
 
 		-
-			message: '#^Class App\\Http\\Resources\\ConsecutivoFeResource referenced with incorrect case\: App\\Http\\Resources\\ConsecutivoFEResource\.$#'
-			identifier: class.nameCase
-			count: 1
-			path: app/Http/Resources/ComprobanteElectronicoFeResource.php
-
-		-
 			message: '#^Method App\\Http\\Resources\\ConfiguracionResource\:\:obtenerValorFormateado\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -4069,12 +4381,6 @@ parameters:
 			path: app/Models/Almacen.php
 
 		-
-			message: '#^Method App\\Models\\Almacen\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/Almacen.php
-
-		-
 			message: '#^Method App\\Models\\Almacen\:\:getStockProducto\(\) has parameter \$productoId with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
@@ -4119,12 +4425,6 @@ parameters:
 		-
 			message: '#^Class App\\Models\\Archivo uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Models/Archivo.php
-
-		-
-			message: '#^Method App\\Models\\Archivo\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: app/Models/Archivo.php
 
@@ -4185,12 +4485,6 @@ parameters:
 		-
 			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\DetalleAsiento\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasMany\: TRelatedModel, TDeclaringModel$#'
 			identifier: generics.lessTypes
-			count: 1
-			path: app/Models/AsientoContable.php
-
-		-
-			message: '#^Method App\\Models\\AsientoContable\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: app/Models/AsientoContable.php
 
@@ -4561,12 +4855,6 @@ parameters:
 			path: app/Models/BusUnidad.php
 
 		-
-			message: '#^Method App\\Models\\BusUnidad\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/BusUnidad.php
-
-		-
 			message: '#^Method App\\Models\\BusUnidad\:\:scopePorCapacidad\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -4711,12 +4999,6 @@ parameters:
 			path: app/Models/Caja.php
 
 		-
-			message: '#^Method App\\Models\\Caja\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/Caja.php
-
-		-
 			message: '#^Method App\\Models\\Caja\:\:empresa\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -4779,12 +5061,6 @@ parameters:
 		-
 			message: '#^Class App\\Models\\CajaChica uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Models/CajaChica.php
-
-		-
-			message: '#^Method App\\Models\\CajaChica\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: app/Models/CajaChica.php
 
@@ -4929,12 +5205,6 @@ parameters:
 		-
 			message: '#^Class App\\Models\\Cliente uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Models/Cliente.php
-
-		-
-			message: '#^Method App\\Models\\Cliente\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: app/Models/Cliente.php
 
@@ -5095,12 +5365,6 @@ parameters:
 			path: app/Models/ComprobanteElectronicoFe.php
 
 		-
-			message: '#^Method App\\Models\\ComprobanteElectronicoFe\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/ComprobanteElectronicoFe.php
-
-		-
 			message: '#^Method App\\Models\\ComprobanteElectronicoFe\:\:scopeAceptados\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -5187,12 +5451,6 @@ parameters:
 		-
 			message: '#^Class App\\Models\\ComprobanteRecibidoElectronico uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Models/ComprobanteRecibidoElectronico.php
-
-		-
-			message: '#^Method App\\Models\\ComprobanteRecibidoElectronico\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: app/Models/ComprobanteRecibidoElectronico.php
 
@@ -5317,12 +5575,6 @@ parameters:
 			path: app/Models/Configuracion.php
 
 		-
-			message: '#^Method App\\Models\\Configuracion\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/Configuracion.php
-
-		-
 			message: '#^Method App\\Models\\Configuracion\:\:getValorConvertidoAttribute\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -5385,12 +5637,6 @@ parameters:
 		-
 			message: '#^Class App\\Models\\ConfiguracionApi uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Models/ConfiguracionApi.php
-
-		-
-			message: '#^Method App\\Models\\ConfiguracionApi\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: app/Models/ConfiguracionApi.php
 
@@ -5527,12 +5773,6 @@ parameters:
 			path: app/Models/ConsecutivoFe.php
 
 		-
-			message: '#^Method App\\Models\\ConsecutivoFe\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/ConsecutivoFe.php
-
-		-
 			message: '#^Method App\\Models\\ConsecutivoFe\:\:scopePorTipoComprobante\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -5565,12 +5805,6 @@ parameters:
 		-
 			message: '#^Method App\\Models\\CuentaBancaria\:\:actualizarSaldo\(\) has parameter \$monto with no type specified\.$#'
 			identifier: missingType.parameter
-			count: 1
-			path: app/Models/CuentaBancaria.php
-
-		-
-			message: '#^Method App\\Models\\CuentaBancaria\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: app/Models/CuentaBancaria.php
 
@@ -5653,12 +5887,6 @@ parameters:
 			path: app/Models/CuentaContable.php
 
 		-
-			message: '#^Method App\\Models\\CuentaContable\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/CuentaContable.php
-
-		-
 			message: '#^Method App\\Models\\CuentaContable\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
 			identifier: return.type
 			count: 1
@@ -5737,12 +5965,6 @@ parameters:
 			path: app/Models/CuentaContable.php
 
 		-
-			message: '#^Method App\\Models\\CuentaPorCobrar\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/CuentaPorCobrar.php
-
-		-
 			message: '#^Method App\\Models\\CuentaPorCobrar\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
 			identifier: return.type
 			count: 1
@@ -5777,12 +5999,6 @@ parameters:
 			identifier: property.phpDocType
 			count: 1
 			path: app/Models/CuentaPorCobrar.php
-
-		-
-			message: '#^Method App\\Models\\CuentaPorPagar\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/CuentaPorPagar.php
 
 		-
 			message: '#^Method App\\Models\\CuentaPorPagar\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
@@ -5931,12 +6147,6 @@ parameters:
 		-
 			message: '#^Class App\\Models\\DeclaracionTributaria uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Models/DeclaracionTributaria.php
-
-		-
-			message: '#^Method App\\Models\\DeclaracionTributaria\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: app/Models/DeclaracionTributaria.php
 
@@ -6301,12 +6511,6 @@ parameters:
 			path: app/Models/DetalleVenta.php
 
 		-
-			message: '#^Method App\\Models\\Empleado\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/Empleado.php
-
-		-
 			message: '#^Method App\\Models\\Empleado\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
 			identifier: return.type
 			count: 1
@@ -6511,12 +6715,6 @@ parameters:
 			path: app/Models/EntradaInventario.php
 
 		-
-			message: '#^Method App\\Models\\EntradaInventario\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/EntradaInventario.php
-
-		-
 			message: '#^Method App\\Models\\EntradaInventario\:\:detalles\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\DetalleEntradaInventario, App\\Models\\EntradaInventario\> but returns Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\DetalleEntradaInventario, \$this\(App\\Models\\EntradaInventario\)\>\.$#'
 			identifier: return.type
 			count: 1
@@ -6565,12 +6763,6 @@ parameters:
 			path: app/Models/EntradaInventario.php
 
 		-
-			message: '#^Method App\\Models\\Etiqueta\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/Etiqueta.php
-
-		-
 			message: '#^Method App\\Models\\Etiqueta\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
 			identifier: return.type
 			count: 1
@@ -6615,12 +6807,6 @@ parameters:
 		-
 			message: '#^Class App\\Models\\FeCertificadoDigital uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Models/FeCertificadoDigital.php
-
-		-
-			message: '#^Method App\\Models\\FeCertificadoDigital\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: app/Models/FeCertificadoDigital.php
 
@@ -7291,12 +7477,6 @@ parameters:
 			path: app/Models/MensajeHacienda.php
 
 		-
-			message: '#^Method App\\Models\\MensajeHacienda\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/MensajeHacienda.php
-
-		-
 			message: '#^Method App\\Models\\MensajeHacienda\:\:esPendiente\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -7401,12 +7581,6 @@ parameters:
 		-
 			message: '#^Class App\\Models\\MovimientoBancario uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Models/MovimientoBancario.php
-
-		-
-			message: '#^Method App\\Models\\MovimientoBancario\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: app/Models/MovimientoBancario.php
 
@@ -7647,12 +7821,6 @@ parameters:
 		-
 			message: '#^Class App\\Models\\Notificacion uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Models/Notificacion.php
-
-		-
-			message: '#^Method App\\Models\\Notificacion\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: app/Models/Notificacion.php
 
@@ -7903,12 +8071,6 @@ parameters:
 			path: app/Models/OrdenCompra.php
 
 		-
-			message: '#^Method App\\Models\\OrdenCompra\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/OrdenCompra.php
-
-		-
 			message: '#^Method App\\Models\\OrdenCompra\:\:calcularSaldoPendiente\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -8013,12 +8175,6 @@ parameters:
 		-
 			message: '#^Class App\\Models\\Pago uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Models/Pago.php
-
-		-
-			message: '#^Method App\\Models\\Pago\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: app/Models/Pago.php
 
@@ -8275,12 +8431,6 @@ parameters:
 			path: app/Models/PagoNomina.php
 
 		-
-			message: '#^Method App\\Models\\PagoNomina\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/PagoNomina.php
-
-		-
 			message: '#^Method App\\Models\\PagoNomina\:\:esPagoFinalizado\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -8385,12 +8535,6 @@ parameters:
 		-
 			message: '#^Class App\\Models\\PeriodoNomina uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Models/PeriodoNomina.php
-
-		-
-			message: '#^Method App\\Models\\PeriodoNomina\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: app/Models/PeriodoNomina.php
 
@@ -8533,12 +8677,6 @@ parameters:
 			path: app/Models/PlanillaCcss.php
 
 		-
-			message: '#^Method App\\Models\\PlanillaCcss\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/PlanillaCcss.php
-
-		-
 			message: '#^Method App\\Models\\PlanillaCcss\:\:calcularTotalCuotas\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -8601,12 +8739,6 @@ parameters:
 		-
 			message: '#^Class App\\Models\\Presupuesto uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Models/Presupuesto.php
-
-		-
-			message: '#^Method App\\Models\\Presupuesto\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: app/Models/Presupuesto.php
 
@@ -8697,12 +8829,6 @@ parameters:
 		-
 			message: '#^Class App\\Models\\Producto uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Models/Producto.php
-
-		-
-			message: '#^Method App\\Models\\Producto\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: app/Models/Producto.php
 
@@ -8799,12 +8925,6 @@ parameters:
 		-
 			message: '#^Class App\\Models\\Proveedor uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Models/Proveedor.php
-
-		-
-			message: '#^Method App\\Models\\Proveedor\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: app/Models/Proveedor.php
 
@@ -8907,12 +9027,6 @@ parameters:
 		-
 			message: '#^Class App\\Models\\RetencionImpuesto uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Models/RetencionImpuesto.php
-
-		-
-			message: '#^Method App\\Models\\RetencionImpuesto\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: app/Models/RetencionImpuesto.php
 
@@ -9199,12 +9313,6 @@ parameters:
 			path: app/Models/RolUsuario.php
 
 		-
-			message: '#^Method App\\Models\\Ruta\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/Ruta.php
-
-		-
 			message: '#^Method App\\Models\\Ruta\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
 			identifier: return.type
 			count: 1
@@ -9245,12 +9353,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Models/Ruta.php
-
-		-
-			message: '#^Method App\\Models\\SalidaInventario\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/SalidaInventario.php
 
 		-
 			message: '#^Method App\\Models\\SalidaInventario\:\:detalles\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\DetalleSalidaInventario, App\\Models\\SalidaInventario\> but returns Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\DetalleSalidaInventario, \$this\(App\\Models\\SalidaInventario\)\>\.$#'
@@ -9305,12 +9407,6 @@ parameters:
 			identifier: missingType.generics
 			count: 1
 			path: app/Models/SesionUsuario.php
-
-		-
-			message: '#^Method App\\Models\\Sucursal\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/Sucursal.php
 
 		-
 			message: '#^Method App\\Models\\Sucursal\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
@@ -9733,12 +9829,6 @@ parameters:
 			path: app/Models/UnidadMedida.php
 
 		-
-			message: '#^Method App\\Models\\UrlShortener\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/UrlShortener.php
-
-		-
 			message: '#^Method App\\Models\\UrlShortener\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
 			identifier: return.type
 			count: 1
@@ -9907,12 +9997,6 @@ parameters:
 			path: app/Models/Venta.php
 
 		-
-			message: '#^Method App\\Models\\Venta\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/Venta.php
-
-		-
 			message: '#^Method App\\Models\\Venta\:\:historialAuditoria\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AuditoriaActividad\>\.$#'
 			identifier: return.type
 			count: 1
@@ -9957,12 +10041,6 @@ parameters:
 		-
 			message: '#^Class App\\Models\\ZonaGeografica uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Models/ZonaGeografica.php
-
-		-
-			message: '#^Method App\\Models\\ZonaGeografica\:\:bootBelongsToTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: app/Models/ZonaGeografica.php
 
@@ -11621,6 +11699,30 @@ parameters:
 			identifier: staticMethod.notFound
 			count: 1
 			path: app/Services/SentryService.php
+
+		-
+			message: '#^Method App\\Services\\VentaService\:\:procesarDetalles\(\) has parameter \$detalles with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/VentaService.php
+
+		-
+			message: '#^Method App\\Services\\VentaService\:\:procesarDetalles\(\) has parameter \$productos with generic class Illuminate\\Database\\Eloquent\\Collection but does not specify its types\: TKey, TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/VentaService.php
+
+		-
+			message: '#^Method App\\Services\\VentaService\:\:validarProductos\(\) has parameter \$productoIds with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/VentaService.php
+
+		-
+			message: '#^Method App\\Services\\VentaService\:\:validarStockDisponible\(\) has parameter \$detalles with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/VentaService.php
 
 		-
 			message: '#^Trait App\\Traits\\EncryptsAttributes is used zero times and is not analysed\.$#'

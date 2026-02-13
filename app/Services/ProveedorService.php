@@ -5,7 +5,7 @@ namespace App\Services;
 use App\DTOs\API\ProveedorCreateDTO;
 use App\DTOs\API\ProveedorUpdateDTO;
 use App\Models\Proveedor;
-use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * Servicio para gestionar Proveedores
@@ -29,7 +29,7 @@ class ProveedorService
     public function actualizar(Proveedor $proveedor, ProveedorUpdateDTO $dto): Proveedor
     {
         $proveedor->update($dto->toArray());
-        return $proveedor->fresh();
+        return $proveedor->fresh() ?? $proveedor;
     }
 
     /**
@@ -37,7 +37,7 @@ class ProveedorService
      */
     public function eliminar(Proveedor $proveedor): bool
     {
-        return $proveedor->delete();
+        return (bool) $proveedor->delete();
     }
 
     /**
@@ -51,7 +51,7 @@ class ProveedorService
     /**
      * Listar proveedores con paginación
      */
-    public function listar(int $perPage = 15): Paginator
+    public function listar(int $perPage = 15): LengthAwarePaginator
     {
         return Proveedor::paginate($perPage);
     }
@@ -59,7 +59,7 @@ class ProveedorService
     /**
      * Buscar proveedores
      */
-    public function buscar(string $termino, int $perPage = 15): Paginator
+    public function buscar(string $termino, int $perPage = 15): LengthAwarePaginator
     {
         return Proveedor::where('nombre', 'like', "%{$termino}%")
             ->orWhere('cedula_juridica', 'like', "%{$termino}%")
@@ -70,7 +70,7 @@ class ProveedorService
     /**
      * Obtener proveedores activos
      */
-    public function activos(int $perPage = 15): Paginator
+    public function activos(int $perPage = 15): LengthAwarePaginator
     {
         return Proveedor::where('activo', true)->paginate($perPage);
     }

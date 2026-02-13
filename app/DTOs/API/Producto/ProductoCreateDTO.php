@@ -38,7 +38,7 @@ final class ProductoCreateDTO
             precio: (float) $request->input('precio'),
             stock_inicial: (int) $request->input('stock_inicial', 0),
             categoria_id: (int) $request->input('categoria_id'),
-            codigo_externo: $request->string('codigo_externo')?->toString() ?? null,
+            codigo_externo: $request->input('codigo_externo'),
             activo: (bool) $request->input('activo', true),
         );
     }

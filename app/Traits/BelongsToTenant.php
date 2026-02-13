@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait BelongsToTenant
 {
-    protected static function bootBelongsToTenant()
+    protected static function bootBelongsToTenant(): void
     {
         // Global scope para filtrar por empresa del usuario autenticado o tenant actual
         static::addGlobalScope('tenant', function (Builder $builder) {

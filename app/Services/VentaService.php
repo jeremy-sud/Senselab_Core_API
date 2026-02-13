@@ -159,7 +159,7 @@ class VentaService
         }
         
         $venta->update(['estado_venta' => $nuevoEstado]);
-        return $venta->fresh();
+        return $venta->fresh() ?? $venta;
     }
 
     /**
@@ -173,7 +173,7 @@ class VentaService
             'eliminado' => true
         ]);
         
-        return $venta->fresh();
+        return $venta->fresh() ?? $venta;
     }
 
     /**
