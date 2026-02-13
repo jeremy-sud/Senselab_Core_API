@@ -5,7 +5,7 @@ namespace App\Services;
 use App\DTOs\API\ClienteCreateDTO;
 use App\DTOs\API\ClienteUpdateDTO;
 use App\Models\Cliente;
-use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * Servicio para gestionar Clientes
@@ -29,7 +29,7 @@ class ClienteService
     public function actualizar(Cliente $cliente, ClienteUpdateDTO $dto): Cliente
     {
         $cliente->update($dto->toArray());
-        return $cliente->fresh();
+        return $cliente->fresh() ?? $cliente;
     }
 
     /**
@@ -37,7 +37,7 @@ class ClienteService
      */
     public function eliminar(Cliente $cliente): bool
     {
-        return $cliente->delete();
+        return (bool) $cliente->delete();
     }
 
     /**
@@ -51,7 +51,7 @@ class ClienteService
     /**
      * Listar clientes con paginación
      */
-    public function listar(int $perPage = 15): Paginator
+    public function listar(int $perPage = 15): LengthAwarePaginator
     {
         return Cliente::paginate($perPage);
     }
@@ -59,7 +59,7 @@ class ClienteService
     /**
      * Buscar clientes
      */
-    public function buscar(string $termino, int $perPage = 15): Paginator
+    public function buscar(string $termino, int $perPage = 15): LengthAwarePaginator
     {
         return Cliente::where('nombre', 'like', "%{$termino}%")
             ->orWhere('cedula_juridica', 'like', "%{$termino}%")
@@ -70,7 +70,7 @@ class ClienteService
     /**
      * Obtener clientes activos
      */
-    public function activos(int $perPage = 15): Paginator
+    public function activos(int $perPage = 15): LengthAwarePaginator
     {
         return Cliente::where('activo', true)->paginate($perPage);
     }

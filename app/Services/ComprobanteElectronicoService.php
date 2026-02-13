@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\DTOs\API\ComprobanteElectronicoCreateDTO;
 use App\Models\ComprobanteElectronicoFe;
-use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * Servicio para gestionar Comprobantes Electrónicos
@@ -33,7 +33,7 @@ class ComprobanteElectronicoService
     /**
      * Listar comprobantes con paginación
      */
-    public function listar(int $perPage = 15): Paginator
+    public function listar(int $perPage = 15): LengthAwarePaginator
     {
         return ComprobanteElectronicoFe::paginate($perPage);
     }
@@ -53,7 +53,7 @@ class ComprobanteElectronicoService
     {
         $comprobante->estado = $nuevoEstado;
         $comprobante->save();
-        return $comprobante->fresh();
+        return $comprobante->fresh() ?? $comprobante;
     }
 
     /**

@@ -47,7 +47,7 @@ final class CuentaPagarCreateDTO
     public function diasHastaVencimiento(): int
     {
         $hoy = new \DateTime();
-        return $hoy->diff($this->fecha_vencimiento)->days;
+        return (int) $hoy->diff($this->fecha_vencimiento)->days;
     }
 
     /**

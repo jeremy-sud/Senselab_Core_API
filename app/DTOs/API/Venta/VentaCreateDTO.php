@@ -38,7 +38,7 @@ final class VentaCreateDTO
         return new self(
             cliente_id: (int) $request->input('cliente_id'),
             detalles: $detalles,
-            observaciones: $request->string('observaciones')?->toString() ?? null,
+            observaciones: $request->input('observaciones'),
             descuento_adicional: $request->has('descuento_adicional')
                 ? (float) $request->input('descuento_adicional')
                 : 0,

@@ -27,11 +27,11 @@ final class ProductoUpdateDTO
     public static function fromRequest(Request $request): self
     {
         return new self(
-            nombre: $request->string('nombre')?->toString() ?? null,
-            descripcion: $request->string('descripcion')?->toString() ?? null,
+            nombre: $request->input('nombre'),
+            descripcion: $request->input('descripcion'),
             precio: $request->has('precio') ? (float) $request->input('precio') : null,
             categoria_id: $request->has('categoria_id') ? (int) $request->input('categoria_id') : null,
-            codigo_externo: $request->string('codigo_externo')?->toString() ?? null,
+            codigo_externo: $request->input('codigo_externo'),
             activo: $request->has('activo') ? (bool) $request->input('activo') : null,
         );
     }

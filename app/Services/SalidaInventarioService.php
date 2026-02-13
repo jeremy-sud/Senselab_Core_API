@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\DTOs\API\SalidaInventarioCreateDTO;
 use App\Models\SalidaInventario;
-use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * Servicio para gestionar Salidas de Inventario
@@ -26,7 +26,7 @@ class SalidaInventarioService
             $salida->detalles()->create($detalle);
         }
         
-        return $salida->fresh('detalles');
+        return $salida->fresh('detalles') ?? $salida;
     }
 
     /**
@@ -40,7 +40,7 @@ class SalidaInventarioService
     /**
      * Listar salidas con paginación
      */
-    public function listar(int $perPage = 15): Paginator
+    public function listar(int $perPage = 15): LengthAwarePaginator
     {
         return SalidaInventario::with('detalles')->paginate($perPage);
     }
@@ -48,7 +48,7 @@ class SalidaInventarioService
     /**
      * Salidas por almacén
      */
-    public function porAlmacen(int $almacenId, int $perPage = 15): Paginator
+    public function porAlmacen(int $almacenId, int $perPage = 15): LengthAwarePaginator
     {
         return SalidaInventario::where('almacen_id', $almacenId)
             ->with('detalles')
@@ -58,7 +58,7 @@ class SalidaInventarioService
     /**
      * Salidas entre fechas
      */
-    public function entreFechas(\DateTime $inicio, \DateTime $fin, int $perPage = 15): Paginator
+    public function entreFechas(\DateTime $inicio, \DateTime $fin, int $perPage = 15): LengthAwarePaginator
     {
         return SalidaInventario::whereBetween('fecha', [$inicio->format('Y-m-d'), $fin->format('Y-m-d')])
             ->with('detalles')

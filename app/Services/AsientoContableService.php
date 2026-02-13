@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\DTOs\API\AsientoContableCreateDTO;
 use App\Models\AsientoContable;
-use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * Servicio para gestionar Asientos Contables
@@ -26,7 +26,7 @@ class AsientoContableService
             $asiento->detalles()->create($detalle);
         }
         
-        return $asiento->fresh('detalles');
+        return $asiento->fresh('detalles') ?? $asiento;
     }
 
     /**
@@ -40,7 +40,7 @@ class AsientoContableService
     /**
      * Listar asientos con paginación
      */
-    public function listar(int $perPage = 15): Paginator
+    public function listar(int $perPage = 15): LengthAwarePaginator
     {
         return AsientoContable::with('detalles')->paginate($perPage);
     }
@@ -48,7 +48,7 @@ class AsientoContableService
     /**
      * Asientos entre fechas
      */
-    public function entreFechas(\DateTime $inicio, \DateTime $fin, int $perPage = 15): Paginator
+    public function entreFechas(\DateTime $inicio, \DateTime $fin, int $perPage = 15): LengthAwarePaginator
     {
         return AsientoContable::whereBetween('fecha', [$inicio->format('Y-m-d'), $fin->format('Y-m-d')])
             ->with('detalles')
