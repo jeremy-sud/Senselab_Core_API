@@ -2,9 +2,11 @@
 ## Ursol CAST API - Refactorización y Mejora de Arquitectura
 
 **Fecha de Inicio:** 12 de febrero de 2026  
+**Fecha de Actualización:** 13 de febrero de 2026  
 **Semanas Estimadas:** 4-5 semanas  
 **Horas Estimadas:** 45-55 horas de desarrollo  
 **Equipo:** 1-2 desarrolladores  
+**PRIORIDAD:** ALTA - Mejora fundamental de calidad  
 
 ---
 

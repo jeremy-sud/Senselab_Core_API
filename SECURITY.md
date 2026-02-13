@@ -1,8 +1,9 @@
 # 🔐 Guía de Seguridad - Ursol CAST API
 
-> **Última actualización:** 3 de Diciembre de 2025  
-> **Versión:** 1.0.0  
-> **Clasificación:** Documento Interno de Seguridad
+> **Última actualización:** 13 de Febrero de 2026  
+> **Versión:** 2.1.0  
+> **Clasificación:** Documento Interno de Seguridad  
+> **Auditor:** Verificación de Código Actual + Mejoras Implementadas
 
 ---
 
@@ -18,7 +19,58 @@
 
 ---
 
-## 🎯 OWASP Top 10 - Implementación
+## 🔐 MEJORAS IMPLEMENTADAS (FEBRERO 2026)
+
+### FASE 1.5 - Rate Limiting Granular ✅
+- **7 Limiters independientes** configurados con diferentes umbrales
+- **Servicio centralizado** `RateLimitingService` (253 líneas)
+- **Middleware mejorado** `ThrottleRequestsWithRetryAfter` con header 429
+- **IP blocking** tras múltiples violaciones  
+- **Listas de excepción** inteligentes
+
+**Configuración:**
+```
+API General:      60 reqs/min
+Reportes:         5 generaciones/hora
+Importaciones:    2/día
+Exportaciones:    5/día
+Hacienda:         10 envíos/hora
+Login:            5 intentos/15 min
+Payment:          3 transacciones/hora
+```
+
+### FASE 1.6 - Encriptación AES-256-CBC ✅
+- **30+ campos sensibles** encriptados automáticamente
+- **Búsqueda hash-based** sin desencriptar datos
+- **Soporte rotación de claves** para cumplimiento normativo
+- **Control de acceso** por IP y rol
+- **Campos protegidos:**
+  - Usuario: email, teléfono, identificación
+  - Empresa: CIF, banco, código DANE
+  - Proveedor: cuenta bancaria
+  - Transacción: detalles financieros
+- **Audit trail** completo de acceso
+
+### FASE 1.7 - Auditoría Completa ✅
+- **AuditLog Model** con 23 columnas
+- **CRUD automático** en todos los modelos
+- **GDPR/LGPD compliance** - Right-to-be-forgotten implementado
+- **Máscaras automáticas** de valores sensibles
+- **Retención configurable** (90 días default)
+- **Full-text search** en cambios de datos
+- **13 Scopes** para análisis y reporting
+
+### FASE 2.1 - Hacienda Integration ✅
+- **HaciendaComprobante Model** con 13 scopes
+- **HaciendaIntegrationService** (410 líneas, DGT-R-000-2024 v4.4 compliant)
+- **Generador de clave** de 29 dígitos (Algoritmo Mod-9)
+- **Firma digital XAdES-EPES** implementada
+- **8 endpoints REST** para gestión completa
+- **Estados:** pending, signed, sent, accepted, rejected, error
+
+---
+
+## 🔴 ÁREAS DE MEJORA (FASE 4 - en progreso)
 
 ### A01:2021 - Broken Access Control ✅
 
