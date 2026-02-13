@@ -23,12 +23,16 @@ class StoreVentaRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'empresa_id' => ['nullable', 'exists:empresas,id'],
             'sucursal_id' => ['required', 'exists:sucursales,id'],
             'cliente_id' => ['required', 'exists:clientes,id'],
             'usuario_id' => ['required', 'exists:usuarios,id'],
-            'forma_pago_id' => ['required', 'exists:formas_pago,id'],
+            'almacen_id' => ['nullable', 'exists:almacenes,id'],
+            'forma_pago_id' => ['nullable', 'exists:formas_pago,id'],
             'fecha_venta' => ['required', 'date'],
             'tipo_comprobante' => ['required', 'in:factura,tiquete,nota_credito,nota_debito'],
+            'tipo_pago' => ['nullable', 'string'],
+            'estado' => ['nullable', 'string'],
             'observaciones' => ['nullable', 'string'],
             'detalles' => ['required', 'array', 'min:1'],
             'detalles.*.producto_id' => ['required', 'exists:productos,id'],

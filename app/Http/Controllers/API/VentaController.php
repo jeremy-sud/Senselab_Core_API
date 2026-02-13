@@ -27,7 +27,7 @@ use OpenApi\Attributes as OA;
  * 
  * Refactorización completada: 12 de febrero de 2026
  */
-class VentaControllerRefactored extends Controller
+class VentaController extends Controller
 {
     use HasEmpresaContext;
 
@@ -87,10 +87,9 @@ class VentaControllerRefactored extends Controller
             $dto = VentaCreateDTO::fromRequest($request);
             $venta = $this->ventaService->crear($dto);
 
-            return response()->json(
-                VentaResource::make($venta)->resolve(),
-                201
-            );
+            return response()->json([
+                'data' => VentaResource::make($venta)->resolve()
+            ], 201);
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Error al crear venta',
