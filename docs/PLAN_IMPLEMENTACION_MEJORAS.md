@@ -1866,13 +1866,16 @@ class RecordMetrics
 
 # FASE 4: CALIDAD DE CÓDIGO
 ## Semanas 4-5 | 45-55 horas
+**Iniciada:** 12 de febrero de 2026
 
 ### Entregables:
-- [ ] PHPStan baseline < 30 errores
-- [ ] Controllers refactorizados (ninguno > 400 líneas)
-- [ ] DTO layer explícita
-- [ ] Test coverage > 80%
-- [ ] All SonarQube issues resolved
+- ⏳ PHPStan baseline < 30 errores
+- ⏳ Controllers refactorizados (ninguno > 400 líneas)
+- ⏳ DTO layer explícita
+- ⏳ Test coverage > 80%
+- ⏳ All SonarQube issues resolved
+
+**Ver documentación detallada en:** [FASE_4_CALIDAD_CODIGO.md](FASE_4_CALIDAD_CODIGO.md)
 
 ---
 
