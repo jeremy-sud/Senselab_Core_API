@@ -1,0 +1,155 @@
+Documento de Estudio Estructural para reducir el riesgo operativo: Ursol CAST API (REST Multi-tenant)
+
+Este análisis es 100% de lectura del repositorio. No se hizo ningún cambio de código.
+
+1) Vista general de arquitectura
+Ursol-CAST-API es un backend Laravel 12 orientado a ERP multi-módulo, multi-tenant por empresa, con RBAC, facturación electrónica CR (Hacienda), componentes de IA, observabilidad y despliegue Docker/Kubernetes.
+El sistema está en una fase madura funcionalmente, pero con deuda de cohesión técnica por crecimiento acelerado.
+
+Métricas observadas del código:
+
+95 controladores
+85 modelos
+80 policies
+170 FormRequests
+80 API Resources
+31 servicios
+95 migraciones
+86 seeders
+24 tests feature
+22 tests unit
+578 rutas API registradas (php artisan route:list --path=api)
+2) Mapa mental en texto (organización real del sistema)
+
+URSOL CAST API (Laravel 12)
+├── Capa de entrada HTTP
+│   ├── bootstrap/app.php
+│   │   ├── routing: web/api/console + /up
+│   │   ├── aliases middleware (permission, security.headers, throttle.granular, metrics.request, etc.)
+│   │   └── stack global append/prepend (CORS, throttle custom, request log, metrics, security headers)
+│   ├── routes/api.php (1287 líneas)
+│   │   ├── auth pública: /api/login
+│   │   ├── bloque auth:sanctum + throttle general
+│   │   ├── módulos ERP CRUD masivos (inventario, ventas, compras, contabilidad, nómina, transporte, catálogos)
+│   │   ├── FE/Hacienda (comprobantes + /api/v1/hacienda/*)
+│   │   ├── IA (/api/ai/*)
+│   │   ├── observabilidad (/api/health/*, /api/metrics*)
+│   │   └── compliance/GDPR
+│   └── routes/web.php
+│       ├── redirect raíz a Swagger
+│       └── URL shortener público /s/{slug}
+│
+├── Capa de controladores
+│   ├── app/Http/Controllers/API/* (núcleo CRUD legacy/monolítico)
+│   ├── app/Http/Controllers/Api/V1/* (segmento versionado parcial)
+│   ├── app/Http/Controllers/* (controladores transversales: FE, GDPR, health, metrics, etc.)
+│   └── estado mixto:
+│       ├── algunos controladores en patrón Service + DTO (ej. Venta refactor)
+│       └── mayoría con lógica de negocio acoplada al controlador
+│
+├── Capa de dominio/datos
+│   ├── app/Models/* (85 modelos)
+│   ├── app/Policies/* (80 policies, base policy RBAC+tenant ownership)
+│   ├── app/Observers/* (auditoría y eventos de modelos críticos)
+│   ├── app/Traits/*
+│   │   ├── multi-tenant (BelongsToTenant, HasEmpresaContext)
+│   │   ├── seguridad/auditoría/encriptación
+│   │   └── cache de permisos y utilidades
+│   └── app/Services/*
+│       ├── servicios de negocio ERP
+│       ├── servicios Hacienda (OAuth, cliente API, XML, firma)
+│       └── servicios IA (Gemini/OpenAI + verticales de predicción/contenido/OCR)
+│
+├── Contratos de entrada/salida
+│   ├── app/Http/Requests/* (FormRequests extensivos por recurso)
+│   ├── app/Http/Resources/* (serialización por entidad)
+│   └── app/DTOs/* (iniciado pero adopción parcial)
+│
+├── Persistencia
+│   ├── database/migrations/* (95)
+│   ├── database/seeders/* (muy amplia carga de datos base/demo)
+│   ├── database/factories/* (cobertura alta)
+│   └── diseño centrado en empresa_id + soft-delete custom (activo/eliminado + creado_en/actualizado_en)
+│
+├── Calidad y pruebas
+│   ├── tests/Feature + tests/Unit
+│   ├── phpunit.xml (SQLite in-memory para tests)
+│   ├── PHPStan + baseline + workflows dedicados
+│   └── CI/CD múltiple en GitHub Actions (tests, análisis, deploy)
+│
+├── Operación/infra
+│   ├── Dockerfile + docker-compose (nginx/php/mysql/redis/queue/scheduler)
+│   ├── kubernetes/base + overlays
+│   └── scripts de deploy/rollback/backup/instalación
+│
+└── Documentación
+    ├── README principal muy extenso
+    ├── docs/ con guías técnicas, sprints, auditorías
+    └── histórico grande en docs/archive
+3) Fortalezas reales del proyecto
+
+Cobertura funcional ERP muy amplia y verticalizada por dominio.
+Seguridad base bien planteada: auth:sanctum + middleware de permisos + policies por modelo (AppServiceProvider.php (line 145)).
+Infraestructura lista para entornos reales: Docker, K8s, colas, scheduler.
+Ecosistema de calidad presente: PHPUnit, PHPStan, Sonar, workflows CI/CD.
+Integración Hacienda y FE avanzada a nivel de componentes (app/Services/Hacienda/*).
+Buen esfuerzo de observabilidad (logging estructurado, health, métricas).
+Multi-tenant con Spatie y resolución por header/subdominio (multitenancy.php, HeaderSubdomainTenantFinder.php).
+4) Hallazgos críticos / riesgos técnicos
+
+Inconsistencia fuerte de naming y clases en FE/Hacienda.
+Hay referencias a modelos que no existen (Comprobante, Factura, InventarioMovimiento) en HaciendaIntegrationService.php (line 6), HaciendaController.php (line 5), audit.php (line 54), encryption.php (line 124), InstallSecurityFeatures.php (line 36).
+Esto es deuda de compilación/lógica latente y dificulta mantener seguridad/compliance.
+
+Dualidad de controladores/recursos para “Consecutivo FE” con contratos distintos.
+Existen ConsecutivoFEController y ConsecutivoFeController, además de ConsecutivoFEResource y ConsecutivoFeResource, con campos incompatibles (tipo_documento_dgt vs tipo_comprobante) en ConsecutivoFEController.php (line 5), ConsecutivoFeController.php (line 13), ConsecutivoFEResource.php (line 21), ConsecutivoFeResource.php (line 21).
+
+Aislamiento multi-tenant no uniforme.
+El trait global BelongsToTenant está en práctica aplicado solo en Venta (Venta.php (line 14), BelongsToTenant.php (line 12)), mientras que el resto depende de checks manuales en controladores. Riesgo claro de fuga de datos entre tenants por omisión humana.
+
+Rutas API monolíticas.
+api.php tiene 1287 líneas y centraliza casi todo (api.php (line 96)). Con 578 rutas, el archivo ya excede mantenibilidad segura.
+
+Middlewares de rate limiting potencialmente superpuestos/incoherentes.
+Se combina throttle:... por ruta, throttleApi() global y middleware custom appended (app.php (line 31), app.php (line 51)).
+Además, patrones del custom middleware no calzan con rutas reales (/api/*/auth/login vs /api/login) en ThrottleRequestsWithRetryAfter.php (line 27).
+
+Métricas con implementación incompleta.
+MetricsController llama método inexistente registerApplicationMetrics() (MetricsController.php (line 48)).
+También hay placeholders de producción (getActiveConnectionCount retorna 1, hit rate fijo 75.5) en MetricsController.php (line 220), MetricsController.php (line 233).
+
+Request metrics con snapshot desacoplado del write path.
+Se guarda por clave simple (Cache::put(metrics_request_...)) pero snapshot busca Cache::tags(['metrics'])->get('metric_keys', []) sin registrar esos keys en ningún lado (RequestMetricsMiddleware.php (line 62), RequestMetricsMiddleware.php (line 132)).
+
+Cobertura de pruebas desbalanceada vs tamaño del sistema.
+95 controladores y 578 rutas con solo 24 feature tests y 22 unit tests.
+Además hay import roto en test E2E (ConsultarEstadoJob inexistente) en FacturacionElectronicaE2ETest.php (line 19).
+
+Provider central sobredimensionado.
+AppServiceProvider contiene un registro manual muy grande de modelos/policies/observers/rate limiting (AppServiceProvider.php (line 11) en adelante), elevando costo de mantenimiento y riesgo de drift.
+
+Artefactos históricos dentro del código vivo.
+Archivos backup/versiones antiguas dentro de árbol principal (VentaController.backup.php, api.php.backup, 2025_02_07_000000_create_audit_logs_table.php.bak), generando ruido y riesgo operativo.
+
+5) Observaciones de diseño (anotaciones de arquitectura)
+
+La arquitectura actual es modular por entidad, no por bounded context. Funciona para velocidad inicial, pero penaliza consistencia transversal.
+Hay una transición parcial hacia Service + DTO, visible en ventas (VentaController.php + VentaService.php + VentaCreateDTO.php), pero no generalizada.
+La política multi-tenant está bien conceptualizada, pero ejecutada de forma híbrida: un mix de global scope, policy ownership y filtros manuales.
+El sistema tiene señales de “producto vivo” con múltiples fases/sprints y documentación histórica extensa; eso explica heterogeneidad de estilos.
+6) Recomendaciones de mejora (priorizadas)
+
+Unificar contratos FE/Hacienda y clases canónicas: resolver naming (ConsecutivoFe/ConsecutivoFE) y retirar referencias a modelos inexistentes.
+Estandarizar multi-tenancy por defecto: aplicar scope tenant consistente en todos los modelos con empresa_id y tests de aislamiento cross-tenant por módulo.
+Particionar api.php por dominio/versionado: *.php con RouteServiceProvider modular.
+Consolidar esquema de autorización: elegir una sola convención de permisos y eliminar combinaciones ambiguas (can:view ... con espacios, slugs mixtos).
+Corregir observabilidad ejecutable: reparar MetricsController y alinear RequestMetricsMiddleware con su snapshot.
+Reducir complejidad de controladores grandes: plan de refactor por lotes hacia Service + DTO + Action classes.
+Limpiar artefactos backup del árbol de app y moverlos a docs/archive o eliminar seguimiento en git.
+Racionalizar workflows CI/CD: hay overlap de pipelines; conviene definir una cadena oficial mínima y otra extendida opcional.
+Ampliar test suite orientada a riesgo: prioridad en FE/Hacienda, multi-tenant, permisos y endpoints críticos financieros.
+Extraer registro de policies/observers a convención/autodiscovery para reducir acoplamiento en AppServiceProvider.
+7) Conclusión ejecutiva
+La API está funcionalmente muy completa y tiene una base sólida de seguridad, RBAC, módulos ERP e infraestructura.
+La principal deuda no es “falta de features”, sino consistencia arquitectónica: naming, multi-tenancy homogéneo, rutas monolíticas, observabilidad incompleta y contratos duplicados en FE/Hacienda.
+Si se corrigen esos ejes, el proyecto puede pasar de “maduro con deuda” a “plataforma robusta y escalable” con riesgo operativo significativamente menor.
