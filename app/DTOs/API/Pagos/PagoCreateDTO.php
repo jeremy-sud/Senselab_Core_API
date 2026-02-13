@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 /**
  * PagoCreateDTO - DTO para registrar pagos a clientes/proveedores
- * 
+ *
  * Soporta múltiples formas de pago: efectivo, cheque, transferencia, tarjeta.
  */
 final class PagoCreateDTO

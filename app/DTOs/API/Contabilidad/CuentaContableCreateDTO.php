@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 /**
  * CuentaContableCreateDTO - DTO para crear cuentas contables
- * 
+ *
  * Define estructura del plan de cuentas del sistema.
  */
 final class CuentaContableCreateDTO

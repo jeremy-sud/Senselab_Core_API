@@ -4,7 +4,7 @@ namespace App\DTOs\API\Venta;
 
 /**
  * DTO para un detalle individual de venta
- * 
+ *
  * Representa una línea de venta con producto y cantidad
  */
 final class DetalleVentaDTO

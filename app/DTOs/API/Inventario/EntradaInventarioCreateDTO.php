@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 /**
  * EntradaInventarioCreateDTO - DTO para registrar entrada de producto a inventario
- * 
+ *
  * Maneja compras, devoluciones recibidas y ajustes positivos de inventario.
  */
 final class EntradaInventarioCreateDTO

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 /**
  * ClienteUpdateDTO - DTO para actualizar cliente
- * 
+ *
  * Maneja actualizaciones parciales de datos del cliente.
  */
 final class ClienteUpdateDTO
@@ -39,7 +39,7 @@ final class ClienteUpdateDTO
             provincia: $request->input('provincia'),
             canton: $request->input('canton'),
             distrito: $request->input('distrito'),
-            saldo_deudor: $request->input('saldo_deudor') !== null 
+            saldo_deudor: $request->input('saldo_deudor') !== null
                 ? (float) $request->input('saldo_deudor')
                 : null,
             es_empresa: $request->input('es_empresa') !== null

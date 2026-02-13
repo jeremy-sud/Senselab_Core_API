@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Models\Comprobante;
+use App\Models\ComprobanteElectronicoFe;
 use App\Models\HaciendaComprobante;
 use App\Services\Hacienda\HaciendaIntegrationService;
 use App\Http\Requests\StoreHaciendaComprobanteRequest;
@@ -24,11 +24,11 @@ class HaciendaController extends ApiController
      * POST /api/v1/hacienda/generar
      * Generar comprobante electrónico para envío a Hacienda
      *
-     * @param Comprobante $comprobante
+     * @param ComprobanteElectronicoFe $comprobante
      * @param Request $request
      * @return JsonResponse
      */
-    public function generar(Comprobante $comprobante, Request $request): JsonResponse
+    public function generar(ComprobanteElectronicoFe $comprobante, Request $request): JsonResponse
     {
         try {
             // Este endpoint crea el registro de `HaciendaComprobante` que

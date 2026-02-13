@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 /**
  * CuentaPagarCreateDTO - DTO para crear cuentas por pagar
- * 
+ *
  * Registra créditos recibidos de proveedores con plazo de pago.
  */
 final class CuentaPagarCreateDTO

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 /**
  * SalidaInventarioCreateDTO - DTO para registrar salida de inventario
- * 
+ *
  * Maneja ventas, devoluciones otorgadas y ajustes negativos de inventario.
  */
 final class SalidaInventarioCreateDTO

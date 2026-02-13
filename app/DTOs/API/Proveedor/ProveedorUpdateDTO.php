@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 /**
  * ProveedorUpdateDTO - Data Transfer Object para actualizar proveedor
- * 
+ *
  * Maneja actualizaciones parciales de proveedores con campos opcionales.
  * Cada campo null es ignorado en la actualización (no sobrescribe valores existentes).
  */
@@ -25,7 +25,7 @@ final class ProveedorUpdateDTO
 
     /**
      * Factory method desde Request HTTP
-     * 
+     *
      * @param Request $request
      * @return self
      */
@@ -37,8 +37,8 @@ final class ProveedorUpdateDTO
             telefono: $request->input('telefono'),
             direccion: $request->input('direccion'),
             numero_identificacion: $request->input('numero_identificacion'),
-            saldo_acreedor: $request->input('saldo_acreedor') !== null 
-                ? (float) $request->input('saldo_acreedor') 
+            saldo_acreedor: $request->input('saldo_acreedor') !== null
+                ? (float) $request->input('saldo_acreedor')
                 : null,
             activo: $request->input('activo') !== null
                 ? (bool) $request->input('activo')
@@ -85,7 +85,7 @@ final class ProveedorUpdateDTO
 
     /**
      * Reglas de validación para actualizar proveedor
-     * 
+     *
      * Usa 'sometimes' para campos opcionales
      * Actualiza solo si están presentes en request
      */
