@@ -1,5 +1,16 @@
 # Checklist Pre-Release — URSOL‑CAST API
 
+**Última actualización:** 13 de febrero de 2026  
+**Versión:** 2.1.0  
+**Estado:** FASE 4 en progreso - Esperar a completar mejoras de calidad antes de producción  
+
+🚨 **NOTA CRÍTICA:** Este proyecto está en FASE 4 (Calidad de Código). No se recomienda producción hasta completar:
+- [ ] Reducir PHPStan errores (1974 → <30)
+- [ ] Aumentar cobertura de tests (25% → >80%)
+- [ ] Refactorizar 15 controladores > 400 líneas
+
+---
+
 Este documento recoge la lista de comprobaciones y cambios a realizar antes del lanzamiento oficial (producción).
 
 ## 1. Secrets & configuración

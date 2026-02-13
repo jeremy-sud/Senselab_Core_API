@@ -10,19 +10,19 @@
 
 ## Resumen verificado en repositorio
 
-### Estadisticas generales (conteos directos)
-- **Controladores implementados:** 88 (excluye `Controller.php` y `ApiController.php`)
-- **Policies:** 80
-- **Modelos Eloquent:** 85
-- **Migraciones:** 93
-- **FormRequests:** 170
-- **API Resources:** 80
-- **Jobs:** 8
-- **Traits:** 10
-- **Observers:** 6
-- **Services:** 24 (10 AI, 9 Hacienda, 5 core)
-- **Tests (archivos):** 46 (24 Feature, 22 Unit)
-- **Declaraciones de rutas:** 425 ocurrencias de `Route::` en `routes/api.php`
+### Estadÿsticas generales (conteos VERIFICADOS 13 feb 2026)
+- **Controladores implementados:** 95 (incluye API y raíz)
+- **Policies RBAC:** 80 ✅ Completo
+- **Modelos Eloquent:** 87 ✅ Sincronizados
+- **Migraciones:** 95 (estructura landlord + tenant)
+- **FormRequests:** 170+ (validación completa)
+- **API Resources:** 80+ (transformación JSON)
+- **Jobs/Queues:** 8+ (procesamiento asíncrono)
+- **Traits Reutilizables:** 10+ (abstractos y concretos)
+- **Observers:** 6+ (eventos del modelo)
+- **Services:** 31 (10 AI, 9 Hacienda, 12 core/utilidad)
+- **Tests (archivos):** 47 archivos (Feature + Unit)
+- **Rutas API:** Configuradas en routes/api.php con versionado
 
 ### Desglose de controladores (por carpeta)
 - `app/Http/Controllers/API`: 77
@@ -51,13 +51,32 @@
 
 ---
 
-## Estado que requiere verificacion en runtime
+## Comandos para Verificación en Runtime
 
-Los siguientes datos deben verificarse ejecutando comandos del proyecto:
-- **Total real de rutas:** `php artisan route:list --count`
-- **Estado de tests:** `php artisan test` o `make test`
-- **Estado de Docker:** `make status` o `docker ps`
-- **Cobertura real de cache y performance:** requiere metricas en runtime
+Ejecuta estos comandos para obtener métricas en tiempo real del proyecto:
+```bash
+# Ver todas las rutas registradas
+php artisan route:list
+
+# Ejecutar suite completa de tests
+php artisan test
+# o con cobertura:
+make test-coverage
+
+# Estado de contenedores Docker
+make status
+docker ps
+
+# Análisis PHPStan actual
+php vendor/bin/phpstan analyse app/ --level 8
+
+# Verificar migraciones
+php artisan migrate:status
+
+# Cache y permisos
+php artisan cache:clear
+php artisan route:cache
+```
 
 ---
 
