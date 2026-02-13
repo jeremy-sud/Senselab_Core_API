@@ -8,7 +8,7 @@ use Illuminate\Pagination\Paginator;
 
 /**
  * Servicio para gestionar Comprobantes Electrónicos
- * 
+ *
  * Encapsula la lógica de negocio para comprobantes electrónicos
  * Fecha de creación: 12 de febrero de 2026
  */

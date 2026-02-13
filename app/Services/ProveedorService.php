@@ -9,7 +9,7 @@ use Illuminate\Pagination\Paginator;
 
 /**
  * Servicio para gestionar Proveedores
- * 
+ *
  * Encapsula la lógica de negocio para proveedores
  * Fecha de creación: 12 de febrero de 2026
  */

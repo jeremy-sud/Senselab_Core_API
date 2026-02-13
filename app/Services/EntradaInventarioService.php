@@ -8,7 +8,7 @@ use Illuminate\Pagination\Paginator;
 
 /**
  * Servicio para gestionar Entradas de Inventario
- * 
+ *
  * Encapsula la lógica de negocio para entradas de inventario
  * Fecha de creación: 12 de febrero de 2026
  */

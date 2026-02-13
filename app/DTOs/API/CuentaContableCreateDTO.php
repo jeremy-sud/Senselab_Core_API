@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 /**
  * DTO para creación de cuenta contable
- * 
+ *
  * Valida y transforma datos de entrada para la creación de cuentas contables
  * Fecha de creación: 12 de febrero de 2026
  */

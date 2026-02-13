@@ -6,7 +6,7 @@ use App\Models\Venta;
 
 /**
  * Transformer para convertir Venta a array de respuesta
- * 
+ *
  * Fecha de creación: 12 de febrero de 2026
  */
 class VentaTransformer

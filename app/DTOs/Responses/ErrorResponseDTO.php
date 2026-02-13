@@ -4,7 +4,7 @@ namespace App\DTOs\Responses;
 
 /**
  * DTO para respuestas de error
- * 
+ *
  * Encapsula error de respuesta estandarizada
  * Fecha de creación: 12 de febrero de 2026
  */

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 /**
  * DTO para creación de ventas
- * 
+ *
  * Valida y transforma datos de entrada para la creación de ventas
  * Fecha de creación: 12 de febrero de 2026
  */
@@ -68,7 +68,7 @@ final class VentaCreateDTO
     }
 
     /**
-     * Getter para sucursal_id 
+     * Getter para sucursal_id
      */
     public function getSucursalId(): int
     {

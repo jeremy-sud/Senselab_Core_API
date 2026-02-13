@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 /**
  * DTO para creación de proveedores
- * 
+ *
  * Valida y transforma datos de entrada para la creación de proveedores
  * Fecha de creación: 12 de febrero de 2026
  */

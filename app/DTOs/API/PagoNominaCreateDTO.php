@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 /**
  * DTO para creación de pago de nómina
- * 
+ *
  * Valida y transforma datos de entrada para la creación de pagos de nómina
  * Fecha de creación: 12 de febrero de 2026
  */
