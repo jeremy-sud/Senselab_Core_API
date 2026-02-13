@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 /**
  * ComprobanteFECreateDTO - DTO para crear Comprobantes Electrónicos
- * 
+ *
  * Integra con sistema Hacienda (DGT-R-000-2024).
  * Valida estructura de comprobante electrónico con detalles.
  */

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 /**
  * CategoriaProductoCreateDTO - DTO para crear categorías de productos
- * 
+ *
  * Organiza productos en categorías jerárquicas para mejor clasificación.
  */
 final class CategoriaProductoCreateDTO
@@ -26,7 +26,7 @@ final class CategoriaProductoCreateDTO
     {
         return new self(
             nombre: trim($request->input('nombre')),
-            categoria_padre_id: $request->input('categoria_padre_id') !== null 
+            categoria_padre_id: $request->input('categoria_padre_id') !== null
                 ? (int) $request->input('categoria_padre_id')
                 : null,
             descripcion: $request->input('descripcion', ''),

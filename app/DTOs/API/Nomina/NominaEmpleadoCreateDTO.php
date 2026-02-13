@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 /**
  * NominaEmpleadoCreateDTO - DTO para crear nómina de empleado
- * 
+ *
  * Calcula salarios, deducciones y aportes según legislación costarricense.
  */
 final class NominaEmpleadoCreateDTO

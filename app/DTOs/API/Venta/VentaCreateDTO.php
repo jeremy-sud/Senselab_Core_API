@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 /**
  * DTO para creación de ventas
- * 
+ *
  * Encapsula toda la lógica de validación y estructuración
  * de datos para crear una nueva venta con sus detalles
  */
@@ -25,7 +25,7 @@ final class VentaCreateDTO
 
     /**
      * Factory desde Request
-     * 
+     *
      * @throws \Illuminate\Validation\ValidationException
      */
     public static function fromRequest(Request $request): self

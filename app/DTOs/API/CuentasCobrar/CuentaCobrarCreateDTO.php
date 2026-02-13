@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 /**
  * CuentaCobrarCreateDTO - DTO para crear cuentas por cobrar
- * 
+ *
  * Registra créditos otorgados a clientes con plazo de pago.
  */
 final class CuentaCobrarCreateDTO

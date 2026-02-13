@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 /**
  * VentaUpdateDTO - DTO para actualizar venta
- * 
+ *
  * Maneja actualizaciones parciales sin revalidar todas las relaciones.
  */
 final class VentaUpdateDTO
@@ -29,7 +29,7 @@ final class VentaUpdateDTO
             cliente_id: $request->input('cliente_id') !== null ? (int) $request->input('cliente_id') : null,
             detalles: $request->input('detalles'),
             observaciones: $request->input('observaciones'),
-            descuento_adicional: $request->input('descuento_adicional') !== null 
+            descuento_adicional: $request->input('descuento_adicional') !== null
                 ? (float) $request->input('descuento_adicional')
                 : null,
             generar_comprobante: $request->input('generar_comprobante') !== null

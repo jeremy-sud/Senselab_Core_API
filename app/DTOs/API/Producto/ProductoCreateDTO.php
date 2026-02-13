@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 /**
  * Data Transfer Object para creación de productos
- * 
+ *
  * Encapsula validación e hidratación de datos de entrada
  * para creación de nuevos productos
  */
@@ -27,7 +27,7 @@ final class ProductoCreateDTO
 
     /**
      * Factory method para crear desde Request
-     * 
+     *
      * @throws \Illuminate\Validation\ValidationException
      */
     public static function fromRequest(Request $request): self

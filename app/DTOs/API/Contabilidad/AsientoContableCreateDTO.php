@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 /**
  * AsientoContableCreateDTO - DTO para crear asientos contables
- * 
+ *
  * Valida estructura de asiento con debe/haber balanceados.
  */
 final class AsientoContableCreateDTO

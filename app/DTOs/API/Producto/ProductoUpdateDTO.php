@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 /**
  * Data Transfer Object para actualización de productos
- * 
+ *
  * Similar a ProductoCreateDTO pero con campos opcionales
  * para permitir actualizaciones parciales
  */

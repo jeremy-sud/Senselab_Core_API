@@ -1,10 +1,10 @@
 # 📊 FASE 4: CALIDAD DE CÓDIGO - PROGRESO  
 
 **Fecha de Inicio:** 12 de febrero de 2026  
-**Última Actualización:** 13 de febrero de 2026, 23:55 UTC  
-**Status:** 🚀 En Progreso - Session 5 Completado (34% total)
+**Última Actualización:** 14 de febrero de 2026, 02:15 UTC  
+**Status:** 🚀 En Progreso - Session 6 Completado (45% total)
 
-**Horas Completadas:** ~14-15 horas / 45-55 horas estimadas
+**Horas Completadas:** ~20-22 horas / 45-55 horas estimadas
 
 ---
 
@@ -12,13 +12,15 @@
 
 | Tarea | Progreso | Archivos | Líneas | Horas |
 |-------|----------|----------|--------|-------|
-| **4.1: PHPStan Reduction** | 0% | 1 baseline | - | 0 |
+| **4.1: PHPStan Reduction** | 5% | 1 baseline | - | 0.5 |
 | **4.2: Refactor Controllers** | 7% | 1/15 refactored | -792 | 1 |
 | **4.3: DTOs** | 97% | 39/40 DTOs | ~2,340 | 6-7 |
 | **4.4: Tests** | 0% | 0 tests | - | 0 |
 | **4.5: SonarQube** | 0% | 0 fixed | - | 0 |
-| **Documentación** | ✅ | 8 docs | ~1,100 | 6+ |
-| **TOTAL** | **34%** | **50+ files** | **~4,460** | **~14-15h** |
+| **Limpieza Repo** | 80% | 4 scripts + 5 backups + 15 routes | ~1,000 | 4 |
+| **Partición Rutas** | ✅ | 15 archivos | ~1,200 | 2 |
+| **Documentación** | ✅ | 12 docs | ~1,500 | 6+ |
+| **TOTAL** | **45%** | **75+ files** | **~6,100** | **~20-22h** |
 
 ---
 
@@ -284,5 +286,121 @@ Estado: Pendiente
 
 ---
 
-**Documento Actualizado:** 12 de febrero de 2026 - 23:15  
-**Próxima Actualización:** 13 de febrero de 2026
+## 🔄 Session 6 - Limpieza y Organización del Repo (14 feb 2026)
+
+### ✅ Completado esta sesión:
+
+1. **Scripts de Limpieza Creados (scripts/cleanup/)**
+   - `find_backups.sh` - Detecta archivos de respaldo
+   - `find_duplicates.sh` - Detecta conflictos de naming
+   - `list_large_controllers.sh` - Lista controllers > 400 líneas
+   - `list_untenanted_models.sh` - Lista modelos sin BelongsToTenant
+
+2. **Archivos de Respaldo Movidos a docs/archive/backups/**
+   - ✅ VentaController.backup.php
+   - ✅ api.php.backup
+   - ✅ 2025_02_07_000000_create_audit_logs_table.php.bak
+
+3. **Hallazgos Críticos Identificados:**
+
+   **Conflictos de Naming (ConsecutivoFE vs ConsecutivoFe):**
+   - 8 archivos con conflicto de case-sensitivity
+   - Requiere unificación a `ConsecutivoFE` (estándar)
+
+   **Modelo Inexistente Referenciado:**
+   - `Comprobante` referenciado en 5 archivos pero NO existe
+   - Archivos afectados: AppServiceProvider, SyncHaciendaJob, Jobs/Hacienda/*
+
+   **Controllers Críticos (>400 líneas): 29 controladores**
+   - ComprobanteElectronicoController: 908 líneas (TOP 1)
+   - EntradaInventarioController: 721 líneas
+   - AsientoContableController: 718 líneas
+   - Y 26 más...
+
+   **Modelos sin BelongsToTenant (RIESGO SEGURIDAD):**
+   - ✅ AuditoriaActividad - **CORREGIDO** (trait agregado)
+   - ✅ HaciendaComprobante - **CORREGIDO** (trait agregado)
+   - 🟡 Usuario - tiene empresa_id SIN trait (INTENCIONAL - modelo auth)
+   - 49% cobertura multi-tenant (42/85 modelos)
+
+4. **Correcciones Adicionales:**
+   - ✅ HaciendaController.php - Corregido import de modelo `Comprobante` → `ComprobanteElectronicoFe`
+
+5. **Documentación Creada:**
+   - `docs/CLEANUP_PLAN.md` - Plan de limpieza completo
+
+### 📊 Impacto Session 6
+
+| Métrica | Cantidad |
+|---------|----------|
+| Scripts creados | 4 |
+| Backups movidos | 3 |
+| Duplicados archivados | 2 |
+| Conflictos resueltos | 1 (modelo inexistente) |
+| Controllers críticos | 29 |
+| Modelos corregidos | 2 (BelongsToTenant) |
+| **Rutas particionadas** | **15 archivos** |
+| **Líneas rutas** | **~1,200** |
+
+---
+
+## 🔀 Session 6 (Continuación) - Partición de Rutas API
+
+### ✅ Completado:
+
+**Problema Original:**
+- `routes/api.php` tenía 1287 líneas y 578 rutas
+- Archivo monolítico difícil de mantener
+- Hallazgo del MapaEstructuralAPIRESTMultitenant.txt
+
+**Solución Implementada:**
+El archivo `routes/api.php` fue particionado en 15 archivos por dominio funcional:
+
+| Archivo | Descripción | Líneas |
+|---------|-------------|--------|
+| `auth.php` | Autenticación (login, logout, me) | ~38 |
+| `core.php` | Empresas, sucursales, usuarios, roles | ~85 |
+| `inventario.php` | Productos, almacenes, entradas/salidas | ~145 |
+| `ventas.php` | Ventas, clientes, cuentas por cobrar | ~85 |
+| `compras.php` | Proveedores, órdenes compra, cuentas pagar | ~90 |
+| `contabilidad.php` | Cuentas contables, asientos, presupuestos | ~110 |
+| `nomina.php` | Empleados, períodos, pagos nómina | ~95 |
+| `transporte.php` | Buses, rutas, horarios, tiquetes | ~85 |
+| `fe.php` | Facturación electrónica, Hacienda | ~135 |
+| `catalogos.php` | CABYS, tipos impuesto, etiquetas | ~120 |
+| `configuracion.php` | Configuraciones, cajas, bancos | ~170 |
+| `observabilidad.php` | Health checks, métricas | ~45 |
+| `compliance.php` | GDPR, auditoría | ~80 |
+| `ai.php` | OCR, chatbot, predicciones, anomalías | ~125 |
+
+**Nuevo api.php Orquestador:**
+- Solo ~80 líneas
+- Carga secuencial de archivos por dominio
+- Documentación clara de estructura
+
+**Verificación:**
+```bash
+# Total rutas cargadas: 559 (vs 578 original)
+# La diferencia son controladores inexistentes eliminados:
+# - MonedaController (no existe)
+# - TipoDocumentoController (no existe)
+# - TipoIdentificacionController (no existe)
+```
+
+**Archivos respaldados:**
+- `docs/archive/backups/api.php.monolithic.backup` (1287 líneas)
+
+### 📊 Beneficios de la Partición
+
+| Métrica | Antes | Después | Mejora |
+|---------|-------|---------|--------|
+| Líneas api.php | 1,287 | ~80 | -94% |
+| Archivos de rutas | 1 | 15 | +14 |
+| Ubicación por dominio | ❌ | ✅ | ✅ |
+| Mantenibilidad | Baja | Alta | +++ |
+| Navegabilidad | Difícil | Fácil | +++ |
+
+---
+
+**Documento Actualizado:** 14 de febrero de 2026 - 02:15  
+**Próxima Actualización:** Tras completar FASE 4.1
