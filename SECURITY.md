@@ -462,7 +462,7 @@ Log::channel('security')->info('Login exitoso', [
 
 ```
 Email: seguridad@ursol.com
-Urgencias: +506 XXXX-XXXX
+Urgencias: +506 8868-7765
 ```
 
 ### Checklist de Incidente
