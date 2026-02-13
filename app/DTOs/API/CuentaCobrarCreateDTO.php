@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 /**
  * DTO para creación de cuenta por cobrar
- * 
+ *
  * Valida y transforma datos de entrada para la creación de cuentas por cobrar
  * Fecha de creación: 12 de febrero de 2026
  */

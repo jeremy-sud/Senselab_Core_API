@@ -8,7 +8,7 @@ use Illuminate\Pagination\Paginator;
 
 /**
  * Servicio para gestionar Asientos Contables
- * 
+ *
  * Encapsula la lógica de negocio para asientos contables
  * Fecha de creación: 12 de febrero de 2026
  */

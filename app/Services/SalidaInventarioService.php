@@ -8,7 +8,7 @@ use Illuminate\Pagination\Paginator;
 
 /**
  * Servicio para gestionar Salidas de Inventario
- * 
+ *
  * Encapsula la lógica de negocio para salidas de inventario
  * Fecha de creación: 12 de febrero de 2026
  */

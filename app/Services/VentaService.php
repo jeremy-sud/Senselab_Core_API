@@ -19,21 +19,21 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * VentaService - Servicio de Gestión de Ventas
- * 
+ *
  * Encapsula la lógica de negocio completa para ventas:
  * - CRUD operations
  * - Detalle de venta processing con cálculo de totales
  * - Validación de stock
  * - Generación de números de comprobante
  * - Cambios de estado
- * 
+ *
  * Refactorización: 12 de febrero de 2026 (FASE 4.2)
  */
 class VentaService
 {
     /**
      * Crear una nueva venta con detalles
-     * 
+     *
      * @param VentaCreateDTO $dto
      * @return Venta
      * @throws \Exception
@@ -48,7 +48,7 @@ class VentaService
             $cliente = $this->validarCliente($dto->getClienteId(), $dto->getEmpresaId());
             $usuario = $this->validarUsuario($dto->getUsuarioId(), $dto->getEmpresaId());
             
-            $almacen = $dto->getAlmacenId() 
+            $almacen = $dto->getAlmacenId()
                 ? $this->validarAlmacen($dto->getAlmacenId(), $dto->getEmpresaId())
                 : null;
             
@@ -293,7 +293,7 @@ class VentaService
 
     /**
      * Procesar detalles de venta y descontar stock
-     * 
+     *
      * @return array{subtotal: float, descuentos: float, impuestos: float}
      */
     private function procesarDetalles(Venta $venta, array $detalles, Collection $productos, ?Almacen $almacen): array

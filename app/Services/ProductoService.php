@@ -9,7 +9,7 @@ use Illuminate\Pagination\Paginator;
 
 /**
  * Servicio para gestionar Productos
- * 
+ *
  * Encapsula la lógica de negocio para productos
  * Fecha de creación: 12 de febrero de 2026
  */

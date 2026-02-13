@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 /**
  * DTO para creación de comprobante electrónico
- * 
+ *
  * Valida y transforma datos de entrada para la creación de comprobantes electrónicos
  * Fecha de creación: 12 de febrero de 2026
  */

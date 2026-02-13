@@ -9,7 +9,7 @@ use Illuminate\Pagination\Paginator;
 
 /**
  * Servicio para gestionar Clientes
- * 
+ *
  * Encapsula la lógica de negocio para clientes
  * Fecha de creación: 12 de febrero de 2026
  */

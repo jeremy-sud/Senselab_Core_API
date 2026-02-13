@@ -6,7 +6,7 @@ use App\Models\Cliente;
 
 /**
  * Transformer para convertir Cliente a array de respuesta
- * 
+ *
  * Fecha de creación: 12 de febrero de 2026
  */
 class ClienteTransformer
@@ -28,7 +28,7 @@ class ClienteTransformer
             'razon_social' => $cliente->razon_social,
             'activo' => (bool) $cliente->activo,
             'empresa_id' => $cliente->empresa_id,
-            'saldo_pendiente' => (float) ($cliente->cuentas_cobrar()->sum('monto_total') - 
+            'saldo_pendiente' => (float) ($cliente->cuentas_cobrar()->sum('monto_total') -
                                           $cliente->cuentas_cobrar()->sum('monto_pagado')),
             'created_at' => $cliente->created_at?->toIso8601String(),
             'updated_at' => $cliente->updated_at?->toIso8601String(),

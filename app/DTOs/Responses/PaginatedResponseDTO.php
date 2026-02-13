@@ -4,7 +4,7 @@ namespace App\DTOs\Responses;
 
 /**
  * DTO para respuestas paginadas
- * 
+ *
  * Encapsula datos de respuesta paginada estandarizada
  * Fecha de creación: 12 de febrero de 2026
  */

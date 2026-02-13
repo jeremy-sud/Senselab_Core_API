@@ -13,10 +13,9 @@ use OpenApi\Attributes as OA;
 
 /**
  * VentaController - Versión Refactorizada
- * 
+ *
  * Controlador simplificado usando Service + DTO + Transformer
  * Reduces from 818 líneas a ~250 líneas
- * 
  * Fecha: 12 de febrero de 2026
  */
 class VentaControllerRefactored extends Controller

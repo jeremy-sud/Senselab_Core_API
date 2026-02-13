@@ -6,7 +6,7 @@ use App\Models\Producto;
 
 /**
  * Transformer para convertir Producto a array de respuesta
- * 
+ *
  * Fecha de creación: 12 de febrero de 2026
  */
 class ProductoTransformer
