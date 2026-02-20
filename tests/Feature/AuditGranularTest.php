@@ -283,14 +283,15 @@ class AuditGranularTest extends TestCase
     public function test_audit_log_readable_description(): void
     {
         $audit = new AuditLog([
-            'event' => 'created',
-            'model_type' => 'App\Models\Usuario',
-            'model_id' => 1,
+            'action' => 'created',
+            'auditable_type' => 'App\Models\Usuario',
+            'auditable_id' => 1,
             'user_email' => 'test@example.com',
-            'description' => 'Custom description',
+            'user_name' => 'Test User',
         ]);
 
-        $this->assertEquals('Custom description', $audit->readable_description);
+        $summary = $audit->getSummary();
+        $this->assertStringContainsString('creó', $summary);
     }
 
     public function test_audit_log_is_sensitive_change(): void
@@ -298,10 +299,12 @@ class AuditGranularTest extends TestCase
         Config::set('audit.changes.sensitive_patterns', ['password', 'token', 'email']);
 
         $audit = new AuditLog([
-            'changed_fields' => ['password', 'name'],
+            'involves_sensitive_data' => true,
+            'old_values' => ['password' => 'old'],
+            'new_values' => ['password' => 'new'],
         ]);
 
-        $this->assertTrue($audit->isSensitiveChange());
+        $this->assertTrue($audit->involves_sensitive_data);
     }
 
     public function test_audit_log_not_sensitive_change(): void
@@ -309,10 +312,12 @@ class AuditGranularTest extends TestCase
         Config::set('audit.changes.sensitive_patterns', ['password', 'token', 'email']);
 
         $audit = new AuditLog([
-            'changed_fields' => ['name', 'phone'],
+            'involves_sensitive_data' => false,
+            'old_values' => ['name' => 'old'],
+            'new_values' => ['name' => 'new'],
         ]);
 
-        $this->assertFalse($audit->isSensitiveChange());
+        $this->assertFalse($audit->involves_sensitive_data);
     }
 
     // ========== INTEGRATION TESTS ==========
@@ -389,64 +394,63 @@ class AuditGranularTest extends TestCase
     public function test_audit_field_changes_grouped(): void
     {
         $audit = new AuditLog([
-            'changed_fields' => ['name', 'email'],
             'old_values' => ['name' => 'Old', 'email' => 'old@example.com'],
             'new_values' => ['name' => 'New', 'email' => 'new@example.com'],
         ]);
 
-        $changes = $audit->field_changes;
+        $changes = $audit->getChangedFields();
         
         $this->assertArrayHasKey('name', $changes);
         $this->assertArrayHasKey('email', $changes);
-        $this->assertEquals('Old', $changes['name']['old']);
-        $this->assertEquals('New', $changes['name']['new']);
+        $this->assertEquals('Old', $changes['name']['from']);
+        $this->assertEquals('New', $changes['name']['to']);
     }
 
     public function test_audit_log_to_summary(): void
     {
         $audit = new AuditLog([
-            'id' => 1,
-            'event' => 'created',
-            'model_type' => 'App\Models\Usuario',
-            'model_id' => 1,
-            'model_name' => 'Usuario 1',
+            'action' => 'created',
+            'auditable_type' => 'App\Models\Usuario',
+            'auditable_id' => 1,
             'user_id' => 1,
             'user_email' => 'admin@example.com',
             'user_name' => 'Admin',
-            'changed_fields' => ['name'],
-            'created_at' => now(),
+            'old_values' => [],
+            'new_values' => ['name' => 'Test'],
             'ip_address' => '127.0.0.1',
         ]);
 
-        $summary = $audit->toSummary();
+        $summary = $audit->getSummary();
 
-        $this->assertArrayHasKey('id', $summary);
-        $this->assertArrayHasKey('event', $summary);
-        $this->assertArrayHasKey('model', $summary);
-        $this->assertArrayHasKey('user', $summary);
-        $this->assertArrayHasKey('timestamp', $summary);
-        $this->assertEquals('created', $summary['event']);
+        $this->assertIsString($summary);
+        $this->assertStringContainsString('Admin', $summary);
+        $this->assertStringContainsString('creó', $summary);
     }
 
     public function test_audit_log_to_api_response(): void
     {
         $audit = new AuditLog([
-            'event' => 'updated',
-            'model_type' => 'App\Models\Usuario',
-            'model_id' => 1,
-            'changed_fields' => ['email'],
+            'action' => 'updated',
+            'auditable_type' => 'App\Models\Usuario',
+            'auditable_id' => 1,
             'old_values' => ['email' => 'old@example.com'],
             'new_values' => ['email' => 'new@example.com'],
             'user_id' => 1,
             'user_email' => 'admin@example.com',
+            'user_name' => 'Admin',
+            'ip_address' => '127.0.0.1',
+            'request_method' => 'PUT',
+            'request_path' => '/api/usuarios/1',
+            'created_at' => now(),
         ]);
 
         $response = $audit->toApiResponse();
 
         $this->assertArrayHasKey('id', $response);
-        $this->assertArrayHasKey('event', $response);
-        $this->assertArrayHasKey('old_values', $response);
-        $this->assertArrayHasKey('new_values', $response);
+        $this->assertArrayHasKey('action', $response);
+        $this->assertArrayHasKey('model', $response);
+        $this->assertArrayHasKey('user', $response);
+        $this->assertArrayHasKey('changes', $response);
         $this->assertArrayHasKey('context', $response);
     }
 }

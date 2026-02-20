@@ -69,6 +69,10 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     // MÓDULO: ROLES Y PERMISOS
     // ------------------------------------------------------------------------
     Route::apiResource('roles', RolController::class);
+    
+    // Ruta específica ANTES del resource para evitar conflicto con {permiso}
+    Route::get('/permisos/grouped', [PermisoController::class, 'grouped'])
+        ->middleware('permission:ver-roles');
     Route::apiResource('permisos', PermisoController::class);
     
     // Asignación de permisos a roles

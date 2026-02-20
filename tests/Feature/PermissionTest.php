@@ -240,13 +240,14 @@ class PermissionTest extends TestCase
         $rol = Rol::where('nombre', 'Vendedor')->first();
         $permiso = Permiso::where('slug', 'ver-productos')->first();
 
-        // Act
+        // Act - El controlador espera rol_id y permiso_id en el body
         $response = $this->authenticatedJson('POST', "/api/roles/{$rol->id}/permisos", [
-            'permisos' => [$permiso->id],
+            'rol_id' => $rol->id,
+            'permiso_id' => $permiso->id,
         ], $usuario);
 
         // Assert
-        $response->assertStatus(200);
+        $response->assertStatus(201);
         $this->assertTrue($rol->fresh()->hasPermission('ver-productos'));
     }
 

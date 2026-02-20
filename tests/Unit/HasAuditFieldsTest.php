@@ -83,7 +83,7 @@ class HasAuditFieldsTest extends TestCase
         $this->assertEquals($auditoriaAntes + 1, AuditoriaActividad::count());
         
         // Verificar el registro
-        $auditoria = AuditoriaActividad::latest()->first();
+        $auditoria = AuditoriaActividad::latest('id')->first();
         
         $this->assertEquals('actualizar', $auditoria->accion);
         $this->assertEquals('productos', $auditoria->tabla);
@@ -115,7 +115,7 @@ class HasAuditFieldsTest extends TestCase
         $this->assertEquals($auditoriaAntes + 1, AuditoriaActividad::count());
         
         // Verificar el registro
-        $auditoria = AuditoriaActividad::latest()->first();
+        $auditoria = AuditoriaActividad::latest('id')->first();
         
         $this->assertEquals('eliminar', $auditoria->accion);
         $this->assertEquals('productos', $auditoria->tabla);
@@ -140,7 +140,7 @@ class HasAuditFieldsTest extends TestCase
         $this->assertEquals($auditoriaAntes + 1, AuditoriaActividad::count());
         
         // Verificar el registro
-        $auditoria = AuditoriaActividad::latest()->first();
+        $auditoria = AuditoriaActividad::latest('id')->first();
         
         $this->assertEquals('restaurar', $auditoria->accion);
         $this->assertEquals('productos', $auditoria->tabla);
@@ -157,7 +157,7 @@ class HasAuditFieldsTest extends TestCase
         $producto = $this->createProducto([], $this->empresa);
         
         // Verificar auditoría
-        $auditoria = AuditoriaActividad::latest()->first();
+        $auditoria = AuditoriaActividad::latest('id')->first();
         
         $this->assertEquals('192.168.1.100', $auditoria->ip_address);
     }
@@ -197,7 +197,7 @@ class HasAuditFieldsTest extends TestCase
         // Verificar auditoría
         $auditoria = AuditoriaActividad::where('tabla', 'usuarios')
             ->where('registro_id', $nuevoUsuario->id)
-            ->latest()
+            ->latest('id')
             ->first();
         
         $datosNuevos = json_decode($auditoria->datos_nuevos, true);
@@ -285,7 +285,7 @@ class HasAuditFieldsTest extends TestCase
         $auditoriaActualizacion = AuditoriaActividad::where('tabla', 'productos')
             ->where('registro_id', $producto->id)
             ->where('accion', 'actualizar')
-            ->latest()
+            ->latest('id')
             ->first();
         
         $this->assertEquals($otroUsuario->id, $auditoriaActualizacion->usuario_id);
@@ -336,7 +336,7 @@ class HasAuditFieldsTest extends TestCase
         $auditoria = AuditoriaActividad::where('tabla', 'productos')
             ->where('registro_id', $producto->id)
             ->where('accion', 'actualizar')
-            ->latest()
+            ->latest('id')
             ->first();
         
         $datosAnteriores = json_decode($auditoria->datos_anteriores, true);
@@ -370,7 +370,7 @@ class HasAuditFieldsTest extends TestCase
         // Debe haber auditoría
         $auditoria = AuditoriaActividad::where('tabla', 'clientes')
             ->where('registro_id', $cliente->id)
-            ->latest()
+            ->latest('id')
             ->first();
         
         $this->assertNotNull($auditoria);

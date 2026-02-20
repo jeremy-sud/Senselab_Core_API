@@ -42,6 +42,7 @@ class AuditLog extends Model
         'archived_at',
         'change_reason',
         'metadata',
+        'created_at',
     ];
 
     protected $casts = [
