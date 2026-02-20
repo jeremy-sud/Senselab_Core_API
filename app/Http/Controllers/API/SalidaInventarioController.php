@@ -7,703 +7,233 @@ use App\Http\Requests\StoreSalidaInventarioRequest;
 use App\Http\Requests\UpdateSalidaInventarioRequest;
 use App\Http\Resources\SalidaInventarioResource;
 use App\Models\SalidaInventario;
-use App\Traits\HasCacheableQueries;
+use App\Services\SalidaInventarioService;
 use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use OpenApi\Attributes as OA;
 
 /**
- * Controlador para Salidas de Inventario
+ * SalidaInventarioController - Versión Refactorizada (FASE 4.2)
  *
- * Gestiona el registro de salidas de mercancía del inventario (ventas,
- * consumo interno, mermas, ajustes negativos, etc.).
+ * Controlador simplificado usando Service Layer Pattern
+ * Reducción de líneas: 710 → ~220 (-69%)
  *
- * @package App\Http\Controllers\API
- * @author Sistemas Ursol S.A. - Jeremy Arias Solano
+ * Refactorización completada: 13 de febrero de 2026
  */
 class SalidaInventarioController extends Controller
 {
-    use HasCacheableQueries, HasEmpresaContext;
+    use HasEmpresaContext;
+
+    public function __construct(private SalidaInventarioService $salidaService) {}
 
     /**
-     * Tags para invalidación de cache
-     * @var array<string>
-     */
-    protected array $cacheTags = ['salidas-inventario', 'inventario'];
-
-    /**
-     * TTL del cache en segundos (20 minutos)
-     * Datos dinámicos: salidas cambian frecuentemente durante operaciones
-     * @var int
-     */
-    protected int $cacheTTL = 1200;
-    /**
-     * Listar todas las salidas de inventario de la empresa
+     * GET /api/salidas-inventario
+     * Listar salidas con paginación y filtros opcionales
      */
     #[OA\Get(
         path: '/api/salidas-inventario',
         summary: 'Listar salidas de inventario',
-        description: 'Obtiene el listado paginado de todas las salidas de inventario de la empresa con sus relaciones',
+        description: 'Obtiene listado paginado de salidas con filtros opcionales por cliente, almacén y fechas',
         security: [['sanctum' => []]],
-        tags: ['Inventario - Salidas'],
-        parameters: [
-            new OA\Parameter(name: 'page', in: 'query', required: false, schema: new OA\Schema(type: 'integer', example: 1))
-        ],
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Listado de salidas de inventario',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'success', type: 'boolean', example: true),
-                        new OA\Property(
-                            property: 'data',
-                            type: 'array',
-                            items: new OA\Items(ref: '#/components/schemas/SalidaInventario')
-                        ),
-                        new OA\Property(
-                            property: 'meta',
-                            properties: [
-                                new OA\Property(property: 'current_page', type: 'integer', example: 1),
-                                new OA\Property(property: 'total', type: 'integer', example: 30),
-                                new OA\Property(property: 'per_page', type: 'integer', example: 15)
-                            ],
-                            type: 'object'
-                        )
-                    ]
-                )
-            ),
-            new OA\Response(response: 401, description: 'No autenticado')
-        ]
+        tags: ['Inventario - Salidas']
     )]
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', SalidaInventario::class);
+        $this->resolveEmpresaOrFail($request->input('empresa_id'));
 
-        $empresaId = $this->getEmpresaId();
+        $perPage = (int) $request->input('per_page', 15);
 
-        $cacheKey = $this->getCacheKey('index', ['empresa_id' => $empresaId]);
+        $salidas = match (true) {
+            $request->filled('cliente_id')
+                => $this->salidaService->porCliente((int) $request->input('cliente_id'), $perPage),
 
-        return $this->cacheQueryIfEnabled($cacheKey, function () use ($empresaId) {
-            $salidas = SalidaInventario::where('empresa_id', $empresaId)
-                ->with(['almacen', 'cliente', 'proveedor', 'venta', 'detalles.producto'])
-                ->orderBy('fecha_salida', 'desc')
-                ->paginate(15);
+            $request->filled('almacen_id')
+                => $this->salidaService->porAlmacen((int) $request->input('almacen_id'), $perPage),
 
-            return response()->json([
-                'success' => true,
-                'data' => SalidaInventarioResource::collection($salidas),
-                'meta' => [
-                    'current_page' => $salidas->currentPage(),
-                    'total' => $salidas->total(),
-                    'per_page' => $salidas->perPage()
-                ]
-            ]);
-        });
+            $request->filled(['fecha_inicio', 'fecha_fin'])
+                => $this->salidaService->entreFechas(
+                    new \DateTime($request->input('fecha_inicio')),
+                    new \DateTime($request->input('fecha_fin')),
+                    $perPage
+                ),
+
+            default => $this->salidaService->listar($perPage)
+        };
+
+        return SalidaInventarioResource::collection($salidas);
     }
 
     /**
+     * POST /api/salidas-inventario
      * Crear nueva salida de inventario
      */
     #[OA\Post(
         path: '/api/salidas-inventario',
         summary: 'Crear salida de inventario',
-        description: 'Registra una nueva salida de inventario en estado Pendiente. Se debe agregar productos mediante los detalles',
+        description: 'Registra una nueva salida de inventario en estado Pendiente',
         security: [['sanctum' => []]],
-        tags: ['Inventario - Salidas'],
-        requestBody: new OA\RequestBody(
-            required: true,
-            content: new OA\JsonContent(
-                required: ['fecha_salida'],
-                properties: [
-                    new OA\Property(property: 'almacen_id', type: 'integer', example: 1),
-                    new OA\Property(property: 'fecha_salida', type: 'string', format: 'date-time', example: '2025-01-15 14:00:00'),
-                    new OA\Property(property: 'tipo_salida', type: 'string', enum: ['Venta', 'Ajuste Negativo', 'Devolución Proveedor', 'Transferencia', 'Consumo Interno'], example: 'Venta'),
-                    new OA\Property(property: 'venta_id', type: 'integer', example: 12),
-                    new OA\Property(property: 'cliente_id', type: 'integer', example: 8),
-                    new OA\Property(property: 'proveedor_id', type: 'integer', example: 3),
-                    new OA\Property(property: 'documento_referencia', type: 'string', example: 'FACT-V-2025-050'),
-                    new OA\Property(property: 'observaciones', type: 'string', example: 'Entregado al cliente sin novedades'),
-                    new OA\Property(property: 'descripcion', type: 'string', example: 'Venta directa mostrador')
-                ]
-            )
-        ),
-        responses: [
-            new OA\Response(
-                response: 201,
-                description: 'Salida creada exitosamente',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'success', type: 'boolean', example: true),
-                        new OA\Property(property: 'message', type: 'string', example: 'Salida de inventario creada exitosamente'),
-                        new OA\Property(property: 'data', ref: '#/components/schemas/SalidaInventario')
-                    ]
-                )
-            ),
-            new OA\Response(response: 401, description: 'No autenticado'),
-            new OA\Response(response: 422, description: 'Datos de validación incorrectos'),
-            new OA\Response(response: 500, description: 'Error al crear la salida')
-        ]
+        tags: ['Inventario - Salidas']
     )]
     public function store(StoreSalidaInventarioRequest $request): JsonResponse
     {
         $this->authorize('create', SalidaInventario::class);
 
-        $empresaId = $this->getEmpresaId();
-
-        DB::beginTransaction();
         try {
-            $salida = SalidaInventario::create([
-                'empresa_id' => $empresaId,
-                'almacen_id' => $request->almacen_id,
-                'fecha_salida' => $request->fecha_salida,
-                'tipo_salida' => $request->tipo_salida,
-                'venta_id' => $request->venta_id,
-                'cliente_id' => $request->cliente_id,
-                'proveedor_id' => $request->proveedor_id,
-                'documento_referencia' => $request->documento_referencia,
-                'observaciones' => $request->observaciones,
-                'descripcion' => $request->descripcion,
-                'estado' => 'Pendiente',
-                'monto_total' => 0
-            ]);
-
-            DB::commit();
-            $this->flushCache();
+            $salida = $this->salidaService->crear($request->validated());
 
             return response()->json([
-                'success' => true,
                 'message' => 'Salida de inventario creada exitosamente',
-                'data' => new SalidaInventarioResource($salida->load(['almacen', 'cliente']))
+                'data' => SalidaInventarioResource::make($salida)->resolve()
             ], 201);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
+        } catch (\Throwable $e) {
             return response()->json([
-                'success' => false,
-                'message' => 'Error al crear la salida de inventario',
+                'message' => 'Error al crear salida de inventario',
                 'error' => $e->getMessage()
-            ], 500);
+            ], 422);
         }
     }
 
     /**
-     * Mostrar una salida específica
+     * GET /api/salidas-inventario/{id}
+     * Obtener detalle de una salida
      */
     #[OA\Get(
         path: '/api/salidas-inventario/{id}',
         summary: 'Obtener salida de inventario',
-        description: 'Retorna los datos de una salida específica con todas sus relaciones',
+        description: 'Retorna los datos de una salida específica con sus relaciones',
         security: [['sanctum' => []]],
-        tags: ['Inventario - Salidas'],
-        parameters: [
-            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
-        ],
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Salida encontrada',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'success', type: 'boolean', example: true),
-                        new OA\Property(property: 'data', ref: '#/components/schemas/SalidaInventario')
-                    ]
-                )
-            ),
-            new OA\Response(response: 401, description: 'No autenticado'),
-            new OA\Response(response: 404, description: 'Salida no encontrada')
-        ]
+        tags: ['Inventario - Salidas']
     )]
-    public function show(Request $request, int $id): SalidaInventarioResource
+    public function show(int $id): JsonResponse
     {
-        $empresaId = $this->getEmpresaId();
+        $salida = $this->salidaService->obtener($id);
 
-        $salida = SalidaInventario::where('empresa_id', $empresaId)
-            ->with(['almacen', 'cliente', 'proveedor', 'venta', 'detalles.producto.unidadMedida'])
-            ->findOrFail($id);
+        if (!$salida) {
+            return response()->json(['message' => 'Salida no encontrada'], 404);
+        }
 
         $this->authorize('view', $salida);
+        $this->assertEmpresa($salida);
 
-        return new SalidaInventarioResource($salida);
+        return response()->json(SalidaInventarioResource::make($salida)->resolve());
     }
 
     /**
+     * PUT /api/salidas-inventario/{id}
      * Actualizar salida de inventario
      */
     #[OA\Put(
         path: '/api/salidas-inventario/{id}',
         summary: 'Actualizar salida de inventario',
-        description: 'Modifica los datos de una salida existente. Solo se permite actualizar si el estado es Pendiente',
+        description: 'Modifica una salida existente. Solo permitido si estado es Pendiente',
         security: [['sanctum' => []]],
-        tags: ['Inventario - Salidas'],
-        parameters: [
-            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
-        ],
-        requestBody: new OA\RequestBody(
-            required: true,
-            content: new OA\JsonContent(
-                properties: [
-                    new OA\Property(property: 'almacen_id', type: 'integer', example: 1),
-                    new OA\Property(property: 'fecha_salida', type: 'string', format: 'date-time', example: '2025-01-15 14:00:00'),
-                    new OA\Property(property: 'tipo_salida', type: 'string', example: 'Venta'),
-                    new OA\Property(property: 'venta_id', type: 'integer', example: 12),
-                    new OA\Property(property: 'cliente_id', type: 'integer', example: 8),
-                    new OA\Property(property: 'proveedor_id', type: 'integer', example: 3),
-                    new OA\Property(property: 'documento_referencia', type: 'string', example: 'FACT-V-2025-050'),
-                    new OA\Property(property: 'observaciones', type: 'string', example: 'Actualizado'),
-                    new OA\Property(property: 'descripcion', type: 'string', example: 'Descripción actualizada')
-                ]
-            )
-        ),
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Salida actualizada',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'success', type: 'boolean', example: true),
-                        new OA\Property(property: 'message', type: 'string', example: 'Salida de inventario actualizada exitosamente'),
-                        new OA\Property(property: 'data', ref: '#/components/schemas/SalidaInventario')
-                    ]
-                )
-            ),
-            new OA\Response(response: 401, description: 'No autenticado'),
-            new OA\Response(response: 404, description: 'Salida no encontrada'),
-            new OA\Response(response: 422, description: 'No se puede modificar una salida ya procesada'),
-            new OA\Response(response: 500, description: 'Error al actualizar')
-        ]
+        tags: ['Inventario - Salidas']
     )]
-    public function update(UpdateSalidaInventarioRequest $request, int $id): SalidaInventarioResource|JsonResponse
+    public function update(UpdateSalidaInventarioRequest $request, int $id): JsonResponse
     {
-        $empresaId = $this->getEmpresaId();
+        $salida = $this->salidaService->obtener($id);
 
-        $salida = SalidaInventario::where('empresa_id', $empresaId)->findOrFail($id);
-
-        $this->authorize('update', $salida);
-
-        if ($salida->estado === 'Procesada') {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se puede modificar una salida ya procesada'
-            ], 422);
+        if (!$salida) {
+            return response()->json(['message' => 'Salida no encontrada'], 404);
         }
 
-        DB::beginTransaction();
+        $this->authorize('update', $salida);
+        $this->assertEmpresa($salida);
+
+        if ($salida->estado === 'Procesada') {
+            return response()->json(['message' => 'No se puede modificar una salida ya procesada'], 422);
+        }
+
         try {
-            $salida->update($request->only([
-                'almacen_id',
-                'fecha_salida',
-                'tipo_salida',
-                'venta_id',
-                'cliente_id',
-                'proveedor_id',
-                'documento_referencia',
-                'observaciones',
-                'descripcion'
-            ]));
+            $salida = $this->salidaService->actualizar($salida, $request->validated());
 
-            DB::commit();
-            $this->flushCache();
-
-            return (new SalidaInventarioResource($salida->load(['almacen', 'cliente'])))
-                ->additional(['message' => 'Salida de inventario actualizada exitosamente']);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
             return response()->json([
-                'success' => false,
-                'message' => 'Error al actualizar la salida',
+                'message' => 'Salida actualizada exitosamente',
+                'data' => SalidaInventarioResource::make($salida)->resolve()
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Error al actualizar salida',
+                'error' => $e->getMessage()
+            ], 422);
+        }
+    }
+
+    /**
+     * DELETE /api/salidas-inventario/{id}
+     * Eliminar salida de inventario
+     */
+    #[OA\Delete(
+        path: '/api/salidas-inventario/{id}',
+        summary: 'Eliminar salida de inventario',
+        description: 'Elimina una salida. Solo permitido si estado es Pendiente',
+        security: [['sanctum' => []]],
+        tags: ['Inventario - Salidas']
+    )]
+    public function destroy(int $id): JsonResponse
+    {
+        $salida = $this->salidaService->obtener($id);
+
+        if (!$salida) {
+            return response()->json(['message' => 'Salida no encontrada'], 404);
+        }
+
+        $this->authorize('delete', $salida);
+        $this->assertEmpresa($salida);
+
+        if ($salida->estado === 'Procesada') {
+            return response()->json(['message' => 'No se puede eliminar una salida ya procesada'], 422);
+        }
+
+        try {
+            $this->salidaService->eliminar($salida);
+
+            return response()->json(['message' => 'Salida eliminada exitosamente']);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Error al eliminar salida',
                 'error' => $e->getMessage()
             ], 500);
         }
     }
 
     /**
-     * Eliminar salida de inventario
-     */
-    #[OA\Delete(
-        path: '/api/salidas-inventario/{id}',
-        summary: 'Eliminar salida de inventario',
-        description: 'Elimina una salida de inventario. Solo se permite eliminar si el estado es Pendiente',
-        security: [['sanctum' => []]],
-        tags: ['Inventario - Salidas'],
-        parameters: [
-            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
-        ],
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Salida eliminada',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'success', type: 'boolean', example: true),
-                        new OA\Property(property: 'message', type: 'string', example: 'Salida de inventario eliminada exitosamente')
-                    ]
-                )
-            ),
-            new OA\Response(response: 401, description: 'No autenticado'),
-            new OA\Response(response: 404, description: 'Salida no encontrada'),
-            new OA\Response(response: 422, description: 'No se puede eliminar una salida ya procesada')
-        ]
-    )]
-    public function destroy(Request $request, int $id): JsonResponse
-    {
-        $empresaId = $this->getEmpresaId();
-
-        $salida = SalidaInventario::where('empresa_id', $empresaId)->findOrFail($id);
-
-        $this->authorize('delete', $salida);
-
-        if ($salida->estado === 'Procesada') {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se puede eliminar una salida ya procesada'
-            ], 422);
-        }
-
-        $salida->delete();
-        $this->flushCache();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Salida de inventario eliminada exitosamente'
-        ]);
-    }
-
-    /**
-     * Procesar salida de inventario (actualiza stock)
+     * POST /api/salidas-inventario/{id}/procesar
+     * Procesar salida y actualizar stock
      */
     #[OA\Post(
         path: '/api/salidas-inventario/{id}/procesar',
         summary: 'Procesar salida de inventario',
-        description: 'Cambia el estado de la salida a Procesada y reduce las cantidades en el inventario. Valida que exista stock suficiente. Esta acción es irreversible',
+        description: 'Procesa la salida y reduce el stock. Valida stock suficiente. Acción irreversible',
         security: [['sanctum' => []]],
-        tags: ['Inventario - Salidas'],
-        parameters: [
-            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
-        ],
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Salida procesada exitosamente',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'success', type: 'boolean', example: true),
-                        new OA\Property(property: 'message', type: 'string', example: 'Salida procesada exitosamente, stock actualizado'),
-                        new OA\Property(property: 'data', ref: '#/components/schemas/SalidaInventario')
-                    ]
-                )
-            ),
-            new OA\Response(response: 401, description: 'No autenticado'),
-            new OA\Response(response: 404, description: 'Salida no encontrada'),
-            new OA\Response(
-                response: 422,
-                description: 'Validación fallida',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'success', type: 'boolean', example: false),
-                        new OA\Property(property: 'message', type: 'string', example: 'Stock insuficiente para el producto ID: 15')
-                    ]
-                )
-            ),
-            new OA\Response(response: 500, description: 'Error al procesar')
-        ]
+        tags: ['Inventario - Salidas']
     )]
-    public function procesar(Request $request, int $id): JsonResponse
+    public function procesar(int $id): JsonResponse
     {
-        $empresaId = $this->getEmpresaId();
+        $salida = $this->salidaService->obtener($id);
 
-        $salida = SalidaInventario::where('empresa_id', $empresaId)
-            ->with('detalles.producto')
-            ->findOrFail($id);
-
-        // Validaciones con abort para reducir returns
-        abort_if(
-            $salida->estado === 'Procesada',
-            422,
-            'La salida ya fue procesada anteriormente'
-        );
-
-        abort_if(
-            $salida->detalles->isEmpty(),
-            422,
-            'No se puede procesar una salida sin productos'
-        );
-
-        DB::beginTransaction();
-        try {
-            // Verificar y reducir stock de cada producto
-            foreach ($salida->detalles as $detalle) {
-                $inventario = DB::table('inventarios')
-                    ->where('producto_id', $detalle->producto_id)
-                    ->where('almacen_id', $salida->almacen_id)
-                    ->first();
-
-                if (!$inventario || $inventario->cantidad_actual < $detalle->cantidad) {
-                    DB::rollBack();
-                    abort(422, "Stock insuficiente para el producto ID: {$detalle->producto_id}");
-                }
-
-                DB::table('inventarios')
-                    ->where('id', $inventario->id)
-                    ->decrement('cantidad_actual', (float) $detalle->cantidad);
-            }
-
-            $salida->update(['estado' => 'Procesada']);
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Salida procesada exitosamente, stock actualizado',
-                'data' => new SalidaInventarioResource($salida->fresh(['almacen', 'cliente', 'detalles']))
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            report($e);
-            abort(500, 'Error al procesar la salida: ' . $e->getMessage());
+        if (!$salida) {
+            return response()->json(['message' => 'Salida no encontrada'], 404);
         }
-    }
 
-    /**
-     * Cancelar salida de inventario
-     */
-    #[OA\Post(
-        path: '/api/salidas-inventario/{id}/cancelar',
-        summary: 'Cancelar salida de inventario',
-        description: 'Cambia el estado de la salida a Cancelada. Solo se permite cancelar salidas en estado Pendiente. Para salidas procesadas debe crear una entrada de ajuste',
-        security: [['sanctum' => []]],
-        tags: ['Inventario - Salidas'],
-        parameters: [
-            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
-        ],
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Salida cancelada',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'success', type: 'boolean', example: true),
-                        new OA\Property(property: 'message', type: 'string', example: 'Salida cancelada exitosamente'),
-                        new OA\Property(property: 'data', ref: '#/components/schemas/SalidaInventario')
-                    ]
-                )
-            ),
-            new OA\Response(response: 401, description: 'No autenticado'),
-            new OA\Response(response: 404, description: 'Salida no encontrada'),
-            new OA\Response(
-                response: 422,
-                description: 'No se puede cancelar una salida ya procesada',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'success', type: 'boolean', example: false),
-                        new OA\Property(property: 'message', type: 'string', example: 'No se puede cancelar una salida ya procesada. Debe crear una entrada de ajuste.')
-                    ]
-                )
-            )
-        ]
-    )]
-    public function cancelar(Request $request, int $id): JsonResponse
-    {
-        $empresaId = $this->getEmpresaId();
+        $this->authorize('update', $salida);
+        $this->assertEmpresa($salida);
 
-        $salida = SalidaInventario::where('empresa_id', $empresaId)->findOrFail($id);
+        try {
+            $salida = $this->salidaService->procesar($salida);
 
-        if ($salida->estado === 'Procesada') {
             return response()->json([
-                'success' => false,
-                'message' => 'No se puede cancelar una salida ya procesada. Debe crear una entrada de ajuste.'
+                'message' => 'Salida procesada exitosamente, stock actualizado',
+                'data' => SalidaInventarioResource::make($salida)->resolve()
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Error al procesar salida',
+                'error' => $e->getMessage()
             ], 422);
         }
-
-        $salida->update(['estado' => 'Cancelada']);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Salida cancelada exitosamente',
-            'data' => new SalidaInventarioResource($salida)
-        ]);
-    }
-
-    /**
-     * Obtener salidas por cliente
-     */
-    #[OA\Get(
-        path: '/api/salidas-inventario/cliente/{clienteId}',
-        summary: 'Obtener salidas por cliente',
-        description: 'Lista todas las salidas de inventario asociadas a un cliente específico',
-        security: [['sanctum' => []]],
-        tags: ['Inventario - Salidas'],
-        parameters: [
-            new OA\Parameter(name: 'clienteId', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
-            new OA\Parameter(name: 'page', in: 'query', required: false, schema: new OA\Schema(type: 'integer', example: 1))
-        ],
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Salidas del cliente',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'success', type: 'boolean', example: true),
-                        new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/SalidaInventario')),
-                        new OA\Property(
-                            property: 'meta',
-                            properties: [
-                                new OA\Property(property: 'current_page', type: 'integer', example: 1),
-                                new OA\Property(property: 'total', type: 'integer', example: 12)
-                            ],
-                            type: 'object'
-                        )
-                    ]
-                )
-            ),
-            new OA\Response(response: 401, description: 'No autenticado')
-        ]
-    )]
-    public function porCliente(Request $request, int $clienteId): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
-    {
-        $empresaId = $this->getEmpresaId();
-
-        $salidas = SalidaInventario::where('empresa_id', $empresaId)
-            ->where('cliente_id', $clienteId)
-            ->with(['almacen', 'cliente', 'detalles'])
-            ->orderBy('fecha_salida', 'desc')
-            ->paginate(15);
-
-        return SalidaInventarioResource::collection($salidas);
-    }
-
-    /**
-     * Obtener salidas por almacén
-     */
-    #[OA\Get(
-        path: '/api/salidas-inventario/almacen/{almacenId}',
-        summary: 'Obtener salidas por almacén',
-        description: 'Lista todas las salidas de inventario de un almacén específico',
-        security: [['sanctum' => []]],
-        tags: ['Inventario - Salidas'],
-        parameters: [
-            new OA\Parameter(name: 'almacenId', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
-            new OA\Parameter(name: 'page', in: 'query', required: false, schema: new OA\Schema(type: 'integer', example: 1))
-        ],
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Salidas del almacén',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'success', type: 'boolean', example: true),
-                        new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/SalidaInventario')),
-                        new OA\Property(
-                            property: 'meta',
-                            properties: [
-                                new OA\Property(property: 'current_page', type: 'integer', example: 1),
-                                new OA\Property(property: 'total', type: 'integer', example: 18)
-                            ],
-                            type: 'object'
-                        )
-                    ]
-                )
-            ),
-            new OA\Response(response: 401, description: 'No autenticado')
-        ]
-    )]
-    public function porAlmacen(Request $request, int $almacenId): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
-    {
-        $empresaId = $this->getEmpresaId();
-
-        $salidas = SalidaInventario::where('empresa_id', $empresaId)
-            ->where('almacen_id', $almacenId)
-            ->with(['almacen', 'cliente', 'detalles'])
-            ->orderBy('fecha_salida', 'desc')
-            ->paginate(15);
-
-        return SalidaInventarioResource::collection($salidas);
-    }
-
-    /**
-     * Resumen de salidas por tipo
-     */
-    #[OA\Get(
-        path: '/api/salidas-inventario/resumen/por-tipo',
-        summary: 'Resumen de salidas por tipo',
-        description: 'Genera estadísticas agrupadas por tipo de salida mostrando cantidad total y monto total',
-        security: [['sanctum' => []]],
-        tags: ['Inventario - Salidas'],
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Resumen estadístico',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'success', type: 'boolean', example: true),
-                        new OA\Property(
-                            property: 'data',
-                            type: 'array',
-                            items: new OA\Items(
-                                properties: [
-                                    new OA\Property(property: 'tipo_salida', type: 'string', example: 'Venta'),
-                                    new OA\Property(property: 'total_salidas', type: 'integer', example: 25),
-                                    new OA\Property(property: 'monto_total', type: 'number', format: 'decimal', example: 85000.75)
-                                ],
-                                type: 'object'
-                            )
-                        )
-                    ]
-                )
-            ),
-            new OA\Response(response: 401, description: 'No autenticado')
-        ]
-    )]
-    public function resumenPorTipo(Request $request): JsonResponse
-    {
-        $empresaId = $this->getEmpresaId();
-
-        $resumen = SalidaInventario::where('empresa_id', $empresaId)
-            ->selectRaw('tipo_salida, COUNT(*) as total_salidas, SUM(monto_total) as monto_total')
-            ->groupBy('tipo_salida')
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => $resumen
-        ]);
-    }
-
-    /**
-     * Obtener salidas pendientes
-     */
-    #[OA\Get(
-        path: '/api/salidas-inventario/pendientes',
-        summary: 'Obtener salidas pendientes',
-        description: 'Lista todas las salidas de inventario en estado Pendiente ordenadas por fecha de salida ascendente',
-        security: [['sanctum' => []]],
-        tags: ['Inventario - Salidas'],
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Salidas pendientes',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'success', type: 'boolean', example: true),
-                        new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/SalidaInventario'))
-                    ]
-                )
-            ),
-            new OA\Response(response: 401, description: 'No autenticado')
-        ]
-    )]
-    public function pendientes(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
-    {
-        $empresaId = $this->getEmpresaId();
-
-        $salidas = SalidaInventario::where('empresa_id', $empresaId)
-            ->where('estado', 'Pendiente')
-            ->with(['almacen', 'cliente', 'detalles'])
-            ->orderBy('fecha_salida', 'asc')
-            ->get();
-
-        return SalidaInventarioResource::collection($salidas);
     }
 }

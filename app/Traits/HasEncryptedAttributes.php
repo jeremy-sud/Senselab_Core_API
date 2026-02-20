@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
  * ```php
  * class Usuario extends Model {
  *     use HasEncryptedAttributes;
- *     
+ *
  *     protected $encryptedAttributes = ['document_number', 'phone', 'personal_email'];
  * }
  * ```
@@ -175,7 +175,7 @@ trait HasEncryptedAttributes
 
     /**
      * Hacer una consulta por campo encriptado usando hash
-     * 
+     *
      * Ejemplo:
      * Usuario::whereEncrypted('document_number', '12345678')->first();
      *

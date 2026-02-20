@@ -50,7 +50,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Dominios desde los cuales se permiten solicitudes CORS.
-    | 
+    |
     | CRITICAL: Nunca usar '*' en producción (permite todos los dominios)
     | Usar variable de entorno para cada ambiente
     |
@@ -115,7 +115,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Tiempo que el navegador puede cachear la respuesta del CORS preflight.
-    | 
+    |
     | Valores recomendados:
     | - Desarrollo: 0 (sin caché)
     | - Producción: 86400 (24 horas) o 604800 (7 días)
@@ -129,7 +129,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Si se debe permitir cookies y headers de autenticación en requests CORS.
-    | 
+    |
     | SEGURIDAD CRÍTICA:
     | - Si es true: 'allowed_origins' NO puede ser '*'
     | - Las cookies será enviadas con credenciales del usuario

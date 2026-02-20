@@ -8,15 +8,15 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * Trait HasAuditFields
- * 
+ *
  * Registra automáticamente quién creó, actualizó o eliminó un registro.
  * También crea entradas en la tabla auditoria_actividades para trazabilidad completa.
- * 
+ *
  * Uso:
  * - El trait busca campos created_by, updated_by, deleted_by si existen
  * - Si no existen, solo registra en auditoria_actividades
  * - Siempre registra IP, user agent y datos antes/después
- * 
+ *
  * @package App\Traits
  */
 trait HasAuditFields
@@ -84,7 +84,7 @@ trait HasAuditFields
 
     /**
      * Verifica si la tabla tiene una columna específica.
-     * 
+     *
      * @param string $column
      * @return bool
      */
@@ -96,7 +96,7 @@ trait HasAuditFields
 
     /**
      * Registra la actividad en la tabla de auditoría.
-     * 
+     *
      * @param string $accion
      * @param array|null $datosAnteriores
      * @param array|null $datosNuevos
@@ -153,7 +153,7 @@ trait HasAuditFields
 
     /**
      * Obtiene el historial de cambios de este registro.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function historialAuditoria()
@@ -166,7 +166,7 @@ trait HasAuditFields
 
     /**
      * Obtiene el usuario que creó el registro.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|null
      */
     public function creador()
@@ -179,7 +179,7 @@ trait HasAuditFields
 
     /**
      * Obtiene el usuario que actualizó el registro por última vez.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|null
      */
     public function actualizador()
@@ -192,7 +192,7 @@ trait HasAuditFields
 
     /**
      * Obtiene el usuario que eliminó el registro.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|null
      */
     public function eliminador()

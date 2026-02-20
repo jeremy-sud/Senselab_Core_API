@@ -8,15 +8,15 @@ use Illuminate\Support\Str;
 
 /**
  * Trait HasSafeErrorHandling
- * 
+ *
  * Proporciona manejo seguro de errores para controladores API.
- * 
+ *
  * FASE 1.3: Logging estructurado con trace_id, contexto de usuario,
  * IP address y timestamps ISO8601 para auditoría y debugging.
  *
  * En producción, oculta detalles de excepciones del cliente.
  * En desarrollo, expone información para debugging.
- * 
+ *
  * @package App\Traits
  * @author Sistemas Ursol S.A.
  */

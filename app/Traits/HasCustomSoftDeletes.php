@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\Auth;
 
 /**
  * Trait HasCustomSoftDeletes
- * 
+ *
  * Implementa soft deletes usando el campo 'eliminado' existente en lugar de 'deleted_at'.
  * Proporciona métodos similares a SoftDeletes de Laravel pero adaptado a la BD existente.
- * 
+ *
  * @package App\Traits
  */
 trait HasCustomSoftDeletes
@@ -28,7 +28,7 @@ trait HasCustomSoftDeletes
 
     /**
      * Force a hard delete on a soft deleted model.
-     * 
+     *
      * @return bool|null
      */
     public function forceDelete(): ?bool
@@ -38,7 +38,7 @@ trait HasCustomSoftDeletes
 
     /**
      * Perform the actual delete query on this model instance.
-     * 
+     *
      * @return void
      */
     protected function runSoftDelete(): void
@@ -68,7 +68,7 @@ trait HasCustomSoftDeletes
 
     /**
      * Restore a soft-deleted model instance.
-     * 
+     *
      * @return bool
      */
     public function restore(): bool
@@ -121,7 +121,7 @@ trait HasCustomSoftDeletes
 
     /**
      * Get a new query builder that includes soft deleted models.
-     * 
+     *
      * @return Builder
      */
     public static function withTrashed(): Builder
@@ -131,7 +131,7 @@ trait HasCustomSoftDeletes
 
     /**
      * Get a new query builder that only includes soft deleted models.
-     * 
+     *
      * @return Builder
      */
     public static function onlyTrashed(): Builder
@@ -141,7 +141,7 @@ trait HasCustomSoftDeletes
 
     /**
      * Determine if the model is currently force deleting.
-     * 
+     *
      * @return bool
      */
     public function isForceDeleting(): bool
@@ -151,7 +151,7 @@ trait HasCustomSoftDeletes
 
     /**
      * Register a "restoring" model event callback with the dispatcher.
-     * 
+     *
      * @param  \Closure|string  $callback
      * @return void
      */
@@ -162,7 +162,7 @@ trait HasCustomSoftDeletes
 
     /**
      * Register a "restored" model event callback with the dispatcher.
-     * 
+     *
      * @param  \Closure|string  $callback
      * @return void
      */
@@ -174,7 +174,7 @@ trait HasCustomSoftDeletes
     /**
      * Perform the actual delete query on this model instance.
      * Override the default delete to use soft delete.
-     * 
+     *
      * @return bool|null
      */
     public function delete(): ?bool

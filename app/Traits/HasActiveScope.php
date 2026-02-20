@@ -6,17 +6,17 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Trait HasActiveScope
- * 
+ *
  * Agrega scopes para filtrar registros activos/inactivos automáticamente.
  * Útil para consultas que solo necesitan registros activos.
- * 
+ *
  * @package App\Traits
  */
 trait HasActiveScope
 {
     /**
      * Scope para obtener solo registros activos.
-     * 
+     *
      * @param Builder $query
      * @return Builder
      */
@@ -27,7 +27,7 @@ trait HasActiveScope
 
     /**
      * Scope para obtener solo registros inactivos.
-     * 
+     *
      * @param Builder $query
      * @return Builder
      */
@@ -38,7 +38,7 @@ trait HasActiveScope
 
     /**
      * Scope para incluir registros activos e inactivos.
-     * 
+     *
      * @param Builder $query
      * @return Builder
      */
@@ -49,7 +49,7 @@ trait HasActiveScope
 
     /**
      * Determina si el registro está activo.
-     * 
+     *
      * @return bool
      */
     public function estaActivo(): bool
@@ -59,7 +59,7 @@ trait HasActiveScope
 
     /**
      * Activa el registro.
-     * 
+     *
      * @return bool
      */
     public function activar(): bool
@@ -70,7 +70,7 @@ trait HasActiveScope
 
     /**
      * Desactiva el registro.
-     * 
+     *
      * @return bool
      */
     public function desactivar(): bool
@@ -81,7 +81,7 @@ trait HasActiveScope
 
     /**
      * Alterna el estado activo/inactivo.
-     * 
+     *
      * @return bool
      */
     public function toggleActivo(): bool

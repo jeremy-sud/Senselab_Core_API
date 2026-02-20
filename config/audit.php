@@ -2,10 +2,10 @@
 
 /**
  * Configuración Granular de Auditoría Completa
- * 
+ *
  * Define qué modelos auditar, qué eventos registrar y con qué nivel de detalle.
  * Soporta exclusión de campos sensibles y auditoría selectiva por roles.
- * 
+ *
  * @package Ursol\Configuration
  * @version 1.0.0
  */
@@ -45,7 +45,7 @@ return [
     | Audited Models
     |--------------------------------------------------------------------------
     |
-    | Modelos a auditar. array vacío = auditar todos
+    | Modelos a auditar. array vacío = auditar todos modelos, false = no auditar este modelo
     | false = no auditar este modelo
     |
     */
@@ -193,17 +193,17 @@ return [
     |--------------------------------------------------------------------------
     |
     | Niveles de auditoría por rol/permiso
-    | - 'full': auditar todo
+    | - 'full': auditar todo (cambios completos con valores anteriores y nuevos)
     | - 'sensitive': auditar solo cambios en campos sensibles
     | - 'none': no auditar
     |
     */
     'audit_levels' => [
-        'super_admin' => 'full',              // Super admin: auditar todo
-        'admin' => 'full',                    // Admin: auditar todo
-        'finance_manager' => 'full',          // Finance: auditar todos cambios
-        'employee' => 'sensitive',            // Empleado: auditar solo sensibles
-        'guest' => 'none',                    // Invitado: no auditar
+        'super_admin' => 'full',              // Super admin: auditar todo con detalles completos
+        'admin' => 'full',                    // Admin: auditar todo con detalles completos
+        'finance_manager' => 'full',          // Finance: auditar todos cambios con detalles completos
+        'employee' => 'sensitive',            // Empleado: auditar solo sensibles con valores enmascarados
+        'guest' => 'none',                    // Invitado: no auditar ningún cambio
     ],
 
     /*
