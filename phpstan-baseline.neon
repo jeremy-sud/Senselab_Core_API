@@ -913,18 +913,6 @@ parameters:
 			path: app/Http/Controllers/API/ArchivoController.php
 
 		-
-			message: '#^Method App\\Http\\Controllers\\API\\AsientoContableController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/API/AsientoContableController.php
-
-		-
-			message: '#^PHPDoc tag @return with type Illuminate\\Http\\JsonResponse is incompatible with native type App\\Http\\Resources\\AsientoContableResource\.$#'
-			identifier: return.phpDocType
-			count: 1
-			path: app/Http/Controllers/API/AsientoContableController.php
-
-		-
 			message: '#^Method App\\Http\\Controllers\\API\\AuditoriaActividadController\:\:estadisticas\(\) has invalid return type App\\Http\\Controllers\\API\\JsonResponse\.$#'
 			identifier: class.notFound
 			count: 1
@@ -1133,12 +1121,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Http/Controllers/API/CodigoActividadEconomicaController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\API\\ComprobanteRecibidoElectronicoController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/API/ComprobanteRecibidoElectronicoController.php
 
 		-
 			message: '#^Method App\\Http\\Controllers\\API\\ConfiguracionController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
@@ -1495,24 +1477,6 @@ parameters:
 			path: app/Http/Controllers/API/EmpresaController.php
 
 		-
-			message: '#^Method App\\Http\\Controllers\\API\\EntradaInventarioController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/API/EntradaInventarioController.php
-
-		-
-			message: '#^Relation ''bodega'' is not found in App\\Models\\EntradaInventario model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Http/Controllers/API/EntradaInventarioController.php
-
-		-
-			message: '#^Relation ''usuario'' is not found in App\\Models\\EntradaInventario model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Http/Controllers/API/EntradaInventarioController.php
-
-		-
 			message: '#^Method App\\Http\\Controllers\\API\\EtiquetaController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -1559,18 +1523,6 @@ parameters:
 			identifier: assign.propertyType
 			count: 1
 			path: app/Http/Controllers/API/FormaPagoController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\API\\HorarioRutaController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/API/HorarioRutaController.php
-
-		-
-			message: '#^PHPDoc tag @return with type App\\Http\\Resources\\HorarioRutaResource is incompatible with native type Illuminate\\Http\\JsonResponse\.$#'
-			identifier: return.phpDocType
-			count: 1
-			path: app/Http/Controllers/API/HorarioRutaController.php
 
 		-
 			message: '#^Method App\\Http\\Controllers\\API\\InventarioController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
@@ -1759,18 +1711,6 @@ parameters:
 			path: app/Http/Controllers/API/OrdenCompraController.php
 
 		-
-			message: '#^Method App\\Http\\Controllers\\API\\PagoController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/API/PagoController.php
-
-		-
-			message: '#^PHPDoc tag @return with type Illuminate\\Http\\JsonResponse is incompatible with native type App\\Http\\Resources\\PagoResource\.$#'
-			identifier: return.phpDocType
-			count: 2
-			path: app/Http/Controllers/API/PagoController.php
-
-		-
 			message: '#^Method App\\Http\\Controllers\\API\\PagoCuentaCobrarController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -1805,18 +1745,6 @@ parameters:
 			identifier: missingType.property
 			count: 1
 			path: app/Http/Controllers/API/PagoCuentaPagarController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\API\\PagoNominaController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/API/PagoNominaController.php
-
-		-
-			message: '#^Property App\\Http\\Controllers\\API\\PagoNominaController\:\:\$cacheTags type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/API/PagoNominaController.php
 
 		-
 			message: '#^Relation ''metodoPago'' is not found in App\\Models\\PagoNomina model\.$#'
@@ -1999,12 +1927,6 @@ parameters:
 			path: app/Http/Controllers/API/RutaController.php
 
 		-
-			message: '#^Method App\\Http\\Controllers\\API\\SalidaInventarioController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/API/SalidaInventarioController.php
-
-		-
 			message: '#^Method App\\Http\\Controllers\\API\\SucursalController\:\:destroy\(\) has invalid return type App\\Http\\Controllers\\API\\JsonResponse\.$#'
 			identifier: class.notFound
 			count: 1
@@ -2063,24 +1985,6 @@ parameters:
 			identifier: missingType.property
 			count: 1
 			path: app/Http/Controllers/API/SucursalController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\API\\TasaImpuestoController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/API/TasaImpuestoController.php
-
-		-
-			message: '#^PHPDoc tag @param for parameter \$request with type Illuminate\\Http\\Request is not subtype of native type App\\Http\\Requests\\TasaImpuestoVigenteRequest\.$#'
-			identifier: parameter.phpDocType
-			count: 1
-			path: app/Http/Controllers/API/TasaImpuestoController.php
-
-		-
-			message: '#^Property App\\Http\\Controllers\\API\\TasaImpuestoController\:\:\$cacheTags type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/API/TasaImpuestoController.php
 
 		-
 			message: '#^Method App\\Http\\Controllers\\API\\TipoCambioHistorialController\:\:generateCacheKey\(\) has parameter \$params with no value type specified in iterable type array\.$#'
@@ -11161,6 +11065,24 @@ parameters:
 			path: app/Services/AI/PredictionService.php
 
 		-
+			message: '#^Method App\\Services\\AsientoContableService\:\:actualizar\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AsientoContableService.php
+
+		-
+			message: '#^Method App\\Services\\AsientoContableService\:\:actualizar\(\) should return App\\Models\\AsientoContable but returns App\\Models\\AsientoContable\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/AsientoContableService.php
+
+		-
+			message: '#^Method App\\Services\\AsientoContableService\:\:crear\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/AsientoContableService.php
+
+		-
 			message: '#^Call to an undefined static method App\\Models\\AuditLog\:\:byEmpresa\(\)\.$#'
 			identifier: staticMethod.notFound
 			count: 1
@@ -11291,6 +11213,54 @@ parameters:
 			identifier: parameter.notFound
 			count: 1
 			path: app/Services/EncryptionService.php
+
+		-
+			message: '#^Method App\\Services\\EntradaInventarioService\:\:actualizar\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/EntradaInventarioService.php
+
+		-
+			message: '#^Method App\\Services\\EntradaInventarioService\:\:actualizar\(\) should return App\\Models\\EntradaInventario but returns App\\Models\\EntradaInventario\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/EntradaInventarioService.php
+
+		-
+			message: '#^Method App\\Services\\EntradaInventarioService\:\:cancelar\(\) should return App\\Models\\EntradaInventario but returns App\\Models\\EntradaInventario\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/EntradaInventarioService.php
+
+		-
+			message: '#^Method App\\Services\\EntradaInventarioService\:\:crear\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/EntradaInventarioService.php
+
+		-
+			message: '#^Method App\\Services\\EntradaInventarioService\:\:eliminar\(\) should return bool but returns bool\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/EntradaInventarioService.php
+
+		-
+			message: '#^Method App\\Services\\EntradaInventarioService\:\:procesar\(\) should return App\\Models\\EntradaInventario but returns App\\Models\\EntradaInventario\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/EntradaInventarioService.php
+
+		-
+			message: '#^Relation ''bodega'' is not found in App\\Models\\EntradaInventario model\.$#'
+			identifier: larastan.relationExistence
+			count: 4
+			path: app/Services/EntradaInventarioService.php
+
+		-
+			message: '#^Relation ''usuario'' is not found in App\\Models\\EntradaInventario model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/EntradaInventarioService.php
 
 		-
 			message: '#^Method App\\Services\\Hacienda\\ClaveNumericaGenerator\:\:extraerInformacion\(\) return type has no value type specified in iterable type array\.$#'
@@ -11693,6 +11663,36 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Services/RateLimitingService.php
+
+		-
+			message: '#^Method App\\Services\\SalidaInventarioService\:\:actualizar\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/SalidaInventarioService.php
+
+		-
+			message: '#^Method App\\Services\\SalidaInventarioService\:\:actualizar\(\) should return App\\Models\\SalidaInventario but returns App\\Models\\SalidaInventario\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/SalidaInventarioService.php
+
+		-
+			message: '#^Method App\\Services\\SalidaInventarioService\:\:crear\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/SalidaInventarioService.php
+
+		-
+			message: '#^Method App\\Services\\SalidaInventarioService\:\:eliminar\(\) should return bool but returns bool\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/SalidaInventarioService.php
+
+		-
+			message: '#^Method App\\Services\\SalidaInventarioService\:\:procesar\(\) should return App\\Models\\SalidaInventario but returns App\\Models\\SalidaInventario\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/SalidaInventarioService.php
 
 		-
 			message: '#^Call to an undefined static method Sentry\\Breadcrumb\:\:create\(\)\.$#'

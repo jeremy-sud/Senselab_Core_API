@@ -3,13 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
 
 class RolPermiso extends Model
 {
-    use HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
+    use HasAuditFields, HasActiveScope;
     /**
      * Tabla asociada al modelo.
      *

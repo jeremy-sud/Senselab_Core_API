@@ -132,6 +132,7 @@ class RolPermisoController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     * Soporta ambos modos: por RolPermiso ID o por rol_id + permiso_id
      */
         #[OA\Delete(
         path: '/api/rol-permiso/{id}',
@@ -147,8 +148,19 @@ class RolPermisoController extends Controller
         ]
     )]
 
-    public function destroy(RolPermiso $rolPermiso): JsonResponse
+    public function destroy(int $rol, int $permiso): JsonResponse
     {
+        $rolPermiso = RolPermiso::where('rol_id', $rol)
+            ->where('permiso_id', $permiso)
+            ->first();
+
+        if (!$rolPermiso) {
+            return response()->json([
+                'success' => false,
+                'message' => 'La relación rol-permiso no existe'
+            ], 404);
+        }
+
         $rolPermiso->delete();
 
         return response()->json([

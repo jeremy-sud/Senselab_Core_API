@@ -63,7 +63,9 @@ trait HasAuditFields
 
         // Después de actualizar - registrar cambios en auditoría
         static::updated(function ($model) {
-            $cambios = $model->getDirty();
+            $cambios = $model->getChanges(); // getChanges() en lugar de getDirty() después del save
+            // Remover timestamps de los cambios
+            unset($cambios['updated_at'], $cambios['created_at']);
             if (!empty($cambios)) {
                 $model->registrarAuditoria('actualizar', $model->getOriginal(), $cambios);
             }
@@ -74,8 +76,12 @@ trait HasAuditFields
             $model->registrarAuditoria('eliminar', $model->getAttributes(), null);
         });
 
-        // Después de restaurar - registrar en auditoría
-        if (method_exists(static::class, 'restored')) {
+        // Después de restaurar - registrar en auditoría (para modelos con soft deletes)
+        // Solo registrar el evento si el modelo usa HasCustomSoftDeletes o SoftDeletes
+        $traits = class_uses_recursive(static::class);
+        $hasSoftDeletes = isset($traits[\App\Traits\HasCustomSoftDeletes::class]) || isset($traits[\Illuminate\Database\Eloquent\SoftDeletes::class]);
+        if ($hasSoftDeletes) {
+            /** @phpstan-ignore-next-line staticMethod.notFound */
             static::restored(function ($model) {
                 $model->registrarAuditoria('restaurar', ['eliminado' => true], ['eliminado' => false]);
             });
