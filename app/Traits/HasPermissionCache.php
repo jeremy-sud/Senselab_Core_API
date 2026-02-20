@@ -75,7 +75,7 @@ trait HasPermissionCache
         $normalizedSlug = str_replace('.', '-', $permissionSlug);
         $alternativeSlug = str_replace('-', '.', $permissionSlug);
         
-        return in_array($normalizedSlug, $permissions) || 
+        return in_array($normalizedSlug, $permissions) ||
                in_array($alternativeSlug, $permissions);
     }
 
@@ -93,7 +93,7 @@ trait HasPermissionCache
             $normalizedSlug = str_replace('.', '-', $slug);
             $alternativeSlug = str_replace('-', '.', $slug);
             
-            if (in_array($normalizedSlug, $permissions) || 
+            if (in_array($normalizedSlug, $permissions) ||
                 in_array($alternativeSlug, $permissions)) {
                 return true;
             }
@@ -116,7 +116,7 @@ trait HasPermissionCache
             $normalizedSlug = str_replace('.', '-', $slug);
             $alternativeSlug = str_replace('-', '.', $slug);
             
-            if (!in_array($normalizedSlug, $permissions) && 
+            if (!in_array($normalizedSlug, $permissions) &&
                 !in_array($alternativeSlug, $permissions)) {
                 return false;
             }

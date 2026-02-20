@@ -96,7 +96,8 @@ trait HasCacheableQueries
     }
 
     /**
-     * Invalida todo el cache relacionado a este controlador
+     * Invalida todo el cache relacionado a este controlador y sus tags
+     *
      * Se debe llamar en operaciones de escritura (create, update, delete)
      */
     protected function flushCache(): void
@@ -106,7 +107,7 @@ trait HasCacheableQueries
 
     /**
      * Invalida una clave específica del cache
-     * 
+     *
      * @param string $key
      * @return void
      */
@@ -118,12 +119,12 @@ trait HasCacheableQueries
     /**
      * Verifica si el cache está habilitado
      * Útil para desactivar cache en testing o debugging
-     * 
+     *
      * @return bool
      */
     protected function isCacheEnabled(): bool
     {
-        return config('cache.enabled', true) 
+        return config('cache.enabled', true)
             && config('cache.default') !== 'array'
             && !app()->environment('testing');
     }
@@ -131,7 +132,7 @@ trait HasCacheableQueries
     /**
      * Wrapper condicional para cache
      * Solo cachea si está habilitado, sino ejecuta directamente
-     * 
+     *
      * @param string $cacheKey Clave de cache ya generada
      * @param callable $callback
      * @return mixed
@@ -147,7 +148,7 @@ trait HasCacheableQueries
     
     /**
      * Alias de getCacheKey para compatibilidad
-     * 
+     *
      * @param string $method
      * @param array $params
      * @return string
@@ -159,7 +160,7 @@ trait HasCacheableQueries
     
     /**
      * Alias de cacheQuery para compatibilidad
-     * 
+     *
      * @param string $cacheKey
      * @param callable $callback
      * @return mixed
@@ -171,7 +172,7 @@ trait HasCacheableQueries
     
     /**
      * Alias de flushCache para compatibilidad
-     * 
+     *
      * @return void
      */
     protected function clearCache(): void
