@@ -35,10 +35,18 @@ class HorarioRutaController extends Controller
 
         $query = HorarioRuta::with(['ruta', 'bus'])->where('eliminado', 0);
 
-        if ($request->filled('ruta_id')) $query->where('ruta_id', $request->ruta_id);
-        if ($request->filled('bus_id')) $query->where('bus_id', $request->bus_id);
-        if ($request->filled('estado')) $query->where('estado', $request->estado);
-        if ($request->filled('fecha')) $query->whereDate('fecha_salida', $request->fecha);
+        if ($request->filled('ruta_id')) {
+            $query->where('ruta_id', $request->ruta_id);
+        }
+        if ($request->filled('bus_id')) {
+            $query->where('bus_id', $request->bus_id);
+        }
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+        if ($request->filled('fecha')) {
+            $query->whereDate('fecha_salida', $request->fecha);
+        }
         if ($request->filled(['desde', 'hasta'])) {
             $query->whereBetween('fecha_salida', [$request->desde, $request->hasta]);
         }

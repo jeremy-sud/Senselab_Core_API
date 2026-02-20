@@ -212,6 +212,9 @@ class AuditLog extends Model
             case 'forceDeleted':
                 $summary .= "eliminó permanentemente {$this->auditable_type}";
                 break;
+            default:
+                $summary .= "realizó acción '{$this->action}' en {$this->auditable_type}";
+                break;
         }
 
         if ($this->involves_sensitive_data) {

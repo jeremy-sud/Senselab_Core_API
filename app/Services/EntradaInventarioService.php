@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DTOs\API\EntradaInventarioCreateDTO;
+use App\Exceptions\InventarioException;
 use App\Models\EntradaInventario;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
@@ -112,13 +113,13 @@ class EntradaInventarioService
     public function procesar(EntradaInventario $entrada): EntradaInventario
     {
         if ($entrada->estado === 'Procesada') {
-            throw new \Exception('La entrada ya fue procesada anteriormente');
+            throw InventarioException::entradaYaProcesada();
         }
 
         $entrada->load('detalles.producto');
 
         if ($entrada->detalles->isEmpty()) {
-            throw new \Exception('No se puede procesar una entrada sin productos');
+            throw InventarioException::entradaSinProductos();
         }
 
         return DB::transaction(function () use ($entrada) {
@@ -155,7 +156,7 @@ class EntradaInventarioService
     public function cancelar(EntradaInventario $entrada): EntradaInventario
     {
         if ($entrada->estado === 'Procesada') {
-            throw new \Exception('No se puede cancelar una entrada ya procesada');
+            throw InventarioException::entradaYaProcesadaParaCancelar();
         }
 
         $entrada->update(['estado' => 'Cancelada']);

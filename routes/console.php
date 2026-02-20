@@ -38,3 +38,20 @@ Schedule::job(new CleanCacheJob('all'))
     ->monthlyOn(1, '04:00')
     ->name('cache:clean-all')
     ->withoutOverlapping();
+
+// ============================================================================
+// Sprint 9 - Cache Warming
+// ============================================================================
+
+// Precargar catálogos diariamente a las 5 AM (después de limpieza)
+Schedule::command('cache:warmup')
+    ->dailyAt('05:00')
+    ->name('cache:warmup-daily')
+    ->withoutOverlapping()
+    ->runInBackground();
+
+// Precargar permisos cada 6 horas
+Schedule::command('permission:cache warmup')
+    ->everySixHours()
+    ->name('permission:warmup')
+    ->withoutOverlapping();

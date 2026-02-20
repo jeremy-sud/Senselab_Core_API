@@ -96,7 +96,7 @@ trait HasAuditFields
      */
     protected function hasColumn(string $column): bool
     {
-        return in_array($column, $this->getFillable()) || 
+        return in_array($column, $this->getFillable()) ||
                in_array($column, array_keys($this->getAttributes()));
     }
 

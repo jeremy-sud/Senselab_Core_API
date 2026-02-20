@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DTOs\API\SalidaInventarioCreateDTO;
+use App\Exceptions\InventarioException;
 use App\Models\SalidaInventario;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
@@ -112,13 +113,13 @@ class SalidaInventarioService
     public function procesar(SalidaInventario $salida): SalidaInventario
     {
         if ($salida->estado === 'Procesada') {
-            throw new \Exception('La salida ya fue procesada anteriormente');
+            throw InventarioException::salidaYaProcesada();
         }
 
         $salida->load('detalles.producto');
 
         if ($salida->detalles->isEmpty()) {
-            throw new \Exception('No se puede procesar una salida sin productos');
+            throw InventarioException::salidaSinProductos();
         }
 
         return DB::transaction(function () use ($salida) {
@@ -129,7 +130,7 @@ class SalidaInventarioService
                     ->first();
 
                 if (!$inventario || $inventario->cantidad_actual < $detalle->cantidad) {
-                    throw new \Exception("Stock insuficiente para el producto ID: {$detalle->producto_id}");
+                    throw InventarioException::stockInsuficiente($detalle->producto_id);
                 }
 
                 DB::table('inventarios')
