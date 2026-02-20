@@ -348,7 +348,7 @@ class ComprobanteElectronicoController extends Controller
                     $impuestoMonto = $primerImpuesto['monto'] ?? null;
                 }
                 
-                $lineaDetalle = FeLineaDetalle::create([
+                FeLineaDetalle::create([
                     'comprobante_id' => $comprobante->id,
                     'numero_linea' => $linea['numero_linea'],
                     'codigo_tipo' => $linea['codigo_tipo'] ?? '04',

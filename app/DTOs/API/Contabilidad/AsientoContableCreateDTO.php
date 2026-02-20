@@ -64,7 +64,7 @@ final class AsientoContableCreateDTO
     /**
      * Verifica que asiento esté balanceado
      */
-    public function estáBalanceado(): bool
+    public function estaBalanceado(): bool
     {
         return abs($this->totalDebe() - $this->totalHaber()) < 0.01;
     }

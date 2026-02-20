@@ -130,15 +130,15 @@ php artisan route:cache
 - **Controladores > 400 líneas:** 19 archivos (documentación OpenAPI)
 - **DTOs existentes:** ✅ 25+ implementados
 - **VentaController refactorizado:** 818 → 240 líneas (-71%)
-- **Tests:** 529 total, 515 passing (97.4%)
+- **Tests:** 529 total, 529 passing (100%)
 - **Test files:** 47 archivos
 
 ### Progreso de Tareas
-- ✅ [4.1] PHPStan errors: 1974 → 0 (con baseline)
+- ✅ [4.1] PHPStan errors: 1974 → 0 (con baseline nivel 8)
 - ✅ [4.2] VentaController refactorizado con Service Layer Pattern
 - ✅ [4.3] DTOs implementados: Venta, Producto, Cliente, Proveedor, etc.
-- ✅ [4.4] Tests corregidos: PermissionTest 100%, 97.4% overall
-- ⏳ [4.5] Resolver issues de SonarQube (4-5h)
+- ✅ [4.4] Tests corregidos: 529/529 (100%)
+- ✅ [4.5] SonarQube issues resueltos (71 → ~45 aceptados)
 
 ### Fixes Aplicados (20 feb 2026)
 - Corregido typo `Produto` → `Producto` en ProductoService
@@ -148,11 +148,17 @@ php artisan route:cache
 - Agregada ruta `/api/permisos/grouped`
 - Corregido `RolPermisoController::destroy()` para rutas anidadas
 - Eliminado `HasCustomSoftDeletes` de modelo `RolPermiso`
+- Creada `InventarioException` para excepciones dedicadas
+- Corregido if sin llaves en HorarioRutaController, PagoController
+- Renombrado `estáBalanceado()` → `estaBalanceado()`
+- Eliminadas variables no usadas en VentaService
+- Agregado default al switch en AuditLog
+- Corregido trailing whitespace y newlines faltantes
 
 ### Documentación
 - **Plan detallado:** [FASE_4_CALIDAD_CODIGO.md](docs/FASE_4_CALIDAD_CODIGO.md)
 - **Refactorización VentaController:** [REFACTORIZACION_VENTA_CONTROLLER_COMPLETADA.md](docs/REFACTORIZACION_VENTA_CONTROLLER_COMPLETADA.md)
 - **Roadmap:** [PLAN_IMPLEMENTACION_MEJORAS.md](docs/PLAN_IMPLEMENTACION_MEJORAS.md)
 
-**Estimación restante FASE 4:** 4-5 horas (SonarQube)
+**FASE 4 COMPLETADA** ✅
 

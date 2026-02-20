@@ -43,10 +43,10 @@ class VentaService
         DB::beginTransaction();
         
         try {
-            // Validar relaciones
-            $sucursal = $this->validarSucursal($dto->getSucursalId(), $dto->getEmpresaId());
-            $cliente = $this->validarCliente($dto->getClienteId(), $dto->getEmpresaId());
-            $usuario = $this->validarUsuario($dto->getUsuarioId(), $dto->getEmpresaId());
+            // Validar relaciones (lanzan excepción si no existen)
+            $this->validarSucursal($dto->getSucursalId(), $dto->getEmpresaId());
+            $this->validarCliente($dto->getClienteId(), $dto->getEmpresaId());
+            $this->validarUsuario($dto->getUsuarioId(), $dto->getEmpresaId());
             
             $almacen = $dto->getAlmacenId()
                 ? $this->validarAlmacen($dto->getAlmacenId(), $dto->getEmpresaId())

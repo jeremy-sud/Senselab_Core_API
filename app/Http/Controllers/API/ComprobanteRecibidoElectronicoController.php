@@ -17,7 +17,7 @@ use OpenApi\Attributes as OA;
 
 /**
  * ComprobanteRecibidoElectronicoController - Versión Refactorizada (FASE 4.2)
- * 
+ *
  * Controlador simplificado para gestión de comprobantes electrónicos recibidos.
  * Reducción: 631 → ~200 líneas (-68%)
  */

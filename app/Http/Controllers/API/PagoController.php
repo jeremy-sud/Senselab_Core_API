@@ -42,10 +42,18 @@ class PagoController extends Controller
             ->where('eliminado', 0)
             ->with(['formaPago', 'proveedor', 'cliente', 'cuentaPorPagar', 'cuentaPorCobrar', 'ordenCompra']);
 
-        if ($request->filled('estado')) $query->where('estado', $request->estado);
-        if ($request->filled('forma_pago_id')) $query->where('forma_pago_id', $request->forma_pago_id);
-        if ($request->filled('proveedor_id')) $query->where('proveedor_id', $request->proveedor_id);
-        if ($request->filled('cliente_id')) $query->where('cliente_id', $request->cliente_id);
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+        if ($request->filled('forma_pago_id')) {
+            $query->where('forma_pago_id', $request->forma_pago_id);
+        }
+        if ($request->filled('proveedor_id')) {
+            $query->where('proveedor_id', $request->proveedor_id);
+        }
+        if ($request->filled('cliente_id')) {
+            $query->where('cliente_id', $request->cliente_id);
+        }
         if ($request->filled(['desde', 'hasta'])) {
             $query->whereBetween('fecha_pago', [$request->desde, $request->hasta]);
         }
@@ -138,8 +146,12 @@ class PagoController extends Controller
 
             if ($request->filled('monto') && $request->monto != $montoAnterior) {
                 $diferencia = $request->monto - $montoAnterior;
-                if ($pago->cuenta_por_pagar_id) $this->actualizarCuentaPorPagar($pago->cuenta_por_pagar_id, $diferencia);
-                if ($pago->cuenta_por_cobrar_id) $this->actualizarCuentaPorCobrar($pago->cuenta_por_cobrar_id, $diferencia);
+                if ($pago->cuenta_por_pagar_id) {
+                    $this->actualizarCuentaPorPagar($pago->cuenta_por_pagar_id, $diferencia);
+                }
+                if ($pago->cuenta_por_cobrar_id) {
+                    $this->actualizarCuentaPorCobrar($pago->cuenta_por_cobrar_id, $diferencia);
+                }
             }
 
             DB::commit();
@@ -175,8 +187,12 @@ class PagoController extends Controller
         try {
             DB::beginTransaction();
 
-            if ($pago->cuenta_por_pagar_id) $this->actualizarCuentaPorPagar($pago->cuenta_por_pagar_id, -$pago->monto);
-            if ($pago->cuenta_por_cobrar_id) $this->actualizarCuentaPorCobrar($pago->cuenta_por_cobrar_id, -$pago->monto);
+            if ($pago->cuenta_por_pagar_id) {
+                $this->actualizarCuentaPorPagar($pago->cuenta_por_pagar_id, -$pago->monto);
+            }
+            if ($pago->cuenta_por_cobrar_id) {
+                $this->actualizarCuentaPorCobrar($pago->cuenta_por_cobrar_id, -$pago->monto);
+            }
 
             $pago->update(['eliminado' => 1, 'activo' => 0]);
             DB::commit();
