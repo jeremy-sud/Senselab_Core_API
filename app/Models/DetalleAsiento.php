@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
@@ -20,7 +21,7 @@ class DetalleAsiento extends Model
     /**
      * Los atributos que son asignables masivamente.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'asiento_contable_id',
@@ -49,7 +50,7 @@ class DetalleAsiento extends Model
     /**
      * Los atributos que deben ser ocultados para la serialización.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $hidden = [
         'eliminado',
@@ -103,7 +104,7 @@ class DetalleAsiento extends Model
      *
      * @return bool
      */
-    public function estaBalanceado()
+    public function estaBalanceado(): mixed
     {
         return $this->debe === $this->haber;
     }
@@ -113,7 +114,7 @@ class DetalleAsiento extends Model
      *
      * @return void
      */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 

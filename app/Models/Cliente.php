@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
+/** @use HasFactory<\Database\Factories\ClienteFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Cliente extends Model
 {
+    /** @use HasFactory<\Database\Factories\ClienteFactory> */
     use HasFactory, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     /**
@@ -118,8 +121,7 @@ class Cliente extends Model
     /**
      * Scope para buscar por nombre o apellido.
      */
-    public function scopePorNombre($query, $nombre)
-    {
+    public function scopePorNombre(Builder $query, mixed $nombre): Builder{
         return $query->where(function($q) use ($nombre) {
             $q->where('nombre', 'LIKE', "%{$nombre}%")
               ->orWhere('apellidos', 'LIKE', "%{$nombre}%");
@@ -129,31 +131,28 @@ class Cliente extends Model
     /**
      * Scope para buscar por identificación.
      */
-    public function scopePorIdentificacion($query, $identificacion)
-    {
+    public function scopePorIdentificacion(Builder $query, mixed $identificacion): Builder{
         return $query->where('numero_identificacion', 'LIKE', "%{$identificacion}%");
     }
 
     /**
      * Scope para buscar por tipo de identificación.
      */
-    public function scopePorTipoIdentificacion($query, $tipo)
-    {
+    public function scopePorTipoIdentificacion(Builder $query, mixed $tipo): Builder{
         return $query->where('tipo_identificacion', $tipo);
     }
 
     /**
      * Scope para buscar por email.
      */
-    public function scopePorEmail($query, $email)
-    {
+    public function scopePorEmail(Builder $query, mixed $email): Builder{
         return $query->where('email', 'LIKE', "%{$email}%");
     }
 
     /**
      * Boot the model.
      */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 

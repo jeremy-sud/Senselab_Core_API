@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
+/** @use HasFactory<\Database\Factories\TipoComprobanteFeFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class TipoComprobanteFe extends Model
 {
+    /** @use HasFactory<\Database\Factories\TipoComprobanteFeFactory> */
     use HasFactory, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     protected $table = 'tipos_comprobantes_fe';
@@ -51,8 +54,7 @@ class TipoComprobanteFe extends Model
         return $query->where('activo', true)->where('eliminado', false);
     }
 
-    public function scopePorCodigo($query, $codigo)
-    {
+    public function scopePorCodigo(Builder $query, mixed $codigo): Builder{
         return $query->where('codigo_dgt', $codigo);
     }
 
@@ -68,22 +70,22 @@ class TipoComprobanteFe extends Model
 
     /* --------------------- Métodos --------------------- */
 
-    public function esFacturaElectronica()
+    public function esFacturaElectronica(): mixed
     {
         return $this->codigo_dgt === '01';
     }
 
-    public function esNotaCredito()
+    public function esNotaCredito(): mixed
     {
         return $this->codigo_dgt === '03';
     }
 
-    public function esNotaDebito()
+    public function esNotaDebito(): mixed
     {
         return $this->codigo_dgt === '02';
     }
 
-    public function esTiquete()
+    public function esTiquete(): mixed
     {
         return $this->codigo_dgt === '04';
     }

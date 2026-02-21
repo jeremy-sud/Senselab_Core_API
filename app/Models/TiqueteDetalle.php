@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class TiqueteDetalle extends Model
@@ -23,7 +24,7 @@ class TiqueteDetalle extends Model
     /**
      * Atributos que se pueden asignar de manera masiva.
      *
-     * @var array
+     * @var list<string>
      */
     protected $fillable = [
         'detalle_venta_id',
@@ -40,7 +41,7 @@ class TiqueteDetalle extends Model
     /**
      * Atributos que deben ser convertidos a tipos nativos.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
         'precio_final_tiquete' => 'float',

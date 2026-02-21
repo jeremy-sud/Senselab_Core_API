@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
@@ -20,7 +21,7 @@ class DetalleEntradaInventario extends Model
     /**
      * Los atributos que son asignables masivamente.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'entrada_inventario_id',
@@ -61,7 +62,7 @@ class DetalleEntradaInventario extends Model
     /**
      * Los atributos que deben ser ocultados para la serialización.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $hidden = [
         'eliminado',
@@ -124,8 +125,7 @@ class DetalleEntradaInventario extends Model
      * @param  string  $lote
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopePorLote($query, $lote)
-    {
+    public function scopePorLote(Builder $query, mixed $lote): Builder{
         return $query->where('lote', $lote);
     }
 
@@ -136,8 +136,7 @@ class DetalleEntradaInventario extends Model
      * @param  int  $dias
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeProximosAVencer($query, $dias = 30)
-    {
+    public function scopeProximosAVencer(Builder $query, mixed $dias = 30): Builder{
         return $query->whereNotNull('fecha_vencimiento')
                     ->whereDate('fecha_vencimiento', '>=', now())
                     ->whereDate('fecha_vencimiento', '<=', now()->addDays($dias));
@@ -160,7 +159,7 @@ class DetalleEntradaInventario extends Model
      *
      * @return void
      */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 

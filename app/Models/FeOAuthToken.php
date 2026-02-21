@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+/** @use HasFactory<\Database\Factories\FeOAuthTokenFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Carbon\Carbon;
 
@@ -13,6 +15,7 @@ use Carbon\Carbon;
  */
 class FeOAuthToken extends Model
 {
+    /** @use HasFactory<\Database\Factories\FeOAuthTokenFactory> */
     use HasFactory;
 
     /**
@@ -60,32 +63,28 @@ class FeOAuthToken extends Model
     /**
      * Scope: Tokens activos.
      */
-    public function scopeActivos($query)
-    {
+    public function scopeActivos(Builder $query): Builder{
         return $query->where('activo', true);
     }
 
     /**
      * Scope: Tokens no expirados.
      */
-    public function scopeValidos($query)
-    {
+    public function scopeValidos(Builder $query): Builder{
         return $query->where('expires_at', '>', Carbon::now());
     }
 
     /**
      * Scope: Filtrar por ambiente.
      */
-    public function scopeAmbiente($query, string $ambiente)
-    {
+    public function scopeAmbiente(Builder $query, string $ambiente): Builder{
         return $query->where('ambiente', $ambiente);
     }
 
     /**
      * Scope: Obtener el token válido más reciente para un ambiente.
      */
-    public function scopeUltimoValido($query, string $ambiente)
-    {
+    public function scopeUltimoValido(Builder $query, string $ambiente): Builder{
         return $query->ambiente($ambiente)
             ->activos()
             ->validos()
@@ -135,7 +134,7 @@ class FeOAuthToken extends Model
             return 0;
         }
 
-        $diff = Carbon::now()->diffInSeconds($this->expires_at, false);
+        $diff = (int) Carbon::now()->diffInSeconds($this->expires_at, false);
         return max(0, $diff);
     }
 

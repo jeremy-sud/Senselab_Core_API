@@ -2,16 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
+/** @use HasFactory<\Database\Factories\CajaFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Caja extends Model
 {
+    /** @use HasFactory<\Database\Factories\CajaFactory> */
     use HasFactory, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     /**
@@ -66,16 +69,14 @@ class Caja extends Model
     /**
      * Scope para buscar por nombre.
      */
-    public function scopePorNombre($query, $nombre)
-    {
+    public function scopePorNombre(Builder $query, mixed $nombre): Builder{
         return $query->where('nombre', 'LIKE', "%{$nombre}%");
     }
 
     /**
      * Scope para filtrar por sucursal.
      */
-    public function scopePorSucursal($query, $sucursalId)
-    {
+    public function scopePorSucursal(Builder $query, mixed $sucursalId): Builder{
         return $query->where('sucursal_id', $sucursalId);
     }
 }

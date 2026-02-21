@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
+/** @use HasFactory<\Database\Factories\DeclaracionTributariaFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class DeclaracionTributaria extends Model
 {
+    /** @use HasFactory<\Database\Factories\DeclaracionTributariaFactory> */
     use HasFactory, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     protected $table = 'declaraciones_tributarias';
@@ -86,39 +89,37 @@ class DeclaracionTributaria extends Model
         return $query->where('estado', 'aceptada');
     }
 
-    public function scopePorTipo($query, $tipo)
-    {
+    public function scopePorTipo(Builder $query, mixed $tipo): Builder{
         return $query->where('tipo_declaracion', $tipo);
     }
 
-    public function scopePorPeriodo($query, $periodo)
-    {
+    public function scopePorPeriodo(Builder $query, mixed $periodo): Builder{
         return $query->where('periodo_fiscal', $periodo);
     }
 
     /* --------------------- Métodos --------------------- */
 
-    public function esIVA()
+    public function esIVA(): mixed
     {
         return $this->tipo_declaracion === 'D104';
     }
 
-    public function esRenta()
+    public function esRenta(): mixed
     {
         return $this->tipo_declaracion === 'D101';
     }
 
-    public function esBorrador()
+    public function esBorrador(): mixed
     {
         return $this->estado === 'borrador';
     }
 
-    public function fueAceptada()
+    public function fueAceptada(): mixed
     {
         return $this->estado === 'aceptada';
     }
 
-    public function calcularSaldoNeto()
+    public function calcularSaldoNeto(): mixed
     {
         return $this->monto_a_pagar - $this->monto_a_favor;
     }

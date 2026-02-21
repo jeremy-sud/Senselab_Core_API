@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
+/** @use HasFactory<\Database\Factories\ProductoFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -16,6 +18,7 @@ use Illuminate\Support\Str;
  */
 class Producto extends Model
 {
+    /** @use HasFactory<\Database\Factories\ProductoFactory> */
     use HasFactory, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     protected $table = 'productos';
@@ -65,6 +68,14 @@ class Producto extends Model
         'actualizado_en' => 'datetime',
     ];
 
+    /**
+
+
+     * @var array<string, mixed>
+
+
+     */
+
     public static $rules = [
         'empresa_id' => 'required|exists:empresas,id',
         'nombre' => 'required|string',
@@ -110,28 +121,24 @@ class Producto extends Model
     }
 
     /* --------------------- Scopes --------------------- */
-    public function scopeActivos($q)
-    {
+    public function scopeActivos(mixed $q): Builder{
         return $q->where('activo', true)->where('eliminado', false);
     }
 
-    public function scopePorEmpresa($q, $empresaId)
-    {
+    public function scopePorEmpresa(mixed $q, mixed $empresaId): Builder{
         return $q->where('empresa_id', $empresaId);
     }
 
-    public function scopePorCategoria($q, $categoriaId)
-    {
+    public function scopePorCategoria(mixed $q, mixed $categoriaId): Builder{
         return $q->where('categoria_id', $categoriaId);
     }
 
-    public function scopePorTipo($q, $tipo)
-    {
+    public function scopePorTipo(mixed $q, mixed $tipo): Builder{
         return $q->where('tipo_producto', $tipo);
     }
 
     /* --------------------- Boot / eventos --------------------- */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 

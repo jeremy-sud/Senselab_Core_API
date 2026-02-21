@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
@@ -26,7 +27,7 @@ class RolPermiso extends Model
     /**
      * Atributos que se pueden asignar de manera masiva.
      *
-     * @var array
+     * @var list<string>
      */
     protected $fillable = [
         'rol_id',
@@ -37,7 +38,7 @@ class RolPermiso extends Model
     /**
      * Atributos que deben ser convertidos a tipos nativos.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
         'activo' => 'boolean',

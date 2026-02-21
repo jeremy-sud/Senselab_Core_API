@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+/** @use HasFactory<\Database\Factories\UsuarioFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,6 +15,7 @@ use App\Traits\HasPermissionCache;
 
 class Usuario extends Authenticatable
 {
+    /** @use HasFactory<\Database\Factories\UsuarioFactory> */
     use HasApiTokens, HasFactory, HasCustomSoftDeletes, HasAuditFields, HasActiveScope, HasPermissionCache;
 
     /**
@@ -42,7 +45,7 @@ class Usuario extends Authenticatable
     /**
      * Atributos que se pueden asignar de manera masiva.
      *
-     * @var array
+     * @var list<string>
      */
     protected $fillable = [
         'nombre',
@@ -60,7 +63,7 @@ class Usuario extends Authenticatable
     /**
      * Atributos que deben ser convertidos a tipos nativos.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
         'activo' => 'boolean',
@@ -179,7 +182,7 @@ class Usuario extends Authenticatable
     /**
      * Verificar si el usuario tiene alguno de los roles especificados.
      *
-     * @param array $roleNames Array de nombres de roles
+     * @param array<string> $roleNames Array de nombres de roles
      * @return bool
      */
     public function hasAnyRole(array $roleNames): bool
@@ -198,8 +201,8 @@ class Usuario extends Authenticatable
      */
     public function getAllPermissions(): array
     {
-        return \App\Models\Permiso::whereHas('roles', function ($query) {
-            $query->whereHas('usuarios', function ($q) {
+        return \App\Models\Permiso::whereHas('roles', function (\Illuminate\Database\Eloquent\Builder $query) {
+            $query->whereHas('usuarios', function (\Illuminate\Database\Eloquent\Builder $q) {
                 $q->where('usuarios.id', $this->id)
                   ->where('rol_usuario.activo', true);
             })
@@ -215,7 +218,7 @@ class Usuario extends Authenticatable
     /**
      * Asignar roles al usuario.
      *
-     * @param array $roleIds Array de IDs de roles
+     * @param array<int> $roleIds Array de IDs de roles
      * @return void
      */
     public function assignRoles(array $roleIds): void

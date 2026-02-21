@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
+/** @use HasFactory<\Database\Factories\RetencionImpuestoFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class RetencionImpuesto extends Model
 {
+    /** @use HasFactory<\Database\Factories\RetencionImpuestoFactory> */
     use HasFactory, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     protected $table = 'retenciones_impuestos';
@@ -78,34 +81,32 @@ class RetencionImpuesto extends Model
         return $query->where('declarado', false);
     }
 
-    public function scopePorTipo($query, $tipo)
-    {
+    public function scopePorTipo(Builder $query, mixed $tipo): Builder{
         return $query->where('tipo_retencion', $tipo);
     }
 
-    public function scopePorPeriodo($query, $periodo)
-    {
+    public function scopePorPeriodo(Builder $query, mixed $periodo): Builder{
         return $query->where('periodo_declaracion', $periodo);
     }
 
     /* --------------------- Métodos --------------------- */
 
-    public function esRetencionRenta()
+    public function esRetencionRenta(): mixed
     {
         return $this->tipo_retencion === 'renta';
     }
 
-    public function esRetencionIVA()
+    public function esRetencionIVA(): mixed
     {
         return $this->tipo_retencion === 'iva';
     }
 
-    public function fueDeclarada()
+    public function fueDeclarada(): mixed
     {
         return $this->declarado === true;
     }
 
-    public function marcarComoDeclarada()
+    public function marcarComoDeclarada(): void
     {
         $this->update(['declarado' => true]);
     }

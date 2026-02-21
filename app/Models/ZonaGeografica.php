@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
+/** @use HasFactory<\Database\Factories\ZonaGeograficaFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ZonaGeografica extends Model
 {
+    /** @use HasFactory<\Database\Factories\ZonaGeograficaFactory> */
     use HasFactory, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     protected $table = 'zonas_geograficas';
@@ -75,8 +78,7 @@ class ZonaGeografica extends Model
         return $query->where('activa', true)->where('eliminado', false);
     }
 
-    public function scopePorTipo($query, $tipo)
-    {
+    public function scopePorTipo(Builder $query, mixed $tipo): Builder{
         return $query->where('tipo', $tipo);
     }
 
@@ -97,22 +99,22 @@ class ZonaGeografica extends Model
 
     /* --------------------- Métodos --------------------- */
 
-    public function esProvincia()
+    public function esProvincia(): mixed
     {
         return $this->tipo === 'provincia';
     }
 
-    public function esCanton()
+    public function esCanton(): mixed
     {
         return $this->tipo === 'canton';
     }
 
-    public function esZonaVentas()
+    public function esZonaVentas(): mixed
     {
         return $this->tipo === 'zona_ventas';
     }
 
-    public function tieneVendedorAsignado()
+    public function tieneVendedorAsignado(): mixed
     {
         return !is_null($this->vendedor_asignado_id);
     }

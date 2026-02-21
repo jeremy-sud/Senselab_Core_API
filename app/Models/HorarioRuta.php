@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -39,6 +40,14 @@ class HorarioRuta extends Model
         'eliminado',
     ];
 
+    /**
+
+
+     * @var array<string, mixed>
+
+
+     */
+
     public static $rules = [
         'ruta_id' => 'required|exists:rutas,id',
         'bus_id' => 'nullable|exists:buses,id',
@@ -63,7 +72,7 @@ class HorarioRuta extends Model
      */
     public function bus(): BelongsTo
     {
-        return $this->belongsTo(Bus::class, 'bus_id');
+        return $this->belongsTo(BusUnidad::class, 'bus_id');
     }
 
     /**
@@ -114,7 +123,7 @@ class HorarioRuta extends Model
      *
      * @return int|null
      */
-    public function calcularAsientosDisponibles()
+    public function calcularAsientosDisponibles(): mixed
     {
         // Si ya existe valor almacenado, lo usamos como fallback
         $almacenado = $this->asientos_disponibles;
@@ -133,7 +142,7 @@ class HorarioRuta extends Model
         return $disponibles;
     }
 
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 

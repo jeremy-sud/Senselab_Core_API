@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
@@ -26,7 +27,7 @@ class DetalleVenta extends Model
     /**
      * Atributos asignables.
      *
-     * @var array<int,string>
+     * @var list<string>
      */
     protected $fillable = [
         'venta_id',
@@ -50,7 +51,7 @@ class DetalleVenta extends Model
     /**
      * Casts.
      *
-     * @var array<string,string>
+     * @var array<string, string>
      */
     protected $casts = [
         'cantidad' => 'decimal:2',
@@ -71,7 +72,7 @@ class DetalleVenta extends Model
     /**
      * Atributos ocultos.
      *
-     * @var array<int,string>
+     * @var list<string>
      */
     protected $hidden = [
         'eliminado',
@@ -80,7 +81,7 @@ class DetalleVenta extends Model
     /**
      * Reglas de validación (referenciales, para uso externo).
      *
-     * @var array<string,string>
+     * @var array<string, string>
      */
     public static $rules = [
         'venta_id' => 'required|exists:ventas,id',
@@ -127,15 +128,14 @@ class DetalleVenta extends Model
         return $query->where('activo', true)->where('eliminado', false);
     }
 
-    public function scopePorProducto($query, $productoId)
-    {
+    public function scopePorProducto(Builder $query, mixed $productoId): Builder{
         return $query->where('producto_id', $productoId);
     }
 
     /**
      * Boot model: calcular subtotales, descuentos e impuesto antes de guardar.
      */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 

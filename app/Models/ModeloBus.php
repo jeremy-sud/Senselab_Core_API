@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+/** @use HasFactory<\Database\Factories\ModeloBusFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ModeloBus extends Model
 {
+    /** @use HasFactory<\Database\Factories\ModeloBusFactory> */
     use HasFactory;
 
     /**
@@ -40,8 +43,7 @@ class ModeloBus extends Model
     /**
      * Scope para buscar por nombre.
      */
-    public function scopePorNombre($query, $nombre)
-    {
+    public function scopePorNombre(Builder $query, mixed $nombre): Builder{
         return $query->where('nombre', 'LIKE', "%{$nombre}%");
     }
 }

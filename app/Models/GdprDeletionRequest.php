@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Carbon\Carbon;
@@ -68,7 +69,7 @@ class GdprDeletionRequest extends Model
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Usuario::class);
     }
 
     /**
@@ -76,7 +77,7 @@ class GdprDeletionRequest extends Model
      */
     public function approver(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'approved_by');
+        return $this->belongsTo(Usuario::class, 'approved_by');
     }
 
     // ════════════════════════════════════════════════════════════════
@@ -86,32 +87,28 @@ class GdprDeletionRequest extends Model
     /**
      * Scope: Solicitudes pendientes de aprobación
      */
-    public function scopePending($query)
-    {
+    public function scopePending(Builder $query): Builder{
         return $query->where('status', 'pending');
     }
 
     /**
      * Scope: Solicitudes aprobadas
      */
-    public function scopeApproved($query)
-    {
+    public function scopeApproved(Builder $query): Builder{
         return $query->where('status', 'approved');
     }
 
     /**
      * Scope: Solicitudes completadas
      */
-    public function scopeCompleted($query)
-    {
+    public function scopeCompleted(Builder $query): Builder{
         return $query->where('status', 'completed');
     }
 
     /**
      * Scope: Solicitudes que vencen hoy
      */
-    public function scopeDueToday($query)
-    {
+    public function scopeDueToday(Builder $query): Builder{
         return $query->where('delete_after', '<=', Carbon::now())
                      ->where('status', 'approved')
                      ->where('completed_at', null);
@@ -120,24 +117,21 @@ class GdprDeletionRequest extends Model
     /**
      * Scope: Por usuario
      */
-    public function scopeByUser($query, $userId)
-    {
+    public function scopeByUser(Builder $query, mixed $userId): Builder{
         return $query->where('user_id', $userId);
     }
 
     /**
      * Scope: Por intervalo de fechas
      */
-    public function scopeDateRange($query, Carbon $from, Carbon $to)
-    {
+    public function scopeDateRange(Builder $query, Carbon $from, Carbon $to): Builder{
         return $query->whereBetween('created_at', [$from, $to]);
     }
 
     /**
      * Scope: Con identidad verificada
      */
-    public function scopeVerified($query)
-    {
+    public function scopeVerified(Builder $query): Builder{
         return $query->where('verified_identity', true);
     }
 
@@ -276,6 +270,12 @@ class GdprDeletionRequest extends Model
     /**
      * Obtener resumen de datos a eliminar
      */
+    /**
+     * @return array<string, mixed>
+     */
+    /**
+     * @return array<string, mixed>
+     */
     public function getDataSummaryReport(): array
     {
         return [
@@ -293,13 +293,19 @@ class GdprDeletionRequest extends Model
     /**
      * Convertir a respuesta de API
      */
+    /**
+     * @return array<string, mixed>
+     */
+    /**
+     * @return array<string, mixed>
+     */
     public function toApiResponse(): array
     {
         return [
             'id' => $this->gdpr_request_id ?? $this->generateGdprRequestId(),
             'status' => $this->status,
             'request_type' => $this->request_type,
-            'created_at' => $this->created_at->toIso8601String(),
+            'created_at' => $this->created_at?->toIso8601String(),
             'deadline' => $this->delete_after?->toIso8601String(),
             'verified' => $this->verified_identity,
             'message' => $this->getStatusMessage(),
@@ -320,6 +326,6 @@ class GdprDeletionRequest extends Model
             'failed' => 'Hubo un error al procesar tu solicitud. Por favor intenta de nuevo.',
         ];
 
-        return $messages[$this->status] ?? 'Estado desconocido';
+        return $messages[$this->status];
     }
 }

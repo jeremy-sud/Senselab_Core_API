@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Carbon\Carbon;
@@ -62,7 +63,7 @@ class DataRetentionPolicy extends Model
      */
     public function creator(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(Usuario::class, 'created_by');
     }
 
     // ════════════════════════════════════════════════════════════════
@@ -72,16 +73,14 @@ class DataRetentionPolicy extends Model
     /**
      * Scope: Políticas activas
      */
-    public function scopeActive($query)
-    {
+    public function scopeActive(Builder $query): Builder{
         return $query->where('enabled', true);
     }
 
     /**
      * Scope: Políticas con ejecución automática
      */
-    public function scopeAutoExecute($query)
-    {
+    public function scopeAutoExecute(Builder $query): Builder{
         return $query->where('auto_execute', true)
                      ->where('enabled', true);
     }
@@ -89,24 +88,21 @@ class DataRetentionPolicy extends Model
     /**
      * Scope: Por nombre de tabla
      */
-    public function scopeForTable($query, string $table)
-    {
+    public function scopeForTable(Builder $query, string $table): Builder{
         return $query->where('table_name', $table);
     }
 
     /**
      * Scope: Políticas que no se han ejecutado
      */
-    public function scopeNeverExecuted($query)
-    {
+    public function scopeNeverExecuted(Builder $query): Builder{
         return $query->whereNull('last_execution_at');
     }
 
     /**
      * Scope: Políticas con errores
      */
-    public function scopeWithErrors($query)
-    {
+    public function scopeWithErrors(Builder $query): Builder{
         return $query->whereNotNull('last_error');
     }
 
@@ -147,6 +143,12 @@ class DataRetentionPolicy extends Model
     /**
      * Ejecutar política de retención
      */
+    /**
+     * @return array<string, mixed>
+     */
+    /**
+     * @return array<string, mixed>
+     */
     public function execute(): array
     {
         if (!$this->enabled) {
@@ -185,6 +187,12 @@ class DataRetentionPolicy extends Model
     /**
      * Ejecutar eliminación permanente
      */
+    /**
+     * @return array<string, mixed>
+     */
+    /**
+     * @return array<string, mixed>
+     */
     protected function executeHardDelete(): array
     {
         try {
@@ -218,6 +226,12 @@ class DataRetentionPolicy extends Model
 
     /**
      * Ejecutar soft delete (si existe)
+     */
+    /**
+     * @return array<string, mixed>
+     */
+    /**
+     * @return array<string, mixed>
      */
     protected function executeSoftDelete(): array
     {
@@ -254,6 +268,12 @@ class DataRetentionPolicy extends Model
     /**
      * Ejecutar archivado
      */
+    /**
+     * @return array<string, mixed>
+     */
+    /**
+     * @return array<string, mixed>
+     */
     protected function executeArchive(): array
     {
         // Implementar archivado a otro servidor/storage
@@ -267,6 +287,12 @@ class DataRetentionPolicy extends Model
 
     /**
      * Ejecutar anonimización
+     */
+    /**
+     * @return array<string, mixed>
+     */
+    /**
+     * @return array<string, mixed>
      */
     protected function executeAnonymize(): array
     {
@@ -338,6 +364,12 @@ class DataRetentionPolicy extends Model
 
     /**
      * Obtener configuración JSON de La política
+     */
+    /**
+     * @return array<string, mixed>
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getConfigurationJson(): array
     {

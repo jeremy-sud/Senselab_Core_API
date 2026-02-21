@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+/** @use HasFactory<\Database\Factories\ComprobanteElectronicoFeFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\BelongsToTenant;
 
@@ -17,6 +19,7 @@ use App\Traits\BelongsToTenant;
  */
 class ComprobanteElectronicoFe extends Model
 {
+    /** @use HasFactory<\Database\Factories\ComprobanteElectronicoFeFactory> */
     use HasFactory, SoftDeletes, BelongsToTenant;
 
     /**
@@ -135,48 +138,42 @@ class ComprobanteElectronicoFe extends Model
     /**
      * Scope: Filtrar por estado.
      */
-    public function scopeEstado($query, string $estado)
-    {
+    public function scopeEstado(Builder $query, string $estado): Builder{
         return $query->where('estado', $estado);
     }
 
     /**
      * Scope: Comprobantes pendientes de envío.
      */
-    public function scopePendientes($query)
-    {
+    public function scopePendientes(Builder $query): Builder{
         return $query->where('estado', 'pendiente');
     }
 
     /**
      * Scope: Comprobantes aceptados por Hacienda.
      */
-    public function scopeAceptados($query)
-    {
+    public function scopeAceptados(Builder $query): Builder{
         return $query->where('estado', 'aceptado');
     }
 
     /**
      * Scope: Comprobantes rechazados por Hacienda.
      */
-    public function scopeRechazados($query)
-    {
+    public function scopeRechazados(Builder $query): Builder{
         return $query->where('estado', 'rechazado');
     }
 
     /**
      * Scope: Filtrar por tipo de documento.
      */
-    public function scopeTipoDocumento($query, string $tipo)
-    {
+    public function scopeTipoDocumento(Builder $query, string $tipo): Builder{
         return $query->where('tipo_documento', $tipo);
     }
 
     /**
      * Scope: Filtrar por rango de fechas.
      */
-    public function scopeFechaEmisionEntre($query, $fechaInicio, $fechaFin)
-    {
+    public function scopeFechaEmisionEntre(Builder $query, mixed $fechaInicio, mixed $fechaFin): Builder{
         return $query->whereBetween('fecha_emision', [$fechaInicio, $fechaFin]);
     }
 

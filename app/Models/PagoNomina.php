@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+/** @use HasFactory<\Database\Factories\PagoNominaFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
@@ -16,6 +18,7 @@ use Illuminate\Support\Str;
  */
 class PagoNomina extends Model
 {
+    /** @use HasFactory<\Database\Factories\PagoNominaFactory> */
     use HasFactory, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     protected $table = 'pagos_nomina';
@@ -55,6 +58,14 @@ class PagoNomina extends Model
         'eliminado' => 'boolean',
     ];
 
+    /**
+
+
+     * @var array<string, mixed>
+
+
+     */
+
     public static $rules = [
         'empresa_id' => 'required|exists:empresas,id',
         'empleado_id' => 'required|exists:empleados,id',
@@ -82,34 +93,30 @@ class PagoNomina extends Model
      * Relación con la forma de pago (Alias para metodoPago).
      * Se agrega para consistencia con otros modelos que usan formaPago.
      */
-    public function formaPago()
+    public function formaPago(): mixed
     {
         return $this->belongsTo(FormaPago::class, 'metodo_pago_id');
     }
 
     /* --------------------- Scopes --------------------- */
-    public function scopeActivos($q)
-    {
+    public function scopeActivos(mixed $q): Builder{
         return $q->where('activo', true)->where('eliminado', false);
     }
 
-    public function scopePorEmpleado($q, $empleadoId)
-    {
+    public function scopePorEmpleado(mixed $q, mixed $empleadoId): Builder{
         return $q->where('empleado_id', $empleadoId);
     }
 
-    public function scopePorPeriodo($q, $periodoId)
-    {
+    public function scopePorPeriodo(mixed $q, mixed $periodoId): Builder{
         return $q->where('periodo_nomina_id', $periodoId);
     }
 
-    public function scopeRecientes($q, $limit = 10)
-    {
+    public function scopeRecientes(mixed $q, mixed $limit = 10): Builder{
         return $q->orderBy('fecha_pago', 'desc')->limit($limit);
     }
 
     /* --------------------- Boot / eventos --------------------- */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 
@@ -132,7 +139,7 @@ class PagoNomina extends Model
     }
 
     /* --------------------- Helpers --------------------- */
-    public function esPagoFinalizado()
+    public function esPagoFinalizado(): mixed
     {
         return in_array($this->estado, ['pagado', 'confirmado']);
     }

@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\BelongsToTenant;
+/** @use HasFactory<\Database\Factories\ArchivoFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Archivo extends Model
 {
+    /** @use HasFactory<\Database\Factories\ArchivoFactory> */
     use HasFactory, BelongsToTenant;
 
     protected $table = 'archivos';
@@ -83,23 +86,21 @@ class Archivo extends Model
     /**
      * Scope para filtrar por categoría
      */
-    public function scopeCategoria($query, $categoria)
-    {
+    public function scopeCategoria(Builder $query, mixed $categoria): Builder{
         return $query->where('categoria', $categoria);
     }
 
     /**
      * Scope para filtrar por tipo de entidad
      */
-    public function scopeEntidadTipo($query, $tipo)
-    {
+    public function scopeEntidadTipo(Builder $query, mixed $tipo): Builder{
         return $query->where('entidad_tipo', $tipo);
     }
 
     /**
      * Obtener la URL completa del archivo
      */
-    public function getUrlAttribute()
+    public function getUrlAttribute(): mixed
     {
         return storage_path('app/' . $this->ruta);
     }
@@ -107,7 +108,7 @@ class Archivo extends Model
     /**
      * Obtener el tamaño formateado
      */
-    public function getTamanoFormateadoAttribute()
+    public function getTamanoFormateadoAttribute(): mixed
     {
         $bytes = $this->tamano_bytes;
         $units = ['B', 'KB', 'MB', 'GB', 'TB'];

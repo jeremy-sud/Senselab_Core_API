@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\BelongsToTenant;
+/** @use HasFactory<\Database\Factories\BusUnidadFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BusUnidad extends Model
 {
+    /** @use HasFactory<\Database\Factories\BusUnidadFactory> */
     use HasFactory, BelongsToTenant;
 
     /**
@@ -77,24 +80,21 @@ class BusUnidad extends Model
     /**
      * Scope para buscar por placa.
      */
-    public function scopePorPlaca($query, $placa)
-    {
+    public function scopePorPlaca(Builder $query, mixed $placa): Builder{
         return $query->where('placa', 'LIKE', "%{$placa}%");
     }
 
     /**
      * Scope para buscar por identificador interno.
      */
-    public function scopePorIdentificador($query, $identificador)
-    {
+    public function scopePorIdentificador(Builder $query, mixed $identificador): Builder{
         return $query->where('identificador_interno', 'LIKE', "%{$identificador}%");
     }
 
     /**
      * Scope para filtrar por capacidad de asientos.
      */
-    public function scopePorCapacidad($query, $minimo, $maximo = null)
-    {
+    public function scopePorCapacidad(Builder $query, mixed $minimo, mixed $maximo = null): Builder{
         $query = $query->where('capacidad_asientos', '>=', $minimo);
         
         if ($maximo) {

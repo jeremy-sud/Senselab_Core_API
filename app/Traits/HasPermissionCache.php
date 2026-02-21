@@ -33,7 +33,7 @@ trait HasPermissionCache
     /**
      * Obtener todos los permisos con cache.
      *
-     * @return array Array de slugs de permisos
+     * @return array<int, string> Array de slugs de permisos
      */
     public function getCachedPermissions(): array
     {
@@ -50,7 +50,7 @@ trait HasPermissionCache
      * Cargar permisos desde la base de datos.
      * Implementación por defecto usando getAllPermissions().
      *
-     * @return array
+     * @return array<int, string>
      */
     protected function loadPermissionsFromDatabase(): array
     {
@@ -82,7 +82,7 @@ trait HasPermissionCache
     /**
      * Verificar si tiene alguno de los permisos especificados usando cache.
      *
-     * @param array $permissionSlugs Array de slugs de permisos
+     * @param array<int, string> $permissionSlugs Array de slugs de permisos
      * @return bool
      */
     public function hasAnyCachedPermission(array $permissionSlugs): bool
@@ -105,7 +105,7 @@ trait HasPermissionCache
     /**
      * Verificar si tiene todos los permisos especificados usando cache.
      *
-     * @param array $permissionSlugs Array de slugs de permisos
+     * @param array<int, string> $permissionSlugs Array de slugs de permisos
      * @return bool
      */
     public function hasAllCachedPermissions(array $permissionSlugs): bool
@@ -139,7 +139,7 @@ trait HasPermissionCache
      * Refrescar cache de permisos.
      * Limpia el cache y lo recarga inmediatamente.
      *
-     * @return array
+     * @return array<int, string>
      */
     public function refreshPermissionCache(): array
     {

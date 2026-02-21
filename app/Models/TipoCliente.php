@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
+/** @use HasFactory<\Database\Factories\TipoClienteFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class TipoCliente extends Model
 {
+    /** @use HasFactory<\Database\Factories\TipoClienteFactory> */
     use HasFactory, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     protected $table = 'tipos_clientes';
@@ -70,12 +73,12 @@ class TipoCliente extends Model
 
     /* --------------------- Métodos --------------------- */
 
-    public function tieneDescuento()
+    public function tieneDescuento(): mixed
     {
         return $this->descuento_default > 0;
     }
 
-    public function tieneCredito()
+    public function tieneCredito(): mixed
     {
         return $this->dias_credito_default > 0;
     }

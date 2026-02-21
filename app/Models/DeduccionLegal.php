@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
+/** @use HasFactory<\Database\Factories\DeduccionLegalFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class DeduccionLegal extends Model
 {
+    /** @use HasFactory<\Database\Factories\DeduccionLegalFactory> */
     use HasFactory, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     protected $table = 'deducciones_legales';
@@ -60,24 +63,23 @@ class DeduccionLegal extends Model
         return $query->where('es_obligatoria', true);
     }
 
-    public function scopePorTipo($query, $tipo)
-    {
+    public function scopePorTipo(Builder $query, mixed $tipo): Builder{
         return $query->where('tipo', $tipo);
     }
 
     /* --------------------- Métodos --------------------- */
 
-    public function esCCSS()
+    public function esCCSS(): mixed
     {
         return in_array($this->tipo, ['ccss_obrero', 'ccss_patronal']);
     }
 
-    public function esINS()
+    public function esINS(): mixed
     {
         return in_array($this->tipo, ['ins_laboral', 'ins_lpt']);
     }
 
-    public function calcularMonto($salario)
+    public function calcularMonto(mixed $salario): mixed
     {
         if ($this->monto_fijo) {
             return $this->monto_fijo;
@@ -90,7 +92,7 @@ class DeduccionLegal extends Model
         return 0;
     }
 
-    public function esObligatoria()
+    public function esObligatoria(): mixed
     {
         return $this->es_obligatoria === true;
     }

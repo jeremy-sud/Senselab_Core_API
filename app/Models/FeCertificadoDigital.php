@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+/** @use HasFactory<\Database\Factories\FeCertificadoDigitalFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Carbon\Carbon;
 use App\Traits\BelongsToTenant;
@@ -16,6 +18,7 @@ use App\Traits\BelongsToTenant;
  */
 class FeCertificadoDigital extends Model
 {
+    /** @use HasFactory<\Database\Factories\FeCertificadoDigitalFactory> */
     use HasFactory, SoftDeletes, BelongsToTenant;
 
     /**
@@ -73,16 +76,14 @@ class FeCertificadoDigital extends Model
     /**
      * Scope: Certificados activos.
      */
-    public function scopeActivos($query)
-    {
+    public function scopeActivos(Builder $query): Builder{
         return $query->where('activo', true);
     }
 
     /**
      * Scope: Certificados válidos (no expirados).
      */
-    public function scopeValidos($query)
-    {
+    public function scopeValidos(Builder $query): Builder{
         return $query->where('valido', true)
             ->where('fecha_vencimiento', '>', Carbon::now());
     }
@@ -90,8 +91,7 @@ class FeCertificadoDigital extends Model
     /**
      * Scope: Filtrar por ambiente.
      */
-    public function scopeAmbiente($query, string $ambiente)
-    {
+    public function scopeAmbiente(Builder $query, string $ambiente): Builder{
         return $query->where('ambiente', $ambiente);
     }
 
@@ -129,6 +129,6 @@ class FeCertificadoDigital extends Model
             return null;
         }
 
-        return Carbon::now()->diffInDays($this->fecha_vencimiento, false);
+        return (int) Carbon::now()->diffInDays($this->fecha_vencimiento, false);
     }
 }

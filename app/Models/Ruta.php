@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Traits\BelongsToTenant;
@@ -29,7 +30,7 @@ class Ruta extends Model
     /**
      * Atributos que se pueden asignar de manera masiva.
      *
-     * @var array
+     * @var list<string>
      */
     protected $fillable = [
         'empresa_id',
@@ -47,7 +48,7 @@ class Ruta extends Model
     /**
      * Atributos que deben ser convertidos a tipos nativos.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
         'distancia_km' => 'float',

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
@@ -22,7 +23,7 @@ class CuentaPorCobrar extends Model
     /**
      * Los atributos que son asignables masivamente.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'cliente_id',
@@ -59,7 +60,7 @@ class CuentaPorCobrar extends Model
     /**
      * Los atributos que deben ser ocultados para la serialización.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $hidden = [
         'eliminado',
@@ -68,7 +69,7 @@ class CuentaPorCobrar extends Model
     /**
      * Los atributos computados que deben ser agregados a los arrays.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $appends = [
         'esta_vencida',
@@ -131,7 +132,7 @@ class CuentaPorCobrar extends Model
      *
      * @return bool
      */
-    public function getEstaVencidaAttribute()
+    public function getEstaVencidaAttribute(): mixed
     {
         return $this->fecha_vencimiento < now() && 
                $this->monto_pendiente > 0 && 
@@ -180,7 +181,7 @@ class CuentaPorCobrar extends Model
      *
      * @return void
      */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 

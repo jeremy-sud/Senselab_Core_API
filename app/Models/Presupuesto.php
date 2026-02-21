@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+/** @use HasFactory<\Database\Factories\PresupuestoFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
@@ -16,6 +18,7 @@ use Illuminate\Support\Str;
  */
 class Presupuesto extends Model
 {
+    /** @use HasFactory<\Database\Factories\PresupuestoFactory> */
     use HasFactory, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     protected $table = 'presupuestos';
@@ -46,6 +49,14 @@ class Presupuesto extends Model
         'eliminado' => 'boolean',
     ];
 
+    /**
+
+
+     * @var array<string, mixed>
+
+
+     */
+
     public static $rules = [
         'empresa_id' => 'required|exists:empresas,id',
         'nombre' => 'required|string',
@@ -60,30 +71,27 @@ class Presupuesto extends Model
         return $this->belongsTo(Empresa::class);
     }
 
-    public function detalles()
+    public function detalles(): mixed
     {
         // Relación con detalle_presupuestos si existe
         return $this->hasMany(DetallePresupuesto::class, 'presupuesto_id');
     }
 
     /* --------------------- Scopes --------------------- */
-    public function scopeActivos($q)
-    {
+    public function scopeActivos(mixed $q): Builder{
         return $q->where('activo', true)->where('eliminado', false);
     }
 
-    public function scopePorEmpresa($q, $empresaId)
-    {
+    public function scopePorEmpresa(mixed $q, mixed $empresaId): Builder{
         return $q->where('empresa_id', $empresaId);
     }
 
-    public function scopePorEstado($q, $estado)
-    {
+    public function scopePorEstado(mixed $q, mixed $estado): Builder{
         return $q->where('estado', $estado);
     }
 
     /* --------------------- Boot / eventos --------------------- */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 
@@ -103,7 +111,7 @@ class Presupuesto extends Model
     }
 
     /* --------------------- Helpers --------------------- */
-    public function duracionDias()
+    public function duracionDias(): mixed
     {
         if (!$this->periodo_inicio || !$this->periodo_fin) {
             return null;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+/** @use HasFactory<\Database\Factories\SesionUsuarioFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class SesionUsuario extends Model
 {
+    /** @use HasFactory<\Database\Factories\SesionUsuarioFactory> */
     use HasFactory;
 
     protected $table = 'sesiones_usuarios';

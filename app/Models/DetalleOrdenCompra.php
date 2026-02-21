@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
@@ -20,7 +21,7 @@ class DetalleOrdenCompra extends Model
     /**
      * Los atributos que son asignables masivamente.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'orden_compra_id',
@@ -58,7 +59,7 @@ class DetalleOrdenCompra extends Model
     /**
      * Los atributos que deben ser ocultados para la serialización.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $hidden = [
         'eliminado',
@@ -117,7 +118,7 @@ class DetalleOrdenCompra extends Model
      *
      * @return void
      */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 

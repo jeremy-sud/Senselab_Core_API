@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+/** @use HasFactory<\Database\Factories\PagoFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
@@ -16,6 +18,7 @@ use Illuminate\Support\Str;
  */
 class Pago extends Model
 {
+    /** @use HasFactory<\Database\Factories\PagoFactory> */
     use HasFactory, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     protected $table = 'pagos';
@@ -54,6 +57,14 @@ class Pago extends Model
         'activo' => 'boolean',
         'eliminado' => 'boolean',
     ];
+
+    /**
+
+
+     * @var array<string, mixed>
+
+
+     */
 
     public static $rules = [
         'empresa_id' => 'required|exists:empresas,id',
@@ -99,23 +110,20 @@ class Pago extends Model
     }
 
     /* --------------------- Scopes --------------------- */
-    public function scopeActivos($q)
-    {
+    public function scopeActivos(mixed $q): Builder{
         return $q->where('activo', true)->where('eliminado', false);
     }
 
-    public function scopePorEmpresa($q, $empresaId)
-    {
+    public function scopePorEmpresa(mixed $q, mixed $empresaId): Builder{
         return $q->where('empresa_id', $empresaId);
     }
 
-    public function scopeRecientes($q, $limit = 10)
-    {
+    public function scopeRecientes(mixed $q, mixed $limit = 10): Builder{
         return $q->orderBy('fecha_pago', 'desc')->limit($limit);
     }
 
     /* --------------------- Boot / eventos --------------------- */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 
@@ -140,7 +148,7 @@ class Pago extends Model
     }
 
     /* --------------------- Helpers --------------------- */
-    public function esAnulable()
+    public function esAnulable(): mixed
     {
         return in_array($this->estado, ['pendiente', 'confirmado']);
     }
