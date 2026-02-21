@@ -14,6 +14,12 @@ class ClienteTransformer
     /**
      * Transformar un Cliente a array
      */
+    /**
+     * @return array<string, mixed>
+     */
+    /**
+     * @return array<string, mixed>
+     */
     public static function transform(Cliente $cliente): array
     {
         return [
@@ -37,6 +43,14 @@ class ClienteTransformer
 
     /**
      * Transformar colección de Clientes a array
+     */
+    /**
+     * @param iterable<int, mixed> $clientes
+     * @return array<int, array<string, mixed>>
+     */
+    /**
+     * @param iterable<int, mixed> $clientes
+     * @return array<int, array<string, mixed>>
      */
     public static function collection(iterable $clientes): array
     {

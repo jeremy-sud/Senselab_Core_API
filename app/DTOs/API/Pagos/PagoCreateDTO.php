@@ -11,6 +11,9 @@ use Illuminate\Http\Request;
  */
 final class PagoCreateDTO
 {
+    /**
+     * @param array<mixed> $cuentas_cobrar_pagadas
+     */
     private function __construct(
         public readonly int $entidad_id, // cliente_id o proveedor_id
         public readonly string $tipo_entidad, // cliente, proveedor
@@ -50,6 +53,11 @@ final class PagoCreateDTO
     /**
      * Convierte a array para modelo
      */
+    /**
+     * Convert the DTO to model data array.
+     *
+     * @return array<string, mixed>
+     */
     public function toModelData(): array
     {
         return [
@@ -72,6 +80,11 @@ final class PagoCreateDTO
     /**
      * Reglas de validación
      */
+    /**
+     * Get the validation rules.
+     *
+     * @return array<string, mixed>
+     */
     public static function rules(): array
     {
         return [
@@ -90,6 +103,11 @@ final class PagoCreateDTO
         ];
     }
 
+    /**
+     * Get the validation messages.
+     *
+     * @return array<string, string>
+     */
     public static function messages(): array
     {
         return [

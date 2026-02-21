@@ -10,6 +10,12 @@ namespace App\DTOs\Responses;
  */
 final class PaginatedResponseDTO
 {
+    /**
+     * @param array<mixed> $data
+     */
+    /**
+     * @param array<mixed> $data
+     */
     public function __construct(
         public readonly array $data,
         public readonly int $total,
@@ -21,6 +27,11 @@ final class PaginatedResponseDTO
 
     /**
      * Convertir a array para respuesta JSON
+     */
+    /**
+     * Convert the DTO to an array.
+     *
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {

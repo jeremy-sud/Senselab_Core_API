@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
  */
 final class ProveedorUpdateDTO
 {
+    /**
+     * @param array<mixed> $contactos
+     */
     private function __construct(
         public readonly ?string $nombre = null,
         public readonly ?string $email = null,
@@ -51,6 +54,11 @@ final class ProveedorUpdateDTO
      * Convierte DTO a array para actualizar modelo
      * Solo incluye campos no-null
      */
+    /**
+     * Convert the DTO to model data array.
+     *
+     * @return array<string, mixed>
+     */
     public function toModelData(): array
     {
         $data = [];
@@ -89,6 +97,11 @@ final class ProveedorUpdateDTO
      * Usa 'sometimes' para campos opcionales
      * Actualiza solo si están presentes en request
      */
+    /**
+     * Get the validation rules.
+     *
+     * @return array<string, mixed>
+     */
     public static function rules(): array
     {
         return [
@@ -107,6 +120,11 @@ final class ProveedorUpdateDTO
 
     /**
      * Mensajes de error personalizados
+     */
+    /**
+     * Get the validation messages.
+     *
+     * @return array<string, string>
      */
     public static function messages(): array
     {

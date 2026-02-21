@@ -38,16 +38,21 @@ final class ProductoCreateDTO
             stock_inicial: $request->integer('stock_inicial'),
             categoria_id: $request->integer('categoria_id'),
             empresa_id: $request->integer('empresa_id'),
-            sku: $request->string('sku')?->trim(),
-            codigo_interno: $request->string('codigo_interno')?->trim(),
+            sku: $request->filled('sku') ? $request->string('sku')->trim()->toString() : null,
+            codigo_interno: $request->filled('codigo_interno') ? $request->string('codigo_interno')->trim()->toString() : null,
             activo: $request->boolean('activo', true),
             precio_costo: $request->float('precio_costo'),
-            unidad_medida: $request->string('unidad_medida')?->trim(),
+            unidad_medida: $request->filled('unidad_medida') ? $request->string('unidad_medida')->trim()->toString() : null,
         );
     }
 
     /**
      * Convertir a array para guardar en base de datos
+     */
+    /**
+     * Convert the DTO to an array.
+     *
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {

@@ -36,12 +36,17 @@ final class CuentaCobrarCreateDTO
             monto_pagado: $request->float('monto_pagado', 0),
             fecha_vencimiento: new \DateTime($request->string('fecha_vencimiento')),
             estado: $request->string('estado'),
-            observaciones: $request->string('observaciones')?->trim(),
+            observaciones: $request->filled('observaciones') ? $request->string('observaciones')->trim()->toString() : null,
         );
     }
 
     /**
      * Convertir a array para guardar en base de datos
+     */
+    /**
+     * Convert the DTO to an array.
+     *
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {

@@ -35,13 +35,18 @@ final class CuentaPagarCreateDTO
             monto_pagado: $request->float('monto_pagado', 0),
             fecha_vencimiento: new \DateTime($request->string('fecha_vencimiento')),
             estado: $request->string('estado'),
-            numero_factura: $request->string('numero_factura')?->trim(),
-            observaciones: $request->string('observaciones')?->trim(),
+            numero_factura: $request->filled('numero_factura') ? $request->string('numero_factura')->trim()->toString() : null,
+            observaciones: $request->filled('observaciones') ? $request->string('observaciones')->trim()->toString() : null,
         );
     }
 
     /**
      * Convertir a array para guardar en base de datos
+     */
+    /**
+     * Convert the DTO to an array.
+     *
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {

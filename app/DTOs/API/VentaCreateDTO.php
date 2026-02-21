@@ -12,6 +12,12 @@ use Illuminate\Http\Request;
  */
 final class VentaCreateDTO
 {
+    /**
+     * @param array<mixed> $detalles
+     */
+    /**
+     * @param array<mixed> $detalles
+     */
     public function __construct(
         public readonly int $cliente_id,
         public readonly int $empresa_id,
@@ -50,6 +56,11 @@ final class VentaCreateDTO
 
     /**
      * Convertir a array para guardar en base de datos
+     */
+    /**
+     * Convert the DTO to an array.
+     *
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {
@@ -110,6 +121,12 @@ final class VentaCreateDTO
     /**
      * Getter para detalles
      */
+    /**
+     * @return array<mixed>
+     */
+    /**
+     * @return array<mixed>
+     */
     public function getDetalles(): array
     {
         return $this->detalles;
@@ -117,6 +134,12 @@ final class VentaCreateDTO
 
     /**
      * Getter para producto_ids
+     */
+    /**
+     * @return array<mixed>
+     */
+    /**
+     * @return array<mixed>
      */
     public function getProductoIds(): array
     {

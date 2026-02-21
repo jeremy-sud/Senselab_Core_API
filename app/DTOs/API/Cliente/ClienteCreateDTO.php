@@ -36,6 +36,11 @@ final class ClienteCreateDTO
     /**
      * Convertir a array para modelo
      */
+    /**
+     * Convert the DTO to model data array.
+     *
+     * @return array<string, mixed>
+     */
     public function toModelData(): array
     {
         return [
@@ -50,6 +55,11 @@ final class ClienteCreateDTO
 
     /**
      * Validar reglas
+     */
+    /**
+     * Get the validation rules.
+     *
+     * @return array<string, mixed>
      */
     public static function rules(): array
     {

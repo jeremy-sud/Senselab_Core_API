@@ -35,13 +35,18 @@ final class PagoCreateDTO
             forma_pago: $request->string('forma_pago'),
             fecha_pago: new \DateTime($request->string('fecha_pago')),
             cuenta_bancaria_id: $request->integer('cuenta_bancaria_id'),
-            numero_referencia: $request->string('numero_referencia')?->trim(),
-            observaciones: $request->string('observaciones')?->trim(),
+            numero_referencia: $request->filled('numero_referencia') ? $request->string('numero_referencia')->trim()->toString() : null,
+            observaciones: $request->filled('observaciones') ? $request->string('observaciones')->trim()->toString() : null,
         );
     }
 
     /**
      * Convertir a array para guardar en base de datos
+     */
+    /**
+     * Convert the DTO to an array.
+     *
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {

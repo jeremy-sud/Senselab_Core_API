@@ -54,6 +54,11 @@ final class ClienteUpdateDTO
     /**
      * Convierte a array para actualizar modelo
      */
+    /**
+     * Convert the DTO to model data array.
+     *
+     * @return array<string, mixed>
+     */
     public function toModelData(): array
     {
         $data = [];
@@ -98,6 +103,11 @@ final class ClienteUpdateDTO
     /**
      * Reglas de validación
      */
+    /**
+     * Get the validation rules.
+     *
+     * @return array<string, mixed>
+     */
     public static function rules(): array
     {
         return [
@@ -115,6 +125,11 @@ final class ClienteUpdateDTO
         ];
     }
 
+    /**
+     * Get the validation messages.
+     *
+     * @return array<string, string>
+     */
     public static function messages(): array
     {
         return [

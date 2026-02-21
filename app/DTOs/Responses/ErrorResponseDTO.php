@@ -10,6 +10,12 @@ namespace App\DTOs\Responses;
  */
 final class ErrorResponseDTO
 {
+    /**
+     * @param array<mixed> $errors
+     */
+    /**
+     * @param array<mixed> $errors
+     */
     public function __construct(
         public readonly string $message,
         public readonly int $status,
@@ -21,6 +27,11 @@ final class ErrorResponseDTO
     /**
      * Convertir a array para respuesta JSON
      */
+    /**
+     * Convert the DTO to an array.
+     *
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return array_filter([
@@ -30,7 +41,7 @@ final class ErrorResponseDTO
             'errors' => $this->errors ?: null,
             'trace' => $this->trace,
         ], function ($value) {
-            return $value !== null && $value !== [];
+            return $value !== null;
         });
     }
 }

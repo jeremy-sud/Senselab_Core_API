@@ -11,6 +11,9 @@ use Illuminate\Http\Request;
  */
 final class EntradaInventarioCreateDTO
 {
+    /**
+     * @param array<mixed> $lotes
+     */
     private function __construct(
         public readonly int $producto_id,
         public readonly int $proveedor_id,
@@ -50,6 +53,11 @@ final class EntradaInventarioCreateDTO
     /**
      * Convierte a array para modelo
      */
+    /**
+     * Convert the DTO to model data array.
+     *
+     * @return array<string, mixed>
+     */
     public function toModelData(): array
     {
         return [
@@ -68,6 +76,11 @@ final class EntradaInventarioCreateDTO
     /**
      * Reglas de validación
      */
+    /**
+     * Get the validation rules.
+     *
+     * @return array<string, mixed>
+     */
     public static function rules(): array
     {
         return [
@@ -85,6 +98,11 @@ final class EntradaInventarioCreateDTO
         ];
     }
 
+    /**
+     * Get the validation messages.
+     *
+     * @return array<string, string>
+     */
     public static function messages(): array
     {
         return [
