@@ -33,6 +33,7 @@ class ChatbotService
 
     /**
      * Funciones disponibles para el chatbot (Function Calling)
+     * @var array<int, string>
      */
     protected array $availableFunctions = [
         'get_sales_summary',
@@ -71,8 +72,8 @@ class ChatbotService
      * Procesar mensaje del usuario
      *
      * @param string $message Mensaje en lenguaje natural
-     * @param array $context Contexto adicional (historial, usuario)
-     * @return array Respuesta estructurada
+     * @param array<string, mixed> $context Contexto adicional (historial, usuario)
+     * @return array<string, mixed> Respuesta estructurada
      */
     public function processMessage(string $message, array $context = []): array
     {
@@ -143,6 +144,8 @@ class ChatbotService
 
     /**
      * Obtener datos relevantes según la intención
+     *
+     * @return array<string, mixed>
      */
     protected function fetchRelevantData(string $intent, string $message): array
     {
@@ -183,6 +186,8 @@ class ChatbotService
 
     /**
      * Construir prompt del sistema con datos
+     *
+     * @param array<string, mixed> $data
      */
     protected function buildSystemPrompt(array $data): string
     {
@@ -214,6 +219,8 @@ PROMPT;
 
     /**
      * Obtener resumen de ventas
+     *
+     * @return array<string, mixed>
      */
     public function getSalesSummary(): array
     {
@@ -232,15 +239,15 @@ PROMPT;
 
             return [
                 'hoy' => [
-                    'total' => $query->clone()->whereDate('created_at', $hoy)->sum('monto_total') ?? 0,
+                    'total' => $query->clone()->whereDate('created_at', $hoy)->sum('monto_total'),
                     'cantidad' => $query->clone()->whereDate('created_at', $hoy)->count(),
                 ],
                 'semana' => [
-                    'total' => $query->clone()->where('created_at', '>=', $inicioSemana)->sum('monto_total') ?? 0,
+                    'total' => $query->clone()->where('created_at', '>=', $inicioSemana)->sum('monto_total'),
                     'cantidad' => $query->clone()->where('created_at', '>=', $inicioSemana)->count(),
                 ],
                 'mes' => [
-                    'total' => $query->clone()->where('created_at', '>=', $inicioMes)->sum('monto_total') ?? 0,
+                    'total' => $query->clone()->where('created_at', '>=', $inicioMes)->sum('monto_total'),
                     'cantidad' => $query->clone()->where('created_at', '>=', $inicioMes)->count(),
                 ],
             ];
@@ -249,6 +256,8 @@ PROMPT;
 
     /**
      * Obtener estado del inventario
+     *
+     * @return array<string, mixed>
      */
     public function getInventoryStatus(): array
     {
@@ -285,6 +294,8 @@ PROMPT;
 
     /**
      * Obtener facturas pendientes
+     *
+     * @return array<string, mixed>
      */
     public function getPendingInvoices(): array
     {
@@ -300,9 +311,9 @@ PROMPT;
             $hoy = Carbon::today();
 
             $pendientes = $query->clone()->count();
-            $montoPendiente = $query->clone()->sum('saldo_pendiente') ?? 0;
+            $montoPendiente = $query->clone()->sum('saldo_pendiente');
             $vencidas = $query->clone()->where('fecha_vencimiento', '<', $hoy)->count();
-            $montoVencido = $query->clone()->where('fecha_vencimiento', '<', $hoy)->sum('saldo_pendiente') ?? 0;
+            $montoVencido = $query->clone()->where('fecha_vencimiento', '<', $hoy)->sum('saldo_pendiente');
 
             return [
                 'cantidad_pendientes' => $pendientes,
@@ -315,6 +326,8 @@ PROMPT;
 
     /**
      * Obtener productos más vendidos
+     *
+     * @return array<int, mixed>
      */
     public function getTopProducts(int $limit = 5): array
     {
@@ -348,6 +361,8 @@ PROMPT;
 
     /**
      * Obtener mejores clientes
+     *
+     * @return array<int, mixed>
      */
     public function getTopCustomers(int $limit = 5): array
     {
@@ -380,6 +395,8 @@ PROMPT;
 
     /**
      * Obtener productos con bajo stock
+     *
+     * @return array<int, mixed>
      */
     public function getLowStockProducts(int $limit = 10): array
     {
@@ -404,6 +421,8 @@ PROMPT;
 
     /**
      * Obtener estadísticas del día
+     *
+     * @return array<string, mixed>
      */
     public function getDailyStats(): array
     {
@@ -419,15 +438,17 @@ PROMPT;
 
             return [
                 'fecha' => $hoy->format('Y-m-d'),
-                'ventas_total' => $ventasQuery->clone()->sum('monto_total') ?? 0,
+                'ventas_total' => $ventasQuery->clone()->sum('monto_total'),
                 'ventas_cantidad' => $ventasQuery->clone()->count(),
-                'ticket_promedio' => $ventasQuery->clone()->avg('monto_total') ?? 0,
+                'ticket_promedio' => $ventasQuery->clone()->avg('monto_total'),
             ];
         });
     }
 
     /**
      * Obtener estadísticas del mes
+     *
+     * @return array<string, mixed>
      */
     public function getMonthlyStats(): array
     {
@@ -443,15 +464,19 @@ PROMPT;
 
             return [
                 'mes' => Carbon::now()->format('F Y'),
-                'ventas_total' => $ventasQuery->clone()->sum('monto_total') ?? 0,
+                'ventas_total' => $ventasQuery->clone()->sum('monto_total'),
                 'ventas_cantidad' => $ventasQuery->clone()->count(),
-                'ticket_promedio' => $ventasQuery->clone()->avg('monto_total') ?? 0,
+                'ticket_promedio' => $ventasQuery->clone()->avg('monto_total'),
             ];
         });
     }
 
     /**
      * Obtener estadísticas de clientes
+     *
+     * @return array<string, mixed>
+     *
+     * @return array<string, mixed>
      */
     protected function getCustomerStats(): array
     {

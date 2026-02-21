@@ -23,7 +23,10 @@ class OpenAIService implements AIServiceInterface
     protected string $apiKey;
     protected string $baseUrl = 'https://api.openai.com/v1';
     protected ?string $organization = null;
+    /** @var array<string, mixed> */
     protected array $config = [];
+    
+    /** @var array<string, mixed> */
     protected array $usageStats = [
         'requests' => 0,
         'tokens_used' => 0,
@@ -246,6 +249,10 @@ class OpenAIService implements AIServiceInterface
 
     /**
      * Realizar request a OpenAI API
+     *
+     * @param string $endpoint
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
      */
     protected function makeRequest(string $endpoint, array $data): array
     {
@@ -305,6 +312,10 @@ class OpenAIService implements AIServiceInterface
 
     /**
      * Preparar contenido de imagen para Vision API
+     *
+     * @param string $imagePath
+     * @param string $detail
+     * @return array<string, mixed>|null
      */
     protected function prepareImageContent(string $imagePath, string $detail = 'auto'): ?array
     {
@@ -349,6 +360,8 @@ class OpenAIService implements AIServiceInterface
 
     /**
      * Trackear uso para estadísticas
+     *
+     * @param array<string, mixed> $response
      */
     protected function trackUsage(array $response): void
     {
@@ -373,6 +386,11 @@ class OpenAIService implements AIServiceInterface
 
     /**
      * Generar JSON estructurado a partir de texto
+     *
+     * @param string $text
+     * @param array<string, mixed> $schema
+     * @param array<string, mixed> $options
+     * @return array<string, mixed>
      */
     public function parseToJson(string $text, array $schema, array $options = []): array
     {
@@ -390,6 +408,11 @@ class OpenAIService implements AIServiceInterface
 
     /**
      * Clasificar texto en categorías predefinidas
+     *
+     * @param string $text
+     * @param array<int, string> $categories
+     * @param array<string, mixed> $options
+     * @return array<string, mixed>
      */
     public function classify(string $text, array $categories, array $options = []): array
     {

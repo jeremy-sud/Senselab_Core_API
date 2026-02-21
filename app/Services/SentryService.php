@@ -150,11 +150,13 @@ class SentryService
 
         $hub = \Sentry\SentrySdk::getCurrentHub();
         $hub->addBreadcrumb(
-            \Sentry\Breadcrumb::create()
-                ->setMessage($message)
-                ->setCategory($category)
-                ->setLevel($level)
-                ->setData($data)
+            new \Sentry\Breadcrumb(
+                $level,
+                'default',
+                $category,
+                $message,
+                $data
+            )
         );
     }
 

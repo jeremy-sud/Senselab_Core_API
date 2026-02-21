@@ -27,6 +27,7 @@ class PredictionService
     
     /**
      * Configuración del servicio
+     * @var array<string, mixed>
      */
     private array $config = [
         'forecast_days' => 30,           // Días a predecir
@@ -52,12 +53,15 @@ class PredictionService
     
     /**
      * Obtener predicción de demanda para un producto específico
+     *
+     * @return array<string, mixed>
      */
     public function predictProductDemand(int $productoId, int $days = 30): array
     {
         $cacheKey = "prediction:demand:{$this->empresaId}:{$productoId}:{$days}";
         
-        return Cache::remember($cacheKey, $this->config['cache_ttl'], function () use ($productoId, $days) {
+        /** @var array<string, mixed> $result */
+        $result = Cache::remember($cacheKey, $this->config['cache_ttl'], function () use ($productoId, $days) {
             $producto = Producto::where('id', $productoId)
                 ->where('empresa_id', $this->empresaId)
                 ->first();
@@ -140,10 +144,14 @@ class PredictionService
                 ],
             ];
         });
+
+        return $result;
     }
     
     /**
      * Obtener productos con bajo stock que necesitan reabastecimiento
+     *
+     * @return array<string, mixed>
      */
     public function getLowStockAlerts(int $limit = 20): array
     {
@@ -226,7 +234,7 @@ class PredictionService
             
             // Ordenar por urgencia
             $order = ['critico' => 1, 'alto' => 2, 'medio' => 3, 'bajo' => 4];
-            usort($alerts, fn($a, $b) => ($order[$a['nivel_alerta']] ?? 5) <=> ($order[$b['nivel_alerta']] ?? 5));
+            usort($alerts, fn($a, $b) => $order[$a['nivel_alerta']] <=> $order[$b['nivel_alerta']]);
             
             return [
                 'success' => true,
@@ -245,6 +253,8 @@ class PredictionService
     
     /**
      * Generar recomendaciones de compra usando IA
+     *
+     * @return array<string, mixed>
      */
     public function generatePurchaseRecommendations(): array
     {
@@ -321,6 +331,8 @@ PROMPT;
     
     /**
      * Análisis de tendencias de ventas por categoría
+     *
+     * @return array<string, mixed>
      */
     public function analyzeSalesTrends(int $months = 6): array
     {
@@ -409,6 +421,8 @@ PROMPT;
     
     /**
      * Predicción de ingresos para el próximo período
+     *
+     * @return array<string, mixed>
      */
     public function predictRevenue(int $days = 30): array
     {
@@ -537,6 +551,9 @@ PROMPT;
     
     /**
      * Calcular estadísticas de ventas
+     *
+     * @param Collection<int, mixed> $salesHistory
+     * @return array<string, mixed>
      */
     private function calculateSalesStatistics(Collection $salesHistory): array
     {
@@ -571,6 +588,10 @@ PROMPT;
     
     /**
      * Calcular predicción de demanda
+     *
+     * @param Collection<int, mixed> $salesHistory
+     * @param array<string, mixed> $stats
+     * @return array<string, mixed>
      */
     private function calculatePrediction(Collection $salesHistory, array $stats, int $days): array
     {
@@ -614,6 +635,8 @@ PROMPT;
     
     /**
      * Calcular punto de reorden
+     *
+     * @param array<string, mixed> $stats
      */
     private function calculateReorderPoint(array $stats): float
     {
@@ -627,6 +650,8 @@ PROMPT;
     
     /**
      * Calcular cantidad sugerida de compra
+     *
+     * @param array<string, mixed> $stats
      */
     private function calculateSuggestedOrder(array $stats, float $currentStock, float $reorderPoint): int
     {
@@ -645,6 +670,8 @@ PROMPT;
     
     /**
      * Determinar nivel de urgencia
+     *
+     * @return array<string, string>
      */
     private function determineUrgency(float $currentStock, float $reorderPoint, float $daysOfStock): array
     {
@@ -689,6 +716,8 @@ PROMPT;
     
     /**
      * Calcular desviación estándar
+     *
+     * @param array<int, float|int> $values
      */
     private function standardDeviation(array $values): float
     {
@@ -709,6 +738,9 @@ PROMPT;
     
     /**
      * Calcular tendencia lineal
+     *
+     * @param array<int, float|int> $values
+     * @return array<string, float>
      */
     private function calculateLinearTrend(array $values): array
     {
@@ -746,6 +778,9 @@ PROMPT;
     
     /**
      * Construir contexto para recomendaciones de compra
+     *
+     * @param array<string, mixed> $alerts
+     * @return array<string, mixed>
      */
     private function buildPurchaseContext(array $alerts): array
     {
@@ -756,8 +791,11 @@ PROMPT;
             $productosTexto .= "Nivel: {$alert['nivel_alerta']}\n";
         }
         
+        $date = Carbon::now();
+        $date->setLocale('es');
+        
         return [
-            'mes_actual' => Carbon::now()->locale('es')->monthName,
+            'mes_actual' => $date->monthName,
             'productos_texto' => $productosTexto,
             'total_productos' => count($alerts),
         ];
@@ -765,6 +803,9 @@ PROMPT;
     
     /**
      * Recomendaciones fallback sin IA
+     *
+     * @param array<string, mixed> $alerts
+     * @return array<string, mixed>
      */
     private function fallbackRecommendations(array $alerts): array
     {
@@ -811,6 +852,9 @@ PROMPT;
     
     /**
      * Obtener top categorías por tendencia
+     *
+     * @param array<int, array<string, mixed>> $trends
+     * @return array<int, array<string, mixed>>
      */
     private function getTopByTrend(array $trends, string $direction, int $limit = 3): array
     {

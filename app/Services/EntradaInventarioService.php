@@ -19,6 +19,8 @@ class EntradaInventarioService
 {
     /**
      * Crear una nueva entrada de inventario
+     *
+     * @param array<string, mixed> $data
      */
     public function crear(array $data): EntradaInventario
     {
@@ -34,7 +36,7 @@ class EntradaInventarioService
                 }
             }
 
-            return $entrada->load(['proveedor', 'bodega', 'usuario', 'detalles.producto']);
+            return $entrada->load(['proveedor', 'almacen', 'detalles.producto']);
         });
     }
 
@@ -43,7 +45,7 @@ class EntradaInventarioService
      */
     public function obtener(int $entradaId): ?EntradaInventario
     {
-        return EntradaInventario::with(['proveedor', 'bodega', 'usuario', 'detalles.producto'])
+        return EntradaInventario::with(['proveedor', 'almacen', 'detalles.producto'])
             ->find($entradaId);
     }
 
@@ -52,7 +54,7 @@ class EntradaInventarioService
      */
     public function listar(int $perPage = 15): LengthAwarePaginator
     {
-        return EntradaInventario::with(['proveedor', 'bodega', 'usuario'])
+        return EntradaInventario::with(['proveedor', 'almacen'])
             ->orderByDesc('fecha_entrada')
             ->paginate($perPage);
     }
@@ -63,7 +65,7 @@ class EntradaInventarioService
     public function porProveedor(int $proveedorId, int $perPage = 15): LengthAwarePaginator
     {
         return EntradaInventario::where('proveedor_id', $proveedorId)
-            ->with(['proveedor', 'bodega', 'detalles'])
+            ->with(['proveedor', 'almacen', 'detalles'])
             ->orderByDesc('fecha_entrada')
             ->paginate($perPage);
     }
@@ -73,8 +75,8 @@ class EntradaInventarioService
      */
     public function porAlmacen(int $almacenId, int $perPage = 15): LengthAwarePaginator
     {
-        return EntradaInventario::where('bodega_id', $almacenId)
-            ->with(['proveedor', 'bodega', 'detalles'])
+        return EntradaInventario::where('almacen_id', $almacenId)
+            ->with(['proveedor', 'almacen', 'detalles'])
             ->orderByDesc('fecha_entrada')
             ->paginate($perPage);
     }
@@ -85,18 +87,20 @@ class EntradaInventarioService
     public function entreFechas(\DateTime $inicio, \DateTime $fin, int $perPage = 15): LengthAwarePaginator
     {
         return EntradaInventario::whereBetween('fecha_entrada', [$inicio->format('Y-m-d'), $fin->format('Y-m-d')])
-            ->with(['proveedor', 'bodega', 'detalles'])
+            ->with(['proveedor', 'almacen', 'detalles'])
             ->orderByDesc('fecha_entrada')
             ->paginate($perPage);
     }
 
     /**
      * Actualizar entrada
+     *
+     * @param array<string, mixed> $data
      */
     public function actualizar(EntradaInventario $entrada, array $data): EntradaInventario
     {
         $entrada->update($data);
-        return $entrada->fresh(['proveedor', 'bodega', 'usuario', 'detalles.producto']);
+        return $entrada->fresh(['proveedor', 'almacen', 'detalles.producto']) ?? $entrada;
     }
 
     /**
@@ -104,7 +108,7 @@ class EntradaInventarioService
      */
     public function eliminar(EntradaInventario $entrada): bool
     {
-        return $entrada->delete();
+        return (bool) $entrada->delete();
     }
 
     /**
@@ -126,7 +130,7 @@ class EntradaInventarioService
             foreach ($entrada->detalles as $detalle) {
                 $inventario = DB::table('inventarios')
                     ->where('producto_id', $detalle->producto_id)
-                    ->where('almacen_id', $entrada->bodega_id)
+                    ->where('almacen_id', $entrada->almacen_id)
                     ->first();
 
                 if ($inventario) {
@@ -136,7 +140,7 @@ class EntradaInventarioService
                 } else {
                     DB::table('inventarios')->insert([
                         'producto_id' => $detalle->producto_id,
-                        'almacen_id' => $entrada->bodega_id,
+                        'almacen_id' => $entrada->almacen_id,
                         'cantidad_actual' => (float) $detalle->cantidad,
                         'cantidad_minima' => 0,
                         'created_at' => now(),
@@ -146,7 +150,7 @@ class EntradaInventarioService
             }
 
             $entrada->update(['estado' => 'Procesada']);
-            return $entrada->fresh(['proveedor', 'bodega', 'detalles.producto']);
+            return $entrada->fresh(['proveedor', 'almacen', 'detalles.producto']) ?? $entrada;
         });
     }
 
@@ -160,6 +164,6 @@ class EntradaInventarioService
         }
 
         $entrada->update(['estado' => 'Cancelada']);
-        return $entrada->fresh();
+        return $entrada->fresh() ?? $entrada;
     }
 }

@@ -19,6 +19,8 @@ class SalidaInventarioService
 {
     /**
      * Crear una nueva salida de inventario
+     *
+     * @param array<string, mixed> $data
      */
     public function crear(array $data): SalidaInventario
     {
@@ -92,11 +94,13 @@ class SalidaInventarioService
 
     /**
      * Actualizar salida
+     *
+     * @param array<string, mixed> $data
      */
     public function actualizar(SalidaInventario $salida, array $data): SalidaInventario
     {
         $salida->update($data);
-        return $salida->fresh(['almacen', 'cliente', 'detalles.producto']);
+        return $salida->fresh(['almacen', 'cliente', 'detalles.producto']) ?? $salida;
     }
 
     /**
@@ -104,7 +108,7 @@ class SalidaInventarioService
      */
     public function eliminar(SalidaInventario $salida): bool
     {
-        return $salida->delete();
+        return (bool) $salida->delete();
     }
 
     /**
@@ -139,7 +143,7 @@ class SalidaInventarioService
             }
 
             $salida->update(['estado' => 'Procesada']);
-            return $salida->fresh(['almacen', 'cliente', 'detalles.producto']);
+            return $salida->fresh(['almacen', 'cliente', 'detalles.producto']) ?? $salida;
         });
     }
 }

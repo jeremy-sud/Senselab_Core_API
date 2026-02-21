@@ -14,9 +14,9 @@ interface AIServiceInterface
      * Enviar un mensaje de chat y obtener respuesta.
      *
      * @param string $message Mensaje del usuario
-     * @param array $context Contexto adicional (historial, datos del sistema)
-     * @param array $options Opciones adicionales (model, temperature, etc.)
-     * @return array Respuesta estructurada
+     * @param array<string, mixed> $context Contexto adicional (historial, datos del sistema)
+     * @param array<string, mixed> $options Opciones adicionales (model, temperature, etc.)
+     * @return array<string, mixed> Respuesta estructurada
      */
     public function chat(string $message, array $context = [], array $options = []): array;
 
@@ -25,17 +25,17 @@ interface AIServiceInterface
      *
      * @param string $imagePath Ruta o URL de la imagen
      * @param string $prompt Instrucciones de análisis
-     * @param array $options Opciones adicionales
-     * @return array Datos extraídos
+     * @param array<string, mixed> $options Opciones adicionales
+     * @return array<string, mixed> Datos extraídos
      */
     public function analyzeImage(string $imagePath, string $prompt, array $options = []): array;
 
     /**
      * Generar embeddings para texto.
      *
-     * @param string|array $text Texto o array de textos
-     * @param array $options Opciones adicionales
-     * @return array Vectores de embeddings
+     * @param string|array<int, string> $text Texto o array de textos
+     * @param array<string, mixed> $options Opciones adicionales
+     * @return array<string, mixed> Vectores de embeddings
      */
     public function embeddings(string|array $text, array $options = []): array;
 
@@ -49,7 +49,7 @@ interface AIServiceInterface
     /**
      * Obtener estadísticas de uso.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getUsageStats(): array;
 }

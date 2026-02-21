@@ -24,8 +24,8 @@ class AuditService
      *
      * @param string $event Tipo de evento (created, updated, deleted, etc.)
      * @param Model $model Modelo afectado
-     * @param array|null $oldValues Valores anteriores (para updated/deleted)
-     * @param array|null $newValues Valores nuevos (para created/updated)
+     * @param array<string, mixed>|null $oldValues Valores anteriores (para updated/deleted)
+     * @param array<string, mixed>|null $newValues Valores nuevos (para created/updated)
      * @return \App\Models\AuditLog
      */
     public static function record(
@@ -139,8 +139,8 @@ class AuditService
     /**
      * Enmascarar valores sensibles
      *
-     * @param array|null $values
-     * @return array|null
+     * @param array<string, mixed>|null $values
+     * @return array<string, mixed>|null
      */
     protected static function maskSensitiveValues(?array $values): ?array
     {
@@ -167,9 +167,9 @@ class AuditService
     /**
      * Truncar valores muy grandes
      *
-     * @param array|null $values
+     * @param array<string, mixed>|null $values
      * @param int $maxSize
-     * @return array|null
+     * @return array<string, mixed>|null
      */
     protected static function truncateValues(?array $values, int $maxSize): ?array
     {
@@ -193,13 +193,13 @@ class AuditService
      *
      * @param string $event
      * @param Model $model
-     * @param array $changedFields
+     * @param array<int, string> $changedFields
      * @return string
      */
     protected static function generateDescription(string $event, Model $model, array $changedFields): string
     {
         $user = Auth::user();
-        $userName = $user?->name ?? 'Unknown User';
+        $userName = $user->name ?? 'Unknown User';
         $modelName = class_basename($model::class);
 
         return match($event) {
@@ -234,7 +234,7 @@ class AuditService
      * Loguear evento crítico
      *
      * @param AuditLog $audit
-     * @param array $changedFields
+     * @param array<int, string> $changedFields
      * @return void
      */
     protected static function logCriticalEvent(AuditLog $audit, array $changedFields): void
@@ -365,7 +365,7 @@ class AuditService
      * Obtener estadísticas de auditoría
      *
      * @param int|null $empresaId
-     * @return array
+     * @return array<string, mixed>
      */
     public static function getStatistics(?int $empresaId = null): array
     {
@@ -405,7 +405,7 @@ class AuditService
     /**
      * Obtener config de auditoría completa
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public static function getAuditConfig(): array
     {

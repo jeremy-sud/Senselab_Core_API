@@ -2119,12 +2119,6 @@ parameters:
 			path: app/Services/AI/CabysClassifierService.php
 
 		-
-			message: '#^Expression on left side of \?\? is not nullable\.$#'
-			identifier: nullCoalesce.expr
-			count: 7
-			path: app/Services/AI/ChatbotService.php
-
-		-
 			message: '#^Method App\\Services\\AI\\ChatbotService\:\:buildSystemPrompt\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -2207,12 +2201,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/AI/ChatbotService.php
-
-		-
-			message: '#^Cannot call method isoFormat\(\) on Carbon\\Carbon\|string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Services/AI/ContentGeneratorService.php
 
 		-
 			message: '#^Method App\\Services\\AI\\ContentGeneratorService\:\:generateBatchReminders\(\) has parameter \$cuentasCobrar with no value type specified in iterable type array\.$#'
@@ -2329,12 +2317,6 @@ parameters:
 			path: app/Services/AI/CreditScoringService.php
 
 		-
-			message: '#^Method App\\Services\\AI\\CreditScoringService\:\:calculateScore\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/CreditScoringService.php
-
-		-
 			message: '#^Method App\\Services\\AI\\CreditScoringService\:\:determineRiskLevel\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -2401,12 +2383,6 @@ parameters:
 			path: app/Services/AI/CreditScoringService.php
 
 		-
-			message: '#^Parameter \#1 \$array \(list\) of array_values is already a list, call has no effect\.$#'
-			identifier: arrayValues.list
-			count: 1
-			path: app/Services/AI/CreditScoringService.php
-
-		-
 			message: '#^Parameter \#3 \$callback of static method Illuminate\\Cache\\Repository\:\:remember\(\) contains unresolvable type\.$#'
 			identifier: argument.unresolvableType
 			count: 1
@@ -2429,12 +2405,6 @@ parameters:
 			identifier: staticMethod.unresolvableReturnType
 			count: 1
 			path: app/Services/AI/CreditScoringService.php
-
-		-
-			message: '#^Expression on left side of \?\? is not nullable\.$#'
-			identifier: nullCoalesce.expr
-			count: 1
-			path: app/Services/AI/GeminiService.php
 
 		-
 			message: '#^Method App\\Services\\AI\\GeminiService\:\:analyzeImage\(\) has parameter \$options with no value type specified in iterable type array\.$#'
@@ -2725,12 +2695,6 @@ parameters:
 			path: app/Services/AI/OpenAIService.php
 
 		-
-			message: '#^Cannot access property \$monthName on Carbon\\Carbon\|string\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Services/AI/PredictionService.php
-
-		-
 			message: '#^Method App\\Services\\AI\\PredictionService\:\:analyzeSalesTrends\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -2761,37 +2725,7 @@ parameters:
 			path: app/Services/AI/PredictionService.php
 
 		-
-			message: '#^Method App\\Services\\AI\\PredictionService\:\:calculatePrediction\(\) has parameter \$salesHistory with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Services/AI/PredictionService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\PredictionService\:\:calculatePrediction\(\) has parameter \$stats with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/PredictionService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\PredictionService\:\:calculatePrediction\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/PredictionService.php
-
-		-
 			message: '#^Method App\\Services\\AI\\PredictionService\:\:calculateReorderPoint\(\) has parameter \$stats with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/PredictionService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\PredictionService\:\:calculateSalesStatistics\(\) has parameter \$salesHistory with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Services/AI/PredictionService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\PredictionService\:\:calculateSalesStatistics\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/AI/PredictionService.php
@@ -2845,12 +2779,6 @@ parameters:
 			path: app/Services/AI/PredictionService.php
 
 		-
-			message: '#^Method App\\Services\\AI\\PredictionService\:\:predictProductDemand\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/PredictionService.php
-
-		-
 			message: '#^Method App\\Services\\AI\\PredictionService\:\:predictRevenue\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -2860,12 +2788,6 @@ parameters:
 			message: '#^Method App\\Services\\AI\\PredictionService\:\:standardDeviation\(\) has parameter \$values with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: app/Services/AI/PredictionService.php
-
-		-
-			message: '#^Offset ''alto''\|''bajo''\|''critico''\|''medio'' on array\{critico\: 1, alto\: 2, medio\: 3, bajo\: 4\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 2
 			path: app/Services/AI/PredictionService.php
 
 		-
@@ -2893,100 +2815,10 @@ parameters:
 			path: app/Services/AsientoContableService.php
 
 		-
-			message: '#^Method App\\Services\\AsientoContableService\:\:actualizar\(\) should return App\\Models\\AsientoContable but returns App\\Models\\AsientoContable\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Services/AsientoContableService.php
-
-		-
 			message: '#^Method App\\Services\\AsientoContableService\:\:crear\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/AsientoContableService.php
-
-		-
-			message: '#^Call to an undefined static method App\\Models\\AuditLog\:\:byEmpresa\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 1
-			path: app/Services/AuditService.php
-
-		-
-			message: '#^Call to an undefined static method App\\Models\\AuditLog\:\:changedField\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 1
-			path: app/Services/AuditService.php
-
-		-
-			message: '#^Call to an undefined static method App\\Models\\AuditLog\:\:search\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 1
-			path: app/Services/AuditService.php
-
-		-
-			message: '#^Method App\\Services\\AuditService\:\:generateDescription\(\) has parameter \$changedFields with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AuditService.php
-
-		-
-			message: '#^Method App\\Services\\AuditService\:\:getAuditConfig\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AuditService.php
-
-		-
-			message: '#^Method App\\Services\\AuditService\:\:getStatistics\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AuditService.php
-
-		-
-			message: '#^Method App\\Services\\AuditService\:\:logCriticalEvent\(\) has parameter \$changedFields with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AuditService.php
-
-		-
-			message: '#^Method App\\Services\\AuditService\:\:maskSensitiveValues\(\) has parameter \$values with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AuditService.php
-
-		-
-			message: '#^Method App\\Services\\AuditService\:\:maskSensitiveValues\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AuditService.php
-
-		-
-			message: '#^Method App\\Services\\AuditService\:\:record\(\) has parameter \$newValues with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AuditService.php
-
-		-
-			message: '#^Method App\\Services\\AuditService\:\:record\(\) has parameter \$oldValues with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AuditService.php
-
-		-
-			message: '#^Method App\\Services\\AuditService\:\:truncateValues\(\) has parameter \$values with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AuditService.php
-
-		-
-			message: '#^Method App\\Services\\AuditService\:\:truncateValues\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AuditService.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Services/AuditService.php
 
 		-
 			message: '#^Method App\\Services\\EncryptionService\:\:decryptFields\(\) has parameter \$data with no value type specified in iterable type array\.$#'
@@ -3023,66 +2855,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/EncryptionService.php
-
-		-
-			message: '#^PHPDoc tag @param for parameter \$oldEncrypter with type string is incompatible with native type Illuminate\\Encryption\\Encrypter\.$#'
-			identifier: parameter.phpDocType
-			count: 1
-			path: app/Services/EncryptionService.php
-
-		-
-			message: '#^PHPDoc tag @param references unknown parameter\: \$algorithm$#'
-			identifier: parameter.notFound
-			count: 1
-			path: app/Services/EncryptionService.php
-
-		-
-			message: '#^Method App\\Services\\EntradaInventarioService\:\:actualizar\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/EntradaInventarioService.php
-
-		-
-			message: '#^Method App\\Services\\EntradaInventarioService\:\:actualizar\(\) should return App\\Models\\EntradaInventario but returns App\\Models\\EntradaInventario\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Services/EntradaInventarioService.php
-
-		-
-			message: '#^Method App\\Services\\EntradaInventarioService\:\:cancelar\(\) should return App\\Models\\EntradaInventario but returns App\\Models\\EntradaInventario\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Services/EntradaInventarioService.php
-
-		-
-			message: '#^Method App\\Services\\EntradaInventarioService\:\:crear\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/EntradaInventarioService.php
-
-		-
-			message: '#^Method App\\Services\\EntradaInventarioService\:\:eliminar\(\) should return bool but returns bool\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Services/EntradaInventarioService.php
-
-		-
-			message: '#^Method App\\Services\\EntradaInventarioService\:\:procesar\(\) should return App\\Models\\EntradaInventario but returns App\\Models\\EntradaInventario\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Services/EntradaInventarioService.php
-
-		-
-			message: '#^Relation ''bodega'' is not found in App\\Models\\EntradaInventario model\.$#'
-			identifier: larastan.relationExistence
-			count: 4
-			path: app/Services/EntradaInventarioService.php
-
-		-
-			message: '#^Relation ''usuario'' is not found in App\\Models\\EntradaInventario model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Services/EntradaInventarioService.php
 
 		-
 			message: '#^Method App\\Services\\Hacienda\\ClaveNumericaGenerator\:\:extraerInformacion\(\) return type has no value type specified in iterable type array\.$#'
@@ -3123,12 +2895,6 @@ parameters:
 		-
 			message: '#^Method App\\Services\\Hacienda\\HaciendaApiClient\:\:enviarComprobante\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Hacienda/HaciendaApiClient.php
-
-		-
-			message: '#^Method App\\Services\\Hacienda\\HaciendaApiClient\:\:extractHeaders\(\) has parameter \$response with no type specified\.$#'
-			identifier: missingType.parameter
 			count: 1
 			path: app/Services/Hacienda/HaciendaApiClient.php
 
@@ -3211,54 +2977,6 @@ parameters:
 			path: app/Services/Hacienda/HaciendaApiClient.php
 
 		-
-			message: '#^Access to property \$cliente on an unknown class App\\Models\\Comprobante\.$#'
-			identifier: class.notFound
-			count: 3
-			path: app/Services/Hacienda/HaciendaIntegrationService.php
-
-		-
-			message: '#^Access to property \$empresa_id on an unknown class App\\Models\\Comprobante\.$#'
-			identifier: class.notFound
-			count: 3
-			path: app/Services/Hacienda/HaciendaIntegrationService.php
-
-		-
-			message: '#^Access to property \$fecha_comprobante on an unknown class App\\Models\\Comprobante\.$#'
-			identifier: class.notFound
-			count: 2
-			path: app/Services/Hacienda/HaciendaIntegrationService.php
-
-		-
-			message: '#^Access to property \$id on an unknown class App\\Models\\Comprobante\.$#'
-			identifier: class.notFound
-			count: 5
-			path: app/Services/Hacienda/HaciendaIntegrationService.php
-
-		-
-			message: '#^Access to property \$numero_comprobante on an unknown class App\\Models\\Comprobante\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Services/Hacienda/HaciendaIntegrationService.php
-
-		-
-			message: '#^Access to property \$total on an unknown class App\\Models\\Comprobante\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Services/Hacienda/HaciendaIntegrationService.php
-
-		-
-			message: '#^Access to property \$total_impuestos on an unknown class App\\Models\\Comprobante\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Services/Hacienda/HaciendaIntegrationService.php
-
-		-
-			message: '#^Dead catch \- Exception is never thrown in the try block\.$#'
-			identifier: catch.neverThrown
-			count: 1
-			path: app/Services/Hacienda/HaciendaIntegrationService.php
-
-		-
 			message: '#^Method App\\Services\\Hacienda\\HaciendaIntegrationService\:\:getStatistics\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -3268,30 +2986,6 @@ parameters:
 			message: '#^Method App\\Services\\Hacienda\\HaciendaIntegrationService\:\:getStatus\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: app/Services/Hacienda/HaciendaIntegrationService.php
-
-		-
-			message: '#^Parameter \$comprobante of method App\\Services\\Hacienda\\HaciendaIntegrationService\:\:buildXml\(\) has invalid type App\\Models\\Comprobante\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Services/Hacienda/HaciendaIntegrationService.php
-
-		-
-			message: '#^Parameter \$comprobante of method App\\Services\\Hacienda\\HaciendaIntegrationService\:\:generateClave\(\) has invalid type App\\Models\\Comprobante\.$#'
-			identifier: class.notFound
-			count: 2
-			path: app/Services/Hacienda/HaciendaIntegrationService.php
-
-		-
-			message: '#^Parameter \$comprobante of method App\\Services\\Hacienda\\HaciendaIntegrationService\:\:generateComprobante\(\) has invalid type App\\Models\\Comprobante\.$#'
-			identifier: class.notFound
-			count: 2
-			path: app/Services/Hacienda/HaciendaIntegrationService.php
-
-		-
-			message: '#^Parameter \$comprobante of method App\\Services\\Hacienda\\HaciendaIntegrationService\:\:validateComprobante\(\) has invalid type App\\Models\\Comprobante\.$#'
-			identifier: class.notFound
-			count: 2
 			path: app/Services/Hacienda/HaciendaIntegrationService.php
 
 		-
@@ -3325,32 +3019,8 @@ parameters:
 			path: app/Services/Hacienda/RateLimiter.php
 
 		-
-			message: '#^Cannot access property \$length on DOMNodeList\<DOMNameSpaceNode\|DOMNode\>\|false\.$#'
-			identifier: property.nonObject
-			count: 2
-			path: app/Services/Hacienda/Xml/FirmaDigitalService.php
-
-		-
-			message: '#^Cannot access property \$nodeValue on DOMNameSpaceNode\|DOMNode\|null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Services/Hacienda/Xml/FirmaDigitalService.php
-
-		-
-			message: '#^Cannot call method item\(\) on DOMNodeList\<DOMNameSpaceNode\|DOMNode\>\|false\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: app/Services/Hacienda/Xml/FirmaDigitalService.php
-
-		-
 			message: '#^Method App\\Services\\Hacienda\\Xml\\FirmaDigitalService\:\:extraerCertificado\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Hacienda/Xml/FirmaDigitalService.php
-
-		-
-			message: '#^Method App\\Services\\Hacienda\\Xml\\FirmaDigitalService\:\:firmarLegacy\(\) should return string but returns string\|false\.$#'
-			identifier: return.type
 			count: 1
 			path: app/Services/Hacienda/Xml/FirmaDigitalService.php
 
@@ -3361,64 +3031,16 @@ parameters:
 			path: app/Services/Hacienda/Xml/FirmaDigitalService.php
 
 		-
-			message: '#^Offset ''cert'' might not exist on array\|null\.$#'
-			identifier: offsetAccess.notFound
-			count: 3
-			path: app/Services/Hacienda/Xml/FirmaDigitalService.php
-
-		-
 			message: '#^Property App\\Services\\Hacienda\\Xml\\FirmaDigitalService\:\:\$certData type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/Hacienda/Xml/FirmaDigitalService.php
 
 		-
-			message: '#^Property App\\Services\\Hacienda\\Xml\\FirmaDigitalService\:\:\$privateKey has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: app/Services/Hacienda/Xml/FirmaDigitalService.php
-
-		-
-			message: '#^Property RobRichards\\XMLSecLibs\\XMLSecurityDSig\:\:\$sigNode \(DOMElement\|null\) does not accept DOMNameSpaceNode\|DOMNode\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Services/Hacienda/Xml/FirmaDigitalService.php
-
-		-
-			message: '#^Argument of an invalid type DOMNodeList\<DOMNameSpaceNode\|DOMNode\>\|false supplied for foreach, only iterables are supported\.$#'
-			identifier: foreach.nonIterable
-			count: 1
-			path: app/Services/Hacienda/Xml/XadesEpesSigner.php
-
-		-
-			message: '#^Cannot call method C14N\(\) on DOMElement\|null\.$#'
-			identifier: method.nonObject
-			count: 3
-			path: app/Services/Hacienda/Xml/XadesEpesSigner.php
-
-		-
-			message: '#^Method App\\Services\\Hacienda\\Xml\\XadesEpesSigner\:\:sign\(\) should return string but returns string\|false\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Services/Hacienda/Xml/XadesEpesSigner.php
-
-		-
 			message: '#^Property App\\Services\\Hacienda\\Xml\\XadesEpesSigner\:\:\$certInfo type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/Hacienda/Xml/XadesEpesSigner.php
-
-		-
-			message: '#^Method App\\Services\\Hacienda\\Xml\\XmlComprobanteBuilder\:\:build\(\) should return string but returns string\|false\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Services/Hacienda/Xml/XmlComprobanteBuilder.php
-
-		-
-			message: '#^Method App\\Services\\Hacienda\\Xml\\XmlComprobanteBuilder\:\:formatearDecimal\(\) has parameter \$valor with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Services/Hacienda/Xml/XmlComprobanteBuilder.php
 
 		-
 			message: '#^Method App\\Services\\PermissionService\:\:assignPermissionsToRole\(\) has parameter \$permisoIds with no value type specified in iterable type array\.$#'
@@ -3463,88 +3085,10 @@ parameters:
 			path: app/Services/PermissionService.php
 
 		-
-			message: '#^Method App\\Services\\RateLimitingService\:\:getIdentifier\(\) should return int\|string but returns int\|string\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Services/RateLimitingService.php
-
-		-
 			message: '#^Method App\\Services\\RateLimitingService\:\:getStats\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/RateLimitingService.php
-
-		-
-			message: '#^Method App\\Services\\RateLimitingService\:\:resetIn\(\) should return int but returns float\|int\<0, max\>\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Services/RateLimitingService.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Services/RateLimitingService.php
-
-		-
-			message: '#^Method App\\Services\\SalidaInventarioService\:\:actualizar\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/SalidaInventarioService.php
-
-		-
-			message: '#^Method App\\Services\\SalidaInventarioService\:\:actualizar\(\) should return App\\Models\\SalidaInventario but returns App\\Models\\SalidaInventario\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Services/SalidaInventarioService.php
-
-		-
-			message: '#^Method App\\Services\\SalidaInventarioService\:\:crear\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/SalidaInventarioService.php
-
-		-
-			message: '#^Method App\\Services\\SalidaInventarioService\:\:eliminar\(\) should return bool but returns bool\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Services/SalidaInventarioService.php
-
-		-
-			message: '#^Method App\\Services\\SalidaInventarioService\:\:procesar\(\) should return App\\Models\\SalidaInventario but returns App\\Models\\SalidaInventario\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Services/SalidaInventarioService.php
-
-		-
-			message: '#^Call to an undefined static method Sentry\\Breadcrumb\:\:create\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 1
-			path: app/Services/SentryService.php
-
-		-
-			message: '#^Method App\\Services\\VentaService\:\:procesarDetalles\(\) has parameter \$detalles with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/VentaService.php
-
-		-
-			message: '#^Method App\\Services\\VentaService\:\:procesarDetalles\(\) has parameter \$productos with generic class Illuminate\\Database\\Eloquent\\Collection but does not specify its types\: TKey, TModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Services/VentaService.php
-
-		-
-			message: '#^Method App\\Services\\VentaService\:\:validarProductos\(\) has parameter \$productoIds with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/VentaService.php
-
-		-
-			message: '#^Method App\\Services\\VentaService\:\:validarStockDisponible\(\) has parameter \$detalles with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/VentaService.php
 
 		-
 			message: '#^Trait App\\Traits\\EncryptsAttributes is used zero times and is not analysed\.$#'

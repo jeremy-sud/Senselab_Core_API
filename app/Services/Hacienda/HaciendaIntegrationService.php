@@ -3,7 +3,7 @@
 namespace App\Services\Hacienda;
 
 use App\Models\HaciendaComprobante;
-use App\Models\Comprobante;
+use App\Models\ComprobanteElectronicoFe;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
@@ -43,11 +43,11 @@ class HaciendaIntegrationService
     /**
      * Generar comprobante electrónico
      *
-     * @param Comprobante $comprobante Comprobante a enviar
+     * @param ComprobanteElectronicoFe $comprobante Comprobante a enviar
      * @param string $tipo Tipo de comprobante (01=Factura, 03=Nota, etc.)
      * @return HaciendaComprobante|null
      */
-    public static function generateComprobante(Comprobante $comprobante, string $tipo = self::TYPE_FACTURA): ?HaciendaComprobante
+    public static function generateComprobante(ComprobanteElectronicoFe $comprobante, string $tipo = self::TYPE_FACTURA): ?HaciendaComprobante
     {
         try {
             // Paso 1: Validación preliminar de los datos del comprobante.
@@ -338,10 +338,10 @@ class HaciendaIntegrationService
     /**
      * Validar comprobante antes de enviar
      *
-     * @param Comprobante $comprobante
+     * @param ComprobanteElectronicoFe $comprobante
      * @return bool
      */
-    protected static function validateComprobante(Comprobante $comprobante): bool
+    protected static function validateComprobante(ComprobanteElectronicoFe $comprobante): bool
     {
         // Validaciones mínimas antes de procesar el comprobante.
         // Aquí no se realizan validaciones fiscales completas, sólo
@@ -374,11 +374,11 @@ class HaciendaIntegrationService
      * NNNNNNN: Correlativo (7 dígitos)
      * EEEE: Tipo de comprobante (01, 03, 04, 05, 07)
      *
-     * @param Comprobante $comprobante
+     * @param ComprobanteElectronicoFe $comprobante
      * @param string $tipo
      * @return string
      */
-    protected static function generateClave(Comprobante $comprobante, string $tipo): string
+    protected static function generateClave(ComprobanteElectronicoFe $comprobante, string $tipo): string
     {
         $fecha = $comprobante->fecha_comprobante ?? now();
         $year = $fecha->format('y');
@@ -441,7 +441,7 @@ class HaciendaIntegrationService
      * Construir XML del comprobante
      *
      * @param HaciendaComprobante $haciendaComprobante
-     * @param Comprobante $comprobante
+     * @param ComprobanteElectronicoFe $comprobante
      * @param mixed $empresa
      * @return string|null
      */
@@ -533,20 +533,15 @@ class HaciendaIntegrationService
      */
     protected static function buildXADESSignature($xmlContent, $certificate, $privateKey): ?string
     {
-        try {
-            // En un proyecto real, usar librería como:
-            // - phpseclib
-            // - XML Digital Signatures (xmlsec-php)
-            // - xades-php
+        // En un proyecto real, usar librería como:
+        // - phpseclib
+        // - XML Digital Signatures (xmlsec-php)
+        // - xades-php
 
-            // Para esta demostración, simplemente envolveremos el XML
-            // En producción, implementar la firma digital XAdES-EPES completa
+        // Para esta demostración, simplemente envolveremos el XML
+        // En producción, implementar la firma digital XAdES-EPES completa
 
-            return $xmlContent; // Placeholder
-        } catch (Exception $e) {
-            Log::error('Error en firma XAdES-EPES', ['error' => $e->getMessage()]);
-            return null;
-        }
+        return $xmlContent; // Placeholder
     }
 
     /**

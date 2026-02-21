@@ -302,7 +302,7 @@ class HaciendaApiClient
     /**
      * Extraer headers relevantes de la respuesta
      */
-    protected function extractHeaders($response): array
+    protected function extractHeaders(\Psr\Http\Message\ResponseInterface $response): array
     {
         return [
             'x_ratelimit_limit' => $response->getHeader('X-Ratelimit-Limit')[0] ?? null,

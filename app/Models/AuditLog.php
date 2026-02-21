@@ -141,6 +141,38 @@ class AuditLog extends Model
         return $query->where('ip_address', $ip);
     }
 
+    /**
+     * Scope: Por empresa (a través del usuario)
+     */
+    public function scopeByEmpresa(Builder $query, int $empresaId): Builder{
+        return $query->whereHas('user', function (Builder $q) use ($empresaId) {
+            $q->where('empresa_id', $empresaId);
+        });
+    }
+
+    /**
+     * Scope: Por campo cambiado
+     */
+    public function scopeChangedField(Builder $query, string $field): Builder{
+        return $query->where(function (Builder $q) use ($field) {
+            $q->whereNotNull('old_values->' . $field)
+              ->orWhereNotNull('new_values->' . $field);
+        });
+    }
+
+    /**
+     * Scope: Búsqueda general
+     */
+    public function scopeSearch(Builder $query, string $term): Builder{
+        return $query->where(function (Builder $q) use ($term) {
+            $q->where('user_name', 'like', "%{$term}%")
+              ->orWhere('user_email', 'like', "%{$term}%")
+              ->orWhere('auditable_type', 'like', "%{$term}%")
+              ->orWhere('action', 'like', "%{$term}%")
+              ->orWhere('ip_address', 'like', "%{$term}%");
+        });
+    }
+
     // ════════════════════════════════════════════════════════════════
     // MÉTODOS - Análisis y Transformación
     // ════════════════════════════════════════════════════════════════
