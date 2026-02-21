@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
@@ -20,7 +21,7 @@ class DetallePresupuesto extends Model
     /**
      * Los atributos que son asignables masivamente.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'presupuesto_id',
@@ -46,7 +47,7 @@ class DetallePresupuesto extends Model
     /**
      * Los atributos que deben ser ocultados para la serialización.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $hidden = [
         'eliminado',
@@ -55,7 +56,7 @@ class DetallePresupuesto extends Model
     /**
      * Los atributos computados que deben ser agregados a los arrays.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $appends = [
         'monto_ejecutado',
@@ -104,9 +105,9 @@ class DetallePresupuesto extends Model
      *
      * @return float
      */
-    public function getMontoEjecutadoAttribute()
+    public function getMontoEjecutadoAttribute(): float
     {
-        return $this->movimientos()
+        return (float) $this->movimientos()
                     ->where('activo', true)
                     ->where('eliminado', false)
                     ->sum('monto');
@@ -117,7 +118,7 @@ class DetallePresupuesto extends Model
      *
      * @return float
      */
-    public function getPorcentajeEjecucionAttribute()
+    public function getPorcentajeEjecucionAttribute(): mixed
     {
         if ($this->monto_presupuestado <= 0) {
             return 0;
@@ -144,8 +145,7 @@ class DetallePresupuesto extends Model
      * @param  float  $porcentaje
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeExcedidos($query, $porcentaje = 100)
-    {
+    public function scopeExcedidos(Builder $query, mixed $porcentaje = 100): Builder{
         return $query->whereHas('movimientos', function ($query) use ($porcentaje) {
             $query->selectRaw('SUM(monto) as total_ejecutado')
                   ->havingRaw('total_ejecutado > (detalle_presupuestos.monto_presupuestado * ?)', [$porcentaje / 100]);
@@ -160,8 +160,7 @@ class DetallePresupuesto extends Model
      * @param  float  $maximo
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopePorPorcentajeEjecucion($query, $minimo = 0, $maximo = 100)
-    {
+    public function scopePorPorcentajeEjecucion(Builder $query, mixed $minimo = 0, mixed $maximo = 100): Builder{
         return $query->whereHas('movimientos', function ($query) use ($minimo, $maximo) {
             $query->selectRaw('SUM(monto) as total_ejecutado')
                   ->havingRaw('(total_ejecutado / detalle_presupuestos.monto_presupuestado * 100) BETWEEN ? AND ?', [$minimo, $maximo]);
@@ -173,7 +172,7 @@ class DetallePresupuesto extends Model
      *
      * @return void
      */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 

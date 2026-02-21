@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+/** @use HasFactory<\Database\Factories\PermisoFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
@@ -15,6 +17,7 @@ use Illuminate\Support\Str;
  */
 class Permiso extends Model
 {
+    /** @use HasFactory<\Database\Factories\PermisoFactory> */
     use HasFactory, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     protected $table = 'permisos';
@@ -42,6 +45,14 @@ class Permiso extends Model
         'eliminado' => 'boolean',
     ];
 
+    /**
+
+
+     * @var array<string, mixed>
+
+
+     */
+
     public static $rules = [
         'nombre' => 'required|string|unique:permisos,nombre',
         'slug' => 'required|string|unique:permisos,slug',
@@ -60,18 +71,16 @@ class Permiso extends Model
     }
 
     /* --------------------- Scopes --------------------- */
-    public function scopeActivos($q)
-    {
+    public function scopeActivos(mixed $q): Builder{
         return $q->where('activo', true)->where('eliminado', false);
     }
 
-    public function scopePorModulo($q, $modulo)
-    {
+    public function scopePorModulo(mixed $q, mixed $modulo): Builder{
         return $q->where('modulo', $modulo);
     }
 
     /* --------------------- Boot / eventos --------------------- */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 

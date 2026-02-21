@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+/** @use HasFactory<\Database\Factories\PagoCuentaCobrarFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +13,7 @@ use App\Traits\HasActiveScope;
 
 class PagoCuentaCobrar extends Model
 {
+    /** @use HasFactory<\Database\Factories\PagoCuentaCobrarFactory> */
     use HasFactory, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     protected $table = 'pagos_cuentas_cobrar';
@@ -54,18 +57,15 @@ class PagoCuentaCobrar extends Model
         return $query->where('activo', true)->where('eliminado', false);
     }
 
-    public function scopePorCuenta($query, $cuentaId)
-    {
+    public function scopePorCuenta(Builder $query, mixed $cuentaId): Builder{
         return $query->where('cuenta_por_cobrar_id', $cuentaId);
     }
 
-    public function scopePorFormaPago($query, $formaPagoId)
-    {
+    public function scopePorFormaPago(Builder $query, mixed $formaPagoId): Builder{
         return $query->where('forma_pago_id', $formaPagoId);
     }
 
-    public function scopeFechaBetween($query, $desde, $hasta)
-    {
+    public function scopeFechaBetween(Builder $query, mixed $desde, mixed $hasta): Builder{
         return $query->whereBetween('fecha_pago', [$desde, $hasta]);
     }
 }

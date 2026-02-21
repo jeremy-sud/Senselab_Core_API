@@ -2,16 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
+/** @use HasFactory<\Database\Factories\CajaChicaFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CajaChica extends Model
 {
+    /** @use HasFactory<\Database\Factories\CajaChicaFactory> */
     use HasFactory, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     /**
@@ -100,8 +103,7 @@ class CajaChica extends Model
     /**
      * Scope para filtrar por estado.
      */
-    public function scopePorEstado($query, $estado)
-    {
+    public function scopePorEstado(Builder $query, mixed $estado): Builder{
         return $query->where('estado', $estado);
     }
 
@@ -116,8 +118,7 @@ class CajaChica extends Model
     /**
      * Scope para filtrar por responsable.
      */
-    public function scopePorResponsable($query, $responsableId)
-    {
+    public function scopePorResponsable(Builder $query, mixed $responsableId): Builder{
         return $query->where('responsable_id', $responsableId);
     }
 

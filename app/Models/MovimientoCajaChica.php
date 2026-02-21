@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+/** @use HasFactory<\Database\Factories\MovimientoCajaChicaFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +13,7 @@ use App\Traits\HasActiveScope;
 
 class MovimientoCajaChica extends Model
 {
+    /** @use HasFactory<\Database\Factories\MovimientoCajaChicaFactory> */
     use HasFactory, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     /**
@@ -87,24 +90,21 @@ class MovimientoCajaChica extends Model
     /**
      * Scope para filtrar por caja chica.
      */
-    public function scopePorCaja($query, $cajaChicaId)
-    {
+    public function scopePorCaja(Builder $query, mixed $cajaChicaId): Builder{
         return $query->where('caja_chica_id', $cajaChicaId);
     }
 
     /**
      * Scope para filtrar por tipo de movimiento.
      */
-    public function scopePorTipo($query, $tipo)
-    {
+    public function scopePorTipo(Builder $query, mixed $tipo): Builder{
         return $query->where('tipo_movimiento', $tipo);
     }
 
     /**
      * Scope para filtrar por rango de fechas.
      */
-    public function scopeFechaBetween($query, $start, $end)
-    {
+    public function scopeFechaBetween(Builder $query, mixed $start, mixed $end): Builder{
         return $query->whereBetween('fecha_movimiento', [$start, $end]);
     }
 
@@ -146,8 +146,8 @@ class MovimientoCajaChica extends Model
     public function getMontoSignedAttribute(): float
     {
         if ($this->esEgreso()) {
-            return -$this->monto;
+            return -(float) $this->monto;
         }
-        return $this->monto;
+        return (float) $this->monto;
     }
 }

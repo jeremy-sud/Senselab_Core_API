@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+/** @use HasFactory<\Database\Factories\RolUsuarioFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +13,7 @@ use App\Traits\HasActiveScope;
 
 class RolUsuario extends Model
 {
+    /** @use HasFactory<\Database\Factories\RolUsuarioFactory> */
     use HasFactory, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     protected $table = 'rol_usuario';
@@ -47,13 +50,11 @@ class RolUsuario extends Model
         return $query->where('activo', true)->where('eliminado', false);
     }
 
-    public function scopePorUsuario($query, $usuarioId)
-    {
+    public function scopePorUsuario(Builder $query, mixed $usuarioId): Builder{
         return $query->where('usuario_id', $usuarioId);
     }
 
-    public function scopePorRol($query, $rolId)
-    {
+    public function scopePorRol(Builder $query, mixed $rolId): Builder{
         return $query->where('rol_id', $rolId);
     }
 }

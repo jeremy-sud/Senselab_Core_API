@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
@@ -20,7 +21,7 @@ class UsuarioRol extends Model
     /**
      * Atributos que se pueden asignar de manera masiva.
      *
-     * @var array
+     * @var list<string>
      */
     protected $fillable = [
         'usuario_id',
@@ -32,7 +33,7 @@ class UsuarioRol extends Model
     /**
      * Atributos que deben ser convertidos a tipos nativos.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
         'activo' => 'boolean',

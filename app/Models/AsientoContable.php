@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
+/** @use HasFactory<\Database\Factories\AsientoContableFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,6 +16,7 @@ use OpenApi\Attributes as OA;
 
 class AsientoContable extends Model
 {
+    /** @use HasFactory<\Database\Factories\AsientoContableFactory> */
     use HasFactory, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     /**
@@ -71,16 +74,14 @@ class AsientoContable extends Model
     /**
      * Scope para filtrar por fecha de asiento.
      */
-    public function scopeFechaAsientoBetween($query, $start, $end)
-    {
+    public function scopeFechaAsientoBetween(Builder $query, mixed $start, mixed $end): Builder{
         return $query->whereBetween('fecha_asiento', [$start, $end]);
     }
 
     /**
      * Scope para filtrar por estado.
      */
-    public function scopePorEstado($query, $estado)
-    {
+    public function scopePorEstado(Builder $query, mixed $estado): Builder{
         return $query->where('estado', $estado);
     }
 
@@ -114,7 +115,7 @@ class AsientoContable extends Model
      * Cada asiento posee múltiples movimientos (detalle_asientos).
      */
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\DetalleAsiento>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\DetalleAsiento, $this>
      */
     public function detalles(): HasMany
     {

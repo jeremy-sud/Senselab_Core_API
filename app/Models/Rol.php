@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+/** @use HasFactory<\Database\Factories\RolFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
@@ -11,6 +13,7 @@ use App\Traits\HasPermissionCache;
 
 class Rol extends Model
 {
+    /** @use HasFactory<\Database\Factories\RolFactory> */
     use HasFactory, HasCustomSoftDeletes, HasAuditFields, HasActiveScope, HasPermissionCache;
     /**
      * Tabla asociada al modelo.
@@ -29,7 +32,7 @@ class Rol extends Model
     /**
      * Atributos que se pueden asignar de manera masiva.
      *
-     * @var array
+     * @var list<string>
      */
     protected $fillable = [
         'nombre',
@@ -41,7 +44,7 @@ class Rol extends Model
     /**
      * Atributos que deben ser convertidos a tipos nativos.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
         'activo' => 'boolean',
@@ -66,7 +69,7 @@ class Rol extends Model
     /**
      * Boot del modelo.
      */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 
@@ -117,7 +120,7 @@ class Rol extends Model
     /**
      * Asignar permisos al rol.
      *
-     * @param array $permisoIds Array de IDs de permisos
+     * @param array<int> $permisoIds Array de IDs de permisos
      * @return void
      */
     public function assignPermissions(array $permisoIds): void
@@ -151,7 +154,7 @@ class Rol extends Model
     /**
      * Verificar si el rol tiene alguno de los permisos especificados.
      *
-     * @param array $permisoSlugs Array de slugs de permisos
+     * @param array<string> $permisoSlugs Array de slugs de permisos
      * @return bool
      */
     public function hasAnyPermission(array $permisoSlugs): bool
@@ -162,7 +165,7 @@ class Rol extends Model
     /**
      * Verificar si el rol tiene todos los permisos especificados.
      *
-     * @param array $permisoSlugs Array de slugs de permisos
+     * @param array<string> $permisoSlugs Array de slugs de permisos
      * @return bool
      */
     public function hasAllPermissions(array $permisoSlugs): bool
@@ -174,7 +177,7 @@ class Rol extends Model
     /**
      * Sincronizar permisos del rol.
      *
-     * @param array $permisoIds Array de IDs de permisos
+     * @param array<int> $permisoIds Array de IDs de permisos
      * @return void
      */
     public function syncPermissions(array $permisoIds): void
@@ -195,7 +198,7 @@ class Rol extends Model
      * Cargar permisos desde la base de datos para cache.
      * Requerido por HasPermissionCache trait.
      *
-     * @return array
+     * @return array<int, string>
      */
     protected function loadPermissionsFromDatabase(): array
     {

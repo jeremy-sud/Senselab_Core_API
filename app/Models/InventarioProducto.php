@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+/** @use HasFactory<\Database\Factories\InventarioProductoFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +13,7 @@ use App\Traits\HasActiveScope;
 
 class InventarioProducto extends Model
 {
+    /** @use HasFactory<\Database\Factories\InventarioProductoFactory> */
     use HasFactory, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     protected $table = 'inventario_productos';
@@ -56,8 +59,7 @@ class InventarioProducto extends Model
         return $query->where('activo', true)->where('eliminado', false);
     }
 
-    public function scopePorAlmacen($query, $almacenId)
-    {
+    public function scopePorAlmacen(Builder $query, mixed $almacenId): Builder{
         return $query->where('almacen_id', $almacenId);
     }
 

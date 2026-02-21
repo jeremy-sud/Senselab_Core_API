@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
+/** @use HasFactory<\Database\Factories\MensajeHaciendaFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class MensajeHacienda extends Model
 {
+    /** @use HasFactory<\Database\Factories\MensajeHaciendaFactory> */
     use HasFactory, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     protected $table = 'mensajes_hacienda';
@@ -80,34 +83,33 @@ class MensajeHacienda extends Model
         return $query->where('estado', 'error');
     }
 
-    public function scopePorTipo($query, $tipo)
-    {
+    public function scopePorTipo(Builder $query, mixed $tipo): Builder{
         return $query->where('tipo_mensaje', $tipo);
     }
 
     /* --------------------- Métodos --------------------- */
 
-    public function esPendiente()
+    public function esPendiente(): mixed
     {
         return $this->estado === 'pendiente';
     }
 
-    public function esProcesado()
+    public function esProcesado(): mixed
     {
         return $this->estado === 'procesado';
     }
 
-    public function tieneError()
+    public function tieneError(): mixed
     {
         return $this->estado === 'error';
     }
 
-    public function incrementarIntentos()
+    public function incrementarIntentos(): void
     {
         $this->increment('intentos_envio');
     }
 
-    public function marcarComoProcesado()
+    public function marcarComoProcesado(): void
     {
         $this->update([
             'estado' => 'procesado',
@@ -115,7 +117,7 @@ class MensajeHacienda extends Model
         ]);
     }
 
-    public function marcarComoError($mensaje)
+    public function marcarComoError(mixed $mensaje): void
     {
         $this->update([
             'estado' => 'error',

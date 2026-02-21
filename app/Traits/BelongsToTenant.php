@@ -29,7 +29,10 @@ trait BelongsToTenant
         });
     }
 
-    public function empresa()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\Empresa, $this>
+     */
+    public function empresa(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo('App\Models\Empresa');
     }

@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+/** @use HasFactory<\Database\Factories\NotificacionFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\BelongsToTenant;
 
 class Notificacion extends Model
 {
+    /** @use HasFactory<\Database\Factories\NotificacionFactory> */
     use HasFactory, BelongsToTenant;
 
     protected $table = 'notificaciones';
@@ -82,16 +85,14 @@ class Notificacion extends Model
     /**
      * Scope para filtrar por tipo
      */
-    public function scopeTipo($query, $tipo)
-    {
+    public function scopeTipo(Builder $query, mixed $tipo): Builder{
         return $query->where('tipo', $tipo);
     }
 
     /**
      * Scope para filtrar por prioridad
      */
-    public function scopePrioridad($query, $prioridad)
-    {
+    public function scopePrioridad(Builder $query, mixed $prioridad): Builder{
         return $query->where('prioridad', $prioridad);
     }
 
@@ -114,7 +115,7 @@ class Notificacion extends Model
     /**
      * Marcar notificación como leída
      */
-    public function marcarComoLeida()
+    public function marcarComoLeida(): void
     {
         $this->update([
             'leida' => true,
@@ -125,7 +126,7 @@ class Notificacion extends Model
     /**
      * Marcar notificación como no leída
      */
-    public function marcarComoNoLeida()
+    public function marcarComoNoLeida(): void
     {
         $this->update([
             'leida' => false,
@@ -136,7 +137,7 @@ class Notificacion extends Model
     /**
      * Crear notificación para un usuario
      */
-    public static function crear($usuarioId, $tipo, $titulo, $mensaje, $datos = null, $url = null, $prioridad = self::PRIORIDAD_NORMAL)
+    public static function crear(mixed $usuarioId, mixed $tipo, mixed $titulo, mixed $mensaje, mixed $datos = null, mixed $url = null, mixed $prioridad = self::PRIORIDAD_NORMAL): mixed
     {
         $usuario = Usuario::find($usuarioId);
 
@@ -156,7 +157,7 @@ class Notificacion extends Model
     /**
      * Crear notificación de información
      */
-    public static function info($usuarioId, $titulo, $mensaje, $datos = null, $url = null)
+    public static function info(mixed $usuarioId, mixed $titulo, mixed $mensaje, mixed $datos = null, mixed $url = null): mixed
     {
         return self::crear($usuarioId, self::TIPO_INFO, $titulo, $mensaje, $datos, $url);
     }
@@ -164,7 +165,7 @@ class Notificacion extends Model
     /**
      * Crear notificación de advertencia
      */
-    public static function warning($usuarioId, $titulo, $mensaje, $datos = null, $url = null)
+    public static function warning(mixed $usuarioId, mixed $titulo, mixed $mensaje, mixed $datos = null, mixed $url = null): mixed
     {
         return self::crear($usuarioId, self::TIPO_WARNING, $titulo, $mensaje, $datos, $url, self::PRIORIDAD_ALTA);
     }
@@ -172,7 +173,7 @@ class Notificacion extends Model
     /**
      * Crear notificación de error
      */
-    public static function error($usuarioId, $titulo, $mensaje, $datos = null, $url = null)
+    public static function error(mixed $usuarioId, mixed $titulo, mixed $mensaje, mixed $datos = null, mixed $url = null): mixed
     {
         return self::crear($usuarioId, self::TIPO_ERROR, $titulo, $mensaje, $datos, $url, self::PRIORIDAD_URGENTE);
     }
@@ -180,7 +181,7 @@ class Notificacion extends Model
     /**
      * Crear notificación de éxito
      */
-    public static function success($usuarioId, $titulo, $mensaje, $datos = null, $url = null)
+    public static function success(mixed $usuarioId, mixed $titulo, mixed $mensaje, mixed $datos = null, mixed $url = null): mixed
     {
         return self::crear($usuarioId, self::TIPO_SUCCESS, $titulo, $mensaje, $datos, $url);
     }

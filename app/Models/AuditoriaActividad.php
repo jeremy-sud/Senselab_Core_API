@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\BelongsToTenant;
+/** @use HasFactory<\Database\Factories\AuditoriaActividadFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class AuditoriaActividad extends Model
 {
+    /** @use HasFactory<\Database\Factories\AuditoriaActividadFactory> */
     use HasFactory;
     use BelongsToTenant;
 
@@ -53,47 +56,42 @@ class AuditoriaActividad extends Model
     /**
      * Scope para filtrar por acción
      */
-    public function scopeAccion($query, $accion)
-    {
+    public function scopeAccion(Builder $query, mixed $accion): Builder{
         return $query->where('accion', $accion);
     }
 
     /**
      * Scope para filtrar por tabla
      */
-    public function scopeTabla($query, $tabla)
-    {
+    public function scopeTabla(Builder $query, mixed $tabla): Builder{
         return $query->where('tabla', $tabla);
     }
 
     /**
      * Scope para filtrar por usuario
      */
-    public function scopePorUsuario($query, $usuarioId)
-    {
+    public function scopePorUsuario(Builder $query, mixed $usuarioId): Builder{
         return $query->where('usuario_id', $usuarioId);
     }
 
     /**
      * Scope para filtrar por empresa
      */
-    public function scopePorEmpresa($query, $empresaId)
-    {
+    public function scopePorEmpresa(Builder $query, mixed $empresaId): Builder{
         return $query->where('empresa_id', $empresaId);
     }
 
     /**
      * Scope para filtrar por rango de fechas
      */
-    public function scopeEntreFechas($query, $fechaInicio, $fechaFin)
-    {
+    public function scopeEntreFechas(Builder $query, mixed $fechaInicio, mixed $fechaFin): Builder{
         return $query->whereBetween('creado_en', [$fechaInicio, $fechaFin]);
     }
 
     /**
      * Registrar una actividad de auditoría
      */
-    public static function registrar($accion, $tabla, $registroId = null, $datosAnteriores = null, $datosNuevos = null)
+    public static function registrar(mixed $accion, mixed $tabla, mixed $registroId = null, mixed $datosAnteriores = null, mixed $datosNuevos = null): mixed
     {
         return self::create([
             'usuario_id' => auth()->id(),
@@ -111,7 +109,7 @@ class AuditoriaActividad extends Model
     /**
      * Obtener cambios realizados (comparación de datos anteriores y nuevos)
      */
-    public function getCambiosAttribute()
+    public function getCambiosAttribute(): mixed
     {
         if (!$this->datos_anteriores || !$this->datos_nuevos) {
             return [];

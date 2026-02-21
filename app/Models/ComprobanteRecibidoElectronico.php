@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\BelongsToTenant;
+/** @use HasFactory<\Database\Factories\ComprobanteRecibidoElectronicoFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ComprobanteRecibidoElectronico extends Model
 {
+    /** @use HasFactory<\Database\Factories\ComprobanteRecibidoElectronicoFactory> */
     use HasFactory, BelongsToTenant;
 
     /**
@@ -122,48 +125,42 @@ class ComprobanteRecibidoElectronico extends Model
     /**
      * Scope para filtrar por estado de validación.
      */
-    public function scopePorEstadoValidacion($query, $estado)
-    {
+    public function scopePorEstadoValidacion(Builder $query, mixed $estado): Builder{
         return $query->where('estado_validacion', $estado);
     }
 
     /**
      * Scope para filtrar por contabilizado.
      */
-    public function scopeContabilizados($query, $contabilizado = true)
-    {
+    public function scopeContabilizados(Builder $query, mixed $contabilizado = true): Builder{
         return $query->where('contabilizado', $contabilizado);
     }
 
     /**
      * Scope para filtrar por mensaje de hacienda.
      */
-    public function scopePorMensajeHacienda($query, $mensaje)
-    {
+    public function scopePorMensajeHacienda(Builder $query, mixed $mensaje): Builder{
         return $query->where('mensaje_hacienda', $mensaje);
     }
 
     /**
      * Scope para filtrar por tipo de documento.
      */
-    public function scopePorTipoDocumento($query, $tipo)
-    {
+    public function scopePorTipoDocumento(Builder $query, mixed $tipo): Builder{
         return $query->where('tipo_documento', $tipo);
     }
 
     /**
      * Scope para filtrar por rango de fechas de emisión.
      */
-    public function scopePorFechaEmision($query, $start, $end)
-    {
+    public function scopePorFechaEmision(Builder $query, mixed $start, mixed $end): Builder{
         return $query->whereBetween('fecha_emision', [$start, $end]);
     }
 
     /**
      * Scope para buscar por clave numérica.
      */
-    public function scopePorClaveNumerica($query, $clave)
-    {
+    public function scopePorClaveNumerica(Builder $query, mixed $clave): Builder{
         return $query->where('clave_numerica', 'LIKE', "%{$clave}%");
     }
 

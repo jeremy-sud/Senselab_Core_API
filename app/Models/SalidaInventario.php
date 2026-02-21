@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
@@ -31,7 +32,7 @@ class SalidaInventario extends Model
     /**
      * Atributos que se pueden asignar de manera masiva.
      *
-     * @var array
+     * @var list<string>
      */
     protected $fillable = [
         'empresa_id',
@@ -53,7 +54,7 @@ class SalidaInventario extends Model
     /**
      * Atributos que deben ser convertidos a tipos nativos.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
         'fecha_salida' => 'datetime',
@@ -121,7 +122,7 @@ class SalidaInventario extends Model
      * Relación con los detalles de la salida.
      */
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<DetalleSalidaInventario, SalidaInventario>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<DetalleSalidaInventario, $this>
      */
     public function detalles(): \Illuminate\Database\Eloquent\Relations\HasMany
     {

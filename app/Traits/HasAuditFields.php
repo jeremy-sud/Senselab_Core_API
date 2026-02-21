@@ -104,8 +104,8 @@ trait HasAuditFields
      * Registra la actividad en la tabla de auditoría.
      *
      * @param string $accion
-     * @param array|null $datosAnteriores
-     * @param array|null $datosNuevos
+     * @param array<string, mixed>|null $datosAnteriores
+     * @param array<string, mixed>|null $datosNuevos
      * @return void
      */
     protected function registrarAuditoria(string $accion, ?array $datosAnteriores, ?array $datosNuevos): void
@@ -160,9 +160,9 @@ trait HasAuditFields
     /**
      * Obtiene el historial de cambios de este registro.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\AuditoriaActividad>
      */
-    public function historialAuditoria()
+    public function historialAuditoria(): \Illuminate\Database\Eloquent\Collection
     {
         return AuditoriaActividad::where('tabla', $this->getTable())
             ->where('registro_id', $this->getKey())

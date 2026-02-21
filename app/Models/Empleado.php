@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
@@ -22,7 +23,7 @@ class Empleado extends Model
     /**
      * Atributos asignables.
      *
-     * @var array<int,string>
+     * @var list<string>
      */
     protected $fillable = [
         'empresa_id',
@@ -45,7 +46,7 @@ class Empleado extends Model
     /**
      * Tipos de datos.
      *
-     * @var array<string,string>
+     * @var array<string, string>
      */
     protected $casts = [
         'fecha_nacimiento' => 'date',
@@ -60,7 +61,7 @@ class Empleado extends Model
     /**
      * Campos ocultos.
      *
-     * @var array<int,string>
+     * @var list<string>
      */
     protected $hidden = [
         'eliminado',
@@ -69,7 +70,7 @@ class Empleado extends Model
     /**
      * Atributos añadidos.
      *
-     * @var array<int,string>
+     * @var list<string>
      */
     protected $appends = [
         'nombre_completo',
@@ -78,7 +79,7 @@ class Empleado extends Model
     /**
      * Reglas de validación (uso referencial en controladores/servicios).
      *
-     * @var array<string,string>
+     * @var array<string, string>
      */
     public static $rules = [
         'empresa_id' => 'required|exists:empresas,id',
@@ -116,7 +117,7 @@ class Empleado extends Model
      *
      * @return string
      */
-    public function getNombreCompletoAttribute()
+    public function getNombreCompletoAttribute(): mixed
     {
         $parts = array_filter([$this->nombre, $this->primer_apellido, $this->segundo_apellido]);
         return trim(implode(' ', $parts));
@@ -130,25 +131,22 @@ class Empleado extends Model
         return $query->where('activo', true)->where('eliminado', false);
     }
 
-    public function scopePorCargo($query, $cargoId)
-    {
+    public function scopePorCargo(Builder $query, mixed $cargoId): Builder{
         return $query->where('cargo_id', $cargoId);
     }
 
-    public function scopePorEmpresa($query, $empresaId)
-    {
+    public function scopePorEmpresa(Builder $query, mixed $empresaId): Builder{
         return $query->where('empresa_id', $empresaId);
     }
 
-    public function scopeBuscarDocumento($query, $tipo, $numero)
-    {
+    public function scopeBuscarDocumento(Builder $query, mixed $tipo, mixed $numero): Builder{
         return $query->where('tipo_documento', $tipo)->where('numero_documento', $numero);
     }
 
     /**
      * Boot model: validaciones/normalizaciones antes de guardar.
      */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 

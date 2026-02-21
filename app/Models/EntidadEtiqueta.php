@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
@@ -32,6 +33,14 @@ class EntidadEtiqueta extends Model
         'eliminado',
     ];
 
+    /**
+
+
+     * @var array<string, mixed>
+
+
+     */
+
     public static $rules = [
         'etiqueta_id' => 'required|exists:etiquetas,id',
         'entidad_tipo' => 'required|string|max:50',
@@ -45,7 +54,7 @@ class EntidadEtiqueta extends Model
      * Modifica este arreglo si usas otros nombres de tabla.
      * Clave: valor almacenado en `entidad_tipo` => Clase del modelo
      *
-     * @var array<string,string>
+     * @var array<string, string>
      */
     protected static $entidadMap = [
         'clientes' => Cliente::class,
@@ -68,17 +77,20 @@ class EntidadEtiqueta extends Model
      * Relación polimórfica (resuelta por mapa o convención).
      * Si no podemos resolver la clase, devuelve null.
      */
-    public function entidad()
+    public function entidad(): mixed
     {
         $tipo = $this->entidad_tipo;
 
         if (isset(self::$entidadMap[$tipo])) {
-            return $this->belongsTo(self::$entidadMap[$tipo], 'entidad_id');
+            /** @var class-string<\Illuminate\Database\Eloquent\Model> $class */
+            $class = self::$entidadMap[$tipo];
+            return $this->belongsTo($class, 'entidad_id');
         }
 
         // Intentar convertir el nombre de tabla a clase en App\Models (singular, Studly)
         $posible = '\\App\\Models\\' . Str::studly(Str::singular($tipo));
-        if (class_exists($posible)) {
+        if (class_exists($posible) && is_subclass_of($posible, \Illuminate\Database\Eloquent\Model::class)) {
+            /** @var class-string<\Illuminate\Database\Eloquent\Model> $posible */
             return $this->belongsTo($posible, 'entidad_id');
         }
 
@@ -91,17 +103,15 @@ class EntidadEtiqueta extends Model
         return $query->where('activo', true)->where('eliminado', false);
     }
 
-    public function scopePorEtiqueta($query, $etiquetaId)
-    {
+    public function scopePorEtiqueta(Builder $query, mixed $etiquetaId): Builder{
         return $query->where('etiqueta_id', $etiquetaId);
     }
 
-    public function scopePorEntidad($query, $tipo, $id)
-    {
+    public function scopePorEntidad(Builder $query, mixed $tipo, mixed $id): Builder{
         return $query->where('entidad_tipo', $tipo)->where('entidad_id', $id);
     }
 
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 

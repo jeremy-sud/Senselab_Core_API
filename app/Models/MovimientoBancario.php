@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
+/** @use HasFactory<\Database\Factories\MovimientoBancarioFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class MovimientoBancario extends Model
 {
+    /** @use HasFactory<\Database\Factories\MovimientoBancarioFactory> */
     use HasFactory, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     protected $table = 'movimientos_bancarios';
@@ -85,34 +88,32 @@ class MovimientoBancario extends Model
         return $query->where('conciliado', false);
     }
 
-    public function scopePorTipo($query, $tipo)
-    {
+    public function scopePorTipo(Builder $query, mixed $tipo): Builder{
         return $query->where('tipo_movimiento', $tipo);
     }
 
-    public function scopeEntreFechas($query, $desde, $hasta)
-    {
+    public function scopeEntreFechas(Builder $query, mixed $desde, mixed $hasta): Builder{
         return $query->whereBetween('fecha_movimiento', [$desde, $hasta]);
     }
 
     /* --------------------- Métodos --------------------- */
 
-    public function esDeposito()
+    public function esDeposito(): mixed
     {
         return in_array($this->tipo_movimiento, ['deposito', 'transferencia_entrada', 'interes']);
     }
 
-    public function esRetiro()
+    public function esRetiro(): mixed
     {
         return in_array($this->tipo_movimiento, ['retiro', 'transferencia_salida', 'comision']);
     }
 
-    public function estaConciliado()
+    public function estaConciliado(): mixed
     {
         return $this->conciliado === true;
     }
 
-    public function conciliar()
+    public function conciliar(): void
     {
         $this->update([
             'conciliado' => true,

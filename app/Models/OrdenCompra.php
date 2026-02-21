@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+/** @use HasFactory<\Database\Factories\OrdenCompraFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
@@ -20,6 +22,7 @@ use Illuminate\Support\Str;
  */
 class OrdenCompra extends Model
 {
+    /** @use HasFactory<\Database\Factories\OrdenCompraFactory> */
     use HasFactory, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     protected $table = 'ordenes_compra';
@@ -59,6 +62,11 @@ class OrdenCompra extends Model
     ];
 
     // Reglas de validación básicas; ajustar si el esquema real difiere
+    /**
+
+     * @var array<string, mixed>
+
+     */
     public static $rules = [
         'empresa_id' => 'required|exists:empresas,id',
         'proveedor_id' => 'required|exists:proveedores,id',
@@ -77,13 +85,13 @@ class OrdenCompra extends Model
         return $this->belongsTo(Proveedor::class);
     }
 
-    public function detalles()
+    public function detalles(): mixed
     {
         // Relación con detalle de orden de compra
         return $this->hasMany(DetalleOrdenCompra::class, 'orden_compra_id');
     }
 
-    public function pagos()
+    public function pagos(): mixed
     {
         // Aquí asumimos una relación simple hasMany; si en el proyecto hay modelos especializados
         // para pagos a cuentas por pagar, ajustar a la relación concreta (p.ej. PagoCuentaPorPagar)
@@ -115,28 +123,24 @@ class OrdenCompra extends Model
     }
 
     /* ------------------------- Scopes útiles ------------------------- */
-    public function scopeActivas($q)
-    {
+    public function scopeActivas(mixed $q): Builder{
         return $q->where('activo', true)->where('eliminado', false);
     }
 
-    public function scopePorProveedor($q, $proveedorId)
-    {
+    public function scopePorProveedor(mixed $q, mixed $proveedorId): Builder{
         return $q->where('proveedor_id', $proveedorId);
     }
 
-    public function scopePorEmpresa($q, $empresaId)
-    {
+    public function scopePorEmpresa(mixed $q, mixed $empresaId): Builder{
         return $q->where('empresa_id', $empresaId);
     }
 
-    public function scopePendientes($q)
-    {
+    public function scopePendientes(mixed $q): Builder{
         return $q->whereIn('estado', ['pendiente', 'parcial']);
     }
 
     /* ------------------------- Boot / eventos ------------------------- */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 
@@ -165,7 +169,7 @@ class OrdenCompra extends Model
     }
 
     /* ------------------------- Helpers ------------------------- */
-    public function calcularSaldoPendiente()
+    public function calcularSaldoPendiente(): mixed
     {
         // Método auxiliar para calcular saldo pendiente (total_orden - suma(pagos))
         $pagado = 0;

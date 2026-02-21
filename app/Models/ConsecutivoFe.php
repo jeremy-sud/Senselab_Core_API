@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\BelongsToTenant;
+/** @use HasFactory<\Database\Factories\ConsecutivoFeFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ConsecutivoFe extends Model
 {
+    /** @use HasFactory<\Database\Factories\ConsecutivoFeFactory> */
     use HasFactory, BelongsToTenant;
 
     /**
@@ -99,8 +102,7 @@ class ConsecutivoFe extends Model
     /**
      * Scope para filtrar por tipo de comprobante.
      */
-    public function scopePorTipoComprobante($query, $tipo)
-    {
+    public function scopePorTipoComprobante(Builder $query, mixed $tipo): Builder{
         return $query->where('tipo_comprobante', $tipo);
     }
 
@@ -135,7 +137,7 @@ class ConsecutivoFe extends Model
     /**
      * Boot the model.
      */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 

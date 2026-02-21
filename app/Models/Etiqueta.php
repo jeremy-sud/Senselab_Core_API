@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
@@ -33,6 +34,14 @@ class Etiqueta extends Model
         'eliminado',
     ];
 
+    /**
+
+
+     * @var array<string, mixed>
+
+
+     */
+
     public static $rules = [
         'empresa_id' => 'required|exists:empresas,id',
         'nombre' => 'required|string|max:100',
@@ -58,12 +67,11 @@ class Etiqueta extends Model
         return $query->where('activo', true)->where('eliminado', false);
     }
 
-    public function scopePorNombre($query, $nombre)
-    {
+    public function scopePorNombre(Builder $query, mixed $nombre): Builder{
         return $query->where('nombre', 'like', "%{$nombre}%");
     }
 
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 

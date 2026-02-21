@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+/** @use HasFactory<\Database\Factories\LogAccesoSistemaFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class LogAccesoSistema extends Model
 {
+    /** @use HasFactory<\Database\Factories\LogAccesoSistemaFactory> */
     use HasFactory;
 
     protected $table = 'logs_acceso_sistema';
@@ -66,34 +69,31 @@ class LogAccesoSistema extends Model
         return $query->where('tipo_evento', 'logout');
     }
 
-    public function scopePorUsuario($query, $usuarioId)
-    {
+    public function scopePorUsuario(Builder $query, mixed $usuarioId): Builder{
         return $query->where('usuario_id', $usuarioId);
     }
 
-    public function scopePorIP($query, $ip)
-    {
+    public function scopePorIP(Builder $query, mixed $ip): Builder{
         return $query->where('ip_address', $ip);
     }
 
-    public function scopeUltimos($query, $dias = 30)
-    {
+    public function scopeUltimos(Builder $query, mixed $dias = 30): Builder{
         return $query->where('creado_en', '>=', now()->subDays($dias));
     }
 
     /* --------------------- Métodos --------------------- */
 
-    public function fueExitoso()
+    public function fueExitoso(): mixed
     {
         return $this->tipo_evento === 'login_exitoso';
     }
 
-    public function fueFallido()
+    public function fueFallido(): mixed
     {
         return $this->tipo_evento === 'login_fallido';
     }
 
-    public function getDuracionFormateada()
+    public function getDuracionFormateada(): mixed
     {
         if (!$this->duracion_sesion) {
             return null;
@@ -109,7 +109,7 @@ class LogAccesoSistema extends Model
     /**
      * Registrar un login exitoso
      */
-    public static function registrarLoginExitoso($usuario, $request)
+    public static function registrarLoginExitoso(mixed $usuario, mixed $request): mixed
     {
         return self::create([
             'usuario_id' => $usuario->id,
@@ -125,7 +125,7 @@ class LogAccesoSistema extends Model
     /**
      * Registrar un login fallido
      */
-    public static function registrarLoginFallido($email, $razon, $request)
+    public static function registrarLoginFallido(mixed $email, mixed $razon, mixed $request): mixed
     {
         return self::create([
             'email' => $email,

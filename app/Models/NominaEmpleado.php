@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+/** @use HasFactory<\Database\Factories\NominaEmpleadoFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +13,7 @@ use App\Traits\HasActiveScope;
 
 class NominaEmpleado extends Model
 {
+    /** @use HasFactory<\Database\Factories\NominaEmpleadoFactory> */
     use HasFactory, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     protected $table = 'nomina_empleados';
@@ -68,17 +71,15 @@ class NominaEmpleado extends Model
         return $query->where('activo', true)->where('eliminado', false);
     }
 
-    public function scopePorPeriodo($query, $periodoId)
-    {
+    public function scopePorPeriodo(Builder $query, mixed $periodoId): Builder{
         return $query->where('periodo_nomina_id', $periodoId);
     }
 
-    public function scopePorEmpleado($query, $empleadoId)
-    {
+    public function scopePorEmpleado(Builder $query, mixed $empleadoId): Builder{
         return $query->where('empleado_id', $empleadoId);
     }
 
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 

@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
+/** @use HasFactory<\Database\Factories\CuentaContableFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CuentaContable extends Model
 {
+    /** @use HasFactory<\Database\Factories\CuentaContableFactory> */
     use HasFactory, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     /**
@@ -90,7 +93,7 @@ class CuentaContable extends Model
     /**
      * Alias: subcuentas (para compatibilidad con controladores)
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\CuentaContable>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\CuentaContable, $this>
      */
     public function subcuentas(): HasMany
     {
@@ -101,7 +104,7 @@ class CuentaContable extends Model
      * Relación con detalles de asientos asociados a esta cuenta.
      * Útil para validar existencia de movimientos.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\DetalleAsiento>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\DetalleAsiento, $this>
      */
     public function asientos(): HasMany
     {
@@ -120,24 +123,21 @@ class CuentaContable extends Model
     /**
      * Scope para buscar por código.
      */
-    public function scopePorCodigo($query, $codigo)
-    {
+    public function scopePorCodigo(Builder $query, mixed $codigo): Builder{
         return $query->where('codigo', 'LIKE', "%{$codigo}%");
     }
 
     /**
      * Scope para buscar por nombre.
      */
-    public function scopePorNombre($query, $nombre)
-    {
+    public function scopePorNombre(Builder $query, mixed $nombre): Builder{
         return $query->where('nombre', 'LIKE', "%{$nombre}%");
     }
 
     /**
      * Scope para filtrar por tipo de cuenta.
      */
-    public function scopePorTipoCuenta($query, $tipoId)
-    {
+    public function scopePorTipoCuenta(Builder $query, mixed $tipoId): Builder{
         return $query->where('tipo_cuenta_id', $tipoId);
     }
 
@@ -208,7 +208,7 @@ class CuentaContable extends Model
     /**
      * Boot the model.
      */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 
@@ -236,7 +236,7 @@ class CuentaContable extends Model
     /**
      * Actualiza el saldo de la cuenta.
      */
-    public function actualizarSaldo(float $monto)
+    public function actualizarSaldo(float $monto): void
     {
         if (!$this->permite_movimientos) {
             throw new \Exception('Esta cuenta no permite movimientos.');

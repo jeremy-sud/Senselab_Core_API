@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
+/** @use HasFactory<\Database\Factories\AlmacenFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Almacen extends Model
 {
+    /** @use HasFactory<\Database\Factories\AlmacenFactory> */
     use HasFactory, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     /**
@@ -117,15 +120,14 @@ class Almacen extends Model
     /**
      * Scope para filtrar por sucursal.
      */
-    public function scopeDeSucursal($query, $sucursalId)
-    {
+    public function scopeDeSucursal(Builder $query, mixed $sucursalId): Builder{
         return $query->where('sucursal_id', $sucursalId);
     }
 
     /**
      * Obtiene el stock actual de un producto en este almacén desde inventario_productos.
      */
-    public function getStockProducto($productoId): float
+    public function getStockProducto(mixed $productoId): float
     {
         $inventario = $this->inventariosProductos()
             ->where('producto_id', $productoId)

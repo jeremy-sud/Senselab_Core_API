@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\BelongsToTenant;
+/** @use HasFactory<\Database\Factories\ConfiguracionApiFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Crypt;
 
 class ConfiguracionApi extends Model
 {
+    /** @use HasFactory<\Database\Factories\ConfiguracionApiFactory> */
     use HasFactory, BelongsToTenant;
 
     protected $table = 'configuraciones_api';
@@ -53,23 +56,21 @@ class ConfiguracionApi extends Model
     /**
      * Scope para filtrar por categoría
      */
-    public function scopeCategoria($query, $categoria)
-    {
+    public function scopeCategoria(Builder $query, mixed $categoria): Builder{
         return $query->where('categoria', $categoria);
     }
 
     /**
      * Scope para filtrar por tipo
      */
-    public function scopeTipo($query, $tipo)
-    {
+    public function scopeTipo(Builder $query, mixed $tipo): Builder{
         return $query->where('tipo', $tipo);
     }
 
     /**
      * Obtener el valor desencriptado si está encriptado
      */
-    public function getValorDesencriptadoAttribute()
+    public function getValorDesencriptadoAttribute(): mixed
     {
         if ($this->encriptado) {
             try {
@@ -85,7 +86,7 @@ class ConfiguracionApi extends Model
     /**
      * Obtener el valor parseado según su tipo
      */
-    public function getValorParseadoAttribute()
+    public function getValorParseadoAttribute(): mixed
     {
         $valor = $this->valor_desencriptado;
 
@@ -104,7 +105,7 @@ class ConfiguracionApi extends Model
     /**
      * Establecer el valor encriptándolo si es necesario
      */
-    public function setValorAttribute($value)
+    public function setValorAttribute(mixed $value): void
     {
         if ($this->encriptado) {
             $this->attributes['valor'] = Crypt::encryptString($value);
@@ -116,7 +117,7 @@ class ConfiguracionApi extends Model
     /**
      * Obtener una configuración específica
      */
-    public static function obtener($clave, $empresaId = null, $default = null)
+    public static function obtener(mixed $clave, mixed $empresaId = null, mixed $default = null): mixed
     {
         $empresaId = $empresaId ?? auth()->user()->empresa_id ?? null;
 
@@ -131,7 +132,7 @@ class ConfiguracionApi extends Model
     /**
      * Establecer una configuración
      */
-    public static function establecer($clave, $valor, $empresaId = null, $tipo = 'string', $categoria = 'general', $encriptado = false)
+    public static function establecer(mixed $clave, mixed $valor, mixed $empresaId = null, mixed $tipo = 'string', mixed $categoria = 'general', mixed $encriptado = false): mixed
     {
         $empresaId = $empresaId ?? auth()->user()->empresa_id ?? null;
 

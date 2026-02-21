@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Modelo para comprobantes electrónicos de Hacienda
@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string|null $numero_secuencia Número de secuencia asignado por Hacienda
  * @property string|null $fecha_respuesta Fecha y hora de respuesta de Hacienda
  * @property string|null $mensaje_error Error si lo hay
- * @property array|null $metadatos Información adicional (intentos, duraciones, etc.)
+ * @property array<string, mixed>|null $metadatos Información adicional (intentos, duraciones, etc.)
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  *
@@ -32,7 +32,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class HaciendaComprobante extends Model
 {
-    use HasFactory;
     use BelongsToTenant;
 
     protected $table = 'hacienda_comprobantes';
@@ -79,7 +78,7 @@ class HaciendaComprobante extends Model
      */
     public function comprobante(): BelongsTo
     {
-        return $this->belongsTo(Comprobante::class, 'comprobante_id');
+        return $this->belongsTo(Venta::class, 'comprobante_id');
     }
 
     /**
@@ -95,8 +94,7 @@ class HaciendaComprobante extends Model
     /**
      * Scope: Filtrar por estado
      */
-    public function scopeByEstado($query, string $estado)
-    {
+    public function scopeByEstado(Builder $query, string $estado): Builder{
         return $query->where('estado', $estado);
     }
 
@@ -109,80 +107,70 @@ class HaciendaComprobante extends Model
     /**
      * Scope: Filtrar por tipo de comprobante
      */
-    public function scopeByTipo($query, string $tipo)
-    {
+    public function scopeByTipo(Builder $query, string $tipo): Builder{
         return $query->where('tipo_comprobante', $tipo);
     }
 
     /**
      * Scope: Filtrar por empresa
      */
-    public function scopeByEmpresa($query, int $empresaId)
-    {
+    public function scopeByEmpresa(Builder $query, int $empresaId): Builder{
         return $query->where('empresa_id', $empresaId);
     }
 
     /**
      * Scope: Filtrar por clave
      */
-    public function scopeByClave($query, string $clave)
-    {
+    public function scopeByClave(Builder $query, string $clave): Builder{
         return $query->where('clave', $clave);
     }
 
     /**
      * Scope: Comprobantes pendientes
      */
-    public function scopePending($query)
-    {
+    public function scopePending(Builder $query): Builder{
         return $query->where('estado', 'pending');
     }
 
     /**
      * Scope: Comprobantes firmados
      */
-    public function scopeSigned($query)
-    {
+    public function scopeSigned(Builder $query): Builder{
         return $query->where('estado', 'signed');
     }
 
     /**
      * Scope: Comprobantes enviados
      */
-    public function scopeSent($query)
-    {
+    public function scopeSent(Builder $query): Builder{
         return $query->where('estado', 'sent');
     }
 
     /**
      * Scope: Comprobantes aceptados
      */
-    public function scopeAccepted($query)
-    {
+    public function scopeAccepted(Builder $query): Builder{
         return $query->where('estado', 'accepted');
     }
 
     /**
      * Scope: Comprobantes rechazados
      */
-    public function scopeRejected($query)
-    {
+    public function scopeRejected(Builder $query): Builder{
         return $query->where('estado', 'rejected');
     }
 
     /**
      * Scope: Ordenar por fecha de creación descendente (más recientes primero)
      */
-    public function scopeLatest($query)
-    {
+    public function scopeLatest(Builder $query): Builder{
         return $query->orderBy('created_at', 'desc');
     }
 
     /**
      * Scope: Comprobantes de los últimos N días
      */
-    public function scopeLastDays($query, int $days)
-    {
+    public function scopeLastDays(Builder $query, int $days): Builder{
         return $query->where('created_at', '>=', now()->subDays($days));
     }
 
@@ -226,7 +214,7 @@ class HaciendaComprobante extends Model
     /**
      * Marcar como aceptado
      */
-    public function markAsAccepted(string $numeroSecuencia = null): bool
+    public function markAsAccepted(?string $numeroSecuencia = null): bool
     {
         if ($numeroSecuencia) {
             $this->numero_secuencia = $numeroSecuencia;

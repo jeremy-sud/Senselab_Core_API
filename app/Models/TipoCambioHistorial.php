@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class TipoCambioHistorial extends Model
@@ -23,7 +24,7 @@ class TipoCambioHistorial extends Model
     /**
      * Atributos que se pueden asignar de manera masiva.
      *
-     * @var array
+     * @var list<string>
      */
     protected $fillable = [
         'fecha',
@@ -37,7 +38,7 @@ class TipoCambioHistorial extends Model
     /**
      * Atributos que deben ser convertidos a tipos nativos.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
         'fecha' => 'date',
@@ -62,16 +63,14 @@ class TipoCambioHistorial extends Model
     /**
      * Scope para filtrar por moneda origen y destino.
      */
-    public function scopePorMonedas($query, $origen, $destino)
-    {
+    public function scopePorMonedas(Builder $query, mixed $origen, mixed $destino): Builder{
         return $query->where('moneda_origen', $origen)->where('moneda_destino', $destino);
     }
 
     /**
      * Scope para filtrar por rango de fechas.
      */
-    public function scopePorRangoFechas($query, $inicio, $fin)
-    {
+    public function scopePorRangoFechas(Builder $query, mixed $inicio, mixed $fin): Builder{
         return $query->whereBetween('fecha', [$inicio, $fin]);
     }
 }

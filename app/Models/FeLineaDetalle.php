@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+/** @use HasFactory<\Database\Factories\FeLineaDetalleFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class FeLineaDetalle extends Model
 {
+    /** @use HasFactory<\Database\Factories\FeLineaDetalleFactory> */
     use HasFactory;
 
     /**

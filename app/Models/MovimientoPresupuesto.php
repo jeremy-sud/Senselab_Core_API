@@ -23,7 +23,7 @@ class MovimientoPresupuesto extends Model
     /**
      * Los atributos que son asignables masivamente.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'empresa_id',

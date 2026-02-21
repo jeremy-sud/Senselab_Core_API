@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
+/** @use HasFactory<\Database\Factories\EntradaInventarioFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class EntradaInventario extends Model
 {
+    /** @use HasFactory<\Database\Factories\EntradaInventarioFactory> */
     use HasFactory, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     /**
@@ -84,7 +87,7 @@ class EntradaInventario extends Model
     }
 
     /**
-     * @return HasMany<DetalleEntradaInventario, EntradaInventario>
+     * @return HasMany<DetalleEntradaInventario, $this>
      */
     public function detalles(): HasMany
     {
@@ -104,15 +107,14 @@ class EntradaInventario extends Model
         return $query->where('estado', 'Pendiente');
     }
 
-    public function scopeFechaBetween($query, $start, $end)
-    {
+    public function scopeFechaBetween(Builder $query, mixed $start, mixed $end): Builder{
         return $query->whereBetween('fecha_entrada', [$start, $end]);
     }
 
     /**
      * Boot: calcular monto_total a partir de detalles antes de guardar
      */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 

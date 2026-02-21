@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
+/** @use HasFactory<\Database\Factories\CodigoActividadEconomicaFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CodigoActividadEconomica extends Model
 {
+    /** @use HasFactory<\Database\Factories\CodigoActividadEconomicaFactory> */
     use HasFactory, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     protected $table = 'codigos_actividad_economica';
@@ -47,13 +50,11 @@ class CodigoActividadEconomica extends Model
         return $query->where('activo', true)->where('eliminado', false);
     }
 
-    public function scopePorCategoria($query, $categoria)
-    {
+    public function scopePorCategoria(Builder $query, mixed $categoria): Builder{
         return $query->where('categoria_principal', $categoria);
     }
 
-    public function scopeBuscar($query, $termino)
-    {
+    public function scopeBuscar(Builder $query, mixed $termino): Builder{
         return $query->where(function ($q) use ($termino) {
             $q->where('codigo', 'like', "%{$termino}%")
               ->orWhere('descripcion', 'like', "%{$termino}%");

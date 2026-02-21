@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\BelongsToTenant;
+/** @use HasFactory<\Database\Factories\ConfiguracionFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Configuracion extends Model
 {
+    /** @use HasFactory<\Database\Factories\ConfiguracionFactory> */
     use HasFactory, BelongsToTenant;
 
     /**
@@ -76,23 +79,21 @@ class Configuracion extends Model
     /**
      * Scope para buscar por clave.
      */
-    public function scopePorClave($query, $clave)
-    {
+    public function scopePorClave(Builder $query, mixed $clave): Builder{
         return $query->where('clave', $clave);
     }
 
     /**
      * Scope para buscar por tipo de dato.
      */
-    public function scopePorTipoDato($query, $tipo)
-    {
+    public function scopePorTipoDato(Builder $query, mixed $tipo): Builder{
         return $query->where('tipo_dato', $tipo);
     }
 
     /**
      * Obtiene el valor convertido al tipo de dato correspondiente.
      */
-    public function getValorConvertidoAttribute()
+    public function getValorConvertidoAttribute(): mixed
     {
         return match($this->tipo_dato) {
             self::TIPO_STRING => (string) $this->valor,
@@ -108,7 +109,7 @@ class Configuracion extends Model
     /**
      * Boot the model.
      */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 
@@ -159,7 +160,7 @@ class Configuracion extends Model
     /**
      * Valida si una cadena es un JSON válido.
      */
-    protected static function isValidJson($string): bool
+    protected static function isValidJson(mixed $string): bool
     {
         if (!is_string($string)) {
             return false;
@@ -171,7 +172,7 @@ class Configuracion extends Model
     /**
      * Método estático para obtener una configuración por clave.
      */
-    public static function obtenerPorClave(int $empresaId, string $clave, $default = null)
+    public static function obtenerPorClave(int $empresaId, string $clave, mixed $default = null): mixed
     {
         $config = static::where('empresa_id', $empresaId)
             ->where('clave', $clave)

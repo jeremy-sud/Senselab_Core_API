@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
+/** @use HasFactory<\Database\Factories\CuentaBancariaFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CuentaBancaria extends Model
 {
+    /** @use HasFactory<\Database\Factories\CuentaBancariaFactory> */
     use HasFactory, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     protected $table = 'cuentas_bancarias';
@@ -81,8 +84,7 @@ class CuentaBancaria extends Model
         return $query->where('activa', true)->where('eliminado', false);
     }
 
-    public function scopePorMoneda($query, $moneda)
-    {
+    public function scopePorMoneda(Builder $query, mixed $moneda): Builder{
         return $query->where('moneda', $moneda);
     }
 
@@ -93,7 +95,7 @@ class CuentaBancaria extends Model
 
     /* --------------------- Métodos --------------------- */
 
-    public function getNumeroCuentaEnmascarado()
+    public function getNumeroCuentaEnmascarado(): mixed
     {
         $numero = $this->numero_cuenta;
         $longitud = strlen($numero);
@@ -103,12 +105,12 @@ class CuentaBancaria extends Model
         return $numero;
     }
 
-    public function actualizarSaldo($monto)
+    public function actualizarSaldo(mixed $monto): void
     {
         $this->increment('saldo_actual', $monto);
     }
 
-    public function estaActiva()
+    public function estaActiva(): mixed
     {
         return $this->activa === true;
     }

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Traits\HasCustomSoftDeletes;
@@ -11,7 +11,6 @@ use App\Traits\HasActiveScope;
 
 class Cabys extends Model
 {
-    use HasFactory, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     /**
      * La tabla asociada al modelo.
@@ -57,24 +56,21 @@ class Cabys extends Model
     /**
      * Scope para buscar por código CAByS.
      */
-    public function scopePorCodigo($query, $codigo)
-    {
+    public function scopePorCodigo(Builder $query, mixed $codigo): Builder{
         return $query->where('codigo', 'LIKE', "%{$codigo}%");
     }
 
     /**
      * Scope para buscar por descripción.
      */
-    public function scopePorDescripcion($query, $descripcion)
-    {
+    public function scopePorDescripcion(Builder $query, mixed $descripcion): Builder{
         return $query->where('descripcion', 'LIKE', "%{$descripcion}%");
     }
 
     /**
      * Scope para filtrar por tasa de IVA.
      */
-    public function scopePorTasaIva($query, $tasa)
-    {
+    public function scopePorTasaIva(Builder $query, mixed $tasa): Builder{
         return $query->where('impuesto_iva_predeterminado', $tasa);
     }
 
@@ -122,7 +118,7 @@ class Cabys extends Model
     /**
      * Boot the model.
      */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 

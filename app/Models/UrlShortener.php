@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Traits\BelongsToTenant;
@@ -36,7 +37,7 @@ class UrlShortener extends Model
     /**
      * Los atributos que son asignables en masa.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'empresa_id',

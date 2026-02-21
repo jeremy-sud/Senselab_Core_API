@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
 use App\Traits\HasActiveScope;
+/** @use HasFactory<\Database\Factories\PlanillaCcssFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class PlanillaCcss extends Model
 {
+    /** @use HasFactory<\Database\Factories\PlanillaCcssFactory> */
     use HasFactory, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     protected $table = 'planillas_ccss';
@@ -89,29 +92,28 @@ class PlanillaCcss extends Model
         return $query->where('estado', 'pagada');
     }
 
-    public function scopePorPeriodo($query, $periodo)
-    {
+    public function scopePorPeriodo(Builder $query, mixed $periodo): Builder{
         return $query->where('periodo', $periodo);
     }
 
     /* --------------------- Métodos --------------------- */
 
-    public function esBorrador()
+    public function esBorrador(): mixed
     {
         return $this->estado === 'borrador';
     }
 
-    public function fuePagada()
+    public function fuePagada(): mixed
     {
         return $this->estado === 'pagada';
     }
 
-    public function calcularTotalCuotas()
+    public function calcularTotalCuotas(): mixed
     {
         return $this->total_cuota_obrera + $this->total_cuota_patronal;
     }
 
-    public function marcarComoPagada()
+    public function marcarComoPagada(): void
     {
         $this->update([
             'estado' => 'pagada',

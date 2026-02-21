@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Carbon\Carbon;
@@ -62,13 +63,13 @@ class AuditLog extends Model
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Usuario::class);
     }
 
     /**
      * Obtener la entidad auditada (polymorphic)
      */
-    public function auditable()
+    public function auditable(): mixed
     {
         return $this->morphTo();
     }
@@ -80,24 +81,21 @@ class AuditLog extends Model
     /**
      * Scope: Registros recientes
      */
-    public function scopeRecent($query)
-    {
+    public function scopeRecent(Builder $query): Builder{
         return $query->orderBy('created_at', 'desc');
     }
 
     /**
      * Scope: Solo cambios de datos sensibles
      */
-    public function scopeSensitiveOnly($query)
-    {
+    public function scopeSensitiveOnly(Builder $query): Builder{
         return $query->where('involves_sensitive_data', true);
     }
 
     /**
      * Scope: Registros vencidos para retención
      */
-    public function scopeExpiredRetention($query)
-    {
+    public function scopeExpiredRetention(Builder $query): Builder{
         return $query->where('retention_expires_at', '<=', Carbon::now())
                      ->where('is_archived', false);
     }
@@ -105,16 +103,14 @@ class AuditLog extends Model
     /**
      * Scope: Por usuario
      */
-    public function scopeByUser($query, $userId)
-    {
+    public function scopeByUser(Builder $query, mixed $userId): Builder{
         return $query->where('user_id', $userId);
     }
 
     /**
      * Scope: Por modelo
      */
-    public function scopeForModel($query, string $modelType, ?int $modelId = null)
-    {
+    public function scopeForModel(Builder $query, string $modelType, ?int $modelId = null): Builder{
         $query->where('auditable_type', $modelType);
         
         if ($modelId) {
@@ -127,24 +123,21 @@ class AuditLog extends Model
     /**
      * Scope: Por acción
      */
-    public function scopeByAction($query, string $action)
-    {
+    public function scopeByAction(Builder $query, string $action): Builder{
         return $query->where('action', $action);
     }
 
     /**
      * Scope: Rango de fechas
      */
-    public function scopeDateRange($query, Carbon $from, Carbon $to)
-    {
+    public function scopeDateRange(Builder $query, Carbon $from, Carbon $to): Builder{
         return $query->whereBetween('created_at', [$from, $to]);
     }
 
     /**
      * Scope: Por dirección IP
      */
-    public function scopeByIp($query, string $ip)
-    {
+    public function scopeByIp(Builder $query, string $ip): Builder{
         return $query->where('ip_address', $ip);
     }
 
@@ -154,6 +147,15 @@ class AuditLog extends Model
 
     /**
      * Obtener cambios legibles antes/después
+     */
+    /**
+     * @return array<string, mixed>
+     */
+    /**
+     * @return array<string, mixed>
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getReadableChanges(): array
     {
@@ -166,6 +168,12 @@ class AuditLog extends Model
 
     /**
      * Obtener solo campos que cambiaron
+     */
+    /**
+     * @return array<string, mixed>
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getChangedFields(): array
     {
@@ -268,13 +276,19 @@ class AuditLog extends Model
     /**
      * Obtener registros que expiraron y necesitan archivarse
      */
-    public static function getExpiredRecords()
+    public static function getExpiredRecords(): mixed
     {
         return static::expiredRetention()->get();
     }
 
     /**
      * Formatear para respuesta de API
+     */
+    /**
+     * @return array<string, mixed>
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function toApiResponse(): array
     {
@@ -298,7 +312,7 @@ class AuditLog extends Model
             ],
             'sensitive' => $this->involves_sensitive_data,
             'reason' => $this->change_reason,
-            'timestamp' => $this->created_at->toIso8601String(),
+            'timestamp' => $this->created_at?->toIso8601String(),
         ];
     }
 }

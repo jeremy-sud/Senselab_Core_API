@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
@@ -37,6 +38,14 @@ class FormaPago extends Model
         'eliminado',
     ];
 
+    /**
+
+
+     * @var array<string, mixed>
+
+
+     */
+
     public static $rules = [
         'codigo_dgt' => 'required|string|max:10|unique:formas_pago,codigo_dgt',
         'nombre' => 'required|string|max:255|unique:formas_pago,nombre',
@@ -51,8 +60,7 @@ class FormaPago extends Model
         return $query->where('activo', true)->where('eliminado', false);
     }
 
-    public function scopePorCodigo($query, $codigo)
-    {
+    public function scopePorCodigo(Builder $query, mixed $codigo): Builder{
         return $query->where('codigo_dgt', $codigo);
     }
 
@@ -62,7 +70,7 @@ class FormaPago extends Model
         return $this->hasMany(Pago::class, 'forma_pago_id');
     }
 
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 
