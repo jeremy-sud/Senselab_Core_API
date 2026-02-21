@@ -252,6 +252,9 @@ class VentaService
 
     /**
      * Validar que todos los productos existen y pertenecen a empresa
+     *
+     * @param array<int, int> $productoIds
+     * @return Collection<int, Producto>
      */
     private function validarProductos(array $productoIds, int $empresaId): Collection
     {
@@ -275,6 +278,8 @@ class VentaService
 
     /**
      * Validar stock disponible en almacén
+     *
+     * @param array<int, array<string, mixed>> $detalles
      */
     private function validarStockDisponible(int $almacenId, array $detalles): void
     {
@@ -294,6 +299,8 @@ class VentaService
     /**
      * Procesar detalles de venta y descontar stock
      *
+     * @param array<int, array<string, mixed>> $detalles
+     * @param Collection<int, Producto> $productos
      * @return array{subtotal: float, descuentos: float, impuestos: float}
      */
     private function procesarDetalles(Venta $venta, array $detalles, Collection $productos, ?Almacen $almacen): array

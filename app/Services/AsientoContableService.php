@@ -120,7 +120,7 @@ class AsientoContableService
             }
 
             $asiento->update($data);
-            return $asiento->fresh(['detalles.cuentaContable', 'empresa']);
+            return $asiento->fresh(['detalles.cuentaContable', 'empresa']) ?? $asiento;
         });
     }
 

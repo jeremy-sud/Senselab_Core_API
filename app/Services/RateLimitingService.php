@@ -69,7 +69,7 @@ class RateLimitingService
         // Identificador único por el que se aplicará el rate limit.
         // Preferimos user_id cuando exista para limitar por cuenta;
         // en caso contrario usamos la IP del cliente.
-        return $request->user()?->id ?? $request->ip();
+        return $request->user()->id ?? $request->ip() ?? 'unknown';
     }
 
     /**
@@ -136,7 +136,7 @@ class RateLimitingService
         }
 
         $remaining = $expiresAt - time();
-        return max(0, $remaining);
+        return (int) max(0, $remaining);
     }
 
     /**

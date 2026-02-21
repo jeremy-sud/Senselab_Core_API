@@ -95,6 +95,9 @@ class XmlComprobanteBuilder
 
         // Generar XML string
         $xml = $this->doc->saveXML();
+        if ($xml === false) {
+            throw new \RuntimeException('Error al generar XML');
+        }
 
         Log::info('XML v4.4 generado exitosamente', [
             'tipo_documento' => $comprobante->tipo_documento,
@@ -609,7 +612,7 @@ class XmlComprobanteBuilder
     /**
      * Formatear decimal para XML (máximo 5 decimales)
      */
-    protected function formatearDecimal($valor): string
+    protected function formatearDecimal(float|string|int|null $valor): string
     {
         return number_format((float)$valor, 5, '.', '');
     }

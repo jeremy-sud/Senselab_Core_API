@@ -35,6 +35,7 @@ class AnomalyDetectionService
 
     /**
      * Umbrales de detección
+     * @var array<string, float|int>
      */
     protected array $thresholds = [
         'z_score' => 3.0,           // Desviaciones estándar para considerar anomalía
@@ -64,6 +65,8 @@ class AnomalyDetectionService
 
     /**
      * Análisis completo de anomalías
+     *
+     * @return array<string, mixed>
      */
     public function runFullAnalysis(int $days = 30): array
     {
@@ -126,6 +129,8 @@ class AnomalyDetectionService
 
     /**
      * Detectar anomalías en ventas (montos inusuales)
+     *
+     * @return array<string, mixed>
      */
     public function detectSalesAnomalies(Carbon $startDate): array
     {
@@ -187,6 +192,8 @@ class AnomalyDetectionService
 
     /**
      * Detectar descuentos excesivos
+     *
+     * @return array<string, mixed>
      */
     public function detectDiscountAnomalies(Carbon $startDate): array
     {
@@ -248,6 +255,8 @@ class AnomalyDetectionService
 
     /**
      * Detectar movimientos de caja chica atípicos
+     *
+     * @return array<string, mixed>
      */
     public function detectCashAnomalies(Carbon $startDate): array
     {
@@ -302,6 +311,8 @@ class AnomalyDetectionService
 
     /**
      * Detectar transacciones en horarios inusuales
+     *
+     * @return array<string, mixed>
      */
     public function detectUnusualHours(Carbon $startDate): array
     {
@@ -342,6 +353,8 @@ class AnomalyDetectionService
 
     /**
      * Detectar patrones sospechosos
+     *
+     * @return array<string, mixed>
      */
     public function detectSuspiciousPatterns(Carbon $startDate): array
     {
@@ -421,6 +434,9 @@ class AnomalyDetectionService
 
     /**
      * Obtener explicación IA para una anomalía
+     *
+     * @param array<string, mixed> $anomaly
+     * @return array<string, mixed>
      */
     public function explainAnomaly(array $anomaly): array
     {
@@ -464,6 +480,10 @@ PROMPT;
 
     // ========== MÉTODOS AUXILIARES ==========
 
+    /**
+     * @param array<int, float|int> $values
+     * @return array<string, float|int>
+     */
     protected function calculateStats(array $values): array
     {
         $count = count($values);

@@ -44,7 +44,6 @@ class EncryptionService
      * Encriptar un valor
      *
      * @param mixed $value Valor a encriptar
-     * @param string $algorithm Algoritmo opcional (usa config si null)
      * @return string|null Valor encriptado en base64 o null si no hay valor
      */
     public static function encrypt($value): ?string
@@ -400,7 +399,7 @@ class EncryptionService
      *
      * @param string $modelClass Clase del modelo
      * @param string $fieldName Campo a reencriptar
-     * @param string $oldEncrypter Instancia anterior del encryptador (con clave vieja)
+     * @param Encrypter $oldEncrypter Instancia anterior del encryptador (con clave vieja)
      * @return int Número de registros reencriptados
      */
     public static function rotateKey(string $modelClass, string $fieldName, Encrypter $oldEncrypter): int

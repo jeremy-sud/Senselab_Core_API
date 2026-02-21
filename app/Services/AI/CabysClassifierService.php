@@ -30,6 +30,7 @@ class CabysClassifierService
 
     /**
      * Categorías principales CABYS con ejemplos
+     * @var array<int, array<string, string>>
      */
     protected array $mainCategories = [
         '1' => ['nombre' => 'Productos alimenticios', 'ejemplos' => 'arroz, frijoles, carne, frutas, verduras, lácteos'],
@@ -59,6 +60,9 @@ class CabysClassifierService
 
     /**
      * Clasificar producto y sugerir código CABYS
+     *
+     * @param array<string, mixed> $producto
+     * @return array<string, mixed>
      */
     public function classifyProduct(array $producto): array
     {
@@ -101,6 +105,9 @@ class CabysClassifierService
 
     /**
      * Clasificar múltiples productos en lote
+     *
+     * @param array<int, array<string, mixed>> $productos
+     * @return array<string, mixed>
      */
     public function classifyBatch(array $productos): array
     {
@@ -135,6 +142,8 @@ class CabysClassifierService
 
     /**
      * Buscar código CABYS por texto
+     *
+     * @return array<string, mixed>
      */
     public function searchCabys(string $query, int $limit = 10): array
     {
@@ -160,6 +169,8 @@ class CabysClassifierService
 
     /**
      * Obtener información de un código CABYS específico
+     *
+     * @return array<string, mixed>
      */
     public function getCabysInfo(string $codigo): array
     {
@@ -186,6 +197,8 @@ class CabysClassifierService
 
     /**
      * Validar si un código CABYS existe
+     *
+     * @return array<string, mixed>
      */
     public function validateCabys(string $codigo): array
     {
@@ -203,6 +216,8 @@ class CabysClassifierService
 
     /**
      * Obtener categorías principales CABYS
+     *
+     * @return array<string, mixed>
      */
     public function getMainCategories(): array
     {
@@ -216,6 +231,8 @@ class CabysClassifierService
 
     /**
      * Buscar coincidencia exacta en la base de datos
+     *
+     * @return array<string, mixed>|null
      */
     protected function searchExactMatch(string $descripcion): ?array
     {
@@ -239,6 +256,8 @@ class CabysClassifierService
 
     /**
      * Buscar por palabras clave
+     *
+     * @return array<int, array<string, mixed>>
      */
     protected function searchByKeywords(string $descripcion): array
     {
@@ -293,6 +312,9 @@ class CabysClassifierService
 
     /**
      * Clasificar usando IA
+     *
+     * @param array<int, array<string, mixed>> $candidatos
+     * @return array<string, mixed>
      */
     protected function classifyWithAI(string $descripcion, string $categoria, string $unidadMedida, array $candidatos): array
     {

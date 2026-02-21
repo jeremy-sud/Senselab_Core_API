@@ -26,10 +26,14 @@ use Illuminate\Support\Facades\Log;
 class ContentGeneratorService
 {
     protected AIServiceInterface $aiService;
+    /**
+     * @var array<string, mixed>|null
+     */
     protected ?array $empresaInfo = null;
 
     /**
      * Plantillas base por tipo de contenido
+     * @var array<string, array<string, mixed>>
      */
     protected array $templates = [
         'recordatorio_amigable' => [
@@ -65,6 +69,9 @@ class ContentGeneratorService
         }
     }
 
+    /**
+     * @param array<string, mixed> $empresaInfo
+     */
     public function setEmpresa(array $empresaInfo): self
     {
         $this->empresaInfo = $empresaInfo;
@@ -73,6 +80,9 @@ class ContentGeneratorService
 
     /**
      * Generar email de recordatorio de cobro
+     *
+     * @param array<string, mixed> $cuentaCobrar
+     * @return array<string, mixed>
      */
     public function generatePaymentReminder(array $cuentaCobrar, string $tipo = 'auto'): array
     {
@@ -178,6 +188,9 @@ PROMPT;
 
     /**
      * Generar mensaje de WhatsApp para cobro
+     *
+     * @param array<string, mixed> $cuentaCobrar
+     * @return array<string, mixed>
      */
     public function generateWhatsAppMessage(array $cuentaCobrar, string $tipo = 'auto'): array
     {
@@ -229,6 +242,9 @@ PROMPT;
 
     /**
      * Generar carta formal de cobro (PDF)
+     *
+     * @param array<string, mixed> $cuentaCobrar
+     * @return array<string, mixed>
      */
     public function generateFormalLetter(array $cuentaCobrar): array
     {
@@ -316,6 +332,9 @@ PROMPT;
 
     /**
      * Generar notificación push/in-app
+     *
+     * @param array<string, mixed> $datos
+     * @return array<string, mixed>
      */
     public function generateNotification(string $tipo, array $datos): array
     {
@@ -349,6 +368,9 @@ PROMPT;
 
     /**
      * Generar descripción de producto para catálogo
+     *
+     * @param array<string, mixed> $producto
+     * @return array<string, mixed>
      */
     public function generateProductDescription(array $producto): array
     {
@@ -394,6 +416,9 @@ PROMPT;
 
     /**
      * Generar múltiples recordatorios en lote
+     *
+     * @param array<int, array<string, mixed>> $cuentasCobrar
+     * @return array<string, mixed>
      */
     public function generateBatchReminders(array $cuentasCobrar, string $canal = 'email'): array
     {
@@ -464,7 +489,9 @@ PROMPT;
 
     protected function getCurrentDate(): string
     {
-        return Carbon::now()->locale('es')->isoFormat('D [de] MMMM [de] YYYY');
+        $date = Carbon::now();
+        $date->setLocale('es');
+        return $date->isoFormat('D [de] MMMM [de] YYYY');
     }
 }
 

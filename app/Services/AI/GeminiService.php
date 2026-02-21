@@ -26,6 +26,9 @@ class GeminiService implements AIServiceInterface
 {
     protected string $apiKey;
     protected string $baseUrl;
+    /**
+     * @var array<string, mixed>
+     */
     protected array $config = [];
 
     public function __construct()
@@ -202,6 +205,9 @@ class GeminiService implements AIServiceInterface
     /**
      * {@inheritdoc}
      * Nota: Gemini no tiene embeddings nativos, usamos respuesta estructurada
+     *
+     * @param array<string, mixed> $options
+     * @return array<string, mixed>
      */
     public function generateEmbedding(string $text, array $options = []): array
     {
@@ -218,6 +224,9 @@ class GeminiService implements AIServiceInterface
     /**
      * {@inheritdoc}
      * Extraer datos estructurados de contenido
+     *
+     * @param array<string, mixed> $options
+     * @return array<string, mixed>
      */
     public function extractData(string $content, string $schema, array $options = []): array
     {
@@ -298,6 +307,8 @@ PROMPT;
 
     /**
      * Listar modelos disponibles
+     *
+     * @return array<int, mixed>
      */
     public function listModels(): array
     {
@@ -331,6 +342,8 @@ PROMPT;
 
     /**
      * Realizar petición a la API de Gemini
+     *
+     * @param array<string, mixed> $payload
      */
     protected function makeRequest(string $model, array $payload): \Illuminate\Http\Client\Response
     {
@@ -343,6 +356,8 @@ PROMPT;
 
     /**
      * Preparar datos de imagen para la API
+     *
+     * @return array<string, mixed>|null
      */
     protected function prepareImageData(string $imagePath): ?array
     {
@@ -352,7 +367,7 @@ PROMPT;
                 $response = Http::timeout(30)->get($imagePath);
                 if ($response->successful()) {
                     $content = $response->body();
-                    $mimeType = $response->header('Content-Type') ?? 'image/jpeg';
+                    $mimeType = $response->header('Content-Type') ?: 'image/jpeg';
                     return [
                         'base64' => base64_encode($content),
                         'mime_type' => explode(';', $mimeType)[0],
@@ -393,6 +408,8 @@ PROMPT;
 
     /**
      * Convertir PDF a imagen (primera página)
+     *
+     * @return array<string, mixed>|null
      */
     protected function convertPdfToImage(string $pdfPath): ?array
     {
@@ -425,6 +442,8 @@ PROMPT;
 
     /**
      * Manejar errores de la API
+     *
+     * @return array<string, mixed>
      */
     protected function handleError(\Illuminate\Http\Client\Response $response): array
     {

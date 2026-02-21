@@ -44,7 +44,7 @@ class FirmaDigitalService
     /**
      * Clave privada extraída
      */
-    protected $privateKey = null;
+    protected \OpenSSLAsymmetricKey|false|null $privateKey = null;
 
     /**
      * Instancia del firmador XAdES-EPES
@@ -74,6 +74,10 @@ class FirmaDigitalService
 
         // Inicializar firmador XAdES-EPES
         $this->xadesSigner = new XadesEpesSigner();
+
+        if (!$this->certData || !isset($this->certData['cert'])) {
+            throw new \RuntimeException('No se pudo obtener el certificado del almacén PKCS12');
+        }
 
         // Firmar documento usando método sign
         $xmlFirmado = $this->xadesSigner->sign($xmlString, $this->privateKey, $this->certData['cert']);
@@ -132,6 +136,10 @@ class FirmaDigitalService
         // Firmar el documento
         $objDSig->sign($objKey);
 
+        if (!$this->certData || !isset($this->certData['cert'])) {
+            throw new \RuntimeException('No se pudo obtener el certificado del almacén PKCS12');
+        }
+
         // Agregar certificado a la firma
         $objDSig->add509Cert($this->certData['cert']);
 
@@ -141,6 +149,9 @@ class FirmaDigitalService
 
         // Obtener XML firmado
         $xmlFirmado = $doc->saveXML();
+        if ($xmlFirmado === false) {
+            throw new \RuntimeException('Error al generar XML firmado');
+        }
 
         Log::warning('XML firmado con método legacy (sin XAdES-EPES completo)', [
             'certificado_id' => $certificadoId,
@@ -362,11 +373,14 @@ class FirmaDigitalService
         
         $signatureNodes = $xpath->query('//ds:Signature');
 
-        if ($signatureNodes->length === 0) {
+        if ($signatureNodes === false || $signatureNodes->length === 0) {
             throw new \Exception("El XML no contiene firma digital");
         }
 
         $signatureNode = $signatureNodes->item(0);
+        if (!$signatureNode instanceof \DOMElement) {
+            throw new \Exception("El nodo de firma no es un elemento válido");
+        }
 
         // Crear objeto de verificación
         $objDSig = new XMLSecurityDSig();
@@ -381,6 +395,10 @@ class FirmaDigitalService
         
         if (!$objKey) {
             throw new \Exception("No se pudo localizar la clave pública en el XML firmado");
+        }
+
+        if (!$this->certData || !isset($this->certData['cert'])) {
+            throw new \RuntimeException('No se pudo obtener el certificado del almacén PKCS12');
         }
 
         $objKey->loadKey($this->certData['cert'], false, true);
@@ -411,11 +429,15 @@ class FirmaDigitalService
         
         $certNodes = $xpath->query('//ds:X509Certificate');
 
-        if ($certNodes->length === 0) {
+        if ($certNodes === false || $certNodes->length === 0) {
             return null;
         }
 
-        $certBase64 = $certNodes->item(0)->nodeValue;
+        $certNode = $certNodes->item(0);
+        if ($certNode === null) {
+            return null;
+        }
+        $certBase64 = $certNode->nodeValue;
         $certPem = "-----BEGIN CERTIFICATE-----\n" . 
                    chunk_split($certBase64, 64) . 
                    "-----END CERTIFICATE-----";

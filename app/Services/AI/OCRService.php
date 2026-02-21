@@ -24,6 +24,7 @@ class OCRService
 
     /**
      * Schema de datos a extraer de facturas
+     * @var array<string, mixed>
      */
     protected array $invoiceSchema = [
         'proveedor' => [
@@ -81,7 +82,7 @@ class OCRService
      * Escanear factura y extraer datos
      *
      * @param UploadedFile|string $file Archivo subido o ruta
-     * @return array Datos extraídos estructurados
+     * @return array<string, mixed> Datos extraídos estructurados
      */
     public function scanInvoice(UploadedFile|string $file): array
     {
@@ -144,8 +145,8 @@ class OCRService
     /**
      * Escanear múltiples facturas
      *
-     * @param array $files Array de archivos
-     * @return array Resultados por archivo
+     * @param array<int|string, UploadedFile|string> $files Array de archivos
+     * @return array<string, mixed> Resultados por archivo
      */
     public function scanMultiple(array $files): array
     {
@@ -166,8 +167,8 @@ class OCRService
     /**
      * Validar datos extraídos contra base de datos
      *
-     * @param array $data Datos extraídos
-     * @return array Datos validados con sugerencias
+     * @param array<string, mixed> $data Datos extraídos
+     * @return array<string, mixed> Datos validados con sugerencias
      */
     public function validateExtractedData(array $data): array
     {
@@ -373,6 +374,9 @@ PROMPT;
 
     /**
      * Parsear respuesta JSON de OpenAI
+     *
+     * @param string $content
+     * @return array<string, mixed>
      */
     protected function parseResponse(string $content): array
     {
@@ -411,6 +415,8 @@ PROMPT;
 
     /**
      * Obtener schema esperado
+     *
+     * @return array<string, mixed>
      */
     public function getSchema(): array
     {

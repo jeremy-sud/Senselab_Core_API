@@ -139,6 +139,9 @@ class XadesEpesSigner
         $root->appendChild($signatureElement);
 
         $xmlFirmado = $this->doc->saveXML();
+        if ($xmlFirmado === false) {
+            throw new \RuntimeException('Error al generar XML firmado');
+        }
 
         Log::debug('XAdES-EPES: XML firmado exitosamente', [
             'signature_id' => $this->signatureId,
@@ -315,7 +318,7 @@ class XadesEpesSigner
         $tempDoc = new DOMDocument('1.0', 'UTF-8');
         $importedNode = $tempDoc->importNode($signedProperties, true);
         $tempDoc->appendChild($importedNode);
-        $c14n = $tempDoc->documentElement->C14N(true, false);
+        $c14n = $tempDoc->documentElement?->C14N(true, false) ?? '';
         
         // Calcular digest
         $digest = base64_encode(hash('sha256', $c14n, true));
@@ -543,12 +546,14 @@ class XadesEpesSigner
         $xpath = new DOMXPath($docClone);
         $xpath->registerNamespace('ds', self::NS_DS);
         $signatures = $xpath->query('//ds:Signature');
-        foreach ($signatures as $sig) {
-            $sig->parentNode->removeChild($sig);
+        if ($signatures !== false) {
+            foreach ($signatures as $sig) {
+                $sig->parentNode?->removeChild($sig);
+            }
         }
 
         // Canonicalizar el documento completo
-        $c14n = $docClone->documentElement->C14N(true, false);
+        $c14n = $docClone->documentElement?->C14N(true, false) ?? '';
 
         return base64_encode(hash('sha256', $c14n, true));
     }
@@ -563,7 +568,7 @@ class XadesEpesSigner
         $importedNode = $tempDoc->importNode($node, true);
         $tempDoc->appendChild($importedNode);
         
-        return $tempDoc->documentElement->C14N(true, false);
+        return $tempDoc->documentElement?->C14N(true, false) ?? '';
     }
 
     /**

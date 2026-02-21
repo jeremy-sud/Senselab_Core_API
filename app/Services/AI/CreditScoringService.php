@@ -28,6 +28,7 @@ class CreditScoringService
 
     /**
      * Pesos para el cálculo del score
+     * @var array<string, float>
      */
     protected array $weights = [
         'historial_pagos' => 0.35,      // 35% - Más importante
@@ -40,6 +41,7 @@ class CreditScoringService
 
     /**
      * Rangos de clasificación
+     * @var array<string, array<string, mixed>>
      */
     protected array $riskLevels = [
         'excelente' => ['min' => 80, 'max' => 100, 'color' => 'green'],
@@ -57,13 +59,16 @@ class CreditScoringService
 
     /**
      * Calcular score crediticio de un cliente
+     *
+     * @return array<string, mixed>
      */
     public function calculateScore(int $clienteId): array
     {
         $cacheKey = "credit_score:{$this->empresaId}:{$clienteId}";
 
         // Cache por 24 horas
-        return Cache::remember($cacheKey, 86400, function () use ($clienteId) {
+        /** @var array<string, mixed> $result */
+        $result = \Illuminate\Support\Facades\Cache::remember($cacheKey, 86400, function () use ($clienteId) {
             $cliente = $this->getClienteData($clienteId);
 
             if (!$cliente) {
@@ -126,10 +131,14 @@ class CreditScoringService
                 'calculado_en' => Carbon::now()->toIso8601String(),
             ];
         });
+
+        return $result;
     }
 
     /**
      * Calcular scores para todos los clientes
+     *
+     * @return array<string, mixed>
      */
     public function calculateAllScores(int $limit = 100): array
     {
@@ -180,6 +189,8 @@ class CreditScoringService
 
     /**
      * Obtener clientes de alto riesgo
+     *
+     * @return array<string, mixed>
      */
     public function getHighRiskClients(int $limit = 20): array
     {
@@ -201,7 +212,7 @@ class CreditScoringService
         return [
             'success' => true,
             'total_alto_riesgo' => count($highRisk),
-            'clientes' => array_slice(array_values($highRisk), 0, $limit),
+            'clientes' => array_slice($highRisk, 0, $limit),
             'alerta' => count($highRisk) > 10
                 ? 'Hay una cantidad significativa de clientes de alto riesgo'
                 : null,
@@ -210,6 +221,8 @@ class CreditScoringService
 
     /**
      * Simular impacto de nuevo crédito
+     *
+     * @return array<string, mixed>
      */
     public function simulateCredit(int $clienteId, float $montoCredito, int $plazo): array
     {
@@ -279,6 +292,9 @@ class CreditScoringService
             ->first();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function calculateMetrics(int $clienteId): array
     {
         // Fecha de primera compra (antigüedad)
@@ -347,6 +363,9 @@ class CreditScoringService
         ];
     }
 
+    /**
+     * @param array<string, mixed> $metricas
+     */
     protected function scoreHistorialPagos(array $metricas): float
     {
         // Basado en % de pagos puntuales y días de mora
@@ -367,6 +386,9 @@ class CreditScoringService
         return max(0, min(100, $score));
     }
 
+    /**
+     * @param array<string, mixed> $metricas
+     */
     protected function scoreAntiguedad(array $metricas): float
     {
         $dias = $metricas['dias_cliente'];
@@ -380,6 +402,9 @@ class CreditScoringService
         return 10; // Nuevo cliente
     }
 
+    /**
+     * @param array<string, mixed> $metricas
+     */
     protected function scoreVolumenCompras(array $metricas): float
     {
         $monto = $metricas['monto_total'];
@@ -395,6 +420,9 @@ class CreditScoringService
         return 10;
     }
 
+    /**
+     * @param array<string, mixed> $metricas
+     */
     protected function scoreFrecuenciaCompras(array $metricas): float
     {
         $compras6Meses = $metricas['compras_6_meses'];
@@ -408,6 +436,9 @@ class CreditScoringService
         return 5; // Sin compras recientes
     }
 
+    /**
+     * @param array<string, mixed> $metricas
+     */
     protected function scoreMontoPromedio(array $metricas): float
     {
         $promedio = $metricas['promedio_compra'];
@@ -421,6 +452,9 @@ class CreditScoringService
         return 10;
     }
 
+    /**
+     * @param array<string, mixed> $metricas
+     */
     protected function scoreDeudaActual(array $metricas): float
     {
         $deuda = $metricas['deuda_actual'];
@@ -441,6 +475,9 @@ class CreditScoringService
         return 5; // Deuda muy alta relativa al historial
     }
 
+    /**
+     * @return array<string, string>
+     */
     protected function determineRiskLevel(float $score): array
     {
         foreach ($this->riskLevels as $nivel => $config) {
@@ -451,6 +488,9 @@ class CreditScoringService
         return ['nivel' => 'alto_riesgo', 'color' => 'red'];
     }
 
+    /**
+     * @param array<string, mixed> $metricas
+     */
     protected function calculateCreditLimit(float $score, array $metricas): float
     {
         // Base: promedio de compra * factor según score
@@ -472,6 +512,9 @@ class CreditScoringService
         return round(min($limite, max($maxHistorico, $limite * 0.5)), -3); // Redondear a miles
     }
 
+    /**
+     * @param array<string, mixed> $metricas
+     */
     protected function calculateDefaultProbability(float $score, array $metricas): float
     {
         // Probabilidad inversa al score
@@ -490,6 +533,10 @@ class CreditScoringService
         return max(0, min(100, $probBase));
     }
 
+    /**
+     * @param array<string, mixed> $metricas
+     * @return array<int, string>
+     */
     protected function generateRecommendations(float $score, array $metricas): array
     {
         $recomendaciones = [];
