@@ -26,6 +26,11 @@ class UpdateCuentaPorPagarRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
     public function rules(): array
     {
         return [
@@ -48,6 +53,11 @@ class UpdateCuentaPorPagarRequest extends FormRequest
      *
      * @return array<string, string>
      */
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
     public function messages(): array
     {
         return [
@@ -63,6 +73,11 @@ class UpdateCuentaPorPagarRequest extends FormRequest
         ];
     }
 
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array<string, string>
+     */
     /**
      * Get custom attributes for validator errors.
      *

@@ -19,6 +19,11 @@ class UpdateMovimientoBancarioRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
     public function rules(): array
     {
         return [
@@ -41,6 +46,11 @@ class UpdateMovimientoBancarioRequest extends FormRequest
 
     /**
      * Get custom messages for validator errors.
+     *
+     * @return array<string, string>
+     */
+    /**
+     * Get the error messages for the defined validation rules.
      *
      * @return array<string, string>
      */
@@ -70,6 +80,11 @@ class UpdateMovimientoBancarioRequest extends FormRequest
      *
      * @return array<string, string>
      */
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array<string, string>
+     */
     public function attributes(): array
     {
         return [
@@ -86,7 +101,13 @@ class UpdateMovimientoBancarioRequest extends FormRequest
     /**
      * Configure the validator instance.
      */
-    public function withValidator($validator): void
+    /**
+     * Configure the validator instance.
+     *
+     * @param \Illuminate\Validation\Validator $validator
+     * @return void
+     */
+    public function withValidator(\Illuminate\Validation\Validator $validator): void
     {
         $validator->after(function ($validator) {
             // Validar que si está conciliado, no se puede desconciliar sin autorización

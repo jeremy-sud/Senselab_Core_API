@@ -17,6 +17,11 @@ class StoreAlmacenRequest extends FormRequest
         return true;
     }
 
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
     public function rules(): array
     {
         return [
@@ -30,6 +35,11 @@ class StoreAlmacenRequest extends FormRequest
         ];
     }
 
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
     public function messages(): array
     {
         return [
@@ -42,7 +52,13 @@ class StoreAlmacenRequest extends FormRequest
     /**
      * Validación adicional: solo un almacén principal por sucursal
      */
-    public function withValidator($validator)
+    /**
+     * Configure the validator instance.
+     *
+     * @param \Illuminate\Validation\Validator $validator
+     * @return void
+     */
+    public function withValidator(\Illuminate\Validation\Validator $validator): void
     {
         $validator->after(function ($validator) {
             if ($this->es_principal) {

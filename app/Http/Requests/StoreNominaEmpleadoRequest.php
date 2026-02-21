@@ -8,6 +8,11 @@ class StoreNominaEmpleadoRequest extends FormRequest
 {
     public function authorize(): bool { return true; }
 
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
     public function rules(): array
     {
         return [
@@ -24,6 +29,11 @@ class StoreNominaEmpleadoRequest extends FormRequest
         ];
     }
 
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
     public function messages(): array
     {
         return [
@@ -41,6 +51,11 @@ class StoreNominaEmpleadoRequest extends FormRequest
         ];
     }
 
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array<string, string>
+     */
     public function attributes(): array
     {
         return [
@@ -55,7 +70,13 @@ class StoreNominaEmpleadoRequest extends FormRequest
         ];
     }
 
-    public function withValidator($validator): void
+    /**
+     * Configure the validator instance.
+     *
+     * @param \Illuminate\Validation\Validator $validator
+     * @return void
+     */
+    public function withValidator(\Illuminate\Validation\Validator $validator): void
     {
         $validator->after(function ($validator) {
             // Validar que el salario neto sea positivo
