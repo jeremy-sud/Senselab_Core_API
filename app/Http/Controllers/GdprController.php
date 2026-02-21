@@ -65,12 +65,24 @@ class GdprController extends Controller
                 'change_reason' => 'Nueva solicitud de derecho al olvido GDPR',
             ]);
 
+            // Generar código de verificación y guardarlo en caché por 15 minutos
+            $verificationCode = str_pad((string)random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+            \Illuminate\Support\Facades\Cache::put(
+                'gdpr_verification_' . $gdprRequest->id,
+                $verificationCode,
+                now()->addMinutes(15)
+            );
+
+            // TODO: Enviar código por email al usuario
+            // \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\GdprVerificationMail($verificationCode));
+
             return response()->json([
                 'success' => true,
-                'message' => 'Solicitud creada exitosamente. Por favor verifica tu identidad.',
+                'message' => 'Solicitud creada exitosamente. Por favor verifica tu identidad con el código enviado a tu correo.',
                 'request_id' => $gdprRequest->generateGdprRequestId(),
                 'status' => 'pending',
                 'next_step' => 'verify_identity',
+                // 'debug_code' => $verificationCode // Solo para desarrollo
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
@@ -132,14 +144,33 @@ class GdprController extends Controller
                 return response()->json(['error' => 'No autorizado'], 403);
             }
 
-            // TODO: Implementar lógica real de verificación
-            // Por ahora, solo validamos que no haya sido verificada
+            // Verificar que no haya sido verificada ya
             if ($gdprRequest->verified_identity) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Identidad ya fue verificada',
                 ], 400);
             }
+
+            // Lógica real de verificación con caché
+            $cachedCode = \Illuminate\Support\Facades\Cache::get('gdpr_verification_' . $gdprRequest->id);
+            
+            if (!$cachedCode) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El código de verificación ha expirado o no existe. Solicite uno nuevo.',
+                ], 400);
+            }
+
+            if ($cachedCode !== $validated['verification_code']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Código de verificación incorrecto.',
+                ], 400);
+            }
+
+            // Limpiar caché tras verificación exitosa
+            \Illuminate\Support\Facades\Cache::forget('gdpr_verification_' . $gdprRequest->id);
 
             // Marcar como verificada
             $gdprRequest->verifyIdentity($validated['method']);

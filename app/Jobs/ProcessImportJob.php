@@ -73,8 +73,23 @@ class ProcessImportJob implements ShouldQueue
             // Limpiar archivo temporal
             Storage::disk('local')->delete($this->filePath);
 
-            // TODO: Notificar al usuario
-            // dispatch(new SendEmailJob($this->userId, 'import_completed', $result));
+            if ($this->userId) {
+                $user = \App\Models\Usuario::find($this->userId);
+                if ($user && $user->email) {
+                    dispatch(new SendEmailJob(
+                        to: $user->email,
+                        subject: "Importación de {$this->importType} completada",
+                        view: 'emails.imports.completed',
+                        data: [
+                            'user_name' => $user->nombre,
+                            'import_type' => $this->importType,
+                            'total' => $result['total'],
+                            'imported' => $result['imported'],
+                            'errors' => $result['errors']
+                        ]
+                    ));
+                }
+            }
 
         } catch (\Exception $e) {
             Log::error('ProcessImportJob: Error procesando importación', [
@@ -138,8 +153,51 @@ class ProcessImportJob implements ShouldQueue
      */
     protected function importClientes(string $csvContent, Empresa $empresa): array
     {
-        // TODO: Implementar importación de clientes
-        return ['imported' => 0, 'errors' => [], 'total' => 0];
+        $lines = explode("\n", $csvContent);
+        $headers = str_getcsv(array_shift($lines));
+        
+        $imported = 0;
+        $errors = [];
+
+        DB::beginTransaction();
+        try {
+            foreach ($lines as $index => $line) {
+                if (empty(trim($line))) continue;
+
+                $data = str_getcsv($line);
+                if (count($headers) !== count($data)) {
+                    $errors[] = "Línea " . ($index + 2) . ": Número de columnas incorrecto";
+                    continue;
+                }
+                $row = array_combine($headers, $data);
+
+                try {
+                    Cliente::create([
+                        'empresa_id' => $empresa->id,
+                        'tipo_identificacion' => $row['tipo_identificacion'] ?? '01',
+                        'identificacion' => $row['identificacion'],
+                        'nombre' => $row['nombre'],
+                        'correo' => $row['correo'] ?? null,
+                        'telefono' => $row['telefono'] ?? null,
+                        'activo' => true,
+                        'eliminado' => false,
+                    ]);
+                    $imported++;
+                } catch (\Exception $e) {
+                    $errors[] = "Línea " . ($index + 2) . ": " . $e->getMessage();
+                }
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+
+        return [
+            'imported' => $imported,
+            'errors' => $errors,
+            'total' => count($lines),
+        ];
     }
 
     /**
@@ -147,8 +205,51 @@ class ProcessImportJob implements ShouldQueue
      */
     protected function importProveedores(string $csvContent, Empresa $empresa): array
     {
-        // TODO: Implementar importación de proveedores
-        return ['imported' => 0, 'errors' => [], 'total' => 0];
+        $lines = explode("\n", $csvContent);
+        $headers = str_getcsv(array_shift($lines));
+        
+        $imported = 0;
+        $errors = [];
+
+        DB::beginTransaction();
+        try {
+            foreach ($lines as $index => $line) {
+                if (empty(trim($line))) continue;
+
+                $data = str_getcsv($line);
+                if (count($headers) !== count($data)) {
+                    $errors[] = "Línea " . ($index + 2) . ": Número de columnas incorrecto";
+                    continue;
+                }
+                $row = array_combine($headers, $data);
+
+                try {
+                    Proveedor::create([
+                        'empresa_id' => $empresa->id,
+                        'tipo_identificacion' => $row['tipo_identificacion'] ?? '01',
+                        'identificacion' => $row['identificacion'],
+                        'nombre' => $row['nombre'],
+                        'correo' => $row['correo'] ?? null,
+                        'telefono' => $row['telefono'] ?? null,
+                        'activo' => true,
+                        'eliminado' => false,
+                    ]);
+                    $imported++;
+                } catch (\Exception $e) {
+                    $errors[] = "Línea " . ($index + 2) . ": " . $e->getMessage();
+                }
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+
+        return [
+            'imported' => $imported,
+            'errors' => $errors,
+            'total' => count($lines),
+        ];
     }
 
     /**
@@ -164,5 +265,21 @@ class ProcessImportJob implements ShouldQueue
 
         // Limpiar archivo temporal
         Storage::disk('local')->delete($this->filePath);
+
+        if ($this->userId) {
+            $user = \App\Models\Usuario::find($this->userId);
+            if ($user && $user->email) {
+                dispatch(new SendEmailJob(
+                    to: $user->email,
+                    subject: "Error en importación de {$this->importType}",
+                    view: 'emails.imports.failed',
+                    data: [
+                        'user_name' => $user->nombre,
+                        'import_type' => $this->importType,
+                        'error_message' => 'Ocurrió un error al procesar el archivo. Por favor, verifique el formato e intente nuevamente.'
+                    ]
+                ));
+            }
+        }
     }
 }

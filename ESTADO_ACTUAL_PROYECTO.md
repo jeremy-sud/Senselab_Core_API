@@ -162,3 +162,36 @@ php artisan route:cache
 
 **FASE 4 COMPLETADA** ✅
 
+---
+
+## 🚀 FASE 5: RENDIMIENTO (Completada 20 feb 2026)
+
+### Estado Actual
+- **Gzip:** ✅ Configurado en Nginx (`comp_level 6`)
+- **N+1 Queries:** ✅ Resueltos con `with()` y `whenLoaded()`
+- **Índices BD:** ✅ Verificados en migraciones
+- **Cache Warming:** ✅ Implementado `CacheWarmupCommand` para 11 catálogos (CABYS, zonas, impuestos, etc.)
+- **Scheduler:** ✅ Configurado en `routes/console.php` (diario a las 5 AM)
+
+---
+
+## 🚀 FASE 6: ARQUITECTURA CQRS (Completada 20 feb 2026)
+
+### Estado Actual
+- **Infraestructura Base:** ✅ Creados `CommandBus`, `QueryBus` y contratos en `app/CQRS/`
+- **Módulo Ventas:** ✅ Implementados Commands (`CreateVenta`, `CancelVenta`) y Queries (`GetVenta`, `ListVentas`, `VentasStats`)
+- **Service Provider:** ✅ Registrado `CQRSServiceProvider`
+- **PHPStan:** ✅ 0 errores (nivel 8) tras implementación
+
+---
+
+## 🚀 RESOLUCIÓN DE DEUDA TÉCNICA (20 feb 2026)
+
+### Tareas Completadas
+- ✅ **Modelo Faltante:** Creado `MovimientoPresupuesto` y su migración.
+- ✅ **Reportes PDF:** Implementados reportes de Inventario, Cuentas por Cobrar y Nómina en `GeneratePdfReportJob`.
+- ✅ **Importaciones:** Implementada importación masiva de Clientes y Proveedores en `ProcessImportJob`.
+- ✅ **Token Hacienda:** Integrado `OAuthTokenManager` en `SyncHaciendaJob`.
+- ✅ **GDPR:** Implementada verificación real con caché en `GdprController`.
+- ✅ **Notificaciones:** Implementado envío de emails (`SendEmailJob`) para éxito/fallo en Jobs asíncronos.
+
