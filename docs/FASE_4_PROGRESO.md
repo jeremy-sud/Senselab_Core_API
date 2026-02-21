@@ -12,7 +12,7 @@
 
 | Tarea | Progreso | Archivos | Líneas | Horas |
 |-------|----------|----------|--------|-------|
-| **4.1: PHPStan Reduction** | 40% | 1 baseline | - | 4 |
+| **4.1: PHPStan Reduction** | 65% | 1 baseline | - | 5 |
 | **4.2: Refactor Controllers** | 7% | 1/15 refactored | -792 | 1 |
 | **4.3: DTOs** | 97% | 39/40 DTOs | ~2,340 | 6-7 |
 | **4.4: Tests** | 0% | 0 tests | - | 0 |
@@ -410,3 +410,8 @@ El archivo `routes/api.php` fue particionado en 15 archivos por dominio funciona
 - ✅ Reducción masiva de errores en `app/Traits` (de ~20 a 0 errores).
 - ✅ Baseline global reducido de 2,065 a 1,310 errores (-755 errores).
 - ✅ Scripts de refactorización automatizada creados y ejecutados con éxito.
+
+### 🧹 PHPStan Baseline Reduction (app/Http/Requests)
+- ✅ Reducción masiva de errores en `app/Http/Requests` (de 279 a 0 errores).
+- ✅ Baseline global reducido a 726 errores (65% de reducción total).
+- ✅ Script de refactorización automatizada creado y ejecutado con éxito para `rules()`, `messages()` y `withValidator()`.

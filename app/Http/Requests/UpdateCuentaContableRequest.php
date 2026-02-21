@@ -26,6 +26,11 @@ class UpdateCuentaContableRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
     public function rules(): array
     {
         $empresaId = $this->user()->empresa_id;
@@ -58,7 +63,13 @@ class UpdateCuentaContableRequest extends FormRequest
      * @param  \Illuminate\Validation\Validator  $validator
      * @return void
      */
-    public function withValidator($validator)
+    /**
+     * Configure the validator instance.
+     *
+     * @param \Illuminate\Validation\Validator $validator
+     * @return void
+     */
+    public function withValidator(\Illuminate\Validation\Validator $validator): void
     {
         $validator->after(function ($validator) {
             // Validar que la cuenta padre no sea la misma cuenta
@@ -73,6 +84,11 @@ class UpdateCuentaContableRequest extends FormRequest
      *
      * @return array<string, string>
      */
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
     public function messages(): array
     {
         return [
@@ -84,6 +100,11 @@ class UpdateCuentaContableRequest extends FormRequest
         ];
     }
 
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array<string, string>
+     */
     /**
      * Get custom attributes for validator errors.
      *
