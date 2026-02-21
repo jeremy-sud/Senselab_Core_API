@@ -171,9 +171,9 @@ class SyncHaciendaJob implements ShouldQueue
 
     protected function getHaciendaToken(Empresa $empresa): string
     {
-        // TODO: Implementar obtención de token de Hacienda
-        // Por ahora retornar token de prueba
-        return config('hacienda.test_token', 'test_token');
+        $ambiente = config('hacienda.ambiente', 'sandbox');
+        $tokenManager = new \App\Services\Hacienda\OAuthTokenManager($ambiente);
+        return $tokenManager->getValidToken();
     }
 
     /**

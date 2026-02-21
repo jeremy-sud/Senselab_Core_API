@@ -70,8 +70,22 @@ class GeneratePdfReportJob implements ShouldQueue
                 'size' => Storage::disk('local')->size("reports/{$filename}"),
             ]);
 
-            // TODO: Notificar al usuario que el PDF está listo
-            // dispatch(new SendEmailJob($this->userId, 'report_ready', ['filename' => $filename]));
+            if ($this->userId) {
+                $user = \App\Models\Usuario::find($this->userId);
+                if ($user && $user->email) {
+                    dispatch(new SendEmailJob(
+                        to: $user->email,
+                        subject: "Reporte de {$this->reportType} generado",
+                        view: 'emails.reports.ready',
+                        data: [
+                            'user_name' => $user->nombre,
+                            'report_type' => $this->reportType,
+                            'filename' => $filename,
+                            'download_url' => url("/api/reports/download/{$filename}")
+                        ]
+                    ));
+                }
+            }
 
         } catch (\Exception $e) {
             Log::error('GeneratePdfReportJob: Error generando PDF', [
@@ -113,8 +127,18 @@ class GeneratePdfReportJob implements ShouldQueue
      */
     protected function generateInventarioReport(Empresa $empresa)
     {
-        // TODO: Implementar reporte de inventario
-        return Pdf::loadView('reports.inventario', ['empresa' => $empresa]);
+        $productos = \App\Models\Producto::where('empresa_id', $empresa->id)
+            ->when(isset($this->filters['categoria_id']), function ($query) {
+                $query->where('categoria_id', $this->filters['categoria_id']);
+            })
+            ->with(['categoria', 'unidadMedida'])
+            ->get();
+
+        return Pdf::loadView('reports.inventario', [
+            'empresa' => $empresa,
+            'productos' => $productos,
+            'filters' => $this->filters,
+        ]);
     }
 
     /**
@@ -122,8 +146,18 @@ class GeneratePdfReportJob implements ShouldQueue
      */
     protected function generateCuentasCobrarReport(Empresa $empresa)
     {
-        // TODO: Implementar reporte de cuentas por cobrar
-        return Pdf::loadView('reports.cuentas_cobrar', ['empresa' => $empresa]);
+        $cuentas = \App\Models\CuentaCobrar::where('empresa_id', $empresa->id)
+            ->when(isset($this->filters['estado']), function ($query) {
+                $query->where('estado', $this->filters['estado']);
+            })
+            ->with(['cliente', 'venta'])
+            ->get();
+
+        return Pdf::loadView('reports.cuentas_cobrar', [
+            'empresa' => $empresa,
+            'cuentas' => $cuentas,
+            'filters' => $this->filters,
+        ]);
     }
 
     /**
@@ -131,8 +165,21 @@ class GeneratePdfReportJob implements ShouldQueue
      */
     protected function generateNominaReport(Empresa $empresa)
     {
-        // TODO: Implementar reporte de nómina
-        return Pdf::loadView('reports.nomina', ['empresa' => $empresa]);
+        $periodos = \App\Models\PeriodoNomina::where('empresa_id', $empresa->id)
+            ->when(isset($this->filters['fecha_inicio']), function ($query) {
+                $query->where('fecha_inicio', '>=', $this->filters['fecha_inicio']);
+            })
+            ->when(isset($this->filters['fecha_fin']), function ($query) {
+                $query->where('fecha_fin', '<=', $this->filters['fecha_fin']);
+            })
+            ->with(['pagos.empleado'])
+            ->get();
+
+        return Pdf::loadView('reports.nomina', [
+            'empresa' => $empresa,
+            'periodos' => $periodos,
+            'filters' => $this->filters,
+        ]);
     }
 
     /**
@@ -146,6 +193,20 @@ class GeneratePdfReportJob implements ShouldQueue
             'error' => $exception->getMessage(),
         ]);
 
-        // TODO: Notificar al usuario del fallo
+        if ($this->userId) {
+            $user = \App\Models\Usuario::find($this->userId);
+            if ($user && $user->email) {
+                dispatch(new SendEmailJob(
+                    to: $user->email,
+                    subject: "Error generando reporte de {$this->reportType}",
+                    view: 'emails.reports.failed',
+                    data: [
+                        'user_name' => $user->nombre,
+                        'report_type' => $this->reportType,
+                        'error_message' => 'Ocurrió un error al generar el reporte. Por favor, intente nuevamente más tarde.'
+                    ]
+                ));
+            }
+        }
     }
 }
