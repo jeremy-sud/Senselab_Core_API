@@ -12,6 +12,12 @@ use Illuminate\Http\Request;
  */
 final class SalidaInventarioCreateDTO
 {
+    /**
+     * @param array<mixed> $detalles
+     */
+    /**
+     * @param array<mixed> $detalles
+     */
     public function __construct(
         public readonly int $empresa_id,
         public readonly int $almacen_id,
@@ -35,13 +41,18 @@ final class SalidaInventarioCreateDTO
             tipo_salida: $request->string('tipo_salida'),
             cantidad_total: $request->float('cantidad_total'),
             venta_id: $request->integer('venta_id'),
-            observaciones: $request->string('observaciones')?->trim(),
-            detalles: $request->array('detalles', []),
+            observaciones: $request->filled('observaciones') ? $request->string('observaciones')->trim()->toString() : null,
+            detalles: $request->array('detalles'),
         );
     }
 
     /**
      * Convertir a array para guardar en base de datos
+     */
+    /**
+     * Convert the DTO to an array.
+     *
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {
@@ -58,6 +69,12 @@ final class SalidaInventarioCreateDTO
 
     /**
      * Obtener detalles de la salida
+     */
+    /**
+     * @return array<mixed>
+     */
+    /**
+     * @return array<mixed>
      */
     public function getDetalles(): array
     {

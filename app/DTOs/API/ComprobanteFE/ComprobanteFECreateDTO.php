@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
  */
 final class ComprobanteFECreateDTO
 {
+    /**
+     * @param array<mixed> $detalles
+     */
     private function __construct(
         public readonly int $venta_id,
         public readonly string $tipo_comprobante, // FE, TE, NC, ND
@@ -63,6 +66,11 @@ final class ComprobanteFECreateDTO
     /**
      * Convierte a array para crear modelo
      */
+    /**
+     * Convert the DTO to model data array.
+     *
+     * @return array<string, mixed>
+     */
     public function toModelData(): array
     {
         return [
@@ -83,6 +91,11 @@ final class ComprobanteFECreateDTO
     /**
      * Reglas de validación Hacienda compliant
      */
+    /**
+     * Get the validation rules.
+     *
+     * @return array<string, mixed>
+     */
     public static function rules(): array
     {
         return [
@@ -100,6 +113,11 @@ final class ComprobanteFECreateDTO
         ];
     }
 
+    /**
+     * Get the validation messages.
+     *
+     * @return array<string, string>
+     */
     public static function messages(): array
     {
         return [

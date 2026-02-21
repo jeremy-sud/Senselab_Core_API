@@ -43,6 +43,11 @@ final class ClienteUpdateDTO
     /**
      * Convertir a array para actualizar en base de datos
      */
+    /**
+     * Convert the DTO to an array.
+     *
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return array_filter([

@@ -31,13 +31,18 @@ final class CuentaContableCreateDTO
             nombre: $request->string('nombre')->trim(),
             empresa_id: $request->integer('empresa_id'),
             tipo_cuenta_id: $request->integer('tipo_cuenta_id'),
-            descripcion: $request->string('descripcion')?->trim(),
+            descripcion: $request->filled('descripcion') ? $request->string('descripcion')->trim()->toString() : null,
             activo: $request->boolean('activo', true),
         );
     }
 
     /**
      * Convertir a array para guardar en base de datos
+     */
+    /**
+     * Convert the DTO to an array.
+     *
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {

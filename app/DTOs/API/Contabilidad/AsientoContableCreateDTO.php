@@ -11,6 +11,9 @@ use Illuminate\Http\Request;
  */
 final class AsientoContableCreateDTO
 {
+    /**
+     * @param array<mixed> $detalles
+     */
     private function __construct(
         public readonly string $numero_asiento,
         public readonly \DateTime $fecha,
@@ -72,6 +75,11 @@ final class AsientoContableCreateDTO
     /**
      * Convierte a array para modelo
      */
+    /**
+     * Convert the DTO to model data array.
+     *
+     * @return array<string, mixed>
+     */
     public function toModelData(): array
     {
         return [
@@ -89,6 +97,11 @@ final class AsientoContableCreateDTO
     /**
      * Reglas de validación
      */
+    /**
+     * Get the validation rules.
+     *
+     * @return array<string, mixed>
+     */
     public static function rules(): array
     {
         return [
@@ -105,6 +118,11 @@ final class AsientoContableCreateDTO
         ];
     }
 
+    /**
+     * Get the validation messages.
+     *
+     * @return array<string, string>
+     */
     public static function messages(): array
     {
         return [

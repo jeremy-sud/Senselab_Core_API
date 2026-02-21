@@ -11,6 +11,9 @@ use Illuminate\Http\Request;
  */
 final class VentaUpdateDTO
 {
+    /**
+     * @param array<mixed> $detalles
+     */
     private function __construct(
         public readonly ?int $cliente_id = null,
         public readonly ?array $detalles = null,
@@ -42,6 +45,11 @@ final class VentaUpdateDTO
     /**
      * Convierte a array para actualizar modelo
      */
+    /**
+     * Convert the DTO to model data array.
+     *
+     * @return array<string, mixed>
+     */
     public function toModelData(): array
     {
         $data = [];
@@ -71,6 +79,11 @@ final class VentaUpdateDTO
     /**
      * Reglas de validación
      */
+    /**
+     * Get the validation rules.
+     *
+     * @return array<string, mixed>
+     */
     public static function rules(): array
     {
         return [
@@ -86,6 +99,11 @@ final class VentaUpdateDTO
         ];
     }
 
+    /**
+     * Get the validation messages.
+     *
+     * @return array<string, string>
+     */
     public static function messages(): array
     {
         return [

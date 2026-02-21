@@ -12,6 +12,12 @@ use Illuminate\Http\Request;
  */
 final class PresupuestoCreateDTO
 {
+    /**
+     * @param array<mixed> $detalles
+     */
+    /**
+     * @param array<mixed> $detalles
+     */
     public function __construct(
         public readonly int $empresa_id,
         public readonly int $cliente_id,
@@ -40,14 +46,19 @@ final class PresupuestoCreateDTO
             impuesto: $request->float('impuesto'),
             total: $request->float('total'),
             estado: $request->string('estado'),
-            numero_presupuesto: $request->string('numero_presupuesto')?->trim(),
-            observaciones: $request->string('observaciones')?->trim(),
-            detalles: $request->array('detalles', []),
+            numero_presupuesto: $request->filled('numero_presupuesto') ? $request->string('numero_presupuesto')->trim()->toString() : null,
+            observaciones: $request->filled('observaciones') ? $request->string('observaciones')->trim()->toString() : null,
+            detalles: $request->array('detalles'),
         );
     }
 
     /**
      * Convertir a array para guardar en base de datos
+     */
+    /**
+     * Convert the DTO to an array.
+     *
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {
@@ -67,6 +78,12 @@ final class PresupuestoCreateDTO
 
     /**
      * Obtener detalles del presupuesto
+     */
+    /**
+     * @return array<mixed>
+     */
+    /**
+     * @return array<mixed>
      */
     public function getDetalles(): array
     {

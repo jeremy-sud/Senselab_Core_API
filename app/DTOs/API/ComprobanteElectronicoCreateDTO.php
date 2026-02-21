@@ -12,6 +12,12 @@ use Illuminate\Http\Request;
  */
 final class ComprobanteElectronicoCreateDTO
 {
+    /**
+     * @param array<mixed> $detalles_json
+     */
+    /**
+     * @param array<mixed> $detalles_json
+     */
     public function __construct(
         public readonly int $empresa_id,
         public readonly int $venta_id,
@@ -36,14 +42,19 @@ final class ComprobanteElectronicoCreateDTO
             clave_numerica: $request->string('clave_numerica')->trim(),
             fecha_emision: new \DateTime($request->string('fecha_emision')),
             estado: $request->string('estado'),
-            numero_telefax: $request->string('numero_telefax')?->trim(),
-            correo_receptor: $request->string('correo_receptor')?->trim(),
+            numero_telefax: $request->filled('numero_telefax') ? $request->string('numero_telefax')->trim()->toString() : null,
+            correo_receptor: $request->filled('correo_receptor') ? $request->string('correo_receptor')->trim()->toString() : null,
             detalles_json: $request->array('detalles_json'),
         );
     }
 
     /**
      * Convertir a array para guardar en base de datos
+     */
+    /**
+     * Convert the DTO to an array.
+     *
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {

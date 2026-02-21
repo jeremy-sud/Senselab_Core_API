@@ -46,6 +46,11 @@ final class ProductoUpdateDTO
      * Convertir a array para actualizar en base de datos
      * Solo incluye campos que no son null
      */
+    /**
+     * Convert the DTO to an array.
+     *
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return array_filter([

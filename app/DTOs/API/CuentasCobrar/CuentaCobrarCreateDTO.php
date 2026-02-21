@@ -11,6 +11,9 @@ use Illuminate\Http\Request;
  */
 final class CuentaCobrarCreateDTO
 {
+    /**
+     * @param array<mixed> $cuotas
+     */
     private function __construct(
         public readonly int $cliente_id,
         public readonly float $monto,
@@ -59,6 +62,11 @@ final class CuentaCobrarCreateDTO
     /**
      * Convierte a array para modelo
      */
+    /**
+     * Convert the DTO to model data array.
+     *
+     * @return array<string, mixed>
+     */
     public function toModelData(): array
     {
         return [
@@ -77,6 +85,11 @@ final class CuentaCobrarCreateDTO
     /**
      * Reglas de validación
      */
+    /**
+     * Get the validation rules.
+     *
+     * @return array<string, mixed>
+     */
     public static function rules(): array
     {
         return [
@@ -94,6 +107,11 @@ final class CuentaCobrarCreateDTO
         ];
     }
 
+    /**
+     * Get the validation messages.
+     *
+     * @return array<string, string>
+     */
     public static function messages(): array
     {
         return [

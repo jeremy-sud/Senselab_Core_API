@@ -46,6 +46,11 @@ final class ProductoCreateDTO
     /**
      * Convertir DTO a array para creación de modelo
      */
+    /**
+     * Convert the DTO to model data array.
+     *
+     * @return array<string, mixed>
+     */
     public function toModelData(): array
     {
         return [
@@ -61,6 +66,11 @@ final class ProductoCreateDTO
 
     /**
      * Reglas de validación para este DTO
+     */
+    /**
+     * Get the validation rules.
+     *
+     * @return array<string, mixed>
      */
     public static function rules(): array
     {
@@ -107,6 +117,11 @@ final class ProductoCreateDTO
 
     /**
      * Mensajes personalizados de validación
+     */
+    /**
+     * Get the validation messages.
+     *
+     * @return array<string, string>
      */
     public static function messages(): array
     {

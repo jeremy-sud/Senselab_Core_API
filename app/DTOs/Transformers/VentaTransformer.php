@@ -14,6 +14,12 @@ class VentaTransformer
     /**
      * Transformar una Venta a array
      */
+    /**
+     * @return array<string, mixed>
+     */
+    /**
+     * @return array<string, mixed>
+     */
     public static function transform(Venta $venta): array
     {
         return [
@@ -28,7 +34,7 @@ class VentaTransformer
             'estado' => $venta->estado,
             'forma_pago_id' => $venta->forma_pago_id,
             'observaciones' => $venta->observaciones,
-            'cantidad_detalles' => $venta->detalles()?->count() ?? 0,
+            'cantidad_detalles' => $venta->detalles()->count(),
             'created_at' => $venta->created_at?->toIso8601String(),
             'updated_at' => $venta->updated_at?->toIso8601String(),
         ];
@@ -36,6 +42,14 @@ class VentaTransformer
 
     /**
      * Transformar colección de Ventas a array
+     */
+    /**
+     * @param iterable<int, mixed> $ventas
+     * @return array<int, array<string, mixed>>
+     */
+    /**
+     * @param iterable<int, mixed> $ventas
+     * @return array<int, array<string, mixed>>
      */
     public static function collection(iterable $ventas): array
     {

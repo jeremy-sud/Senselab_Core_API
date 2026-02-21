@@ -11,6 +11,10 @@ use Illuminate\Http\Request;
  */
 final class NominaEmpleadoCreateDTO
 {
+    /**
+     * @param array<mixed> $deducciones
+     * @param array<mixed> $aportes
+     */
     private function __construct(
         public readonly int $empleado_id,
         public readonly \DateTime $fecha_inicio,
@@ -74,6 +78,11 @@ final class NominaEmpleadoCreateDTO
     /**
      * Convierte a array para modelo
      */
+    /**
+     * Convert the DTO to model data array.
+     *
+     * @return array<string, mixed>
+     */
     public function toModelData(): array
     {
         return [
@@ -95,6 +104,11 @@ final class NominaEmpleadoCreateDTO
     /**
      * Reglas de validación
      */
+    /**
+     * Get the validation rules.
+     *
+     * @return array<string, mixed>
+     */
     public static function rules(): array
     {
         return [
@@ -109,6 +123,11 @@ final class NominaEmpleadoCreateDTO
         ];
     }
 
+    /**
+     * Get the validation messages.
+     *
+     * @return array<string, string>
+     */
     public static function messages(): array
     {
         return [

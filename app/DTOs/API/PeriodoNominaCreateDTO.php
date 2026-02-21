@@ -32,12 +32,17 @@ final class PeriodoNominaCreateDTO
             fecha_fin: new \DateTime($request->string('fecha_fin')),
             numero_periodo: $request->string('numero_periodo')->trim(),
             estado: $request->string('estado'),
-            observaciones: $request->string('observaciones')?->trim(),
+            observaciones: $request->filled('observaciones') ? $request->string('observaciones')->trim()->toString() : null,
         );
     }
 
     /**
      * Convertir a array para guardar en base de datos
+     */
+    /**
+     * Convert the DTO to an array.
+     *
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {

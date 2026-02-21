@@ -14,6 +14,12 @@ class ProductoTransformer
     /**
      * Transformar un Producto a array
      */
+    /**
+     * @return array<string, mixed>
+     */
+    /**
+     * @return array<string, mixed>
+     */
     public static function transform(Producto $producto): array
     {
         return [
@@ -36,6 +42,14 @@ class ProductoTransformer
 
     /**
      * Transformar colección de Productos a array
+     */
+    /**
+     * @param iterable<int, mixed> $productos
+     * @return array<int, array<string, mixed>>
+     */
+    /**
+     * @param iterable<int, mixed> $productos
+     * @return array<int, array<string, mixed>>
      */
     public static function collection(iterable $productos): array
     {

@@ -40,12 +40,17 @@ final class PagoNominaCreateDTO
             total_pago: $request->float('total_pago'),
             fecha_pago: new \DateTime($request->string('fecha_pago')),
             estado: $request->string('estado'),
-            observaciones: $request->string('observaciones')?->trim(),
+            observaciones: $request->filled('observaciones') ? $request->string('observaciones')->trim()->toString() : null,
         );
     }
 
     /**
      * Convertir a array para guardar en base de datos
+     */
+    /**
+     * Convert the DTO to an array.
+     *
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {

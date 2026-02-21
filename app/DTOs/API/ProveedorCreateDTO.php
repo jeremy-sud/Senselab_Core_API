@@ -37,17 +37,22 @@ final class ProveedorCreateDTO
             email: $request->string('email')->trim(),
             telefono: $request->string('telefono')->trim(),
             empresa_id: $request->integer('empresa_id'),
-            direccion: $request->string('direccion')?->trim(),
-            ciudad: $request->string('ciudad')?->trim(),
-            provincia: $request->string('provincia')?->trim(),
-            razon_social: $request->string('razon_social')?->trim(),
-            contacto_principal: $request->string('contacto_principal')?->trim(),
+            direccion: $request->filled('direccion') ? $request->string('direccion')->trim()->toString() : null,
+            ciudad: $request->filled('ciudad') ? $request->string('ciudad')->trim()->toString() : null,
+            provincia: $request->filled('provincia') ? $request->string('provincia')->trim()->toString() : null,
+            razon_social: $request->filled('razon_social') ? $request->string('razon_social')->trim()->toString() : null,
+            contacto_principal: $request->filled('contacto_principal') ? $request->string('contacto_principal')->trim()->toString() : null,
             activo: $request->boolean('activo', true),
         );
     }
 
     /**
      * Convertir a array para guardar en base de datos
+     */
+    /**
+     * Convert the DTO to an array.
+     *
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {

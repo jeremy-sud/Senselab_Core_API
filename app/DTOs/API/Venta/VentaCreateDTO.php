@@ -15,6 +15,9 @@ final class VentaCreateDTO
     /**
      * @param array<DetalleVentaDTO> $detalles
      */
+    /**
+     * @param array<mixed> $detalles
+     */
     private function __construct(
         public readonly int $cliente_id,
         public readonly array $detalles, // array de DetalleVentaDTO
@@ -49,6 +52,11 @@ final class VentaCreateDTO
     /**
      * Convertir a array para crear modelo
      */
+    /**
+     * Convert the DTO to model data array.
+     *
+     * @return array<string, mixed>
+     */
     public function toModelData(): array
     {
         return [
@@ -61,6 +69,12 @@ final class VentaCreateDTO
     /**
      * Obtener datos de detalles para guardar
      */
+    /**
+     * @return array<mixed>
+     */
+    /**
+     * @return array<mixed>
+     */
     public function getDetallesData(): array
     {
         return array_map(
@@ -71,6 +85,12 @@ final class VentaCreateDTO
 
     /**
      * Calcular totales de la venta
+     */
+    /**
+     * @return array<mixed>
+     */
+    /**
+     * @return array<mixed>
      */
     public function calcularTotales(): array
     {
@@ -97,6 +117,11 @@ final class VentaCreateDTO
     /**
      * Reglas de validación
      */
+    /**
+     * Get the validation rules.
+     *
+     * @return array<string, mixed>
+     */
     public static function rules(): array
     {
         return [
@@ -114,6 +139,11 @@ final class VentaCreateDTO
 
     /**
      * Mensajes de validación personalizados
+     */
+    /**
+     * Get the validation messages.
+     *
+     * @return array<string, string>
      */
     public static function messages(): array
     {

@@ -20,6 +20,11 @@ final class DetalleVentaDTO
     /**
      * Convertir a array para almacenamiento
      */
+    /**
+     * Convert the DTO to an array.
+     *
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [
@@ -44,6 +49,9 @@ final class DetalleVentaDTO
     /**
      * Crear desde array
      */
+        /**
+     * @param array<string, mixed> $data
+     */
     public static function fromArray(array $data): self
     {
         return new self(
@@ -59,6 +67,11 @@ final class DetalleVentaDTO
 
     /**
      * Validar reglas para detalle
+     */
+    /**
+     * Get the validation rules.
+     *
+     * @return array<string, mixed>
      */
     public static function rules(): array
     {

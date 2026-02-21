@@ -39,6 +39,11 @@ final class ProductoUpdateDTO
     /**
      * Convertir DTO a array filtrado (solo cambios)
      */
+    /**
+     * Convert the DTO to model data array.
+     *
+     * @return array<string, mixed>
+     */
     public function toModelData(): array
     {
         $data = [];
@@ -67,6 +72,11 @@ final class ProductoUpdateDTO
 
     /**
      * Reglas de validación (todos opcionales)
+     */
+    /**
+     * Get the validation rules.
+     *
+     * @return array<string, mixed>
      */
     public static function rules(): array
     {

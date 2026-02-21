@@ -28,7 +28,7 @@ final class CategoriaProductoCreateDTO
         return new self(
             nombre: $request->string('nombre')->trim(),
             empresa_id: $request->integer('empresa_id'),
-            descripcion: $request->string('descripcion')?->trim(),
+            descripcion: $request->filled('descripcion') ? $request->string('descripcion')->trim()->toString() : null,
             categoria_padre_id: $request->integer('categoria_padre_id'),
             activo: $request->boolean('activo', true),
         );
@@ -36,6 +36,11 @@ final class CategoriaProductoCreateDTO
 
     /**
      * Convertir a array para guardar en base de datos
+     */
+    /**
+     * Convert the DTO to an array.
+     *
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {

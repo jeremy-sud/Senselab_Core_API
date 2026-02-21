@@ -12,6 +12,12 @@ use Illuminate\Http\Request;
  */
 final class AsientoContableCreateDTO
 {
+    /**
+     * @param array<mixed> $detalles
+     */
+    /**
+     * @param array<mixed> $detalles
+     */
     public function __construct(
         public readonly int $empresa_id,
         public readonly \DateTime $fecha,
@@ -36,14 +42,19 @@ final class AsientoContableCreateDTO
             concepto: $request->string('concepto')->trim(),
             total_debe: $request->float('total_debe'),
             total_haber: $request->float('total_haber'),
-            referencia: $request->string('referencia')?->trim(),
+            referencia: $request->filled('referencia') ? $request->string('referencia')->trim()->toString() : null,
             proyecto_id: $request->integer('proyecto_id'),
-            detalles: $request->array('detalles', []),
+            detalles: $request->array('detalles'),
         );
     }
 
     /**
      * Convertir a array para guardar en base de datos
+     */
+    /**
+     * Convert the DTO to an array.
+     *
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {
@@ -61,6 +72,12 @@ final class AsientoContableCreateDTO
 
     /**
      * Obtener detalles del asiento
+     */
+    /**
+     * @return array<mixed>
+     */
+    /**
+     * @return array<mixed>
      */
     public function getDetalles(): array
     {

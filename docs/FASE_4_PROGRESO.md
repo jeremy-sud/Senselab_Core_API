@@ -12,7 +12,7 @@
 
 | Tarea | Progreso | Archivos | Líneas | Horas |
 |-------|----------|----------|--------|-------|
-| **4.1: PHPStan Reduction** | 65% | 1 baseline | - | 5 |
+| **4.1: PHPStan Reduction** | 71% | 1 baseline | - | 6 |
 | **4.2: Refactor Controllers** | 7% | 1/15 refactored | -792 | 1 |
 | **4.3: DTOs** | 97% | 39/40 DTOs | ~2,340 | 6-7 |
 | **4.4: Tests** | 0% | 0 tests | - | 0 |
@@ -413,5 +413,37 @@ El archivo `routes/api.php` fue particionado en 15 archivos por dominio funciona
 
 ### 🧹 PHPStan Baseline Reduction (app/Http/Requests)
 - ✅ Reducción masiva de errores en `app/Http/Requests` (de 279 a 0 errores).
-- ✅ Baseline global reducido a 726 errores (65% de reducción total).
+- ✅ Baseline global reducido a 595 errores (71% de reducción total).
 - ✅ Script de refactorización automatizada creado y ejecutado con éxito para `rules()`, `messages()` y `withValidator()`.
+
+## 🔄 Session 7 - Reducción Masiva de Errores PHPStan (14 feb 2026)
+
+### ✅ Completado esta sesión:
+
+1. **Limpieza de `app/Models` y `app/Traits`**
+   - Se corrigieron 20 errores en Modelos (tipos de retorno en relaciones, casts, nullsafe).
+   - Se corrigieron errores en Traits (tipos de retorno, PHPDocs).
+   - Se eliminaron Traits sin uso (`CustomSoftDeletes`, `CustomTimestamps`).
+   - **Resultado:** 0 errores en `app/Models` y `app/Traits`.
+
+2. **Limpieza de `app/Http/Requests`**
+   - Se creó un script automatizado (`fix_requests.php`) para inyectar PHPDocs en los métodos `rules()`, `messages()` y `withValidator()`.
+   - Se corrigieron 279 errores en ~170 archivos de Request.
+   - **Resultado:** 0 errores en `app/Http/Requests`.
+
+3. **Limpieza de `app/DTOs`**
+   - Se crearon scripts automatizados (`fix_dtos.php`, `fix_dtos_nullsafe.php`, `fix_dtos_iterable.php`) para inyectar PHPDocs en `toArray()`, `toModelData()`, constructores y métodos que retornan arrays.
+   - Se corrigieron 145 errores en ~40 archivos DTO.
+   - Se reemplazaron llamadas nullsafe inválidas (`?->`) en objetos `Stringable`.
+   - **Resultado:** 0 errores en `app/DTOs`.
+
+### 📊 Impacto Session 7
+
+| Métrica | Antes | Después | Mejora |
+|---------|-------|---------|--------|
+| Errores Baseline | 2,065 | 595 | -71% |
+| Errores Models | 20 | 0 | -100% |
+| Errores Traits | ~10 | 0 | -100% |
+| Errores Requests | 279 | 0 | -100% |
+| Errores DTOs | 145 | 0 | -100% |
+
