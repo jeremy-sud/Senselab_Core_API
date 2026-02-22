@@ -5,9 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Traits\HasCustomSoftDeletes;
-use App\Traits\HasAuditFields;
-use App\Traits\HasActiveScope;
 
 class Cabys extends Model
 {

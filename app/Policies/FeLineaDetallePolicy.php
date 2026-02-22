@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Models\Usuario;
-use App\Models\FeLineaDetalle;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class FeLineaDetallePolicy extends BasePolicy

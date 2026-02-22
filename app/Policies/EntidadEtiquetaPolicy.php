@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Models\Usuario;
-use App\Models\EntidadEtiqueta;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class EntidadEtiquetaPolicy extends BasePolicy

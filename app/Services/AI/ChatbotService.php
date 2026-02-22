@@ -5,12 +5,9 @@ namespace App\Services\AI;
 use App\Models\Venta;
 use App\Models\Producto;
 use App\Models\Cliente;
-use App\Models\Proveedor;
 use App\Models\CuentaPorCobrar;
-use App\Models\InventarioProducto;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
 /**

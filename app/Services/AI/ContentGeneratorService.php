@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace App\Services\AI;
 
 use App\Models\Cliente;
-use App\Models\CuentaPorCobrar;
 use App\Models\Empresa;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 
 /**
  * Servicio de Generación Automática de Contenido

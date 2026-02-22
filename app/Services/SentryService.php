@@ -6,7 +6,6 @@ namespace App\Services;
 
 use Sentry\Tracing\Transaction;
 use Sentry\EventId;
-use Sentry\State\Hub;
 
 /**
  * Sentry Error Tracking Service

@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Services\AI;
 
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Http\Client\RequestException;
 
 /**
  * Servicio de integración con Google Gemini API (GRATUITO)

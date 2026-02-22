@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Models\Usuario;
-use App\Models\RolUsuario;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class RolUsuarioPolicy extends BasePolicy

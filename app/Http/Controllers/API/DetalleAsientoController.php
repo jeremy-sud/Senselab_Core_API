@@ -4,8 +4,6 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DetalleAsientoResource;
-use App\Http\Requests\StoreDetalleAsientoRequest;
-use App\Http\Requests\UpdateDetalleAsientoRequest;
 use App\Http\Requests\LibroMayorRequest;
 use App\Http\Requests\BalanceComprobacionRequest;
 use App\Models\DetalleAsiento;

@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreCategoriaProductoRequest;
-use App\Http\Requests\UpdateCategoriaProductoRequest;
 use App\Http\Resources\CategoriaProductoResource;
 use App\Models\CategoriaProducto;
 use App\Traits\HasCacheableQueries;

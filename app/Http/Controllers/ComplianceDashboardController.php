@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\AuditLog;
 use App\Models\GdprDeletionRequest;
 use App\Models\DataRetentionPolicy;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
