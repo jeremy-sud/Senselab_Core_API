@@ -32,6 +32,8 @@ class OAuthTokenManager
 
     /**
      * Credenciales OAuth
+     * 
+     * @var array<string, mixed>
      */
     protected array $credentials;
 
@@ -161,6 +163,8 @@ class OAuthTokenManager
 
     /**
      * Guardar token en la base de datos
+     * 
+     * @param array<string, mixed> $data
      */
     protected function guardarToken(array $data): FeOAuthToken
     {
@@ -264,7 +268,7 @@ class OAuthTokenManager
     /**
      * Obtener estadísticas de uso de tokens
      * 
-     * @return array Estadísticas
+     * @return array<string, mixed> Estadísticas
      */
     public function getEstadisticas(): array
     {

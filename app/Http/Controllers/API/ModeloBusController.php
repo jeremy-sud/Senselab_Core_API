@@ -26,6 +26,7 @@ class ModeloBusController extends Controller
 {
     use HasCacheableQueries;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['modelos-buses', 'transporte', 'catalogos'];
     protected int $cacheTTL = 7200; // 2 horas - catálogo estable
     /**
@@ -72,7 +73,7 @@ class ModeloBusController extends Controller
      * Crear un nuevo modelo de bus
      *
      * @param StoreModeloBusRequest $request
-     * @return ModeloBusResource
+     * @return JsonResponse
      */
     #[OA\Post(
         path: "/api/modelos-buses",
@@ -263,7 +264,7 @@ class ModeloBusController extends Controller
     /**
      * Listar modelos activos para formularios
      *
-     * @return JsonResponse
+     * @return AnonymousResourceCollection
      */
     #[OA\Get(
         path: "/api/modelos-buses/activos",

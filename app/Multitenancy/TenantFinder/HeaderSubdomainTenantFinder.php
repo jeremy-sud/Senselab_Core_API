@@ -32,6 +32,9 @@ class HeaderSubdomainTenantFinder extends TenantFinder
         return $this->resolveFromSubdomain($request);
     }
 
+    /**
+     * @return array<int, string>
+     */
     protected function headerKeys(): array
     {
         return config('multitenancy.identification.header_keys', [

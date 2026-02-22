@@ -34,7 +34,7 @@ class ConfiguracionResource extends JsonResource
         ];
     }
 
-    private function obtenerValorFormateado()
+    private function obtenerValorFormateado(): mixed
     {
         switch ($this->tipo_dato) {
             case 'numero':

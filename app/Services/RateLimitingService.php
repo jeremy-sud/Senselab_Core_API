@@ -255,6 +255,8 @@ class RateLimitingService
 
     /**
      * Obtener estadísticas de rate limiting
+     * 
+     * @return array<string, mixed>
      */
     public static function getStats(string $key = 'api'): array
     {

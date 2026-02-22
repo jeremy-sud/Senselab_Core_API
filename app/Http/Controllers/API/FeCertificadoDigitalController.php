@@ -177,20 +177,20 @@ class FeCertificadoDigitalController extends Controller
                 'private'
             );
 
-            $validated['nombre_archivo_original'] = $nombreOriginal;
-            $validated['ruta_archivo'] = $ruta;
+            $data['nombre_archivo_original'] = $nombreOriginal;
+            $data['ruta_archivo'] = $ruta;
         }
 
         // Si es el primer certificado o se marca como activo, desactivar otros
-        if ($validated['activo'] ?? false) {
+        if ($data['activo'] ?? false) {
             FeCertificadoDigital::where('empresa_id', $user->empresa_id)
-                ->where('ambiente', $validated['ambiente'])
+                ->where('ambiente', $data['ambiente'])
                 ->update(['activo' => false]);
         }
 
-        $validated['empresa_id'] = $user->empresa_id;
+        $data['empresa_id'] = $user->empresa_id;
 
-        $certificado = FeCertificadoDigital::create($validated);
+        $certificado = FeCertificadoDigital::create($data);
 
         return response()->json([
             'message' => 'Certificado digital creado exitosamente',

@@ -30,6 +30,7 @@ class TipoClienteController extends Controller
 {
     use HasCacheableQueries;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['tipos-cliente', 'catalogos'];
     protected int $cacheTTL = 3600; // 1 hora - catálogo estable
 

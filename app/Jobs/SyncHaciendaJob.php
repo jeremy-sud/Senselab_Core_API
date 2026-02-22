@@ -18,9 +18,10 @@ class SyncHaciendaJob implements ShouldQueue
 {
     use Queueable;
 
-    public $tries = 5;
-    public $timeout = 120;
-    public $backoff = [60, 120, 300, 600, 1200];
+    public int $tries = 5;
+    public int $timeout = 120;
+    /** @var array<int, int> */
+    public array $backoff = [60, 120, 300, 600, 1200];
 
     /**
      * Create a new job instance.

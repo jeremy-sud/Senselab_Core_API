@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreProveedorRequest;
 use App\Http\Requests\UpdateProveedorRequest;
 use App\Http\Resources\ProveedorResource;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
@@ -16,8 +17,9 @@ class ProveedorController extends Controller
 {
     use HasCacheableQueries;
 
-    protected $cacheTags = ['proveedores', 'catalogos'];
-    protected $cacheTTL = 1800; // 30 minutos
+    /** @var array<int, string> */
+    protected array $cacheTags = ['proveedores', 'catalogos'];
+    protected int $cacheTTL = 1800; // 30 minutos
     /**
      * Display a listing of the resource.
      *
@@ -103,7 +105,7 @@ class ProveedorController extends Controller
             )
         ]
     )]
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection|JsonResponse
     {
         $this->authorize('viewAny', Proveedor::class);
 
@@ -240,7 +242,7 @@ class ProveedorController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     * @return ProveedorResource|\Illuminate\Http\JsonResponse
+     * @return ProveedorResource
      */
     #[OA\Get(
         path: '/api/proveedores/{id}',
@@ -316,7 +318,7 @@ class ProveedorController extends Controller
      *
      * @param UpdateProveedorRequest $request
      * @param int $id
-     * @return ProveedorResource|\Illuminate\Http\JsonResponse
+     * @return ProveedorResource
      */
     #[OA\Put(
         path: '/api/proveedores/{id}',

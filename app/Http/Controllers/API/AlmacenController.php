@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreAlmacenRequest;
 use App\Http\Requests\UpdateAlmacenRequest;
 use App\Http\Resources\AlmacenResource;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
@@ -16,8 +17,9 @@ class AlmacenController extends Controller
 {
     use HasCacheableQueries;
 
-    protected $cacheTags = ['almacenes', 'catalogos'];
-    protected $cacheTTL = 1800; // 30 minutos
+    /** @var array<int, string> */
+    protected array $cacheTags = ['almacenes', 'catalogos'];
+    protected int $cacheTTL = 1800; // 30 minutos
     /**
      * Display a listing of the resource.
      *
@@ -40,7 +42,7 @@ class AlmacenController extends Controller
             new OA\Response(response: 200, description: 'Listado exitoso', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/Almacen'))]))
         ]
     )]
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection|JsonResponse
     {
         $this->authorize('viewAny', Almacen::class);
 

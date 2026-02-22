@@ -26,6 +26,7 @@ class PresupuestoController extends Controller
 {
     use HasCacheableQueries, HasEmpresaContext;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['presupuestos', 'finanzas'];
     protected int $cacheTTL = 3600; // 1h - planning data, semi-stable
     /**
@@ -68,7 +69,7 @@ class PresupuestoController extends Controller
 
         $cacheKey = $this->getCacheKey('index', ['empresa_id' => $empresaId]);
 
-        return $this->cacheQueryIfEnabled($cacheKey, function() use ($request, $empresaId) {
+        return $this->cacheQueryIfEnabled($cacheKey, function() use ($empresaId) {
             $presupuestos = Presupuesto::where('empresa_id', $empresaId)
                 ->with('detalles.cuentaContable')
                 ->orderBy('periodo_inicio', 'desc')

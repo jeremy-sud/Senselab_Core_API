@@ -18,6 +18,8 @@ class AsientoContableService
 {
     /**
      * Crear un nuevo asiento contable
+     *
+     * @param array<string, mixed> $data
      */
     public function crear(array $data): AsientoContable
     {
@@ -102,6 +104,9 @@ class AsientoContableService
 
     /**
      * Actualizar asiento
+     *
+     * @param AsientoContable $asiento
+     * @param array<string, mixed> $data
      */
     public function actualizar(AsientoContable $asiento, array $data): AsientoContable
     {

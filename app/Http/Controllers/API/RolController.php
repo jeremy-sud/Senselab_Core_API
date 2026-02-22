@@ -27,6 +27,7 @@ class RolController extends Controller
 {
     use HasCacheableQueries;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['roles', 'rbac'];
     protected int $cacheTTL = 1800; // 30 minutos - datos RBAC cambian ocasionalmente
 
@@ -217,7 +218,7 @@ class RolController extends Controller
             ], 422);
         }
 
-        $rol->eliminado = 1;
+        $rol->eliminado = now();
         $rol->activo = 0;
         $rol->save();
 

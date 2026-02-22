@@ -17,8 +17,9 @@ class MovimientoCajaChicaController extends Controller
 {
     use HasCacheableQueries;
 
-    protected $cacheTags = ['movimientos_caja_chica', 'caja_chica', 'tesoreria'];
-    protected $cacheTTL = 600; // 10 minutos
+    /** @var array<int, string> */
+    protected array $cacheTags = ['movimientos_caja_chica', 'caja_chica', 'tesoreria'];
+    protected int $cacheTTL = 600; // 10 minutos
 
     public function __construct()
     {
@@ -287,7 +288,7 @@ class MovimientoCajaChicaController extends Controller
             )
         ]
     )]
-    public function update(Request $request, string $id): MovimientoCajaChicaResource
+    public function update(Request $request, string $id): MovimientoCajaChicaResource|JsonResponse
     {
         $movimiento = MovimientoCajaChica::findOrFail($id);
         $this->authorize('update', $movimiento);

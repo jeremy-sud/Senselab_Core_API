@@ -21,6 +21,7 @@ class MensajeHaciendaController extends Controller
 {
     use HasCacheableQueries;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['mensajes-hacienda', 'hacienda', 'facturacion-electronica'];
     protected int $cacheTTL = 900; // 15 minutos - mensajes dinámicos de Hacienda
 
@@ -241,7 +242,7 @@ class MensajeHaciendaController extends Controller
     {
         $this->authorize('delete', $mensajeHacienda);
 
-        $mensajeHacienda->eliminado = true;
+        $mensajeHacienda->eliminado = now();
         $mensajeHacienda->save();
 
         $this->flushCache();

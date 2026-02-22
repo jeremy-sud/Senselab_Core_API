@@ -29,6 +29,7 @@ class DetalleSalidaInventarioController extends Controller
     use HasCacheableQueries, HasEmpresaContext;
 
     /** @var array<string> */
+    /** @var array<int, string> */
     protected array $cacheTags = ['detalles-salidas-inventario', 'inventario', 'salidas'];
     protected int $cacheTTL = 1800; // 30min - inventory detail semi-dynamic
     /**

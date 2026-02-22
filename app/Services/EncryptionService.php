@@ -169,9 +169,9 @@ class EncryptionService
     /**
      * Encriptar múltiples campos de un array
      *
-     * @param array $data Array con datos a encriptar
+     * @param array<string, mixed> $data Array con datos a encriptar
      * @param string $modelClass Clase del modelo (para saber qué campos encriptar)
-     * @return array
+     * @return array<string, mixed>
      */
     public static function encryptFields(array $data, string $modelClass): array
     {
@@ -202,9 +202,9 @@ class EncryptionService
     /**
      * Desencriptar múltiples campos de un array
      *
-     * @param array $data Array con datos encriptados
+     * @param array<string, mixed> $data Array con datos encriptados
      * @param string $modelClass Clase del modelo
-     * @return array
+     * @return array<string, mixed>
      */
     public static function decryptFields(array $data, string $modelClass): array
     {
@@ -371,7 +371,7 @@ class EncryptionService
      * Obtener campos encriptados para un modelo
      *
      * @param string $modelClass Clase del modelo
-     * @return array
+     * @return array<string, mixed>
      */
     public static function getEncryptedFields(string $modelClass): array
     {
@@ -446,7 +446,7 @@ class EncryptionService
     /**
      * Obtener estadísticas de encriptación
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public static function getStatistics(): array
     {

@@ -25,6 +25,7 @@ class ProductoController extends Controller
      * Tags de cache para productos
      * @var array
      */
+    /** @var array<int, string> */
     protected array $cacheTags = ['productos', 'catalogos'];
 
     /**
@@ -36,7 +37,7 @@ class ProductoController extends Controller
      * Display a listing of the resource.
      *
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return AnonymousResourceCollection
      */
     #[OA\Get(
         path: '/api/productos',
@@ -270,7 +271,7 @@ class ProductoController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return ProductoResource
      */
     #[OA\Get(
         path: '/api/productos/{id}',
@@ -329,7 +330,7 @@ class ProductoController extends Controller
      *
      * @param UpdateProductoRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return ProductoResource
      */
     #[OA\Put(
         path: '/api/productos/{id}',

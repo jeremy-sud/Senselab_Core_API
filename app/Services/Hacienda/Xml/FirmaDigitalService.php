@@ -39,6 +39,8 @@ class FirmaDigitalService
     /**
      * Datos del certificado parseado
      */
+    /** @var array<string, mixed>|null */
+    /** @var array<string, mixed>|null */
     protected ?array $certData = null;
 
     /**
@@ -417,7 +419,7 @@ class FirmaDigitalService
      * Extraer certificado de un XML firmado
      * 
      * @param string $xmlFirmado XML con firma
-     * @return array|null Datos del certificado
+     * @return array<string, mixed>|null Datos del certificado
      */
     public function extraerCertificado(string $xmlFirmado): ?array
     {
@@ -473,7 +475,7 @@ class FirmaDigitalService
     /**
      * Obtener información del certificado actualmente cargado
      * 
-     * @return array|null
+     * @return array<string, mixed>|null
      */
     public function getInformacionCertificado(): ?array
     {

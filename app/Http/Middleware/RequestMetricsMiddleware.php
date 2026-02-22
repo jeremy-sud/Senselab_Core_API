@@ -114,6 +114,8 @@ class RequestMetricsMiddleware
 
     /**
      * Obtener todas las métricas registradas
+     *
+     * @return array<string, mixed>
      */
     public static function getMetricsSnapshot(): array
     {

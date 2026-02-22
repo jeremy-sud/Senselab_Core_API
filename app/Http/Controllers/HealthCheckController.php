@@ -49,7 +49,7 @@ class HealthCheckController extends Controller
             try {
                 $cacheDriver = config('cache.default', 'file');
                 if ($cacheDriver === 'redis') {
-                    Cache::connection('redis')->ping();
+                    \Illuminate\Support\Facades\Redis::ping();
                 }
                 $checks['cache'] = 'ok';
             } catch (\Exception $e) {
@@ -78,7 +78,7 @@ class HealthCheckController extends Controller
                 'status' => 'not_ready',
                 'error' => $e->getMessage(),
                 'timestamp' => now()->iso8601Micro(),
-                'checks' => $checks ?? [],
+                'checks' => $checks,
             ], 503);
         }
     }
@@ -206,7 +206,7 @@ class HealthCheckController extends Controller
         try {
             $cacheDriver = config('cache.default', 'file');
             if ($cacheDriver === 'redis') {
-                Cache::connection('redis')->ping();
+                \Illuminate\Support\Facades\Redis::ping();
             }
             return true;
         } catch (\Exception $e) {
@@ -256,12 +256,17 @@ class HealthCheckController extends Controller
 
     /**
      * Obtener promedio de carga del sistema
+     *
+     * @return array<string, float>|null
      */
     private function getLoadAverage(): ?array
     {
         try {
             if (PHP_OS_FAMILY !== 'Windows') {
                 $loadavg = sys_getloadavg();
+                if ($loadavg === false) {
+                    $loadavg = [0.0, 0.0, 0.0];
+                }
                 return [
                     '1min' => round($loadavg[0], 2),
                     '5min' => round($loadavg[1], 2),

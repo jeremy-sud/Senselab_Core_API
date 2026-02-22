@@ -42,11 +42,15 @@ class ProcesarRespuestaHaciendaJob implements ShouldQueue
 
     /**
      * Datos de la respuesta
+     * @var array<string, mixed>
      */
     protected array $respuestaData;
 
     /**
      * Create a new job instance.
+     *
+     * @param int $comprobanteId
+     * @param array<string, mixed> $respuestaData
      */
     public function __construct(int $comprobanteId, array $respuestaData)
     {
@@ -140,8 +144,9 @@ class ProcesarRespuestaHaciendaJob implements ShouldQueue
     }
 
     /**
-     * Parsear XML de respuesta de Hacienda
-     */
+     * Parsear XML de respuesta de Hacienda     *
+     * @param string $xmlRespuesta
+     * @return array<string, mixed>     */
     protected function parsearXmlRespuesta(string $xmlRespuesta): array
     {
         $detalles = [];

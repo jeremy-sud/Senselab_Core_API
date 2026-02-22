@@ -14,8 +14,9 @@ class RegimenTributarioController extends Controller
 {
     use HasCacheableQueries;
 
-    protected $cacheTags = ['regimenes_tributarios', 'configuracion'];
-    protected $cacheTTL = 86400; // 24 horas (datos muy estables)
+    /** @var array<int, string> */
+    protected array $cacheTags = ['regimenes_tributarios', 'configuracion'];
+    protected int $cacheTTL = 86400; // 24 horas (datos muy estables)
 
     public function __construct()
     {

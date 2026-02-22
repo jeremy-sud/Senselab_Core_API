@@ -11,6 +11,7 @@ use App\Traits\HasCacheableQueries;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use OpenApi\Attributes as OA;
 
@@ -30,6 +31,7 @@ class ZonaGeograficaController extends Controller
 {
     use HasCacheableQueries;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['zonas-geograficas', 'geografico'];
     protected int $cacheTTL = 3600; // 1 hora - cambia ocasionalmente
 
@@ -49,7 +51,7 @@ class ZonaGeograficaController extends Controller
         ]
     )]
 
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection|JsonResponse
     {
         $this->authorize('viewAny', ZonaGeografica::class);
 

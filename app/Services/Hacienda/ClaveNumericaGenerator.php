@@ -227,7 +227,7 @@ class ClaveNumericaGenerator
      * Validar formato de una clave numérica existente
      * 
      * @param string $clave Clave a validar
-     * @return array|bool Si se llama desde tests retorna array ['valido' => bool, 'errores' => array], sino bool
+     * @return array<string, mixed>|bool Si se llama desde tests retorna array ['valido' => bool, 'errores' => array], sino bool
      */
     public function validar(string $clave)
     {
@@ -324,7 +324,7 @@ class ClaveNumericaGenerator
      * Extraer información de una clave numérica
      * 
      * @param string $clave Clave numérica de 50 posiciones
-     * @return array Información extraída
+     * @return array<string, mixed> Información extraída
      * @throws \InvalidArgumentException Si la clave es inválida
      */
     public function extraerInformacion(string $clave): array
@@ -383,7 +383,7 @@ class ClaveNumericaGenerator
      * @param string $consecutivoInicial Consecutivo inicial
      * @param int $cantidad Cantidad de claves a generar
      * @param string $situacion Situación de emisión
-     * @return array Array de claves generadas
+     * @return array<int, string> Array de claves generadas
      */
     public function generarMultiples(
         Carbon $fechaEmision,

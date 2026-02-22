@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ConsecutivoFE;
-use App\Http\Requests\StoreConsecutivoFERequest;
-use App\Http\Requests\UpdateConsecutivoFERequest;
-use App\Http\Resources\ConsecutivoFEResource;
+use App\Models\ConsecutivoFe;
+use App\Http\Requests\StoreConsecutivoFeRequest;
+use App\Http\Requests\UpdateConsecutivoFeRequest;
+use App\Http\Resources\ConsecutivoFeResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +19,7 @@ use OpenApi\Attributes as OA;
     name: 'Consecutivos FE',
     description: 'Gestión de consecutivos de facturación electrónica por tipo de documento'
 )]
-class ConsecutivoFEController extends Controller
+class ConsecutivoFeController extends Controller
 {
     use HasEmpresaContext; // Centraliza acceso a empresa
 
@@ -38,7 +38,7 @@ class ConsecutivoFEController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $query = ConsecutivoFE::where('empresa_id', $this->getEmpresaId())
+        $query = ConsecutivoFe::where('empresa_id', $this->getEmpresaId())
             ->where('eliminado', 0);
 
         // Filtros
@@ -62,7 +62,7 @@ class ConsecutivoFEController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => ConsecutivoFEResource::collection($consecutivos),
+            'data' => ConsecutivoFeResource::collection($consecutivos),
             'meta' => [
                 'current_page' => $consecutivos->currentPage(),
                 'last_page' => $consecutivos->lastPage(),
@@ -86,9 +86,9 @@ class ConsecutivoFEController extends Controller
         ]
     )]
 
-    public function store(StoreConsecutivoFERequest $request): JsonResponse
+    public function store(StoreConsecutivoFeRequest $request): JsonResponse
     {
-        $consecutivo = ConsecutivoFE::create([
+        $consecutivo = ConsecutivoFe::create([
             'empresa_id' => $this->getEmpresaId(),
             'sucursal_id' => $request->sucursal_id,
             'tipo_documento_dgt' => $request->tipo_documento_dgt,
@@ -101,7 +101,7 @@ class ConsecutivoFEController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Consecutivo FE creado exitosamente',
-            'data' => new ConsecutivoFEResource($consecutivo)
+            'data' => new ConsecutivoFeResource($consecutivo)
         ], 201);
     }
 
@@ -122,7 +122,7 @@ class ConsecutivoFEController extends Controller
         ]
     )]
 
-    public function show(ConsecutivoFE $consecutivoFe): JsonResponse
+    public function show(ConsecutivoFe $consecutivoFe): JsonResponse
     {
         if ($consecutivoFe->empresa_id !== $this->getEmpresaId()) {
             return response()->json([
@@ -133,7 +133,7 @@ class ConsecutivoFEController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => new ConsecutivoFEResource($consecutivoFe)
+            'data' => new ConsecutivoFeResource($consecutivoFe)
         ]);
     }
 
@@ -154,7 +154,7 @@ class ConsecutivoFEController extends Controller
         ]
     )]
 
-    public function update(UpdateConsecutivoFERequest $request, ConsecutivoFE $consecutivoFe): JsonResponse
+    public function update(UpdateConsecutivoFeRequest $request, ConsecutivoFe $consecutivoFe): JsonResponse
     {
         if ($consecutivoFe->empresa_id !== $this->getEmpresaId()) {
             return response()->json([
@@ -171,7 +171,7 @@ class ConsecutivoFEController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Consecutivo FE actualizado exitosamente',
-            'data' => new ConsecutivoFEResource($consecutivoFe)
+            'data' => new ConsecutivoFeResource($consecutivoFe)
         ]);
     }
 
@@ -192,7 +192,7 @@ class ConsecutivoFEController extends Controller
         ]
     )]
 
-    public function destroy(ConsecutivoFE $consecutivoFe): JsonResponse
+    public function destroy(ConsecutivoFe $consecutivoFe): JsonResponse
     {
         if ($consecutivoFe->empresa_id !== $this->getEmpresaId()) {
             return response()->json([
@@ -218,7 +218,7 @@ class ConsecutivoFEController extends Controller
 
         DB::beginTransaction();
         try {
-            $query = ConsecutivoFE::where('empresa_id', $this->getEmpresaId())
+            $query = ConsecutivoFe::where('empresa_id', $this->getEmpresaId())
                 ->where('tipo_documento_dgt', $request->tipo_documento_dgt)
                 ->where('estado', 'Activo')
                 ->where('eliminado', 0)
@@ -273,7 +273,7 @@ class ConsecutivoFEController extends Controller
     /**
      * Resetear el consecutivo a un número específico (solo admin).
      */
-    public function resetear(ResetearConsecutivoRequest $request, ConsecutivoFE $consecutivoFe): JsonResponse
+    public function resetear(ResetearConsecutivoRequest $request, ConsecutivoFe $consecutivoFe): JsonResponse
     {
         if ($consecutivoFe->empresa_id !== $this->getEmpresaId()) {
             return response()->json([
@@ -289,7 +289,7 @@ class ConsecutivoFEController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Consecutivo reseteado exitosamente',
-            'data' => new ConsecutivoFEResource($consecutivoFe)
+            'data' => new ConsecutivoFeResource($consecutivoFe)
         ]);
     }
 
@@ -298,7 +298,7 @@ class ConsecutivoFEController extends Controller
      */
     public function porTipoDocumento(Request $request, string $tipoDocumentoDgt): JsonResponse
     {
-        $consecutivos = ConsecutivoFE::where('empresa_id', $this->getEmpresaId())
+        $consecutivos = ConsecutivoFe::where('empresa_id', $this->getEmpresaId())
             ->where('tipo_documento_dgt', $tipoDocumentoDgt)
             ->where('eliminado', 0)
             ->orderBy('prefijo')
@@ -306,14 +306,14 @@ class ConsecutivoFEController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => ConsecutivoFEResource::collection($consecutivos)
+            'data' => ConsecutivoFeResource::collection($consecutivos)
         ]);
     }
 
     /**
      * Marcar un consecutivo como agotado.
      */
-    public function marcarAgotado(ConsecutivoFE $consecutivoFe): JsonResponse
+    public function marcarAgotado(ConsecutivoFe $consecutivoFe): JsonResponse
     {
         if ($consecutivoFe->empresa_id !== $this->getEmpresaId()) {
             return response()->json([
@@ -327,14 +327,14 @@ class ConsecutivoFEController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Consecutivo marcado como agotado',
-            'data' => new ConsecutivoFEResource($consecutivoFe)
+            'data' => new ConsecutivoFeResource($consecutivoFe)
         ]);
     }
 
     /**
      * Activar un consecutivo inactivo.
      */
-    public function activar(ConsecutivoFE $consecutivoFe): JsonResponse
+    public function activar(ConsecutivoFe $consecutivoFe): JsonResponse
     {
         if ($consecutivoFe->empresa_id !== $this->getEmpresaId()) {
             return response()->json([
@@ -351,7 +351,7 @@ class ConsecutivoFEController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Consecutivo activado exitosamente',
-            'data' => new ConsecutivoFEResource($consecutivoFe)
+            'data' => new ConsecutivoFeResource($consecutivoFe)
         ]);
     }
 
@@ -360,7 +360,7 @@ class ConsecutivoFEController extends Controller
      */
     public function resumenPorEstado(): JsonResponse
     {
-        $resumen = ConsecutivoFE::where('empresa_id', $this->getEmpresaId())
+        $resumen = ConsecutivoFe::where('empresa_id', $this->getEmpresaId())
             ->where('eliminado', 0)
             ->select('estado', DB::raw('count(*) as total'))
             ->groupBy('estado')

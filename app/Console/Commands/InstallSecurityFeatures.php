@@ -19,7 +19,7 @@ use File as FileHelper;
  */
 class InstallSecurityFeatures extends Command
 {
-    protected $signature = 'security:install 
+    protected $signature = 'security:install
                             {--models= : Modelos específicos a actualizar (separados por coma)}
                             {--force : Ignorar confirmación y ejecutar inmediatamente}';
 
@@ -27,6 +27,7 @@ class InstallSecurityFeatures extends Command
 
     /**
      * Modelos críticos recomendados para instalación automática
+     * @var array<int, string>
      */
     protected array $criticalModels = [
         'App\Models\Usuario',
@@ -43,13 +44,14 @@ class InstallSecurityFeatures extends Command
 
     /**
      * Traits a instalar
+     * @var array<string, string>
      */
     protected array $traits = [
         'HasAuditableEvents' => 'App\Traits\HasAuditableEvents',
         'HasEncryptedAttributes' => 'App\Traits\HasEncryptedAttributes',
     ];
 
-    public function handle()
+    public function handle(): int
     {
         $this->info('🔐 Instalador de Seguridad - FASE 1');
         $this->line('');
@@ -99,8 +101,8 @@ class InstallSecurityFeatures extends Command
     }
 
     /**
-     * Obtener modelos a actualizar
-     */
+     * Obtener modelos a actualizar     *
+     * @return array<int, string>     */
     protected function getModelsToUpdate(): array
     {
         if ($this->option('models')) {
@@ -118,11 +120,14 @@ class InstallSecurityFeatures extends Command
             '1' => $this->criticalModels,
             '2' => $this->getAllModels(),
             '3' => $this->getCustomModels(),
+            default => $this->criticalModels,
         };
     }
 
     /**
      * Obtener todos los modelos de app/Models
+     *
+     * @return array<int, string>
      */
     protected function getAllModels(): array
     {
@@ -149,6 +154,8 @@ class InstallSecurityFeatures extends Command
 
     /**
      * Obtener modelos específicos ingresados por usuario
+     *
+     * @return array<int, string>
      */
     protected function getCustomModels(): array
     {

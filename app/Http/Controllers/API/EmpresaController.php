@@ -18,8 +18,9 @@ class EmpresaController extends Controller
 {
     use HasCacheableQueries;
 
-    protected $cacheTags = ['empresas', 'tenants'];
-    protected $cacheTTL = 3600; // 1 hora
+    /** @var array<int, string> */
+    protected array $cacheTags = ['empresas', 'tenants'];
+    protected int $cacheTTL = 3600; // 1 hora
     /**
      * Display a listing of the resource.
      *
@@ -183,8 +184,8 @@ class EmpresaController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
-     * @return EmpresaResource|\Illuminate\Http\JsonResponse
+     * @param string $id
+     * @return EmpresaResource
      */
     #[OA\Get(
         path: '/api/empresas/{id}',
@@ -231,7 +232,7 @@ class EmpresaController extends Controller
      * Update the specified resource in storage.
      *
      * @param UpdateEmpresaRequest $request
-     * @param Empresa $empresa
+     * @param string $id
      * @return EmpresaResource
      */
     #[OA\Put(
@@ -303,7 +304,7 @@ class EmpresaController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $id
+     * @param string $id
      * @return \Illuminate\Http\JsonResponse
      */
     #[OA\Delete(

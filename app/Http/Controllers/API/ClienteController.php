@@ -21,6 +21,7 @@ class ClienteController extends Controller
      * Tags de cache para clientes
      * @var array
      */
+    /** @var array<int, string> */
     protected array $cacheTags = ['clientes', 'catalogos'];
 
     /**
@@ -32,7 +33,7 @@ class ClienteController extends Controller
      * Display a listing of the resource.
      *
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return AnonymousResourceCollection
      */
     #[OA\Get(
         path: '/api/clientes',

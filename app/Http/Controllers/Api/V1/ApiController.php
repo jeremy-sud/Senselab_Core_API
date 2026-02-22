@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * Controlador base para APIs v1
@@ -17,6 +18,12 @@ class ApiController extends Controller
 {
     /**
      * Respuesta de éxito
+     *
+     * @param mixed $data
+     * @param string $message
+     * @param int $code
+     * @param array<string, string> $headers
+     * @return JsonResponse
      */
     protected function success(
         mixed $data = null,
@@ -36,6 +43,12 @@ class ApiController extends Controller
 
     /**
      * Respuesta de error
+     *
+     * @param string $message
+     * @param int $code
+     * @param mixed $errors
+     * @param array<string, string> $headers
+     * @return JsonResponse
      */
     protected function error(
         string $message = 'Error',
@@ -59,6 +72,10 @@ class ApiController extends Controller
 
     /**
      * Respuesta de validación fallida
+     *
+     * @param array<string, array<int, string>> $errors
+     * @param string $message
+     * @return JsonResponse
      */
     protected function validationError(array $errors, string $message = 'Validation failed'): JsonResponse
     {
@@ -106,8 +123,10 @@ class ApiController extends Controller
 
     /**
      * Respuesta de lista paginada
+     *
+     * @param LengthAwarePaginator<int, mixed> $items
      */
-    protected function paginated($items, string $message = 'Success'): JsonResponse
+    protected function paginated(LengthAwarePaginator $items, string $message = 'Success'): JsonResponse
     {
         // Formato de respuesta para listas paginadas. Devuelve los items
         // y un bloque `pagination` con metadatos útiles para la UI.

@@ -30,6 +30,7 @@ class DeclaracionTributariaController extends Controller
 {
     use HasCacheableQueries;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['declaraciones-tributarias', 'contabilidad', 'hacienda'];
     protected int $cacheTTL = 2700; // 45min - tax filing queries, semi-stable
     /**

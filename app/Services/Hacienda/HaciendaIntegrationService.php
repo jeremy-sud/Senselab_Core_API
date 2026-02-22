@@ -288,7 +288,7 @@ class HaciendaIntegrationService
      * Validar estado en Hacienda
      *
      * @param HaciendaComprobante $haciendaComprobante
-     * @return array|null
+     * @return array<string, mixed>|null
      */
     public static function getStatus(HaciendaComprobante $haciendaComprobante): ?array
     {
@@ -564,7 +564,7 @@ class HaciendaIntegrationService
     /**
      * Obtener estadísticas de comprobantes
      *
-     * @return array
+     * @return array<string, int>
      */
     public static function getStatistics(): array
     {

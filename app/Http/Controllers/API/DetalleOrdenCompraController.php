@@ -23,8 +23,9 @@ class DetalleOrdenCompraController extends Controller
 {
     use HasCacheableQueries;
 
-    protected $cacheTags = ['detalle_ordenes_compra', 'ordenes_compra', 'compras'];
-    protected $cacheTTL = 1200; // 20 minutos
+    /** @var array<int, string> */
+    protected array $cacheTags = ['detalle_ordenes_compra', 'ordenes_compra', 'compras'];
+    protected int $cacheTTL = 1200; // 20 minutos
 
     public function __construct()
     {
@@ -33,6 +34,12 @@ class DetalleOrdenCompraController extends Controller
 
     /**
      * Alias para getCacheKey (compatibilidad)
+     */
+    /**
+     * @param array<string, mixed> $params
+     */
+    /**
+     * @param array<string, mixed> $params
      */
     protected function generateCacheKey(string $method, array $params = []): string
     {
@@ -357,8 +364,10 @@ class DetalleOrdenCompraController extends Controller
 
     /**
      * Actualizar totales de la orden recalculando desde detalles activos
+     *
+     * @param int|string $ordenId
      */
-    private function actualizarTotalesOrden($ordenId)
+    private function actualizarTotalesOrden(int|string $ordenId): void
     {
         $orden = OrdenCompra::findOrFail($ordenId);
 

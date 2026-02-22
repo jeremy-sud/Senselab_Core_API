@@ -16,8 +16,9 @@ class EtiquetaController extends Controller
 {
     use HasCacheableQueries;
 
-    protected $cacheTags = ['etiquetas', 'catalogos'];
-    protected $cacheTTL = 7200; // 2 horas
+    /** @var array<int, string> */
+    protected array $cacheTags = ['etiquetas', 'catalogos'];
+    protected int $cacheTTL = 7200; // 2 horas
 
     public function __construct()
     {
@@ -219,7 +220,7 @@ class EtiquetaController extends Controller
             )
         ]
     )]
-    public function update(Request $request, string $id): EtiquetaResource
+    public function update(Request $request, string $id): EtiquetaResource|JsonResponse
     {
         $etiqueta = Etiqueta::findOrFail($id);
         $this->authorize('update', $etiqueta);

@@ -27,6 +27,7 @@ class FormaPagoController extends Controller
 {
     use HasCacheableQueries;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['formas-pago', 'catalogos'];
     protected int $cacheTTL = 86400; // 24 horas - catálogo muy estable
 
@@ -186,7 +187,7 @@ class FormaPagoController extends Controller
 
         $this->authorize('delete', $formaPago);
 
-        $formaPago->eliminado = 1;
+        $formaPago->eliminado = now();
         $formaPago->activo = 0;
         $formaPago->save();
 

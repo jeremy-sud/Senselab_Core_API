@@ -27,6 +27,7 @@ class RutaController extends Controller
 {
     use HasCacheableQueries, HasEmpresaContext;
     /** @var array<string> */
+    /** @var array<int, string> */
     protected array $cacheTags = ['rutas', 'transporte'];
     protected int $cacheTTL = 1800; // 30 min - rutas cambian ocasionalmente
     /**

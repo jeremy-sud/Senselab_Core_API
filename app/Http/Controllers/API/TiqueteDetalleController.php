@@ -27,6 +27,7 @@ class TiqueteDetalleController extends Controller
 {
     use HasCacheableQueries;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['tiquetes-detalle', 'transporte', 'ventas'];
     protected int $cacheTTL = 600; // 10min - tickets highly volatile
     /**

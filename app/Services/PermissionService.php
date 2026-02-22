@@ -38,7 +38,7 @@ class PermissionService
      * Verificar si un usuario tiene alguno de los permisos especificados.
      *
      * @param Usuario $usuario
-     * @param array $permissionSlugs
+     * @param array<int, string> $permissionSlugs
      * @return bool
      */
     public function userHasAnyPermission(Usuario $usuario, array $permissionSlugs): bool
@@ -50,7 +50,7 @@ class PermissionService
      * Verificar si un usuario tiene todos los permisos especificados.
      *
      * @param Usuario $usuario
-     * @param array $permissionSlugs
+     * @param array<int, string> $permissionSlugs
      * @return bool
      */
     public function userHasAllPermissions(Usuario $usuario, array $permissionSlugs): bool
@@ -62,7 +62,7 @@ class PermissionService
      * Obtener todos los permisos de un usuario con cache.
      *
      * @param Usuario $usuario
-     * @return array
+     * @return array<int, string>
      */
     public function getUserPermissions(Usuario $usuario): array
     {
@@ -73,7 +73,7 @@ class PermissionService
      * Obtener todos los permisos de un rol con cache.
      *
      * @param Rol $rol
-     * @return array
+     * @return array<int, string>
      */
     public function getRolePermissions(Rol $rol): array
     {
@@ -140,7 +140,7 @@ class PermissionService
      * Asignar permisos a un rol y actualizar cache.
      *
      * @param Rol $rol
-     * @param array $permisoIds
+     * @param array<int, int> $permisoIds
      * @return void
      */
     public function assignPermissionsToRole(Rol $rol, array $permisoIds): void
@@ -156,7 +156,7 @@ class PermissionService
      * Asignar roles a un usuario y actualizar cache.
      *
      * @param Usuario $usuario
-     * @param array $roleIds
+     * @param array<int, int> $roleIds
      * @return void
      */
     public function assignRolesToUser(Usuario $usuario, array $roleIds): void
@@ -187,7 +187,7 @@ class PermissionService
     /**
      * Obtener estadísticas del cache de permisos.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getCacheStats(): array
     {

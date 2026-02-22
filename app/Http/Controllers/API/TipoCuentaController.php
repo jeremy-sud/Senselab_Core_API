@@ -27,6 +27,7 @@ class TipoCuentaController extends Controller
 {
     use HasCacheableQueries;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['tipos-cuenta', 'catalogos', 'contabilidad'];
     protected int $cacheTTL = 7200; // 2 horas - catálogo contable estándar
     /**
@@ -422,7 +423,7 @@ class TipoCuentaController extends Controller
     /**
      * Obtener tipos de cuenta por naturaleza (Deudora/Acreedora)
      *
-     * @param Request $request
+     * @param PorNaturalezaRequest $request
      * @return JsonResponse
      */
     #[OA\Get(

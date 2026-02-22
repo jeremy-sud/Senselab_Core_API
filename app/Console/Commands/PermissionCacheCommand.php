@@ -55,11 +55,15 @@ class PermissionCacheCommand extends Command
     {
         $action = $this->argument('action');
 
+        if (!in_array($action, ['clear', 'warmup', 'stats'])) {
+            $this->error("Acción inválida: {$action}. Use: clear, warmup o stats");
+            return self::FAILURE;
+        }
+
         return match($action) {
             'clear' => $this->clearCache(),
             'warmup' => $this->warmupCache(),
-            'stats' => $this->showStats(),
-            default => $this->error("Acción inválida: {$action}. Use: clear, warmup o stats")
+            default => $this->showStats(),
         };
     }
 

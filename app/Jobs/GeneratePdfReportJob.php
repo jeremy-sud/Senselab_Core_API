@@ -18,9 +18,10 @@ class GeneratePdfReportJob implements ShouldQueue
 {
     use Queueable;
 
-    public $tries = 3;
-    public $timeout = 300; // 5 minutos
-    public $backoff = [60, 120, 300]; // Retry delays
+    public int $tries = 3;
+    public int $timeout = 300; // 5 minutos
+    /** @var array<int, int> */
+    public array $backoff = [60, 120, 300]; // Retry delays
 
     /**
      * Create a new job instance.
@@ -146,7 +147,7 @@ class GeneratePdfReportJob implements ShouldQueue
      */
     protected function generateCuentasCobrarReport(Empresa $empresa)
     {
-        $cuentas = \App\Models\CuentaCobrar::where('empresa_id', $empresa->id)
+        $cuentas = \App\Models\CuentaPorCobrar::where('empresa_id', $empresa->id)
             ->when(isset($this->filters['estado']), function ($query) {
                 $query->where('estado', $this->filters['estado']);
             })

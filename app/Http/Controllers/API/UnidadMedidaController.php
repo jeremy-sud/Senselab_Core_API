@@ -25,6 +25,7 @@ class UnidadMedidaController extends Controller
 {
     use HasCacheableQueries;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['unidades-medida', 'catalogos'];
     protected int $cacheTTL = 86400; // 24 horas - catálogo muy estable
 
@@ -279,7 +280,7 @@ class UnidadMedidaController extends Controller
 
         $this->authorize('delete', $unidad);
 
-        $unidad->eliminado = 1;
+        $unidad->eliminado = now();
         $unidad->activo = 0;
         $unidad->save();
 

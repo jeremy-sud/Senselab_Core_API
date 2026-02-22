@@ -23,8 +23,9 @@ class DetalleVentaController extends Controller
 {
     use HasCacheableQueries;
 
-    protected $cacheTags = ['detalle_ventas', 'ventas', 'transacciones'];
-    protected $cacheTTL = 600; // 10 minutos (datos muy dinámicos)
+    /** @var array<int, string> */
+    protected array $cacheTags = ['detalle_ventas', 'ventas', 'transacciones'];
+    protected int $cacheTTL = 600; // 10 minutos (datos muy dinámicos)
 
     public function __construct()
     {
@@ -33,6 +34,12 @@ class DetalleVentaController extends Controller
 
     /**
      * Alias para getCacheKey (compatibilidad)
+     */
+    /**
+     * @param array<string, mixed> $params
+     */
+    /**
+     * @param array<string, mixed> $params
      */
     protected function generateCacheKey(string $method, array $params = []): string
     {
@@ -373,8 +380,10 @@ class DetalleVentaController extends Controller
 
     /**
      * Actualizar totales de la venta recalculando desde los detalles activos
+     *
+     * @param int|string $ventaId
      */
-    private function actualizarTotalesVenta($ventaId)
+    private function actualizarTotalesVenta(int|string $ventaId): void
     {
         $venta = Venta::findOrFail($ventaId);
 

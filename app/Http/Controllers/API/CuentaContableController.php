@@ -28,6 +28,7 @@ class CuentaContableController extends Controller
     use HasCacheableQueries, HasEmpresaContext;
 
     /** @var array<string> */
+    /** @var array<int, string> */
     protected array $cacheTags = ['cuentas-contables', 'contabilidad'];
     protected int $cacheTTL = 3600; // 1 hora - plan contable cambia ocasionalmente
     /**
@@ -480,7 +481,7 @@ class CuentaContableController extends Controller
      * Obtener el árbol jerárquico de cuentas contables
      *
      * @param Request $request
-     * @return JsonResponse
+     * @return AnonymousResourceCollection
      */
     #[OA\Get(
         path: "/api/cuentas-contables/arbol",
@@ -532,7 +533,7 @@ class CuentaContableController extends Controller
      * Obtener cuentas que permiten movimientos (para asientos)
      *
      * @param Request $request
-     * @return JsonResponse
+     * @return AnonymousResourceCollection
      */
     #[OA\Get(
         path: "/api/cuentas-contables/para-movimientos",

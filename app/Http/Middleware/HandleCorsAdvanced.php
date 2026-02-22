@@ -31,6 +31,7 @@ class HandleCorsAdvanced
     public function handle(Request $request, Closure $next): Response
     {
         // Obtener configuración CORS desde config/cors.php
+        /** @var array<int, string> $allowedOrigins */
         $allowedOrigins = config('cors.allowed_origins', []);
         $requestOrigin = $request->header('Origin');
 
@@ -72,7 +73,7 @@ class HandleCorsAdvanced
      * Verificar si un origen está permitido
      *
      * @param  string  $origin
-     * @param  array  $allowedOrigins
+     * @param  array<int, string>  $allowedOrigins
      * @return bool
      */
     private function isOriginAllowed(string $origin, array $allowedOrigins): bool

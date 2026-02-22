@@ -30,6 +30,7 @@ class DetalleAsientoController extends Controller
 {
     use HasCacheableQueries, HasEmpresaContext;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['detalles-asientos', 'contabilidad', 'asientos-contables'];
     protected int $cacheTTL = 3600; // 1h - accounting movements stable
     /**
@@ -172,7 +173,7 @@ class DetalleAsientoController extends Controller
      *
      * @param int $id
      * @param Request $request
-     * @return JsonResponse
+     * @return DetalleAsientoResource
      */
     #[OA\Get(
         path: "/api/detalles-asientos/{id}",
@@ -319,7 +320,7 @@ class DetalleAsientoController extends Controller
     /**
      * Obtener libro mayor (mayor analítico) de todas las cuentas
      *
-     * @param Request $request
+     * @param LibroMayorRequest $request
      * @return JsonResponse
      */
     #[OA\Get(
@@ -415,7 +416,7 @@ class DetalleAsientoController extends Controller
     /**
      * Obtener balance de comprobación
      *
-     * @param Request $request
+     * @param BalanceComprobacionRequest $request
      * @return JsonResponse
      */
     #[OA\Get(
@@ -502,7 +503,8 @@ class DetalleAsientoController extends Controller
             ->with('cuentaContable.tipoCuenta')
             ->get();
 
-        $balance = $query->map(function ($item) {
+        // @phpstan-ignore-next-line
+        $balance = $query->map(function (\App\Models\DetalleAsiento $item) {
             $saldo = $item->total_debe - $item->total_haber;
 
             return [

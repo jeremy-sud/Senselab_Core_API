@@ -10,7 +10,7 @@ class FixModelTimestamps extends Command
     protected $signature = 'models:fix-timestamps';
     protected $description = 'Agrega constantes de timestamps personalizados a todos los modelos';
 
-    public function handle()
+    public function handle(): int
     {
         $modelsPath = app_path('Models');
         $files = File::allFiles($modelsPath);
