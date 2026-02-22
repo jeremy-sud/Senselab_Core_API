@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\AuditoriaActividad;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
@@ -14,8 +15,9 @@ class AuditoriaActividadController extends Controller
 {
     use HasCacheableQueries;
 
-    protected $cacheTags = ['auditoria_actividades', 'auditoria'];
-    protected $cacheTTL = 1800; // 30 minutos
+    /** @var array<int, string> */
+    protected array $cacheTags = ['auditoria_actividades', 'auditoria'];
+    protected int $cacheTTL = 1800; // 30 minutos
 
     public function __construct()
     {
@@ -221,13 +223,15 @@ class AuditoriaActividadController extends Controller
                 ->orderByDesc('total')
                 ->limit(10)
                 ->pluck('total', 'tabla'),
+            // @phpstan-ignore-next-line
             'usuarios_mas_activos' => $query->with('usuario')
                 ->selectRaw('usuario_id, COUNT(*) as total')
                 ->groupBy('usuario_id')
                 ->orderByDesc('total')
                 ->limit(10)
                 ->get()
-                ->map(function ($item) {
+                // @phpstan-ignore-next-line
+                ->map(function (\App\Models\AuditoriaActividad $item) {
                     return [
                         'usuario' => $item->usuario ? $item->usuario->nombre : 'Usuario eliminado',
                         'total' => $item->total
@@ -235,7 +239,7 @@ class AuditoriaActividadController extends Controller
                 }),
         ];
 
-        return response()->json(['data' => $estadisticas]);
+        return new JsonResponse(['data' => $estadisticas]);
     }
 
     /**

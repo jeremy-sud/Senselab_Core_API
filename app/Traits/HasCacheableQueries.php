@@ -150,7 +150,7 @@ trait HasCacheableQueries
      * Alias de getCacheKey para compatibilidad
      *
      * @param string $method
-     * @param array $params
+     * @param array<string, mixed> $params
      * @return string
      */
     protected function generateCacheKey(string $method, array $params = []): string

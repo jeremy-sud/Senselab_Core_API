@@ -24,6 +24,7 @@ class LogAccesoSistemaController extends Controller
 {
     use HasCacheableQueries;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['logs-acceso', 'auditoria'];
     protected int $cacheTTL = 600; // 10 minutos - logs muy dinámicos
 

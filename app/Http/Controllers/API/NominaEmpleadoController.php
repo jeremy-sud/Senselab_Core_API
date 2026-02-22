@@ -19,8 +19,9 @@ class NominaEmpleadoController extends Controller
 {
     use HasCacheableQueries;
 
-    protected $cacheTags = ['nomina_empleados', 'nomina', 'rrhh'];
-    protected $cacheTTL = 900; // 15 minutos
+    /** @var array<int, string> */
+    protected array $cacheTags = ['nomina_empleados', 'nomina', 'rrhh'];
+    protected int $cacheTTL = 900; // 15 minutos
 
     public function __construct()
     {

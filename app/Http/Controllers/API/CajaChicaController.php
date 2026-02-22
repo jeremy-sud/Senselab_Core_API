@@ -16,8 +16,9 @@ class CajaChicaController extends Controller
 {
     use HasCacheableQueries;
 
-    protected $cacheTags = ['caja_chica', 'tesoreria', 'fondos'];
-    protected $cacheTTL = 900; // 15 minutos
+    /** @var array<int, string> */
+    protected array $cacheTags = ['caja_chica', 'tesoreria', 'fondos'];
+    protected int $cacheTTL = 900; // 15 minutos
 
     public function __construct()
     {

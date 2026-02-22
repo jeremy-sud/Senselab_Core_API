@@ -77,7 +77,7 @@ class XadesEpesSigner
     /** @var string Certificado X.509 en formato PEM */
     protected string $certificate;
     
-    /** @var array Información parseada del certificado */
+    /** @var array<string, mixed> Información parseada del certificado */
     protected array $certInfo;
     
     /** @var string ID único de la firma */

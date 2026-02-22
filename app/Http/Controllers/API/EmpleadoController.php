@@ -12,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use OpenApi\Attributes as OA;
 
 /**
@@ -30,6 +31,7 @@ class EmpleadoController extends Controller
 {
     use HasCacheableQueries;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['empleados', 'rrhh'];
     protected int $cacheTTL = 900; // 15 minutos - datos de RRHH moderadamente dinámicos
 
@@ -196,7 +198,7 @@ class EmpleadoController extends Controller
      *
      * GET /api/empleados/{id}
      *
-     * @param int $id
+     * @param string $id
      * @return EmpleadoResource
      */
     #[OA\Get(
@@ -229,7 +231,7 @@ class EmpleadoController extends Controller
      * PUT/PATCH /api/empleados/{id}
      *
      * @param UpdateEmpleadoRequest $request
-     * @param int $id
+     * @param string $id
      * @return EmpleadoResource
      */
     #[OA\Put(
@@ -294,7 +296,7 @@ class EmpleadoController extends Controller
      *
      * DELETE /api/empleados/{id}
      *
-     * @param int $id
+     * @param string $id
      * @return JsonResponse
      */
     #[OA\Delete(

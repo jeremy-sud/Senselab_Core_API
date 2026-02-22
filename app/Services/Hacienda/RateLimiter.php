@@ -169,7 +169,7 @@ class RateLimiter
     /**
      * Obtener estadísticas actuales de rate limiting
      * 
-     * @return array Estadísticas
+     * @return array<string, mixed> Estadísticas
      */
     public function getEstadisticas(): array
     {
@@ -233,7 +233,7 @@ class RateLimiter
     /**
      * Obtener configuración actual
      * 
-     * @return array Configuración
+     * @return array<string, mixed> Configuración
      */
     public function getConfiguracion(): array
     {

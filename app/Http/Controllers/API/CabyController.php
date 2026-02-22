@@ -28,6 +28,7 @@ class CabyController extends Controller
 {
     use HasCacheableQueries;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['cabys', 'catalogos', 'hacienda'];
     protected int $cacheTTL = 86400; // 24 horas - catálogo fiscal muy estable
 
@@ -435,8 +436,8 @@ class CabyController extends Controller
     /**
      * Buscar códigos CAByS por término de búsqueda
      *
-     * @param Request $request
-     * @return JsonResponse
+     * @param BuscarCabyRequest $request
+     * @return AnonymousResourceCollection
      */
     #[OA\Get(
         path: "/api/cabys/buscar",

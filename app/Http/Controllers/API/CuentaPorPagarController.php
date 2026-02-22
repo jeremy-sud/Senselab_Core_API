@@ -30,7 +30,7 @@ class CuentaPorPagarController extends Controller
 
     /**
      * Tags para invalidación de cache
-     * @var array<string>
+     * @var array<int, string>
      */
     protected array $cacheTags = ['cuentas-por-pagar', 'finanzas'];
 

@@ -27,6 +27,7 @@ class BusUnidadController extends Controller
 {
     use HasCacheableQueries, HasEmpresaContext;
     /** @var array<string> */
+    /** @var array<int, string> */
     protected array $cacheTags = ['buses-unidades', 'transporte'];
     protected int $cacheTTL = 1800; // 30 min - flota cambia ocasionalmente
     /**
@@ -346,7 +347,7 @@ class BusUnidadController extends Controller
      * Listar buses disponibles (activos sin horarios en curso)
      *
      * @param Request $request
-     * @return JsonResponse
+     * @return AnonymousResourceCollection
      */
     #[OA\Get(
         path: "/api/buses-unidades/disponibles",

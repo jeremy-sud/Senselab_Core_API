@@ -28,6 +28,7 @@ class DetallePresupuestoController extends Controller
     use HasCacheableQueries, HasEmpresaContext;
 
     /** @var array<string> */
+    /** @var array<int, string> */
     protected array $cacheTags = ['detalles-presupuestos', 'presupuestos', 'finanzas'];
     protected int $cacheTTL = 3600; // 1h - budget details stable
     /**

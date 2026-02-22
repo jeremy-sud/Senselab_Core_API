@@ -31,6 +31,7 @@ class InventarioController extends Controller
 {
     use HasCacheableQueries, HasEmpresaContext;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['inventario', 'movimientos-inventario'];
     protected int $cacheTTL = 1200; // 20 minutos - movimientos semi-dinámicos
 

@@ -28,6 +28,7 @@ class ConfiguracionController extends Controller
     use HasCacheableQueries, HasEmpresaContext;
 
     /** @var array<string> */
+    /** @var array<int, string> */
     protected array $cacheTags = ['configuraciones', 'settings'];
     protected int $cacheTTL = 7200; // 2 horas (cambia poco)
     /**

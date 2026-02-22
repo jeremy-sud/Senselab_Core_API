@@ -112,8 +112,8 @@ class GdprController extends Controller
                 'success' => true,
                 'request' => $gdprRequest->toApiResponse(),
                 'details' => [
-                    'created_at' => $gdprRequest->created_at->toIso8601String(),
-                    'updated_at' => $gdprRequest->updated_at->toIso8601String(),
+                    'created_at' => $gdprRequest->created_at?->toIso8601String(),
+                    'updated_at' => $gdprRequest->updated_at?->toIso8601String(),
                     'deadline' => $gdprRequest->delete_after?->toIso8601String(),
                     'action_log' => $gdprRequest->action_log,
                 ],
@@ -235,7 +235,7 @@ class GdprController extends Controller
                 'success' => true,
                 'message' => 'Solicitud aprobada',
                 'status' => 'approved',
-                'deadline' => $gdprRequest->delete_after->toIso8601String(),
+                'deadline' => $gdprRequest->delete_after?->toIso8601String(),
             ]);
         } catch (\Exception $e) {
             return response()->json([

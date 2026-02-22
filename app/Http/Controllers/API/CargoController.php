@@ -26,6 +26,7 @@ class CargoController extends Controller
 {
     use HasCacheableQueries;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['cargos', 'catalogos'];
     protected int $cacheTTL = 3600; // 1 hora - catálogo estable
 
@@ -297,7 +298,7 @@ class CargoController extends Controller
             ], 422);
         }
 
-        $cargo->eliminado = 1;
+        $cargo->eliminado = now();
         $cargo->activo = 0;
         $cargo->save();
 

@@ -196,7 +196,7 @@ class MetricsController extends Controller
             // Cache
             $cacheDriver = config('cache.default', 'file');
             if ($cacheDriver === 'redis') {
-                Cache::connection('redis')->ping();
+                \Illuminate\Support\Facades\Redis::ping();
             }
 
             // Storage
@@ -215,12 +215,8 @@ class MetricsController extends Controller
      */
     private function getActiveConnectionCount(): int
     {
-        try {
-            // Esto es simplificado, en producción depende del driver DB
-            return 1; // Placeholder
-        } catch (\Exception $e) {
-            return 0;
-        }
+        // Esto es simplificado, en producción depende del driver DB
+        return 1; // Placeholder
     }
 
     /**
@@ -228,12 +224,8 @@ class MetricsController extends Controller
      */
     private function getCacheHitRate(): float
     {
-        try {
-            // Placeholder: en producción usar stats de Redis
-            return 75.5;
-        } catch (\Exception $e) {
-            return 0;
-        }
+        // Placeholder: en producción usar stats de Redis
+        return 75.5;
     }
 
     /**

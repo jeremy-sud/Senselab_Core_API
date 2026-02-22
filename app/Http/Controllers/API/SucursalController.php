@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Sucursal;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreSucursalRequest;
 use App\Http\Requests\UpdateSucursalRequest;
@@ -16,13 +17,14 @@ class SucursalController extends Controller
 {
     use HasCacheableQueries;
 
-    protected $cacheTags = ['sucursales', 'catalogos'];
-    protected $cacheTTL = 3600; // 1 hora
+    /** @var array<int, string> */
+    protected array $cacheTags = ['sucursales', 'catalogos'];
+    protected int $cacheTTL = 3600; // 1 hora
     /**
      * Display a listing of the resource.
      *
      * @param Request $request
-     * @return AnonymousResourceCollection
+     * @return AnonymousResourceCollection|JsonResponse
      */
     #[OA\Get(
         path: '/api/sucursales',
@@ -103,7 +105,7 @@ class SucursalController extends Controller
      * Store a newly created resource in storage.
      *
      * @param StoreSucursalRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     #[OA\Post(
         path: '/api/sucursales',
@@ -275,7 +277,7 @@ class SucursalController extends Controller
      * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     #[OA\Delete(
         path: '/api/sucursales/{id}',

@@ -20,6 +20,7 @@ class OrdenCompraController extends Controller
     use HasCacheableQueries;
 
     /** @var array<int,string> */
+    /** @var array<int, string> */
     protected array $cacheTags = ['ordenes-compra', 'transacciones'];
     protected int $cacheTTL = 900; // 15 minutos
     /**
@@ -211,7 +212,7 @@ class OrdenCompraController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return OrdenCompraResource
      */
     #[OA\Get(
         path: '/api/ordenes-compra/{id}',
@@ -250,9 +251,9 @@ class OrdenCompraController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * @param UpdateOrdenCompraRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return OrdenCompraResource
      */
     #[OA\Put(
         path: '/api/ordenes-compra/{id}',

@@ -14,8 +14,9 @@ class TipoCambioHistorialController extends Controller
 {
     use HasCacheableQueries;
 
-    protected $cacheTags = ['tipos_cambio_historial', 'finanzas'];
-    protected $cacheTTL = 3600; // 1 hora
+    /** @var array<int, string> */
+    protected array $cacheTags = ['tipos_cambio_historial', 'finanzas'];
+    protected int $cacheTTL = 3600; // 1 hora
 
     public function __construct()
     {

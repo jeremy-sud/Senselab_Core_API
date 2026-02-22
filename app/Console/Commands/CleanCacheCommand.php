@@ -28,7 +28,7 @@ class CleanCacheCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): int
     {
         $type = $this->argument('type');
         $sync = $this->option('sync');

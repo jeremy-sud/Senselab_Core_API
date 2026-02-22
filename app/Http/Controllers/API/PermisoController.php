@@ -26,6 +26,7 @@ class PermisoController extends Controller
 {
     use HasCacheableQueries;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['permisos', 'rbac'];
     protected int $cacheTTL = 3600; // 1 hora - permisos cambian raramente
 
@@ -230,7 +231,7 @@ class PermisoController extends Controller
             ], 422);
         }
 
-        $permiso->eliminado = 1;
+        $permiso->eliminado = now();
         $permiso->activo = 0;
         $permiso->save();
 

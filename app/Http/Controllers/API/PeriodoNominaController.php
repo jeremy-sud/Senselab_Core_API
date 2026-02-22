@@ -29,6 +29,7 @@ class PeriodoNominaController extends Controller
     use HasCacheableQueries, HasEmpresaContext;
 
     /** @var array<string> */
+    /** @var array<int, string> */
     protected array $cacheTags = ['periodos-nomina', 'nomina', 'rrhh'];
     protected int $cacheTTL = 1800; // 30min - payroll periods, semi-dynamic
     /**

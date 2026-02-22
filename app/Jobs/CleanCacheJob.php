@@ -16,8 +16,8 @@ class CleanCacheJob implements ShouldQueue
 {
     use Queueable;
 
-    public $tries = 2;
-    public $timeout = 300;
+    public int $tries = 2;
+    public int $timeout = 300;
 
     /**
      * Create a new job instance.
@@ -110,24 +110,32 @@ class CleanCacheJob implements ShouldQueue
         
         if (config('cache.default') === 'redis') {
             // Limpiar keys expiradas en Redis
-            $redis = Cache::getRedis();
             $cleaned = 0;
-            
-            // Scan por keys con patrón laravel_cache:*
-            $cursor = 0;
-            do {
-                $result = $redis->scan($cursor, 'MATCH', 'laravel_cache:*', 'COUNT', 100);
-                $cursor = $result[0];
-                $keys = $result[1] ?? [];
-                
-                foreach ($keys as $key) {
-                    $ttl = $redis->ttl($key);
-                    if ($ttl === -2) { // Key expirada
-                        $redis->del($key);
-                        $cleaned++;
+
+            try {
+                /** @var \Redis|\Predis\Client $redis */
+                $redis = \Illuminate\Support\Facades\Redis::connection()->client();
+                $cursor = null;
+                do {
+                    /** @var array<int, string>|false $keys */
+                    $keys = $redis instanceof \Redis
+                        ? $redis->scan($cursor, 'laravel_cache:*', 100)
+                        : [];
+
+                    if (is_array($keys)) {
+                        foreach ($keys as $key) {
+                            /** @var int $ttl */
+                            $ttl = $redis->ttl($key);
+                            if ($ttl === -2) {
+                                $redis->del($key);
+                                $cleaned++;
+                            }
+                        }
                     }
-                }
-            } while ($cursor != 0);
+                } while ($cursor > 0);
+            } catch (\Throwable $e) {
+                // Silently fall back if scan is unavailable
+            }
 
             return [
                 'action' => 'clean_expired',

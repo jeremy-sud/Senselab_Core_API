@@ -124,7 +124,7 @@ class ComplianceDashboardController extends Controller
      * GET /api/compliance/audit-logs/:id
      * Detalle de un audit log específico
      */
-    public function getAuditLogDetail($id): JsonResponse
+    public function getAuditLogDetail(string $id): JsonResponse
     {
         try {
             $log = AuditLog::findOrFail($id);
@@ -150,7 +150,7 @@ class ComplianceDashboardController extends Controller
                     'sensitive_fields' => $log->sensitive_fields_mask,
                     'retention_expires' => $log->retention_expires_at?->toIso8601String(),
                     'metadata' => $log->metadata,
-                    'created_at' => $log->created_at->toIso8601String(),
+                    'created_at' => $log->created_at?->toIso8601String(),
                 ],
             ]);
         } catch (\Exception $e) {
@@ -188,7 +188,7 @@ class ComplianceDashboardController extends Controller
      * GET /api/compliance/retention-policies/:id
      * Detalle de política de retención
      */
-    public function getRetentionPolicyDetail($id): JsonResponse
+    public function getRetentionPolicyDetail(string $id): JsonResponse
     {
         try {
             $policy = DataRetentionPolicy::findOrFail($id);
@@ -206,8 +206,8 @@ class ComplianceDashboardController extends Controller
                         'last_error' => $policy->last_error,
                     ],
                     'creator' => $policy->creator?->only(['id', 'email', 'name']),
-                    'created_at' => $policy->created_at->toIso8601String(),
-                    'updated_at' => $policy->updated_at->toIso8601String(),
+                    'created_at' => $policy->created_at?->toIso8601String(),
+                    'updated_at' => $policy->updated_at?->toIso8601String(),
                 ],
             ]);
         } catch (\Exception $e) {
@@ -219,7 +219,7 @@ class ComplianceDashboardController extends Controller
      * POST /api/compliance/retention-policies/:id/execute
      * Ejecutar política de retención manualmente
      */
-    public function executeRetentionPolicy($id, Request $request): JsonResponse
+    public function executeRetentionPolicy(string $id, Request $request): JsonResponse
     {
         try {
             $policy = DataRetentionPolicy::findOrFail($id);
@@ -333,6 +333,9 @@ class ComplianceDashboardController extends Controller
      * ════════════════════════════════════════════════════════════════
      */
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getAuditSummary(): array
     {
         $thirtyDays = Carbon::now()->subDays(30);
@@ -347,6 +350,9 @@ class ComplianceDashboardController extends Controller
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getGdprSummary(): array
     {
         return [
@@ -358,6 +364,9 @@ class ComplianceDashboardController extends Controller
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getRetentionSummary(): array
     {
         return [
@@ -368,6 +377,9 @@ class ComplianceDashboardController extends Controller
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getDataProtectionStatus(): array
     {
         return [
@@ -379,6 +391,10 @@ class ComplianceDashboardController extends Controller
         ];
     }
 
+    /**
+     * @param int $limit
+     * @return array<int, array<string, mixed>>
+     */
     private function getRecentSensitiveChanges(int $limit = 10): array
     {
         return AuditLog::sensitiveOnly()
@@ -389,7 +405,7 @@ class ComplianceDashboardController extends Controller
                            'id' => $log->id,
                            'summary' => $log->getSummary(),
                            'user' => $log->user_email,
-                           'timestamp' => $log->created_at->toIso8601String(),
+                           'timestamp' => $log->created_at?->toIso8601String(),
                        ])
                        ->toArray();
     }

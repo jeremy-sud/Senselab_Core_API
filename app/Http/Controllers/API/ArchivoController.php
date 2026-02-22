@@ -23,8 +23,9 @@ class ArchivoController extends Controller
 {
     use HasCacheableQueries;
 
-    protected $cacheTags = ['archivos', 'documentos'];
-    protected $cacheTTL = 1800; // 30 minutos
+    /** @var array<int, string> */
+    protected array $cacheTags = ['archivos', 'documentos'];
+    protected int $cacheTTL = 1800; // 30 minutos
 
     public function __construct()
     {

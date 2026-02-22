@@ -7,6 +7,7 @@ use App\Models\CuentaBancaria;
 use App\Http\Requests\StoreCuentaBancariaRequest;
 use App\Http\Requests\UpdateCuentaBancariaRequest;
 use App\Http\Resources\CuentaBancariaResource;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Traits\HasCacheableQueries;
 use Illuminate\Http\Request;
@@ -29,13 +30,14 @@ class CuentaBancariaController extends Controller
 {
     use HasCacheableQueries;
 
-    protected $cacheTags = ['cuentas-bancarias', 'finanzas'];
-    protected $cacheTTL = 1800; // 30 minutos
+    /** @var array<int, string> */
+    protected array $cacheTags = ['cuentas-bancarias', 'finanzas'];
+    protected int $cacheTTL = 1800; // 30 minutos
     /**
      * Display a listing of the resource.
      *
      * @param Request $request
-     * @return AnonymousResourceCollection
+     * @return AnonymousResourceCollection|JsonResponse
      */
         #[OA\Get(
         path: '/api/cuenta-bancaria',
@@ -120,7 +122,7 @@ class CuentaBancariaController extends Controller
      * Store a newly created resource in storage.
      *
      * @param StoreCuentaBancariaRequest $request
-     * @return CuentaBancariaResource|\Illuminate\Http\JsonResponse
+     * @return CuentaBancariaResource|JsonResponse
      */
         #[OA\Post(
         path: '/api/cuenta-bancaria',
@@ -170,7 +172,7 @@ class CuentaBancariaController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     * @return CuentaBancariaResource|\Illuminate\Http\JsonResponse
+     * @return CuentaBancariaResource|JsonResponse
      */
         #[OA\Get(
         path: '/api/cuenta-bancaria/{id}',
@@ -214,7 +216,7 @@ class CuentaBancariaController extends Controller
      *
      * @param UpdateCuentaBancariaRequest $request
      * @param int $id
-     * @return CuentaBancariaResource|\Illuminate\Http\JsonResponse
+     * @return CuentaBancariaResource|JsonResponse
      */
         #[OA\Put(
         path: '/api/cuenta-bancaria/{id}',
@@ -274,7 +276,7 @@ class CuentaBancariaController extends Controller
      * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
         #[OA\Delete(
         path: '/api/cuenta-bancaria/{id}',

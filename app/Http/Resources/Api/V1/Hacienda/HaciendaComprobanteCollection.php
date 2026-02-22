@@ -14,6 +14,9 @@ class HaciendaComprobanteCollection extends ResourceCollection
 {
     public $collects = HaciendaComprobanteResource::class;
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(Request $request): array
     {
         return [

@@ -71,7 +71,7 @@ class NotificacionResource extends JsonResource
     /**
      * Get the appropriate resource for the related entity.
      */
-    protected function getEntidadResource()
+    protected function getEntidadResource(): mixed
     {
         if (!$this->entidad) {
             return null;

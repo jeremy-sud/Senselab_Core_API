@@ -6,6 +6,7 @@ namespace App\Http\Middleware;
 
 use App\Services\RateLimitingService;
 use Closure;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
@@ -22,6 +23,7 @@ class ThrottleRequestsWithRetryAfter
 {
     /**
      * Mapa de rutas a claves de rate limiting
+     * @var array<string, string>
      */
     protected array $routeMap = [
         '/api/*/auth/login' => 'login',
@@ -94,7 +96,7 @@ class ThrottleRequestsWithRetryAfter
     /**
      * Respuesta de demasiadas solicitudes (429)
      */
-    protected function tooManyRequestsResponse(Request $request, $limiterOrSeconds = 'api'): Response
+    protected function tooManyRequestsResponse(Request $request, string|int $limiterOrSeconds = 'api'): JsonResponse
     {
         $retryAfter = is_string($limiterOrSeconds)
             ? RateLimitingService::resetIn($request, $limiterOrSeconds)
@@ -148,7 +150,7 @@ class ThrottleRequestsWithRetryAfter
         );
         $response->headers->set(
             config('rate-limiting.headers.reset'),
-            (string) now()->addSeconds($resetIn ?? 60)->timestamp
+            (string) now()->addSeconds($resetIn)->timestamp
         );
 
         return $response;

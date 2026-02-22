@@ -19,8 +19,9 @@ class NotificacionController extends Controller
 {
     use HasCacheableQueries;
 
-    protected $cacheTags = ['notificaciones'];
-    protected $cacheTTL = 300; // 5 minutos (muy dinámico)
+    /** @var array<int, string> */
+    protected array $cacheTags = ['notificaciones'];
+    protected int $cacheTTL = 300; // 5 minutos (muy dinámico)
 
     public function __construct()
     {

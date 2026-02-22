@@ -24,6 +24,7 @@ class DeduccionLegalController extends Controller
 {
     use HasCacheableQueries;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['deducciones-legales', 'nomina', 'catalogos'];
     protected int $cacheTTL = 7200; // 2 horas - catálogo semi-estable
 

@@ -14,8 +14,9 @@ class PagoCuentaCobrarController extends Controller
 {
     use HasCacheableQueries;
 
-    protected $cacheTags = ['pagos_cuentas_cobrar', 'cuentas_cobrar', 'transacciones'];
-    protected $cacheTTL = 600; // 10 minutos
+    /** @var array<int, string> */
+    protected array $cacheTags = ['pagos_cuentas_cobrar', 'cuentas_cobrar', 'transacciones'];
+    protected int $cacheTTL = 600; // 10 minutos
 
     public function __construct()
     {

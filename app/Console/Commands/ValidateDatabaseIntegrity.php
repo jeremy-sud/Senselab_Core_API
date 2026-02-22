@@ -242,7 +242,7 @@ class ValidateDatabaseIntegrity extends Command
             }
 
             try {
-                $orphans = DB::selectOne("
+                $orphans = (int) DB::selectOne("
                     SELECT COUNT(*) as total
                     FROM {$table} t
                     LEFT JOIN empresas e ON t.empresa_id = e.id

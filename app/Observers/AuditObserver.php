@@ -24,7 +24,8 @@ class AuditObserver
     /**
      * Campos sensibles que no deben guardarse sin enmascaramiento
      */
-    protected $sensitiveFields = [
+    /** @var array<int, string> */
+    protected array $sensitiveFields = [
         'password',
         'secret',
         'token',
@@ -42,7 +43,8 @@ class AuditObserver
     /**
      * Modelos que NO se deben auditar
      */
-    protected $ignoredModels = [
+    /** @var array<int, string> */
+    protected array $ignoredModels = [
         'PassportTokens',
         'OAuthClients',
         'ActivityLog',
@@ -131,6 +133,11 @@ class AuditObserver
 
     /**
      * Crear registro de auditoría
+     *
+     * @param Model $model
+     * @param string $action
+     * @param array<string, mixed>|null $oldValues
+     * @param array<string, mixed>|null $newValues
      */
     protected function createAuditLog(
         Model $model,
@@ -155,8 +162,8 @@ class AuditObserver
 
             AuditLog::create([
                 'user_id' => $user?->id,
-                'user_email' => $user?->email ?? 'system@ursol-cast.local',
-                'user_name' => $user?->name ?? 'System',
+                'user_email' => $user->email ?? 'system@ursol-cast.local',
+                'user_name' => $user->name ?? 'System',
                 'auditable_type' => get_class($model),
                 'auditable_id' => $model->getKey(),
                 'action' => $action,
@@ -186,7 +193,11 @@ class AuditObserver
     }
 
     /**
-     *Detectar campos sensibles
+     * Detectar campos sensibles
+     *
+     * @param array<string, mixed>|null $oldValues
+     * @param array<string, mixed>|null $newValues
+     * @return array<int, string>
      */
     protected function detectSensitiveFields(?array $oldValues, ?array $newValues): array
     {
@@ -220,6 +231,10 @@ class AuditObserver
 
     /**
      * Enmascarar valores sensibles
+     *
+     * @param array<string, mixed>|null $values
+     * @param array<int, string> $sensitiveFields
+     * @return array<string, mixed>|null
      */
     protected function maskSensitiveValues(?array $values, array $sensitiveFields): ?array
     {
@@ -247,7 +262,7 @@ class AuditObserver
             $model->getTable()
         );
 
-        return $policy?->retention_days ?? 365; // Default: 1 año
+        return $policy->retention_days ?? 365; // Default: 1 año
     }
 
     /**

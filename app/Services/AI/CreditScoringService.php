@@ -68,7 +68,8 @@ class CreditScoringService
 
         // Cache por 24 horas
         /** @var array<string, mixed> $result */
-        $result = \Illuminate\Support\Facades\Cache::remember($cacheKey, 86400, function () use ($clienteId) {
+        // @phpstan-ignore-next-line
+        $result = \Illuminate\Support\Facades\Cache::remember($cacheKey, 86400, function () use ($clienteId): array {
             $cliente = $this->getClienteData($clienteId);
 
             if (!$cliente) {

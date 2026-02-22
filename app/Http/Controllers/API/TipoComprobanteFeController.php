@@ -29,6 +29,7 @@ class TipoComprobanteFeController extends Controller
 {
     use HasCacheableQueries;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['tipos-comprobante-fe', 'facturacion'];
     protected int $cacheTTL = 86400; // 24 horas - catálogo fiscal muy estable
 
@@ -196,7 +197,7 @@ class TipoComprobanteFeController extends Controller
         ]
     )]
 
-    public function update(UpdateTipoComprobanteFeRequest $request, int $id): JsonResponse
+    public function update(UpdateTipoComprobanteFeRequest $request, int $id): JsonResponse|TipoComprobanteFeResource
     {
         try {
             $tipoComprobante = TipoComprobanteFe::findOrFail($id);

@@ -30,8 +30,9 @@ class UsuarioController extends Controller
 {
     use HasCacheableQueries;
 
-    protected $cacheTags = ['usuarios', 'auth'];
-    protected $cacheTTL = 900; // 15 minutos
+    /** @var array<int, string> */
+    protected array $cacheTags = ['usuarios', 'auth'];
+    protected int $cacheTTL = 900; // 15 minutos
     /**
      * Listar todos los usuarios de la empresa
      *
@@ -239,7 +240,7 @@ class UsuarioController extends Controller
             ], 422);
         }
 
-        $usuario->eliminado = 1;
+        $usuario->eliminado = now();
         $usuario->activo = 0;
         $usuario->save();
 

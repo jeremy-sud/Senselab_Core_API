@@ -35,7 +35,7 @@ class MovimientoBancarioController extends Controller
 
     /**
      * Tags para invalidación de cache
-     * @var array<string>
+     * @var array<int, string>
      */
     protected array $cacheTags = ['movimientos-bancarios', 'finanzas', 'bancos'];
 
@@ -94,6 +94,8 @@ class MovimientoBancarioController extends Controller
 
     /**
      * Get cache parameters for index
+     *
+     * @return array<string, mixed>
      */
     private function getIndexCacheParams(Request $request, int $perPage): array
     {
@@ -262,7 +264,7 @@ class MovimientoBancarioController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return MovimientoBancarioResource
      */
         #[OA\Get(
         path: '/api/movimiento-bancario/{id}',
@@ -302,7 +304,7 @@ class MovimientoBancarioController extends Controller
      *
      * @param UpdateMovimientoBancarioRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return MovimientoBancarioResource
      */
         #[OA\Put(
         path: '/api/movimiento-bancario/{id}',

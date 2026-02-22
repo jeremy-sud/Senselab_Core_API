@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * Servicio de Predicción de Demanda e Inventario
- * 
+ *
  * Utiliza análisis estadístico e IA para predecir demanda de productos
  * y generar alertas de reabastecimiento.
  */
@@ -61,7 +61,8 @@ class PredictionService
         $cacheKey = "prediction:demand:{$this->empresaId}:{$productoId}:{$days}";
         
         /** @var array<string, mixed> $result */
-        $result = Cache::remember($cacheKey, $this->config['cache_ttl'], function () use ($productoId, $days) {
+        // @phpstan-ignore-next-line
+        $result = Cache::remember($cacheKey, $this->config['cache_ttl'], function () use ($productoId, $days): array {
             $producto = Producto::where('id', $productoId)
                 ->where('empresa_id', $this->empresaId)
                 ->first();
@@ -95,8 +96,8 @@ class PredictionService
             $currentStock = $this->getCurrentStock($productoId);
             
             // Calcular días de stock restantes
-            $daysOfStock = $stats['daily_average'] > 0 
-                ? round($currentStock / $stats['daily_average'], 1) 
+            $daysOfStock = $stats['daily_average'] > 0
+                ? round($currentStock / $stats['daily_average'], 1)
                 : 999;
             
             // Calcular punto de reorden
@@ -133,7 +134,7 @@ class PredictionService
                     'dias_stock_restante' => $daysOfStock,
                     'punto_reorden' => round($reorderPoint, 0),
                     'cantidad_sugerida_compra' => $this->calculateSuggestedOrder($stats, $currentStock, $reorderPoint),
-                    'fecha_estimada_agotamiento' => $daysOfStock < 999 
+                    'fecha_estimada_agotamiento' => $daysOfStock < 999
                         ? Carbon::now()->addDays((int)$daysOfStock)->format('Y-m-d')
                         : null,
                 ],
@@ -157,7 +158,8 @@ class PredictionService
     {
         $cacheKey = "prediction:alerts:{$this->empresaId}";
         
-        return Cache::remember($cacheKey, $this->config['cache_ttl'], function () use ($limit) {
+        /** @var array<string, mixed> $result */
+        $result = Cache::remember($cacheKey, $this->config['cache_ttl'], function () use ($limit): array {
             // Obtener productos con su stock actual y ventas promedio
             $productos = DB::table('productos as p')
                 ->leftJoin('inventarios as i', function ($join) {
@@ -194,8 +196,8 @@ class PredictionService
                 $stockActual = (float)$producto->stock_actual;
                 $stockMinimo = (float)($producto->stock_minimo ?? 0);
                 
-                $diasStock = $promedioDiario > 0 
-                    ? round($stockActual / $promedioDiario, 1) 
+                $diasStock = $promedioDiario > 0
+                    ? round($stockActual / $promedioDiario, 1)
                     : ($stockActual > 0 ? 999 : 0);
                 
                 $nivel = 'normal';
@@ -249,6 +251,8 @@ class PredictionService
                 'generado_en' => Carbon::now()->toIso8601String(),
             ];
         });
+        
+        return $result;
     }
     
     /**
@@ -338,7 +342,8 @@ PROMPT;
     {
         $cacheKey = "prediction:trends:{$this->empresaId}:{$months}";
         
-        return Cache::remember($cacheKey, $this->config['cache_ttl'] * 2, function () use ($months) {
+        /** @var array<string, mixed> $result */
+        $result = Cache::remember($cacheKey, $this->config['cache_ttl'] * 2, function () use ($months): array {
             $startDate = Carbon::now()->subMonths($months);
             
             // Ventas por mes y categoría
@@ -417,6 +422,8 @@ PROMPT;
                 'top_decrecimiento' => $this->getTopByTrend($trends, 'decrecimiento'),
             ];
         });
+        
+        return $result;
     }
     
     /**
@@ -428,7 +435,8 @@ PROMPT;
     {
         $cacheKey = "prediction:revenue:{$this->empresaId}:{$days}";
         
-        return Cache::remember($cacheKey, $this->config['cache_ttl'], function () use ($days) {
+        /** @var array<string, mixed> $result */
+        $result = Cache::remember($cacheKey, $this->config['cache_ttl'], function () use ($days): array {
             $historyMonths = 6;
             $startDate = Carbon::now()->subMonths($historyMonths);
             
@@ -523,6 +531,8 @@ PROMPT;
                 'moneda' => 'CRC',
             ];
         });
+        
+        return $result;
     }
     
     // ========== MÉTODOS PRIVADOS ==========

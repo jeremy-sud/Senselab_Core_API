@@ -18,6 +18,7 @@ class PlanillaCcssController extends Controller
 {
     use HasCacheableQueries;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['planillas-ccss', 'nomina', 'ccss'];
     protected int $cacheTTL = 3600; // 1 hora - planillas estables una vez generadas
 
@@ -252,7 +253,7 @@ class PlanillaCcssController extends Controller
     {
         $this->authorize('delete', $planillaCcss);
 
-        $planillaCcss->eliminado = true;
+        $planillaCcss->eliminado = now();
         $planillaCcss->save();
 
         $this->flushCache();

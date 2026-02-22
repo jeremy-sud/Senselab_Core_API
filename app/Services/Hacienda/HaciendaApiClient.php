@@ -29,6 +29,8 @@ class HaciendaApiClient
 
     /**
      * Configuración del ambiente actual
+     * 
+     * @var array<string, mixed>
      */
     protected array $config;
 
@@ -67,9 +69,9 @@ class HaciendaApiClient
      * @param string $clave Clave numérica única de 50 posiciones
      * @param string $xmlFirmado XML firmado digitalmente en base64
      * @param string $fecha Fecha de emisión ISO 8601
-     * @param array $emisor Datos del emisor
-     * @param array|null $receptor Datos del receptor (opcional)
-     * @return array Respuesta de Hacienda
+     * @param array<string, mixed> $emisor Datos del emisor
+     * @param array<string, mixed>|null $receptor Datos del receptor (opcional)
+     * @return array<string, mixed> Respuesta de Hacienda
      * @throws \Exception
      */
     public function enviarComprobante(
@@ -97,7 +99,7 @@ class HaciendaApiClient
      * Consultar estado de un comprobante
      * 
      * @param string $clave Clave numérica del comprobante
-     * @return array Estado del comprobante
+     * @return array<string, mixed> Estado del comprobante
      * @throws \Exception
      */
     public function consultarEstado(string $clave): array
@@ -108,8 +110,8 @@ class HaciendaApiClient
     /**
      * Listar comprobantes enviados
      * 
-     * @param array $filtros Filtros de búsqueda (fecha_inicio, fecha_fin, etc.)
-     * @return array Lista de comprobantes
+     * @param array<string, mixed> $filtros Filtros de búsqueda (fecha_inicio, fecha_fin, etc.)
+     * @return array<string, mixed> Lista de comprobantes
      * @throws \Exception
      */
     public function listarComprobantes(array $filtros = []): array
@@ -121,7 +123,7 @@ class HaciendaApiClient
      * Obtener detalles de un comprobante específico
      * 
      * @param string $clave Clave numérica del comprobante
-     * @return array Detalles del comprobante
+     * @return array<string, mixed> Detalles del comprobante
      * @throws \Exception
      */
     public function obtenerComprobante(string $clave): array
@@ -133,8 +135,8 @@ class HaciendaApiClient
      * Realizar petición GET
      * 
      * @param string $endpoint Endpoint de la API
-     * @param array $query Parámetros query string
-     * @return array Respuesta decodificada
+     * @param array<string, mixed> $query Parámetros query string
+     * @return array<string, mixed> Respuesta decodificada
      * @throws \Exception
      */
     protected function get(string $endpoint, array $query = []): array
@@ -148,8 +150,8 @@ class HaciendaApiClient
      * Realizar petición POST
      * 
      * @param string $endpoint Endpoint de la API
-     * @param array $data Datos del body
-     * @return array Respuesta decodificada
+     * @param array<string, mixed> $data Datos del body
+     * @return array<string, mixed> Respuesta decodificada
      * @throws \Exception
      */
     protected function post(string $endpoint, array $data): array
@@ -164,8 +166,8 @@ class HaciendaApiClient
      * 
      * @param string $method Método HTTP
      * @param string $endpoint Endpoint relativo
-     * @param array $options Opciones de Guzzle
-     * @return array Respuesta decodificada
+     * @param array<string, mixed> $options Opciones de Guzzle
+     * @return array<string, mixed> Respuesta decodificada
      * @throws \Exception
      */
     protected function request(string $method, string $endpoint, array $options = []): array
@@ -301,6 +303,8 @@ class HaciendaApiClient
 
     /**
      * Extraer headers relevantes de la respuesta
+     * 
+     * @return array<string, mixed>
      */
     protected function extractHeaders(\Psr\Http\Message\ResponseInterface $response): array
     {
@@ -314,6 +318,8 @@ class HaciendaApiClient
 
     /**
      * Registrar log de request
+     * 
+     * @param array<string, mixed> $options
      */
     protected function logRequest(string $method, string $url, array $options): void
     {
@@ -331,6 +337,8 @@ class HaciendaApiClient
 
     /**
      * Registrar log de response
+     * 
+     * @param array<string, mixed> $data
      */
     protected function logResponse(int $statusCode, array $data, float $duration): void
     {

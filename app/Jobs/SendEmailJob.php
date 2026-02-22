@@ -16,9 +16,10 @@ class SendEmailJob implements ShouldQueue
 {
     use Queueable;
 
-    public $tries = 5;
-    public $timeout = 60;
-    public $backoff = [30, 60, 120, 300, 600];
+    public int $tries = 5;
+    public int $timeout = 60;
+    /** @var array<int, int> */
+    public array $backoff = [30, 60, 120, 300, 600];
 
     /**
      * Create a new job instance.

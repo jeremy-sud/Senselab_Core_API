@@ -30,6 +30,7 @@ class RetencionImpuestoController extends Controller
 {
     use HasCacheableQueries;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['retenciones-impuesto', 'contabilidad', 'proveedores'];
     protected int $cacheTTL = 2400; // 40min - tax withholdings, semi-stable
     /**

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\File;
 
 /**
  * Generador completo de módulos ERP
- * 
+ *
  * Genera automáticamente todos los componentes necesarios para un nuevo módulo:
  * - Modelo con traits multi-tenant
  * - Migración de base de datos
@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\File;
  * - Factory para testing
  * - Test Feature
  * - Rutas API
- * 
+ *
  * @package App\Console\Commands
  * @author Jeremy Arias Solano <deadmooncr@gmail.com>
  * @copyright 2025 Sistemas Ursol S.A.
@@ -68,16 +68,19 @@ class MakeErpModule extends Command
 
     /**
      * Campos del módulo
+     * @var array<string, string>
      */
     protected array $fields = [];
 
     /**
      * Relaciones del módulo
+     * @var array<string, string>
      */
     protected array $relations = [];
 
     /**
      * Archivos generados
+     * @var array<int, string>
      */
     protected array $generatedFiles = [];
 
@@ -260,7 +263,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Modelo {$this->moduleName}
- * 
+ *
  * @package App\Models
  * @author Generado por MakeErpModule
  * @copyright 2025 Sistemas Ursol S.A.
@@ -339,7 +342,7 @@ use OpenApi\Attributes as OA;
 
 /**
  * Controller para {$this->moduleName}
- * 
+ *
  * @package App\Http\Controllers\API
  * @author Generado por MakeErpModule
  * @copyright 2025 Sistemas Ursol S.A.
@@ -582,7 +585,7 @@ use App\Models\\{$this->moduleName};
 
 /**
  * Policy para {$this->moduleName}
- * 
+ *
  * @package App\Policies
  * @author Generado por MakeErpModule
  * @copyright 2025 Sistemas Ursol S.A.
@@ -629,7 +632,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * Request de validación para crear {$this->moduleName}
- * 
+ *
  * @package App\Http\Requests\\{$this->moduleName}
  * @author Generado por MakeErpModule
  * @copyright 2025 Sistemas Ursol S.A.
@@ -646,7 +649,7 @@ class Store{$this->moduleName}Request extends FormRequest
 
     /**
      * Reglas de validación
-     * 
+     *
      * @return array<string, mixed>
      */
     public function rules(): array
@@ -658,7 +661,7 @@ class Store{$this->moduleName}Request extends FormRequest
 
     /**
      * Mensajes de error personalizados
-     * 
+     *
      * @return array<string, string>
      */
     public function messages(): array
@@ -688,7 +691,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * Request de validación para actualizar {$this->moduleName}
- * 
+ *
  * @package App\Http\Requests\\{$this->moduleName}
  * @author Generado por MakeErpModule
  * @copyright 2025 Sistemas Ursol S.A.
@@ -705,7 +708,7 @@ class Update{$this->moduleName}Request extends FormRequest
 
     /**
      * Reglas de validación
-     * 
+     *
      * @return array<string, mixed>
      */
     public function rules(): array
@@ -717,7 +720,7 @@ class Update{$this->moduleName}Request extends FormRequest
 
     /**
      * Mensajes de error personalizados
-     * 
+     *
      * @return array<string, string>
      */
     public function messages(): array
@@ -755,7 +758,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * Resource para {$this->moduleName}
- * 
+ *
  * @package App\Http\Resources
  * @author Generado por MakeErpModule
  * @copyright 2025 Sistemas Ursol S.A.
@@ -807,7 +810,7 @@ use Illuminate\Support\Facades\Schema;
 
 /**
  * Migration para tabla {$this->tableName}
- * 
+ *
  * @author Generado por MakeErpModule
  */
 return new class extends Migration
@@ -874,7 +877,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * Factory para {$this->moduleName}
- * 
+ *
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\\{$this->moduleName}>
  * @author Generado por MakeErpModule
  */
@@ -955,7 +958,7 @@ use Tests\TestCase;
 
 /**
  * Tests para {$this->moduleName}Controller
- * 
+ *
  * @author Generado por MakeErpModule
  */
 class {$this->moduleName}Test extends TestCase

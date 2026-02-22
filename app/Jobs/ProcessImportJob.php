@@ -20,9 +20,10 @@ class ProcessImportJob implements ShouldQueue
 {
     use Queueable;
 
-    public $tries = 3;
-    public $timeout = 600; // 10 minutos
-    public $backoff = [120, 300, 600];
+    public int $tries = 3;
+    public int $timeout = 600; // 10 minutos
+    /** @var array<int, int> */
+    public array $backoff = [120, 300, 600];
 
     /**
      * Create a new job instance.

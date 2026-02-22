@@ -30,6 +30,7 @@ class UrlShortenerController extends Controller
 {
     use HasCacheableQueries;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['url-shortener', 'urls'];
     protected int $cacheTTL = 1800; // 30 minutos - URLs dinámicas por clicks
 
@@ -182,7 +183,7 @@ class UrlShortenerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUrlShortenerRequest $request, $id): JsonResponse
+    public function update(UpdateUrlShortenerRequest $request, string $id): JsonResponse
     {
         try {
             $url = UrlShortener::findOrFail($id);

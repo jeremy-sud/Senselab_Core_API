@@ -26,6 +26,7 @@ class TipoImpuestoController extends Controller
 {
     use HasCacheableQueries;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['tipos-impuesto', 'catalogos'];
     protected int $cacheTTL = 86400; // 24 horas - catálogo fiscal muy estable
 

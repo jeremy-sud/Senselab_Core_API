@@ -25,6 +25,7 @@ class MarcaController extends Controller
 {
     use HasCacheableQueries;
 
+    /** @var array<int, string> */
     protected array $cacheTags = ['marcas', 'catalogos'];
     protected int $cacheTTL = 3600; // 1 hora - catálogo estable
 
@@ -277,7 +278,7 @@ class MarcaController extends Controller
 
         $this->authorize('delete', $marca);
 
-        $marca->eliminado = 1;
+        $marca->eliminado = now();
         $marca->activo = 0;
         $marca->save();
 
