@@ -22,8 +22,8 @@ Para comenzar a trabajar en el proyecto, sigue estos pasos:
 
 3. Ejecuta el script de instalación automática:
    
-   • Linux/Mac: ./install.sh
-   • Windows: .\install.ps1
+   • Linux/Mac: ./scripts/install.sh
+   • Windows: .\scripts\install.ps1
 
    El script te guiará en todo el proceso (5-10 minutos).
 
@@ -55,7 +55,7 @@ Saludos,
 📦 Instalación rápida:
 1. git clone https://github.com/jeremy-sud/Ursol-CAST-API.git
 2. cd Ursol-CAST-API
-3. ./install.sh (Linux/Mac) o .\install.ps1 (Windows)
+3. ./scripts/install.sh (Linux/Mac) o .\scripts\install.ps1 (Windows)
 
 📖 Lee: COLABORADORES_README.md
 
@@ -241,7 +241,7 @@ Sugiéreles usar este formato para sus Pull Requests:
 1. Dale acceso al repositorio de GitHub
 2. Envíale el link: https://github.com/jeremy-sud/Ursol-CAST-API
 3. Dile que lea: COLABORADORES_README.md
-4. Dile que ejecute: `./install.sh` o `.\install.ps1`
+4. Dile que ejecute: `./scripts/install.sh` o `.\scripts\install.ps1`
 
 **Eso es todo. NO necesitas:**
 - ❌ Pasarle archivos SQL

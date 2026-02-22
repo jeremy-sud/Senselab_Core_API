@@ -184,7 +184,7 @@ class ProductoService
 ## 📚 Referencias
 
 - [Laravel Best Practices - DTOs](https://laravel.com/docs)
-- [FASE_4_CALIDAD_CODIGO.md](../../docs/FASE_4_CALIDAD_CODIGO.md)
+- [FASE_4_CALIDAD_CODIGO.md](../../docs/archive/FASE_4_CALIDAD_CODIGO.md)
 
 ---
 

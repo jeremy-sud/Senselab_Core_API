@@ -12,7 +12,7 @@
 ```bash
 git clone https://github.com/jeremy-sud/Ursol-CAST-API.git
 cd Ursol-CAST-API
-./install.sh
+./scripts/install.sh
 ```
 
 ### Para Windows (PowerShell):
