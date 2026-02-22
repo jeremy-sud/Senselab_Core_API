@@ -18,7 +18,7 @@ help: ## Mostrar esta ayuda
 
 ci-test: ## Ejecutar tests como en CI (Docker con MySQL)
 	@echo "$(GREEN)Ejecutando tests (modo CI)...$(NC)"
-	docker exec ursol_php vendor/bin/phpunit --configuration=phpunit.docker.xml --stop-on-failure --coverage-text
+	docker exec ursol_php vendor/bin/phpunit --configuration=docker/phpunit.docker.xml --stop-on-failure --coverage-text
 
 ci-quality: ## Verificar calidad de código
 	@echo "$(GREEN)Verificando calidad de código...$(NC)"
@@ -125,7 +125,7 @@ fresh: ## Resetear BD, migrar y seedear
 # === TESTING ===
 
 test: ## Ejecutar tests en Docker con MySQL
-	docker-compose exec php php artisan test --configuration=phpunit.docker.xml
+	docker-compose exec php php artisan test --configuration=docker/phpunit.docker.xml
 
 test-local: ## Ejecutar tests localmente con SQLite (sin Docker)
 	php artisan test

@@ -82,18 +82,39 @@ php artisan route:cache
 
 ## Documentacion disponible (paths reales)
 
-- `README.md`
-- `docs/KNOWN_WARNINGS.md`
-- `docs/PLAN_IMPLEMENTACION_MEJORAS.md`
-- `docs/release_checklist.md`
+### Raíz del proyecto
+- `README.md` — Documentación principal
+- `ESTADO_ACTUAL_PROYECTO.md` — Este documento
+- `CHANGELOG.md` — Historial de cambios
+- `SECURITY.md` — Políticas de seguridad
+
+### docs/ (referencia activa)
+- `docs/README.md` — Índice de documentación
+- `docs/IA_FUNCIONALIDADES.md` — Módulo IA (10 servicios, 32 endpoints)
+- `docs/KNOWN_WARNINGS.md` — Warnings aceptados
+- `docs/PENDIENTES_PROYECTO.md` — Lista de pendientes
+- `docs/MAPA_ESTRUCTURAL_API.txt` — Mapa de arquitectura
+- `docs/release_checklist.md` — Checklist pre-release
+- `docs/examples.http` — Ejemplos REST Client
+
+### docs/api/
 - `docs/api/CONTROLLERS_SUMMARY.md`
 - `docs/api/CONTROLLERS_COMPLETE_SUMMARY.md`
 - `docs/api/FORMREQUESTS_SUMMARY.md`
-- `docs/archive/FASE_7_OPENAPI_COMPLETA.md`
-- `docs/archive/FASE_8_TESTING_PLAN.md`
-- `docs/archive/FASE_9_DOCKERIZACION_COMPLETADA.md`
-- `docs/archive/FASE_10_TESTING_100_COMPLETADA.md`
-- `docs/archive/INFORME_TESTS_POST_OPTIMIZACION.md`
+- `docs/api/MODELS_RELATIONS.md`
+- `docs/api/POLICIES_GUIDE.md`
+
+### docs/guides/
+- `docs/guides/INSTALLATION_GUIDE.md`
+- `docs/guides/DOCKER_GUIDE.md`
+- `docs/guides/TESTING_GUIDE.md`
+- `docs/guides/GUIA_DATOS_TESTEO.md`
+- `docs/guides/REFACTORIZACION_CONTROLADORES.md`
+
+### docs/hacienda/
+- `docs/hacienda/FACTURACION_ELECTRONICA_API.md`
+- `docs/hacienda/FACTURACION_ELECTRONICA_SETUP.md`
+- `docs/hacienda/DGT-R-000-2024DisposicionesTecnicasDeComprobantesElectronicosCP.txt`
 
 ---
 
@@ -103,7 +124,7 @@ php artisan route:cache
 - `docker-compose.dev.yml`
 - `docker-compose.staging.yml`
 - `Dockerfile`
-- `docker-start.sh`, `docker-health.sh`
+- `docker/docker-start.sh`, `docker/docker-health.sh`
 - `Makefile`
 
 ---
@@ -175,9 +196,9 @@ php artisan route:cache
 - **2 archivos JSON de errores** eliminados (phpstan-errors.json, phpstan-models-errors.json)
 
 ### Documentación
-- **Plan detallado:** [FASE_4_CALIDAD_CODIGO.md](docs/FASE_4_CALIDAD_CODIGO.md)
-- **Refactorización VentaController:** [REFACTORIZACION_VENTA_CONTROLLER_COMPLETADA.md](docs/REFACTORIZACION_VENTA_CONTROLLER_COMPLETADA.md)
-- **Roadmap:** [PLAN_IMPLEMENTACION_MEJORAS.md](docs/PLAN_IMPLEMENTACION_MEJORAS.md)
+- **Plan detallado:** [FASE_4_CALIDAD_CODIGO.md](docs/archive/FASE_4_CALIDAD_CODIGO.md)
+- **Refactorización VentaController:** [REFACTORIZACION_VENTA_CONTROLLER_COMPLETADA.md](docs/archive/REFACTORIZACION_VENTA_CONTROLLER_COMPLETADA.md)
+- **Roadmap:** [PLAN_IMPLEMENTACION_MEJORAS.md](docs/archive/PLAN_IMPLEMENTACION_MEJORAS.md)
 
 **FASE 4 COMPLETADA** ✅
 

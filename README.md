@@ -574,10 +574,10 @@ git clone https://github.com/jeremy-sud/Ursol-CAST-API.git
 cd Ursol-CAST-API
 
 # 2. Dar permisos al script
-chmod +x docker-start.sh
+chmod +x docker/docker-start.sh
 
 # 3. Ejecutar instalación completa (todo automático)
-./docker-start.sh
+./docker/docker-start.sh
 ```
 
 El script automáticamente:
@@ -1644,7 +1644,7 @@ $carta = $service->generarCartaCobro(
 
 ### Documentación Completa
 
-📘 Ver guía detallada: [IA_FUNCIONALIDADES.md](IA_FUNCIONALIDADES.md)
+📘 Ver guía detallada: [IA_FUNCIONALIDADES.md](docs/IA_FUNCIONALIDADES.md)
 
 ---
 

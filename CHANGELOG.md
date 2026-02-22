@@ -66,8 +66,8 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 ### Documentación Actualizada
 - `README.md` - Estadísticas verificadas
 - `ESTADO_ACTUAL_PROYECTO.md` - Conteos confirmados
-- `docs/FASE_4_CALIDAD_CODIGO.md` - Plan de mejora en progreso
-- `docs/PLAN_IMPLEMENTACION_MEJORAS.md` - Roadmap detallado
+- `docs/archive/FASE_4_CALIDAD_CODIGO.md` - Plan de mejora (archivado)
+- `docs/archive/PLAN_IMPLEMENTACION_MEJORAS.md` - Roadmap (archivado)
 
 ---
 ## [2.0.0] - 2026-02-07
