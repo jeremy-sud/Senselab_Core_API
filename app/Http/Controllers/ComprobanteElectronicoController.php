@@ -6,7 +6,6 @@ use App\Models\ComprobanteElectronicoFe;
 use App\Models\FeLineaDetalle;
 use App\Http\Requests\StoreComprobanteElectronicoRequest;
 use App\Jobs\Hacienda\EnviarComprobanteJob;
-use App\Services\Hacienda\HaciendaApiClient;
 use App\Services\Hacienda\ClaveNumericaGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;

@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Models\Usuario;
-use App\Models\ConfiguracionApi;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ConfiguracionApiPolicy extends BasePolicy

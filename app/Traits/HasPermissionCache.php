@@ -3,7 +3,6 @@
 namespace App\Traits;
 
 use Illuminate\Support\Facades\Cache;
-use App\Models\Permiso;
 
 /**
  * Trait para agregar cache de permisos a modelos Usuario y Rol.

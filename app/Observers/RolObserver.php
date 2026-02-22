@@ -4,7 +4,6 @@ namespace App\Observers;
 
 use App\Models\Rol;
 use App\Services\PermissionService;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Observer para el modelo Rol.

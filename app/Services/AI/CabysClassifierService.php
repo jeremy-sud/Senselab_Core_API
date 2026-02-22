@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\AI;
 
-use App\Models\Caby;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 /**
  * Servicio de Clasificación Automática CABYS

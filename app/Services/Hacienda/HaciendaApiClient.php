@@ -2,13 +2,10 @@
 
 namespace App\Services\Hacienda;
 
-use App\Models\FeOAuthToken;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
 
 /**
  * Cliente HTTP para comunicación con el API de Hacienda Costa Rica

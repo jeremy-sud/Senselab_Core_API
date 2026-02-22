@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\DTOs\API\AsientoContableCreateDTO;
 use App\Models\AsientoContable;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;

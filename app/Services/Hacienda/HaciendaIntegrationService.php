@@ -5,9 +5,7 @@ namespace App\Services\Hacienda;
 use App\Models\HaciendaComprobante;
 use App\Models\ComprobanteElectronicoFe;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 use Exception;
 
 /**

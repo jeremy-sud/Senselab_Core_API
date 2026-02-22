@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\DTOs\API\SalidaInventarioCreateDTO;
 use App\Exceptions\InventarioException;
 use App\Models\SalidaInventario;
 use Illuminate\Pagination\LengthAwarePaginator;

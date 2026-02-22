@@ -2,7 +2,6 @@
 
 namespace App\Policies;
 
-use App\Models\Usuario;
 use App\Models\FormaPago;
 
 /**

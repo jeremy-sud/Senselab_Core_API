@@ -3,7 +3,6 @@
 namespace App\Traits;
 
 use App\Services\EncryptionService;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 
 /**
  * Trait HasEncryptedAttributes

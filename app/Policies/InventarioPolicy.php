@@ -2,9 +2,6 @@
 
 namespace App\Policies;
 
-use App\Models\Usuario;
-use App\Models\InventarioProducto;
-
 /**
  * InventarioPolicy - Gestión de autorización para Inventario
  * 

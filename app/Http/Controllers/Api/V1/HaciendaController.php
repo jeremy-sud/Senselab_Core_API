@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Api\V1;
 use App\Models\ComprobanteElectronicoFe;
 use App\Models\HaciendaComprobante;
 use App\Services\Hacienda\HaciendaIntegrationService;
-use App\Http\Requests\StoreHaciendaComprobanteRequest;
-use App\Http\Requests\UpdateHaciendaComprobanteRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 

@@ -7,7 +7,6 @@ namespace App\Services;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\RateLimiter;
 
 /**
  * Rate Limiting Service - FASE 1.5

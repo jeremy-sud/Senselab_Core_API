@@ -4,6 +4,38 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
+## [2.2.0] - 2026-02-21
+
+### 🔧 Calidad de Código - PHPStan Deep Fix + Code Cleanup
+
+#### PHPStan: 281 → 52 errores (229 corregidos, 82% reducción)
+- **missingType.iterableValue (77 errores):** Añadidos tipos genéricos `array<string, mixed>` en PHPDoc de traits, services, controllers y jobs
+- **class.notFound (22 errores):** Añadidos imports faltantes (`DB`, `JsonResponse`), corregido nombre de modelo `CuentaCobrar` → `CuentaPorCobrar`
+- **return.type + return.phpDocType (51 errores):** Sincronizados return types nativos y PHPDoc en ~30 controllers
+- **class.nameCase (12 errores):** Corregido `ConsecutivoFE` → `ConsecutivoFe` en ConsecutivoFEController
+- **missingType.property (14 errores):** Añadido tipo `int` a propiedades `$tries`, `$timeout` en 5 Jobs
+- **assign.propertyType (9 errores):** Corregido `$eliminado = 1` → `$eliminado = now()` en 9 controllers (soft-delete timestamp)
+- **Otros (44 errores):** Cache facade methods, dead catches, nullsafe operators, etc.
+- **52 errores restantes** en baseline (Prometheus no instalado, relaciones Larastan, traits no usados)
+- **PHPStan Level 6** con baseline: ✅ 0 errores
+
+#### Limpieza de Imports
+- **82 imports no usados eliminados** de 78 archivos
+- Principalmente `use App\Models\Usuario` en Policies que extienden BasePolicy
+- Verificado: PHPStan ✅, PHPUnit ✅ tras eliminación
+
+#### Limpieza de Archivos Temporales (45 archivos)
+- Eliminados 34 scripts PHP de fix (`fix_*.php`)
+- Eliminados 2 scripts de OpenAPI docs (`add_openapi_docs*.php`)
+- Eliminado `analyze_phpstan.sh`, `fix_routes.py`
+- Eliminados 6 archivos neon temporales (`phpstan-baseline-old/new/generated/reduced`, `phpstan-level7/8`)
+- Eliminados 2 archivos JSON de errores
+
+#### Tests
+- **529 tests passing** (100%), 5 skipped, 1698 assertions
+- Sin regresiones tras todos los cambios
+
+---
 ## [2.1.0] - 2026-02-13
 
 ### 📊 Verificación de Estadísticas y Estado Real (13 de Febrero 2026)
