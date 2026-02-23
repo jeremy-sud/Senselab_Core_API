@@ -366,9 +366,6 @@ class AuthorizationTest extends TestCase
         $response->assertStatus(200);
 
         $response = $this->getJson("/api/productos/{$producto->id}");
-        if ($response->status() !== 200) {
-            dump($response->json());
-        }
         $response->assertStatus(200);
 
         // NO PUEDE actualizar productos (no tiene producto.actualizar)

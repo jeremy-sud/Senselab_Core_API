@@ -6,6 +6,7 @@ use App\Models\InventarioProducto;
 use App\Http\Requests\StoreInventarioProductoRequest;
 use App\Http\Requests\UpdateInventarioProductoRequest;
 use App\Http\Resources\InventarioProductoResource;
+use App\Models\Almacen;
 use App\Traits\HasEmpresaContext;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -148,6 +149,11 @@ class InventarioProductoController extends Controller
 
     public function porAlmacen(int $almacenId): JsonResponse
     {
+        $empresaId = $this->getEmpresaId();
+
+        // Validar que el almacén pertenece a la empresa del usuario
+        Almacen::where('empresa_id', $empresaId)->findOrFail($almacenId);
+
         $inventarios = InventarioProducto::where('almacen_id', $almacenId)
             ->where('eliminado', 0)
             ->get();
@@ -160,8 +166,13 @@ class InventarioProductoController extends Controller
 
     public function bajoStockMinimo(): JsonResponse
     {
+        $empresaId = $this->getEmpresaId();
+
         $inventarios = InventarioProducto::bajoStockMinimo()
             ->where('eliminado', 0)
+            ->whereHas('almacen', function ($q) use ($empresaId) {
+                $q->where('empresa_id', $empresaId);
+            })
             ->get();
 
         return response()->json([
@@ -173,8 +184,13 @@ class InventarioProductoController extends Controller
 
     public function sobreStockMaximo(): JsonResponse
     {
+        $empresaId = $this->getEmpresaId();
+
         $inventarios = InventarioProducto::sobreStockMaximo()
             ->where('eliminado', 0)
+            ->whereHas('almacen', function ($q) use ($empresaId) {
+                $q->where('empresa_id', $empresaId);
+            })
             ->get();
 
         return response()->json([
@@ -186,7 +202,12 @@ class InventarioProductoController extends Controller
 
     public function resumenPorAlmacen(): JsonResponse
     {
+        $empresaId = $this->getEmpresaId();
+
         $resumen = InventarioProducto::where('eliminado', 0)
+            ->whereHas('almacen', function ($q) use ($empresaId) {
+                $q->where('empresa_id', $empresaId);
+            })
             ->selectRaw('almacen_id, count(*) as total_productos, sum(stock_actual) as stock_total, avg(costo_promedio) as costo_promedio')
             ->groupBy('almacen_id')
             ->get();

@@ -9,12 +9,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\RolUsuario;
+use App\Models\Usuario;
 use App\Http\Requests\StoreRolUsuarioRequest;
 use App\Http\Requests\UpdateRolUsuarioRequest;
 use App\Http\Resources\RolUsuarioResource;
+use App\Traits\HasEmpresaContext;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\AsignarRolesUsuarioRequest;
+use Illuminate\Support\Facades\DB;
 use OpenApi\Attributes as OA;
 
 
@@ -24,6 +27,7 @@ use OpenApi\Attributes as OA;
 )]
 class RolUsuarioController extends Controller
 {
+    use HasEmpresaContext;
         #[OA\Get(
         path: '/api/rol-usuario',
         summary: 'Listar roles de usuarios',
@@ -36,7 +40,14 @@ class RolUsuarioController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $query = RolUsuario::where('activo', 1)->where('eliminado', 0);
+        $this->authorize('viewAny', RolUsuario::class);
+
+        $empresaId = $this->getEmpresaId();
+
+        $query = RolUsuario::where('activo', 1)->where('eliminado', 0)
+            ->whereHas('usuario', function ($q) use ($empresaId) {
+                $q->where('empresa_id', $empresaId);
+            });
 
         if ($request->filled('usuario_id')) {
             $query->where('usuario_id', $request->usuario_id);
@@ -129,6 +140,13 @@ class RolUsuarioController extends Controller
 
     public function rolesPorUsuario(int $usuarioId): JsonResponse
     {
+        $this->authorize('viewAny', RolUsuario::class);
+
+        $empresaId = $this->getEmpresaId();
+
+        // Validar que el usuario pertenece a la empresa actual
+        Usuario::where('empresa_id', $empresaId)->findOrFail($usuarioId);
+
         $roles = RolUsuario::where('usuario_id', $usuarioId)
             ->where('activo', 1)
             ->where('eliminado', 0)
@@ -142,9 +160,16 @@ class RolUsuarioController extends Controller
 
     public function usuariosPorRol(int $rolId): JsonResponse
     {
+        $this->authorize('viewAny', RolUsuario::class);
+
+        $empresaId = $this->getEmpresaId();
+
         $usuarios = RolUsuario::where('rol_id', $rolId)
             ->where('activo', 1)
             ->where('eliminado', 0)
+            ->whereHas('usuario', function ($q) use ($empresaId) {
+                $q->where('empresa_id', $empresaId);
+            })
             ->get();
 
         return response()->json([
@@ -155,26 +180,35 @@ class RolUsuarioController extends Controller
 
     public function asignarRoles(AsignarRolesUsuarioRequest $request): JsonResponse
     {
+        $this->authorize('create', RolUsuario::class);
 
-        // Desactivar roles actuales
-        RolUsuario::where('usuario_id', $request->usuario_id)
-            ->update(['activo' => 0]);
+        $empresaId = $this->getEmpresaId();
 
-        // Asignar nuevos roles
+        // Validar que el usuario pertenece a la empresa actual
+        Usuario::where('empresa_id', $empresaId)->findOrFail($request->usuario_id);
+
         $rolesAsignados = [];
-        foreach ($request->roles as $rolId) {
-            $rolUsuario = RolUsuario::updateOrCreate(
-                [
-                    'usuario_id' => $request->usuario_id,
-                    'rol_id' => $rolId,
-                ],
-                [
-                    'activo' => 1,
-                    'eliminado' => 0,
-                ]
-            );
-            $rolesAsignados[] = $rolUsuario;
-        }
+
+        DB::transaction(function () use ($request, &$rolesAsignados) {
+            // Desactivar roles actuales
+            RolUsuario::where('usuario_id', $request->usuario_id)
+                ->update(['activo' => 0]);
+
+            // Asignar nuevos roles
+            foreach ($request->roles as $rolId) {
+                $rolUsuario = RolUsuario::updateOrCreate(
+                    [
+                        'usuario_id' => $request->usuario_id,
+                        'rol_id' => $rolId,
+                    ],
+                    [
+                        'activo' => 1,
+                        'eliminado' => 0,
+                    ]
+                );
+                $rolesAsignados[] = $rolUsuario;
+            }
+        });
 
         return response()->json([
             'success' => true,

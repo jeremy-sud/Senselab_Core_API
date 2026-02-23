@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\Producto;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Cache\TaggableStore;
 
 /**
  * Observer para Producto
@@ -23,7 +24,7 @@ class ProductoObserver
     public function created(Producto $producto): void
     {
         // Limpiar cache de productos
-        Cache::tags(['productos', 'catalogos'])->flush();
+        $this->flushProductCache();
         
         // Log de creación
         Log::info('Producto creado', [
@@ -40,7 +41,7 @@ class ProductoObserver
     public function updated(Producto $producto): void
     {
         // Limpiar cache
-        Cache::tags(['productos', 'catalogos'])->flush();
+        $this->flushProductCache();
         
         // Log si cambió el precio
         if ($producto->isDirty('precio_venta')) {
@@ -58,7 +59,7 @@ class ProductoObserver
     public function deleted(Producto $producto): void
     {
         // Limpiar cache
-        Cache::tags(['productos', 'catalogos'])->flush();
+        $this->flushProductCache();
         
         Log::warning('Producto eliminado', [
             'producto_id' => $producto->id,
@@ -71,7 +72,7 @@ class ProductoObserver
      */
     public function restored(Producto $producto): void
     {
-        Cache::tags(['productos', 'catalogos'])->flush();
+        $this->flushProductCache();
     }
 
     /**
@@ -79,6 +80,19 @@ class ProductoObserver
      */
     public function forceDeleted(Producto $producto): void
     {
-        Cache::tags(['productos', 'catalogos'])->flush();
+        $this->flushProductCache();
+    }
+
+    /**
+     * Limpiar cache de productos de forma segura.
+     * Cache::tags() solo funciona con drivers que soportan tags (Redis, Memcached).
+     */
+    private function flushProductCache(): void
+    {
+        if (Cache::getStore() instanceof TaggableStore) {
+            Cache::tags(['productos', 'catalogos'])->flush();
+        } else {
+            Cache::flush();
+        }
     }
 }

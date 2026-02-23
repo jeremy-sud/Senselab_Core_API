@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\V1\AI;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cliente;
 use App\Services\AI\CreditScoringService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -29,6 +30,9 @@ class CreditController extends Controller
         try {
             $empresaId = $request->user()->empresa_id;
 
+            // Validar que el cliente pertenece a la empresa del usuario
+            Cliente::where('empresa_id', $empresaId)->findOrFail($clienteId);
+
             $this->creditService->setEmpresa($empresaId);
             $result = $this->creditService->calculateScore($clienteId);
 
@@ -52,6 +56,9 @@ class CreditController extends Controller
     {
         try {
             $empresaId = $request->user()->empresa_id;
+
+            // Validar que el cliente pertenece a la empresa del usuario
+            Cliente::where('empresa_id', $empresaId)->findOrFail($clienteId);
 
             $this->creditService->setEmpresa($empresaId);
             $result = $this->creditService->calculateScore($clienteId);
