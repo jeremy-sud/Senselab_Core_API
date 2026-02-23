@@ -16,7 +16,7 @@ class RolUsuarioPolicy extends BasePolicy
      */
     public function viewAny(Usuario $user): bool
     {
-        return $user->hasPermissionTo('ver-usuarios');
+        return $user->hasPermission('ver-usuarios');
     }
 
     /**
@@ -24,7 +24,7 @@ class RolUsuarioPolicy extends BasePolicy
      */
     public function view(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
-        return $user->hasPermissionTo('ver-usuarios');
+        return $user->hasPermission('ver-usuarios');
     }
 
     /**
@@ -32,7 +32,7 @@ class RolUsuarioPolicy extends BasePolicy
      */
     public function create(Usuario $user): bool
     {
-        return $user->hasPermissionTo('editar-usuarios');
+        return $user->hasPermission('editar-usuarios');
     }
 
     /**
@@ -41,7 +41,7 @@ class RolUsuarioPolicy extends BasePolicy
     public function update(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
         $rolUsuario = $model;
-        if (!$user->hasPermissionTo('editar-usuarios')) {
+        if (!$user->hasPermission('editar-usuarios')) {
             return false;
         }
 
@@ -59,7 +59,7 @@ class RolUsuarioPolicy extends BasePolicy
     public function delete(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
         $rolUsuario = $model;
-        if (!$user->hasPermissionTo('editar-usuarios')) {
+        if (!$user->hasPermission('editar-usuarios')) {
             return false;
         }
 
@@ -85,7 +85,7 @@ class RolUsuarioPolicy extends BasePolicy
      */
     public function restore(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
-        return $user->hasPermissionTo('editar-usuarios');
+        return $user->hasPermission('editar-usuarios');
     }
 
     /**
@@ -93,6 +93,6 @@ class RolUsuarioPolicy extends BasePolicy
      */
     public function forceDelete(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
-        return $user->hasPermissionTo('editar-usuarios') && $user->hasRole('Administrador');
+        return $user->hasPermission('editar-usuarios') && $user->hasRole('Administrador');
     }
 }

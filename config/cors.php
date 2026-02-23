@@ -76,10 +76,10 @@ return [
     | Ejemplo: /^https:\/\/(.+\.)?example\.com$/
     |
     */
-    'allowed_origins_patterns' => [
+    'allowed_origins_patterns' => array_filter([
         // Subdominios del tenant (Multi-tenancy)
-        env('CORS_SUBDOMAIN_PATTERN', '')
-    ],
+        env('CORS_SUBDOMAIN_PATTERN'),
+    ]),
 
     /*
     |--------------------------------------------------------------------------

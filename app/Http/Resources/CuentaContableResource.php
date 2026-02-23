@@ -37,7 +37,7 @@ class CuentaContableResource extends JsonResource
             
             // Información adicional
             'nivel' => $this->cuenta_padre_id ? $this->getNivel() : 1,
-            'es_cuenta_padre' => $this->subcuentas()->where('eliminado', 0)->count() > 0,
+            'es_cuenta_padre' => $this->whenCounted('subcuentas', fn () => $this->subcuentas_count > 0, fn () => $this->relationLoaded('subcuentas') ? $this->subcuentas->where('eliminado', 0)->isNotEmpty() : false),
             'tiene_movimientos' => $this->whenLoaded('asientos', function () {
                 return $this->asientos->count() > 0;
             }),
@@ -62,24 +62,35 @@ class CuentaContableResource extends JsonResource
                 ];
             }),
             'subcuentas' => $this->whenLoaded('subcuentas', function () {
-                return CuentaContableResource::collection($this->subcuentas()->where('eliminado', 0)->get());
+                return CuentaContableResource::collection($this->subcuentas->where('eliminado', 0)->values());
             }),
         ];
     }
 
     /**
-     * Calcular el nivel jerárquico de la cuenta
+     * Calcular el nivel jerárquico de la cuenta.
+     * Usa la relación cargada si está disponible para evitar N+1.
      *
      * @return int
      */
     private function getNivel(): int
     {
+        // Si el modelo tiene un atributo nivel pre-calculado, usarlo
+        if (isset($this->resource->attributes['nivel'])) {
+            return (int) $this->resource->attributes['nivel'];
+        }
+
         $nivel = 1;
         $cuenta = $this->resource;
         
         while ($cuenta->cuenta_padre_id) {
             $nivel++;
-            $cuenta = $cuenta->cuentaPadre;
+            // Usar la relación ya cargada si existe, sino cargar
+            if ($cuenta->relationLoaded('cuentaPadre') && $cuenta->cuentaPadre) {
+                $cuenta = $cuenta->cuentaPadre;
+            } else {
+                break; // No hacer query N+1, retornar nivel parcial
+            }
             
             // Prevenir bucles infinitos
             if ($nivel > 10) break;
