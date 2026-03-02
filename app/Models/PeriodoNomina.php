@@ -85,6 +85,14 @@ class PeriodoNomina extends Model
         return $this->hasMany(PagoNomina::class, 'periodo_nomina_id');
     }
 
+    /**
+     * Alias: pagos del período (usado en GeneratePdfReportJob).
+     */
+    public function pagos(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->pagosNomina();
+    }
+
     /* --------------------- Scopes --------------------- */
     public function scopeActivos(mixed $q): Builder{
         return $q->where('activo', true)->where('eliminado', false);

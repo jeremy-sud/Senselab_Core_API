@@ -27,6 +27,7 @@ class Empleado extends Model
      */
     protected $fillable = [
         'empresa_id',
+        'usuario_id',
         'nombre',
         'primer_apellido',
         'segundo_apellido',
@@ -35,6 +36,7 @@ class Empleado extends Model
         'fecha_nacimiento',
         'fecha_ingreso',
         'cargo_id',
+        'departamento_id',
         'salario',
         'direccion',
         'telefono',
@@ -110,6 +112,22 @@ class Empleado extends Model
     public function cargo(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Cargo::class);
+    }
+
+    /**
+     * Relación con el usuario del sistema asociado al empleado.
+     */
+    public function usuario(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Usuario::class);
+    }
+
+    /**
+     * Relación con el departamento del empleado.
+     */
+    public function departamento(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Departamento::class);
     }
 
     /**

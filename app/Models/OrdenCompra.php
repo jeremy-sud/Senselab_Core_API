@@ -85,16 +85,13 @@ class OrdenCompra extends Model
         return $this->belongsTo(Proveedor::class);
     }
 
-    public function detalles(): mixed
+    public function detalles(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        // Relación con detalle de orden de compra
         return $this->hasMany(DetalleOrdenCompra::class, 'orden_compra_id');
     }
 
-    public function pagos(): mixed
+    public function pagos(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        // Aquí asumimos una relación simple hasMany; si en el proyecto hay modelos especializados
-        // para pagos a cuentas por pagar, ajustar a la relación concreta (p.ej. PagoCuentaPorPagar)
         return $this->hasMany(Pago::class, 'orden_compra_id');
     }
 

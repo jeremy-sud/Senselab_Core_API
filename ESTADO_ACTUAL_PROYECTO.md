@@ -1,27 +1,27 @@
 # Estado Actual del Proyecto - Ursol CAST API
 
-**Fecha de actualización:** 21 de febrero 2026  
+**Fecha de actualización:** 2 de marzo 2026  
 **Desarrollado por:** Sistemas Ursol S.A.  
 **Desarrollador principal:** Jeremy Arias Solano  
 
-> Nota: FASE 4 completada: PHPStan ✅ (Level 6+baseline, 229 errores corregidos), Tests 100% passing ✅, Imports limpios ✅
+> Nota: FASE 4 completada: PHPStan ✅ (Level 6+baseline, 229 errores corregidos), Tests 100% passing ✅, Imports limpios ✅  
+> v2.3.0: Auditoría integral — 9 relaciones faltantes, MetricsController reescrito, AppServiceProvider refactorizado, 4 test suites nuevos
 
 ---
 
-## Resumen verificado en repositorio
-
-### Estadÿsticas generales (conteos VERIFICADOS 13 feb 2026)
+## Estadísticas generales (conteos VERIFICADOS 2 mar 2026)
 - **Controladores implementados:** 95 (incluye API y raíz)
-- **Policies RBAC:** 80 ✅ Completo
-- **Modelos Eloquent:** 87 ✅ Sincronizados
-- **Migraciones:** 95 (estructura landlord + tenant)
+- **Policies RBAC:** 80 ✅ (registradas en AuthServiceProvider dedicado)
+- **Modelos Eloquent:** 88 ✅ (+1 Departamento)
+- **Migraciones:** 97 (+2 nuevas: departamentos, FKs faltantes)
 - **FormRequests:** 170+ (validación completa)
 - **API Resources:** 80+ (transformación JSON)
 - **Jobs/Queues:** 8+ (procesamiento asíncrono)
-- **Traits Reutilizables:** 10+ (abstractos y concretos)
-- **Observers:** 6+ (eventos del modelo)
+- **Traits Reutilizables:** 10+ (1 deprecated: EncryptsAttributes)
+- **Observers:** 6+ (registrados en ObserverServiceProvider dedicado)
 - **Services:** 31 (10 AI, 9 Hacienda, 12 core/utilidad)
-- **Tests (archivos):** 47 archivos (Feature + Unit)
+- **Tests (archivos):** 51 archivos (+4 nuevos)
+- **Providers:** 4 (AppServiceProvider, AuthServiceProvider, ObserverServiceProvider, CQRSServiceProvider)
 - **Rutas API:** Configuradas en routes/api.php con versionado
 
 ### Desglose de controladores (por carpeta)
@@ -234,4 +234,36 @@ php artisan route:cache
 - ✅ **Token Hacienda:** Integrado `OAuthTokenManager` en `SyncHaciendaJob`.
 - ✅ **GDPR:** Implementada verificación real con caché en `GdprController`.
 - ✅ **Notificaciones:** Implementado envío de emails (`SendEmailJob`) para éxito/fallo en Jobs asíncronos.
+
+---
+
+## 🔧 v2.3.0: AUDITORÍA INTEGRAL DE CÓDIGO (2 mar 2026)
+
+### Errores Runtime Corregidos
+- ✅ **MetricsController** reescrito sin Prometheus SDK — métricas reales DB/Redis/modelos
+- ✅ **CleanCacheJob** — Predis→Redis facade
+- ✅ **GdprController** — TODO→Mail::raw() implementación real
+
+### Relaciones Eloquent Corregidas
+- ✅ 9 relaciones añadidas/corregidas en 7 modelos (Caja, Empleado, OrdenCompra, Presupuesto, PagoNomina, PeriodoNomina, TipoCuenta)
+- ✅ Tipos retorno corregidos: `mixed` → `HasMany`/`BelongsTo`
+
+### Migraciones y Modelos
+- ✅ Modelo `Departamento` creado con tabla, relaciones y scopes
+- ✅ FK columns: `usuario_id` en cajas, `usuario_id` + `departamento_id` en empleados
+
+### Refactoring
+- ✅ **AppServiceProvider** simplificado (334→120 líneas): policies→AuthServiceProvider, observers→ObserverServiceProvider
+- ✅ **ConsecutivoFE→ConsecutivoFe**: 4 archivos renombrados, rutas actualizadas
+- ✅ Archivos backup eliminados (.bak, .backup)
+- ✅ Trait `EncryptsAttributes` marcado `@deprecated`
+
+### Multi-Tenant
+- ✅ Verificado: todos los modelos con `empresa_id` usan `BelongsToTenant` — aislamiento correcto
+
+### Tests Nuevos
+- ✅ `MultiTenantIsolationTest` (9 tests) — aislamiento CRUD entre empresas
+- ✅ `FinancialModuleTest` (12 tests) — módulos contables
+- ✅ `ModelRelationsTest` (16 tests) — relaciones añadidas
+- ✅ `MetricsControllerTest` (3 tests) — endpoint /metrics
 

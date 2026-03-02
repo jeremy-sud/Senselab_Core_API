@@ -78,4 +78,12 @@ class TipoCuenta extends Model
     {
         return $query->where('eliminado', false);
     }
+
+    /**
+     * Relación con las cuentas contables de este tipo.
+     */
+    public function cuentasContables(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(CuentaContable::class, 'tipo_cuenta_id');
+    }
 }

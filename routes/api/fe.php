@@ -8,7 +8,7 @@
  */
 
 use App\Http\Controllers\API\ComprobanteRecibidoElectronicoController;
-use App\Http\Controllers\ConsecutivoFEController;
+use App\Http\Controllers\ConsecutivoFeController;
 use App\Http\Controllers\ComprobanteElectronicoController;
 use App\Http\Controllers\API\MensajeHaciendaController;
 use App\Http\Controllers\API\TipoComprobanteFeController;
@@ -46,21 +46,21 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     // ------------------------------------------------------------------------
     // MÓDULO: CONSECUTIVOS DE FACTURACIÓN ELECTRÓNICA
     // ------------------------------------------------------------------------
-    Route::apiResource('consecutivos-fe', ConsecutivoFEController::class)
+    Route::apiResource('consecutivos-fe', ConsecutivoFeController::class)
         ->parameters(['consecutivos-fe' => 'consecutivoFe'])
         ->middleware(['permission:ver-facturacion_electronica,facturacion_electronica.crear,facturacion_electronica.actualizar,facturacion_electronica.eliminar']);
     // Obtener siguiente consecutivo (rate limiting: 30 por minuto)
-    Route::post('/consecutivos-fe/obtener-siguiente', [ConsecutivoFEController::class, 'obtenerSiguiente'])
+    Route::post('/consecutivos-fe/obtener-siguiente', [ConsecutivoFeController::class, 'obtenerSiguiente'])
         ->middleware(['permission:ver-facturacion_electronica', 'throttle:30,1']);
-    Route::post('/consecutivos-fe/{consecutivoFe}/resetear', [ConsecutivoFEController::class, 'resetear'])
+    Route::post('/consecutivos-fe/{consecutivoFe}/resetear', [ConsecutivoFeController::class, 'resetear'])
         ->middleware('permission:editar-facturacion_electronica');
-    Route::get('/consecutivos-fe/tipo/{tipoDocumentoDgt}', [ConsecutivoFEController::class, 'porTipoDocumento'])
+    Route::get('/consecutivos-fe/tipo/{tipoDocumentoDgt}', [ConsecutivoFeController::class, 'porTipoDocumento'])
         ->middleware('permission:ver-facturacion_electronica');
-    Route::post('/consecutivos-fe/{consecutivoFe}/marcar-agotado', [ConsecutivoFEController::class, 'marcarAgotado'])
+    Route::post('/consecutivos-fe/{consecutivoFe}/marcar-agotado', [ConsecutivoFeController::class, 'marcarAgotado'])
         ->middleware('permission:editar-facturacion_electronica');
-    Route::post('/consecutivos-fe/{consecutivoFe}/activar', [ConsecutivoFEController::class, 'activar'])
+    Route::post('/consecutivos-fe/{consecutivoFe}/activar', [ConsecutivoFeController::class, 'activar'])
         ->middleware('permission:editar-facturacion_electronica');
-    Route::get('/consecutivos-fe/resumen/por-estado', [ConsecutivoFEController::class, 'resumenPorEstado'])
+    Route::get('/consecutivos-fe/resumen/por-estado', [ConsecutivoFeController::class, 'resumenPorEstado'])
         ->middleware('permission:ver-facturacion_electronica');
 
     // ------------------------------------------------------------------------

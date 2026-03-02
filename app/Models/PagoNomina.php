@@ -90,10 +90,17 @@ class PagoNomina extends Model
     }
 
     /**
-     * Relación con la forma de pago (Alias para metodoPago).
-     * Se agrega para consistencia con otros modelos que usan formaPago.
+     * Relación con la forma de pago.
      */
-    public function formaPago(): mixed
+    public function formaPago(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(FormaPago::class, 'metodo_pago_id');
+    }
+
+    /**
+     * Alias: relación con método de pago (misma FK metodo_pago_id).
+     */
+    public function metodoPago(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(FormaPago::class, 'metodo_pago_id');
     }

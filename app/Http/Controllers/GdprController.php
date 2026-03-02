@@ -73,8 +73,21 @@ class GdprController extends Controller
                 now()->addMinutes(15)
             );
 
-            // TODO: Enviar código por email al usuario
-            // \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\GdprVerificationMail($verificationCode));
+            // Enviar código de verificación por email al usuario
+            try {
+                \Illuminate\Support\Facades\Mail::raw(
+                    "Su código de verificación GDPR es: {$verificationCode}\n\nEste código expira en 15 minutos.",
+                    function ($message) use ($user) {
+                        $message->to($user->email)
+                                ->subject('Código de verificación GDPR - Ursol CAST');
+                    }
+                );
+            } catch (\Exception $mailException) {
+                \Illuminate\Support\Facades\Log::warning('No se pudo enviar email de verificación GDPR', [
+                    'user_id' => $user->id,
+                    'error' => $mailException->getMessage(),
+                ]);
+            }
 
             return response()->json([
                 'success' => true,

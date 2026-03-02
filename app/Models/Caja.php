@@ -11,6 +11,7 @@ use App\Traits\HasActiveScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Caja extends Model
 {
@@ -33,6 +34,7 @@ class Caja extends Model
      */
     protected $fillable = [
         'sucursal_id',
+        'usuario_id',
         'nombre',
         'descripcion',
         'activo',
@@ -55,6 +57,22 @@ class Caja extends Model
     public function sucursal(): BelongsTo
     {
         return $this->belongsTo(Sucursal::class);
+    }
+
+    /**
+     * Relación con el usuario asignado a la caja.
+     */
+    public function usuario(): BelongsTo
+    {
+        return $this->belongsTo(Usuario::class);
+    }
+
+    /**
+     * Movimientos registrados en la caja.
+     */
+    public function movimientos(): HasMany
+    {
+        return $this->hasMany(MovimientoCajaChica::class, 'caja_id');
     }
 
     /**

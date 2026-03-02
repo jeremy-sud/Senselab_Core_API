@@ -23,7 +23,7 @@ class ComprobanteElectronicoFeResource extends JsonResource
             'tipo_comprobante_id' => $this->tipo_comprobante_id,
             'tipo_comprobante' => new TipoComprobanteFeResource($this->whenLoaded('tipoComprobante')),
             'consecutivo_fe_id' => $this->consecutivo_fe_id,
-            'consecutivo' => new ConsecutivoFEResource($this->whenLoaded('consecutivo')),
+            'consecutivo' => new ConsecutivoFeResource($this->whenLoaded('consecutivo')),
             
             // Información del comprobante
             'numero_consecutivo' => $this->numero_consecutivo,

@@ -4,6 +4,86 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
+## [2.3.0] - 2026-03-02
+
+### 🔧 Auditoría Integral de Código — Correcciones, Refactoring y Cobertura
+
+Sprint de diagnóstico profundo y ejecución de correcciones priorizadas. Se auditó todo el codebase
+(95 controllers, 87 modelos, 578 rutas) identificando errores runtime, deuda técnica y brechas de tests.
+
+#### Errores Runtime Corregidos
+
+- **MetricsController reescrito** — Eliminada dependencia de Prometheus SDK (no instalado). 
+  Implementadas métricas reales: conexiones DB (SHOW STATUS / pg_stat_activity), 
+  cache hit rate (Redis INFO stats), conteos de modelos, y health checks con formato Prometheus nativo.
+- **CleanCacheJob** — Reemplazadas referencias a `Predis\Client` (no instalado) con `Redis` facade de Laravel.
+- **GdprController** — Reemplazado `// TODO: enviar verificación` con implementación real usando `Mail::raw()` 
+  con try/catch y logging.
+
+#### Relaciones Eloquent Faltantes (9 relaciones en 7 modelos)
+
+| Modelo | Relaciones añadidas |
+|---|---|
+| `Caja` | `usuario()` BelongsTo, `movimientos()` HasMany |
+| `Empleado` | `usuario()` BelongsTo, `departamento()` BelongsTo |
+| `OrdenCompra` | `detalles()`, `pagos()` — tipo corregido de `mixed` → `HasMany` |
+| `Presupuesto` | `detalles()` — tipo corregido de `mixed` → `HasMany` |
+| `PagoNomina` | `metodoPago()` BelongsTo alias, `formaPago()` tipado corregido |
+| `PeriodoNomina` | `pagos()` alias de `pagosNomina()` |
+| `TipoCuenta` | `cuentasContables()` HasMany |
+
+#### Migraciones y Modelo Nuevo
+
+- **`create_departamentos_table`** — Tabla de departamentos (nombre, descripcion, codigo, activo, eliminado)
+- **`add_missing_fk_columns_to_cajas_y_empleados`** — Agrega `usuario_id` a cajas, `usuario_id` + `departamento_id` a empleados con FK constraints
+- **Modelo `Departamento`** — Nuevo modelo con fillable, casts, relación `empleados()`, `scopeActivos()`
+
+#### Naming & Cleanup
+
+- **ConsecutivoFE → ConsecutivoFe** — Unificados 4 archivos (Controller, 2 Requests, Resource), clase renombrada, 
+  rutas en `api/fe.php` actualizadas, referencia en `ComprobanteElectronicoFeResource` corregida
+- **Eliminados archivos backup** — `EntradaInventarioController.php.bak`, `ClaveNumericaGenerator.php.backup`
+- **Trait `EncryptsAttributes`** marcado como `@deprecated` (duplicado de `HasEncryptedAttributes`)
+
+#### Refactoring AppServiceProvider (334 → 120 líneas)
+
+- **AuthServiceProvider** (NUEVO) — 57 mappings modelo→policy organizados por dominio 
+  (Core, RBAC, Comercial, Ventas, Inventario, Contabilidad, Nómina, FE, Transporte)
+- **ObserverServiceProvider** (NUEVO) — 6 observers dedicados + 11 AuditObserver registrations
+- **AppServiceProvider** simplificado — Solo rate limiting; policies y observers extraídos
+- Providers registrados en `bootstrap/providers.php`
+
+#### Multi-Tenant: Verificación Completa
+
+- Verificado que **todos los modelos con `empresa_id`** ya usan `BelongsToTenant` (global scope + auto-assign)
+- Modelos sin `empresa_id` son catálogos globales o detalles que heredan aislamiento del padre
+- No se requiere acción adicional; aislamiento multi-tenant correcto
+
+#### Tests Nuevos (4 archivos)
+
+| Archivo | Cobertura | Tests |
+|---|---|---|
+| `MultiTenantIsolationTest` | Aislamiento CRUD entre empresas, global scope, edge cases | 9 tests |
+| `FinancialModuleTest` | AsientoContable, CuentaPorCobrar, CuentaPorPagar CRUD + validaciones | 12 tests |
+| `ModelRelationsTest` | Todas las relaciones añadidas/corregidas, fillable, scopes | 16 tests |
+| `MetricsControllerTest` | Endpoint /metrics Prometheus, /metrics/health, auth | 3 tests |
+
+#### Archivos Modificados (resumen)
+
+- 7 modelos editados (Caja, Empleado, OrdenCompra, Presupuesto, PagoNomina, PeriodoNomina, TipoCuenta)
+- 1 modelo creado (Departamento)
+- 4 archivos renombrados (ConsecutivoFE → ConsecutivoFe)
+- 2 archivos eliminados (.bak, .backup)
+- 3 providers (1 reescrito, 2 creados)
+- 3 controllers editados (MetricsController, GdprController, ConsecutivoFeController)
+- 1 Job editado (CleanCacheJob)
+- 2 migraciones creadas
+- 1 trait marcado deprecated
+- 4 archivos de test creados
+- 1 bootstrap/providers.php actualizado
+
+---
+
 ## [2.2.0] - 2026-02-21
 
 ### 🔧 Calidad de Código - PHPStan Deep Fix + Code Cleanup
