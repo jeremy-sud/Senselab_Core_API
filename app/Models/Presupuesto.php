@@ -71,9 +71,8 @@ class Presupuesto extends Model
         return $this->belongsTo(Empresa::class);
     }
 
-    public function detalles(): mixed
+    public function detalles(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        // Relación con detalle_presupuestos si existe
         return $this->hasMany(DetallePresupuesto::class, 'presupuesto_id');
     }
 

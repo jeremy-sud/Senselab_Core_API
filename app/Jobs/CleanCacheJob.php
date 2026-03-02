@@ -109,32 +109,34 @@ class CleanCacheJob implements ShouldQueue
         // Aquí podemos forzar la limpieza de cache driver específico
         
         if (config('cache.default') === 'redis') {
-            // Limpiar keys expiradas en Redis
             $cleaned = 0;
 
             try {
-                /** @var \Redis|\Predis\Client $redis */
-                $redis = \Illuminate\Support\Facades\Redis::connection()->client();
-                $cursor = null;
-                do {
-                    /** @var array<int, string>|false $keys */
-                    $keys = $redis instanceof \Redis
-                        ? $redis->scan($cursor, 'laravel_cache:*', 100)
-                        : [];
+                /** @var \Illuminate\Redis\Connections\Connection $connection */
+                $connection = \Illuminate\Support\Facades\Redis::connection();
+                /** @var \Redis|object $redis */
+                $redis = $connection->client();
 
-                    if (is_array($keys)) {
-                        foreach ($keys as $key) {
-                            /** @var int $ttl */
-                            $ttl = $redis->ttl($key);
-                            if ($ttl === -2) {
-                                $redis->del($key);
-                                $cleaned++;
+                if ($redis instanceof \Redis) {
+                    $cursor = null;
+                    do {
+                        /** @var array<int, string>|false $keys */
+                        $keys = $redis->scan($cursor, 'laravel_cache:*', 100);
+
+                        if (is_array($keys)) {
+                            foreach ($keys as $key) {
+                                /** @var int $ttl */
+                                $ttl = $redis->ttl($key);
+                                if ($ttl === -2) {
+                                    $redis->del($key);
+                                    $cleaned++;
+                                }
                             }
                         }
-                    }
-                } while ($cursor > 0);
+                    } while ($cursor > 0);
+                }
             } catch (\Throwable $e) {
-                // Silently fall back if scan is unavailable
+                Log::debug('CleanCacheJob: Redis scan no disponible', ['error' => $e->getMessage()]);
             }
 
             return [

@@ -7,6 +7,12 @@ use Illuminate\Support\Facades\Crypt;
 /**
  * Trait EncryptsAttributes - Encriptación Automática de Atributos FASE 3
  *
+ * @deprecated Usar HasEncryptedAttributes en su lugar, que ofrece:
+ *   - Integración con EncryptionService centralizado
+ *   - Rotación de claves (key rotation)
+ *   - Búsqueda por campos encriptados vía hash
+ *   - Cache de desencriptación
+ *
  * Proporciona métodos para encriptar/desencriptar automáticamente atributos
  * usando el cipher de Laravel (AES-128-CBC o AES-256-CBC).
  *
@@ -15,6 +21,7 @@ use Illuminate\Support\Facades\Crypt;
  *
  * @package App\Traits
  * @version 1.0.0
+ * @see \App\Traits\HasEncryptedAttributes
  */
 trait EncryptsAttributes
 {
