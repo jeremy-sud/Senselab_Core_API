@@ -75,22 +75,22 @@ class EmpleadoController extends Controller
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
-                required: ['primer_nombre', 'primer_apellido', 'tipo_identificacion', 'numero_identificacion', 'fecha_nacimiento', 'fecha_ingreso', 'departamento_id', 'cargo_id', 'salario_base'],
+                required: ['nombre', 'primer_apellido', 'tipo_documento', 'numero_documento', 'fecha_nacimiento', 'fecha_ingreso', 'departamento_id', 'cargo_id', 'salario'],
                 properties: [
                     new OA\Property(property: 'usuario_id', type: 'integer', nullable: true),
-                    new OA\Property(property: 'primer_nombre', type: 'string', example: 'Carlos'),
-                    new OA\Property(property: 'segundo_nombre', type: 'string', nullable: true),
+                    new OA\Property(property: 'nombre', type: 'string', example: 'Carlos'),
                     new OA\Property(property: 'primer_apellido', type: 'string', example: 'Rodríguez'),
                     new OA\Property(property: 'segundo_apellido', type: 'string', nullable: true),
-                    new OA\Property(property: 'tipo_identificacion', type: 'string', enum: ['cedula', 'pasaporte', 'residencia']),
-                    new OA\Property(property: 'numero_identificacion', type: 'string', example: '1-2345-6789'),
+                    new OA\Property(property: 'tipo_documento', type: 'string', enum: ['cedula', 'pasaporte', 'residencia']),
+                    new OA\Property(property: 'numero_documento', type: 'string', example: '1-2345-6789'),
                     new OA\Property(property: 'fecha_nacimiento', type: 'string', format: 'date'),
                     new OA\Property(property: 'fecha_ingreso', type: 'string', format: 'date'),
                     new OA\Property(property: 'departamento_id', type: 'integer'),
                     new OA\Property(property: 'cargo_id', type: 'integer'),
-                    new OA\Property(property: 'salario_base', type: 'number'),
-                    new OA\Property(property: 'email_corporativo', type: 'string', format: 'email', nullable: true),
-                    new OA\Property(property: 'telefono_movil', type: 'string', nullable: true)
+                    new OA\Property(property: 'salario', type: 'number'),
+                    new OA\Property(property: 'email', type: 'string', format: 'email', nullable: true),
+                    new OA\Property(property: 'telefono', type: 'string', nullable: true),
+                    new OA\Property(property: 'direccion', type: 'string', nullable: true)
                 ]
             )
         ),
@@ -101,20 +101,20 @@ class EmpleadoController extends Controller
         $this->authorize('create', Empleado::class);
 
         $validated = $request->validate([
-            'usuario_id' => 'nullable|exists:users,id|unique:empleados,usuario_id',
-            'primer_nombre' => 'required|string|max:50',
-            'segundo_nombre' => 'nullable|string|max:50',
-            'primer_apellido' => 'required|string|max:50',
-            'segundo_apellido' => 'nullable|string|max:50',
-            'tipo_identificacion' => 'required|string|in:cedula,pasaporte,residencia',
-            'numero_identificacion' => 'required|string|max:20|unique:empleados,numero_identificacion',
+            'usuario_id' => 'nullable|exists:usuarios,id|unique:empleados,usuario_id',
+            'nombre' => 'required|string|max:255',
+            'primer_apellido' => 'required|string|max:255',
+            'segundo_apellido' => 'nullable|string|max:255',
+            'tipo_documento' => 'required|string|max:50|in:cedula,pasaporte,residencia',
+            'numero_documento' => 'required|string|max:100|unique:empleados,numero_documento',
             'fecha_nacimiento' => 'required|date',
             'fecha_ingreso' => 'required|date',
             'departamento_id' => 'required|exists:departamentos,id',
             'cargo_id' => 'required|exists:cargos,id',
-            'salario_base' => 'required|numeric|min:0',
-            'email_corporativo' => 'nullable|email|unique:empleados,email_corporativo',
-            'telefono_movil' => 'nullable|string|max:20',
+            'salario' => 'required|numeric|min:0',
+            'email' => 'nullable|email|unique:empleados,email',
+            'telefono' => 'nullable|string|max:50',
+            'direccion' => 'nullable|string',
         ]);
 
         try {
@@ -169,11 +169,11 @@ class EmpleadoController extends Controller
         requestBody: new OA\RequestBody(
             content: new OA\JsonContent(
                 properties: [
-                    new OA\Property(property: 'primer_nombre', type: 'string'),
+                    new OA\Property(property: 'nombre', type: 'string'),
                     new OA\Property(property: 'primer_apellido', type: 'string'),
-                    new OA\Property(property: 'telefono_movil', type: 'string', nullable: true),
-                    new OA\Property(property: 'salario_base', type: 'number', nullable: true),
-                    new OA\Property(property: 'estado', type: 'string', enum: ['activo', 'inactivo', 'suspendido', 'vacaciones'])
+                    new OA\Property(property: 'telefono', type: 'string', nullable: true),
+                    new OA\Property(property: 'salario', type: 'number', nullable: true),
+                    new OA\Property(property: 'activo', type: 'boolean')
                 ]
             )
         ),
@@ -185,21 +185,20 @@ class EmpleadoController extends Controller
         $this->authorize('update', $empleado);
 
         $validated = $request->validate([
-            'usuario_id' => 'nullable|exists:users,id|unique:empleados,usuario_id,' . $id,
-            'primer_nombre' => 'sometimes|string|max:50',
-            'segundo_nombre' => 'nullable|string|max:50',
-            'primer_apellido' => 'sometimes|string|max:50',
-            'segundo_apellido' => 'nullable|string|max:50',
-            'tipo_identificacion' => 'sometimes|string|in:cedula,pasaporte,residencia',
-            'numero_identificacion' => 'sometimes|string|max:20|unique:empleados,numero_identificacion,' . $id,
+            'usuario_id' => 'nullable|exists:usuarios,id|unique:empleados,usuario_id,' . $id,
+            'nombre' => 'sometimes|string|max:255',
+            'primer_apellido' => 'sometimes|string|max:255',
+            'segundo_apellido' => 'nullable|string|max:255',
+            'tipo_documento' => 'sometimes|string|max:50|in:cedula,pasaporte,residencia',
+            'numero_documento' => 'sometimes|string|max:100|unique:empleados,numero_documento,' . $id,
             'fecha_nacimiento' => 'sometimes|date',
             'fecha_ingreso' => 'sometimes|date',
             'departamento_id' => 'sometimes|exists:departamentos,id',
             'cargo_id' => 'sometimes|exists:cargos,id',
-            'salario_base' => 'sometimes|numeric|min:0',
-            'email_corporativo' => 'nullable|email|unique:empleados,email_corporativo,' . $id,
-            'telefono_movil' => 'nullable|string|max:20',
-            'estado' => 'sometimes|in:activo,inactivo,suspendido,vacaciones',
+            'salario' => 'sometimes|numeric|min:0',
+            'email' => 'nullable|email|unique:empleados,email,' . $id,
+            'telefono' => 'nullable|string|max:50',
+            'direccion' => 'nullable|string',
         ]);
 
         $empleado = $this->empleadoService->actualizar($empleado, $validated);

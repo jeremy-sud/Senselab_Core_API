@@ -44,7 +44,7 @@ class CuentaContableService
 
         if (isset($filtros['principales']) && $filtros['principales'] == 1) {
             $query->whereNull('cuenta_padre_id');
-        }PeriodoNominaController.php
+        }
 
         if (!empty($filtros['codigo'])) {
             $query->where('codigo', 'like', "%{$filtros['codigo']}%");

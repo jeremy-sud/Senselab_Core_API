@@ -42,14 +42,14 @@ class EmpleadoService
         if (!empty($filtros['search'])) {
             $search = $filtros['search'];
             $query->where(function ($q) use ($search) {
-                $q->where('primer_nombre', 'like', "%{$search}%")
+                $q->where('nombre', 'like', "%{$search}%")
                     ->orWhere('primer_apellido', 'like', "%{$search}%")
-                    ->orWhere('numero_identificacion', 'like', "%{$search}%");
+                    ->orWhere('numero_documento', 'like', "%{$search}%");
             });
         }
 
         return $query->orderBy('primer_apellido')
-            ->orderBy('primer_nombre')
+            ->orderBy('nombre')
             ->paginate($perPage);
     }
 

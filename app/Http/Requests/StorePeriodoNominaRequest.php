@@ -29,7 +29,7 @@ class StorePeriodoNominaRequest extends FormRequest
             'nombre_periodo' => ['required', 'string', 'max:100'],
             'fecha_inicio' => ['required', 'date'],
             'fecha_fin' => ['required', 'date', 'after:fecha_inicio'],
-            'fecha_pago_estimada' => ['nullable', 'date', 'after_or_equal:fecha_fin'],
+            'fecha_pago' => ['nullable', 'date', 'after_or_equal:fecha_fin'],
             'estado' => ['nullable', 'string', 'max:50', Rule::in(['Abierto', 'Cerrado', 'Procesado'])],
             'observaciones' => ['nullable', 'string'],
             'activo' => ['nullable', 'boolean']
@@ -80,7 +80,7 @@ class StorePeriodoNominaRequest extends FormRequest
             'fecha_inicio.required' => 'La fecha de inicio es obligatoria',
             'fecha_fin.required' => 'La fecha de fin es obligatoria',
             'fecha_fin.after' => 'La fecha de fin debe ser posterior a la fecha de inicio',
-            'fecha_pago_estimada.after_or_equal' => 'La fecha de pago estimada debe ser igual o posterior a la fecha de fin del período',
+            'fecha_pago.after_or_equal' => 'La fecha de pago debe ser igual o posterior a la fecha de fin del período',
             'estado.in' => 'El estado debe ser Abierto, Cerrado o Procesado'
         ];
     }
@@ -96,7 +96,7 @@ class StorePeriodoNominaRequest extends FormRequest
             'nombre_periodo' => 'nombre del período',
             'fecha_inicio' => 'fecha de inicio',
             'fecha_fin' => 'fecha de fin',
-            'fecha_pago_estimada' => 'fecha de pago estimada',
+            'fecha_pago' => 'fecha de pago',
             'estado' => 'estado',
             'observaciones' => 'observaciones'
         ];

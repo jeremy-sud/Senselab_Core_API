@@ -32,7 +32,7 @@ class PeriodoNominaResource extends JsonResource
             'nombre_periodo' => $this->nombre_periodo,
             'fecha_inicio' => $this->fecha_inicio,
             'fecha_fin' => $this->fecha_fin,
-            'fecha_pago_estimada' => $this->fecha_pago_estimada,
+            'fecha_pago' => $this->fecha_pago,
             'estado' => $this->estado,
             'observaciones' => $this->observaciones,
             'activo' => (bool) $this->activo,
@@ -58,8 +58,8 @@ class PeriodoNominaResource extends JsonResource
                 ];
             }),
             'pagos' => PagoNominaResource::collection($this->whenLoaded('pagosNomina')),
-            'created_at' => $this->created_at?->toISOString(),
-            'updated_at' => $this->updated_at?->toISOString()
+            'creado_en' => $this->creado_en?->toISOString(),
+            'actualizado_en' => $this->actualizado_en?->toISOString()
         ];
     }
 }
