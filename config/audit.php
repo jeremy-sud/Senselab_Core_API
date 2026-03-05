@@ -51,7 +51,7 @@ return [
     */
     'models' => [
         // Modelos financieros críticos
-        'App\Models\Comprobante' => [
+        'App\Models\ComprobanteElectronicoFe' => [
             'enabled' => true,
             'events' => ['created', 'updated', 'deleted'],
             'exclude_fields' => [],
@@ -61,7 +61,7 @@ return [
             'events' => ['created', 'updated', 'deleted'],
             'exclude_fields' => [],
         ],
-        'App\Models\Factura' => [
+        'App\Models\Venta' => [
             'enabled' => true,
             'events' => ['created', 'updated', 'deleted'],
             'exclude_fields' => [],
@@ -107,7 +107,12 @@ return [
             'events' => ['created', 'updated', 'deleted'],
             'exclude_fields' => [],
         ],
-        'App\Models\InventarioMovimiento' => [
+        'App\Models\EntradaInventario' => [
+            'enabled' => true,
+            'events' => ['created', 'updated', 'deleted'],
+            'exclude_fields' => [],
+        ],
+        'App\Models\SalidaInventario' => [
             'enabled' => true,
             'events' => ['created', 'updated', 'deleted'],
             'exclude_fields' => [],

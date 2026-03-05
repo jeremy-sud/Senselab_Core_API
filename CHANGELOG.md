@@ -4,6 +4,67 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
+## [2.5.0] - 2025-07-02
+
+### 🏗️ FASE 8: Service Layer Pattern — Módulos Críticos
+
+Extracción de lógica de negocio de 6 controladores críticos a servicios dedicados. Patrón: Constructor DI, arrays, DB::transaction en servicio, eliminación de HasCacheableQueries.
+
+#### Servicios Nuevos (5) + Mejorado (1)
+- **AlmacenService** — listar, crear, obtener, actualizar, eliminar, desmarcarPrincipales
+- **CuentaContableService** — listar, crear, obtener, actualizar, eliminar, arbol, paraMovimientos
+- **EmpleadoService** — listar, crear, obtener, actualizar, eliminar
+- **OrdenCompraService** — listar, crear, obtener, actualizar, eliminar, generarNumeroOrden
+- **PeriodoNominaService** — listar, crear, obtener, actualizar, eliminar, cerrar, procesar, resumen, activos
+- **ProveedorService** — Reescrito de DTOs a arrays; añadidos listar, obtener con relaciones, calcularSaldoPendiente
+
+#### Controladores Refactorizados (6)
+- **AlmacenController** — 274→~170 líneas (-38%)
+- **CuentaContableController** — 581→~250 líneas (-57%)
+- **ProveedorController** — 503→~210 líneas (-58%)
+- **EmpleadoController** — 330→~190 líneas (-42%)
+- **OrdenCompraController** — 356→~185 líneas (-48%)
+- **PeriodoNominaController** — 617→~290 líneas (-53%)
+
+#### Cambios Arquitectónicos
+- Eliminado trait `HasCacheableQueries` de 6 controladores
+- Conservado `HasEmpresaContext` en CuentaContable y PeriodoNomina
+- Anotaciones OpenAPI simplificadas en todos los controladores refactorizados
+- Total de controladores con Service Layer: **8** (VentaController y AsientoContableController de FASE 4 + 6 nuevos)
+
+## [2.4.0] - 2025-07-02
+
+### 🧹 Sprint 7.1: Limpieza Crítica
+
+Eliminación de deuda técnica acumulada: referencias rotas, duplicados y configuración inconsistente.
+
+#### Modelos Inexistentes Corregidos
+- **config/audit.php** — `Comprobante`→`ComprobanteElectronicoFe`, `Factura`→`Venta`, `InventarioMovimiento`→`EntradaInventario`+`SalidaInventario`
+- **config/encryption.php** — `Comprobante`→`ComprobanteElectronicoFe`, `InventarioMovimiento`→`EntradaInventario`
+- **InstallSecurityFeatures.php** — `Comprobante`→`ComprobanteElectronicoFe`, `Factura`→`Venta`
+
+#### Docker & CI/CD
+- **XDebug** eliminado de imagen de producción (condicional vía `ARG INSTALL_XDEBUG=false`)
+- **PHP 8.4** unificado en `composer.json` + 6 workflows GitHub Actions (`ci-cd`, `tests`, `phpstan`, `code-analysis`, `deploy-staging`, `deploy-production`)
+
+#### Limpieza de Archivos
+- **18 DTOs duplicados eliminados** — subdirectorios (`Cliente/`, `Venta/`, `Producto/`, `Contabilidad/`, etc.)
+- **11 directorios vacíos eliminados** — restos de DTOs duplicados
+- **15 seeders duplicados eliminados** — naming singular vs plural unificado
+
+### 🧪 Sprint 7.2: Tests para Módulos Críticos
+
+Cobertura de tests para los 4 módulos más grandes que no tenían ningún test.
+
+#### Tests Nuevos (4 archivos, ~44 tests)
+- **InventarioTest** — CRUD Almacenes (crear, listar, ver, actualizar, eliminar), Entradas y Salidas de inventario, validaciones
+- **ContabilidadTest** — CRUD Cuentas Contables, TipoCuenta, Asientos Contables (balanceados/desbalanceados), validación mínimo 2 detalles
+- **ComprasTest** — CRUD Proveedores, Órdenes de Compra con detalles, validaciones (sin proveedor, sin detalles)
+- **NominaTest** — CRUD Empleados, Períodos de Nómina, Pagos de Nómina, validación fecha_fin < fecha_inicio
+
+#### TestCase.php Actualizado
+- **24 permisos nuevos** en `seedPermisos()`: almacenes, contabilidad, cuentas_contables, asientos_contables, tipos_cambio, empleados, nómina, catálogos, categorías_producto
+
 ## [2.3.0] - 2026-03-02
 
 ### 🔧 Auditoría Integral de Código — Correcciones, Refactoring y Cobertura

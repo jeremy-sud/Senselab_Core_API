@@ -75,16 +75,23 @@ RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
     && docker-php-ext-enable redis \
     && apk del .build-deps
 
-# Instalar XDebug para desarrollo/debug
-RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+# XDebug solo para desarrollo (no incluir en producción)
+ARG INSTALL_XDEBUG=false
+RUN if [ "$INSTALL_XDEBUG" = "true" ]; then \
+    apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
     && pecl install xdebug \
     && docker-php-ext-enable xdebug \
-    && apk del .build-deps
+    && apk del .build-deps; \
+    fi
 
 # Configuración de PHP personalizada
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/custom.ini
-COPY docker/php/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 COPY docker/php/php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
+
+# XDebug config solo si se instaló
+RUN if [ "$INSTALL_XDEBUG" = "true" ] && [ -f docker/php/xdebug.ini ]; then \
+    cp docker/php/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini; \
+    fi
 
 # Crear usuario para Laravel
 RUN addgroup -g 1000 laravel && \

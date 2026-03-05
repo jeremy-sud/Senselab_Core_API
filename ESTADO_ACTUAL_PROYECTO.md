@@ -1,11 +1,13 @@
 # Estado Actual del Proyecto - Ursol CAST API
 
-**Fecha de actualización:** 2 de marzo 2026  
+**Fecha de actualización:** 2 de julio 2025  
 **Desarrollado por:** Sistemas Ursol S.A.  
 **Desarrollador principal:** Jeremy Arias Solano  
 
 > Nota: FASE 4 completada: PHPStan ✅ (Level 6+baseline, 229 errores corregidos), Tests 100% passing ✅, Imports limpios ✅  
-> v2.3.0: Auditoría integral — 9 relaciones faltantes, MetricsController reescrito, AppServiceProvider refactorizado, 4 test suites nuevos
+> v2.3.0: Auditoría integral — 9 relaciones faltantes, MetricsController reescrito, AppServiceProvider refactorizado, 4 test suites nuevos  
+> v2.4.0: Sprint 7.1 (Limpieza Crítica) + Sprint 7.2 (Tests Críticos) — 18 DTOs duplicados eliminados, 15 seeders duplicados eliminados, PHP unificado a 8.4, 4 test suites nuevos (Inventario, Contabilidad, Compras, Nómina)
+> v2.5.0: FASE 8 — Service Layer Pattern en 6 módulos críticos (Almacén, CuentaContable, Proveedor, Empleado, OrdenCompra, PeriodoNomina). 5 servicios nuevos + 1 mejorado, 6 controladores refactorizados (~50% reducción promedio)
 
 ---
 
@@ -19,8 +21,8 @@
 - **Jobs/Queues:** 8+ (procesamiento asíncrono)
 - **Traits Reutilizables:** 10+ (1 deprecated: EncryptsAttributes)
 - **Observers:** 6+ (registrados en ObserverServiceProvider dedicado)
-- **Services:** 31 (10 AI, 9 Hacienda, 12 core/utilidad)
-- **Tests (archivos):** 51 archivos (+4 nuevos)
+- **Services:** 37 (10 AI, 9 Hacienda, 18 core/utilidad — 5 nuevos + 1 mejorado en FASE 8)
+- **Tests (archivos):** 55 archivos (+4 nuevos: Inventario, Contabilidad, Compras, Nómina)
 - **Providers:** 4 (AppServiceProvider, AuthServiceProvider, ObserverServiceProvider, CQRSServiceProvider)
 - **Rutas API:** Configuradas en routes/api.php con versionado
 
@@ -31,7 +33,7 @@
 
 ### Arquitectura y dependencias (composer)
 - **Framework:** Laravel `v12.39.0`
-- **PHP (requerido):** `^8.2`
+- **PHP (requerido):** `^8.4`
 - **PHPUnit:** `11.5.44`
 - **PHPStan:** `2.1.38`
 - **Swagger/OpenAPI:** L5-Swagger `9.0.1`
@@ -266,4 +268,74 @@ php artisan route:cache
 - ✅ `FinancialModuleTest` (12 tests) — módulos contables
 - ✅ `ModelRelationsTest` (16 tests) — relaciones añadidas
 - ✅ `MetricsControllerTest` (3 tests) — endpoint /metrics
+
+---
+
+## 🧹 v2.4.0: SPRINT 7.1 — LIMPIEZA CRÍTICA + SPRINT 7.2 — TESTS CRÍTICOS
+
+### Sprint 7.1: Limpieza Crítica
+- ✅ **Referencias a modelos inexistentes:** Corregidas 5 referencias en `config/audit.php`, `config/encryption.php`, `InstallSecurityFeatures.php` (Comprobante→ComprobanteElectronicoFe, Factura→Venta, InventarioMovimiento→EntradaInventario+SalidaInventario)
+- ✅ **XDebug en producción:** Eliminado del Dockerfile de producción (condicional vía `ARG INSTALL_XDEBUG=false`)
+- ✅ **PHP unificado a 8.4:** `composer.json` + 6 workflows CI/CD actualizados de 8.2 → 8.4
+- ✅ **18 DTOs duplicados eliminados:** Archivos en subdirectorios (`Cliente/`, `Venta/`, `Producto/`, `Contabilidad/`, etc.) eliminados + 11 directorios vacíos
+- ✅ **15 seeders duplicados eliminados:** Naming singular vs plural unificado (FormasPagoSeeder activo, FormaPagoSeeder eliminado, etc.)
+- ✅ **Modelo Departamento verificado:** Correcto sin `BelongsToTenant` (tabla global)
+
+### Sprint 7.2: Tests para Módulos Críticos sin Cobertura
+- ✅ **InventarioTest** (11 tests) — CRUD Almacenes, Entradas y Salidas de Inventario
+- ✅ **ContabilidadTest** (11 tests) — CRUD Cuentas Contables, Asientos balanceados/desbalanceados, TipoCuenta
+- ✅ **ComprasTest** (11 tests) — CRUD Proveedores, Órdenes de Compra con detalles
+- ✅ **NominaTest** (11 tests) — CRUD Empleados, Períodos y Pagos de Nómina
+- ✅ **TestCase.php actualizado** — 24 permisos nuevos agregados a `seedPermisos()` (almacenes, contabilidad, cuentas_contables, asientos_contables, tipos_cambio, empleados, nómina, catálogos, categorías_producto)
+
+---
+
+## 🏗️ v2.5.0: FASE 8 — SERVICE LAYER PATTERN (Módulos Críticos)
+
+### Objetivo
+Extraer lógica de negocio de 6 controladores críticos a servicios dedicados, siguiendo el patrón establecido por `VentaService`/`VentaController` y `AsientoContableService`/`AsientoContableController`.
+
+### Patrón Aplicado
+- **Constructor DI:** `__construct(private XService $service)`
+- **Servicios con arrays:** Parámetros `array $data` en lugar de DTOs para operaciones CRUD simples
+- **DB::transaction:** Transacciones en el servicio, no en el controlador
+- **ValidationException:** Reglas de negocio lanzadas como excepciones desde el servicio
+- **Sin caché en controlador:** Eliminado trait `HasCacheableQueries` de los 6 controladores
+
+### Servicios Nuevos (5) + Mejorado (1)
+| Servicio | Métodos | Estado |
+|----------|---------|--------|
+| `AlmacenService` | listar, crear, obtener, actualizar, eliminar, desmarcarPrincipales | ✅ Nuevo |
+| `CuentaContableService` | listar, crear, obtener, actualizar, eliminar, arbol, paraMovimientos | ✅ Nuevo |
+| `EmpleadoService` | listar, crear, obtener, actualizar, eliminar | ✅ Nuevo |
+| `OrdenCompraService` | listar, crear, obtener, actualizar, eliminar, generarNumeroOrden | ✅ Nuevo |
+| `PeriodoNominaService` | listar, crear, obtener, actualizar, eliminar, cerrar, procesar, resumen, activos | ✅ Nuevo |
+| `ProveedorService` | listar, crear, obtener, actualizar, eliminar, calcularSaldoPendiente | ✅ Mejorado (DTO→array) |
+
+### Controladores Refactorizados (6)
+| Controlador | Antes | Después | Reducción |
+|-------------|-------|---------|-----------|
+| `AlmacenController` | 274 líneas | ~170 | -38% |
+| `CuentaContableController` | 581 líneas | ~250 | -57% |
+| `ProveedorController` | 503 líneas | ~210 | -58% |
+| `EmpleadoController` | 330 líneas | ~190 | -42% |
+| `OrdenCompraController` | 356 líneas | ~185 | -48% |
+| `PeriodoNominaController` | 617 líneas | ~290 | -53% |
+
+### Cambios Arquitectónicos
+- **Eliminado:** `HasCacheableQueries` de 6 controladores
+- **Conservado:** `HasEmpresaContext` donde aplica (CuentaContable, PeriodoNomina)
+- **Conservado:** Anotaciones OpenAPI (simplificadas), `$this->authorize()` en controladores
+
+### Controladores con Service Layer (Total del Proyecto: 8)
+1. `VentaController` → `VentaService` (FASE 4)
+2. `AsientoContableController` → `AsientoContableService` (FASE 4)
+3. `AlmacenController` → `AlmacenService` (FASE 8)
+4. `CuentaContableController` → `CuentaContableService` (FASE 8)
+5. `ProveedorController` → `ProveedorService` (FASE 8)
+6. `EmpleadoController` → `EmpleadoService` (FASE 8)
+7. `OrdenCompraController` → `OrdenCompraService` (FASE 8)
+8. `PeriodoNominaController` → `PeriodoNominaService` (FASE 8)
+
+**FASE 8 COMPLETADA** ✅
 
