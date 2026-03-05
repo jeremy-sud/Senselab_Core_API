@@ -11,12 +11,16 @@ use App\Traits\HasActiveScope;
 class DetallePresupuesto extends Model
 {
     use HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
+
     /**
      * La tabla asociada al modelo.
      *
      * @var string
      */
     protected $table = 'detalle_presupuestos';
+
+    const CREATED_AT = 'creado_en';
+    const UPDATED_AT = 'actualizado_en';
 
     /**
      * Los atributos que son asignables masivamente.

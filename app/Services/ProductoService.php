@@ -2,8 +2,6 @@
 
 namespace App\Services;
 
-use App\DTOs\API\ProductoCreateDTO;
-use App\DTOs\API\ProductoUpdateDTO;
 use App\Models\Producto;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -11,72 +9,114 @@ use Illuminate\Pagination\LengthAwarePaginator;
  * Servicio para gestionar Productos
  *
  * Encapsula la lógica de negocio para productos
- * Fecha de creación: 12 de febrero de 2026
  */
 class ProductoService
 {
     /**
-     * Crear un nuevo producto
+     * Listar productos con filtros y paginación
+     *
+     * @param array<string, mixed> $filtros
+     * @param int $perPage
+     * @return LengthAwarePaginator
      */
-    public function crear(ProductoCreateDTO $dto): Producto
+    public function listar(array $filtros = [], int $perPage = 15): LengthAwarePaginator
     {
-        return Producto::create($dto->toArray());
+        $query = Producto::with(['empresa', 'categoria', 'unidadMedida', 'marca', 'tipoImpuesto'])
+            ->where('productos.eliminado', false);
+
+        if (!empty($filtros['search'])) {
+            $search = $filtros['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('nombre', 'like', "%{$search}%")
+                    ->orWhere('codigo', 'like', "%{$search}%")
+                    ->orWhere('codigo_barras', 'like', "%{$search}%")
+                    ->orWhere('descripcion', 'like', "%{$search}%");
+            });
+        }
+
+        if (!empty($filtros['empresa_id'])) {
+            $query->porEmpresa($filtros['empresa_id']);
+        }
+
+        if (!empty($filtros['categoria_id'])) {
+            $query->porCategoria($filtros['categoria_id']);
+        }
+
+        if (!empty($filtros['tipo'])) {
+            $query->porTipo($filtros['tipo']);
+        }
+
+        if (isset($filtros['activo'])) {
+            if ($filtros['activo']) {
+                $query->activos();
+            }
+        }
+
+        return $query->orderBy('id', 'asc')->paginate($perPage);
+    }
+
+    /**
+     * Crear un nuevo producto
+     *
+     * @param array<string, mixed> $data
+     * @return Producto
+     */
+    public function crear(array $data): Producto
+    {
+        $producto = Producto::create($data);
+        $producto->load(['empresa', 'categoria', 'unidadMedida', 'marca', 'tipoImpuesto']);
+        return $producto;
+    }
+
+    /**
+     * Obtener producto por ID con relaciones completas
+     *
+     * @param int $id
+     * @return Producto
+     */
+    public function obtener(int $id): Producto
+    {
+        return Producto::with([
+            'empresa', 'categoria', 'unidadMedida', 'marca',
+            'proveedor', 'tipoImpuesto', 'cabys'
+        ])->findOrFail($id);
     }
 
     /**
      * Actualizar un producto existente
+     *
+     * @param Producto $producto
+     * @param array<string, mixed> $data
+     * @return Producto
      */
-    public function actualizar(Producto $producto, ProductoUpdateDTO $dto): Producto
+    public function actualizar(Producto $producto, array $data): Producto
     {
-        $producto->update($dto->toArray());
-        return $producto->fresh() ?? $producto;
+        $producto->update($data);
+        $producto->load(['empresa', 'categoria', 'unidadMedida', 'marca', 'tipoImpuesto']);
+        return $producto;
     }
 
     /**
-     * Eliminar un producto
+     * Eliminar un producto (soft delete)
+     *
+     * @param Producto $producto
+     * @return bool
      */
     public function eliminar(Producto $producto): bool
     {
-        return (bool) $producto->delete();
-    }
-
-    /**
-     * Obtener producto por ID
-     */
-    public function obtener(int $productoId): ?Producto
-    {
-        return Producto::find($productoId);
-    }
-
-    /**
-     * Listar productos con paginación
-     */
-    public function listar(int $perPage = 15): LengthAwarePaginator
-    {
-        return Producto::paginate($perPage);
-    }
-
-    /**
-     * Buscar productos
-     */
-    public function buscar(string $termino, int $perPage = 15): LengthAwarePaginator
-    {
-        return Producto::where('nombre', 'like', "%{$termino}%")
-            ->orWhere('descripcion', 'like', "%{$termino}%")
-            ->orWhere('sku', 'like', "%{$termino}%")
-            ->paginate($perPage);
-    }
-
-    /**
-     * Obtener productos activos
-     */
-    public function activos(int $perPage = 15): LengthAwarePaginator
-    {
-        return Producto::where('activo', true)->paginate($perPage);
+        $producto->update([
+            'activo' => false,
+            'eliminado' => true,
+        ]);
+        return true;
     }
 
     /**
      * Actualizar stock de producto
+     *
+     * @param Producto $producto
+     * @param float $cantidad
+     * @return Producto
      */
     public function actualizarStock(Producto $producto, float $cantidad): Producto
     {

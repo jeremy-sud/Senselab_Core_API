@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cliente;
-use App\Traits\HasCacheableQueries;
+use App\Services\ClienteService;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreClienteRequest;
 use App\Http\Requests\UpdateClienteRequest;
@@ -15,20 +15,9 @@ use OpenApi\Attributes as OA;
 
 class ClienteController extends Controller
 {
-    use HasCacheableQueries;
-
-    /**
-     * Tags de cache para clientes
-     * @var array
-     */
-    /** @var array<int, string> */
-    protected array $cacheTags = ['clientes', 'catalogos'];
-
-    /**
-     * TTL del cache: 30 minutos (clientes cambian con frecuencia)
-     * @var int
-     */
-    protected int $cacheTTL = 1800;
+    public function __construct(
+        private ClienteService $service
+    ) {}
     /**
      * Display a listing of the resource.
      *
@@ -125,42 +114,12 @@ class ClienteController extends Controller
     {
         $this->authorize('viewAny', Cliente::class);
 
-        // Usar cache si está habilitado
-        return $this->cacheQueryIfEnabled($request, function() use ($request) {
-            $perPage = $request->input('per_page', 15);
-            $search = $request->input('search');
-            $empresaId = $request->input('empresa_id');
-            $tipoIdentificacion = $request->input('tipo_identificacion');
+        $clientes = $this->service->listar(
+            $request->only(['search', 'empresa_id', 'tipo_identificacion', 'activos']),
+            (int) $request->input('per_page', 15)
+        );
 
-            $query = Cliente::with('empresa');
-
-            if ($search) {
-                $query->where(function($q) use ($search) {
-                    $q->where('nombre', 'like', "%{$search}%")
-                        ->orWhere('apellidos', 'like', "%{$search}%")
-                        ->orWhere('nombre_comercial', 'like', "%{$search}%")
-                        ->orWhere('numero_identificacion', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
-                });
-            }
-
-            if ($empresaId) {
-                $query->where('empresa_id', $empresaId);
-            }
-
-            if ($tipoIdentificacion) {
-                $query->porTipoIdentificacion($tipoIdentificacion);
-            }
-
-            if ($request->boolean('activos')) {
-                $query->activos();
-            }
-
-            $clientes = $query->orderBy('id', 'asc')
-                                ->paginate($perPage);
-
-            return ClienteResource::collection($clientes);
-        });
+        return ClienteResource::collection($clientes);
     }
 
     /**
@@ -239,23 +198,12 @@ class ClienteController extends Controller
     {
         $this->authorize('create', Cliente::class);
 
-        try {
-            $cliente = Cliente::create($request->validated());
-            $cliente->load('empresa');
+        $cliente = $this->service->crear($request->validated());
 
-            // Invalidar cache de clientes
-            $this->flushCache();
-
-            return (new ClienteResource($cliente))
-                ->additional(['message' => 'Cliente creado exitosamente'])
-                ->response()
-                ->setStatusCode(201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al crear cliente',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        return (new ClienteResource($cliente))
+            ->additional(['message' => 'Cliente creado exitosamente'])
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
@@ -312,25 +260,9 @@ class ClienteController extends Controller
     )]
     public function show(int $id): ClienteResource
     {
-        try {
-            $cliente = Cliente::with([
-                'empresa',
-                'ventas' => function($query) {
-                    $query->latest()->limit(10);
-                },
-                'cuentasPorCobrar' => function($query) {
-                    $query->where('estado', 'pendiente');
-                }
-            ])->findOrFail($id);
-
-            $this->authorize('view', $cliente);
-
-            return new ClienteResource($cliente);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404, 'Cliente no encontrado');
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $cliente = $this->service->obtener($id);
+        $this->authorize('view', $cliente);
+        return new ClienteResource($cliente);
     }
 
     /**
@@ -420,24 +352,13 @@ class ClienteController extends Controller
     )]
     public function update(UpdateClienteRequest $request, int $id): ClienteResource
     {
-        try {
-            $cliente = Cliente::findOrFail($id);
+        $cliente = Cliente::findOrFail($id);
+        $this->authorize('update', $cliente);
 
-            $this->authorize('update', $cliente);
+        $cliente = $this->service->actualizar($cliente, $request->validated());
 
-            $cliente->update($request->validated());
-            $cliente->load('empresa');
-
-            // Invalidar cache de clientes
-            $this->flushCache();
-
-            return (new ClienteResource($cliente))
-                ->additional(['message' => 'Cliente actualizado exitosamente']);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404, 'Cliente no encontrado');
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        return (new ClienteResource($cliente))
+            ->additional(['message' => 'Cliente actualizado exitosamente']);
     }
 
     /**
@@ -494,32 +415,13 @@ class ClienteController extends Controller
     )]
     public function destroy(int $id): \Illuminate\Http\JsonResponse
     {
-        try {
-            $cliente = Cliente::findOrFail($id);
+        $cliente = Cliente::findOrFail($id);
+        $this->authorize('delete', $cliente);
 
-            $this->authorize('delete', $cliente);
+        $this->service->eliminar($cliente);
 
-            // Soft delete - marcar como inactivo
-            $cliente->update([
-                'activo' => false,
-                'eliminado' => true
-            ]);
-
-            // Invalidar cache de clientes
-            $this->flushCache();
-
-            return response()->json([
-                'message' => 'Cliente eliminado exitosamente'
-            ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Cliente no encontrado'
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al eliminar cliente',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'message' => 'Cliente eliminado exitosamente'
+        ]);
     }
 }

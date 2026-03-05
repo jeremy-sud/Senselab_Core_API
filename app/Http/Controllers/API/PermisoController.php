@@ -86,7 +86,8 @@ class PermisoController extends Controller
 
         $cacheKey = $this->getCacheKey('grouped', []);
 
-        $permisos = $this->cacheQueryIfEnabled($cacheKey, function() {
+        $permisos = $this->cacheQueryIfEnabled($cacheKey, function(): \Illuminate\Support\Collection {
+            /** @var \Illuminate\Support\Collection<string, \Illuminate\Support\Collection<int, array{id: int, nombre: string, slug: string, descripcion: string|null}>> */
             return Permiso::where('activo', true)
                 ->where('eliminado', false)
                 ->get()

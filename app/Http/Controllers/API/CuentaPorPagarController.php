@@ -7,12 +7,11 @@ use App\Http\Requests\StoreCuentaPorPagarRequest;
 use App\Http\Requests\UpdateCuentaPorPagarRequest;
 use App\Http\Resources\CuentaPorPagarResource;
 use App\Models\CuentaPorPagar;
-use App\Traits\HasCacheableQueries;
+use App\Services\CuentaPorPagarService;
 use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\DB;
 use OpenApi\Attributes as OA;
 
 /**
@@ -26,20 +25,9 @@ use OpenApi\Attributes as OA;
  */
 class CuentaPorPagarController extends Controller
 {
-    use HasCacheableQueries, HasEmpresaContext;
+    use HasEmpresaContext;
 
-    /**
-     * Tags para invalidación de cache
-     * @var array<int, string>
-     */
-    protected array $cacheTags = ['cuentas-por-pagar', 'finanzas'];
-
-    /**
-     * TTL del cache en segundos (30 minutos)
-     * Datos semi-dinámicos: saldos actualizan con pagos
-     * @var int
-     */
-    protected int $cacheTTL = 1800;
+    public function __construct(private CuentaPorPagarService $service) {}
     /**
      * Listar todas las cuentas por pagar de la empresa autenticada
      *
@@ -68,47 +56,13 @@ class CuentaPorPagarController extends Controller
     {
         $this->authorize('viewAny', CuentaPorPagar::class);
 
-        $empresaId = $this->getEmpresaId();
+        $cuentas = $this->service->listar(
+            $this->getEmpresaId(),
+            $request->only(['estado', 'proveedor_id', 'vencidas', 'fecha_desde', 'fecha_hasta', 'sort_by', 'sort_order']),
+            $request->integer('per_page', 15)
+        );
 
-        $cacheKey = $this->getCacheKey('index', [
-            'empresa_id' => $empresaId,
-            'estado' => $request->estado,
-            'proveedor_id' => $request->proveedor_id,
-            'vencidas' => $request->vencidas,
-            'desde' => $request->desde,
-            'hasta' => $request->hasta
-        ]);
-
-        return $this->cacheQueryIfEnabled($cacheKey, function () use ($request, $empresaId) {
-            $query = CuentaPorPagar::where('empresa_id', $empresaId)
-                ->where('eliminado', 0)
-                ->with(['proveedor', 'ordenCompra', 'empresa']);
-
-            // Filtros opcionales
-            if ($request->filled('estado')) {
-                $query->where('estado', $request->estado);
-            }
-
-            if ($request->filled('proveedor_id')) {
-                $query->where('proveedor_id', $request->proveedor_id);
-            }
-
-            if ($request->filled('vencidas')) {
-                $query->where('fecha_vencimiento', '<', now())
-                    ->whereIn('estado', ['Pendiente', 'Pagada Parcialmente']);
-            }
-
-            if ($request->filled('desde') && $request->filled('hasta')) {
-                $query->whereBetween('fecha_emision', [$request->desde, $request->hasta]);
-            }
-
-            // Ordenamiento
-            $query->orderBy($request->get('sort_by', 'fecha_vencimiento'), $request->get('sort_order', 'asc'));
-
-            $cuentas = $query->paginate($request->get('per_page', 15));
-
-            return CuentaPorPagarResource::collection($cuentas);
-        });
+        return CuentaPorPagarResource::collection($cuentas);
     }
 
     /**
@@ -147,17 +101,9 @@ class CuentaPorPagarController extends Controller
     {
         $this->authorize('create', CuentaPorPagar::class);
 
-        $validated = $request->validated();
-        $validated['empresa_id'] = $this->getEmpresaId();
-
-        // Fecha de recepción por defecto es hoy si no se proporciona
-        if (!isset($validated['fecha_recepcion_documento'])) {
-            $validated['fecha_recepcion_documento'] = now()->toDateString();
-        }
-
-        $cuenta = CuentaPorPagar::create($validated);
-        $cuenta->load(['proveedor', 'ordenCompra', 'empresa']);
-        $this->flushCache();
+        $data = $request->validated();
+        $data['empresa_id'] = $this->getEmpresaId();
+        $cuenta = $this->service->crear($data);
 
         return (new CuentaPorPagarResource($cuenta))
             ->additional([
@@ -187,13 +133,7 @@ class CuentaPorPagarController extends Controller
     )]
     public function show(int $id, Request $request): CuentaPorPagarResource|JsonResponse
     {
-        $empresaId = $this->getEmpresaId();
-
-        $cuenta = CuentaPorPagar::where('empresa_id', $empresaId)
-            ->where('id', $id)
-            ->where('eliminado', 0)
-            ->with(['proveedor', 'ordenCompra', 'empresa'])
-            ->firstOrFail();
+        $cuenta = $this->service->obtener($this->getEmpresaId(), $id);
         $this->authorize('view', $cuenta);
 
         return (new CuentaPorPagarResource($cuenta))
@@ -217,17 +157,10 @@ class CuentaPorPagarController extends Controller
     )]
     public function update(UpdateCuentaPorPagarRequest $request, int $id): CuentaPorPagarResource|JsonResponse
     {
-        $empresaId = $this->getEmpresaId();
-
-        $cuenta = CuentaPorPagar::where('empresa_id', $empresaId)
-            ->where('id', $id)
-            ->where('eliminado', 0)
-            ->firstOrFail();
+        $cuenta = $this->service->obtener($this->getEmpresaId(), $id);
         $this->authorize('update', $cuenta);
 
-        $cuenta->update($request->validated());
-        $cuenta->load(['proveedor', 'ordenCompra', 'empresa']);
-        $this->flushCache();
+        $cuenta = $this->service->actualizar($cuenta, $request->validated());
 
         return (new CuentaPorPagarResource($cuenta))
             ->additional([
@@ -257,24 +190,10 @@ class CuentaPorPagarController extends Controller
     )]
     public function destroy(int $id, Request $request): JsonResponse
     {
-        $empresaId = $this->getEmpresaId();
-
-        $cuenta = CuentaPorPagar::where('empresa_id', $empresaId)
-            ->where('id', $id)
-            ->where('eliminado', 0)
-            ->firstOrFail();
+        $cuenta = $this->service->obtener($this->getEmpresaId(), $id);
         $this->authorize('delete', $cuenta);
 
-        // Validar que no tenga pagos registrados
-        if ($cuenta->monto_pagado > 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se puede eliminar una cuenta por pagar que ya tiene pagos registrados'
-            ], 422);
-        }
-
-        $cuenta->update(['eliminado' => 1, 'activo' => 0]);
-        $this->flushCache();
+        $this->service->eliminar($cuenta);
 
         return response()->json([
             'success' => true,
@@ -310,24 +229,14 @@ class CuentaPorPagarController extends Controller
     )]
     public function vencidas(Request $request): JsonResponse
     {
-        $empresaId = $this->getEmpresaId();
-
-        $vencidas = CuentaPorPagar::where('empresa_id', $empresaId)
-            ->where('eliminado', 0)
-            ->where('fecha_vencimiento', '<', now())
-            ->whereIn('estado', ['Pendiente', 'Pagada Parcialmente'])
-            ->with(['proveedor'])
-            ->get();
-
-        $totalVencido = $vencidas->sum('monto_pendiente');
-        $cantidadVencidas = $vencidas->count();
+        $data = $this->service->vencidas($this->getEmpresaId());
 
         return response()->json([
             'success' => true,
             'data' => [
-                'total_vencido' => $totalVencido,
-                'cantidad_vencidas' => $cantidadVencidas,
-                'cuentas' => CuentaPorPagarResource::collection($vencidas)
+                'total_vencido' => $data['total_vencido'],
+                'cantidad_vencidas' => $data['cantidad_vencidas'],
+                'cuentas' => CuentaPorPagarResource::collection($data['cuentas'])
             ]
         ]);
     }
@@ -360,24 +269,11 @@ class CuentaPorPagarController extends Controller
     )]
     public function resumen(Request $request): JsonResponse
     {
-        $empresaId = $this->getEmpresaId();
-
-        $resumen = CuentaPorPagar::where('empresa_id', $empresaId)
-            ->where('eliminado', 0)
-            ->select('estado', DB::raw('COUNT(*) as cantidad'), DB::raw('SUM(monto_pendiente) as total_saldo'))
-            ->groupBy('estado')
-            ->get();
-
-        $totalGeneral = CuentaPorPagar::where('empresa_id', $empresaId)
-            ->where('eliminado', 0)
-            ->sum('monto_pendiente');
+        $data = $this->service->resumen($this->getEmpresaId());
 
         return response()->json([
             'success' => true,
-            'data' => [
-                'por_estado' => $resumen,
-                'total_general' => $totalGeneral
-            ]
+            'data' => $data
         ]);
     }
 }
