@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Producto;
-use App\Traits\HasCacheableQueries;
+use App\Services\ProductoService;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreProductoRequest;
 use App\Http\Requests\UpdateProductoRequest;
@@ -19,20 +19,9 @@ use OpenApi\Attributes as OA;
 )]
 class ProductoController extends Controller
 {
-    use HasCacheableQueries;
-
-    /**
-     * Tags de cache para productos
-     * @var array
-     */
-    /** @var array<int, string> */
-    protected array $cacheTags = ['productos', 'catalogos'];
-
-    /**
-     * TTL del cache: 1 hora (productos cambian frecuentemente)
-     * @var int
-     */
-    protected int $cacheTTL = 3600;
+    public function __construct(
+        private ProductoService $service
+    ) {}
     /**
      * Display a listing of the resource.
      *
@@ -129,63 +118,12 @@ class ProductoController extends Controller
     {
         $this->authorize('viewAny', Producto::class);
 
-        try {
-            // Usar cache si está habilitado
-            return $this->cacheQueryIfEnabled($request, function() use ($request) {
-                $perPage = $request->input('per_page', 15);
-                $search = $request->input('search');
-                $empresaId = $request->input('empresa_id');
-                $categoriaId = $request->input('categoria_id');
-                $tipo = $request->input('tipo');
+        $productos = $this->service->listar(
+            $request->only(['search', 'empresa_id', 'categoria_id', 'tipo', 'activo', 'activos']),
+            (int) $request->input('per_page', 15)
+        );
 
-                $query = Producto::with([
-                    'empresa',
-                    'categoria',
-                    'unidadMedida',
-                    'marca',
-                    'tipoImpuesto'
-                ])->where('productos.eliminado', false);
-
-                if ($search) {
-                    $query->where(function($q) use ($search) {
-                        $q->where('nombre', 'like', "%{$search}%")
-                          ->orWhere('codigo', 'like', "%{$search}%")
-                          ->orWhere('codigo_barras', 'like', "%{$search}%")
-                          ->orWhere('descripcion', 'like', "%{$search}%");
-                    });
-                }
-
-                if ($empresaId) {
-                    $query->porEmpresa($empresaId);
-                }
-
-                if ($categoriaId) {
-                    $query->porCategoria($categoriaId);
-                }
-
-                if ($tipo) {
-                    $query->porTipo($tipo);
-                }
-
-                // Filtro por estado activo (soporta 'activo' y 'activos')
-                if ($request->has('activo') || $request->has('activos')) {
-                    $esActivo = $request->boolean('activo') || $request->boolean('activos');
-                    if ($esActivo) {
-                        $query->activos();
-                    } else {
-                        $query->where('productos.activo', false);
-                    }
-                }
-
-                $productos = $query->orderBy('id', 'asc')
-                                   ->paginate($perPage);
-
-                return ProductoResource::collection($productos);
-            });
-        } catch (\Exception $e) {
-            report($e);
-            throw $e;
-        }
+        return ProductoResource::collection($productos);
     }
 
     /**
@@ -242,29 +180,12 @@ class ProductoController extends Controller
     {
         $this->authorize('create', Producto::class);
 
-        try {
-            $producto = Producto::create($request->validated());
-            $producto->load([
-                'empresa',
-                'categoria',
-                'unidadMedida',
-                'marca',
-                'tipoImpuesto',
-            ]);
+        $producto = $this->service->crear($request->validated());
 
-            // Invalidar cache de productos
-            $this->flushCache();
-
-            return (new ProductoResource($producto))
-                ->additional(['message' => 'Producto creado exitosamente'])
-                ->response()
-                ->setStatusCode(201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al crear producto',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        return (new ProductoResource($producto))
+            ->additional(['message' => 'Producto creado exitosamente'])
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
@@ -306,23 +227,9 @@ class ProductoController extends Controller
     )]
     public function show(int $id): ProductoResource
     {
-        try {
-            $producto = Producto::with([
-                'empresa',
-                'categoria',
-                'unidadMedida',
-                'marca',
-                'proveedor',
-                'tipoImpuesto',
-                'cabys'
-            ])->findOrFail($id);
-
-            $this->authorize('view', $producto);
-
-            return new ProductoResource($producto);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404, 'Producto no encontrado');
-        }
+        $producto = $this->service->obtener($id);
+        $this->authorize('view', $producto);
+        return new ProductoResource($producto);
     }
 
     /**
@@ -380,20 +287,9 @@ class ProductoController extends Controller
     public function update(UpdateProductoRequest $request, int $id): ProductoResource
     {
         $producto = Producto::findOrFail($id);
-
         $this->authorize('update', $producto);
 
-        $producto->update($request->validated());
-        $producto->load([
-            'empresa',
-            'categoria',
-            'unidadMedida',
-            'marca',
-            'tipoImpuesto'
-        ]);
-
-        // Invalidar cache de productos
-        $this->flushCache();
+        $producto = $this->service->actualizar($producto, $request->validated());
 
         return (new ProductoResource($producto))
             ->additional(['message' => 'Producto actualizado exitosamente']);
@@ -438,32 +334,13 @@ class ProductoController extends Controller
     )]
     public function destroy(int $id): \Illuminate\Http\JsonResponse
     {
-        try {
-            $producto = Producto::findOrFail($id);
+        $producto = Producto::findOrFail($id);
+        $this->authorize('delete', $producto);
 
-            $this->authorize('delete', $producto);
+        $this->service->eliminar($producto);
 
-            // Soft delete - marcar como inactivo
-            $producto->update([
-                'activo' => false,
-                'eliminado' => true
-            ]);
-
-            // Invalidar cache de productos
-            $this->flushCache();
-
-            return response()->json([
-                'message' => 'Producto eliminado exitosamente'
-            ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Producto no encontrado'
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al eliminar producto',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'message' => 'Producto eliminado exitosamente'
+        ]);
     }
 }

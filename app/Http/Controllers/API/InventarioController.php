@@ -9,7 +9,7 @@ use App\Http\Resources\EntradaInventarioResource;
 use App\Http\Resources\SalidaInventarioResource;
 use App\Models\EntradaInventario;
 use App\Models\SalidaInventario;
-use App\Traits\HasCacheableQueries;
+use App\Services\InventarioService;
 use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -29,11 +29,9 @@ use OpenApi\Attributes as OA;
  */
 class InventarioController extends Controller
 {
-    use HasCacheableQueries, HasEmpresaContext;
+    use HasEmpresaContext;
 
-    /** @var array<int, string> */
-    protected array $cacheTags = ['inventario', 'movimientos-inventario'];
-    protected int $cacheTTL = 1200; // 20 minutos - movimientos semi-dinámicos
+    public function __construct(private InventarioService $service) {}
 
     /**
      * Listar todas las entradas de inventario
@@ -102,44 +100,10 @@ class InventarioController extends Controller
     {
         $this->authorize('viewAny', EntradaInventario::class);
 
-        $empresaId = $this->getEmpresaId();
-
-        $cacheKey = $this->getCacheKey('entradas', [
-            'empresa_id' => $empresaId,
-            'almacen_id' => $request->input('almacen_id'),
-            'estado' => $request->input('estado'),
-            'tipo_entrada' => $request->input('tipo_entrada'),
-            'fecha_desde' => $request->input('fecha_desde'),
-            'fecha_hasta' => $request->input('fecha_hasta')
-        ]);
-
-        $entradas = $this->cacheQueryIfEnabled($cacheKey, function() use ($request, $empresaId) {
-            $query = EntradaInventario::where('empresa_id', $empresaId)
-                ->with(['almacen', 'ordenCompra', 'proveedor', 'detalles']);
-
-            // Filtros opcionales
-            if ($request->filled('almacen_id')) {
-                $query->where('almacen_id', $request->almacen_id);
-            }
-
-            if ($request->filled('estado')) {
-                $query->where('estado', $request->estado);
-            }
-
-            if ($request->filled('tipo_entrada')) {
-                $query->where('tipo_entrada', $request->tipo_entrada);
-            }
-
-            if ($request->filled('fecha_desde')) {
-                $query->whereDate('fecha_entrada', '>=', $request->fecha_desde);
-            }
-
-            if ($request->filled('fecha_hasta')) {
-                $query->whereDate('fecha_entrada', '<=', $request->fecha_hasta);
-            }
-
-            return $query->orderBy('fecha_entrada', 'desc')->get();
-        });
+        $entradas = $this->service->listarEntradas(
+            $this->getEmpresaId(),
+            $request->only(['almacen_id', 'estado', 'tipo_entrada', 'fecha_desde', 'fecha_hasta'])
+        );
 
         return EntradaInventarioResource::collection($entradas);
     }
@@ -193,11 +157,9 @@ class InventarioController extends Controller
     {
         $this->authorize('create', EntradaInventario::class);
 
-        $validated = $request->validated();
-        $validated['empresa_id'] = $this->getEmpresaId();
-
-        $entrada = EntradaInventario::create($validated);
-        $entrada->load(['almacen', 'ordenCompra', 'proveedor', 'detalles']);
+        $data = $request->validated();
+        $data['empresa_id'] = $this->getEmpresaId();
+        $entrada = $this->service->crearEntrada($data);
 
         return (new EntradaInventarioResource($entrada))
             ->response()
@@ -242,12 +204,7 @@ class InventarioController extends Controller
     )]
     public function showEntrada(int $id): EntradaInventarioResource
     {
-        $empresaId = $this->getEmpresaId();
-
-        $entrada = EntradaInventario::where('empresa_id', $empresaId)
-            ->with(['almacen', 'ordenCompra', 'proveedor', 'detalles.producto'])
-            ->findOrFail($id);
-
+        $entrada = $this->service->obtenerEntrada($this->getEmpresaId(), $id);
         $this->authorize('view', $entrada);
 
         return new EntradaInventarioResource($entrada);
@@ -320,44 +277,10 @@ class InventarioController extends Controller
     {
         $this->authorize('viewAny', SalidaInventario::class);
 
-        $empresaId = $this->getEmpresaId();
-
-        $cacheKey = $this->getCacheKey('salidas', [
-            'empresa_id' => $empresaId,
-            'almacen_id' => $request->input('almacen_id'),
-            'estado' => $request->input('estado'),
-            'tipo_salida' => $request->input('tipo_salida'),
-            'fecha_desde' => $request->input('fecha_desde'),
-            'fecha_hasta' => $request->input('fecha_hasta')
-        ]);
-
-        $salidas = $this->cacheQueryIfEnabled($cacheKey, function() use ($request, $empresaId) {
-            $query = SalidaInventario::where('empresa_id', $empresaId)
-                ->with(['almacen', 'venta', 'cliente', 'proveedor', 'detalles']);
-
-            // Filtros opcionales
-            if ($request->filled('almacen_id')) {
-                $query->where('almacen_id', $request->almacen_id);
-            }
-
-            if ($request->filled('estado')) {
-                $query->where('estado', $request->estado);
-            }
-
-            if ($request->filled('tipo_salida')) {
-                $query->where('tipo_salida', $request->tipo_salida);
-            }
-
-            if ($request->filled('fecha_desde')) {
-                $query->whereDate('fecha_salida', '>=', $request->fecha_desde);
-            }
-
-            if ($request->filled('fecha_hasta')) {
-                $query->whereDate('fecha_salida', '<=', $request->fecha_hasta);
-            }
-
-            return $query->orderBy('fecha_salida', 'desc')->get();
-        });
+        $salidas = $this->service->listarSalidas(
+            $this->getEmpresaId(),
+            $request->only(['almacen_id', 'estado', 'tipo_salida', 'fecha_desde', 'fecha_hasta'])
+        );
 
         return SalidaInventarioResource::collection($salidas);
     }
@@ -412,11 +335,9 @@ class InventarioController extends Controller
     {
         $this->authorize('create', SalidaInventario::class);
 
-        $validated = $request->validated();
-        $validated['empresa_id'] = $this->getEmpresaId();
-
-        $salida = SalidaInventario::create($validated);
-        $salida->load(['almacen', 'venta', 'cliente', 'proveedor', 'detalles']);
+        $data = $request->validated();
+        $data['empresa_id'] = $this->getEmpresaId();
+        $salida = $this->service->crearSalida($data);
 
         return (new SalidaInventarioResource($salida))
             ->response()
@@ -461,12 +382,7 @@ class InventarioController extends Controller
     )]
     public function showSalida(int $id): SalidaInventarioResource
     {
-        $empresaId = $this->getEmpresaId();
-
-        $salida = SalidaInventario::where('empresa_id', $empresaId)
-            ->with(['almacen', 'venta', 'cliente', 'proveedor', 'detalles.producto'])
-            ->findOrFail($id);
-
+        $salida = $this->service->obtenerSalida($this->getEmpresaId(), $id);
         $this->authorize('view', $salida);
 
         return new SalidaInventarioResource($salida);
@@ -519,23 +435,13 @@ class InventarioController extends Controller
     )]
     public function cancelarEntrada(int $id): JsonResponse
     {
-        $empresaId = $this->getEmpresaId();
-
-        $entrada = EntradaInventario::where('empresa_id', $empresaId)->findOrFail($id);
-
-        if ($entrada->estado === 'Procesada') {
-            return response()->json([
-                'message' => 'No se puede cancelar una entrada ya procesada'
-            ], 422);
-        }
-
-        $entrada->estado = 'Cancelada';
-        $entrada->save();
+        $entrada = $this->service->obtenerEntrada($this->getEmpresaId(), $id);
+        $this->service->cancelarEntrada($entrada);
 
         return response()->json([
             'message' => 'Entrada de inventario cancelada exitosamente',
             'data' => new EntradaInventarioResource($entrada)
-        ], 200);
+        ]);
     }
 
     /**
@@ -585,22 +491,12 @@ class InventarioController extends Controller
     )]
     public function cancelarSalida(int $id): JsonResponse
     {
-        $empresaId = $this->getEmpresaId();
-
-        $salida = SalidaInventario::where('empresa_id', $empresaId)->findOrFail($id);
-
-        if ($salida->estado === 'Procesada') {
-            return response()->json([
-                'message' => 'No se puede cancelar una salida ya procesada'
-            ], 422);
-        }
-
-        $salida->estado = 'Cancelada';
-        $salida->save();
+        $salida = $this->service->obtenerSalida($this->getEmpresaId(), $id);
+        $this->service->cancelarSalida($salida);
 
         return response()->json([
             'message' => 'Salida de inventario cancelada exitosamente',
             'data' => new SalidaInventarioResource($salida)
-        ], 200);
+        ]);
     }
 }

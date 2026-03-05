@@ -7,11 +7,10 @@ use App\Http\Requests\StorePresupuestoRequest;
 use App\Http\Requests\UpdatePresupuestoRequest;
 use App\Http\Resources\PresupuestoResource;
 use App\Models\Presupuesto;
-use App\Traits\HasCacheableQueries;
+use App\Services\PresupuestoService;
 use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use OpenApi\Attributes as OA;
 
 /**
@@ -24,11 +23,9 @@ use OpenApi\Attributes as OA;
  */
 class PresupuestoController extends Controller
 {
-    use HasCacheableQueries, HasEmpresaContext;
+    use HasEmpresaContext;
 
-    /** @var array<int, string> */
-    protected array $cacheTags = ['presupuestos', 'finanzas'];
-    protected int $cacheTTL = 3600; // 1h - planning data, semi-stable
+    public function __construct(private PresupuestoService $service) {}
     /**
      * Listar presupuestos de la empresa
      */
@@ -65,26 +62,17 @@ class PresupuestoController extends Controller
     {
         $this->authorize('viewAny', Presupuesto::class);
 
-        $empresaId = $this->getEmpresaId();
+        $presupuestos = $this->service->listar($this->getEmpresaId());
 
-        $cacheKey = $this->getCacheKey('index', ['empresa_id' => $empresaId]);
-
-        return $this->cacheQueryIfEnabled($cacheKey, function() use ($empresaId) {
-            $presupuestos = Presupuesto::where('empresa_id', $empresaId)
-                ->with('detalles.cuentaContable')
-                ->orderBy('periodo_inicio', 'desc')
-                ->paginate(15);
-
-            return response()->json([
-                'success' => true,
-                'data' => PresupuestoResource::collection($presupuestos),
-                'meta' => [
-                    'current_page' => $presupuestos->currentPage(),
-                    'total' => $presupuestos->total(),
-                    'per_page' => $presupuestos->perPage()
-                ]
-            ]);
-        });
+        return response()->json([
+            'success' => true,
+            'data' => PresupuestoResource::collection($presupuestos),
+            'meta' => [
+                'current_page' => $presupuestos->currentPage(),
+                'total' => $presupuestos->total(),
+                'per_page' => $presupuestos->perPage()
+            ]
+        ]);
     }
 
     /**
@@ -127,36 +115,18 @@ class PresupuestoController extends Controller
     {
         $this->authorize('create', Presupuesto::class);
 
-        $empresaId = $this->getEmpresaId();
+        $presupuesto = $this->service->crear([
+            'empresa_id' => $this->getEmpresaId(),
+            'nombre' => $request->nombre,
+            'periodo_inicio' => $request->periodo_inicio,
+            'periodo_fin' => $request->periodo_fin,
+        ]);
 
-        DB::beginTransaction();
-        try {
-            $presupuesto = Presupuesto::create([
-                'empresa_id' => $empresaId,
-                'nombre' => $request->nombre,
-                'periodo_inicio' => $request->periodo_inicio,
-                'periodo_fin' => $request->periodo_fin,
-                'estado' => 'Borrador'
-            ]);
-
-            DB::commit();
-
-            $this->flushCache();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Presupuesto creado exitosamente',
-                'data' => new PresupuestoResource($presupuesto)
-            ], 201);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al crear el presupuesto',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Presupuesto creado exitosamente',
+            'data' => new PresupuestoResource($presupuesto)
+        ], 201);
     }
 
     /**
@@ -194,12 +164,7 @@ class PresupuestoController extends Controller
     )]
     public function show(Request $request, int $id): JsonResponse
     {
-        $empresaId = $this->getEmpresaId();
-
-        $presupuesto = Presupuesto::where('empresa_id', $empresaId)
-            ->with('detalles.cuentaContable')
-            ->findOrFail($id);
-
+        $presupuesto = $this->service->obtener($this->getEmpresaId(), $id);
         $this->authorize('view', $presupuesto);
 
         return response()->json([
@@ -255,45 +220,20 @@ class PresupuestoController extends Controller
     )]
     public function update(UpdatePresupuestoRequest $request, int $id): JsonResponse
     {
-        $empresaId = $this->getEmpresaId();
-
-        $presupuesto = Presupuesto::where('empresa_id', $empresaId)->findOrFail($id);
-
+        $presupuesto = $this->service->obtener($this->getEmpresaId(), $id);
         $this->authorize('update', $presupuesto);
 
-        if ($presupuesto->estado === 'Finalizado') {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se puede modificar un presupuesto finalizado'
-            ], 422);
-        }
+        $presupuesto = $this->service->actualizar($presupuesto, $request->only([
+            'nombre',
+            'periodo_inicio',
+            'periodo_fin'
+        ]));
 
-        DB::beginTransaction();
-        try {
-            $presupuesto->update($request->only([
-                'nombre',
-                'periodo_inicio',
-                'periodo_fin'
-            ]));
-
-            DB::commit();
-
-            $this->flushCache();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Presupuesto actualizado exitosamente',
-                'data' => new PresupuestoResource($presupuesto)
-            ]);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al actualizar el presupuesto',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Presupuesto actualizado exitosamente',
+            'data' => new PresupuestoResource($presupuesto)
+        ]);
     }
 
     /**
@@ -332,22 +272,10 @@ class PresupuestoController extends Controller
     )]
     public function destroy(Request $request, int $id): JsonResponse
     {
-        $empresaId = $this->getEmpresaId();
-
-        $presupuesto = Presupuesto::where('empresa_id', $empresaId)->findOrFail($id);
-
+        $presupuesto = $this->service->obtener($this->getEmpresaId(), $id);
         $this->authorize('delete', $presupuesto);
 
-        if ($presupuesto->estado === 'Activo') {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se puede eliminar un presupuesto activo'
-            ], 422);
-        }
-
-        $presupuesto->delete();
-
-        $this->flushCache();
+        $this->service->eliminar($presupuesto);
 
         return response()->json([
             'success' => true,
@@ -392,30 +320,13 @@ class PresupuestoController extends Controller
     )]
     public function activar(Request $request, int $id): JsonResponse
     {
-        $empresaId = $this->getEmpresaId();
-
-        $presupuesto = Presupuesto::where('empresa_id', $empresaId)->findOrFail($id);
-
-        if ($presupuesto->estado === 'Activo') {
-            return response()->json([
-                'success' => false,
-                'message' => 'El presupuesto ya está activo'
-            ], 422);
-        }
-
-        if ($presupuesto->detalles->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se puede activar un presupuesto sin cuentas detalladas'
-            ], 422);
-        }
-
-        $presupuesto->update(['estado' => 'Activo']);
+        $presupuesto = $this->service->obtener($this->getEmpresaId(), $id);
+        $presupuesto = $this->service->activar($presupuesto);
 
         return response()->json([
             'success' => true,
             'message' => 'Presupuesto activado exitosamente',
-            'data' => new PresupuestoResource($presupuesto->fresh('detalles'))
+            'data' => new PresupuestoResource($presupuesto)
         ]);
     }
 
@@ -456,18 +367,8 @@ class PresupuestoController extends Controller
     )]
     public function finalizar(Request $request, int $id): JsonResponse
     {
-        $empresaId = $this->getEmpresaId();
-
-        $presupuesto = Presupuesto::where('empresa_id', $empresaId)->findOrFail($id);
-
-        if ($presupuesto->estado === 'Finalizado') {
-            return response()->json([
-                'success' => false,
-                'message' => 'El presupuesto ya está finalizado'
-            ], 422);
-        }
-
-        $presupuesto->update(['estado' => 'Finalizado']);
+        $presupuesto = $this->service->obtener($this->getEmpresaId(), $id);
+        $presupuesto = $this->service->finalizar($presupuesto);
 
         return response()->json([
             'success' => true,
@@ -501,13 +402,7 @@ class PresupuestoController extends Controller
     )]
     public function activos(Request $request): JsonResponse
     {
-        $empresaId = $this->getEmpresaId();
-
-        $presupuestos = Presupuesto::where('empresa_id', $empresaId)
-            ->where('estado', 'Activo')
-            ->with('detalles')
-            ->orderBy('periodo_inicio', 'desc')
-            ->get();
+        $presupuestos = $this->service->activos($this->getEmpresaId());
 
         return response()->json([
             'success' => true,
@@ -559,22 +454,15 @@ class PresupuestoController extends Controller
     )]
     public function resumen(Request $request, int $id): JsonResponse
     {
-        $empresaId = $this->getEmpresaId();
-
-        $presupuesto = Presupuesto::where('empresa_id', $empresaId)
-            ->with('detalles.cuentaContable')
-            ->findOrFail($id);
-
-        $totalPresupuestado = $presupuesto->detalles->sum('monto_presupuestado');
+        $data = $this->service->resumen($this->getEmpresaId(), $id);
 
         return response()->json([
             'success' => true,
             'data' => [
-                'presupuesto' => new PresupuestoResource($presupuesto),
-                'total_presupuestado' => number_format($totalPresupuestado, 2),
-                'total_cuentas' => $presupuesto->detalles->count(),
-                'periodo_dias' => \Carbon\Carbon::parse($presupuesto->periodo_inicio)
-                    ->diffInDays(\Carbon\Carbon::parse($presupuesto->periodo_fin))
+                'presupuesto' => new PresupuestoResource($data['presupuesto']),
+                'total_presupuestado' => number_format($data['total_presupuestado'], 2),
+                'total_cuentas' => $data['cantidad_lineas'],
+                'periodo_dias' => $data['duracion_dias']
             ]
         ]);
     }

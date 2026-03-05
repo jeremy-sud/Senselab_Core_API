@@ -20,6 +20,9 @@ class CuentaPorPagar extends Model
      */
     protected $table = 'cuentas_por_pagar';
 
+    const CREATED_AT = 'creado_en';
+    const UPDATED_AT = 'actualizado_en';
+
     /**
      * Los atributos que son asignables masivamente.
      *
@@ -34,6 +37,7 @@ class CuentaPorPagar extends Model
         'moneda',
         'monto_original',
         'monto_pagado',
+        'monto_pendiente',
         'estado',
         'observaciones',
         'activo',

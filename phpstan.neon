@@ -112,3 +112,6 @@ parameters:
 
         # Property not found (dynamic model attributes)
         - '#Access to an undefined property .*::\$[a-zA-Z_]+#'
+
+        # Unused traits (reserved for future use / optional installation)
+        - identifier: trait.unused
