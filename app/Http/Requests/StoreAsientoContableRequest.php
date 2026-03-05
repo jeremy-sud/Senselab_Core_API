@@ -27,7 +27,7 @@ class StoreAsientoContableRequest extends FormRequest
     {
         return [
             'fecha_asiento' => ['required', 'date'],
-            'descripcion' => ['nullable', 'string'],
+            'concepto' => ['required', 'string'],
             'estado' => ['nullable', 'string', 'max:50', Rule::in(['Borrador', 'Mayorizado', 'Anulado'])],
             'detalles' => ['required', 'array', 'min:2'],
             'detalles.*.cuenta_contable_id' => ['required', 'integer', 'exists:cuentas_contables,id'],

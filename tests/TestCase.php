@@ -215,6 +215,11 @@ abstract class TestCase extends BaseTestCase
             ['nombre' => 'Crear Empresas', 'slug' => 'crear-empresas', 'modulo' => 'Empresas'],
             ['nombre' => 'Editar Empresas', 'slug' => 'editar-empresas', 'modulo' => 'Empresas'],
             ['nombre' => 'Eliminar Empresas', 'slug' => 'eliminar-empresas', 'modulo' => 'Empresas'],
+            // Sucursales
+            ['nombre' => 'Ver Sucursales', 'slug' => 'ver-sucursales', 'modulo' => 'Empresas'],
+            ['nombre' => 'Crear Sucursales', 'slug' => 'crear-sucursales', 'modulo' => 'Empresas'],
+            ['nombre' => 'Editar Sucursales', 'slug' => 'editar-sucursales', 'modulo' => 'Empresas'],
+            ['nombre' => 'Eliminar Sucursales', 'slug' => 'eliminar-sucursales', 'modulo' => 'Empresas'],
             // Productos
             ['nombre' => 'Ver Productos', 'slug' => 'ver-productos', 'modulo' => 'Productos'],
             ['nombre' => 'Crear Productos', 'slug' => 'crear-productos', 'modulo' => 'Productos'],
@@ -324,6 +329,51 @@ abstract class TestCase extends BaseTestCase
             ['nombre' => 'Crear Empleados', 'slug' => 'crear-empleados', 'modulo' => 'Nómina'],
             ['nombre' => 'Editar Empleados', 'slug' => 'editar-empleados', 'modulo' => 'Nómina'],
             ['nombre' => 'Eliminar Empleados', 'slug' => 'eliminar-empleados', 'modulo' => 'Nómina'],
+            // Órdenes de Compra
+            ['nombre' => 'Ver Órdenes Compra', 'slug' => 'ver-ordenes_compra', 'modulo' => 'Compras'],
+            ['nombre' => 'Crear Órdenes Compra', 'slug' => 'crear-ordenes_compra', 'modulo' => 'Compras'],
+            ['nombre' => 'Editar Órdenes Compra', 'slug' => 'editar-ordenes_compra', 'modulo' => 'Compras'],
+            ['nombre' => 'Eliminar Órdenes Compra', 'slug' => 'eliminar-ordenes_compra', 'modulo' => 'Compras'],
+            // Entradas de Inventario
+            ['nombre' => 'Ver Entradas Inventario', 'slug' => 'ver-entrada_inventario', 'modulo' => 'Inventario'],
+            ['nombre' => 'Crear Entradas Inventario', 'slug' => 'crear-entrada_inventario', 'modulo' => 'Inventario'],
+            ['nombre' => 'Editar Entradas Inventario', 'slug' => 'editar-entrada_inventario', 'modulo' => 'Inventario'],
+            ['nombre' => 'Eliminar Entradas Inventario', 'slug' => 'eliminar-entrada_inventario', 'modulo' => 'Inventario'],
+            // Salidas de Inventario
+            ['nombre' => 'Ver Salidas Inventario', 'slug' => 'ver-salida_inventario', 'modulo' => 'Inventario'],
+            ['nombre' => 'Crear Salidas Inventario', 'slug' => 'crear-salida_inventario', 'modulo' => 'Inventario'],
+            ['nombre' => 'Editar Salidas Inventario', 'slug' => 'editar-salida_inventario', 'modulo' => 'Inventario'],
+            ['nombre' => 'Eliminar Salidas Inventario', 'slug' => 'eliminar-salida_inventario', 'modulo' => 'Inventario'],
+            // Cuentas Contables (slug corregido para coincidir con Policy)
+            ['nombre' => 'Ver Cuenta Contable', 'slug' => 'ver-cuenta_contable', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Crear Cuenta Contable', 'slug' => 'crear-cuenta_contable', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Editar Cuenta Contable', 'slug' => 'editar-cuenta_contable', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Eliminar Cuenta Contable', 'slug' => 'eliminar-cuenta_contable', 'modulo' => 'Contabilidad'],
+            // Cuentas por Cobrar
+            ['nombre' => 'Ver Cuentas por Cobrar', 'slug' => 'ver-cuentas_por_cobrar', 'modulo' => 'Finanzas'],
+            ['nombre' => 'Crear Cuentas por Cobrar', 'slug' => 'crear-cuentas_por_cobrar', 'modulo' => 'Finanzas'],
+            ['nombre' => 'Editar Cuentas por Cobrar', 'slug' => 'editar-cuentas_por_cobrar', 'modulo' => 'Finanzas'],
+            ['nombre' => 'Eliminar Cuentas por Cobrar', 'slug' => 'eliminar-cuentas_por_cobrar', 'modulo' => 'Finanzas'],
+            // Cuentas por Pagar
+            ['nombre' => 'Ver Cuentas por Pagar', 'slug' => 'ver-cuentas_por_pagar', 'modulo' => 'Finanzas'],
+            ['nombre' => 'Crear Cuentas por Pagar', 'slug' => 'crear-cuentas_por_pagar', 'modulo' => 'Finanzas'],
+            ['nombre' => 'Editar Cuentas por Pagar', 'slug' => 'editar-cuentas_por_pagar', 'modulo' => 'Finanzas'],
+            ['nombre' => 'Eliminar Cuentas por Pagar', 'slug' => 'eliminar-cuentas_por_pagar', 'modulo' => 'Finanzas'],
+            // Períodos de Nómina
+            ['nombre' => 'Ver Período Nómina', 'slug' => 'ver-periodo_nomina', 'modulo' => 'Nómina'],
+            ['nombre' => 'Crear Período Nómina', 'slug' => 'crear-periodo_nomina', 'modulo' => 'Nómina'],
+            ['nombre' => 'Editar Período Nómina', 'slug' => 'editar-periodo_nomina', 'modulo' => 'Nómina'],
+            ['nombre' => 'Eliminar Período Nómina', 'slug' => 'eliminar-periodo_nomina', 'modulo' => 'Nómina'],
+            // Pagos de Nómina
+            ['nombre' => 'Ver Pago Nómina', 'slug' => 'ver-pago_nomina', 'modulo' => 'Nómina'],
+            ['nombre' => 'Crear Pago Nómina', 'slug' => 'crear-pago_nomina', 'modulo' => 'Nómina'],
+            ['nombre' => 'Editar Pago Nómina', 'slug' => 'editar-pago_nomina', 'modulo' => 'Nómina'],
+            ['nombre' => 'Eliminar Pago Nómina', 'slug' => 'eliminar-pago_nomina', 'modulo' => 'Nómina'],
+            // Tipos de Cuentas
+            ['nombre' => 'Ver Tipos Cuentas', 'slug' => 'ver-tipo_cuenta', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Crear Tipos Cuentas', 'slug' => 'crear-tipo_cuenta', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Editar Tipos Cuentas', 'slug' => 'editar-tipo_cuenta', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Eliminar Tipos Cuentas', 'slug' => 'eliminar-tipo_cuenta', 'modulo' => 'Contabilidad'],
         ];
 
         foreach ($permisos as $permiso) {

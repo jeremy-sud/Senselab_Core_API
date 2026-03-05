@@ -203,14 +203,22 @@ class InventarioTest extends TestCase
             'eliminado' => false,
         ]);
 
+        $producto = $this->createProducto([], $empresa);
+
         $data = [
             'empresa_id' => $empresa->id,
             'almacen_id' => $almacen->id,
             'fecha_entrada' => now()->format('Y-m-d'),
-            'tipo_entrada' => 'compra',
-            'estado' => 'pendiente',
-            'descripcion' => 'Entrada de prueba',
+            'tipo_entrada' => 'Compra',
+            'estado' => 'Pendiente',
             'observaciones' => 'Observaciones de test',
+            'detalles' => [
+                [
+                    'producto_id' => $producto->id,
+                    'cantidad' => 10,
+                    'precio_unitario' => 500.00,
+                ],
+            ],
         ];
 
         $response = $this->authenticatedJson('POST', '/api/entradas-inventario', $data, $usuario);
@@ -218,7 +226,7 @@ class InventarioTest extends TestCase
         $response->assertStatus(201);
         $this->assertDatabaseHas('entradas_inventario', [
             'almacen_id' => $almacen->id,
-            'tipo_entrada' => 'compra',
+            'tipo_entrada' => 'Compra',
         ]);
     }
 
@@ -284,14 +292,22 @@ class InventarioTest extends TestCase
             'eliminado' => false,
         ]);
 
+        $producto = $this->createProducto([], $empresa);
+
         $data = [
             'empresa_id' => $empresa->id,
             'almacen_id' => $almacen->id,
             'fecha_salida' => now()->format('Y-m-d'),
-            'tipo_salida' => 'venta',
-            'estado' => 'pendiente',
-            'descripcion' => 'Salida de prueba',
+            'tipo_salida' => 'Venta',
+            'estado' => 'Pendiente',
             'observaciones' => 'Observaciones de test',
+            'detalles' => [
+                [
+                    'producto_id' => $producto->id,
+                    'cantidad' => 5,
+                    'costo_unitario' => 500.00,
+                ],
+            ],
         ];
 
         $response = $this->authenticatedJson('POST', '/api/salidas-inventario', $data, $usuario);
@@ -299,7 +315,7 @@ class InventarioTest extends TestCase
         $response->assertStatus(201);
         $this->assertDatabaseHas('salidas_inventario', [
             'almacen_id' => $almacen->id,
-            'tipo_salida' => 'venta',
+            'tipo_salida' => 'Venta',
         ]);
     }
 }

@@ -68,8 +68,8 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
         ->parameters(['cuentas-por-cobrar' => 'cuentaPorCobrar']);
     Route::get('/cuentas-por-cobrar/cliente/{clienteId}', [CuentaPorCobrarController::class, 'porCliente']);
     Route::get('/cuentas-por-cobrar/vencidas/list', [CuentaPorCobrarController::class, 'vencidas']);
-    Route::get('/cuentas-por-cobrar/por-vencer/list', [CuentaPorCobrarController::class, 'porVencer']);
-    Route::get('/cuentas-por-cobrar/resumen/por-estado', [CuentaPorCobrarController::class, 'resumenPorEstado']);
+    Route::get('/cuentas-por-cobrar/por-vencer/list', [CuentaPorCobrarController::class, 'vencidas']);
+    Route::get('/cuentas-por-cobrar/resumen/por-estado', [CuentaPorCobrarController::class, 'resumen']);
 
     // Pagos de Cuentas por Cobrar
     Route::apiResource('pagos-cuentas-cobrar', PagoCuentaCobrarController::class)

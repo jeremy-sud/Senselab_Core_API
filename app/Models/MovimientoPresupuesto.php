@@ -13,6 +13,9 @@ class MovimientoPresupuesto extends Model
 {
     use UsesTenantConnection, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
+    const CREATED_AT = 'creado_en';
+    const UPDATED_AT = 'actualizado_en';
+
     /**
      * La tabla asociada al modelo.
      *

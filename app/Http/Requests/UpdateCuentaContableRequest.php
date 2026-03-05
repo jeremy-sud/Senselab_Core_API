@@ -34,7 +34,7 @@ class UpdateCuentaContableRequest extends FormRequest
     public function rules(): array
     {
         $empresaId = $this->user()->empresa_id;
-        $cuentaId = $this->route('cuenta_contable');
+        $cuentaId = $this->route('cuentas_contable');
 
         return [
             'nombre' => ['sometimes', 'string', 'max:255'],

@@ -31,6 +31,9 @@ class EntradaInventarioService
 
             if (!empty($data['detalles'])) {
                 foreach ($data['detalles'] as $detalle) {
+                    if (isset($detalle['precio_unitario']) && !isset($detalle['costo_unitario'])) {
+                        $detalle['costo_unitario'] = $detalle['precio_unitario'];
+                    }
                     $entrada->detalles()->create($detalle);
                 }
             }

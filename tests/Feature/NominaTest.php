@@ -65,8 +65,8 @@ class NominaTest extends TestCase
             'nombre' => 'Juan',
             'primer_apellido' => 'Pérez',
             'segundo_apellido' => 'López',
-            'tipo_documento' => 'Cedula_Nacional',
-            'numero_documento' => rand(100000000, 999999999),
+            'tipo_documento' => 'cedula',
+            'numero_documento' => (string) rand(100000000, 999999999),
             'fecha_nacimiento' => '1990-05-15',
             'fecha_ingreso' => '2024-01-01',
             'cargo_id' => $cargo->id,
@@ -103,16 +103,18 @@ class NominaTest extends TestCase
         $usuario = $this->createAdminUsuario();
         $empresa = $usuario->empresa;
         $cargo = $this->createCargo();
+        $departamento = $this->createDepartamento();
 
         $data = [
             'nombre' => 'María',
             'primer_apellido' => 'García',
             'segundo_apellido' => 'Solano',
-            'tipo_documento' => 'Cedula_Nacional',
+            'tipo_documento' => 'cedula',
             'numero_documento' => '1-1234-5678',
             'fecha_nacimiento' => '1985-03-20',
             'fecha_ingreso' => '2025-01-15',
             'cargo_id' => $cargo->id,
+            'departamento_id' => $departamento->id,
             'salario' => 950000.00,
             'email' => 'maria@test.com',
             'telefono' => '8888-0001',

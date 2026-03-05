@@ -13,6 +13,9 @@ class Etiqueta extends Model
 {
     use BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
+    const CREATED_AT = 'creado_en';
+    const UPDATED_AT = 'actualizado_en';
+
     protected $table = 'etiquetas';
 
     protected $fillable = [

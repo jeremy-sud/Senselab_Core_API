@@ -183,7 +183,7 @@ class ComprasTest extends TestCase
         $empresa = $usuario->empresa;
         $proveedor = $this->createProveedor($empresa->id);
 
-        $producto = $this->createProducto($empresa);
+        $producto = $this->createProducto([], $empresa);
 
         $data = [
             'empresa_id' => $empresa->id,
@@ -241,7 +241,7 @@ class ComprasTest extends TestCase
         $usuario = $this->createAdminUsuario();
         $empresa = $usuario->empresa;
 
-        $producto = $this->createProducto($empresa);
+        $producto = $this->createProducto([], $empresa);
 
         $response = $this->authenticatedJson('POST', '/api/ordenes-compra', [
             'empresa_id' => $empresa->id,

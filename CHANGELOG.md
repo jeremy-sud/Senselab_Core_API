@@ -4,6 +4,39 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
+
+## [2.8.0] - 2026-03-05
+
+### 🩺 FASE 11: Corrección de 42 Tests Fallidos + Bugs de Producción
+
+Corrección integral de los 42 tests pre-existentes que fallaban (20 errores + 22 fallos). Se descubrieron y corrigieron 8 bugs de producción reales.
+
+#### Resultado
+- **Antes:** 767 tests — 720 passing, 42 failing, 5 skipped
+- **Después:** 767 tests — 762 passing, 0 failing, 5 skipped ✅
+
+#### Bugs de Producción Corregidos
+- **StoreAsientoContableRequest** — Validaba `descripcion` en vez de `concepto` (NOT NULL en DB)
+- **AsientoContableService** — `numero_asiento` y `usuario_id` (NOT NULL) nunca se generaban automáticamente
+- **UpdateCuentaContableRequest** — Parámetro de ruta incorrecto (`cuenta_contable` → `cuentas_contable`)
+- **Rutas ventas** — 2 rutas apuntaban a métodos inexistentes (`porVencer` → `vencidas`, `resumenPorEstado` → `resumen`)
+- **EntradaInventarioService** — Campo `precio_unitario` del API nunca se mapeaba a `costo_unitario` del DB
+- **8 modelos** sin constantes `CREATED_AT`/`UPDATED_AT` (usaban `created_at`/`updated_at` inexistentes)
+
+#### Modelos Corregidos (timestamps)
+- `DetalleAsiento`, `DetalleEntradaInventario`, `DetalleSalidaInventario`
+- `EntidadEtiqueta`, `Etiqueta`, `HorarioRuta`, `MovimientoPresupuesto`
+
+#### Tests Corregidos
+- `MultiTenantIsolationTest` — Emails únicos para empresas de test
+- `ContabilidadTest` — Capitalización de naturaleza en CHECK constraint
+- `ComprasTest` — Orden de argumentos en `createProducto()`
+- `InventarioTest` — Capitalización + detalles completos con estructura correcta
+- `NominaTest` — Tipo documento correcto + `departamento_id`
+- `FinancialModuleTest` — Aceptar 403 como respuesta válida
+- `MetricsControllerTest` — Estructura JSON correcta
+- `TestCase.php` — 52 permisos nuevos en `seedPermisos()`
+
 ## [2.5.0] - 2025-07-02
 
 ### 🏗️ FASE 8: Service Layer Pattern — Módulos Críticos

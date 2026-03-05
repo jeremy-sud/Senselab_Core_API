@@ -28,7 +28,7 @@ class ContabilidadTest extends TestCase
         return TipoCuenta::create(array_merge([
             'nombre' => 'Activo',
             'descripcion' => 'Cuentas de activo',
-            'naturaleza' => 'deudora',
+            'naturaleza' => 'Deudora',
             'activo' => true,
             'eliminado' => false,
         ], $attrs));
@@ -59,7 +59,7 @@ class ContabilidadTest extends TestCase
         $data = [
             'nombre' => 'Pasivo',
             'descripcion' => 'Cuentas de pasivo',
-            'naturaleza' => 'acreedora',
+            'naturaleza' => 'Acreedora',
             'activo' => true,
         ];
 
@@ -262,7 +262,7 @@ class ContabilidadTest extends TestCase
 
         $tipoCuentaPasivo = $this->createTipoCuenta([
             'nombre' => 'Pasivo',
-            'naturaleza' => 'acreedora',
+            'naturaleza' => 'Acreedora',
         ]);
 
         $cuentaHaber = CuentaContable::create([
