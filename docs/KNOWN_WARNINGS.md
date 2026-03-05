@@ -1,9 +1,11 @@
 # 📋 Warnings Conocidos y Aceptados
 
-**Última actualización:** 5 de Diciembre 2025  
-**Total de warnings:** ~577 (SonarQube)  
+**Última actualización:** Marzo 2026  
+**Versión del proyecto:** 2.8.0  
+**Tests pasando:** ✅ 762/762 (5 skipped) — 2,392 assertions  
+**PHPStan:** ✅ Level 8 — 0 errores en 687 archivos  
 **Impacto en funcionalidad:** ❌ Ninguno  
-**Tests pasando:** ✅ 405/405
+**Tests pasando:** ✅ 762/762 (5 skipped) — 2,392 assertions
 
 ---
 
@@ -50,78 +52,44 @@ Los analizadores de código estático como SonarQube aplican reglas genéricas q
 
 **Total estimado:** ~400 warnings en Controllers
 
-#### 1.2 Rutas en api.php
+#### 1.2 Rutas en `routes/api/`
 
 | Tipo de String | Ejemplo | Motivo de Aceptación |
 |----------------|---------|---------------------|
 | Paths con parámetros | `'/empresas/{empresa}'` | Convención REST (GET, PUT, DELETE usan mismo path) |
 | Paths de recursos | `'/productos/{producto}'` | Patrón estándar Laravel Resource Routes |
 
-**Archivo afectado:** `routes/api.php`
+**Archivos afectados:** 14 archivos en `routes/api/` (particionados por módulo)
 
-**Paths duplicados (cada uno aparece ~4 veces por CRUD):**
-```
-/empresas/{empresa}
-/sucursales/{sucursal}
-/almacenes/{almacen}
-/productos/{producto}
-/clientes/{cliente}
-/proveedores/{proveedor}
-/ventas/{venta}
-/ordenes-compra/{ordenCompra}
-/empleados/{empleado}
-/categorias-productos/{categoriaProducto}
-/marcas/{marca}
-/unidades-medida/{unidadMedida}
-/formas-pago/{formaPago}
-/cargos/{cargo}
-/cabys/{caby}
-/tipos-impuesto/{tipoImpuesto}
-/tasas-impuesto/{tasaImpuesto}
-/configuraciones/{configuracion}
-/tipos-cambio-historial/{tipoCambioHistorial}
-/etiquetas/{etiqueta}
-/entidad-etiquetas/{entidadEtiqueta}
-/cajas/{caja}
-... (25+ recursos)
-```
-
-**Total estimado:** ~100 warnings en routes/api.php
+**Total estimado:** ~80 warnings en routes/
 
 ---
 
-### 2. S138 - Function Too Long (1 warning)
+### 2. S138 - Function Too Long (YA NO APLICA ✅)
 
 **Regla SonarQube:** `php:S138`  
-**Descripción:** This function expression has X lines, which is greater than the 150 lines authorized.
+**Estado anterior:** 1 warning en `routes/api.php` (775 líneas).  
+**Estado actual:** ✅ **Resuelto** — Las rutas fueron particionadas en 14 archivos independientes bajo `routes/api/`. El archivo `routes/api.php` principal ahora tiene solo 81 líneas.
 
-| Archivo | Líneas | Motivo de Aceptación |
-|---------|--------|---------------------|
-| `routes/api.php` (línea 92) | 775 | Archivo de definición de rutas de Laravel. Dividirlo añadiría complejidad innecesaria |
-
-**Detalle:** El closure del middleware group `Route::middleware(['auth:sanctum'])` contiene todas las rutas protegidas. Es la convención estándar de Laravel para APIs medianas/grandes.
+La regla de supresión S138 permanece en `sonar-project.properties` como precaución.
 
 ---
 
-### 3. PHPUnit Metadata Deprecation Warnings (~147 warnings)
+### 3. PHPUnit Metadata Deprecation Warnings (~367 warnings)
 
 **Tipo:** Deprecation Warning de PHPUnit 12  
 **Descripción:** Metadata found in doc-comment. Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12.
 
-**Motivo:** Los tests usan anotaciones `@test` en doc-comments en lugar de atributos PHP 8.
+**Motivo:** 41 clases de test usan anotaciones `@test` en doc-comments en lugar de atributos PHP 8 (`#[Test]`).
 
-**Archivos afectados:**
-- `tests/Unit/Helpers/ArrayHelpersTest.php` (~15 tests)
-- `tests/Unit/Helpers/StringHelpersTest.php` (~15 tests)
-- `tests/Unit/Services/ClaveNumericaGeneratorTest.php` (~17 tests)
-- `tests/Unit/Services/Hacienda/*.php` (~20 tests)
-- `tests/Unit/Services/RateLimiterTest.php` (~10 tests)
-- `tests/Unit/Services/XadesEpesSignerTest.php` (~14 tests)
-- `tests/Unit/Services/XmlComprobanteBuilderTest.php` (~9 tests)
-- `tests/Unit/Validation/*.php` (~30 tests)
-- `tests/Feature/ComprobanteElectronicoControllerTest.php` (~14 tests)
-- `tests/Feature/FacturacionElectronica*.php` (~20 tests)
-- `tests/Feature/Hacienda/*.php` (~12 tests)
+**Archivos afectados (41 clases):**
+- `tests/Unit/Helpers/` — ArrayHelpersTest, StringHelpersTest
+- `tests/Unit/Services/` — ClaveNumericaGeneratorTest, RateLimiterTest, XadesEpesSignerTest, XmlComprobanteBuilderTest
+- `tests/Unit/Services/Hacienda/` — HaciendaApiClientTest y otros
+- `tests/Unit/Validation/` — ~30 clases de validación
+- `tests/Feature/` — ComprobanteElectronicoControllerTest, FacturacionElectronica*, Hacienda/*
+
+**Impacto:** Ninguno funcional. Los tests ejecutan correctamente.
 
 **Acción futura:** Migrar anotaciones `@test` a atributos `#[Test]` cuando se actualice a PHPUnit 12.
 
@@ -163,13 +131,13 @@ sonar.issue.ignore.multicriteria.e6.resourceKey=**/routes/**
 
 ## 📊 Resumen Ejecutivo
 
-| Categoría | Cantidad | Severidad | Acción |
+| Categoría | Cantidad | Severidad | Estado |
 |-----------|----------|-----------|--------|
-| S1192 en Controllers (OpenAPI) | ~400 | ⚪ Info | Ignorar - Inherente a Swagger |
-| S1192 en routes/api.php | ~100 | ⚪ Info | Ignorar - Convención Laravel |
-| S138 en routes/api.php | 1 | ⚪ Info | Ignorar - Archivo de rutas grande |
-| PHPUnit Metadata Deprecation | ~147 | 🟡 Warning | Migrar en PHPUnit 12 |
-| **Total** | **~648** | - | - |
+| S1192 en Controllers (OpenAPI) | ~400 | ⚪ Info | Suprimido en SonarQube |
+| S1192 en routes (REST paths) | ~80 | ⚪ Info | Suprimido en SonarQube |
+| S138 en routes/api.php | 0 | ✅ | **Resuelto** (rutas particionadas) |
+| PHPUnit Metadata Deprecation | ~367 | 🟡 Warning | Migrar en PHPUnit 12 |
+| PHPStan errores | 0 | ✅ | Level 8, 0 errores |
 
 ---
 
@@ -177,16 +145,12 @@ sonar.issue.ignore.multicriteria.e6.resourceKey=**/routes/**
 
 ```bash
 # Tests automatizados
-docker exec ursol_php php artisan test
-# Resultado: 405 passed, 5 skipped ✅
+php artisan test
+# Resultado: 762 passed, 5 skipped, 2392 assertions ✅
 
-# PHPStan nivel 5
-docker exec ursol_php ./vendor/bin/phpstan analyse app/ --level=5
-# Resultado: [OK] No errors ✅
-
-# Rutas registradas
-docker exec ursol_php php artisan route:list --count
-# Resultado: 559 routes ✅
+# PHPStan nivel 8
+vendor/bin/phpstan analyse app/ --level=8
+# Resultado: [OK] No errors (687 archivos) ✅
 ```
 
 ---
@@ -195,6 +159,7 @@ docker exec ursol_php php artisan route:list --count
 
 | Fecha | Revisado Por | Notas |
 |-------|--------------|-------|
+| 2026-03 | Jeremy Arias Solano | Reescritura completa — v2.8.0, rutas particionadas, PHPStan Level 8 |
 | 2025-12-05 | GitHub Copilot | Creación inicial del documento |
 
 ---

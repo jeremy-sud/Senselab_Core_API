@@ -1,6 +1,6 @@
 # 📚 Documentación del Proyecto Ursol CAST API
 
-**Última actualización:** 22 de febrero 2026
+**Última actualización:** Marzo 2026
 
 Este directorio contiene toda la documentación organizada del proyecto.
 
@@ -38,16 +38,22 @@ docs/
 | [release_checklist.md](release_checklist.md) | Checklist pre-release para producción |
 | [examples.http](examples.http) | Ejemplos REST Client para probar endpoints |
 
-## 📊 Estado Actual (Febrero 2026)
+## 📊 Estado Actual (Marzo 2026 — v2.8.0)
 
 | Métrica | Valor |
 |---------|-------|
-| **Controladores API** | 95 |
+| **Controladores API** | 93 |
 | **Modelos Eloquent** | 87 |
-| **Tests** | 529 passing (100%) |
-| **Servicios** | 31 (10 IA + 9 Hacienda + 12 core) |
-| **PHPStan** | 0 errores (Level 6 + baseline) |
-| **Fases completadas** | 1-6 ✅ |
+| **Tests** | 762 passing, 5 skipped (2,392 assertions) |
+| **Servicios** | 40 (10 IA + 9 Hacienda + 21 core) |
+| **FormRequests** | 168 |
+| **Resources** | 77 |
+| **Policies** | 80 |
+| **Migraciones** | 98 |
+| **CQRS** | 34 archivos (Ventas, Contabilidad, Compras) |
+| **PHPStan** | Level 8 — 0 errores (687 archivos) |
+| **Rutas** | 14 archivos particionados en `routes/api/` |
+| **Fases completadas** | 1-11 ✅ |
 
 ## 🚀 Guías Rápidas
 
@@ -112,12 +118,14 @@ Los documentos de sprints completados están en `sprints/`:
 | Sprint 7 | ✅ | [Controllers/Policies](sprints/SPRINT_7_COMPLETITUD_CONTROLLERS_POLICIES.md) |
 | Sprint 8 | ✅ | [Módulo IA + PHPStan](sprints/SPRINT_8_COMPLETO.md) |
 | Sprint 9 | ✅ | [PHPUnit Attributes](sprints/SPRINT_9.1_PHPUNIT_ATTRIBUTES.md) |
+| FASE 10 | ✅ | Service Layer + CQRS |
+| FASE 11 | ✅ | Test fixes + Production bugs |
 
 ## 📦 Archivos Históricos
 
 La carpeta `archive/` contiene documentación histórica que ya no es activa pero se preserva para referencia:
 
-- Documentos de fases completadas (FASE 1-6)
+- Documentos de fases completadas (FASE 1-11)
 - Resúmenes de sesiones de trabajo
 - Auditorías y análisis anteriores
 - Planes de implementación completados

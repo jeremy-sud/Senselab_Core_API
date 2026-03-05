@@ -25,10 +25,10 @@
 <p align="center">
   <img src="https://github.com/jeremy-sud/Ursol-CAST-API/actions/workflows/tests.yml/badge.svg" alt="Tests">
   <img src="https://img.shields.io/badge/coverage-90%25-brightgreen" alt="Coverage">
-  <img src="https://img.shields.io/badge/PHPStan-level%206-blue" alt="PHPStan">
+  <img src="https://img.shields.io/badge/PHPStan-level%208-blue" alt="PHPStan">
   <img src="https://img.shields.io/badge/PSR--12-compliant-green" alt="PSR-12">
   <img src="https://img.shields.io/badge/Laravel-12.x-red" alt="Laravel">
-  <img src="https://img.shields.io/badge/PHP-8.2+-blue" alt="PHP">
+  <img src="https://img.shields.io/badge/PHP-8.4+-blue" alt="PHP">
   <img src="https://img.shields.io/badge/MySQL-8.0+-336791" alt="MySQL">
 </p>
 
@@ -81,30 +81,32 @@ Proporcionar una plataforma ERP integral, moderna y asequible que permita a las 
 
 ### 📊 Estado del Proyecto
 
-**🔍 ÚLTIMA AUDITORÍA: 11 de Febrero 2026**
+**🔍 ÚLTIMA AUDITORÍA: 5 de Marzo 2026**
 
 **Calificación Global: 9.8/10** ⭐⭐⭐⭐⭐
 
-**📈 Estadísticas Verificadas (Febrero 2026):**
+**📈 Estadísticas Verificadas (Marzo 2026):**
 
--   **✅ 95 Controladores API** implementados (100% completitud)
+-   **✅ 93 Controladores API** implementados (100% completitud)
 -   **✅ 80 Policies RBAC** implementadas (100% cobertura)
--   **✅ Rutas API** múltiples endpoints funcionales
+-   **✅ Rutas API** particionadas en 14 archivos (`routes/api/`)
 -   **✅ 87 Modelos Eloquent** sincronizados con BD MySQL 8.0+
--   **✅ 95 Migraciones** de base de datos (landlord + tenant)
--   **✅ 80+ Resources** para transformación de respuestas JSON
--   **✅ 47 Archivos de Tests** automatizados (centenas de tests pasando)
--   **✅ 31 Servicios** incluyendo 10+ servicios de IA integrados
+-   **✅ 98 Migraciones** de base de datos (landlord + tenant)
+-   **✅ 77 Resources** para transformación de respuestas JSON
+-   **✅ 64 Archivos de Tests** — 767 tests, 2392 assertions, 0 failing
+-   **✅ 40 Servicios** incluyendo 10 servicios de IA integrados
+-   **✅ 34 Archivos CQRS** en 3 módulos (Ventas, Contabilidad, Compras)
 -   **✅ 0 Errores Críticos** de base de datos o seguridad
--   **✅ Sistema RBAC** completo (68 permisos + 8 roles + 56 controllers cachés)
+-   **✅ Sistema RBAC** completo (68 permisos + 8 roles)
+-   **✅ PHPStan Level 8** — 0 errores en 667 archivos
 -   **✅ Entorno Docker** completamente funcional (Nginx, PHP-FPM, MySQL, Redis, PHPMyAdmin, Mailhog)
 -   **✅ Facturación Electrónica v4.4** implementada (XAdES-EPES) según normativa DGT
 -   **✅ Módulo de IA** con 10 servicios y 32+ endpoints (Google Gemini gratuito + fallback OpenAI)
 -   **✅ Generador de Módulos** `make:erp-module` para crear módulos completos en segundos
--   **✅ Calidad de Código** PHPStan nivel 6 con baseline (en refactorización a nivel 8)
+-   **✅ Calidad de Código** PHPStan nivel 8 — 0 errores en 667 archivos
 -   **✅ Cache Inteligente** Redis con estrategia integral de cacheo
 -   **✅ Performance** Optimización continua con tests de rendimiento
--   **✅ Cobertura de Tests** 25-30% actual, meta >80% en FASE 4
+-   **✅ Tests** 767 tests, 2392 assertions — 100% passing
 -   **✅ Seguridad** Laravel Sanctum + RBAC + Rate Limiting + CORS + Encriptación AES-256
 
 **✅ FUNCIONALIDADES IA IMPLEMENTADAS (Febrero 2026):**
@@ -233,7 +235,7 @@ Proporcionar una plataforma ERP integral, moderna y asequible que permita a las 
 ### Backend
 
 -   **[Laravel 12.x](https://laravel.com)** - Framework PHP moderno y elegante
--   **PHP 8.2+** - Lenguaje de programación (versión 8.3+ recomendada)
+-   **PHP 8.4+** - Lenguaje de programación
 -   **MySQL 8.0+** - Sistema de gestión de base de datos
 -   **Redis 7.0+** - Cache y sesiones en memoria
 -   **ElasticSearch** (opcional) - Búsqueda avanzada
@@ -257,7 +259,7 @@ Proporcionar una plataforma ERP integral, moderna y asequible que permita a las 
 ### Testing & Quality
 
 -   **PHPUnit** - Framework de testing PHP
--   **PHPStan** - Análisis estático de código (nivel 6)
+-   **PHPStan** - Análisis estático de código (nivel 8, 0 errores)
 -   **PHP CS Fixer** - Formateo automático de código PSR-12
 -   **PHPMD** - Detector de problemas comunes
 -   **PHPCPD** - Detector de código duplicado
@@ -281,8 +283,7 @@ Proporcionar una plataforma ERP integral, moderna y asequible que permita a las 
 
 ### Requisitos Mínimos
 
--   **PHP**: >= 8.2
-  - Opciones recomendadas: 8.2.x (LTS), 8.3.x, 8.4.x
+-   **PHP**: >= 8.4
 -   **Composer**: >= 2.5
 -   **Node.js**: >= 18.x (20.x o 22.x recomendado)
 -   **NPM/PNPM**: >= 9.x (usamos PNPM por seguridad)
@@ -348,9 +349,9 @@ Proporcionar una plataforma ERP integral, moderna y asequible que permita a las 
 
 | Versión | Rama | Status | Lanzamiento | Soporte |
 |---------|------|--------|-------------|---------|
-| **1.0** | `main` | 🟢 Activa | Feb 2026 | Indefinido |
-| **0.9** | `v0.9` | 🔴 Legacy | Ene 2026 | Solo críticos |
-| **0.8** | `v0.8` | 🔴 EOL | Dic 2025 | Finalizado |
+| **2.8** | `main` | 🟢 Activa | Mar 2026 | Indefinido |
+| **2.0** | `v2.0` | 🔴 Legacy | Feb 2026 | Solo críticos |
+| **1.0** | `v1.0` | 🔴 EOL | Ene 2026 | Finalizado |
 
 ### Compatibilidad de Navegadores
 
@@ -365,8 +366,8 @@ Para acceso a Swagger UI y dashboards:
 
 ### Compatibilidad de Herramientas
 
-- **Laravel**: 12.x (menor: 11.x)
-- **PHP**: 8.2+, 8.3 recomendado
+- **Laravel**: 12.x
+- **PHP**: 8.4+
 - **MySQL**: 8.0+, 8.4 recomendado
 - **PostgreSQL**: No soportado en v1.0 (futuro)
 
@@ -374,34 +375,17 @@ Para acceso a Swagger UI y dashboards:
 
 
 
--   **100% de cobertura** alcanzado: 56/56 controllers con cache
--   Trait `HasCacheableQueries` implementado en todos los controllers API
--   **Batches completados**: 16 (Batch 1-16)
--   **Controllers implementados**: 56 (excluye AuthController)
--   **Mejoras especiales**:
-    -   5 controllers CRUD completos desde skeleton (CodigoActividadEconomica, DeduccionLegal, LogAccesoSistema, MensajeHacienda, PlanillaCcss)
-    -   Conversión de cache manual a trait (CabyController)
-    -   Cache dual en InventarioController (entradas/salidas)
--   **Performance**:
-    -   Catálogos DGT: 95%+ hit rate, 90-95% más rápido
-    -   Transacciones: 60-75% hit rate, 55-70% más rápido
-    -   RBAC: 90%+ hit rate, 85-92% más rápido
+-   ✅ **Cache optimizado** en todos los controllers API con trait `HasCacheableQueries`
+-   **Controllers implementados**: 93 (100% completitud)
 -   **TTL Strategy**: Optimizado desde 10min a 24h según volatilidad
 -   **Tags por área**: 58 tags únicos para invalidación granular
--   Tests: **187/187 (100%)** ✅
--   Ver detalles: [SPRINT_6_CACHE_OPTIMIZATION.md](SPRINT_6_CACHE_OPTIMIZATION.md)
--   Commits: 7 batches (84af61e, 02e5dc9, 8c3f57a, dc535c8, 7e4a5c7, bc8a62c, 1ea43f2, 49ba9b6, 8d4de8d, cb6a3c1)
 
 **✅ SPRINT 7 - Completitud Controllers y Policies (COMPLETADO) 🎯**
 
--   **15 Controllers** nuevos implementados (77 total - 100% completitud)
--   **15 Policies** nuevas implementadas (72 total - 100% cobertura RBAC)
--   **10 Funcionalidades Bloqueadas** resueltas (incluye DGT crítico)
--   **8,327 líneas** de código productivo agregadas
+-   **93 Controllers** implementados (100% completitud)
+-   **80 Policies** implementadas (100% cobertura RBAC)
 -   Cache strategy contextual (5min - 24h TTL)
 -   OpenAPI completo en todos los endpoints
--   Controllers críticos: ConsecutivoFe (DGT), NominaEmpleado, CajaChica, Archivo, Auditoría
--   Ver detalles: [SPRINT_7_COMPLETITUD_CONTROLLERS_POLICIES.md](SPRINT_7_COMPLETITUD_CONTROLLERS_POLICIES.md)
 
 **✅ FASE 11 - Facturación Electrónica Costa Rica (COMPLETADA) 🇨🇷**
 
@@ -458,103 +442,6 @@ Este ERP proporciona gestión integral de:
 -   **Multi-Tenancy** (soporte para múltiples empresas en una sola instalación)
 
 El sistema está diseñado con las mejores prácticas de desarrollo, siguiendo los estándares de Laravel y con enfoque en escalabilidad, seguridad y facilidad de mantenimiento.
-
-## ✨ Características Principales
-
-### Facturación Electrónica
-
--   ✅ **Emisión de comprobantes electrónicos** según normativa DGT v4.3
--   ✅ **Generación automática de claves** numéricas de 50 caracteres
--   ✅ **Construcción de XML** v4.3 (facturas, tiquetes, notas crédito/débito)
--   ✅ **Firma digital XAdES-EPES** con certificados .p12
--   ✅ **Integración completa con Hacienda** (OAuth 2.0 + Rate limiting)
--   ✅ **Procesamiento asíncrono** con Laravel Queue (envío + consulta + respuesta)
--   ✅ **7 endpoints REST API** (CRUD + download XML + reenviar + anular + estadísticas)
--   ✅ **Ambientes configurables**: Sandbox (ATV) y Producción
--   ✅ **Recepción de comprobantes** electrónicos de proveedores
--   ✅ **Gestión de consecutivos** de facturación
--   ✅ **Integración con códigos CAByS**
--   ✅ **Soporte completo** para tipos 01 (Factura), 02 (Nota Débito), 03 (Nota Crédito), 04 (Tiquete)
--   📘 **Guías completas**: [Setup](FACTURACION_ELECTRONICA_SETUP.md) | [API](FACTURACION_ELECTRONICA_API.md)
--   ✅ **Laravel 12** con PHP 8.2+
--   ✅ **MySQL 8.0+** como motor de base de datos
--   ✅ **Arquitectura Multi-Tenant** con Spatie
--   ✅ **Swagger UI** para testing interactivo
-
-### Autenticación y Autorización
-
--   ✅ Laravel Sanctum para autenticación por tokens API
--   ✅ Sistema RBAC (Role-Based Access Control) completo
--   ✅ 68 permisos granulares (17 módulos × 4 acciones: crear, leer, actualizar, eliminar)
--   ✅ 7 roles predefinidos con permisos configurables
--   ✅ Middleware `CheckPermission` para protección de rutas
--   ✅ Métodos helper en modelo Usuario: `hasPermission()`, `hasRole()`, `hasAnyRole()`, etc.
-
-### Facturación Electrónica
-
--   ✅ Emisión de facturas electrónicas según normativa DGT
--   ✅ Recepción y procesamiento de comprobantes electrónicos
--   ✅ Gestión de consecutivos de facturación
--   ✅ Integración con códigos CAByS
--   ✅ Soporte para múltiples tipos de documento (Factura, Tiquete, Nota de Crédito/Débito)
-
-### Inventario
-
--   ✅ Control multi-almacén
--   ✅ Seguimiento de stock en tiempo real
--   ✅ Gestión de entradas y salidas de inventario
--   ✅ Transferencias entre almacenes
--   ✅ Kardex detallado por producto
--   ✅ Categorización y clasificación de productos
-
-### Contabilidad
-
--   ✅ Plan de cuentas configurable
--   ✅ Asientos contables automáticos y manuales
--   ✅ Cuentas por cobrar y por pagar
--   ✅ Caja chica
--   ✅ Reportes financieros
-
-### Recursos Humanos
-
--   ✅ Gestión de empleados
--   ✅ Cálculo de nómina
--   ✅ Deducciones y bonificaciones
--   ✅ Periodos de pago configurables
-
-### Transporte
-
--   ✅ Gestión de rutas y horarios
--   ✅ Control de flota de buses
--   ✅ Asignación de unidades
--   ✅ Ventas de boletos
-
-### Multi-Tenancy
-
--   ✅ Soporte para múltiples empresas
--   ✅ Aislamiento completo de datos
--   ✅ Configuraciones independientes por tenant
--   📘 Guía y patrón de uso del contexto de empresa: ver `MULTI_TENANCY.md`
-
-## 💻 Requisitos del Sistema
-
--   **PHP**: >= 8.2
--   **Composer**: >= 2.5
--   **Node.js**: >= 18.x
--   **NPM**: >= 9.x
--   **MySQL**: >= 8.0 o **MariaDB**: >= 10.6
--   **Redis** (opcional, recomendado para producción)
--   **Extensiones PHP requeridas**:
-    -   OpenSSL
-    -   PDO
-    -   Mbstring
-    -   Tokenizer
-    -   XML
-    -   Ctype
-    -   JSON
-    -   BCMath
-    -   Fileinfo
-    -   GD o Imagick (para procesamiento de imágenes)
 
 ## 🔧 Instalación
 
@@ -1081,18 +968,19 @@ Ursol-CAST-API/
 │   │   ├── Usuario.php
 │   │   ├── Producto.php
 │   │   └── ...
-│   ├── Services/                    # Servicios de negocio
+│   ├── Services/                    # Servicios de negocio (40)
 │   │   ├── Hacienda/                # Facturación electrónica
 │   │   ├── AI/                      # Servicios de IA
 │   │   ├── Export/                  # Exportación de reportes
-│   │   └── ...
+│   │   └── ...                      # 22 servicios core
+│   ├── CQRS/                        # Patrón CQRS (34 archivos, 3 módulos)
 │   ├── Jobs/                        # Trabajos asíncronos
 │   │   ├── Hacienda/
 │   │   └── ...
 │   ├── Policies/                    # Políticas de autorización RBAC (80 total)
 │   ├── Traits/                      # Comportamientos compartidos
 │   │   ├── BelongsToTenant.php
-│   │   └── HasCacheableQueries.php
+│   │   └── HasCustomSoftDeletes.php
 │   └── Observers/                   # Event observers
 ├── bootstrap/
 │   ├── app.php                      # Bootstrap de aplicación
@@ -1111,7 +999,8 @@ Ursol-CAST-API/
 │   ├── seeders/                     # Data seeders (9 seeders principales)
 │   └── scripts/                     # Scripts de utilidad
 ├── routes/
-│   ├── api.php                      # Rutas REST (559 rutas registradas)
+│   ├── api.php                      # Cargador de rutas API
+│   ├── api/                         # Rutas particionadas (14 archivos)
 │   ├── web.php                      # Rutas web
 │   └── console.php                  # Rutas de consola
 ├── resources/
@@ -1150,23 +1039,19 @@ Ursol-CAST-API/
 
 ## 🧪 Testing
 
-El proyecto cuenta con una **suite completa de 405+ tests** que verifican el funcionamiento de todos los componentes del sistema.
+El proyecto cuenta con una **suite completa de 767 tests** que verifican el funcionamiento de todos los componentes del sistema.
 
-**Estado Actual:** ✅ **405/405 tests passing (100% success rate)**
+**Estado Actual:** ✅ **767/767 tests passing (100% success rate)** — 2392 assertions
 
 ### Base de Datos de Testing
 
-Se utiliza una base de datos MySQL separada para testing:
+Se utiliza SQLite en memoria para testing (rápido y sin dependencias externas):
 
 ```env
-DB_DATABASE=api_db_testing
+DB_CONNECTION=testing
 ```
 
-Crear la base de datos de testing:
-
-```bash
-sudo mysql -u root -e "CREATE DATABASE IF NOT EXISTS api_db_testing;"
-```
+Configurado automáticamente en `phpunit.xml`.
 
 ### Ejecutar Tests
 
@@ -1209,11 +1094,11 @@ tests/
 ```
 
 **Cobertura de Tests:**
-- **Unitarios:** 150+ tests
-- **Feature/E2E:** 70+ tests  
+- **Unitarios:** 408 tests
+- **Feature/E2E:** 359 tests
+- **Servicios (Unit):** 143 tests (6 suites FASE 9 + 4 suites FASE 10)
 - **Helpers:** 50+ tests
 - **Validaciones:** 45+ tests
-- **Servicios:** 35+ tests
 
 ## 🔄 CI/CD Pipeline
 
@@ -1225,8 +1110,8 @@ El proyecto utiliza **GitHub Actions** para integración y despliegue continuo.
 **Trigger:** Push o PR a `main`/`develop`
 
 Ejecuta en cada commit:
-- ✅ Suite completa de PHPUnit (354 tests)
-- ✅ PHPStan nivel 6 (análisis estático)
+- ✅ Suite completa de PHPUnit (767 tests)
+- ✅ PHPStan nivel 8 (análisis estático)
 - ✅ PHP CS Fixer (PSR-12)
 - ✅ Security check (vulnerabilidades)
 - ✅ Coverage mínimo 70%
@@ -1271,7 +1156,7 @@ Pipeline:
 |---------|--------|--------|
 | Tests Passing | 100% | ✅ 100% |
 | Coverage | ≥70% | ✅ 90% |
-| PHPStan | Nivel 6 | ✅ Nivel 6 |
+| PHPStan | Nivel 8 | ✅ Nivel 8 (0 errores) |
 | Complejidad | <10 | ✅ 7.2 |
 | Duplicación | <3% | ✅ 1.8% |
 | Vulnerabilidades | 0 | ✅ 0 |
@@ -1294,18 +1179,9 @@ make rollback          # Rollback de producción
 
 ### Documentación Completa
 
-📖 **[Guía Completa de CI/CD](CI_CD_GUIDE.md)** - Setup, configuración, troubleshooting
-
--   ✅ **186/218 tests passing (85.3%)**
--   ⚠️ **32 tests failing:**
-    -   19 con errores 403 (permisos pendientes de corregir)
-    -   11 con errores 500 (controllers/resources)
-    -   2 con assertion failures (lógica de update)
-
-### Documentación Completa
-
-Ver guía detallada de tests y estado actual en: [INFORME_TESTS_POST_OPTIMIZACION.md](INFORME_TESTS_POST_OPTIMIZACION.md)  
-Testing completado hasta la fase: [FASE_4_TESTING_COMPLETADA.md](FASE_4_TESTING_COMPLETADA.md)
+-   ✅ **767 tests passing (100%)**
+-   ✅ **2,392 assertions**
+-   ✅ **0 failures**
 
 ---
 
@@ -2010,7 +1886,7 @@ Para facturación electrónica:
 # Verificar vulnerabilidades conocidas
 composer audit
 
-# Análisis estático con PHPStan (nivel 6)
+# Análisis estático con PHPStan (nivel 8)
 make phpstan
 
 # OWASP Top 10 check
@@ -2737,23 +2613,14 @@ Esperamos que todos los contribuyentes sean respetuosos y constructivos.
 
 ## 📄 Licencia
 
-Este proyecto está licenciado bajo la **Licencia MIT**.
+Este software es **propiedad exclusiva de Sistemas Ursol S.A.** Todos los derechos están reservados.
 
-### Resumen MT
+- ❌ No se permite copiar, distribuir o transmitir este software sin autorización
+- ❌ No se permite modificar, descompilar o hacer ingeniería inversa
+- ❌ No se permite revender, sublicenciar o transferir derechos
+- ✅ Uso exclusivo bajo acuerdo de licencia con Sistemas Ursol S.A.
 
-Puedes:
-- ✅ Usar comercialmente
-- ✅ Hacer modificaciones
-- ✅ Distribuir
-- ✅ Usar privadamente
-
-Debes:
-- ℹ️ Incluir aviso de licencia
-- ℹ️ Incluir copia de la licencia
-
-No incluye:
-- ❌ Garantía
-- ❌ Responsabilidad
+**Desarrollado por:** Jeremy Arias Solano — Co-fundador de Sistemas Ursol S.A.
 
 **[Ver licencia completa](LICENSE)**
 
@@ -2865,12 +2732,13 @@ Incluye:
 - Líder estratégico del proyecto
 - GitHub: [@ursolcr](https://github.com/ursolcr)
 
-### Desarrollador Principal
+### Desarrollador Principal y Arquitecto
 
 **Jeremy Arias Solano**  
-- Arquitecto de software
-- Especialista en Laravel y sistemas ERP
-- Desarrollo activo y mantenimiento
+- Co-fundador de Sistemas Ursol S.A.
+- Arquitecto de software y desarrollador completo de Ursol CAST API
+- Especialista en Laravel, PHP y sistemas ERP
+- Diseño, desarrollo, testing y mantenimiento integral
 - GitHub: [@jeremy-sud](https://github.com/jeremy-sud)
 
 ### En Desarrollo
@@ -2895,13 +2763,13 @@ Estamos siempre buscando:
   📞 <a href="https://wa.me/50688687765">+506 8868-7765</a> | 
   📧 <a href="mailto:sistemas@ursol.com">sistemas@ursol.com</a><br><br>
   <sub>© 2026 Sistemas Ursol S.A. - Todos los derechos reservados</sub><br>
-  <sub>Licencia MIT - Código Abierto y Libre</sub>
+  <sub>Software Propietario — Uso exclusivo bajo licencia</sub>
 </p>
 
 ---
 
-**Última actualización:** 11 de Febrero 2026
+**Última actualización:** 5 de Marzo 2026
 
-**Versión:** 1.0.0
+**Versión:** 2.8.0
 
 **Estado:** ✅ Producción-Ready (Recomendado)
