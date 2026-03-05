@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\AsientoContable;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -31,6 +32,14 @@ class AsientoContableService
             $data['total_debe'] = $totalDebe;
             $data['total_haber'] = $totalHaber;
             $data['estado'] = $data['estado'] ?? 'Borrador';
+
+            if (empty($data['numero_asiento'])) {
+                $data['numero_asiento'] = $this->generarNumeroAsiento($data['empresa_id'] ?? null);
+            }
+
+            if (empty($data['usuario_id']) && Auth::check()) {
+                $data['usuario_id'] = Auth::id();
+            }
 
             $asiento = AsientoContable::create($data);
 
@@ -144,5 +153,28 @@ class AsientoContableService
     public function validarBalanceo(AsientoContable $asiento): bool
     {
         return abs($asiento->total_debe - $asiento->total_haber) < 0.01;
+    }
+
+    /**
+     * Generar número de asiento correlativo por empresa y año.
+     */
+    private function generarNumeroAsiento(?int $empresaId): string
+    {
+        $year = now()->year;
+        $prefix = "ASI-{$year}-";
+
+        $last = AsientoContable::withoutGlobalScopes()
+            ->when($empresaId, fn($q) => $q->where('empresa_id', $empresaId))
+            ->where('numero_asiento', 'like', $prefix . '%')
+            ->orderByDesc('numero_asiento')
+            ->value('numero_asiento');
+
+        $next = 1;
+        if ($last) {
+            $parts = explode('-', $last);
+            $next = ((int) end($parts)) + 1;
+        }
+
+        return $prefix . str_pad((string) $next, 6, '0', STR_PAD_LEFT);
     }
 }

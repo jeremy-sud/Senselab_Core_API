@@ -11,6 +11,10 @@ use App\Traits\HasActiveScope;
 class DetalleSalidaInventario extends Model
 {
     use HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
+
+    const CREATED_AT = 'creado_en';
+    const UPDATED_AT = 'actualizado_en';
+
     /**
      * La tabla asociada al modelo.
      *

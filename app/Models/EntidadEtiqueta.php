@@ -12,6 +12,10 @@ use Illuminate\Support\Str;
 class EntidadEtiqueta extends Model
 {
     use HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
+
+    const CREATED_AT = 'creado_en';
+    const UPDATED_AT = 'actualizado_en';
+
     protected $table = 'entidad_etiquetas';
 
     protected $fillable = [
