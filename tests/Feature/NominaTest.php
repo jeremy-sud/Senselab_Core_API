@@ -230,7 +230,7 @@ class NominaTest extends TestCase
             'nombre_periodo' => 'Enero 2025 - Quincena 1',
             'fecha_inicio' => '2025-01-01',
             'fecha_fin' => '2025-01-15',
-            'fecha_pago_estimada' => '2025-01-16',
+            'fecha_pago' => '2025-01-16',
             'estado' => 'Abierto',
             'observaciones' => 'Primer período de nómina',
             'activo' => true,

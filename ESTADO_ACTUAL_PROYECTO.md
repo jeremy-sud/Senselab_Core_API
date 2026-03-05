@@ -1,6 +1,6 @@
 # Estado Actual del Proyecto - Ursol CAST API
 
-**Fecha de actualización:** 2 de julio 2025  
+**Fecha de actualización:** 5 de marzo 2026  
 **Desarrollado por:** Sistemas Ursol S.A.  
 **Desarrollador principal:** Jeremy Arias Solano  
 
@@ -8,6 +8,7 @@
 > v2.3.0: Auditoría integral — 9 relaciones faltantes, MetricsController reescrito, AppServiceProvider refactorizado, 4 test suites nuevos  
 > v2.4.0: Sprint 7.1 (Limpieza Crítica) + Sprint 7.2 (Tests Críticos) — 18 DTOs duplicados eliminados, 15 seeders duplicados eliminados, PHP unificado a 8.4, 4 test suites nuevos (Inventario, Contabilidad, Compras, Nómina)
 > v2.5.0: FASE 8 — Service Layer Pattern en 6 módulos críticos (Almacén, CuentaContable, Proveedor, Empleado, OrdenCompra, PeriodoNomina). 5 servicios nuevos + 1 mejorado, 6 controladores refactorizados (~50% reducción promedio)
+> v2.6.0: FASE 9 — Tests unitarios para servicios FASE 8 (86 tests nuevos) + corrección de 10 bugs críticos de mapeo DB pre-existentes
 
 ---
 
@@ -22,7 +23,8 @@
 - **Traits Reutilizables:** 10+ (1 deprecated: EncryptsAttributes)
 - **Observers:** 6+ (registrados en ObserverServiceProvider dedicado)
 - **Services:** 37 (10 AI, 9 Hacienda, 18 core/utilidad — 5 nuevos + 1 mejorado en FASE 8)
-- **Tests (archivos):** 55 archivos (+4 nuevos: Inventario, Contabilidad, Compras, Nómina)
+- **Tests (archivos):** 61 archivos (+6 nuevos: tests unitarios servicios FASE 8)
+- **Tests (total):** 162 tests, 351 assertions — 100% passing
 - **Providers:** 4 (AppServiceProvider, AuthServiceProvider, ObserverServiceProvider, CQRSServiceProvider)
 - **Rutas API:** Configuradas en routes/api.php con versionado
 
@@ -338,4 +340,82 @@ Extraer lógica de negocio de 6 controladores críticos a servicios dedicados, s
 8. `PeriodoNominaController` → `PeriodoNominaService` (FASE 8)
 
 **FASE 8 COMPLETADA** ✅
+
+---
+
+## 🧪 v2.6.0: FASE 9 — TESTS UNITARIOS SERVICIOS + CORRECCIÓN BUGS CRÍTICOS (5 mar 2026)
+
+### Bugs Pre-existentes Descubiertos y Corregidos
+
+#### EmpleadoService — Columnas DB incorrectas
+- ❌ `primer_nombre` → ✅ `nombre` (campo de búsqueda)
+- ❌ `numero_identificacion` → ✅ `numero_documento` (campo de búsqueda)
+- **Archivo:** `app/Services/EmpleadoService.php`
+
+#### EmpleadoController — Validación con campos inexistentes
+- ❌ `primer_nombre` → ✅ `nombre`
+- ❌ `tipo_identificacion` → ✅ `tipo_documento`
+- ❌ `numero_identificacion` → ✅ `numero_documento`
+- ❌ `salario_base` → ✅ `salario`
+- ❌ `email_corporativo` → ✅ `email`
+- ❌ `telefono_movil` → ✅ `telefono`
+- ❌ `exists:users,id` → ✅ `exists:usuarios,id`
+- **Archivo:** `app/Http/Controllers/API/EmpleadoController.php` (store + update + OA annotations)
+
+#### PeriodoNomina — Columna `fecha_pago_estimada` inexistente
+- ❌ `fecha_pago_estimada` → ✅ `fecha_pago` (columna real en DB)
+- **Archivos afectados (5):** `StorePeriodoNominaRequest`, `UpdatePeriodoNominaRequest`, `PeriodoNominaResource`, `PeriodoNominaController` (OA), `NominaTest`
+
+#### PeriodoNominaResource — Timestamps incorrectos
+- ❌ `$this->created_at` → ✅ `$this->creado_en`
+- ❌ `$this->updated_at` → ✅ `$this->actualizado_en`
+
+#### Modelo Empleado — Constantes de timestamp faltantes
+- Agregado `const CREATED_AT = 'creado_en'; const UPDATED_AT = 'actualizado_en';`
+- Sin esto, Laravel insertaba `created_at`/`updated_at` (columnas inexistentes)
+
+#### Modelo DetalleOrdenCompra — Constantes de timestamp faltantes
+- Agregado `const CREATED_AT = 'creado_en'; const UPDATED_AT = 'actualizado_en';`
+
+#### OrdenCompraService — Columnas de detalle incorrectas
+- ❌ `descuento`, `subtotal`, `descripcion` → ✅ `porcentaje_impuesto`, `subtotal_linea`, `total_linea`, `monto_impuesto`, `detalle_adicional`
+- Agregado defaults `subtotal=0`, `impuesto_total=0`, `total_orden=0` en `crear()` (NOT NULL constraint)
+
+#### CuentaContableService — Syntax error
+- Texto perdido `PeriodoNominaController.php` después de llave de cierre en línea 47
+
+### Tests Unitarios Creados (6 archivos, 86 tests)
+
+| Suite | Tests | Assertions | Lógica Clave Verificada |
+|-------|-------|------------|------------------------|
+| `AlmacenServiceTest` | 13 | 24 | es_principal, desmarcarPrincipales, no eliminar principal |
+| `CuentaContableServiceTest` | 16 | 38 | Árbol jerárquico, subcuentas, multi-filtro, empresa scoping |
+| `EmpleadoServiceTest` | 12 | 20 | Búsqueda multi-campo, CRUD con cargo/departamento FK |
+| `OrdenCompraServiceTest` | 12 | 21 | Auto numero_orden, cálculo totales, borrador-only delete |
+| `PeriodoNominaServiceTest` | 20 | 34 | Máquina de estados (Abierto→Cerrado→Procesado), resumen |
+| `ProveedorServiceTest` | 13 | 25 | Búsqueda multi-campo, saldo pendiente, soft delete |
+| **Total** | **86** | **162** | |
+
+### Archivos Modificados (Bugs)
+1. `app/Services/EmpleadoService.php` — Campos de búsqueda corregidos
+2. `app/Http/Controllers/API/EmpleadoController.php` — Validación store/update + OA
+3. `app/Http/Requests/StorePeriodoNominaRequest.php` — fecha_pago 
+4. `app/Http/Requests/UpdatePeriodoNominaRequest.php` — fecha_pago
+5. `app/Http/Resources/PeriodoNominaResource.php` — fecha_pago + timestamps
+6. `app/Http/Controllers/API/PeriodoNominaController.php` — OA annotations
+7. `tests/Feature/NominaTest.php` — fecha_pago
+8. `app/Models/Empleado.php` — CREATED_AT/UPDATED_AT constants
+9. `app/Models/DetalleOrdenCompra.php` — CREATED_AT/UPDATED_AT constants
+10. `app/Services/OrdenCompraService.php` — Columnas detalle + defaults totales
+11. `app/Services/CuentaContableService.php` — Syntax error fix
+
+### Archivos Creados (Tests)
+1. `tests/Unit/Services/AlmacenServiceTest.php`
+2. `tests/Unit/Services/CuentaContableServiceTest.php`
+3. `tests/Unit/Services/EmpleadoServiceTest.php`
+4. `tests/Unit/Services/OrdenCompraServiceTest.php`
+5. `tests/Unit/Services/PeriodoNominaServiceTest.php`
+6. `tests/Unit/Services/ProveedorServiceTest.php`
+
+**FASE 9 COMPLETADA** ✅
 

@@ -68,6 +68,9 @@ class OrdenCompraService
     {
         return DB::transaction(function () use ($data, $detalles) {
             $data['numero_orden'] = $this->generarNumeroOrden($data['empresa_id']);
+            $data['subtotal'] = $data['subtotal'] ?? 0;
+            $data['impuesto_total'] = $data['impuesto_total'] ?? 0;
+            $data['total_orden'] = $data['total_orden'] ?? 0;
 
             $orden = OrdenCompra::create($data);
 
@@ -77,19 +80,25 @@ class OrdenCompraService
             foreach ($detalles as $detalle) {
                 $cantidad = $detalle['cantidad'];
                 $precioUnitario = $detalle['precio_unitario'];
-                $descuento = $detalle['descuento'] ?? 0;
+                $porcentajeImpuesto = $detalle['porcentaje_impuesto'] ?? 0;
 
-                $subtotal = ($cantidad * $precioUnitario) - $descuento;
-                $montoSubtotal += $subtotal;
+                $subtotalLinea = $cantidad * $precioUnitario;
+                $montoImpuesto = $subtotalLinea * ($porcentajeImpuesto / 100);
+                $totalLinea = $subtotalLinea + $montoImpuesto;
+
+                $montoSubtotal += $subtotalLinea;
+                $montoImpuestos += $montoImpuesto;
 
                 DetalleOrdenCompra::create([
                     'orden_compra_id' => $orden->id,
                     'producto_id' => $detalle['producto_id'],
                     'cantidad' => $cantidad,
                     'precio_unitario' => $precioUnitario,
-                    'descuento' => $descuento,
-                    'subtotal' => $subtotal,
-                    'descripcion' => $detalle['descripcion'] ?? null,
+                    'porcentaje_impuesto' => $porcentajeImpuesto,
+                    'monto_impuesto' => $montoImpuesto,
+                    'subtotal_linea' => $subtotalLinea,
+                    'total_linea' => $totalLinea,
+                    'detalle_adicional' => $detalle['detalle_adicional'] ?? null,
                 ]);
             }
 

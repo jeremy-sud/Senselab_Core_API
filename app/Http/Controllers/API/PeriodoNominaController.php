@@ -77,12 +77,12 @@ class PeriodoNominaController extends Controller
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
-                required: ['nombre_periodo', 'fecha_inicio', 'fecha_fin', 'fecha_pago_estimada'],
+                required: ['nombre_periodo', 'fecha_inicio', 'fecha_fin'],
                 properties: [
                     new OA\Property(property: 'nombre_periodo', type: 'string', maxLength: 100, example: 'Enero 2024 - Primera Quincena'),
                     new OA\Property(property: 'fecha_inicio', type: 'string', format: 'date', example: '2024-01-01'),
                     new OA\Property(property: 'fecha_fin', type: 'string', format: 'date', example: '2024-01-15'),
-                    new OA\Property(property: 'fecha_pago_estimada', type: 'string', format: 'date', example: '2024-01-17'),
+                    new OA\Property(property: 'fecha_pago', type: 'string', format: 'date', example: '2024-01-17'),
                     new OA\Property(property: 'observaciones', type: 'string', nullable: true)
                 ]
             )
@@ -150,7 +150,7 @@ class PeriodoNominaController extends Controller
                     new OA\Property(property: 'nombre_periodo', type: 'string', maxLength: 100),
                     new OA\Property(property: 'fecha_inicio', type: 'string', format: 'date'),
                     new OA\Property(property: 'fecha_fin', type: 'string', format: 'date'),
-                    new OA\Property(property: 'fecha_pago_estimada', type: 'string', format: 'date'),
+                    new OA\Property(property: 'fecha_pago', type: 'string', format: 'date'),
                     new OA\Property(property: 'observaciones', type: 'string', nullable: true)
                 ]
             )

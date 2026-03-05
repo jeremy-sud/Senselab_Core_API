@@ -21,6 +21,12 @@ class Empleado extends Model
     protected $table = 'empleados';
 
     /**
+     * Nombres personalizados de las marcas de tiempo.
+     */
+    const CREATED_AT = 'creado_en';
+    const UPDATED_AT = 'actualizado_en';
+
+    /**
      * Atributos asignables.
      *
      * @var list<string>
