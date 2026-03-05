@@ -120,8 +120,8 @@ return [
             ],
         ],
 
-        // Modelo Comprobante - referencias de transacciones
-        'App\Models\Comprobante' => [
+        // Modelo ComprobanteElectronicoFe - referencias de transacciones
+        'App\Models\ComprobanteElectronicoFe' => [
             'reference_number' => [
                 'enabled' => true,
                 'description' => 'Número de referencia de pago/transacción',
@@ -148,8 +148,8 @@ return [
             ],
         ],
 
-        // Modelo InventarioMovimiento - seriales de productos
-        'App\Models\InventarioMovimiento' => [
+        // Modelo EntradaInventario - seriales de productos
+        'App\Models\EntradaInventario' => [
             'serial_number' => [
                 'enabled' => true,
                 'description' => 'Número serial del producto',

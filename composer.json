@@ -41,7 +41,7 @@
         "docs": "https://sites.google.com/view/repdevursol/home/repositorio"
     },
     "require": {
-        "php": "^8.2",
+        "php": "^8.4",
         "barryvdh/laravel-dompdf": "^3.1",
         "darkaonline/l5-swagger": "^9.0",
         "laravel/framework": "^12.0",

@@ -3,31 +3,35 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\OrdenCompra;
-use App\Models\DetalleOrdenCompra;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreOrdenCompraRequest;
 use App\Http\Requests\UpdateOrdenCompraRequest;
 use App\Http\Resources\OrdenCompraResource;
-use App\Traits\HasCacheableQueries;
+use App\Models\OrdenCompra;
+use App\Services\OrdenCompraService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use OpenApi\Attributes as OA;
 
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-
+/**
+ * OrdenCompraController - Versión Refactorizada (FASE 8)
+ *
+ * Controlador simplificado usando Service Layer Pattern.
+ * Delegación: Validación → Service → Response
+ *
+ * Reducción de líneas: 356 → ~185 (-48%)
+ * Refactorización completada: FASE 8
+ *
+ * @package App\Http\Controllers\API
+ * @author Sistemas Ursol S.A.
+ */
 class OrdenCompraController extends Controller
 {
-    use HasCacheableQueries;
+    public function __construct(private OrdenCompraService $ordenCompraService) {}
 
-    /** @var array<int,string> */
-    /** @var array<int, string> */
-    protected array $cacheTags = ['ordenes-compra', 'transacciones'];
-    protected int $cacheTTL = 900; // 15 minutos
     /**
-     * Display a listing of the resource.
-     *
-     * @param Request $request
-     * @return AnonymousResourceCollection
+     * GET /api/ordenes-compra
+     * Listar órdenes de compra con filtros
      */
     #[OA\Get(
         path: '/api/ordenes-compra',
@@ -51,57 +55,17 @@ class OrdenCompraController extends Controller
     {
         $this->authorize('viewAny', OrdenCompra::class);
 
-        try {
-            $perPage = $request->input('per_page', 15);
-            $empresaId = $request->input('empresa_id');
-            $proveedorId = $request->input('proveedor_id');
-            $estado = $request->input('estado');
+        $ordenes = $this->ordenCompraService->listar(
+            filtros: $request->only(['empresa_id', 'proveedor_id', 'estado', 'pendientes', 'activas']),
+            perPage: (int) $request->input('per_page', 15)
+        );
 
-            $ordenes = $this->cacheQueryIfEnabled(
-                $this->getCacheKey('index', $request->all()),
-                function() use ($request, $perPage, $empresaId, $proveedorId, $estado) {
-                    $query = OrdenCompra::with([
-                        'empresa',
-                        'proveedor',
-                        'usuario'
-                    ]);
-
-                    if ($empresaId) {
-                        $query->porEmpresa($empresaId);
-                    }
-
-                    if ($proveedorId) {
-                        $query->porProveedor($proveedorId);
-                    }
-
-                    if ($estado) {
-                        $query->where('estado', $estado);
-                    }
-
-                    if ($request->boolean('pendientes')) {
-                        $query->pendientes();
-                    }
-
-                    if ($request->boolean('activas')) {
-                        $query->activas();
-                    }
-
-                    return $query->orderBy('id', 'desc')->paginate($perPage);
-                }
-            );
-
-            return OrdenCompraResource::collection($ordenes);
-        } catch (\Exception $e) {
-            report($e);
-            throw $e;
-        }
+        return OrdenCompraResource::collection($ordenes);
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param StoreOrdenCompraRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * POST /api/ordenes-compra
+     * Crear una nueva orden de compra con detalles
      */
     #[OA\Post(
         path: '/api/ordenes-compra',
@@ -141,78 +105,31 @@ class OrdenCompraController extends Controller
             new OA\Response(response: 201, description: 'Orden creada', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', ref: '#/components/schemas/OrdenCompra')]))
         ]
     )]
-    public function store(StoreOrdenCompraRequest $request): \Illuminate\Http\JsonResponse
+    public function store(StoreOrdenCompraRequest $request): JsonResponse
     {
         $this->authorize('create', OrdenCompra::class);
 
         try {
-            DB::beginTransaction();
+            $orden = $this->ordenCompraService->crear(
+                data: $request->except('detalles'),
+                detalles: $request->detalles
+            );
 
-            try {
-                // Crear orden de compra
-                $ordenData = $request->except('detalles');
-                $ordenData['numero_orden'] = $this->generarNumeroOrden($request->empresa_id);
-
-                $orden = OrdenCompra::create($ordenData);
-
-                // Crear detalles
-                $montoSubtotal = 0;
-                $montoImpuestos = 0;
-
-                foreach ($request->detalles as $detalle) {
-                    $cantidad = $detalle['cantidad'];
-                    $precioUnitario = $detalle['precio_unitario'];
-                    $descuento = $detalle['descuento'] ?? 0;
-
-                    $subtotal = ($cantidad * $precioUnitario) - $descuento;
-                    $montoSubtotal += $subtotal;
-
-                    DetalleOrdenCompra::create([
-                        'orden_compra_id' => $orden->id,
-                        'producto_id' => $detalle['producto_id'],
-                        'cantidad' => $cantidad,
-                        'precio_unitario' => $precioUnitario,
-                        'descuento' => $descuento,
-                        'subtotal' => $subtotal,
-                        'descripcion' => $detalle['descripcion'] ?? null,
-                    ]);
-                }
-
-                // Actualizar totales
-                $orden->update([
-                    'subtotal' => $montoSubtotal,
-                    'impuesto_total' => $montoImpuestos,
-                    'total_orden' => $montoSubtotal + $montoImpuestos,
-                ]);
-
-                $this->flushCache();
-                DB::commit();
-
-                $orden->load(['proveedor', 'detalles.producto']);
-
-                return (new OrdenCompraResource($orden))
-                    ->additional(['message' => 'Orden de compra creada exitosamente'])
-                    ->response()
-                    ->setStatusCode(201);
-
-            } catch (\Exception $e) {
-                DB::rollBack();
-                throw $e;
-            }
-
+            return (new OrdenCompraResource($orden->load(['proveedor', 'detalles.producto'])))
+                ->additional(['message' => 'Orden de compra creada exitosamente'])
+                ->response()
+                ->setStatusCode(201);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al crear orden de compra',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param int $id
-     * @return OrdenCompraResource
+     * GET /api/ordenes-compra/{id}
+     * Detalles completos de una orden
      */
     #[OA\Get(
         path: '/api/ordenes-compra/{id}',
@@ -228,32 +145,15 @@ class OrdenCompraController extends Controller
     )]
     public function show(int $id): OrdenCompraResource
     {
-        try {
-            $orden = OrdenCompra::with([
-                'empresa',
-                'proveedor',
-                'usuario',
-                'detalles.producto',
-                'pagos',
-                'entradasInventario'
-            ])->findOrFail($id);
-            $this->authorize('view', $orden);
+        $orden = $this->ordenCompraService->obtener($id);
+        $this->authorize('view', $orden);
 
-            // Calcular saldo pendiente
-            $orden->saldo_pendiente = $orden->calcularSaldoPendiente();
-
-            return new OrdenCompraResource($orden);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404, 'Orden de compra no encontrada');
-        }
+        return new OrdenCompraResource($orden);
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param UpdateOrdenCompraRequest $request
-     * @param int $id
-     * @return OrdenCompraResource
+     * PUT /api/ordenes-compra/{id}
+     * Actualizar una orden de compra
      */
     #[OA\Put(
         path: '/api/ordenes-compra/{id}',
@@ -265,28 +165,18 @@ class OrdenCompraController extends Controller
     )]
     public function update(UpdateOrdenCompraRequest $request, int $id): OrdenCompraResource
     {
-        try {
-            $orden = OrdenCompra::with([
-                'proveedor',
-                'detalles.producto',
-                'empresa'
-            ])->findOrFail($id);
-            $this->authorize('update', $orden);
+        $orden = OrdenCompra::findOrFail($id);
+        $this->authorize('update', $orden);
 
-            $orden->update($request->validated());
+        $orden = $this->ordenCompraService->actualizar($orden, $request->validated());
 
-            return (new OrdenCompraResource($orden))
-                ->additional(['message' => 'Orden de compra actualizada exitosamente']);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404, 'Orden de compra no encontrada');
-        }
+        return (new OrdenCompraResource($orden))
+            ->additional(['message' => 'Orden de compra actualizada exitosamente']);
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * DELETE /api/ordenes-compra/{id}
+     * Eliminar orden de compra (solo en borrador)
      */
     #[OA\Delete(
         path: '/api/ordenes-compra/{id}',
@@ -300,56 +190,15 @@ class OrdenCompraController extends Controller
             new OA\Response(response: 422, description: 'Solo se pueden eliminar en estado borrador')
         ]
     )]
-    public function destroy(int $id): \Illuminate\Http\JsonResponse
+    public function destroy(int $id): JsonResponse
     {
         $orden = OrdenCompra::with(['detalles'])->findOrFail($id);
         $this->authorize('delete', $orden);
 
-        // Solo permitir eliminar en estado borrador
-        if ($orden->estado !== 'borrador') {
-            return response()->json([
-                'message' => 'Solo se pueden eliminar órdenes en estado borrador'
-            ], 422);
-        }
+        $this->ordenCompraService->eliminar($orden);
 
-        DB::beginTransaction();
-        try {
-            // Eliminar detalles
-            $orden->detalles()->delete();
-
-            // Soft delete de la orden
-            $orden->update([
-                'activo' => false,
-                'eliminado' => true
-            ]);
-
-            $this->flushCache();
-            DB::commit();
-
-            return response()->json([
-                'message' => 'Orden de compra eliminada exitosamente'
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            report($e);
-            throw $e;
-        }
-    }
-
-    /**
-     * Generar número de orden único
-     *
-     * @param int $empresaId
-     * @return string
-     */
-    private function generarNumeroOrden(int $empresaId): string
-    {
-        $ultimaOrden = OrdenCompra::where('empresa_id', $empresaId)
-                                  ->orderBy('id', 'desc')
-                                  ->first();
-
-        $numero = $ultimaOrden ? (int)substr($ultimaOrden->numero_orden, -6) + 1 : 1;
-
-        return 'OC-' . str_pad($numero, 6, '0', STR_PAD_LEFT);
+        return response()->json([
+            'message' => 'Orden de compra eliminada exitosamente',
+        ]);
     }
 }

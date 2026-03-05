@@ -279,6 +279,51 @@ abstract class TestCase extends BaseTestCase
             ['nombre' => 'Crear Facturación Electrónica', 'slug' => 'crear-facturacion_electronica', 'modulo' => 'Facturación Electrónica'],
             ['nombre' => 'Editar Facturación Electrónica', 'slug' => 'editar-facturacion_electronica', 'modulo' => 'Facturación Electrónica'],
             ['nombre' => 'Eliminar Facturación Electrónica', 'slug' => 'eliminar-facturacion_electronica', 'modulo' => 'Facturación Electrónica'],
+            // Almacenes
+            ['nombre' => 'Ver Almacenes', 'slug' => 'ver-almacenes', 'modulo' => 'Inventario'],
+            ['nombre' => 'Crear Almacenes', 'slug' => 'crear-almacenes', 'modulo' => 'Inventario'],
+            ['nombre' => 'Editar Almacenes', 'slug' => 'editar-almacenes', 'modulo' => 'Inventario'],
+            ['nombre' => 'Eliminar Almacenes', 'slug' => 'eliminar-almacenes', 'modulo' => 'Inventario'],
+            // Contabilidad
+            ['nombre' => 'Ver Contabilidad', 'slug' => 'ver-contabilidad', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Crear Contabilidad', 'slug' => 'crear-contabilidad', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Editar Contabilidad', 'slug' => 'editar-contabilidad', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Eliminar Contabilidad', 'slug' => 'eliminar-contabilidad', 'modulo' => 'Contabilidad'],
+            // Nómina
+            ['nombre' => 'Ver Nómina', 'slug' => 'ver-nomina', 'modulo' => 'Nómina'],
+            ['nombre' => 'Crear Nómina', 'slug' => 'crear-nomina', 'modulo' => 'Nómina'],
+            ['nombre' => 'Editar Nómina', 'slug' => 'editar-nomina', 'modulo' => 'Nómina'],
+            ['nombre' => 'Eliminar Nómina', 'slug' => 'eliminar-nomina', 'modulo' => 'Nómina'],
+            // Catálogos generales
+            ['nombre' => 'Ver Catálogos', 'slug' => 'ver-catalogos', 'modulo' => 'Catálogos'],
+            ['nombre' => 'Crear Catálogos', 'slug' => 'crear-catalogos', 'modulo' => 'Catálogos'],
+            ['nombre' => 'Editar Catálogos', 'slug' => 'editar-catalogos', 'modulo' => 'Catálogos'],
+            ['nombre' => 'Eliminar Catálogos', 'slug' => 'eliminar-catalogos', 'modulo' => 'Catálogos'],
+            // Categorías de Productos
+            ['nombre' => 'Ver Categorías Producto', 'slug' => 'ver-categorias_producto', 'modulo' => 'Inventario'],
+            ['nombre' => 'Crear Categorías Producto', 'slug' => 'crear-categorias_producto', 'modulo' => 'Inventario'],
+            ['nombre' => 'Editar Categorías Producto', 'slug' => 'editar-categorias_producto', 'modulo' => 'Inventario'],
+            ['nombre' => 'Eliminar Categorías Producto', 'slug' => 'eliminar-categorias_producto', 'modulo' => 'Inventario'],
+            // Cuentas Contables
+            ['nombre' => 'Ver Cuentas Contables', 'slug' => 'ver-cuentas_contables', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Crear Cuentas Contables', 'slug' => 'crear-cuentas_contables', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Editar Cuentas Contables', 'slug' => 'editar-cuentas_contables', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Eliminar Cuentas Contables', 'slug' => 'eliminar-cuentas_contables', 'modulo' => 'Contabilidad'],
+            // Asientos Contables
+            ['nombre' => 'Ver Asientos Contables', 'slug' => 'ver-asientos_contables', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Crear Asientos Contables', 'slug' => 'crear-asientos_contables', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Editar Asientos Contables', 'slug' => 'editar-asientos_contables', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Eliminar Asientos Contables', 'slug' => 'eliminar-asientos_contables', 'modulo' => 'Contabilidad'],
+            // Tipos de Cambio
+            ['nombre' => 'Ver Tipos de Cambio', 'slug' => 'ver-tipos_cambio', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Crear Tipos de Cambio', 'slug' => 'crear-tipos_cambio', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Editar Tipos de Cambio', 'slug' => 'editar-tipos_cambio', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Eliminar Tipos de Cambio', 'slug' => 'eliminar-tipos_cambio', 'modulo' => 'Contabilidad'],
+            // Empleados
+            ['nombre' => 'Ver Empleados', 'slug' => 'ver-empleados', 'modulo' => 'Nómina'],
+            ['nombre' => 'Crear Empleados', 'slug' => 'crear-empleados', 'modulo' => 'Nómina'],
+            ['nombre' => 'Editar Empleados', 'slug' => 'editar-empleados', 'modulo' => 'Nómina'],
+            ['nombre' => 'Eliminar Empleados', 'slug' => 'eliminar-empleados', 'modulo' => 'Nómina'],
         ];
 
         foreach ($permisos as $permiso) {

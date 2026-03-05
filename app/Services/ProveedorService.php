@@ -2,87 +2,130 @@
 
 namespace App\Services;
 
-use App\DTOs\API\ProveedorCreateDTO;
-use App\DTOs\API\ProveedorUpdateDTO;
 use App\Models\Proveedor;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
- * Servicio para gestionar Proveedores
+ * ProveedorService - Servicio de Gestión de Proveedores
  *
- * Encapsula la lógica de negocio para proveedores
+ * Encapsula la lógica de negocio para proveedores:
+ * - CRUD operations
+ * - Búsqueda multi-campo (nombre, nombre_comercial, número, email)
+ * - Carga de relaciones (órdenes recientes, cuentas pendientes)
+ * - Soft delete
+ *
  * Fecha de creación: 12 de febrero de 2026
+ * Refactorizado FASE 8 - Service Layer Pattern
  */
 class ProveedorService
 {
     /**
-     * Crear un nuevo proveedor
+     * Listar proveedores con filtros opcionales
+     *
+     * @param array<string, mixed> $filtros
+     * @param int $perPage
+     * @return LengthAwarePaginator
      */
-    public function crear(ProveedorCreateDTO $dto): Proveedor
+    public function listar(array $filtros = [], int $perPage = 15): LengthAwarePaginator
     {
-        return Proveedor::create($dto->toArray());
+        $query = Proveedor::with('empresa');
+
+        if (!empty($filtros['search'])) {
+            $search = $filtros['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('nombre', 'like', "%{$search}%")
+                    ->orWhere('nombre_comercial', 'like', "%{$search}%")
+                    ->orWhere('numero_identificacion', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if (!empty($filtros['empresa_id'])) {
+            $query->where('empresa_id', $filtros['empresa_id']);
+        }
+
+        if (!empty($filtros['activos'])) {
+            $query->where('activo', true);
+        }
+
+        return $query->orderBy('id', 'asc')->paginate($perPage);
+    }
+
+    /**
+     * Crear un nuevo proveedor
+     *
+     * @param array<string, mixed> $data
+     * @return Proveedor
+     */
+    public function crear(array $data): Proveedor
+    {
+        $proveedor = Proveedor::create($data);
+
+        return $proveedor->load('empresa');
+    }
+
+    /**
+     * Obtener proveedor por ID con relaciones detalladas
+     *
+     * Incluye últimas 10 órdenes de compra y cuentas por pagar pendientes.
+     *
+     * @param int $id
+     * @return Proveedor
+     */
+    public function obtener(int $id): Proveedor
+    {
+        return Proveedor::with([
+            'empresa',
+            'ordenesCompra' => function ($query) {
+                $query->latest()->limit(10);
+            },
+            'cuentasPorPagar' => function ($query) {
+                $query->where('estado', 'pendiente');
+            },
+        ])->findOrFail($id);
     }
 
     /**
      * Actualizar un proveedor existente
+     *
+     * @param Proveedor $proveedor
+     * @param array<string, mixed> $data
+     * @return Proveedor
      */
-    public function actualizar(Proveedor $proveedor, ProveedorUpdateDTO $dto): Proveedor
+    public function actualizar(Proveedor $proveedor, array $data): Proveedor
     {
-        $proveedor->update($dto->toArray());
-        return $proveedor->fresh() ?? $proveedor;
+        $proveedor->update($data);
+
+        return $proveedor->load('empresa');
     }
 
     /**
-     * Eliminar un proveedor
+     * Eliminar un proveedor (soft delete)
+     *
+     * @param Proveedor $proveedor
+     * @return bool
      */
     public function eliminar(Proveedor $proveedor): bool
     {
-        return (bool) $proveedor->delete();
-    }
+        $proveedor->update([
+            'activo' => false,
+            'eliminado' => true,
+        ]);
 
-    /**
-     * Obtener proveedor por ID
-     */
-    public function obtener(int $proveedorId): ?Proveedor
-    {
-        return Proveedor::find($proveedorId);
-    }
-
-    /**
-     * Listar proveedores con paginación
-     */
-    public function listar(int $perPage = 15): LengthAwarePaginator
-    {
-        return Proveedor::paginate($perPage);
-    }
-
-    /**
-     * Buscar proveedores
-     */
-    public function buscar(string $termino, int $perPage = 15): LengthAwarePaginator
-    {
-        return Proveedor::where('nombre', 'like', "%{$termino}%")
-            ->orWhere('cedula_juridica', 'like', "%{$termino}%")
-            ->orWhere('email', 'like', "%{$termino}%")
-            ->paginate($perPage);
-    }
-
-    /**
-     * Obtener proveedores activos
-     */
-    public function activos(int $perPage = 15): LengthAwarePaginator
-    {
-        return Proveedor::where('activo', true)->paginate($perPage);
+        return true;
     }
 
     /**
      * Calcular saldo pendiente de proveedor
+     *
+     * @param Proveedor $proveedor
+     * @return float
      */
     public function calcularSaldoPendiente(Proveedor $proveedor): float
     {
         return (float) (
-            $proveedor->cuentas_pagar()->sum('monto_total') -
-            $proveedor->cuentas_pagar()->sum('monto_pagado')
+            $proveedor->cuentasPorPagar()->sum('monto_total') -
+            $proveedor->cuentasPorPagar()->sum('monto_pagado')
         );
     }
 }
