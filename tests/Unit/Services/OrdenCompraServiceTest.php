@@ -9,6 +9,7 @@ use App\Models\Usuario;
 use App\Services\OrdenCompraService;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class OrdenCompraServiceTest extends TestCase
 {
@@ -62,7 +63,7 @@ class OrdenCompraServiceTest extends TestCase
 
     // ─── listar() ───────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function listar_retorna_paginacion(): void
     {
         $this->crearOrden();
@@ -73,7 +74,7 @@ class OrdenCompraServiceTest extends TestCase
         $this->assertGreaterThanOrEqual(2, $resultado->total());
     }
 
-    /** @test */
+    #[Test]
     public function listar_filtra_por_estado(): void
     {
         $this->crearOrden(['estado' => 'borrador']);
@@ -86,7 +87,7 @@ class OrdenCompraServiceTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function listar_filtra_por_proveedor(): void
     {
         $this->crearOrden();
@@ -110,7 +111,7 @@ class OrdenCompraServiceTest extends TestCase
 
     // ─── crear() ────────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function crear_orden_con_detalles(): void
     {
         // Crear producto necesario para el detalle
@@ -144,7 +145,7 @@ class OrdenCompraServiceTest extends TestCase
         $this->assertDatabaseHas('ordenes_compra', ['id' => $orden->id]);
     }
 
-    /** @test */
+    #[Test]
     public function crear_genera_numero_orden_automatico(): void
     {
         $producto = $this->createProducto([], $this->empresa);
@@ -178,7 +179,7 @@ class OrdenCompraServiceTest extends TestCase
         $this->assertNotEquals($orden1->numero_orden, $orden2->numero_orden);
     }
 
-    /** @test */
+    #[Test]
     public function crear_calcula_totales_correctamente(): void
     {
         $producto = $this->createProducto([], $this->empresa);
@@ -210,7 +211,7 @@ class OrdenCompraServiceTest extends TestCase
 
     // ─── obtener() ──────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function obtener_orden_existente(): void
     {
         $orden = $this->crearOrden();
@@ -222,7 +223,7 @@ class OrdenCompraServiceTest extends TestCase
         $this->assertTrue($resultado->relationLoaded('empresa'));
     }
 
-    /** @test */
+    #[Test]
     public function obtener_orden_inexistente_lanza_excepcion(): void
     {
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
@@ -232,7 +233,7 @@ class OrdenCompraServiceTest extends TestCase
 
     // ─── actualizar() ───────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function actualizar_orden(): void
     {
         $orden = $this->crearOrden(['observaciones' => null]);
@@ -246,7 +247,7 @@ class OrdenCompraServiceTest extends TestCase
 
     // ─── eliminar() ─────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function eliminar_orden_borrador(): void
     {
         $orden = $this->crearOrden(['estado' => 'borrador']);
@@ -261,7 +262,7 @@ class OrdenCompraServiceTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function eliminar_orden_no_borrador_lanza_excepcion(): void
     {
         $orden = $this->crearOrden(['estado' => 'enviada']);
@@ -271,7 +272,7 @@ class OrdenCompraServiceTest extends TestCase
         $this->service->eliminar($orden);
     }
 
-    /** @test */
+    #[Test]
     public function eliminar_orden_recibida_lanza_excepcion(): void
     {
         $orden = $this->crearOrden(['estado' => 'recibida']);

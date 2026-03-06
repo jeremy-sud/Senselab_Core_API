@@ -11,6 +11,7 @@
 > v2.6.0: FASE 9 — Tests unitarios para servicios FASE 8 (86 tests nuevos) + corrección de 10 bugs críticos de mapeo DB pre-existentes
 > v2.7.0: FASE 10 — PHPStan baseline vaciado (5→0), CQRS expandido a 3 módulos (14 archivos nuevos), 6 controladores más refactorizados, 4 servicios nuevos + 2 reescritos, 57 tests nuevos, 5 bugs de modelos/servicios corregidos
 > v2.8.0: FASE 11 — 42 tests pre-existentes corrigidos (0 failing), 8 bugs de producción descubiertos y corregidos, 8 modelos con timestamps faltantes, 52 permisos de test agregados
+> v2.9.0: FASE 12 — Migración PHPUnit attributes (405 @test→#[Test], @covers→#[CoversClass], @group→#[Group]), 4 test suites nuevos (35 tests), 2 bugs producción corregidos, 2 tests skipped recuperados
 
 ---
 
@@ -25,8 +26,8 @@
 - **Traits Reutilizables:** 10+ (1 deprecated: EncryptsAttributes)
 - **Observers:** 6+ (registrados en ObserverServiceProvider dedicado)
 - **Services:** 40 (10 AI, 8 Hacienda, 22 core/utilidad — 4 nuevos + 2 reescritos en FASE 10)
-- **Tests (archivos):** 64 archivos (+4 nuevos: tests unitarios servicios FASE 10)
-- **Tests (total):** 767 tests, 2392 assertions — 762 passing, 0 failing, 5 skipped ✅
+- **Tests (archivos):** 68 archivos (+4 nuevos: CajaChica, Configuracion, Presupuesto, EntradaInventario — FASE 12)
+- **Tests (total):** 802 tests, 2544 assertions — 799 passing, 0 failing, 3 skipped ✅
 - **Providers:** 4 (AppServiceProvider, AuthServiceProvider, ObserverServiceProvider, CQRSServiceProvider)
 - **Rutas API:** Configuradas en routes/api.php con versionado
 
@@ -670,3 +671,103 @@ Se corrigieron los **42 tests pre-existentes** que fallaban (20 errores + 22 fal
 19. `tests/Feature/MetricsControllerTest.php` — Estructura JSON + status codes
 
 **FASE 11 COMPLETADA** ✅
+
+---
+
+## 🔄 v2.9.0: FASE 12 — MIGRACIÓN PHPUNIT ATTRIBUTES + TESTS MÓDULOS SIN COBERTURA (5 mar 2026)
+
+### 1. Migración PHPUnit Attributes (PHPUnit 11 compliance)
+Todas las anotaciones legacy docblock migradas a PHP 8 Attributes nativos:
+
+| Anotación Legacy | Attribute Moderno | Cantidad |
+|------------------|-------------------|----------|
+| `@test` | `#[Test]` | 405 |
+| `@covers ClassName` | `#[CoversClass(ClassName::class)]` | ~10 archivos |
+| `@group nombre` | `#[Group('nombre')]` | ~6 archivos |
+
+- **Impacto:** Eliminadas ~290 deprecation warnings de PHPUnit 11
+- **Archivos modificados:** ~50
+
+### 2. Regresión Descubierta y Corregida
+- **HaciendaApiClientTest:** 6 métodos de test perdieron la anotación `@test` durante la migración pero no recibieron `#[Test]`, dejándolos silenciosamente inactivos
+- **Fix:** Agregado `#[Test]` a los 6 métodos
+
+### 3. Bugs de Producción Descubiertos y Corregidos
+
+#### ComprobanteElectronicoController — Impuesto null en líneas exentas
+- ❌ `$impuestoTarifa = null` cuando no hay impuesto → violaba NOT NULL constraint en DB
+- ✅ `$impuestoTarifa = 0` — valor correcto para líneas exentas
+- **Archivo:** `app/Http/Controllers/ComprobanteElectronicoController.php`
+
+#### ComprobanteElectronicoController — Totales gravado/exento faltantes
+- ❌ No se calculaban `total_gravado` ni `total_exento` → campos quedaban en null
+- ✅ Agregado cálculo automático: líneas con impuesto → total_gravado, sin impuesto → total_exento
+- **Archivo:** `app/Http/Controllers/ComprobanteElectronicoController.php`
+
+### 4. Tests Skipped Recuperados (2 de 3 solucionables)
+
+#### factura_exenta_no_aplica_impuestos
+- **Antes:** Skipped (500 error por bug de impuesto null)
+- **Después:** Passing — corregido el bug de producción subyacente
+
+#### reintento_automatico_incrementa_contador_intentos
+- **Antes:** Skipped (403 — usaba `Spatie\Permission` no instalado)
+- **Después:** Passing — migrado al sistema custom de permisos (Rol/Permiso)
+
+#### validacion_totales_incorrectos_rechaza_comprobante
+- **Estado:** Sigue skipped — requiere implementación de validación de totales no existente
+
+### 5. Tests Nuevos para Módulos Sin Cobertura (4 archivos, 35 tests)
+
+| Suite | Tests | Assertions | Endpoint | Lógica Clave Verificada |
+|-------|-------|------------|----------|------------------------|
+| `CajaChicaTest` | 8 | ~24 | `/api/caja-chica` | CRUD, cerrar, validación campos, auth |
+| `ConfiguracionTest` | 10 | ~30 | `/api/configuraciones` | CRUD, buscar por clave, obtener_valor, unicidad, tipo_dato |
+| `PresupuestoTest` | 9 | ~27 | `/api/presupuestos` | CRUD, finalizar, no modificar finalizado, validación periodo |
+| `EntradaInventarioTest` | 8 | ~24 | `/api/entradas-inventario` | CRUD, validación almacén/detalles/tipo_entrada, auth |
+| **Total** | **35** | **~105** | | |
+
+**Nota:** Todos los tests crean registros manualmente (sin factories) debido a que múltiples factories están desactualizadas con campos incorrectos vs las migraciones reales.
+
+### 6. Deuda Técnica Descubierta (no corregida)
+
+#### Factories Obsoletas (~7 factories con campos incorrectos)
+| Factory | Problema |
+|---------|----------|
+| `CajaChicaFactory` | Usa `monto_asignado`, `codigo`, `periodo`, `fecha_liquidacion` (no existen en DB) |
+| `PresupuestoFactory` | Usa campos de cotización (`numero_presupuesto`, `cliente_id`, `total`) en lugar de campos reales |
+| `ConfiguracionFactory` | Usa `tipo`, `es_publica`, `categoria` (no existen), modelo usa `tipo_dato` |
+| `EntradaInventarioFactory` | Usa `numero_entrada`, `total`, `numero_factura` (no existen) |
+| `CargoFactory` | Usa `nivel_jerarquico`, `salario_base`, `empresa_id` (no existen en tabla) |
+| `AlmacenFactory` | Referencia `Sucursal::factory()` pero Sucursal no tiene HasFactory |
+| `ProductoFactory` | Usa `codigo_interno` (tabla tiene `codigo`), valores `tipo_producto` incorrectos |
+
+#### Configuracion — Mismatch FormRequest/Model en tipo_dato
+- **FormRequest** acepta: `texto`, `numero`, `booleano`, `json`
+- **Modelo** valida: `string`, `integer`, `float`, `boolean`, `json`, `array`
+- Solo `json` es aceptado por ambos — bug real de aplicación pendiente de resolver
+
+### Resultado Final
+- **Antes:** 767 tests — 762 passing, 0 failing, 5 skipped
+- **Después:** 802 tests — 799 passing, 0 failing, 3 skipped ✅
+- **Assertions:** 2544 (+152)
+- **Deprecation warnings eliminados:** ~290
+
+### Archivos Modificados
+**Bug producción (1):**
+1. `app/Http/Controllers/ComprobanteElectronicoController.php` — Impuesto null + totales gravado/exento
+
+**Tests corregidos (2):**
+2. `tests/Unit/Services/Hacienda/HaciendaApiClientTest.php` — 6× `#[Test]` faltantes
+3. `tests/Feature/FacturacionElectronicaE2ECasosEdgeTest.php` — 2 tests skipped recuperados
+
+**Migración PHPUnit (~50 archivos):**
+4–53. Todos los archivos `*Test.php` — `@test` → `#[Test]`, `@covers` → `#[CoversClass]`, `@group` → `#[Group]`
+
+### Archivos Creados (4)
+1. `tests/Feature/CajaChicaTest.php` — 8 tests CRUD caja chica
+2. `tests/Feature/ConfiguracionTest.php` — 10 tests CRUD configuraciones
+3. `tests/Feature/PresupuestoTest.php` — 9 tests CRUD presupuestos
+4. `tests/Feature/EntradaInventarioTest.php` — 8 tests CRUD entradas inventario
+
+**FASE 12 COMPLETADA** ✅

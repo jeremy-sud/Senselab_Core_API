@@ -8,6 +8,7 @@ use App\Models\TipoCuenta;
 use App\Services\CuentaContableService;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class CuentaContableServiceTest extends TestCase
 {
@@ -53,7 +54,7 @@ class CuentaContableServiceTest extends TestCase
 
     // ─── listar() ───────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function listar_retorna_cuentas_de_empresa(): void
     {
         $this->crearCuenta();
@@ -64,7 +65,7 @@ class CuentaContableServiceTest extends TestCase
         $this->assertGreaterThanOrEqual(2, $resultado->total());
     }
 
-    /** @test */
+    #[Test]
     public function listar_excluye_eliminadas(): void
     {
         $this->crearCuenta(['eliminado' => false]);
@@ -77,7 +78,7 @@ class CuentaContableServiceTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function listar_filtra_por_tipo_cuenta(): void
     {
         $otroTipo = TipoCuenta::create([
@@ -98,7 +99,7 @@ class CuentaContableServiceTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function listar_filtra_principales_sin_padre(): void
     {
         $padre = $this->crearCuenta(['cuenta_padre_id' => null]);
@@ -111,7 +112,7 @@ class CuentaContableServiceTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function listar_filtra_por_codigo(): void
     {
         $this->crearCuenta(['codigo' => '1000-01']);
@@ -125,7 +126,7 @@ class CuentaContableServiceTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function listar_filtra_por_permite_movimientos(): void
     {
         $this->crearCuenta(['permite_movimientos' => true]);
@@ -140,7 +141,7 @@ class CuentaContableServiceTest extends TestCase
 
     // ─── crear() ────────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function crear_cuenta_contable(): void
     {
         $data = [
@@ -161,7 +162,7 @@ class CuentaContableServiceTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function crear_cuenta_carga_relaciones(): void
     {
         $cuenta = $this->service->crear($this->empresa->id, [
@@ -176,7 +177,7 @@ class CuentaContableServiceTest extends TestCase
 
     // ─── obtener() ──────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function obtener_cuenta_existente(): void
     {
         $cuenta = $this->crearCuenta();
@@ -187,7 +188,7 @@ class CuentaContableServiceTest extends TestCase
         $this->assertTrue($resultado->relationLoaded('tipoCuenta'));
     }
 
-    /** @test */
+    #[Test]
     public function obtener_cuenta_de_otra_empresa_falla(): void
     {
         $otraEmpresa = $this->createEmpresa(['nombre' => 'Otra', 'email' => 'otra' . uniqid() . '@test.com']);
@@ -198,7 +199,7 @@ class CuentaContableServiceTest extends TestCase
         $this->service->obtener($otraEmpresa->id, $cuenta->id);
     }
 
-    /** @test */
+    #[Test]
     public function obtener_cuenta_eliminada_falla(): void
     {
         $cuenta = $this->crearCuenta(['eliminado' => true]);
@@ -210,7 +211,7 @@ class CuentaContableServiceTest extends TestCase
 
     // ─── actualizar() ───────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function actualizar_cuenta_contable(): void
     {
         $cuenta = $this->crearCuenta(['nombre' => 'Nombre Viejo']);
@@ -223,7 +224,7 @@ class CuentaContableServiceTest extends TestCase
 
     // ─── eliminar() ─────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function eliminar_cuenta_sin_dependencias(): void
     {
         $cuenta = $this->crearCuenta();
@@ -238,7 +239,7 @@ class CuentaContableServiceTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function eliminar_cuenta_con_subcuentas_lanza_excepcion(): void
     {
         $padre = $this->crearCuenta();
@@ -251,7 +252,7 @@ class CuentaContableServiceTest extends TestCase
 
     // ─── arbol() ────────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function arbol_retorna_estructura_jerarquica(): void
     {
         $padre = $this->crearCuenta(['cuenta_padre_id' => null, 'codigo' => '1000']);
@@ -268,7 +269,7 @@ class CuentaContableServiceTest extends TestCase
 
     // ─── paraMovimientos() ──────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function para_movimientos_retorna_solo_cuentas_de_movimiento(): void
     {
         $this->crearCuenta(['permite_movimientos' => true, 'activo' => true]);

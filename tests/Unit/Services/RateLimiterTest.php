@@ -6,6 +6,7 @@ use App\Services\Hacienda\RateLimiter;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class RateLimiterTest extends TestCase
 {
@@ -18,13 +19,13 @@ class RateLimiterTest extends TestCase
         Cache::flush();
     }
 
-    /** @test */
+    #[Test]
     public function puede_hacer_request_cuando_no_hay_limite()
     {
         $this->assertTrue($this->rateLimiter->canMakeRequest());
     }
 
-    /** @test */
+    #[Test]
     public function registra_request_correctamente()
     {
         $this->rateLimiter->recordRequest();
@@ -35,7 +36,7 @@ class RateLimiterTest extends TestCase
         $this->assertEquals(1, $estadisticas['current_minute']['requests']);
     }
 
-    /** @test */
+    #[Test]
     public function respeta_limite_por_segundo()
     {
         Config::set('hacienda.rate_limit.max_requests_per_second', 2);
@@ -47,7 +48,7 @@ class RateLimiterTest extends TestCase
         $this->assertFalse($limiter->canMakeRequest());
     }
 
-    /** @test */
+    #[Test]
     public function respeta_limite_por_minuto()
     {
         Config::set('hacienda.rate_limit.max_requests_per_minute', 2);
@@ -59,7 +60,7 @@ class RateLimiterTest extends TestCase
         $this->assertFalse($limiter->canMakeRequest());
     }
 
-    /** @test */
+    #[Test]
     public function puede_resetear_contadores()
     {
         $this->rateLimiter->recordRequest();
@@ -70,7 +71,7 @@ class RateLimiterTest extends TestCase
         $this->assertEquals(0, $estadisticas['current_second']['requests']);
     }
 
-    /** @test */
+    #[Test]
     public function obtiene_estadisticas_correctamente()
     {
         $estadisticas = $this->rateLimiter->getEstadisticas();
@@ -81,7 +82,7 @@ class RateLimiterTest extends TestCase
         $this->assertArrayHasKey('can_make_request', $estadisticas);
     }
 
-    /** @test */
+    #[Test]
     public function obtiene_configuracion_correctamente()
     {
         $config = $this->rateLimiter->getConfiguracion();
@@ -91,7 +92,7 @@ class RateLimiterTest extends TestCase
         $this->assertArrayHasKey('max_requests_per_minute', $config);
     }
 
-    /** @test */
+    #[Test]
     public function calcula_disponibilidad_correctamente()
     {
         Config::set('hacienda.rate_limit.max_requests_per_second', 10);
@@ -105,7 +106,7 @@ class RateLimiterTest extends TestCase
         $this->assertEquals(8, $estadisticas['current_second']['available']);
     }
 
-    /** @test */
+    #[Test]
     public function calcula_porcentaje_uso_correctamente()
     {
         Config::set('hacienda.rate_limit.max_requests_per_second', 10);
@@ -119,7 +120,7 @@ class RateLimiterTest extends TestCase
         $this->assertEquals(20.0, $estadisticas['current_second']['percentage_used']);
     }
 
-    /** @test */
+    #[Test]
     public function no_registra_request_cuando_esta_deshabilitado()
     {
         Config::set('hacienda.rate_limit.enabled', false);

@@ -4,6 +4,7 @@ namespace Tests\Unit\Services\Hacienda;
 
 use App\Services\Hacienda\HaciendaApiClient;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Tests de integración para HaciendaApiClient
@@ -39,9 +40,9 @@ class HaciendaApiClientTest extends TestCase
     }
 
     /**
-     * @test
      * Verifica que el cliente se inicializa correctamente en ambiente sandbox
      */
+    #[Test]
     public function puede_inicializar_en_ambiente_sandbox(): void
     {
         $client = new HaciendaApiClient('sandbox');
@@ -50,9 +51,9 @@ class HaciendaApiClientTest extends TestCase
     }
 
     /**
-     * @test
      * Verifica que el cliente se inicializa correctamente en ambiente production
      */
+    #[Test]
     public function puede_inicializar_en_ambiente_production(): void
     {
         $client = new HaciendaApiClient('production');
@@ -61,9 +62,9 @@ class HaciendaApiClientTest extends TestCase
     }
 
     /**
-     * @test
      * Verifica que puede cambiar de ambiente dinámicamente
      */
+    #[Test]
     public function puede_cambiar_ambiente(): void
     {
         $client = new HaciendaApiClient('sandbox');
@@ -74,9 +75,9 @@ class HaciendaApiClientTest extends TestCase
     }
 
     /**
-     * @test
      * Verifica que rechaza ambientes inválidos
      */
+    #[Test]
     public function rechaza_ambiente_invalido(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -87,9 +88,9 @@ class HaciendaApiClientTest extends TestCase
     }
 
     /**
-     * @test
      * Verifica la URL correcta para sandbox
      */
+    #[Test]
     public function usa_url_correcta_para_sandbox(): void
     {
         config(['hacienda.api_urls.sandbox.recepcion' => 'https://api-sandbox.comprobanteselectronicos.go.cr/recepcion/v1']);
@@ -100,9 +101,9 @@ class HaciendaApiClientTest extends TestCase
     }
 
     /**
-     * @test
      * Verifica la URL correcta para producción
      */
+    #[Test]
     public function usa_url_correcta_para_production(): void
     {
         config(['hacienda.api_urls.production.recepcion' => 'https://api.comprobanteselectronicos.go.cr/recepcion/v1']);

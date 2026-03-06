@@ -10,6 +10,7 @@ use App\Models\Usuario;
 use App\Services\InventarioService;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class InventarioServiceTest extends TestCase
 {
@@ -76,7 +77,7 @@ class InventarioServiceTest extends TestCase
 
     // ─── listarEntradas() ───────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function listar_entradas_retorna_coleccion(): void
     {
         $this->crearEntrada();
@@ -87,7 +88,7 @@ class InventarioServiceTest extends TestCase
         $this->assertGreaterThanOrEqual(2, $resultado->count());
     }
 
-    /** @test */
+    #[Test]
     public function listar_entradas_filtra_por_almacen(): void
     {
         $this->crearEntrada();
@@ -108,7 +109,7 @@ class InventarioServiceTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function listar_entradas_filtra_por_estado(): void
     {
         $this->crearEntrada(['estado' => 'Pendiente']);
@@ -123,7 +124,7 @@ class InventarioServiceTest extends TestCase
 
     // ─── crearEntrada() ─────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function crear_entrada_exitosamente(): void
     {
         $data = [
@@ -147,7 +148,7 @@ class InventarioServiceTest extends TestCase
 
     // ─── obtenerEntrada() ───────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function obtener_entrada_existente(): void
     {
         $entrada = $this->crearEntrada();
@@ -158,7 +159,7 @@ class InventarioServiceTest extends TestCase
         $this->assertTrue($resultado->relationLoaded('almacen'));
     }
 
-    /** @test */
+    #[Test]
     public function obtener_entrada_inexistente_lanza_excepcion(): void
     {
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
@@ -168,7 +169,7 @@ class InventarioServiceTest extends TestCase
 
     // ─── cancelarEntrada() ──────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function cancelar_entrada_pendiente(): void
     {
         $entrada = $this->crearEntrada(['estado' => 'Pendiente']);
@@ -178,7 +179,7 @@ class InventarioServiceTest extends TestCase
         $this->assertEquals('Cancelada', $resultado->estado);
     }
 
-    /** @test */
+    #[Test]
     public function cancelar_entrada_procesada_lanza_excepcion(): void
     {
         $entrada = $this->crearEntrada(['estado' => 'Procesada']);
@@ -190,7 +191,7 @@ class InventarioServiceTest extends TestCase
 
     // ─── listarSalidas() ────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function listar_salidas_retorna_coleccion(): void
     {
         $this->crearSalida();
@@ -201,7 +202,7 @@ class InventarioServiceTest extends TestCase
         $this->assertGreaterThanOrEqual(2, $resultado->count());
     }
 
-    /** @test */
+    #[Test]
     public function listar_salidas_filtra_por_almacen(): void
     {
         $this->crearSalida();
@@ -222,7 +223,7 @@ class InventarioServiceTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function listar_salidas_filtra_por_estado(): void
     {
         $this->crearSalida(['estado' => 'Pendiente']);
@@ -237,7 +238,7 @@ class InventarioServiceTest extends TestCase
 
     // ─── crearSalida() ──────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function crear_salida_exitosamente(): void
     {
         $data = [
@@ -261,7 +262,7 @@ class InventarioServiceTest extends TestCase
 
     // ─── obtenerSalida() ────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function obtener_salida_existente(): void
     {
         $salida = $this->crearSalida();
@@ -272,7 +273,7 @@ class InventarioServiceTest extends TestCase
         $this->assertTrue($resultado->relationLoaded('almacen'));
     }
 
-    /** @test */
+    #[Test]
     public function obtener_salida_inexistente_lanza_excepcion(): void
     {
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
@@ -282,7 +283,7 @@ class InventarioServiceTest extends TestCase
 
     // ─── cancelarSalida() ───────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function cancelar_salida_pendiente(): void
     {
         $salida = $this->crearSalida(['estado' => 'Pendiente']);
@@ -292,7 +293,7 @@ class InventarioServiceTest extends TestCase
         $this->assertEquals('Cancelada', $resultado->estado);
     }
 
-    /** @test */
+    #[Test]
     public function cancelar_salida_procesada_lanza_excepcion(): void
     {
         $salida = $this->crearSalida(['estado' => 'Procesada']);

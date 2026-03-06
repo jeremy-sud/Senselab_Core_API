@@ -7,6 +7,7 @@ use App\Models\Empresa;
 use App\Services\EmpleadoService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class EmpleadoServiceTest extends TestCase
 {
@@ -66,7 +67,7 @@ class EmpleadoServiceTest extends TestCase
 
     // ─── listar() ───────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function listar_retorna_paginacion(): void
     {
         $this->crearEmpleado();
@@ -77,7 +78,7 @@ class EmpleadoServiceTest extends TestCase
         $this->assertGreaterThanOrEqual(2, $resultado->total());
     }
 
-    /** @test */
+    #[Test]
     public function listar_filtra_por_departamento(): void
     {
         $otroDptoId = \DB::table('departamentos')->insertGetId([
@@ -96,7 +97,7 @@ class EmpleadoServiceTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function listar_filtra_por_cargo(): void
     {
         $otroCargoId = \DB::table('cargos')->insertGetId([
@@ -115,7 +116,7 @@ class EmpleadoServiceTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function listar_busca_por_nombre(): void
     {
         $this->crearEmpleado(['nombre' => 'Alejandro']);
@@ -127,7 +128,7 @@ class EmpleadoServiceTest extends TestCase
         $this->assertEquals('Alejandro', $resultado->first()->nombre);
     }
 
-    /** @test */
+    #[Test]
     public function listar_busca_por_numero_documento(): void
     {
         $emp = $this->crearEmpleado(['numero_documento' => 'DOC-UNICO-123']);
@@ -139,7 +140,7 @@ class EmpleadoServiceTest extends TestCase
 
     // ─── crear() ────────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function crear_empleado_exitosamente(): void
     {
         $data = [
@@ -165,7 +166,7 @@ class EmpleadoServiceTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function crear_empleado_carga_relaciones(): void
     {
         $empleado = $this->service->crear([
@@ -185,7 +186,7 @@ class EmpleadoServiceTest extends TestCase
 
     // ─── obtener() ──────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function obtener_empleado_existente(): void
     {
         $empleado = $this->crearEmpleado();
@@ -197,7 +198,7 @@ class EmpleadoServiceTest extends TestCase
         $this->assertTrue($resultado->relationLoaded('departamento'));
     }
 
-    /** @test */
+    #[Test]
     public function obtener_empleado_inexistente_lanza_excepcion(): void
     {
         $this->expectException(ModelNotFoundException::class);
@@ -207,7 +208,7 @@ class EmpleadoServiceTest extends TestCase
 
     // ─── actualizar() ───────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function actualizar_empleado_exitosamente(): void
     {
         $empleado = $this->crearEmpleado(['salario' => 1000000.00]);
@@ -218,7 +219,7 @@ class EmpleadoServiceTest extends TestCase
         $this->assertDatabaseHas('empleados', ['id' => $empleado->id, 'salario' => 1500000.00]);
     }
 
-    /** @test */
+    #[Test]
     public function actualizar_nombre_empleado(): void
     {
         $empleado = $this->crearEmpleado(['nombre' => 'Viejo']);
@@ -230,7 +231,7 @@ class EmpleadoServiceTest extends TestCase
 
     // ─── eliminar() ─────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function eliminar_empleado(): void
     {
         $empleado = $this->crearEmpleado();

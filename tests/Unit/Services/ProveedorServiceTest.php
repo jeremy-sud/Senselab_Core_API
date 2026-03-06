@@ -7,6 +7,7 @@ use App\Models\Proveedor;
 use App\Services\ProveedorService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class ProveedorServiceTest extends TestCase
 {
@@ -46,7 +47,7 @@ class ProveedorServiceTest extends TestCase
 
     // ─── listar() ───────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function listar_retorna_paginacion(): void
     {
         $this->crearProveedor();
@@ -57,7 +58,7 @@ class ProveedorServiceTest extends TestCase
         $this->assertGreaterThanOrEqual(2, $resultado->total());
     }
 
-    /** @test */
+    #[Test]
     public function listar_busca_por_nombre(): void
     {
         $this->crearProveedor(['nombre' => 'Distribuidora Nacional']);
@@ -69,7 +70,7 @@ class ProveedorServiceTest extends TestCase
         $this->assertStringContainsString('Distribuidora', $resultado->first()->nombre);
     }
 
-    /** @test */
+    #[Test]
     public function listar_busca_por_numero_identificacion(): void
     {
         $this->crearProveedor(['numero_identificacion' => 'NIT-UNICO-456']);
@@ -79,7 +80,7 @@ class ProveedorServiceTest extends TestCase
         $this->assertGreaterThanOrEqual(1, $resultado->total());
     }
 
-    /** @test */
+    #[Test]
     public function listar_busca_por_email(): void
     {
         $this->crearProveedor(['email' => 'unico_email@proveedor.com']);
@@ -89,7 +90,7 @@ class ProveedorServiceTest extends TestCase
         $this->assertGreaterThanOrEqual(1, $resultado->total());
     }
 
-    /** @test */
+    #[Test]
     public function listar_filtra_por_empresa(): void
     {
         $this->crearProveedor();
@@ -103,7 +104,7 @@ class ProveedorServiceTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function listar_filtra_solo_activos(): void
     {
         $this->crearProveedor(['activo' => true]);
@@ -118,7 +119,7 @@ class ProveedorServiceTest extends TestCase
 
     // ─── crear() ────────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function crear_proveedor_exitosamente(): void
     {
         $data = [
@@ -144,7 +145,7 @@ class ProveedorServiceTest extends TestCase
 
     // ─── obtener() ──────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function obtener_proveedor_existente(): void
     {
         $proveedor = $this->crearProveedor();
@@ -156,7 +157,7 @@ class ProveedorServiceTest extends TestCase
         $this->assertTrue($resultado->relationLoaded('ordenesCompra'));
     }
 
-    /** @test */
+    #[Test]
     public function obtener_proveedor_inexistente_lanza_excepcion(): void
     {
         $this->expectException(ModelNotFoundException::class);
@@ -166,7 +167,7 @@ class ProveedorServiceTest extends TestCase
 
     // ─── actualizar() ───────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function actualizar_proveedor_exitosamente(): void
     {
         $proveedor = $this->crearProveedor(['telefono' => '1111-1111']);
@@ -177,7 +178,7 @@ class ProveedorServiceTest extends TestCase
         $this->assertDatabaseHas('proveedores', ['id' => $proveedor->id, 'telefono' => '9999-9999']);
     }
 
-    /** @test */
+    #[Test]
     public function actualizar_nombre_proveedor(): void
     {
         $proveedor = $this->crearProveedor(['nombre' => 'Viejo Nombre']);
@@ -189,7 +190,7 @@ class ProveedorServiceTest extends TestCase
 
     // ─── eliminar() ─────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function eliminar_proveedor_soft_delete(): void
     {
         $proveedor = $this->crearProveedor();
@@ -206,7 +207,7 @@ class ProveedorServiceTest extends TestCase
 
     // ─── calcularSaldoPendiente() ───────────────────────────────
 
-    /** @test */
+    #[Test]
     public function calcular_saldo_pendiente_sin_cuentas(): void
     {
         $proveedor = $this->crearProveedor();

@@ -9,6 +9,7 @@ use App\Models\Usuario;
 use App\Services\CuentaPorCobrarService;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class CuentaPorCobrarServiceTest extends TestCase
 {
@@ -62,7 +63,7 @@ class CuentaPorCobrarServiceTest extends TestCase
 
     // ─── listar() ───────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function listar_retorna_paginacion(): void
     {
         $this->crearCuenta();
@@ -73,7 +74,7 @@ class CuentaPorCobrarServiceTest extends TestCase
         $this->assertGreaterThanOrEqual(2, $resultado->total());
     }
 
-    /** @test */
+    #[Test]
     public function listar_filtra_por_estado(): void
     {
         $this->crearCuenta(['estado' => 'Pendiente']);
@@ -86,7 +87,7 @@ class CuentaPorCobrarServiceTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function listar_filtra_por_cliente(): void
     {
         $this->crearCuenta();
@@ -109,7 +110,7 @@ class CuentaPorCobrarServiceTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function listar_filtra_vencidas(): void
     {
         $this->crearCuenta([
@@ -128,7 +129,7 @@ class CuentaPorCobrarServiceTest extends TestCase
 
     // ─── crear() ────────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function crear_cuenta_exitosamente(): void
     {
         $data = [
@@ -155,7 +156,7 @@ class CuentaPorCobrarServiceTest extends TestCase
 
     // ─── obtener() ──────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function obtener_cuenta_existente(): void
     {
         $cuenta = $this->crearCuenta();
@@ -166,7 +167,7 @@ class CuentaPorCobrarServiceTest extends TestCase
         $this->assertTrue($resultado->relationLoaded('cliente'));
     }
 
-    /** @test */
+    #[Test]
     public function obtener_cuenta_inexistente_lanza_excepcion(): void
     {
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
@@ -176,7 +177,7 @@ class CuentaPorCobrarServiceTest extends TestCase
 
     // ─── actualizar() ───────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function actualizar_cuenta_exitosamente(): void
     {
         $cuenta = $this->crearCuenta();
@@ -193,7 +194,7 @@ class CuentaPorCobrarServiceTest extends TestCase
 
     // ─── eliminar() ─────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function eliminar_cuenta_sin_pagos(): void
     {
         $cuenta = $this->crearCuenta(['monto_pagado' => 0]);
@@ -207,7 +208,7 @@ class CuentaPorCobrarServiceTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function eliminar_cuenta_con_pagos_lanza_excepcion(): void
     {
         $cuenta = $this->crearCuenta(['monto_pagado' => 10000]);
@@ -219,7 +220,7 @@ class CuentaPorCobrarServiceTest extends TestCase
 
     // ─── vencidas() ─────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function vencidas_retorna_resumen(): void
     {
         $this->crearCuenta([
@@ -240,7 +241,7 @@ class CuentaPorCobrarServiceTest extends TestCase
 
     // ─── resumen() ──────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function resumen_retorna_datos_agrupados(): void
     {
         $this->crearCuenta();

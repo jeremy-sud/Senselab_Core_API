@@ -7,16 +7,17 @@ use App\Models\Usuario;
 use Illuminate\Foundation\Testing\TestCase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * Pruebas para FASE 1.6: Encriptación de Datos
  *
- * @covers \App\Services\EncryptionService
- * @covers \App\Traits\HasEncryptedAttributes
  *
  * Tests Feature x9
  * Tests Unit    x5
  */
+#[CoversClass(\App\Services\EncryptionService::class)]
+#[CoversClass(\App\Traits\HasEncryptedAttributes::class)]
 class EncryptionGranularTest extends TestCase
 {
     protected function setUp(): void

@@ -6,6 +6,8 @@ namespace Tests\Feature;
 
 use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Structured Logging Test
@@ -13,16 +15,17 @@ use Tests\TestCase;
  * FASE 1.3: Verificar que el logging estructurado está configurado correctamente
  * con trace_id, contexto de usuario, timestamps ISO8601 y JSON formatting
  *
- * @covers \App\Http\Middleware\LogRequest
- * @covers \App\Traits\HasSafeErrorHandling
  */
+#[CoversClass(\App\Http\Middleware\LogRequest::class)]
+#[CoversClass(\App\Traits\HasSafeErrorHandling::class)]
 class StructuredLoggingTest extends TestCase
 {
     /**
      * Verificar que el middleware LogRequest registra requests exitosas
      *
-     * @test
+
      */
+    #[Test]
     public function test_log_request_middleware_logs_successful_request(): void
     {
         // Hacer una solicitud exitosa
@@ -37,8 +40,9 @@ class StructuredLoggingTest extends TestCase
     /**
      * Verificar que el trace_id se propaga en los headers
      *
-     * @test
+
      */
+    #[Test]
     public function test_trace_id_propagates_in_response_headers(): void
     {
         $response = $this->get('/up');
@@ -53,8 +57,9 @@ class StructuredLoggingTest extends TestCase
     /**
      * Verificar que los canales de logging existen
      *
-     * @test
+
      */
+    #[Test]
     public function test_logging_channels_configured(): void
     {
         $channels = config('logging.channels');
@@ -68,8 +73,9 @@ class StructuredLoggingTest extends TestCase
     /**
      * Verificar que el canal security usa JSON formatter
      *
-     * @test
+
      */
+    #[Test]
     public function test_security_channel_uses_json_formatter(): void
     {
         $securityConfig = config('logging.channels.security');
@@ -81,8 +87,9 @@ class StructuredLoggingTest extends TestCase
     /**
      * Verificar que los logs se escriben en archivos específicos
      *
-     * @test
+
      */
+    #[Test]
     public function test_logging_files_are_created(): void
     {
         // Crear directorio si no existe
@@ -103,8 +110,9 @@ class StructuredLoggingTest extends TestCase
     /**
      * Verificar que HasSafeErrorHandling incluye trace_id en respuesta
      *
-     * @test
+
      */
+    #[Test]
     public function test_safe_error_response_includes_trace_id(): void
     {
         // Hacer una solicitud a un endpoint inexistente
@@ -119,8 +127,9 @@ class StructuredLoggingTest extends TestCase
     /**
      * Verificar que el logging incluye contexto de usuario
      *
-     * @test
+
      */
+    #[Test]
     public function test_logging_includes_user_context(): void
     {
         // Sin usuarios autenticados en /up, pero verificamos estructura
@@ -133,8 +142,9 @@ class StructuredLoggingTest extends TestCase
     /**
      * Verificar que performance logging se activa para requests lentas
      *
-     * @test
+
      */
+    #[Test]
     public function test_performance_logging_configured(): void
     {
         $performanceConfig = config('logging.channels.performance');
@@ -147,8 +157,9 @@ class StructuredLoggingTest extends TestCase
     /**
      * Verificar que el middleware está registrado en bootstrap/app.php
      *
-     * @test
+
      */
+    #[Test]
     public function test_log_request_middleware_alias_exists(): void
     {
         // Obtener la configuración de middleware desde app
@@ -159,8 +170,9 @@ class StructuredLoggingTest extends TestCase
     /**
      * Verificar que los timestsamps usan formato ISO8601
      *
-     * @test
+
      */
+    #[Test]
     public function test_timestamps_use_iso8601_format(): void
     {
         // El clase HasSafeErrorHandling usa now()->toIso8601String()

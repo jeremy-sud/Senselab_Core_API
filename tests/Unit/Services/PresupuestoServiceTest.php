@@ -10,6 +10,7 @@ use App\Models\Usuario;
 use App\Services\PresupuestoService;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class PresupuestoServiceTest extends TestCase
 {
@@ -67,7 +68,7 @@ class PresupuestoServiceTest extends TestCase
 
     // ─── listar() ───────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function listar_retorna_paginacion(): void
     {
         $this->crearPresupuesto();
@@ -80,7 +81,7 @@ class PresupuestoServiceTest extends TestCase
 
     // ─── crear() ────────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function crear_presupuesto_exitosamente(): void
     {
         $data = [
@@ -100,7 +101,7 @@ class PresupuestoServiceTest extends TestCase
         $this->assertDatabaseHas('presupuestos', ['nombre' => 'Presupuesto Anual 2025']);
     }
 
-    /** @test */
+    #[Test]
     public function crear_establece_estado_borrador_por_defecto(): void
     {
         $presupuesto = $this->service->crear([
@@ -117,7 +118,7 @@ class PresupuestoServiceTest extends TestCase
 
     // ─── obtener() ──────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function obtener_presupuesto_existente(): void
     {
         $presupuesto = $this->crearPresupuesto();
@@ -127,7 +128,7 @@ class PresupuestoServiceTest extends TestCase
         $this->assertEquals($presupuesto->id, $resultado->id);
     }
 
-    /** @test */
+    #[Test]
     public function obtener_presupuesto_inexistente_lanza_excepcion(): void
     {
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
@@ -137,7 +138,7 @@ class PresupuestoServiceTest extends TestCase
 
     // ─── actualizar() ───────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function actualizar_presupuesto_borrador(): void
     {
         $presupuesto = $this->crearPresupuesto(['estado' => 'Borrador']);
@@ -149,7 +150,7 @@ class PresupuestoServiceTest extends TestCase
         $this->assertEquals('Nombre Actualizado', $resultado->nombre);
     }
 
-    /** @test */
+    #[Test]
     public function actualizar_presupuesto_finalizado_lanza_excepcion(): void
     {
         $presupuesto = $this->crearPresupuesto(['estado' => 'Finalizado']);
@@ -161,7 +162,7 @@ class PresupuestoServiceTest extends TestCase
 
     // ─── eliminar() ─────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function eliminar_presupuesto_borrador(): void
     {
         $presupuesto = $this->crearPresupuesto(['estado' => 'Borrador']);
@@ -171,7 +172,7 @@ class PresupuestoServiceTest extends TestCase
         $this->assertTrue($resultado);
     }
 
-    /** @test */
+    #[Test]
     public function eliminar_presupuesto_activo_lanza_excepcion(): void
     {
         $presupuesto = $this->crearPresupuesto(['estado' => 'Activo']);
@@ -183,7 +184,7 @@ class PresupuestoServiceTest extends TestCase
 
     // ─── activar() ──────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function activar_presupuesto_con_detalles(): void
     {
         $presupuesto = $this->crearPresupuesto(['estado' => 'Borrador']);
@@ -195,7 +196,7 @@ class PresupuestoServiceTest extends TestCase
         $this->assertEquals('Activo', $resultado->estado);
     }
 
-    /** @test */
+    #[Test]
     public function activar_presupuesto_sin_detalles_lanza_excepcion(): void
     {
         $presupuesto = $this->crearPresupuesto(['estado' => 'Borrador']);
@@ -206,7 +207,7 @@ class PresupuestoServiceTest extends TestCase
         $this->service->activar($presupuesto);
     }
 
-    /** @test */
+    #[Test]
     public function activar_presupuesto_ya_activo_lanza_excepcion(): void
     {
         $presupuesto = $this->crearPresupuesto(['estado' => 'Activo']);
@@ -220,7 +221,7 @@ class PresupuestoServiceTest extends TestCase
 
     // ─── finalizar() ────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function finalizar_presupuesto_activo(): void
     {
         $presupuesto = $this->crearPresupuesto(['estado' => 'Activo']);
@@ -230,7 +231,7 @@ class PresupuestoServiceTest extends TestCase
         $this->assertEquals('Finalizado', $resultado->estado);
     }
 
-    /** @test */
+    #[Test]
     public function finalizar_presupuesto_ya_finalizado_lanza_excepcion(): void
     {
         $presupuesto = $this->crearPresupuesto(['estado' => 'Finalizado']);
@@ -242,7 +243,7 @@ class PresupuestoServiceTest extends TestCase
 
     // ─── activos() ──────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function activos_retorna_solo_activos(): void
     {
         $this->crearPresupuesto(['estado' => 'Activo']);
@@ -259,7 +260,7 @@ class PresupuestoServiceTest extends TestCase
 
     // ─── resumen() ──────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function resumen_retorna_datos_completos(): void
     {
         $presupuesto = $this->crearPresupuesto();

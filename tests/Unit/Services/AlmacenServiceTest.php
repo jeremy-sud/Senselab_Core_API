@@ -8,6 +8,7 @@ use App\Models\Sucursal;
 use App\Services\AlmacenService;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class AlmacenServiceTest extends TestCase
 {
@@ -45,7 +46,7 @@ class AlmacenServiceTest extends TestCase
 
     // ─── listar() ───────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function listar_retorna_paginacion(): void
     {
         $this->crearAlmacen();
@@ -56,7 +57,7 @@ class AlmacenServiceTest extends TestCase
         $this->assertGreaterThanOrEqual(2, $resultado->total());
     }
 
-    /** @test */
+    #[Test]
     public function listar_filtra_por_empresa_id(): void
     {
         $this->crearAlmacen();
@@ -75,7 +76,7 @@ class AlmacenServiceTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function listar_filtra_por_sucursal_id(): void
     {
         $this->crearAlmacen();
@@ -89,7 +90,7 @@ class AlmacenServiceTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function listar_filtra_solo_activos(): void
     {
         $this->crearAlmacen(['activo' => true]);
@@ -104,7 +105,7 @@ class AlmacenServiceTest extends TestCase
 
     // ─── crear() ────────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function crear_almacen_exitosamente(): void
     {
         $data = [
@@ -124,7 +125,7 @@ class AlmacenServiceTest extends TestCase
         $this->assertDatabaseHas('almacenes', ['nombre' => 'Almacén Nuevo']);
     }
 
-    /** @test */
+    #[Test]
     public function crear_almacen_principal_desmarca_otros(): void
     {
         // Crear un almacén principal existente
@@ -146,7 +147,7 @@ class AlmacenServiceTest extends TestCase
         $this->assertTrue((bool) $nuevo->es_principal);
     }
 
-    /** @test */
+    #[Test]
     public function crear_almacen_carga_relaciones(): void
     {
         $almacen = $this->service->crear([
@@ -163,7 +164,7 @@ class AlmacenServiceTest extends TestCase
 
     // ─── obtener() ──────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function obtener_almacen_existente(): void
     {
         $almacen = $this->crearAlmacen();
@@ -175,7 +176,7 @@ class AlmacenServiceTest extends TestCase
         $this->assertTrue($resultado->relationLoaded('sucursal'));
     }
 
-    /** @test */
+    #[Test]
     public function obtener_almacen_inexistente_lanza_excepcion(): void
     {
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
@@ -185,7 +186,7 @@ class AlmacenServiceTest extends TestCase
 
     // ─── actualizar() ───────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function actualizar_almacen_exitosamente(): void
     {
         $almacen = $this->crearAlmacen(['nombre' => 'Nombre Viejo']);
@@ -196,7 +197,7 @@ class AlmacenServiceTest extends TestCase
         $this->assertDatabaseHas('almacenes', ['id' => $almacen->id, 'nombre' => 'Nombre Nuevo']);
     }
 
-    /** @test */
+    #[Test]
     public function actualizar_a_principal_desmarca_otros(): void
     {
         $principal = $this->crearAlmacen(['es_principal' => true]);
@@ -210,7 +211,7 @@ class AlmacenServiceTest extends TestCase
 
     // ─── eliminar() ─────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function eliminar_almacen_no_principal(): void
     {
         $almacen = $this->crearAlmacen(['es_principal' => false]);
@@ -225,7 +226,7 @@ class AlmacenServiceTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function eliminar_almacen_principal_lanza_excepcion(): void
     {
         $almacen = $this->crearAlmacen(['es_principal' => true]);

@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Jobs\Hacienda\EnviarComprobanteJob;
 use App\Jobs\Hacienda\ConsultarEstadoJob;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests End-to-End de Facturación Electrónica
@@ -31,9 +33,9 @@ use Carbon\Carbon;
  * 6. Consultar estado (polling)
  * 7. Procesar respuesta (aceptación/rechazo)
  * 
- * @group e2e
- * @group facturacion-electronica
  */
+#[Group('e2e')]
+#[Group('facturacion-electronica')]
 class FacturacionElectronicaE2ETest extends TestCase
 {
     use RefreshDatabase;
@@ -100,7 +102,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         $this->haciendaClient = $this->mock(HaciendaApiClient::class);
     }
 
-    /** @test */
+    #[Test]
     public function flujo_completo_creacion_y_envio_factura_electronica()
     {
         Queue::fake();
@@ -134,7 +136,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         Queue::assertPushed(EnviarComprobanteJob::class);
     }
 
-    /** @test */
+    #[Test]
     public function generacion_xml_cumple_especificacion_dgt_v43()
     {
         $generador = new ClaveNumericaGenerator();
@@ -213,7 +215,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         $this->assertTrue($loaded, 'XML generado debe ser parseable');
     }
 
-    /** @test */
+    #[Test]
     public function firma_digital_genera_xml_firmado_valido()
     {
         $comprobante = ComprobanteElectronicoFe::factory()->create([
@@ -263,7 +265,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         $this->assertNotNull($comprobante->xml_firmado);
     }
 
-    /** @test */
+    #[Test]
     public function envio_a_hacienda_retorna_respuesta_exitosa()
     {
         $this->markTestSkipped('Requiere certificado real y credenciales de Hacienda');
@@ -300,7 +302,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function consulta_estado_comprobante_enviado()
     {
         $this->markTestSkipped('Requiere certificado real y credenciales de Hacienda');
@@ -324,7 +326,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function procesamiento_respuesta_aceptacion_actualiza_estado()
     {
         $comprobante = ComprobanteElectronicoFe::factory()->create([
@@ -353,7 +355,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         $this->assertNotNull($comprobante->respuesta_hacienda_xml);
     }
 
-    /** @test */
+    #[Test]
     public function procesamiento_respuesta_rechazo_guarda_errores()
     {
         $comprobante = ComprobanteElectronicoFe::factory()->create([
@@ -383,7 +385,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         $this->assertNull($comprobante->fecha_aceptacion);
     }
 
-    /** @test */
+    #[Test]
     public function nota_credito_referencia_factura_original()
     {
         Queue::fake();
@@ -421,7 +423,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         $this->assertNotNull($notaCredito->metadata);
     }
 
-    /** @test */
+    #[Test]
     public function validacion_clave_numerica_formato_correcto()
     {
         $generador = new ClaveNumericaGenerator();
@@ -442,7 +444,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         $this->assertStringContainsString('310123456700', $clave); // Cédula (12 dígitos con padding)
     }
 
-    /** @test */
+    #[Test]
     public function calculo_totales_comprobante_correcto()
     {
         // Este test verifica que los totales se calculan correctamente
@@ -501,7 +503,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         $this->assertEquals(2, $comprobante->lineasDetalle()->count());
     }
 
-    /** @test */
+    #[Test]
     public function reenvio_comprobante_en_error_genera_nuevo_job()
     {
         Queue::fake();

@@ -331,13 +331,15 @@ class ComprobanteElectronicoController extends Controller
             $totalVentaBruta = 0;
             $totalDescuentos = 0;
             $totalImpuestos = 0;
+            $totalGravado = 0;
+            $totalExento = 0;
 
             foreach ($request->lineas as $linea) {
                 // Procesar impuestos (tomar el primero si es un array)
                 $impuestoCodigo = null;
                 $impuestoCodigoTarifa = null;
-                $impuestoTarifa = null;
-                $impuestoMonto = null;
+                $impuestoTarifa = 0;
+                $impuestoMonto = 0;
                 
                 if (isset($linea['impuestos']) && is_array($linea['impuestos']) && count($linea['impuestos']) > 0) {
                     $primerImpuesto = $linea['impuestos'][0];
@@ -377,6 +379,14 @@ class ComprobanteElectronicoController extends Controller
 
                 $totalVentaBruta += $linea['monto_total'];
                 $totalDescuentos += $linea['monto_descuento'] ?? 0;
+
+                // Clasificar línea como gravada o exenta
+                $subtotalLinea = ($linea['monto_total'] ?? 0) - ($linea['monto_descuento'] ?? 0);
+                if (isset($linea['impuestos']) && is_array($linea['impuestos']) && count($linea['impuestos']) > 0) {
+                    $totalGravado += $subtotalLinea;
+                } else {
+                    $totalExento += $subtotalLinea;
+                }
             }
 
             // Calcular totales
@@ -389,6 +399,8 @@ class ComprobanteElectronicoController extends Controller
                 'total_descuentos' => $totalDescuentos,
                 'total_venta_neta' => $totalVentaNeta,
                 'total_impuesto' => $totalImpuestos,
+                'total_gravado' => $totalGravado,
+                'total_exento' => $totalExento,
                 'total_comprobante' => $totalComprobante,
             ]);
 

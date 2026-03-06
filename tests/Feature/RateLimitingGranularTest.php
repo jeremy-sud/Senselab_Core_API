@@ -7,6 +7,7 @@ namespace Tests\Feature;
 use App\Services\RateLimitingService;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Cache;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * Rate Limiting Granular Test
@@ -17,9 +18,9 @@ use Illuminate\Support\Facades\Cache;
  * Nota: Extiende de BaseTestCase sin RefreshDatabase para evitar
  * dependencias de BD en tests de lógica pura.
  *
- * @covers \App\Services\RateLimitingService
- * @covers \App\Http\Middleware\ThrottleRequestsWithRetryAfter
  */
+#[CoversClass(\App\Services\RateLimitingService::class)]
+#[CoversClass(\App\Http\Middleware\ThrottleRequestsWithRetryAfter::class)]
 class RateLimitingGranularTest extends BaseTestCase
 {
     /**

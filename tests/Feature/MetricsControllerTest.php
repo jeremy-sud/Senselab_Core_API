@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests para el endpoint /metrics (Prometheus format) y /metrics/health
@@ -12,9 +14,9 @@ use PHPUnit\Framework\Attributes\Test;
  * Verifica que el MetricsController reescrito retorna métricas reales
  * sin dependencia de Prometheus SDK.
  *
- * @covers \App\Http\Controllers\MetricsController
- * @group monitoring
  */
+#[CoversClass(\App\Http\Controllers\MetricsController::class)]
+#[Group('monitoring')]
 class MetricsControllerTest extends TestCase
 {
     use RefreshDatabase;

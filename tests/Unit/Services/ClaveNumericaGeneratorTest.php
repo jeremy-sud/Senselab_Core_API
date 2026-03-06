@@ -5,6 +5,7 @@ namespace Tests\Unit\Services;
 use App\Services\Hacienda\ClaveNumericaGenerator;
 use Tests\TestCase;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Tests para ClaveNumericaGenerator
@@ -26,7 +27,7 @@ class ClaveNumericaGeneratorTest extends TestCase
         $this->generator = new ClaveNumericaGenerator();
     }
 
-    /** @test */
+    #[Test]
     public function puede_generar_clave_numerica_valida()
     {
         $fecha = Carbon::parse('2025-11-26');
@@ -63,7 +64,7 @@ class ClaveNumericaGeneratorTest extends TestCase
         $this->assertMatchesRegularExpression('/^\d{8}$/', $codigoSeguridad);
     }
 
-    /** @test */
+    #[Test]
     public function valida_clave_correctamente()
     {
         $claveValida = '52611202531011234567800000000000000000001154489877';
@@ -74,7 +75,7 @@ class ClaveNumericaGeneratorTest extends TestCase
         $this->assertEmpty($resultado['errores']);
     }
 
-    /** @test */
+    #[Test]
     public function detecta_clave_invalida_por_longitud()
     {
         $claveInvalida = '123456789'; // Muy corta
@@ -85,7 +86,7 @@ class ClaveNumericaGeneratorTest extends TestCase
         $this->assertContains('La clave debe tener exactamente 50 caracteres', $resultado['errores']);
     }
 
-    /** @test */
+    #[Test]
     public function detecta_clave_invalida_por_formato()
     {
         $claveInvalida = 'ABCDEFGHIJ' . str_repeat('0', 40); // Con letras
@@ -96,7 +97,7 @@ class ClaveNumericaGeneratorTest extends TestCase
         $this->assertContains('La clave debe contener solo números', $resultado['errores']);
     }
 
-    /** @test */
+    #[Test]
     public function detecta_pais_invalido()
     {
         // Clave con país 9 (inválido, debería ser 5)
@@ -108,7 +109,7 @@ class ClaveNumericaGeneratorTest extends TestCase
         $this->assertContains('Código de país inválido', $resultado['errores']);
     }
 
-    /** @test */
+    #[Test]
     public function extrae_informacion_correctamente()
     {
         $clave = '52611202531011234567800000000000000000001154489877';
@@ -124,7 +125,7 @@ class ClaveNumericaGeneratorTest extends TestCase
         $this->assertInstanceOf(Carbon::class, $info['fecha_emision']);
     }
 
-    /** @test */
+    #[Test]
     public function puede_generar_multiples_claves_consecutivas()
     {
         $fecha = Carbon::parse('2025-11-26');
@@ -154,7 +155,7 @@ class ClaveNumericaGeneratorTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function rechaza_fecha_futura()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -164,7 +165,7 @@ class ClaveNumericaGeneratorTest extends TestCase
         $this->generator->generar($fechaFutura, '310112345678', '1', '1');
     }
 
-    /** @test */
+    #[Test]
     public function rechaza_fecha_muy_antigua()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -174,7 +175,7 @@ class ClaveNumericaGeneratorTest extends TestCase
         $this->generator->generar($fechaAntigua, '310112345678', '1', '1');
     }
 
-    /** @test */
+    #[Test]
     public function rechaza_cedula_muy_larga()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -184,7 +185,7 @@ class ClaveNumericaGeneratorTest extends TestCase
         $this->generator->generar(Carbon::now(), $cedulaLarga, '1', '1');
     }
 
-    /** @test */
+    #[Test]
     public function rechaza_consecutivo_muy_largo()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -194,7 +195,7 @@ class ClaveNumericaGeneratorTest extends TestCase
         $this->generator->generar(Carbon::now(), '310112345678', $consecutivoLargo, '1');
     }
 
-    /** @test */
+    #[Test]
     public function rechaza_situacion_invalida()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -203,7 +204,7 @@ class ClaveNumericaGeneratorTest extends TestCase
         $this->generator->generar(Carbon::now(), '310112345678', '1', '5');
     }
 
-    /** @test */
+    #[Test]
     public function formatea_cedula_con_padding()
     {
         $fecha = Carbon::parse('2025-11-26');
@@ -216,7 +217,7 @@ class ClaveNumericaGeneratorTest extends TestCase
         $this->assertEquals('000000000123', $cedulaFormateada);
     }
 
-    /** @test */
+    #[Test]
     public function codigo_seguridad_es_aleatorio()
     {
         $fecha = Carbon::now();
@@ -232,7 +233,7 @@ class ClaveNumericaGeneratorTest extends TestCase
         $this->assertNotEquals($codigo1, $codigo2);
     }
 
-    /** @test */
+    #[Test]
     public function situacion_normal_es_1()
     {
         $clave = $this->generator->generar(Carbon::now(), '310112345678', '1', '1');
@@ -240,7 +241,7 @@ class ClaveNumericaGeneratorTest extends TestCase
         $this->assertEquals('1', $situacion);
     }
 
-    /** @test */
+    #[Test]
     public function situacion_contingencia_es_2()
     {
         $clave = $this->generator->generar(Carbon::now(), '310112345678', '1', '2');
@@ -248,7 +249,7 @@ class ClaveNumericaGeneratorTest extends TestCase
         $this->assertEquals('2', $situacion);
     }
 
-    /** @test */
+    #[Test]
     public function situacion_sin_internet_es_3()
     {
         $clave = $this->generator->generar(Carbon::now(), '310112345678', '1', '3');
@@ -256,7 +257,7 @@ class ClaveNumericaGeneratorTest extends TestCase
         $this->assertEquals('3', $situacion);
     }
 
-    /** @test */
+    #[Test]
     public function no_genera_mas_de_1000_claves_multiples()
     {
         $this->expectException(\InvalidArgumentException::class);

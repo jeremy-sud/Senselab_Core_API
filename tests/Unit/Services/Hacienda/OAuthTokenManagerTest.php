@@ -11,6 +11,7 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Tests para OAuthTokenManager
@@ -44,7 +45,7 @@ class OAuthTokenManagerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_token_existente_valido(): void
     {
         // Crear token válido en BD
@@ -72,7 +73,7 @@ class OAuthTokenManagerTest extends TestCase
         $this->assertEquals(1, $token->uso_contador);
     }
 
-    /** @test */
+    #[Test]
     public function reutiliza_token_valido_existente(): void
     {
         // Crear token válido
@@ -104,7 +105,7 @@ class OAuthTokenManagerTest extends TestCase
         $this->assertEquals(3, $token->uso_contador);
     }
 
-    /** @test */
+    #[Test]
     public function puede_guardar_nuevo_token_en_bd(): void
     {
         // Verificar que no hay tokens
@@ -140,7 +141,7 @@ class OAuthTokenManagerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function desactiva_tokens_anteriores_al_crear_nuevo(): void
     {
         // Crear token antiguo activo
@@ -176,7 +177,7 @@ class OAuthTokenManagerTest extends TestCase
         $this->assertTrue((bool)$tokenNuevo->activo);
     }
 
-    /** @test */
+    #[Test]
     public function identifica_tokens_proximos_a_expirar(): void
     {
         // Token que expira en 4 minutos (< 5 min buffer)
@@ -203,7 +204,7 @@ class OAuthTokenManagerTest extends TestCase
         $this->assertFalse($tokenValido->proximo_expirar);
     }
 
-    /** @test */
+    #[Test]
     public function calcula_segundos_restantes_correctamente(): void
     {
         $token = FeOAuthToken::create([
@@ -221,7 +222,7 @@ class OAuthTokenManagerTest extends TestCase
         $this->assertLessThanOrEqual(1800, $segundos);
     }
 
-    /** @test */
+    #[Test]
     public function identifica_tokens_expirados(): void
     {
         $tokenExpirado = FeOAuthToken::create([
@@ -238,7 +239,7 @@ class OAuthTokenManagerTest extends TestCase
         $this->assertEquals(0, FeOAuthToken::validos()->count());
     }
 
-    /** @test */
+    #[Test]
     public function scope_activos_filtra_correctamente(): void
     {
         // Crear tokens activos e inactivos
@@ -266,7 +267,7 @@ class OAuthTokenManagerTest extends TestCase
         $this->assertEquals('active_1', $activos->first()->access_token);
     }
 
-    /** @test */
+    #[Test]
     public function scope_ambiente_filtra_correctamente(): void
     {
         FeOAuthToken::create([
@@ -296,7 +297,7 @@ class OAuthTokenManagerTest extends TestCase
         $this->assertEquals('production_token', $productionTokens->first()->access_token);
     }
 
-    /** @test */
+    #[Test]
     public function scope_validos_excluye_expirados(): void
     {
         // Token válido
