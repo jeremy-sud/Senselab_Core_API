@@ -7,6 +7,7 @@ use App\Models\PeriodoNomina;
 use App\Services\PeriodoNominaService;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class PeriodoNominaServiceTest extends TestCase
 {
@@ -45,7 +46,7 @@ class PeriodoNominaServiceTest extends TestCase
 
     // ─── listar() ───────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function listar_retorna_periodos_de_empresa(): void
     {
         $this->crearPeriodo(['fecha_inicio' => '2025-02-01', 'fecha_fin' => '2025-02-15']);
@@ -56,7 +57,7 @@ class PeriodoNominaServiceTest extends TestCase
         $this->assertGreaterThanOrEqual(2, $resultado->total());
     }
 
-    /** @test */
+    #[Test]
     public function listar_excluye_eliminados(): void
     {
         $this->crearPeriodo(['fecha_inicio' => '2025-04-01', 'fecha_fin' => '2025-04-15', 'eliminado' => false]);
@@ -69,7 +70,7 @@ class PeriodoNominaServiceTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function listar_filtra_por_estado(): void
     {
         $this->crearPeriodo(['estado' => 'Abierto', 'fecha_inicio' => '2025-06-01', 'fecha_fin' => '2025-06-15']);
@@ -82,7 +83,7 @@ class PeriodoNominaServiceTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function listar_filtra_por_anio(): void
     {
         $this->crearPeriodo(['fecha_inicio' => '2025-08-01', 'fecha_fin' => '2025-08-15']);
@@ -95,7 +96,7 @@ class PeriodoNominaServiceTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function listar_filtra_por_mes(): void
     {
         $this->crearPeriodo(['fecha_inicio' => '2025-09-01', 'fecha_fin' => '2025-09-15']);
@@ -110,7 +111,7 @@ class PeriodoNominaServiceTest extends TestCase
 
     // ─── crear() ────────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function crear_periodo_exitosamente(): void
     {
         $data = [
@@ -132,7 +133,7 @@ class PeriodoNominaServiceTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function crear_periodo_estado_default_abierto(): void
     {
         $periodo = $this->service->crear($this->empresa->id, [
@@ -146,7 +147,7 @@ class PeriodoNominaServiceTest extends TestCase
 
     // ─── obtener() ──────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function obtener_periodo_existente(): void
     {
         $periodo = $this->crearPeriodo();
@@ -157,7 +158,7 @@ class PeriodoNominaServiceTest extends TestCase
         $this->assertTrue($resultado->relationLoaded('empresa'));
     }
 
-    /** @test */
+    #[Test]
     public function obtener_periodo_de_otra_empresa_falla(): void
     {
         $otraEmpresa = $this->createEmpresa(['nombre' => 'Otra', 'email' => 'otra' . uniqid() . '@test.com']);
@@ -170,7 +171,7 @@ class PeriodoNominaServiceTest extends TestCase
 
     // ─── actualizar() ───────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function actualizar_periodo_abierto(): void
     {
         $periodo = $this->crearPeriodo(['estado' => 'Abierto']);
@@ -182,7 +183,7 @@ class PeriodoNominaServiceTest extends TestCase
         $this->assertEquals('Actualizado', $resultado->observaciones);
     }
 
-    /** @test */
+    #[Test]
     public function actualizar_periodo_procesado_lanza_excepcion(): void
     {
         $periodo = $this->crearPeriodo(['estado' => 'Procesado']);
@@ -196,7 +197,7 @@ class PeriodoNominaServiceTest extends TestCase
 
     // ─── eliminar() ─────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function eliminar_periodo_sin_pagos(): void
     {
         $periodo = $this->crearPeriodo();
@@ -213,7 +214,7 @@ class PeriodoNominaServiceTest extends TestCase
 
     // ─── cerrar() ───────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function cerrar_periodo_abierto(): void
     {
         $periodo = $this->crearPeriodo(['estado' => 'Abierto']);
@@ -224,7 +225,7 @@ class PeriodoNominaServiceTest extends TestCase
         $this->assertDatabaseHas('periodos_nomina', ['id' => $periodo->id, 'estado' => 'Cerrado']);
     }
 
-    /** @test */
+    #[Test]
     public function cerrar_periodo_no_abierto_lanza_excepcion(): void
     {
         $periodo = $this->crearPeriodo(['estado' => 'Cerrado']);
@@ -234,7 +235,7 @@ class PeriodoNominaServiceTest extends TestCase
         $this->service->cerrar($this->empresa->id, $periodo->id);
     }
 
-    /** @test */
+    #[Test]
     public function cerrar_periodo_procesado_lanza_excepcion(): void
     {
         $periodo = $this->crearPeriodo(['estado' => 'Procesado']);
@@ -246,7 +247,7 @@ class PeriodoNominaServiceTest extends TestCase
 
     // ─── procesar() ─────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function procesar_periodo_no_procesado(): void
     {
         $periodo = $this->crearPeriodo(['estado' => 'Cerrado']);
@@ -256,7 +257,7 @@ class PeriodoNominaServiceTest extends TestCase
         $this->assertEquals('Procesado', $resultado->estado);
     }
 
-    /** @test */
+    #[Test]
     public function procesar_periodo_ya_procesado_lanza_excepcion(): void
     {
         $periodo = $this->crearPeriodo(['estado' => 'Procesado']);
@@ -268,7 +269,7 @@ class PeriodoNominaServiceTest extends TestCase
 
     // ─── resumen() ──────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function resumen_retorna_estructura_correcta(): void
     {
         $periodo = $this->crearPeriodo();
@@ -283,7 +284,7 @@ class PeriodoNominaServiceTest extends TestCase
         $this->assertArrayHasKey('total_neto', $resumen['resumen']);
     }
 
-    /** @test */
+    #[Test]
     public function resumen_sin_pagos_retorna_ceros(): void
     {
         $periodo = $this->crearPeriodo();
@@ -296,7 +297,7 @@ class PeriodoNominaServiceTest extends TestCase
 
     // ─── activos() ──────────────────────────────────────────────
 
-    /** @test */
+    #[Test]
     public function activos_retorna_periodos_activos_no_eliminados(): void
     {
         $this->crearPeriodo(['activo' => true, 'eliminado' => false, 'fecha_inicio' => '2026-01-01', 'fecha_fin' => '2026-01-15']);

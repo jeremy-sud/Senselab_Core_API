@@ -374,6 +374,33 @@ abstract class TestCase extends BaseTestCase
             ['nombre' => 'Crear Tipos Cuentas', 'slug' => 'crear-tipo_cuenta', 'modulo' => 'Contabilidad'],
             ['nombre' => 'Editar Tipos Cuentas', 'slug' => 'editar-tipo_cuenta', 'modulo' => 'Contabilidad'],
             ['nombre' => 'Eliminar Tipos Cuentas', 'slug' => 'eliminar-tipo_cuenta', 'modulo' => 'Contabilidad'],
+            // Configuraciones
+            ['nombre' => 'Ver Configuraciones', 'slug' => 'ver-configuraciones', 'modulo' => 'Sistema'],
+            ['nombre' => 'Crear Configuraciones', 'slug' => 'crear-configuraciones', 'modulo' => 'Sistema'],
+            ['nombre' => 'Editar Configuraciones', 'slug' => 'editar-configuraciones', 'modulo' => 'Sistema'],
+            ['nombre' => 'Eliminar Configuraciones', 'slug' => 'eliminar-configuraciones', 'modulo' => 'Sistema'],
+            ['nombre' => 'Ver Configuración', 'slug' => 'ver-configuracion', 'modulo' => 'Sistema'],
+            ['nombre' => 'Crear Configuración', 'slug' => 'crear-configuracion', 'modulo' => 'Sistema'],
+            ['nombre' => 'Editar Configuración', 'slug' => 'editar-configuracion', 'modulo' => 'Sistema'],
+            ['nombre' => 'Eliminar Configuración', 'slug' => 'eliminar-configuracion', 'modulo' => 'Sistema'],
+            // Caja Chica
+            ['nombre' => 'Ver Caja Chica', 'slug' => 'ver-caja_chica', 'modulo' => 'Finanzas'],
+            ['nombre' => 'Crear Caja Chica', 'slug' => 'crear-caja_chica', 'modulo' => 'Finanzas'],
+            ['nombre' => 'Editar Caja Chica', 'slug' => 'editar-caja_chica', 'modulo' => 'Finanzas'],
+            ['nombre' => 'Eliminar Caja Chica', 'slug' => 'eliminar-caja_chica', 'modulo' => 'Finanzas'],
+            ['nombre' => 'Ver Cajas Chicas', 'slug' => 'ver-cajas_chicas', 'modulo' => 'Finanzas'],
+            ['nombre' => 'Crear Cajas Chicas', 'slug' => 'crear-cajas_chicas', 'modulo' => 'Finanzas'],
+            ['nombre' => 'Editar Cajas Chicas', 'slug' => 'editar-cajas_chicas', 'modulo' => 'Finanzas'],
+            ['nombre' => 'Eliminar Cajas Chicas', 'slug' => 'eliminar-cajas_chicas', 'modulo' => 'Finanzas'],
+            // Presupuestos
+            ['nombre' => 'Ver Presupuestos', 'slug' => 'ver-presupuestos', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Crear Presupuestos', 'slug' => 'crear-presupuestos', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Editar Presupuestos', 'slug' => 'editar-presupuestos', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Eliminar Presupuestos', 'slug' => 'eliminar-presupuestos', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Ver Presupuesto', 'slug' => 'ver-presupuesto', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Crear Presupuesto', 'slug' => 'crear-presupuesto', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Editar Presupuesto', 'slug' => 'editar-presupuesto', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Eliminar Presupuesto', 'slug' => 'eliminar-presupuesto', 'modulo' => 'Contabilidad'],
         ];
 
         foreach ($permisos as $permiso) {

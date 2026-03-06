@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * CORS + Security Headers Test
@@ -12,17 +14,18 @@ use Tests\TestCase;
  * FASE 1.2: Verificar que CORS está correctamente configurado
  * y que todos los headers de seguridad se aplican a las respuestas
  *
- * @covers \App\Http\Middleware\SecurityHeaders
- * @covers \Illuminate\Http\Middleware\HandleCors
- * @covers \App\Http\Middleware\HandleCorsAdvanced
  */
+#[CoversClass(\App\Http\Middleware\SecurityHeaders::class)]
+#[CoversClass(\Illuminate\Http\Middleware\HandleCors::class)]
+#[CoversClass(\App\Http\Middleware\HandleCorsAdvanced::class)]
 class CorsAndSecurityHeadersTest extends TestCase
 {
     /**
      * Verificar que CORS preflight request retorna 200 OK
      *
-     * @test
+
      */
+    #[Test]
     public function test_cors_preflight_request_returns_200(): void
     {
         $response = $this->options(
@@ -43,8 +46,9 @@ class CorsAndSecurityHeadersTest extends TestCase
     /**
      * Verificar que orígenes no permitidos son rechazados
      *
-     * @test
+
      */
+    #[Test]
     public function test_cors_blocked_origin_returns_without_cors_headers(): void
     {
         $response = $this->get(
@@ -63,8 +67,9 @@ class CorsAndSecurityHeadersTest extends TestCase
     /**
      * Verificar que Security Headers se aplican a todas las respuestas
      *
-     * @test
+
      */
+    #[Test]
     public function test_security_headers_present_on_response(): void
     {
         // Crear un usuario y obtener un token (si es necesario)
@@ -83,8 +88,9 @@ class CorsAndSecurityHeadersTest extends TestCase
     /**
      * Verificar que CSP header se aplica solo en rutas API
      *
-     * @test
+
      */
+    #[Test]
     public function test_csp_header_on_api_routes(): void
     {
         // CSP no debe estar en rutas no-API
@@ -101,8 +107,9 @@ class CorsAndSecurityHeadersTest extends TestCase
     /**
      * Verificar que HSTS header se aplica solo en producción
      *
-     * @test
+
      */
+    #[Test]
     public function test_hsts_header_only_in_production(): void
     {
         $response = $this->get('/up');
@@ -118,8 +125,9 @@ class CorsAndSecurityHeadersTest extends TestCase
     /**
      * Verificar que X-Request-ID se agrega a las respuestas
      *
-     * @test
+
      */
+    #[Test]
     public function test_request_id_header_present(): void
     {
         $response = $this->get('/up');
@@ -135,8 +143,9 @@ class CorsAndSecurityHeadersTest extends TestCase
     /**
      * Verificar que caché está deshabilitado para rutas API
      *
-     * @test
+
      */
+    #[Test]
     public function test_cache_disabled_for_api_routes(): void
     {
         $response = $this->getJson('/api/empresas', [
@@ -158,8 +167,9 @@ class CorsAndSecurityHeadersTest extends TestCase
     /**
      * Verificar que las credenciales se permite en CORS si está configurado
      *
-     * @test
+
      */
+    #[Test]
     public function test_cors_credentials_support(): void
     {
         $response = $this->options(
@@ -179,8 +189,9 @@ class CorsAndSecurityHeadersTest extends TestCase
     /**
      * Verificar que métodos HTTP no permitidos son manejados
      *
-     * @test
+
      */
+    #[Test]
     public function test_unsupported_cors_method_handling(): void
     {
         $response = $this->options(

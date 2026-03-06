@@ -7,16 +7,17 @@ use App\Models\HaciendaComprobante;
 use App\Models\Comprobante;
 use Illuminate\Foundation\Testing\TestCase;
 use Illuminate\Support\Facades\Config;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * Pruebas para FASE 2.1: Integración Hacienda Costa Rica
  *
- * @covers \App\Services\Hacienda\HaciendaIntegrationService
- * @covers \App\Http\Controllers\Api\V1\HaciendaController
  *
  * Tests Feature x8
  * Tests Unit    x7
  */
+#[CoversClass(\App\Services\Hacienda\HaciendaIntegrationService::class)]
+#[CoversClass(\App\Http\Controllers\Api\V1\HaciendaController::class)]
 class HaciendaIntegrationTest extends TestCase
 {
     protected function setUp(): void

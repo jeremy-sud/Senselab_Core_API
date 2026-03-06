@@ -11,6 +11,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use App\Jobs\Hacienda\EnviarComprobanteJob;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Tests de integración para ComprobanteElectronicoController
@@ -71,7 +72,7 @@ class ComprobanteElectronicoControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_listar_comprobantes()
     {
         ComprobanteElectronicoFe::factory()->count(3)->create([
@@ -99,7 +100,7 @@ class ComprobanteElectronicoControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_filtrar_comprobantes_por_estado()
     {
         ComprobanteElectronicoFe::factory()->create([
@@ -119,7 +120,7 @@ class ComprobanteElectronicoControllerTest extends TestCase
         $this->assertEquals(1, $response->json('total'));
     }
 
-    /** @test */
+    #[Test]
     public function puede_crear_comprobante_con_lineas()
     {
         Queue::fake();
@@ -187,7 +188,7 @@ class ComprobanteElectronicoControllerTest extends TestCase
         Queue::assertPushed(EnviarComprobanteJob::class);
     }
 
-    /** @test */
+    #[Test]
     public function valida_campos_requeridos()
     {
         $response = $this->actingAs($this->user)
@@ -204,7 +205,7 @@ class ComprobanteElectronicoControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[Test]
     public function valida_tipo_documento()
     {
         $response = $this->actingAs($this->user)
@@ -216,7 +217,7 @@ class ComprobanteElectronicoControllerTest extends TestCase
             ->assertJsonValidationErrors(['tipo_documento']);
     }
 
-    /** @test */
+    #[Test]
     public function valida_minimo_una_linea()
     {
         $response = $this->actingAs($this->user)
@@ -233,7 +234,7 @@ class ComprobanteElectronicoControllerTest extends TestCase
             ->assertJsonValidationErrors(['lineas']);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_comprobante_especifico()
     {
         $comprobante = ComprobanteElectronicoFe::factory()->create([
@@ -250,7 +251,7 @@ class ComprobanteElectronicoControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[Test]
     public function no_puede_ver_comprobante_de_otra_empresa()
     {
         $otraEmpresa = Empresa::factory()->create();
@@ -266,7 +267,7 @@ class ComprobanteElectronicoControllerTest extends TestCase
         $response->assertNotFound();
     }
 
-    /** @test */
+    #[Test]
     public function puede_descargar_xml_firmado()
     {
         $comprobante = ComprobanteElectronicoFe::factory()->create([
@@ -282,7 +283,7 @@ class ComprobanteElectronicoControllerTest extends TestCase
             ->assertHeader('Content-Disposition', "attachment; filename=\"{$comprobante->clave}_firmado.xml\"");
     }
 
-    /** @test */
+    #[Test]
     public function puede_reenviar_comprobante_en_error()
     {
         Queue::fake();
@@ -305,7 +306,7 @@ class ComprobanteElectronicoControllerTest extends TestCase
         Queue::assertPushed(EnviarComprobanteJob::class);
     }
 
-    /** @test */
+    #[Test]
     public function no_puede_reenviar_comprobante_aceptado()
     {
         $comprobante = ComprobanteElectronicoFe::factory()->create([
@@ -321,7 +322,7 @@ class ComprobanteElectronicoControllerTest extends TestCase
         $response->assertStatus(400);
     }
 
-    /** @test */
+    #[Test]
     public function puede_anular_comprobante()
     {
         Queue::fake();
@@ -365,7 +366,7 @@ class ComprobanteElectronicoControllerTest extends TestCase
         Queue::assertPushed(EnviarComprobanteJob::class);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_estadisticas()
     {
         ComprobanteElectronicoFe::factory()->create([
@@ -395,7 +396,7 @@ class ComprobanteElectronicoControllerTest extends TestCase
         $this->assertEquals(50000, $response->json('total_ventas'));
     }
 
-    /** @test */
+    #[Test]
     public function requiere_autenticacion()
     {
         $response = $this->getJson('/api/comprobantes');

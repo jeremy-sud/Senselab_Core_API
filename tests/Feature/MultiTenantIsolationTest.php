@@ -12,6 +12,8 @@ use App\Models\CuentaBancaria;
 use App\Models\Sucursal;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests de Aislamiento Multi-Tenant
@@ -22,10 +24,10 @@ use PHPUnit\Framework\Attributes\Test;
  * Modelos verificados:
  * - Producto, Cliente, Venta, CuentaBancaria, Sucursal
  *
- * @covers \App\Traits\BelongsToTenant
- * @group multitenancy
- * @group security
  */
+#[CoversClass(\App\Traits\BelongsToTenant::class)]
+#[Group('multitenancy')]
+#[Group('security')]
 class MultiTenantIsolationTest extends TestCase
 {
     use RefreshDatabase;

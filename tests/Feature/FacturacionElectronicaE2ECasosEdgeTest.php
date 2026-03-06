@@ -8,12 +8,13 @@ use App\Models\ComprobanteElectronicoFe;
 use App\Models\FeLineaDetalle;
 use App\Models\FeCertificadoDigital;
 use App\Services\Hacienda\ClaveNumericaGenerator;
-use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use App\Jobs\Hacienda\EnviarComprobanteJob;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests E2E de Casos Edge para Facturación Electrónica
@@ -26,10 +27,10 @@ use Carbon\Carbon;
  * - Múltiples impuestos
  * - Casos de error de Hacienda
  * 
- * @group e2e
- * @group facturacion-electronica
- * @group casos-edge
  */
+#[Group('e2e')]
+#[Group('facturacion-electronica')]
+#[Group('casos-edge')]
 class FacturacionElectronicaE2ECasosEdgeTest extends TestCase
 {
     use RefreshDatabase;
@@ -81,7 +82,7 @@ class FacturacionElectronicaE2ECasosEdgeTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function tiquete_electronico_sin_receptor_valida_correctamente()
     {
         Queue::fake();
@@ -132,7 +133,7 @@ class FacturacionElectronicaE2ECasosEdgeTest extends TestCase
         Queue::assertPushed(EnviarComprobanteJob::class);
     }
 
-    /** @test */
+    #[Test]
     public function validacion_totales_incorrectos_rechaza_comprobante()
     {
         $this->markTestSkipped('Validación de totales aún no implementada en FormRequest');
@@ -176,7 +177,7 @@ class FacturacionElectronicaE2ECasosEdgeTest extends TestCase
         $response->assertStatus(422);
     }
 
-    /** @test */
+    #[Test]
     public function factura_con_descuento_calcula_totales_correctamente()
     {
         Queue::fake();
@@ -228,11 +229,11 @@ class FacturacionElectronicaE2ECasosEdgeTest extends TestCase
         $this->assertEquals(2340, $comprobante->total_impuesto);
     }
 
-    /** @test */
+    #[Test]
     public function factura_exenta_no_aplica_impuestos()
     {
-        $this->markTestSkipped('Test presenta error 500 - requiere investigación adicional del cálculo de totales con líneas exentas');
-        
+        // $this->markTestSkipped('Test presenta error 500 - requiere investigación adicional del cálculo de totales con líneas exentas');
+
         Queue::fake();
         
         // Mock de servicios externos
@@ -279,7 +280,7 @@ class FacturacionElectronicaE2ECasosEdgeTest extends TestCase
         $this->assertEquals(50000, $comprobante->total_comprobante);
     }
 
-    /** @test */
+    #[Test]
     public function clave_numerica_situacion_contingencia_es_valida()
     {
         $generador = new ClaveNumericaGenerator();
@@ -302,7 +303,7 @@ class FacturacionElectronicaE2ECasosEdgeTest extends TestCase
         $this->assertEquals('2', $situacion);
     }
 
-    /** @test */
+    #[Test]
     public function clave_numerica_situacion_sin_internet_es_valida()
     {
         $generador = new ClaveNumericaGenerator();
@@ -324,7 +325,7 @@ class FacturacionElectronicaE2ECasosEdgeTest extends TestCase
         $this->assertEquals('3', $situacion);
     }
 
-    /** @test */
+    #[Test]
     public function factura_con_multiples_impuestos_calcula_correctamente()
     {
         Queue::fake();
@@ -379,7 +380,7 @@ class FacturacionElectronicaE2ECasosEdgeTest extends TestCase
         $this->assertEquals(11800, $comprobante->total_comprobante);
     }
 
-    /** @test */
+    #[Test]
     public function comprobante_rechazado_por_hacienda_guarda_codigo_error()
     {
         $comprobante = ComprobanteElectronicoFe::factory()->create([
@@ -410,12 +411,18 @@ class FacturacionElectronicaE2ECasosEdgeTest extends TestCase
         $this->assertStringContainsString('Error en XML', $comprobante->ultimo_error);
     }
 
-    /** @test */
+    #[Test]
     public function reintento_automatico_incrementa_contador_intentos()
     {
-        $this->markTestSkipped('Funcionalidad de reenvío ya validada en tests principales de ComprobanteElectronicoController');
-        
         Queue::fake();
+
+        // Agregar permiso de edición necesario para reenviar
+        $permisoEditar = \App\Models\Permiso::firstOrCreate(
+            ['slug' => 'editar-facturacion_electronica'],
+            ['nombre' => 'Editar Facturación Electrónica', 'activo' => true]
+        );
+        $rol = $this->user->roles()->first();
+        $rol->permisos()->syncWithoutDetaching([$permisoEditar->id]);
 
         $comprobante = ComprobanteElectronicoFe::factory()->create([
             'empresa_id' => $this->empresa->id,
@@ -424,13 +431,11 @@ class FacturacionElectronicaE2ECasosEdgeTest extends TestCase
             'ultimo_intento' => now()->subMinutes(10),
         ]);
 
-        // Otorgar permiso de reenvío al usuario
-        $permisoReenviar = Permission::firstOrCreate(['name' => 'reenviar-comprobante']);
-        $this->user->givePermissionTo($permisoReenviar);
-
         // Simular reenvío manual
         $response = $this->actingAs($this->user)
-            ->postJson("/api/comprobantes/{$comprobante->id}/reenviar");
+            ->postJson("/api/comprobantes/{$comprobante->id}/reenviar", [
+                'certificado_id' => $this->certificado->id,
+            ]);
 
         $response->assertOk();
 

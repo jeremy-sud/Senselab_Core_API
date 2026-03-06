@@ -20,6 +20,7 @@ use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Tests E2E para el flujo completo de Facturación Electrónica con Hacienda
@@ -99,7 +100,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         $this->claveGenerator = new ClaveNumericaGenerator();
     }
 
-    /** @test */
+    #[Test]
     public function flujo_completo_factura_electronica(): void
     {
         // 1. Generar clave numérica
@@ -165,7 +166,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         $this->assertEquals(1, $comprobante->lineas->count());
     }
 
-    /** @test */
+    #[Test]
     public function validacion_clave_numerica_50_posiciones(): void
     {
         $fecha = Carbon::parse('2025-06-15');
@@ -200,7 +201,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         $this->assertMatchesRegularExpression('/^\d{8}$/', $codigoSeguridad);
     }
 
-    /** @test */
+    #[Test]
     public function tipos_documento_soportados(): void
     {
         $tiposDocumento = [
@@ -236,7 +237,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function estados_comprobante_validos(): void
     {
         $estadosValidos = [
@@ -275,7 +276,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function situaciones_emision_validas(): void
     {
         $situaciones = [
@@ -297,7 +298,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function formato_identificacion_emisor_receptor(): void
     {
         // Tipos de identificación según Hacienda
@@ -335,7 +336,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         $this->assertLessThanOrEqual(12, strlen($comprobante->receptor_numero_identificacion));
     }
 
-    /** @test */
+    #[Test]
     public function monedas_soportadas(): void
     {
         $monedas = ['CRC', 'USD', 'EUR'];
@@ -365,7 +366,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function condiciones_venta_validas(): void
     {
         $condiciones = [
@@ -406,7 +407,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function medios_pago_validos(): void
     {
         $mediosPago = [
@@ -442,7 +443,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function oauth_token_para_sandbox(): void
     {
         // Crear token simulado para sandbox
@@ -465,7 +466,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         $this->assertFalse($token->expirado);
     }
 
-    /** @test */
+    #[Test]
     public function urls_endpoints_correctos(): void
     {
         // Sandbox
@@ -489,7 +490,7 @@ class FacturacionElectronicaE2ETest extends TestCase
         $this->assertStringContainsString('/realms/rut/', $prodOauth);
     }
 
-    /** @test */
+    #[Test]
     public function version_esquema_xml_v44(): void
     {
         $version = config('hacienda.version_esquema');

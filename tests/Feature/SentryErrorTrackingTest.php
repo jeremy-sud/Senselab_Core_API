@@ -6,6 +6,8 @@ namespace Tests\Feature;
 
 use App\Services\SentryService;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Sentry Error Tracking Test
@@ -13,14 +15,15 @@ use PHPUnit\Framework\TestCase;
  * FASE 1.4: Verificar que Sentry está correctamente configurado
  * para capturar errores, excepciones y transacciones
  *
- * @test
- * @covers \App\Services\SentryService
+
  */
+#[CoversClass(\App\Services\SentryService::class)]
 class SentryErrorTrackingTest extends TestCase
 {
     /**
      * Verificar que el servicio Sentry está disponible
      */
+    #[Test]
     public function test_sentry_service_exists(): void
     {
         $this->assertTrue(class_exists(SentryService::class));
@@ -36,6 +39,7 @@ class SentryErrorTrackingTest extends TestCase
     /**
      * Verificar que Sentry se puede deshabilitar en testing
      */
+    #[Test]
     public function test_sentry_can_be_disabled_in_testing(): void
     {
         // En testing, Sentry debería estar deshabilitado por defecto
@@ -45,6 +49,7 @@ class SentryErrorTrackingTest extends TestCase
     /**
      * Verificar que SentryService tiene métodos públicos correctos
      */
+    #[Test]
     public function test_sentry_service_has_public_methods(): void
     {
         $reflection = new \ReflectionClass(SentryService::class);
@@ -65,6 +70,7 @@ class SentryErrorTrackingTest extends TestCase
     /**
      * Verificar que SentryService implementa el patrón Facade
      */
+    #[Test]
     public function test_sentry_service_uses_facade_pattern(): void
     {
         // Verificar que todos los métodos son estáticos
@@ -84,6 +90,7 @@ class SentryErrorTrackingTest extends TestCase
     /**
      * Verificar que SentryService tiene documentación
      */
+    #[Test]
     public function test_sentry_service_has_documentation(): void
     {
         $reflection = new \ReflectionClass(SentryService::class);
@@ -96,6 +103,7 @@ class SentryErrorTrackingTest extends TestCase
     /**
      * Verificar que la clase SentryService es una clase normal
      */
+    #[Test]
     public function test_sentry_service_structure(): void
     {
         $reflection = new \ReflectionClass(SentryService::class);
@@ -109,6 +117,7 @@ class SentryErrorTrackingTest extends TestCase
     /**
      * Verificar que SentryService está bien estructurado
      */
+    #[Test]
     public function test_sentry_service_content(): void
     {
         $reflection = new \ReflectionClass(SentryService::class);

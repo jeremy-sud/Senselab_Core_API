@@ -7,17 +7,19 @@ use App\Models\Empresa;
 use App\Models\Usuario;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests del módulo financiero: Asientos Contables, Cuentas por Cobrar/Pagar
  *
  * Verifica CRUD, validaciones y reglas de negocio de los módulos contables.
  *
- * @covers \App\Http\Controllers\AsientoContableController
- * @covers \App\Http\Controllers\CuentaPorCobrarController
- * @covers \App\Http\Controllers\CuentaPorPagarController
- * @group financial
  */
+#[CoversClass(\App\Http\Controllers\AsientoContableController::class)]
+#[CoversClass(\App\Http\Controllers\CuentaPorCobrarController::class)]
+#[CoversClass(\App\Http\Controllers\CuentaPorPagarController::class)]
+#[Group('financial')]
 class FinancialModuleTest extends TestCase
 {
     use RefreshDatabase;

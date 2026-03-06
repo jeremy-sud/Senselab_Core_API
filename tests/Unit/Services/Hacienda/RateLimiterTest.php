@@ -6,6 +6,7 @@ use App\Services\Hacienda\RateLimiter;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Tests para RateLimiter de Hacienda
@@ -32,7 +33,7 @@ class RateLimiterTest extends TestCase
         Cache::flush();
     }
 
-    /** @test */
+    #[Test]
     public function puede_hacer_request_cuando_no_hay_limite(): void
     {
         $rateLimiter = new RateLimiter();
@@ -40,7 +41,7 @@ class RateLimiterTest extends TestCase
         $this->assertTrue($rateLimiter->canMakeRequest());
     }
 
-    /** @test */
+    #[Test]
     public function registra_requests_correctamente(): void
     {
         $rateLimiter = new RateLimiter();
@@ -54,7 +55,7 @@ class RateLimiterTest extends TestCase
         $this->assertTrue($rateLimiter->canMakeRequest());
     }
 
-    /** @test */
+    #[Test]
     public function bloquea_cuando_excede_limite_por_segundo(): void
     {
         Config::set('hacienda.rate_limit.max_requests_per_second', 3);
@@ -70,7 +71,7 @@ class RateLimiterTest extends TestCase
         $this->assertFalse($rateLimiter->canMakeRequest());
     }
 
-    /** @test */
+    #[Test]
     public function bloquea_cuando_excede_limite_por_minuto(): void
     {
         Config::set('hacienda.rate_limit.max_requests_per_second', 100); // Alto para no interferir
@@ -87,7 +88,7 @@ class RateLimiterTest extends TestCase
         $this->assertFalse($rateLimiter->canMakeRequest());
     }
 
-    /** @test */
+    #[Test]
     public function respeta_configuracion_deshabilitada(): void
     {
         Config::set('hacienda.rate_limit.enabled', false);
@@ -107,7 +108,7 @@ class RateLimiterTest extends TestCase
         $this->assertTrue(true);
     }
 
-    /** @test */
+    #[Test]
     public function obtiene_estadisticas_correctas(): void
     {
         $rateLimiter = new RateLimiter();
@@ -128,7 +129,7 @@ class RateLimiterTest extends TestCase
         $this->assertArrayHasKey('limit', $stats['current_second']);
     }
 
-    /** @test */
+    #[Test]
     public function limites_corresponden_a_documentacion_hacienda(): void
     {
         // Verificar que los valores por defecto respetan los límites de Hacienda
@@ -149,7 +150,7 @@ class RateLimiterTest extends TestCase
         $this->assertGreaterThanOrEqual(300, $limiteMinuto);
     }
 
-    /** @test */
+    #[Test]
     public function puede_reiniciar_contadores(): void
     {
         Config::set('hacienda.rate_limit.max_requests_per_second', 2);

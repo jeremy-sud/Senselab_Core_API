@@ -7,17 +7,18 @@ use App\Models\AuditLog;
 use Illuminate\Foundation\Testing\TestCase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Auth;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * Pruebas para FASE 1.7: Auditoría Completa
  *
- * @covers \App\Services\AuditService
- * @covers \App\Models\AuditLog
- * @covers \App\Traits\HasAuditableEvents
  *
  * Tests Feature x10
  * Tests Unit    x10
  */
+#[CoversClass(\App\Services\AuditService::class)]
+#[CoversClass(\App\Models\AuditLog::class)]
+#[CoversClass(\App\Traits\HasAuditableEvents::class)]
 class AuditGranularTest extends TestCase
 {
     protected function setUp(): void

@@ -13,6 +13,7 @@ use App\Models\TipoCuenta;
 use App\Models\Departamento;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests unitarios para las relaciones de modelos añadidas/corregidas
@@ -30,9 +31,9 @@ use PHPUnit\Framework\Attributes\Test;
  * - TipoCuenta (cuentasContables)
  * - Departamento (empleados)
  *
- * @group models
- * @group relations
  */
+#[Group('models')]
+#[Group('relations')]
 class ModelRelationsTest extends TestCase
 {
     use RefreshDatabase;

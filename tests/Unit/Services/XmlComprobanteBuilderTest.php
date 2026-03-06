@@ -9,6 +9,7 @@ use App\Services\Hacienda\Xml\XmlComprobanteBuilder;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Tests para XmlComprobanteBuilder
@@ -51,7 +52,7 @@ class XmlComprobanteBuilderTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function genera_xml_valido_para_factura()
     {
         $comprobante = ComprobanteElectronicoFe::factory()->create([
@@ -115,7 +116,7 @@ class XmlComprobanteBuilderTest extends TestCase
         $this->assertStringContainsString('2025-11-26T10:30:00', $xml);
     }
 
-    /** @test */
+    #[Test]
     public function genera_xml_valido_para_tiquete_sin_receptor()
     {
         $comprobante = ComprobanteElectronicoFe::factory()->create([
@@ -139,7 +140,7 @@ class XmlComprobanteBuilderTest extends TestCase
         $this->assertStringNotContainsString('<Receptor>', $xml);
     }
 
-    /** @test */
+    #[Test]
     public function genera_xml_valido_para_nota_credito_con_referencia()
     {
         $comprobante = ComprobanteElectronicoFe::factory()->create([
@@ -173,7 +174,7 @@ class XmlComprobanteBuilderTest extends TestCase
         $this->assertStringContainsString('<Razon>Anulación de factura</Razon>', $xml);
     }
 
-    /** @test */
+    #[Test]
     public function formatea_decimales_correctamente()
     {
         $comprobante = ComprobanteElectronicoFe::factory()->create([
@@ -195,7 +196,7 @@ class XmlComprobanteBuilderTest extends TestCase
         $this->assertStringContainsString('<MontoTotal>3086.42000</MontoTotal>', $xml);
     }
 
-    /** @test */
+    #[Test]
     public function escapa_caracteres_xml_correctamente()
     {
         $comprobante = ComprobanteElectronicoFe::factory()->create([
@@ -222,7 +223,7 @@ class XmlComprobanteBuilderTest extends TestCase
         $this->assertStringContainsString('comillas', $xml);
     }
 
-    /** @test */
+    #[Test]
     public function incluye_impuestos_en_lineas()
     {
         $comprobante = ComprobanteElectronicoFe::factory()->create([
@@ -246,7 +247,7 @@ class XmlComprobanteBuilderTest extends TestCase
         $this->assertStringContainsString('<Monto>2600.00000</Monto>', $xml);
     }
 
-    /** @test */
+    #[Test]
     public function incluye_descuentos_cuando_existen()
     {
         $comprobante = ComprobanteElectronicoFe::factory()->create([
@@ -266,7 +267,7 @@ class XmlComprobanteBuilderTest extends TestCase
         $this->assertStringContainsString('<NaturalezaDescuento>Descuento por volumen</NaturalezaDescuento>', $xml);
     }
 
-    /** @test */
+    #[Test]
     public function incluye_totales_correctamente()
     {
         $comprobante = ComprobanteElectronicoFe::factory()->create([
@@ -292,7 +293,7 @@ class XmlComprobanteBuilderTest extends TestCase
         $this->assertStringContainsString('<TotalComprobante>21470.00000</TotalComprobante>', $xml);
     }
 
-    /** @test */
+    #[Test]
     public function xml_es_bien_formado()
     {
         $comprobante = ComprobanteElectronicoFe::factory()->create([

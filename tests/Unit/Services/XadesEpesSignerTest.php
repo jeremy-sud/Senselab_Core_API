@@ -4,6 +4,7 @@ namespace Tests\Unit\Services;
 
 use App\Services\Hacienda\Xml\XadesEpesSigner;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Tests para XadesEpesSigner
@@ -70,7 +71,7 @@ class XadesEpesSignerTest extends TestCase
         openssl_x509_export($x509, $this->testCertificate);
     }
 
-    /** @test */
+    #[Test]
     public function firma_xml_correctamente()
     {
         $xml = $this->getSampleXml();
@@ -86,7 +87,7 @@ class XadesEpesSignerTest extends TestCase
         $this->assertTrue($loaded, 'El XML firmado no es válido');
     }
 
-    /** @test */
+    #[Test]
     public function incluye_elemento_signature()
     {
         $xml = $this->getSampleXml();
@@ -97,7 +98,7 @@ class XadesEpesSignerTest extends TestCase
         $this->assertStringContainsString('</ds:Signature>', $xmlFirmado);
     }
 
-    /** @test */
+    #[Test]
     public function incluye_signed_info()
     {
         $xml = $this->getSampleXml();
@@ -113,7 +114,7 @@ class XadesEpesSignerTest extends TestCase
         $this->assertStringContainsString('http://www.w3.org/2001/04/xmldsig-more#rsa-sha256', $xmlFirmado);
     }
 
-    /** @test */
+    #[Test]
     public function incluye_signature_value()
     {
         $xml = $this->getSampleXml();
@@ -124,7 +125,7 @@ class XadesEpesSignerTest extends TestCase
         $this->assertStringContainsString('</ds:SignatureValue>', $xmlFirmado);
     }
 
-    /** @test */
+    #[Test]
     public function incluye_key_info_con_certificado()
     {
         $xml = $this->getSampleXml();
@@ -136,7 +137,7 @@ class XadesEpesSignerTest extends TestCase
         $this->assertStringContainsString('<ds:X509Certificate>', $xmlFirmado);
     }
 
-    /** @test */
+    #[Test]
     public function incluye_qualifying_properties_xades()
     {
         $xml = $this->getSampleXml();
@@ -147,7 +148,7 @@ class XadesEpesSignerTest extends TestCase
         $this->assertStringContainsString('</xades:QualifyingProperties>', $xmlFirmado);
     }
 
-    /** @test */
+    #[Test]
     public function incluye_signed_properties()
     {
         $xml = $this->getSampleXml();
@@ -160,7 +161,7 @@ class XadesEpesSignerTest extends TestCase
         $this->assertMatchesRegularExpression('/<xades:SignedSignatureProperties/', $xmlFirmado);
     }
 
-    /** @test */
+    #[Test]
     public function incluye_signing_time()
     {
         $xml = $this->getSampleXml();
@@ -170,7 +171,7 @@ class XadesEpesSignerTest extends TestCase
         $this->assertStringContainsString('<xades:SigningTime>', $xmlFirmado);
     }
 
-    /** @test */
+    #[Test]
     public function incluye_signing_certificate()
     {
         $xml = $this->getSampleXml();
@@ -183,7 +184,7 @@ class XadesEpesSignerTest extends TestCase
         $this->assertMatchesRegularExpression('/<xades:IssuerSerial/', $xmlFirmado);
     }
 
-    /** @test */
+    #[Test]
     public function incluye_signature_policy_identifier()
     {
         $xml = $this->getSampleXml();
@@ -197,7 +198,7 @@ class XadesEpesSignerTest extends TestCase
         $this->assertMatchesRegularExpression('/<xades:SigPolicyHash/', $xmlFirmado);
     }
 
-    /** @test */
+    #[Test]
     public function incluye_data_object_format()
     {
         $xml = $this->getSampleXml();
@@ -210,7 +211,7 @@ class XadesEpesSignerTest extends TestCase
         $this->assertStringContainsString('text/xml', $xmlFirmado);
     }
 
-    /** @test */
+    #[Test]
     public function usa_namespaces_correctos()
     {
         $xml = $this->getSampleXml();
@@ -223,7 +224,7 @@ class XadesEpesSignerTest extends TestCase
         $this->assertStringContainsString('http://uri.etsi.org/01903/v1.3.2#', $xmlFirmado);
     }
 
-    /** @test */
+    #[Test]
     public function incluye_referencia_al_documento()
     {
         $xml = $this->getSampleXml();
@@ -238,7 +239,7 @@ class XadesEpesSignerTest extends TestCase
         $this->assertStringContainsString('http://www.w3.org/2000/09/xmldsig#enveloped-signature', $xmlFirmado);
     }
 
-    /** @test */
+    #[Test]
     public function lanza_excepcion_con_certificado_invalido()
     {
         $this->expectException(\Exception::class);
@@ -247,7 +248,7 @@ class XadesEpesSignerTest extends TestCase
         $this->signer->sign($xml, 'invalid-key', 'invalid-cert');
     }
 
-    /** @test */
+    #[Test]
     public function lanza_excepcion_con_xml_invalido()
     {
         $this->expectException(\Exception::class);
