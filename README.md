@@ -2161,7 +2161,7 @@ php artisan queue:failed
 ## ❓ FAQ (Preguntas Frecuentes)
 
 ### ¿Cuál es el costo del ERP?
-Ursol CAST API es un proyecto de código abierto bajo licencia MIT. **Completamente gratuito** para uso personal y comercial.
+Ursol CAST API es **software propietario de Sistemas Ursol S.A.** Su uso requiere un acuerdo de licencia. Contactá a [sistemas@ursol.com](mailto:sistemas@ursol.com) para más información.
 
 ### ¿Necesito soporte técnico?
 Sí, ofrecemos:
