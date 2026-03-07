@@ -25,7 +25,7 @@ class StoreEntradaInventarioRequest extends FormRequest
             'orden_compra_id' => ['nullable', 'integer', 'exists:ordenes_compra,id'],
             'proveedor_id' => ['nullable', 'integer', 'exists:proveedores,id'],
             'documento_referencia' => ['nullable', 'string', 'max:100'],
-            'observaciones' => ['nullable', 'string'],
+            'observaciones' => ['nullable', 'string', 'max:2000'],
             'estado' => ['sometimes', 'string', 'in:Pendiente,Procesada,Cancelada'],
             'monto_total' => ['sometimes', 'numeric', 'min:0'],
             'detalles' => ['required', 'array', 'min:1'],

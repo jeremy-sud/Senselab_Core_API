@@ -31,7 +31,7 @@ class UpdateOrdenCompraRequest extends FormRequest
             'fecha_orden' => ['sometimes', 'required', 'date'],
             'fecha_entrega_esperada' => ['nullable', 'date', 'after_or_equal:fecha_orden'],
             'estado' => ['sometimes', 'required', 'in:borrador,pendiente,aprobada,recibida,cancelada'],
-            'observaciones' => ['nullable', 'string'],
+            'observaciones' => ['nullable', 'string', 'max:2000'],
         ];
     }
 

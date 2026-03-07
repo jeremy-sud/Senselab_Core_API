@@ -65,9 +65,9 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     Route::get('/detalle-asientos/cuenta/{cuentaContableId}', [DetalleAsientoController::class, 'porCuenta'])
         ->middleware('permission:ver-asientos_contables');
     Route::get('/detalle-asientos/reportes/libro-mayor', [DetalleAsientoController::class, 'libroMayor'])
-        ->middleware('permission:ver-asientos_contables');
+        ->middleware(['permission:ver-asientos_contables', 'throttle:reports']);
     Route::get('/detalle-asientos/reportes/balance-comprobacion', [DetalleAsientoController::class, 'balanceComprobacion'])
-        ->middleware('permission:ver-asientos_contables');
+        ->middleware(['permission:ver-asientos_contables', 'throttle:reports']);
 
     // ------------------------------------------------------------------------
     // MÓDULO: PRESUPUESTOS FINANCIEROS

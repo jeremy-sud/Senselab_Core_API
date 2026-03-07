@@ -6,7 +6,6 @@ use App\Models\EntradaInventario;
 use App\Models\Almacen;
 use App\Models\Empresa;
 use App\Models\Proveedor;
-use App\Models\Usuario;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class EntradaInventarioFactory extends Factory
@@ -19,14 +18,14 @@ class EntradaInventarioFactory extends Factory
             'empresa_id' => Empresa::factory(),
             'almacen_id' => Almacen::factory(),
             'proveedor_id' => Proveedor::factory(),
-            'usuario_id' => Usuario::factory(),
-            'numero_entrada' => $this->faker->unique()->numerify('ENT-######'),
-            'tipo_entrada' => $this->faker->randomElement(['compra', 'devolucion', 'ajuste', 'traslado']),
+            'tipo_entrada' => $this->faker->randomElement(['Compra', 'Devolucion', 'Ajuste', 'Traslado']),
             'fecha_entrada' => $this->faker->dateTimeBetween('-3 months', 'now'),
-            'numero_factura' => $this->faker->optional()->numerify('FAC-######'),
-            'total' => $this->faker->randomFloat(2, 10000, 500000),
-            'estado' => $this->faker->randomElement(['borrador', 'procesada', 'cancelada']),
+            'documento_referencia' => $this->faker->optional()->numerify('DOC-######'),
+            'monto_total' => $this->faker->randomFloat(2, 10000, 500000),
+            'estado' => $this->faker->randomElement(['Pendiente', 'Procesada', 'Cancelada']),
             'observaciones' => $this->faker->optional()->sentence(),
+            'descripcion' => $this->faker->optional()->sentence(),
+            'activo' => true,
         ];
     }
 

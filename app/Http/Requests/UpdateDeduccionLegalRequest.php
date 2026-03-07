@@ -31,7 +31,7 @@ class UpdateDeduccionLegalRequest extends FormRequest
         return [
             'codigo' => ['sometimes', 'string', 'max:10', 'unique:deducciones_legales,codigo,' . $id],
             'nombre' => ['sometimes', 'string', 'max:100'],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
             'tipo' => ['sometimes', 'in:ccss_obrero,ccss_patronal,ins_laboral,ins_lpt,impuesto_renta,asociacion_solidarista,embargo,prestamo,otros'],
             'porcentaje_base' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'monto_fijo' => ['nullable', 'numeric', 'min:0'],

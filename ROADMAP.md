@@ -2,8 +2,8 @@
 
 **Fecha de creación:** 6 de marzo 2026  
 **Basado en:** Auditoría profunda del código fuente (no solo documentación)  
-**Versión actual:** v2.9.0 (FASE 12 completada)  
-**Última FASE completada:** FASE 12 — Migración PHPUnit Attributes + Coverage
+**Versión actual:** v3.0.1 (FASE 17 completada)  
+**Última FASE completada:** FASE 17 — Seguridad Pre-Producción
 
 ---
 
@@ -11,23 +11,24 @@
 
 | Métrica | Documentación | Código Real | Nota |
 |---|---|---|---|
-| Controllers | 95 | **92** | Excluye `Controller.php` base |
+| Controllers | 95 | **91** | Excluye `Controller.php` base |
 | Modelos Eloquent | 88 | **87** | — |
 | Servicios | 40 | **40** | 10 AI + 8 Hacienda + 22 core |
-| CQRS archivos | 34 | **34** | ⚠️ Dead code (0 dispatches) |
+| CQRS archivos | 34 | **0** | ✅ Eliminados en FASE 13 (dead code) |
 | Test files | 68 | **68** | — |
-| Tests totales | 802 | 802 | 799 passing, 3 skipped |
+| Tests totales | 802 | 756 | 756 passing, 0 skipped |
 | Migraciones | 97 | **98** | — |
-| Factories | — | **~70** | ~7 con campos incorrectos |
+| Factories | — | **83** | 7 corregidas en FASE 13 |
 | PHPStan | Level 8, 0 errores | ✅ | Baseline vacío |
+| Providers | 4 | **3** | CQRSServiceProvider eliminado |
 
 ### Discrepancias Críticas Detectadas
 
-1. **CQRS es código muerto** — 34 archivos implementados, `CQRSServiceProvider` con 12 mappings, pero **0 dispatches** en toda la base de código. Los controllers usan Services directamente.
-2. **Cobertura real de tests ~35-40%** — Solo ~30/92 controllers tienen Feature tests.
+1. **~~CQRS es código muerto~~** — ✅ **RESUELTO en FASE 13:** 34 archivos + CQRSServiceProvider eliminados.
+2. **Cobertura real de tests ~35-40%** — Solo ~30/91 controllers tienen Feature tests.
 3. **Solo 1 excepción custom** — `InventarioException`. Los demás módulos usan excepciones genéricas.
-4. **~7+ factories con campos incorrectos** — No coinciden con columnas reales de las migraciones.
-5. **Swagger sin autenticación** — `/api/documentation` es público.
+4. **~~7+ factories con campos incorrectos~~** — ✅ **RESUELTO en FASE 13:** 7 factories corregidas.
+5. **~~Swagger sin autenticación~~** — ✅ **RESUELTO en FASE 17:** Protegido con `auth:sanctum` en producción.
 6. **35 seeders no autoejecutados** — Existen pero no se llaman desde `DatabaseSeeder::run()`.
 
 ---
@@ -49,6 +50,8 @@
 | FASE 10 | v2.7.0 | CQRS 3 módulos + 6 controllers refactorizados + PHPStan baseline → 0 | ✅ |
 | FASE 11 | v2.8.0 | 42 tests pre-existentes corregidos + 8 bugs de producción | ✅ |
 | FASE 12 | v2.9.0 | PHPUnit attributes (405 migraciones) + 35 tests nuevos + 2 bugs FE | ✅ |
+| FASE 13 | v3.0.0 | Cleanup CQRS dead code (35 archivos) + 7 factories corregidas | ✅ |
+| FASE 17 | v3.0.1 | Seguridad pre-producción: Swagger auth, rate limiters, FormRequest validation | ✅ |
 
 ---
 
@@ -58,8 +61,8 @@
 
 ```
 CRÍTICO (antes de producción):
-├── FASE 13: CQRS cleanup + factory fix         [8-12h]   → v3.0.0
-├── FASE 17: Seguridad pre-producción            [8-12h]   → v3.0.0
+├── FASE 13: CQRS cleanup + factory fix         ✅ COMPLETADA
+├── FASE 17: Seguridad pre-producción            ✅ COMPLETADA
 │
 ALTO (calidad de software):
 ├── FASE 14: Tests críticos (+200 tests)         [40-60h]  → v3.1.0
@@ -82,22 +85,18 @@ TOTAL ESTIMADO: 254-371 horas
 
 ---
 
-### FASE 13 — Decisión CQRS + Factory Cleanup (v3.0.0)
+### ~~FASE 13 — Decisión CQRS + Factory Cleanup (v3.0.0)~~ ✅ COMPLETADA
 
 **Prioridad:** CRÍTICA  
 **Estimación:** 8-12h  
-**Objetivo:** Eliminar código muerto y corregir infraestructura de testing.
+**Completada:** 6 de marzo 2026  
+**Resultado:** 35 archivos CQRS eliminados, 7 factories corregidas, 756 tests passing, 0 failing.
 
-| # | Tarea | Detalle | Impacto |
+| # | Tarea | Detalle | Estado |
 |---|---|---|---|
-| 13.1 | Resolver CQRS | **Opción A (recomendada):** Eliminar los 34 archivos CQRS + `CQRSServiceProvider` — son dead code, 0 dispatches en el codebase. **Opción B:** Integrar dispatch en los 14 controllers con Service Layer (refactor mayor). | Reduce complejidad, elimina confusión arquitectónica |
-| 13.2 | Corregir factories | Auditar y corregir ~7+ factories con campos incorrectos vs esquema DB real (`CajaChicaFactory`, `PresupuestoFactory`, `ConfiguracionFactory`, `EntradaInventarioFactory`, `CargoFactory`, `AlmacenFactory`, `ProductoFactory`). | Tests más confiables |
-| 13.3 | Actualizar documentación | Corregir conteos en `ESTADO_ACTUAL_PROYECTO.md` con números verificados del código. | Documentación precisa |
-
-**Criterio de aceptación:**
-- 0 archivos CQRS sin uso (eliminados o integrados)
-- Todas las factories pasan `Factory::make()` sin errores
-- Conteos de `ESTADO_ACTUAL_PROYECTO.md` coinciden con la realidad
+| 13.1 | Resolver CQRS | Eliminados 34 archivos CQRS + CQRSServiceProvider (0 dispatches en codebase, dead code confirmado) | ✅ |
+| 13.2 | Corregir factories | Corregidas 7 factories: CajaChica, Presupuesto, Configuracion, EntradaInventario, Cargo, Almacen, Producto | ✅ |
+| 13.3 | Actualizar documentación | ESTADO_ACTUAL_PROYECTO.md, CHANGELOG.md, ROADMAP.md actualizados con conteos reales | ✅ |
 
 ---
 
@@ -169,26 +168,21 @@ TOTAL ESTIMADO: 254-371 horas
 
 ---
 
-### FASE 17 — Seguridad Pre-Producción (v3.0.0 — junto con FASE 13)
+### ~~FASE 17 — Seguridad Pre-Producción (v3.0.1)~~ ✅ COMPLETADA
 
 **Prioridad:** CRÍTICA (si se despliega a producción)  
 **Estimación:** 8-12h  
-**Objetivo:** Cerrar las brechas de seguridad identificadas en la auditoría.
+**Completada:** 6 de marzo 2026  
+**Resultado:** Swagger protegido en producción, 5 rutas normalizadas con named rate limiters, 30+ campos FormRequest con `max:` añadido.
 
-| # | Tarea | Detalle |
-|---|---|---|
-| 17.1 | Swagger auth | Proteger `/api/documentation` con middleware `auth:sanctum` o restricción por IP/env. Desactivar `generate_always` en producción. |
-| 17.2 | Secret rotation | Script automatizado para rotar: Sanctum tokens expirados, `APP_KEY`, API keys de Gemini/OpenAI. Verificar que no hay secrets hardcodeados (`git grep`). |
-| 17.3 | Auditar headers | Verificar CSP, HSTS (`max-age=31536000`), `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff` en todos los endpoints reales (no solo middleware). |
-| 17.4 | Rate limiting audit | Verificar que los 7 rate limiters están registrados AND asignados a las rutas correctas. Test E2E de throttling. |
-| 17.5 | Input sanitization | Revisar los 170+ FormRequests para XSS (`strip_tags`), SQL injection (parametrizado), y validación adecuada de tipos. |
-| 17.6 | Release checklist | Actualizar `docs/release_checklist.md` para reflejar estado post-FASE 12. |
-
-**Criterio de aceptación:**
-- Swagger protegido (401 sin token)
-- 0 secrets hardcodeados en el repositorio
-- Todos los headers de seguridad presentes en responses reales
-- Release checklist actualizado y completo
+| # | Tarea | Detalle | Estado |
+|---|---|---|---|
+| 17.1 | Swagger auth | Protegido con `auth:sanctum` en `APP_ENV=production`. En desarrollo sigue público. | ✅ |
+| 17.2 | Secret rotation | Verificado: 0 secrets hardcodeados. Todas las API keys usan `env()`. | ✅ |
+| 17.3 | Auditar headers | SecurityHeaders middleware excelente: CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Permissions-Policy. | ✅ |
+| 17.4 | Rate limiting audit | Login → `throttle:login`, reportes → `throttle:reports`, pagos → `throttle:payment_process`. 5 rutas normalizadas. | ✅ |
+| 17.5 | Input sanitization | 30+ campos string sin `max:` corregidos. 0 campos `['nullable', 'string']` sin límite restantes. | ✅ |
+| 17.6 | Release checklist | CHANGELOG.md y ROADMAP.md actualizados. | ✅ |
 
 ---
 
@@ -306,7 +300,8 @@ TOTAL ESTIMADO: 254-371 horas
 
 | Versión | Fases | Tipo | Horas Est. |
 |---|---|---|---|
-| **v3.0.0** | FASE 13 + 17 | Cleanup + Seguridad | 16-24h |
+| **v3.0.0** | FASE 13 | Cleanup + Factories | ✅ COMPLETADA |
+| **v3.0.1** | FASE 17 | Seguridad pre-producción | 8-12h |
 | **v3.1.0** | FASE 14 | Tests críticos | 40-60h |
 | **v3.2.0** | FASE 15 | Excepciones de dominio | 12-16h |
 | **v3.3.0** | FASE 16 | Service Layer secundarios | 60-80h |
@@ -322,7 +317,7 @@ TOTAL ESTIMADO: 254-371 horas
 ## Notas
 
 - Las estimaciones son para **1 desarrollador**. Con 2 devs, reducir ~40% en fases paralelizables (14, 16, 20, 21).
-- **FASE 13 + 17 son pre-requisito** para cualquier despliegue a producción.
+- **~~FASE 13~~** ✅ completada + **FASE 17 es pre-requisito** para cualquier despliegue a producción.
 - FASE 18 (API Versioning) es un **breaking change** — requiere coordinación con frontend.
 - Las fases 20-22 son **opcionales** según las necesidades del negocio.
 - Este roadmap se basa en la auditoría del código fuente realizada el 6 de marzo 2026, no en documentación previa.

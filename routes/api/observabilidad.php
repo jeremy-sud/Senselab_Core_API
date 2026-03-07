@@ -40,7 +40,7 @@ Route::prefix('health')->group(function () {
 
 // Metrics endpoint (Prometheus format)
 Route::get('/metrics', [MetricsController::class, 'index'])
-    ->middleware('throttle:60,1')
+    ->middleware('throttle:reports')
     ->name('metrics.prometheus');
 
 Route::get('/metrics/health', [MetricsController::class, 'health'])

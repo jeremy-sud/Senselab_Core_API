@@ -34,13 +34,13 @@ class StoreOrdenCompraRequest extends FormRequest
             'fecha_orden' => ['required', 'date'],
             'fecha_entrega_esperada' => ['nullable', 'date', 'after_or_equal:fecha_orden'],
             'estado' => ['required', 'in:borrador,pendiente,aprobada,recibida,cancelada'],
-            'observaciones' => ['nullable', 'string'],
+            'observaciones' => ['nullable', 'string', 'max:2000'],
             'detalles' => ['required', 'array', 'min:1'],
             'detalles.*.producto_id' => ['required', 'exists:productos,id'],
             'detalles.*.cantidad' => ['required', 'numeric', 'min:0.01'],
             'detalles.*.precio_unitario' => ['required', 'numeric', 'min:0'],
             'detalles.*.descuento' => ['nullable', 'numeric', 'min:0'],
-            'detalles.*.descripcion' => ['nullable', 'string'],
+            'detalles.*.descripcion' => ['nullable', 'string', 'max:1000'],
         ];
     }
 

@@ -35,7 +35,7 @@ class UpdateCabyRequest extends FormRequest
     {
         return [
             'codigo' => ['sometimes', 'string', 'max:20', Rule::unique('cabys', 'codigo')->ignore($this->route('caby'))],
-            'descripcion' => ['sometimes', 'string'],
+            'descripcion' => ['sometimes', 'string', 'max:1000'],
             'impuesto_iva_predeterminado' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'activo' => ['sometimes', 'boolean']
         ];

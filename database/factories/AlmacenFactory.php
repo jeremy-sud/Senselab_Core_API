@@ -19,10 +19,8 @@ class AlmacenFactory extends Factory
             'codigo' => strtoupper($this->faker->unique()->lexify('ALM-???')),
             'nombre' => $this->faker->words(3, true) . ' Almacén',
             'descripcion' => $this->faker->optional()->sentence(),
-            'direccion' => $this->faker->address(),
-            'telefono' => $this->faker->optional()->numerify('####-####'),
-            'email' => $this->faker->optional()->safeEmail(),
-            'capacidad_maxima' => $this->faker->optional()->numberBetween(1000, 50000),
+            'ubicacion' => $this->faker->optional()->address(),
+            'es_principal' => $this->faker->boolean(20),
             'activo' => $this->faker->boolean(90),
         ];
     }

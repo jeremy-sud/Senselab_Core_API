@@ -1,6 +1,6 @@
 # Estado Actual del Proyecto - Ursol CAST API
 
-**Fecha de actualización:** 5 de marzo 2026  
+**Fecha de actualización:** 6 de marzo 2026  
 **Desarrollado por:** Sistemas Ursol S.A.  
 **Desarrollador principal:** Jeremy Arias Solano  
 
@@ -12,24 +12,27 @@
 > v2.7.0: FASE 10 — PHPStan baseline vaciado (5→0), CQRS expandido a 3 módulos (14 archivos nuevos), 6 controladores más refactorizados, 4 servicios nuevos + 2 reescritos, 57 tests nuevos, 5 bugs de modelos/servicios corregidos
 > v2.8.0: FASE 11 — 42 tests pre-existentes corrigidos (0 failing), 8 bugs de producción descubiertos y corregidos, 8 modelos con timestamps faltantes, 52 permisos de test agregados
 > v2.9.0: FASE 12 — Migración PHPUnit attributes (405 @test→#[Test], @covers→#[CoversClass], @group→#[Group]), 4 test suites nuevos (35 tests), 2 bugs producción corregidos, 2 tests skipped recuperados
+> v3.0.0: FASE 13 — Eliminación CQRS dead code (34 archivos + CQRSServiceProvider), 7 factories corregidas (campos alineados con migraciones reales), conteos de documentación verificados
 
 ---
 
-## Estadísticas generales (conteos VERIFICADOS 2 mar 2026)
-- **Controladores implementados:** 95 (incluye API y raíz)
+## Estadísticas generales (conteos VERIFICADOS 6 mar 2026)
+- **Controladores implementados:** 91 (excluyendo Controller.php base)
 - **Policies RBAC:** 80 ✅ (registradas en AuthServiceProvider dedicado)
-- **Modelos Eloquent:** 88 ✅ (+1 Departamento)
-- **Migraciones:** 97 (+2 nuevas: departamentos, FKs faltantes)
+- **Modelos Eloquent:** 87 ✅
+- **Migraciones:** 98
 - **FormRequests:** 170+ (validación completa)
 - **API Resources:** 80+ (transformación JSON)
 - **Jobs/Queues:** 8+ (procesamiento asíncrono)
 - **Traits Reutilizables:** 10+ (1 deprecated: EncryptsAttributes)
 - **Observers:** 6+ (registrados en ObserverServiceProvider dedicado)
-- **Services:** 40 (10 AI, 8 Hacienda, 22 core/utilidad — 4 nuevos + 2 reescritos en FASE 10)
-- **Tests (archivos):** 68 archivos (+4 nuevos: CajaChica, Configuracion, Presupuesto, EntradaInventario — FASE 12)
-- **Tests (total):** 802 tests, 2544 assertions — 799 passing, 0 failing, 3 skipped ✅
-- **Providers:** 4 (AppServiceProvider, AuthServiceProvider, ObserverServiceProvider, CQRSServiceProvider)
-- **Rutas API:** Configuradas en routes/api.php con versionado
+- **Services:** 40 (10 AI, 8 Hacienda, 22 core/utilidad)
+- **Tests (archivos):** 68 archivos
+- **Tests (total):** 756 passing, 0 failing ✅
+- **Providers:** 3 (AppServiceProvider, AuthServiceProvider, ObserverServiceProvider)
+- **Factories:** 83 (7 corregidas en FASE 13)
+- **Rutas API:** Configuradas en routes/api.php con 14 archivos en routes/api/
+- **CQRS:** ❌ Eliminado en v3.0.0 (era dead code — 34 archivos, 0 dispatches)
 
 ### Desglose de controladores (por carpeta)
 - `app/Http/Controllers/API`: 77

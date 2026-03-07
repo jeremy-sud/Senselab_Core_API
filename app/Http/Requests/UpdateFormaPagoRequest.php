@@ -28,7 +28,7 @@ class UpdateFormaPagoRequest extends FormRequest
                 'max:255',
                 Rule::unique('formas_pago', 'nombre')->ignore($formaPagoId)
             ],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
             'tipo' => ['nullable', 'string', 'max:50'],
             'requiere_referencia' => ['sometimes', 'boolean'],
             'activo' => ['sometimes', 'boolean']

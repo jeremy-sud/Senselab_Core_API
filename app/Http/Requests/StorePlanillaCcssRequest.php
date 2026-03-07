@@ -42,7 +42,7 @@ class StorePlanillaCcssRequest extends FormRequest
             'archivo_pdf' => ['nullable', 'string', 'max:255'],
             'estado' => ['nullable', 'in:borrador,enviada,aceptada,rechazada,pagada'],
             'fecha_pago' => ['nullable', 'date'],
-            'notas' => ['nullable', 'string'],
+            'notas' => ['nullable', 'string', 'max:1000'],
         ];
     }
 

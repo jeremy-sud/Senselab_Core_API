@@ -40,7 +40,7 @@ class StoreMovimientoBancarioRequest extends FormRequest
             'conciliado' => ['boolean'],
             'fecha_conciliacion' => ['nullable', 'date', 'required_if:conciliado,true'],
             'asiento_contable_id' => ['nullable', 'exists:asientos_contables,id'],
-            'notas' => ['nullable', 'string'],
+            'notas' => ['nullable', 'string', 'max:1000'],
         ];
     }
 

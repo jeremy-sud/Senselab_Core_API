@@ -27,7 +27,7 @@ class UpdateTipoCuentaRequest extends FormRequest
     {
         return [
             'nombre' => ['sometimes', 'string', 'max:100', Rule::unique('tipos_cuentas', 'nombre')->ignore($this->route('tipo_cuenta'))],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
             'naturaleza' => ['sometimes', Rule::in(['Deudora', 'Acreedora'])],
             'activo' => ['sometimes', 'boolean']
         ];

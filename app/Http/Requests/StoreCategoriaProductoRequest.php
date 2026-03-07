@@ -29,7 +29,7 @@ class StoreCategoriaProductoRequest extends FormRequest
                                  ->where('eliminado', 0);
                 })
             ],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
             'activo' => ['sometimes', 'boolean']
         ];
     }

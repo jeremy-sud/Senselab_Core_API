@@ -27,7 +27,7 @@ class StoreSalidaInventarioRequest extends FormRequest
             'proveedor_id' => ['nullable', 'integer', 'exists:proveedores,id'],
             'documento_referencia' => ['nullable', 'string', 'max:100'],
             'observaciones' => ['required', 'string'],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
             'estado' => ['sometimes', 'string', 'in:Pendiente,Procesada,Cancelada'],
             'monto_total' => ['sometimes', 'numeric', 'min:0'],
             'detalles' => ['required', 'array', 'min:1'],

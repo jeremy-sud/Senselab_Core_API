@@ -33,7 +33,7 @@ class StoreAsientoContableRequest extends FormRequest
             'detalles.*.cuenta_contable_id' => ['required', 'integer', 'exists:cuentas_contables,id'],
             'detalles.*.debe' => ['required', 'numeric', 'min:0'],
             'detalles.*.haber' => ['required', 'numeric', 'min:0'],
-            'detalles.*.descripcion' => ['nullable', 'string'],
+            'detalles.*.descripcion' => ['nullable', 'string', 'max:1000'],
             'activo' => ['nullable', 'boolean']
         ];
     }

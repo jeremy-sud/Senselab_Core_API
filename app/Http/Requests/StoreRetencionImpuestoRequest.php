@@ -39,7 +39,7 @@ class StoreRetencionImpuestoRequest extends FormRequest
             'fecha_retencion' => ['required', 'date'],
             'periodo_declaracion' => ['required', 'string', 'size:7', 'regex:/^\d{4}-\d{2}$/'],
             'declarado' => ['boolean'],
-            'notas' => ['nullable', 'string'],
+            'notas' => ['nullable', 'string', 'max:1000'],
         ];
     }
 

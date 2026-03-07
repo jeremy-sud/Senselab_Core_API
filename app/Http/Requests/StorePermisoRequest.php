@@ -20,7 +20,7 @@ class StorePermisoRequest extends FormRequest
     {
         return [
             'nombre' => ['required', 'string', 'max:100'],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:500'],
             'modulo' => ['nullable', 'string', 'max:50'],
             'codigo_unico' => ['required', 'string', 'max:100', 'unique:permisos,codigo_unico'],
             'activo' => ['sometimes', 'boolean']

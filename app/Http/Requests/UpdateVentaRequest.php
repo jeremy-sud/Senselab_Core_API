@@ -28,7 +28,7 @@ class UpdateVentaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'observaciones' => ['nullable', 'string'],
+            'observaciones' => ['nullable', 'string', 'max:2000'],
             'estado_venta' => ['sometimes', 'required', 'in:pendiente,pagada,anulada'],
         ];
     }

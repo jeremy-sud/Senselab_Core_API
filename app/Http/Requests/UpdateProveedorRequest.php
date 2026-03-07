@@ -32,7 +32,7 @@ class UpdateProveedorRequest extends FormRequest
             'email' => ['nullable', 'email', 'max:255'],
             'telefono' => ['nullable', 'string', 'max:50'],
             'celular' => ['nullable', 'string', 'max:50'],
-            'direccion' => ['nullable', 'string'],
+            'direccion' => ['nullable', 'string', 'max:500'],
             'pais' => ['nullable', 'string', 'max:100'],
             'provincia' => ['nullable', 'string', 'max:100'],
             'ciudad' => ['nullable', 'string', 'max:100'],

@@ -31,7 +31,7 @@ class UpdateTipoComprobanteFeRequest extends FormRequest
         return [
             'codigo_dgt' => ['sometimes', 'string', 'size:2', 'unique:tipos_comprobantes_fe,codigo_dgt,' . $id],
             'nombre' => ['sometimes', 'string', 'max:100'],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
             'requiere_referencia' => ['boolean'],
             'permite_exportacion' => ['boolean'],
             'activo' => ['boolean'],

@@ -33,7 +33,7 @@ class UpdateProductoRequest extends FormRequest
             'nombre' => ['sometimes', 'required', 'string', 'max:255'],
             'codigo' => ['nullable', 'string', 'max:100'],
             'codigo_barras' => ['nullable', 'string', 'max:100'],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
             'tipo' => ['sometimes', 'required', 'in:producto,servicio'],
             'precio_compra' => ['nullable', 'numeric', 'min:0'],
             'precio_venta' => ['sometimes', 'required', 'numeric', 'min:0'],

@@ -36,16 +36,16 @@ class StoreVentaRequest extends FormRequest
             'forma_pago_id' => ['nullable', 'exists:formas_pago,id'],
             'fecha_venta' => ['required', 'date'],
             'tipo_comprobante' => ['required', 'in:factura,tiquete,nota_credito,nota_debito'],
-            'tipo_pago' => ['nullable', 'string'],
-            'estado' => ['nullable', 'string'],
-            'observaciones' => ['nullable', 'string'],
+            'tipo_pago' => ['nullable', 'string', 'max:50'],
+            'estado' => ['nullable', 'string', 'max:50'],
+            'observaciones' => ['nullable', 'string', 'max:2000'],
             'detalles' => ['required', 'array', 'min:1'],
             'detalles.*.producto_id' => ['required', 'exists:productos,id'],
             'detalles.*.cantidad' => ['required', 'numeric', 'min:0.01'],
             'detalles.*.precio_unitario' => ['required', 'numeric', 'min:0'],
             'detalles.*.descuento' => ['nullable', 'numeric', 'min:0'],
             'detalles.*.porcentaje_impuesto' => ['nullable', 'numeric', 'min:0', 'max:100'],
-            'detalles.*.descripcion' => ['nullable', 'string'],
+            'detalles.*.descripcion' => ['nullable', 'string', 'max:1000'],
         ];
     }
 

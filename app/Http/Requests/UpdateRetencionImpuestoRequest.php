@@ -39,7 +39,7 @@ class UpdateRetencionImpuestoRequest extends FormRequest
             'fecha_retencion' => ['sometimes', 'date'],
             'periodo_declaracion' => ['sometimes', 'string', 'size:7', 'regex:/^\d{4}-\d{2}$/'],
             'declarado' => ['boolean'],
-            'notas' => ['nullable', 'string'],
+            'notas' => ['nullable', 'string', 'max:1000'],
         ];
     }
 }

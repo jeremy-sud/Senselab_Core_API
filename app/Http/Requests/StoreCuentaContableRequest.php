@@ -37,7 +37,7 @@ class StoreCuentaContableRequest extends FormRequest
 
         return [
             'nombre' => ['required', 'string', 'max:255'],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
             'codigo' => [
                 'required',
                 'string',

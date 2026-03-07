@@ -37,7 +37,7 @@ class StoreEmpleadoRequest extends FormRequest
             'fecha_ingreso' => ['nullable', 'date'],
             'cargo_id' => ['nullable', 'integer', 'exists:cargos,id'],
             'salario' => ['required', 'numeric', 'min:0', 'max:99999999.99'],
-            'direccion' => ['nullable', 'string'],
+            'direccion' => ['nullable', 'string', 'max:500'],
             'telefono' => ['nullable', 'string', 'max:50'],
             'email' => ['nullable', 'email', 'max:255'],
             'activo' => ['sometimes', 'boolean']

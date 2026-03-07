@@ -32,13 +32,13 @@ class StoreMensajeHaciendaRequest extends FormRequest
             'clave_numerica' => ['required', 'string', 'max:50'],
             'tipo_mensaje' => ['required', 'in:aceptacion,rechazo,aceptacion_parcial,consulta'],
             'codigo_respuesta' => ['nullable', 'string', 'max:10'],
-            'detalle_mensaje' => ['nullable', 'string'],
-            'xml_respuesta' => ['nullable', 'string'],
+            'detalle_mensaje' => ['nullable', 'string', 'max:2000'],
+            'xml_respuesta' => ['nullable', 'string', 'max:65535'],
             'fecha_emision' => ['required', 'date'],
             'fecha_procesamiento' => ['nullable', 'date'],
             'estado' => ['nullable', 'in:pendiente,procesado,error'],
             'intentos_envio' => ['nullable', 'integer', 'min:0'],
-            'ultimo_error' => ['nullable', 'string'],
+            'ultimo_error' => ['nullable', 'string', 'max:2000'],
         ];
     }
 

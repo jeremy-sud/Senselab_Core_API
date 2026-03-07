@@ -66,7 +66,7 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     Route::apiResource('pagos-nomina', PagoNominaController::class)
         ->middleware(['permission:ver-nomina,nomina.crear,nomina.actualizar,nomina.eliminar']);
     Route::post('/pagos-nomina/{id}/marcar-pagado', [PagoNominaController::class, 'marcarPagado'])
-        ->middleware('permission:editar-nomina');
+        ->middleware(['permission:editar-nomina', 'throttle:payment_process']);
     Route::get('/pagos-nomina/empleado/{empleadoId}', [PagoNominaController::class, 'porEmpleado'])
         ->middleware('permission:ver-nomina');
     Route::get('/pagos-nomina/resumen/por-metodo-pago', [PagoNominaController::class, 'resumenPorMetodoPago'])

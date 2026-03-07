@@ -23,7 +23,7 @@ class UpdatePermisoRequest extends FormRequest
 
         return [
             'nombre' => ['sometimes', 'string', 'max:100'],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
             'modulo' => ['nullable', 'string', 'max:50'],
             'codigo_unico' => [
                 'sometimes',

@@ -35,7 +35,7 @@ class StorePagoNominaRequest extends FormRequest
             'metodo_pago_id' => ['nullable', 'integer', 'exists:formas_pago,id'],
             'referencia_pago' => ['nullable', 'string', 'max:100'],
             'estado' => ['nullable', 'string', 'max:50', Rule::in(['pendiente', 'pagado', 'cancelado'])],
-            'observaciones' => ['nullable', 'string'],
+            'observaciones' => ['nullable', 'string', 'max:2000'],
             'activo' => ['nullable', 'boolean']
         ];
     }
