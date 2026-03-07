@@ -29,7 +29,7 @@ class StoreTipoComprobanteFeRequest extends FormRequest
         return [
             'codigo_dgt' => ['required', 'string', 'size:2', 'unique:tipos_comprobantes_fe,codigo_dgt'],
             'nombre' => ['required', 'string', 'max:100'],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
             'requiere_referencia' => ['boolean'],
             'permite_exportacion' => ['boolean'],
             'activo' => ['boolean'],

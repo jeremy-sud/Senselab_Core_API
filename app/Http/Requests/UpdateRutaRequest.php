@@ -31,7 +31,7 @@ class UpdateRutaRequest extends FormRequest
             'distancia_km' => ['nullable', 'numeric', 'min:0'],
             'duracion_estimada' => ['nullable', 'integer', 'min:1'],
             'tarifa_base' => ['sometimes', 'numeric', 'min:0'],
-            'observaciones' => ['nullable', 'string'],
+            'observaciones' => ['nullable', 'string', 'max:2000'],
             'activo' => ['sometimes', 'boolean']
         ];
     }

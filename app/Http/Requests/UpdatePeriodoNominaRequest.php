@@ -31,7 +31,7 @@ class UpdatePeriodoNominaRequest extends FormRequest
             'fecha_fin' => ['sometimes', 'date', 'after:fecha_inicio'],
             'fecha_pago' => ['nullable', 'date', 'after_or_equal:fecha_fin'],
             'estado' => ['sometimes', 'string', 'max:50', Rule::in(['Abierto', 'Cerrado', 'Procesado'])],
-            'observaciones' => ['nullable', 'string'],
+            'observaciones' => ['nullable', 'string', 'max:2000'],
             'activo' => ['sometimes', 'boolean']
         ];
     }

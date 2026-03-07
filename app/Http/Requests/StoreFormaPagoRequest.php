@@ -20,7 +20,7 @@ class StoreFormaPagoRequest extends FormRequest
     {
         return [
             'nombre' => ['required', 'string', 'max:255', 'unique:formas_pago,nombre'],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:500'],
             'tipo' => ['nullable', 'string', 'max:50'],
             'requiere_referencia' => ['sometimes', 'boolean'],
             'activo' => ['sometimes', 'boolean']

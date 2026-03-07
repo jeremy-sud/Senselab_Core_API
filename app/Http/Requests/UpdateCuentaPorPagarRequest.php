@@ -43,7 +43,7 @@ class UpdateCuentaPorPagarRequest extends FormRequest
             'monto_original' => ['sometimes', 'numeric', 'min:0', 'max:99999999999.99999'],
             'monto_pagado' => ['sometimes', 'numeric', 'min:0', 'lte:monto_original'],
             'estado' => ['sometimes', 'string', 'max:50', Rule::in(['Pendiente', 'Pagada Parcialmente', 'Pagada Totalmente', 'Vencida', 'Anulada'])],
-            'observaciones' => ['nullable', 'string'],
+            'observaciones' => ['nullable', 'string', 'max:2000'],
             'activo' => ['sometimes', 'boolean']
         ];
     }

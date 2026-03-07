@@ -43,7 +43,7 @@ class StoreDeclaracionTributariaRequest extends FormRequest
             'archivo_xml' => ['nullable', 'string', 'max:255'],
             'archivo_pdf' => ['nullable', 'string', 'max:255'],
             'estado' => ['nullable', 'in:borrador,enviada,aceptada,rechazada'],
-            'notas' => ['nullable', 'string'],
+            'notas' => ['nullable', 'string', 'max:1000'],
         ];
     }
 

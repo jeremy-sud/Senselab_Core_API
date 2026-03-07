@@ -12,10 +12,8 @@ class CargoFactory extends Factory
     public function definition(): array
     {
         return [
-            'nombre' => $this->faker->jobTitle(),
+            'nombre' => $this->faker->unique()->jobTitle(),
             'descripcion' => $this->faker->optional()->sentence(10),
-            'nivel_jerarquico' => $this->faker->numberBetween(1, 5),
-            'salario_base' => $this->faker->randomFloat(2, 300000, 2000000),
             'activo' => $this->faker->boolean(90),
         ];
     }

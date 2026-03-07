@@ -38,7 +38,7 @@ class UpdateCuentaContableRequest extends FormRequest
 
         return [
             'nombre' => ['sometimes', 'string', 'max:255'],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
             'codigo' => [
                 'sometimes',
                 'string',

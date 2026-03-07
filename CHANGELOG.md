@@ -5,6 +5,60 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.0.1] - 2026-03-06
+
+### 🔒 FASE 17: Seguridad Pre-Producción
+
+Auditoría de seguridad y hardening de la API antes de despliegue a producción.
+
+#### Resultado
+- **Tests:** 756 passing, 0 failing ✅
+- **PHPStan Level 8:** 0 errores ✅
+- **FormRequests corregidos:** 30+ campos string sin `max:` ahora validados
+- **Rate limiters normalizados:** 5 rutas críticas usan named limiters
+
+#### Seguridad
+- **Swagger protegido** — `/api/documentation` ahora requiere `auth:sanctum` en producción (`APP_ENV=production`). En desarrollo sigue accesible sin auth.
+- **Rate limiters normalizados:**
+  - `routes/api/auth.php` — `throttle:5,1` → `throttle:login` (named limiter)
+  - `routes/api/ventas.php` — PDF reportes ahora usan `throttle:reports`
+  - `routes/api/contabilidad.php` — Libro mayor y balance de comprobación ahora usan `throttle:reports`
+  - `routes/api/observabilidad.php` — Métricas Prometheus ahora usan `throttle:reports`
+  - `routes/api/nomina.php` — Marcar pagado ahora usa `throttle:payment_process`
+
+#### Corregido (Validación de FormRequests)
+- **30+ campos `string` sin `max:`** — Todos los campos `direccion` (max:500), `descripcion` (max:1000), `observaciones` (max:2000), `notas` (max:1000), `comentario` (max:1000), `xml_respuesta` (max:65535), `detalle_mensaje` (max:2000), `ultimo_error` (max:2000), `certificado_llave_fe` (max:10000), `tipo_pago`/`estado` (max:50), `detalles.*.descripcion` (max:1000)
+- **0 campos `['nullable', 'string']` sin `max:`** restantes en FormRequests
+
+---
+
+## [3.0.0] - 2026-03-06
+
+### 🧹 FASE 13: Cleanup CQRS Dead Code + Factory Corrections
+
+Eliminación de código muerto CQRS (34 archivos nunca invocados) y corrección de 7 factories con campos desalineados respecto a las migraciones reales.
+
+#### Resultado
+- **Tests:** 756 passing, 0 failing ✅
+- **Archivos eliminados:** 34 (CQRS) + 1 (CQRSServiceProvider) = 35
+- **Factories corregidas:** 7
+
+#### Eliminado
+- `app/CQRS/` — 34 archivos de Commands, Queries, Handlers, Contracts, Buses (0 dispatches en el codebase)
+- `app/Providers/CQRSServiceProvider.php` — Registraba 12 handler mappings nunca usados
+- Referencia a `CQRSServiceProvider` en `bootstrap/providers.php`
+
+#### Corregido (Factories → alineadas con migraciones)
+- **CajaChicaFactory** — `monto_asignado`→`monto_inicial`, eliminados `codigo`, `fecha_liquidacion`, `periodo` (no existen en DB)
+- **PresupuestoFactory** — Reescrita completamente (factory era para diseño diferente de entidad). Ahora usa `nombre`, `periodo_inicio`, `periodo_fin`
+- **ConfiguracionFactory** — `tipo`→`tipo_dato`, eliminados `categoria`, `es_publica` (no existen en DB)
+- **EntradaInventarioFactory** — Eliminado `usuario_id`, `numero_entrada`; `numero_factura`→`documento_referencia`, `total`→`monto_total`
+- **CargoFactory** — Eliminados `nivel_jerarquico`, `salario_base` (no existen en DB)
+- **AlmacenFactory** — `direccion`→`ubicacion`, eliminados `telefono`, `email`, `capacidad_maxima`; agregado `es_principal`
+- **ProductoFactory** — `codigo_interno`→`codigo`, `codigo_barra`→`codigo_barras`, `precio_costo`→`precio_compra`, `permite_venta`→`vende`, `permite_compra`→`compra`; eliminados `margen_utilidad_porcentaje`, `precio_minimo_venta`
+
+---
+
 ## [2.8.0] - 2026-03-05
 
 ### 🩺 FASE 11: Corrección de 42 Tests Fallidos + Bugs de Producción

@@ -28,7 +28,7 @@ class UpdateMarcaRequest extends FormRequest
                 'max:100',
                 Rule::unique('marcas', 'nombre')->ignore($marcaId)
             ],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
             'activo' => ['sometimes', 'boolean']
         ];
     }

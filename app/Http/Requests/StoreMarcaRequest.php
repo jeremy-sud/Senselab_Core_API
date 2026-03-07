@@ -20,7 +20,7 @@ class StoreMarcaRequest extends FormRequest
     {
         return [
             'nombre' => ['required', 'string', 'max:100', 'unique:marcas,nombre'],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
             'activo' => ['sometimes', 'boolean']
         ];
     }

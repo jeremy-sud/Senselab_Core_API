@@ -33,7 +33,7 @@ class UpdateUsuarioRequest extends FormRequest
             ],
             'password' => ['sometimes', 'string', 'min:8', 'confirmed'],
             'telefono' => ['nullable', 'string', 'max:50'],
-            'direccion' => ['nullable', 'string'],
+            'direccion' => ['nullable', 'string', 'max:500'],
             'activo' => ['sometimes', 'boolean'],
             'roles' => ['nullable', 'array'],
             'roles.*' => ['required', 'integer', 'exists:roles,id']

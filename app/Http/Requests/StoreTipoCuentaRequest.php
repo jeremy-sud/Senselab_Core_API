@@ -27,7 +27,7 @@ class StoreTipoCuentaRequest extends FormRequest
     {
         return [
             'nombre' => ['required', 'string', 'max:100', 'unique:tipos_cuentas,nombre'],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
             'naturaleza' => ['required', Rule::in(['Deudora', 'Acreedora'])],
             'activo' => ['nullable', 'boolean']
         ];

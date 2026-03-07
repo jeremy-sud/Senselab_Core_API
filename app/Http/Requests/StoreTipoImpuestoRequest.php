@@ -35,8 +35,8 @@ class StoreTipoImpuestoRequest extends FormRequest
         return [
             'codigo_hacienda' => ['required', 'string', 'max:10', 'unique:tipos_impuesto,codigo_hacienda'],
             'nombre' => ['required', 'string', 'max:100'],
-            'descripcion' => ['nullable', 'string'],
-            'comentario' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
+            'comentario' => ['nullable', 'string', 'max:1000'],
             'activo' => ['nullable', 'boolean']
         ];
     }

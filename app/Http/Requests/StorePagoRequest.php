@@ -35,7 +35,7 @@ class StorePagoRequest extends FormRequest
             'fecha_pago' => ['required', 'date'],
             'monto' => ['required', 'numeric', 'min:0.01'],
             'moneda' => ['nullable', 'string', 'size:3', Rule::in(['CRC', 'USD', 'EUR'])],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
             'referencia' => ['nullable', 'string', 'max:255'],
             'estado' => ['nullable', 'string', 'max:50', Rule::in(['Pendiente', 'Pagado', 'Cancelado'])],
             'activo' => ['nullable', 'boolean']

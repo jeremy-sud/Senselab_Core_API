@@ -32,7 +32,7 @@ class UpdateCategoriaProductoRequest extends FormRequest
                                  ->where('id', '!=', $categoriaId);
                 })
             ],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
             'activo' => ['sometimes', 'boolean']
         ];
     }

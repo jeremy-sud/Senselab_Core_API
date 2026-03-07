@@ -63,11 +63,12 @@ return [
 
             /*
              * Middleware allows to prevent unexpected access to API documentation
+             * En producción se requiere autenticación para acceder a la documentación.
              */
             'middleware' => [
-                'api' => [],
+                'api' => env('APP_ENV') === 'production' ? ['auth:sanctum'] : [],
                 'asset' => [],
-                'docs' => [],
+                'docs' => env('APP_ENV') === 'production' ? ['auth:sanctum'] : [],
                 'oauth2_callback' => [],
             ],
 

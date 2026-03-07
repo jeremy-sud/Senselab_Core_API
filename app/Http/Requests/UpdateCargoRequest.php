@@ -28,7 +28,7 @@ class UpdateCargoRequest extends FormRequest
                 'max:100',
                 Rule::unique('cargos', 'nombre')->ignore($cargoId)
             ],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
             'activo' => ['sometimes', 'boolean']
         ];
     }

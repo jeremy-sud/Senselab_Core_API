@@ -28,7 +28,7 @@ class UpdateRolRequest extends FormRequest
                 'max:100',
                 Rule::unique('roles', 'nombre')->ignore($rolId)
             ],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:500'],
             'activo' => ['sometimes', 'boolean'],
             'permisos' => ['nullable', 'array'],
             'permisos.*' => ['required', 'integer', 'exists:permisos,id']

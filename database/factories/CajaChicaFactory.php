@@ -14,39 +14,35 @@ class CajaChicaFactory extends Factory
     public function definition(): array
     {
         $fechaApertura = $this->faker->dateTimeBetween('-3 months', 'now');
-        $estado = $this->faker->randomElement(['abierta', 'cerrada', 'liquidada']);
-        
+        $estado = $this->faker->randomElement(['Abierta', 'Cerrada']);
+
         return [
             'empresa_id' => Empresa::factory(),
             'nombre' => 'Caja Chica ' . $this->faker->words(2, true),
-            'codigo' => strtoupper($this->faker->unique()->lexify('CC-????')),
-            'monto_asignado' => $montoAsignado = $this->faker->randomFloat(2, 5000, 50000),
-            'saldo_actual' => $this->faker->randomFloat(2, 0, $montoAsignado),
+            'monto_inicial' => $montoInicial = $this->faker->randomFloat(2, 5000, 50000),
+            'saldo_actual' => $this->faker->randomFloat(2, 0, $montoInicial),
             'responsable_id' => Usuario::factory(),
             'fecha_apertura' => $fechaApertura,
-            'fecha_cierre' => $estado !== 'abierta' ? $this->faker->dateTimeBetween($fechaApertura, 'now') : null,
-            'fecha_liquidacion' => $estado === 'liquidada' ? $this->faker->dateTimeBetween($fechaApertura, 'now') : null,
+            'fecha_cierre' => $estado !== 'Abierta' ? $this->faker->dateTimeBetween($fechaApertura, 'now') : null,
             'estado' => $estado,
-            'periodo' => $this->faker->optional()->monthName(),
             'observaciones' => $this->faker->optional()->sentence(),
+            'activo' => true,
         ];
     }
 
     public function abierta(): static
     {
         return $this->state(fn (array $attributes) => [
-            'estado' => 'abierta',
+            'estado' => 'Abierta',
             'fecha_cierre' => null,
-            'fecha_liquidacion' => null,
         ]);
     }
 
     public function cerrada(): static
     {
         return $this->state(fn (array $attributes) => [
-            'estado' => 'cerrada',
+            'estado' => 'Cerrada',
             'fecha_cierre' => now(),
-            'fecha_liquidacion' => null,
         ]);
     }
 }

@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 // Login con rate limiting estricto (5 intentos por minuto)
 Route::post('/login', [AuthController::class, 'login'])
-    ->middleware('throttle:5,1');
+    ->middleware('throttle:login');
 
 /*
 |--------------------------------------------------------------------------

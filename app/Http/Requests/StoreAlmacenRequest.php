@@ -29,7 +29,7 @@ class StoreAlmacenRequest extends FormRequest
             'sucursal_id' => ['required', 'exists:sucursales,id'],
             'nombre' => ['required', 'string', 'max:255'],
             'codigo' => ['nullable', 'string', 'max:20'],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
             'es_principal' => ['boolean'],
             'activo' => ['boolean'],
         ];

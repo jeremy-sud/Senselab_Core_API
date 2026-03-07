@@ -36,7 +36,7 @@ class UpdateClienteRequest extends FormRequest
             'email' => ['nullable', 'email', 'max:255'],
             'telefono' => ['nullable', 'string', 'max:50'],
             'celular' => ['nullable', 'string', 'max:50'],
-            'direccion' => ['nullable', 'string'],
+            'direccion' => ['nullable', 'string', 'max:500'],
             'provincia' => ['nullable', 'string', 'max:100'],
             'canton' => ['nullable', 'string', 'max:100'],
             'distrito' => ['nullable', 'string', 'max:100'],

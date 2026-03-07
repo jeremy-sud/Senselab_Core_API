@@ -35,7 +35,7 @@ class UpdatePagoRequest extends FormRequest
             'fecha_pago' => ['sometimes', 'date'],
             'monto' => ['sometimes', 'numeric', 'min:0.01'],
             'moneda' => ['sometimes', 'string', 'size:3', Rule::in(['CRC', 'USD', 'EUR'])],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
             'referencia' => ['nullable', 'string', 'max:255'],
             'estado' => ['sometimes', 'string', 'max:50', Rule::in(['Pendiente', 'Pagado', 'Cancelado'])],
             'activo' => ['sometimes', 'boolean']

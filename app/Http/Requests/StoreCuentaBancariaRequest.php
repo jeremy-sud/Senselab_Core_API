@@ -40,7 +40,7 @@ class StoreCuentaBancariaRequest extends FormRequest
             'telefono_ejecutivo' => ['nullable', 'string', 'max:20'],
             'activa' => ['boolean'],
             'es_principal' => ['boolean'],
-            'notas' => ['nullable', 'string'],
+            'notas' => ['nullable', 'string', 'max:1000'],
         ];
     }
 

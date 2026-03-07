@@ -29,7 +29,7 @@ class StoreTipoClienteRequest extends FormRequest
         return [
             'codigo' => ['required', 'string', 'max:10', 'unique:tipos_clientes,codigo'],
             'nombre' => ['required', 'string', 'max:100'],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
             'descuento_default' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'dias_credito_default' => ['nullable', 'integer', 'min:0', 'max:365'],
             'activo' => ['boolean'],

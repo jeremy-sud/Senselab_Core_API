@@ -27,13 +27,13 @@ class UpdateAsientoContableRequest extends FormRequest
     {
         return [
             'fecha_asiento' => ['sometimes', 'date'],
-            'descripcion' => ['nullable', 'string'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
             'estado' => ['sometimes', 'string', 'max:50', Rule::in(['Borrador', 'Mayorizado', 'Anulado'])],
             'detalles' => ['sometimes', 'array', 'min:2'],
             'detalles.*.cuenta_contable_id' => ['required_with:detalles', 'integer', 'exists:cuentas_contables,id'],
             'detalles.*.debe' => ['required_with:detalles', 'numeric', 'min:0'],
             'detalles.*.haber' => ['required_with:detalles', 'numeric', 'min:0'],
-            'detalles.*.descripcion' => ['nullable', 'string'],
+            'detalles.*.descripcion' => ['nullable', 'string', 'max:1000'],
             'activo' => ['sometimes', 'boolean']
         ];
     }
