@@ -16,7 +16,7 @@ class ConfiguracionApiPolicy extends BasePolicy
      */
     public function viewAny(Usuario $user): bool
     {
-        return $user->hasPermissionTo('ver-configuraciones');
+        return $user->hasPermission('ver-configuraciones');
     }
 
     /**
@@ -24,7 +24,7 @@ class ConfiguracionApiPolicy extends BasePolicy
      */
     public function view(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
-        return $user->hasPermissionTo('ver-configuraciones');
+        return $user->hasPermission('ver-configuraciones');
     }
 
     /**
@@ -32,7 +32,7 @@ class ConfiguracionApiPolicy extends BasePolicy
      */
     public function create(Usuario $user): bool
     {
-        return $user->hasPermissionTo('crear-configuraciones') && $user->hasRole('Administrador');
+        return $user->hasPermission('crear-configuraciones') && $user->hasRole('Administrador');
     }
 
     /**
@@ -40,7 +40,7 @@ class ConfiguracionApiPolicy extends BasePolicy
      */
     public function update(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
-        return $user->hasPermissionTo('editar-configuraciones') && $user->hasRole('Administrador');
+        return $user->hasPermission('editar-configuraciones') && $user->hasRole('Administrador');
     }
 
     /**
@@ -48,7 +48,7 @@ class ConfiguracionApiPolicy extends BasePolicy
      */
     public function delete(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
-        return $user->hasPermissionTo('eliminar-configuraciones') && $user->hasRole('Administrador');
+        return $user->hasPermission('eliminar-configuraciones') && $user->hasRole('Administrador');
     }
 
     /**
@@ -56,7 +56,7 @@ class ConfiguracionApiPolicy extends BasePolicy
      */
     public function restore(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
-        return $user->hasPermissionTo('editar-configuraciones') && $user->hasRole('Administrador');
+        return $user->hasPermission('editar-configuraciones') && $user->hasRole('Administrador');
     }
 
     /**
@@ -64,6 +64,6 @@ class ConfiguracionApiPolicy extends BasePolicy
      */
     public function forceDelete(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
-        return $user->hasPermissionTo('eliminar-configuraciones') && $user->hasRole('Administrador');
+        return $user->hasPermission('eliminar-configuraciones') && $user->hasRole('Administrador');
     }
 }

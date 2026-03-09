@@ -15,7 +15,7 @@ class TipoCambioHistorialPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('tipos_cambio_historial.index');
+        return $user->hasPermission('tipos_cambio_historial.index');
     }
 
     /**
@@ -23,7 +23,7 @@ class TipoCambioHistorialPolicy
      */
     public function view(User $user, TipoCambioHistorial $tipoCambio): bool
     {
-        return $user->hasPermissionTo('tipos_cambio_historial.show');
+        return $user->hasPermission('tipos_cambio_historial.show');
     }
 
     /**
@@ -32,8 +32,8 @@ class TipoCambioHistorialPolicy
     public function create(User $user): bool
     {
         // Solo admin/tesorería pueden registrar tipos de cambio
-        return $user->hasPermissionTo('tipos_cambio_historial.store') &&
-               $user->hasRole('admin|tesorero');
+        return $user->hasPermission('tipos_cambio_historial.store') &&
+               $user->hasAnyRole(['Administrador', 'Tesorero']);
     }
 
     /**
@@ -46,8 +46,8 @@ class TipoCambioHistorialPolicy
             return false;
         }
 
-        return $user->hasPermissionTo('tipos_cambio_historial.update') &&
-               $user->hasRole('admin|tesorero');
+        return $user->hasPermission('tipos_cambio_historial.update') &&
+               $user->hasAnyRole(['Administrador', 'Tesorero']);
     }
 
     /**
@@ -60,7 +60,7 @@ class TipoCambioHistorialPolicy
             return false;
         }
 
-        return $user->hasPermissionTo('tipos_cambio_historial.destroy') &&
-               $user->hasRole('admin');
+        return $user->hasPermission('tipos_cambio_historial.destroy') &&
+               $user->hasRole('Administrador');
     }
 }

@@ -16,8 +16,8 @@ class AuditoriaActividadPolicy
     public function viewAny(User $user): bool
     {
         // Solo admin y auditores pueden ver logs de auditoría
-        return $user->hasPermissionTo('auditoria_actividades.index') &&
-               $user->hasRole('admin|auditor');
+        return $user->hasPermission('auditoria_actividades.index') &&
+               $user->hasAnyRole(['Administrador', 'Auditor']);
     }
 
     /**
@@ -26,8 +26,8 @@ class AuditoriaActividadPolicy
     public function view(User $user, AuditoriaActividad $auditoria): bool
     {
         // Solo admin y auditores pueden ver detalles de auditoría
-        return $user->hasPermissionTo('auditoria_actividades.show') &&
-               $user->hasRole('admin|auditor') &&
+        return $user->hasPermission('auditoria_actividades.show') &&
+               $user->hasAnyRole(['Administrador', 'Auditor']) &&
                $user->empresa_id === $auditoria->empresa_id;
     }
 
@@ -64,8 +64,8 @@ class AuditoriaActividadPolicy
      */
     public function exportar(User $user): bool
     {
-        return $user->hasPermissionTo('auditoria_actividades.exportar') &&
-               $user->hasRole('admin|auditor');
+        return $user->hasPermission('auditoria_actividades.exportar') &&
+               $user->hasAnyRole(['Administrador', 'Auditor']);
     }
 
     /**
@@ -73,7 +73,7 @@ class AuditoriaActividadPolicy
      */
     public function estadisticas(User $user): bool
     {
-        return $user->hasPermissionTo('auditoria_actividades.estadisticas') &&
-               $user->hasRole('admin|auditor');
+        return $user->hasPermission('auditoria_actividades.estadisticas') &&
+               $user->hasAnyRole(['Administrador', 'Auditor']);
     }
 }

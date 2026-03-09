@@ -17,7 +17,7 @@ class FeCertificadoDigitalPolicy extends BasePolicy
      */
     public function viewAny(Usuario $user): bool
     {
-        return $user->hasPermissionTo('ver-facturacion_electronica');
+        return $user->hasPermission('ver-facturacion_electronica');
     }
 
     /**
@@ -26,7 +26,7 @@ class FeCertificadoDigitalPolicy extends BasePolicy
     public function view(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
         $certificado = $model;
-        if (!$user->hasPermissionTo('ver-facturacion_electronica')) {
+        if (!$user->hasPermission('ver-facturacion_electronica')) {
             return false;
         }
 
@@ -38,7 +38,7 @@ class FeCertificadoDigitalPolicy extends BasePolicy
      */
     public function create(Usuario $user): bool
     {
-        return $user->hasPermissionTo('crear-facturacion_electronica') 
+        return $user->hasPermission('crear-facturacion_electronica') 
             && ($user->hasRole('Administrador') || $user->hasRole('Gerente'));
     }
 
@@ -48,7 +48,7 @@ class FeCertificadoDigitalPolicy extends BasePolicy
     public function update(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
         $certificado = $model;
-        if (!$user->hasPermissionTo('editar-facturacion_electronica')) {
+        if (!$user->hasPermission('editar-facturacion_electronica')) {
             return false;
         }
 
@@ -65,7 +65,7 @@ class FeCertificadoDigitalPolicy extends BasePolicy
     public function delete(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
         $certificado = $model;
-        if (!$user->hasPermissionTo('eliminar-facturacion_electronica')) {
+        if (!$user->hasPermission('eliminar-facturacion_electronica')) {
             return false;
         }
 
@@ -88,7 +88,7 @@ class FeCertificadoDigitalPolicy extends BasePolicy
     public function restore(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
         $certificado = $model;
-        return $user->hasPermissionTo('editar-facturacion_electronica')
+        return $user->hasPermission('editar-facturacion_electronica')
             && $user->hasRole('Administrador')
             && $certificado->empresa_id === $user->empresa_id;
     }
@@ -99,7 +99,7 @@ class FeCertificadoDigitalPolicy extends BasePolicy
     public function forceDelete(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
         $certificado = $model;
-        return $user->hasPermissionTo('eliminar-facturacion_electronica')
+        return $user->hasPermission('eliminar-facturacion_electronica')
             && $user->hasRole('Administrador')
             && $certificado->empresa_id === $user->empresa_id;
     }
@@ -109,7 +109,7 @@ class FeCertificadoDigitalPolicy extends BasePolicy
      */
     public function activar(Usuario $user, FeCertificadoDigital $certificado): bool
     {
-        if (!$user->hasPermissionTo('editar-facturacion_electronica')) {
+        if (!$user->hasPermission('editar-facturacion_electronica')) {
             return false;
         }
 

@@ -7,6 +7,7 @@
  * @package routes/api
  */
 
+use App\Http\Controllers\API\CargoController;
 use App\Http\Controllers\API\EmpleadoController;
 use App\Http\Controllers\API\PeriodoNominaController;
 use App\Http\Controllers\API\PagoNominaController;
@@ -93,5 +94,11 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     Route::apiResource('deducciones-legales', DeduccionLegalController::class);
 
     // Planillas CCSS
-    Route::apiResource('planillas-ccss', PlanillaCcssController::class);
+    Route::apiResource('planillas-ccss', PlanillaCcssController::class)
+        ->parameters(['planillas-ccss' => 'planillaCcss']);
+
+    // ------------------------------------------------------------------------
+    // MÓDULO: CARGOS
+    // ------------------------------------------------------------------------
+    Route::apiResource('cargos', CargoController::class);
 });

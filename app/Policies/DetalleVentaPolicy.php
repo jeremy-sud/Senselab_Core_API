@@ -15,7 +15,7 @@ class DetalleVentaPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('detalle_ventas.index');
+        return $user->hasPermission('detalle_ventas.index');
     }
 
     /**
@@ -23,7 +23,7 @@ class DetalleVentaPolicy
      */
     public function view(User $user, DetalleVenta $detalleVenta): bool
     {
-        return $user->hasPermissionTo('detalle_ventas.show') &&
+        return $user->hasPermission('detalle_ventas.show') &&
                $user->empresa_id === $detalleVenta->venta->empresa_id;
     }
 
@@ -32,7 +32,7 @@ class DetalleVentaPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo('detalle_ventas.store');
+        return $user->hasPermission('detalle_ventas.store');
     }
 
     /**
@@ -45,7 +45,7 @@ class DetalleVentaPolicy
             return false;
         }
 
-        return $user->hasPermissionTo('detalle_ventas.update') &&
+        return $user->hasPermission('detalle_ventas.update') &&
                $user->empresa_id === $detalleVenta->venta->empresa_id;
     }
 
@@ -59,7 +59,7 @@ class DetalleVentaPolicy
             return false;
         }
 
-        return $user->hasPermissionTo('detalle_ventas.destroy') &&
+        return $user->hasPermission('detalle_ventas.destroy') &&
                $user->empresa_id === $detalleVenta->venta->empresa_id;
     }
 }

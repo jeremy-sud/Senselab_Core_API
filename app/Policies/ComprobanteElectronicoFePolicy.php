@@ -17,7 +17,7 @@ class ComprobanteElectronicoFePolicy extends BasePolicy
      */
     public function viewAny(Usuario $user): bool
     {
-        return $user->hasPermissionTo('ver-facturacion_electronica');
+        return $user->hasPermission('ver-facturacion_electronica');
     }
 
     /**
@@ -26,7 +26,7 @@ class ComprobanteElectronicoFePolicy extends BasePolicy
     public function view(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
         $comprobante = $model;
-        if (!$user->hasPermissionTo('ver-facturacion_electronica')) {
+        if (!$user->hasPermission('ver-facturacion_electronica')) {
             return false;
         }
 
@@ -39,7 +39,7 @@ class ComprobanteElectronicoFePolicy extends BasePolicy
      */
     public function create(Usuario $user): bool
     {
-        return $user->hasPermissionTo('crear-facturacion_electronica');
+        return $user->hasPermission('crear-facturacion_electronica');
     }
 
     /**
@@ -48,7 +48,7 @@ class ComprobanteElectronicoFePolicy extends BasePolicy
     public function update(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
         $comprobante = $model;
-        if (!$user->hasPermissionTo('editar-facturacion_electronica')) {
+        if (!$user->hasPermission('editar-facturacion_electronica')) {
             return false;
         }
 
@@ -66,7 +66,7 @@ class ComprobanteElectronicoFePolicy extends BasePolicy
     public function delete(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
         $comprobante = $model;
-        if (!$user->hasPermissionTo('eliminar-facturacion_electronica')) {
+        if (!$user->hasPermission('eliminar-facturacion_electronica')) {
             return false;
         }
 
@@ -84,7 +84,7 @@ class ComprobanteElectronicoFePolicy extends BasePolicy
     public function restore(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
         $comprobante = $model;
-        return $user->hasPermissionTo('editar-facturacion_electronica') 
+        return $user->hasPermission('editar-facturacion_electronica') 
             && $comprobante->empresa_id === $user->empresa_id;
     }
 
@@ -94,7 +94,7 @@ class ComprobanteElectronicoFePolicy extends BasePolicy
     public function forceDelete(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
         $comprobante = $model;
-        return $user->hasPermissionTo('eliminar-facturacion_electronica')
+        return $user->hasPermission('eliminar-facturacion_electronica')
             && $user->hasRole('Administrador')
             && $comprobante->empresa_id === $user->empresa_id;
     }
@@ -104,7 +104,7 @@ class ComprobanteElectronicoFePolicy extends BasePolicy
      */
     public function reenviar(Usuario $user, ComprobanteElectronicoFe $comprobante): bool
     {
-        if (!$user->hasPermissionTo('editar-facturacion_electronica')) {
+        if (!$user->hasPermission('editar-facturacion_electronica')) {
             return false;
         }
 
@@ -121,7 +121,7 @@ class ComprobanteElectronicoFePolicy extends BasePolicy
      */
     public function anular(Usuario $user, ComprobanteElectronicoFe $comprobante): bool
     {
-        if (!$user->hasPermissionTo('crear-facturacion_electronica')) {
+        if (!$user->hasPermission('crear-facturacion_electronica')) {
             return false;
         }
 

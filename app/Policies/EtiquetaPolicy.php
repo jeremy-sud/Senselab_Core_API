@@ -15,7 +15,7 @@ class EtiquetaPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('etiquetas.index');
+        return $user->hasPermission('etiquetas.index');
     }
 
     /**
@@ -23,7 +23,7 @@ class EtiquetaPolicy
      */
     public function view(User $user, Etiqueta $etiqueta): bool
     {
-        return $user->hasPermissionTo('etiquetas.show') &&
+        return $user->hasPermission('etiquetas.show') &&
                $user->empresa_id === $etiqueta->empresa_id;
     }
 
@@ -32,7 +32,7 @@ class EtiquetaPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo('etiquetas.store');
+        return $user->hasPermission('etiquetas.store');
     }
 
     /**
@@ -40,7 +40,7 @@ class EtiquetaPolicy
      */
     public function update(User $user, Etiqueta $etiqueta): bool
     {
-        return $user->hasPermissionTo('etiquetas.update') &&
+        return $user->hasPermission('etiquetas.update') &&
                $user->empresa_id === $etiqueta->empresa_id;
     }
 
@@ -49,7 +49,7 @@ class EtiquetaPolicy
      */
     public function delete(User $user, Etiqueta $etiqueta): bool
     {
-        return $user->hasPermissionTo('etiquetas.destroy') &&
+        return $user->hasPermission('etiquetas.destroy') &&
                $user->empresa_id === $etiqueta->empresa_id;
     }
 }

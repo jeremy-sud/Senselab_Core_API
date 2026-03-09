@@ -16,7 +16,7 @@ class RolPermisoPolicy extends BasePolicy
      */
     public function viewAny(Usuario $user): bool
     {
-        return $user->hasPermissionTo('ver-roles');
+        return $user->hasPermission('ver-roles');
     }
 
     /**
@@ -24,7 +24,7 @@ class RolPermisoPolicy extends BasePolicy
      */
     public function view(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
-        return $user->hasPermissionTo('ver-roles');
+        return $user->hasPermission('ver-roles');
     }
 
     /**
@@ -32,7 +32,7 @@ class RolPermisoPolicy extends BasePolicy
      */
     public function create(Usuario $user): bool
     {
-        return $user->hasPermissionTo('editar-roles');
+        return $user->hasPermission('editar-roles');
     }
 
     /**
@@ -40,7 +40,7 @@ class RolPermisoPolicy extends BasePolicy
      */
     public function update(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
-        return $user->hasPermissionTo('editar-roles');
+        return $user->hasPermission('editar-roles');
     }
 
     /**
@@ -49,7 +49,7 @@ class RolPermisoPolicy extends BasePolicy
     public function delete(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
         $rolPermiso = $model;
-        if (!$user->hasPermissionTo('editar-roles')) {
+        if (!$user->hasPermission('editar-roles')) {
             return false;
         }
 
@@ -66,7 +66,7 @@ class RolPermisoPolicy extends BasePolicy
      */
     public function restore(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
-        return $user->hasPermissionTo('editar-roles');
+        return $user->hasPermission('editar-roles');
     }
 
     /**
@@ -74,7 +74,7 @@ class RolPermisoPolicy extends BasePolicy
      */
     public function forceDelete(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
-        return $user->hasPermissionTo('editar-roles') && $user->hasRole('Administrador');
+        return $user->hasPermission('editar-roles') && $user->hasRole('Administrador');
     }
 
     /**
@@ -82,7 +82,7 @@ class RolPermisoPolicy extends BasePolicy
      */
     public function assignPermissions(Usuario $user): bool
     {
-        return $user->hasPermissionTo('editar-roles');
+        return $user->hasPermission('editar-roles');
     }
 
     /**
@@ -90,6 +90,6 @@ class RolPermisoPolicy extends BasePolicy
      */
     public function syncPermissions(Usuario $user): bool
     {
-        return $user->hasPermissionTo('editar-roles');
+        return $user->hasPermission('editar-roles');
     }
 }

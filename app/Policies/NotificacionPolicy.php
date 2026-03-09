@@ -34,8 +34,8 @@ class NotificacionPolicy
     public function create(User $user): bool
     {
         // Sistema y admins pueden crear notificaciones
-        return $user->hasPermissionTo('notificaciones.store') &&
-               $user->hasRole('admin');
+        return $user->hasPermission('notificaciones.store') &&
+               $user->hasRole('Administrador');
     }
 
     /**

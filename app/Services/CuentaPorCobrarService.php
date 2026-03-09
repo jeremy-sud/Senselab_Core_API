@@ -60,6 +60,8 @@ class CuentaPorCobrarService
      */
     public function crear(array $data): CuentaPorCobrar
     {
+        $data['monto_pendiente'] = $data['monto_original'] - ($data['monto_pagado'] ?? 0);
+
         $cuenta = CuentaPorCobrar::create($data);
         $cuenta->load(['cliente', 'venta', 'empresa']);
         return $cuenta;

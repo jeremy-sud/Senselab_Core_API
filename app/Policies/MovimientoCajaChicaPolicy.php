@@ -15,7 +15,7 @@ class MovimientoCajaChicaPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('movimientos_caja_chica.index');
+        return $user->hasPermission('movimientos_caja_chica.index');
     }
 
     /**
@@ -23,7 +23,7 @@ class MovimientoCajaChicaPolicy
      */
     public function view(User $user, MovimientoCajaChica $movimiento): bool
     {
-        return $user->hasPermissionTo('movimientos_caja_chica.show') &&
+        return $user->hasPermission('movimientos_caja_chica.show') &&
                $user->empresa_id === $movimiento->cajaChica->empresa_id;
     }
 
@@ -32,7 +32,7 @@ class MovimientoCajaChicaPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo('movimientos_caja_chica.store');
+        return $user->hasPermission('movimientos_caja_chica.store');
     }
 
     /**
@@ -50,7 +50,7 @@ class MovimientoCajaChicaPolicy
             return false;
         }
 
-        return $user->hasPermissionTo('movimientos_caja_chica.update') &&
+        return $user->hasPermission('movimientos_caja_chica.update') &&
                $user->empresa_id === $movimiento->cajaChica->empresa_id;
     }
 
@@ -69,8 +69,8 @@ class MovimientoCajaChicaPolicy
             return false;
         }
 
-        return $user->hasPermissionTo('movimientos_caja_chica.destroy') &&
+        return $user->hasPermission('movimientos_caja_chica.destroy') &&
                $user->empresa_id === $movimiento->cajaChica->empresa_id &&
-               $user->hasRole('admin|tesorero');
+               $user->hasAnyRole(['Administrador', 'Tesorero']);
     }
 }

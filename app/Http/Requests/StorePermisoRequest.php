@@ -22,7 +22,7 @@ class StorePermisoRequest extends FormRequest
             'nombre' => ['required', 'string', 'max:100'],
             'descripcion' => ['nullable', 'string', 'max:500'],
             'modulo' => ['nullable', 'string', 'max:50'],
-            'codigo_unico' => ['required', 'string', 'max:100', 'unique:permisos,codigo_unico'],
+            'slug' => ['required', 'string', 'max:100', 'unique:permisos,slug'],
             'activo' => ['sometimes', 'boolean']
         ];
     }
@@ -36,9 +36,9 @@ class StorePermisoRequest extends FormRequest
     {
         return [
             'nombre.required' => 'El nombre del permiso es obligatorio',
-            'codigo_unico.required' => 'El código único es obligatorio',
-            'codigo_unico.unique' => 'Ya existe un permiso con este código',
-            'codigo_unico.max' => 'El código único no puede exceder 100 caracteres'
+            'slug.required' => 'El slug es obligatorio',
+            'slug.unique' => 'Ya existe un permiso con este slug',
+            'slug.max' => 'El slug no puede exceder 100 caracteres'
         ];
     }
 

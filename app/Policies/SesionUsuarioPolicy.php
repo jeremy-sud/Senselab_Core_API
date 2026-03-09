@@ -31,8 +31,8 @@ class SesionUsuarioPolicy
         }
 
         // Admin puede ver sesiones de su empresa
-        return $user->hasPermissionTo('sesiones_usuarios.show') &&
-               $user->hasRole('admin') &&
+        return $user->hasPermission('sesiones_usuarios.show') &&
+               $user->hasRole('Administrador') &&
                $user->empresa_id === $sesion->usuario->empresa_id;
     }
 
@@ -65,8 +65,8 @@ class SesionUsuarioPolicy
         }
 
         // Admin puede cerrar sesiones de usuarios de su empresa (seguridad)
-        return $user->hasPermissionTo('sesiones_usuarios.destroy') &&
-               $user->hasRole('admin') &&
+        return $user->hasPermission('sesiones_usuarios.destroy') &&
+               $user->hasRole('Administrador') &&
                $user->empresa_id === $sesion->usuario->empresa_id;
     }
 }

@@ -16,7 +16,7 @@ class FeLineaDetallePolicy extends BasePolicy
      */
     public function viewAny(Usuario $user): bool
     {
-        return $user->hasPermissionTo('ver-facturacion_electronica');
+        return $user->hasPermission('ver-facturacion_electronica');
     }
 
     /**
@@ -25,7 +25,7 @@ class FeLineaDetallePolicy extends BasePolicy
     public function view(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
         $lineaDetalle = $model;
-        if (!$user->hasPermissionTo('ver-facturacion_electronica')) {
+        if (!$user->hasPermission('ver-facturacion_electronica')) {
             return false;
         }
 
@@ -38,7 +38,7 @@ class FeLineaDetallePolicy extends BasePolicy
      */
     public function create(Usuario $user): bool
     {
-        return $user->hasPermissionTo('crear-facturacion_electronica');
+        return $user->hasPermission('crear-facturacion_electronica');
     }
 
     /**
@@ -47,7 +47,7 @@ class FeLineaDetallePolicy extends BasePolicy
     public function update(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
         $lineaDetalle = $model;
-        if (!$user->hasPermissionTo('editar-facturacion_electronica')) {
+        if (!$user->hasPermission('editar-facturacion_electronica')) {
             return false;
         }
 
@@ -65,7 +65,7 @@ class FeLineaDetallePolicy extends BasePolicy
     public function delete(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
         $lineaDetalle = $model;
-        if (!$user->hasPermissionTo('eliminar-facturacion_electronica')) {
+        if (!$user->hasPermission('eliminar-facturacion_electronica')) {
             return false;
         }
 
@@ -83,7 +83,7 @@ class FeLineaDetallePolicy extends BasePolicy
     public function restore(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
         $lineaDetalle = $model;
-        return $user->hasPermissionTo('editar-facturacion_electronica')
+        return $user->hasPermission('editar-facturacion_electronica')
             && $lineaDetalle->comprobante->empresa_id === $user->empresa_id;
     }
 
@@ -93,7 +93,7 @@ class FeLineaDetallePolicy extends BasePolicy
     public function forceDelete(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
         $lineaDetalle = $model;
-        return $user->hasPermissionTo('eliminar-facturacion_electronica')
+        return $user->hasPermission('eliminar-facturacion_electronica')
             && $user->hasRole('Administrador')
             && $lineaDetalle->comprobante->empresa_id === $user->empresa_id;
     }

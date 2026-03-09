@@ -15,7 +15,7 @@ class CajaPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('cajas.index');
+        return $user->hasPermission('cajas.index');
     }
 
     /**
@@ -23,7 +23,7 @@ class CajaPolicy
      */
     public function view(User $user, Caja $caja): bool
     {
-        return $user->hasPermissionTo('cajas.show') &&
+        return $user->hasPermission('cajas.show') &&
                $user->empresa_id === $caja->sucursal->empresa_id;
     }
 
@@ -33,8 +33,8 @@ class CajaPolicy
     public function create(User $user): bool
     {
         // Solo admin/gerentes pueden crear cajas
-        return $user->hasPermissionTo('cajas.store') &&
-               $user->hasRole('admin|gerente');
+        return $user->hasPermission('cajas.store') &&
+               $user->hasAnyRole(['Administrador', 'Gerente']);
     }
 
     /**
@@ -42,9 +42,9 @@ class CajaPolicy
      */
     public function update(User $user, Caja $caja): bool
     {
-        return $user->hasPermissionTo('cajas.update') &&
+        return $user->hasPermission('cajas.update') &&
                $user->empresa_id === $caja->sucursal->empresa_id &&
-               $user->hasRole('admin|gerente');
+               $user->hasAnyRole(['Administrador', 'Gerente']);
     }
 
     /**
@@ -52,8 +52,8 @@ class CajaPolicy
      */
     public function delete(User $user, Caja $caja): bool
     {
-        return $user->hasPermissionTo('cajas.destroy') &&
+        return $user->hasPermission('cajas.destroy') &&
                $user->empresa_id === $caja->sucursal->empresa_id &&
-               $user->hasRole('admin');
+               $user->hasRole('Administrador');
     }
 }

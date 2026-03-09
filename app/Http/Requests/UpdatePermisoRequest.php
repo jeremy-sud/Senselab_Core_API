@@ -25,11 +25,11 @@ class UpdatePermisoRequest extends FormRequest
             'nombre' => ['sometimes', 'string', 'max:100'],
             'descripcion' => ['nullable', 'string', 'max:1000'],
             'modulo' => ['nullable', 'string', 'max:50'],
-            'codigo_unico' => [
+            'slug' => [
                 'sometimes',
                 'string',
                 'max:100',
-                Rule::unique('permisos', 'codigo_unico')->ignore($permisoId)
+                Rule::unique('permisos', 'slug')->ignore($permisoId)
             ],
             'activo' => ['sometimes', 'boolean']
         ];
@@ -43,7 +43,7 @@ class UpdatePermisoRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'codigo_unico.unique' => 'Ya existe un permiso con este código'
+            'slug.unique' => 'Ya existe un permiso con este slug'
         ];
     }
 }
