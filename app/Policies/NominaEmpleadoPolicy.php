@@ -16,7 +16,7 @@ class NominaEmpleadoPolicy
     public function viewAny(User $user): bool
     {
         // Información sensible - requiere permisos de RRHH
-        return $user->hasPermissionTo('nomina_empleados.index');
+        return $user->hasPermission('nomina_empleados.index');
     }
 
     /**
@@ -30,7 +30,7 @@ class NominaEmpleadoPolicy
         }
 
         // Personal RRHH puede ver todas las nóminas de su empresa
-        return $user->hasPermissionTo('nomina_empleados.show') &&
+        return $user->hasPermission('nomina_empleados.show') &&
                $user->empresa_id === $nomina->empleado->empresa_id;
     }
 
@@ -40,8 +40,8 @@ class NominaEmpleadoPolicy
     public function create(User $user): bool
     {
         // Solo RRHH puede crear nóminas
-        return $user->hasPermissionTo('nomina_empleados.store') &&
-               $user->hasRole('admin|rrhh');
+        return $user->hasPermission('nomina_empleados.store') &&
+               $user->hasAnyRole(['Administrador', 'RRHH']);
     }
 
     /**
@@ -55,9 +55,9 @@ class NominaEmpleadoPolicy
         }
 
         // Solo RRHH puede editar
-        return $user->hasPermissionTo('nomina_empleados.update') &&
+        return $user->hasPermission('nomina_empleados.update') &&
                $user->empresa_id === $nomina->empleado->empresa_id &&
-               $user->hasRole('admin|rrhh');
+               $user->hasAnyRole(['Administrador', 'RRHH']);
     }
 
     /**
@@ -71,8 +71,8 @@ class NominaEmpleadoPolicy
         }
 
         // Solo administradores pueden eliminar nóminas
-        return $user->hasPermissionTo('nomina_empleados.destroy') &&
+        return $user->hasPermission('nomina_empleados.destroy') &&
                $user->empresa_id === $nomina->empleado->empresa_id &&
-               $user->hasRole('admin');
+               $user->hasRole('Administrador');
     }
 }

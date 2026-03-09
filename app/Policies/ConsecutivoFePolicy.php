@@ -15,7 +15,7 @@ class ConsecutivoFePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('consecutivos_fe.index');
+        return $user->hasPermission('consecutivos_fe.index');
     }
 
     /**
@@ -23,7 +23,7 @@ class ConsecutivoFePolicy
      */
     public function view(User $user, ConsecutivoFe $consecutivo): bool
     {
-        return $user->hasPermissionTo('consecutivos_fe.show') &&
+        return $user->hasPermission('consecutivos_fe.show') &&
                $user->empresa_id === $consecutivo->empresa_id;
     }
 
@@ -33,8 +33,8 @@ class ConsecutivoFePolicy
     public function create(User $user): bool
     {
         // CRÍTICO - Solo administradores pueden crear consecutivos DGT
-        return $user->hasPermissionTo('consecutivos_fe.store') &&
-               $user->hasRole('admin');
+        return $user->hasPermission('consecutivos_fe.store') &&
+               $user->hasRole('Administrador');
     }
 
     /**
@@ -46,9 +46,9 @@ class ConsecutivoFePolicy
         // No se puede modificar: empresa_id, sucursal_id, tipo_comprobante, consecutivo_inicial
         // Solo se permite: consecutivo_final (expansión de rango)
         
-        return $user->hasPermissionTo('consecutivos_fe.update') &&
+        return $user->hasPermission('consecutivos_fe.update') &&
                $user->empresa_id === $consecutivo->empresa_id &&
-               $user->hasRole('admin');
+               $user->hasRole('Administrador');
     }
 
     /**
@@ -63,9 +63,9 @@ class ConsecutivoFePolicy
             return false; // Ya se usaron consecutivos - NO eliminar
         }
 
-        return $user->hasPermissionTo('consecutivos_fe.destroy') &&
+        return $user->hasPermission('consecutivos_fe.destroy') &&
                $user->empresa_id === $consecutivo->empresa_id &&
-               $user->hasRole('admin');
+               $user->hasRole('Administrador');
     }
 
     /**
@@ -74,7 +74,7 @@ class ConsecutivoFePolicy
     public function obtenerSiguiente(User $user, ConsecutivoFe $consecutivo): bool
     {
         // Cualquier usuario con permisos de facturación puede obtener consecutivos
-        return $user->hasPermissionTo('consecutivos_fe.siguiente') &&
+        return $user->hasPermission('consecutivos_fe.siguiente') &&
                $user->empresa_id === $consecutivo->empresa_id &&
                $consecutivo->activo === true;
     }

@@ -19,6 +19,7 @@ class StoreFormaPagoRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'codigo_dgt' => ['required', 'string', 'max:10', 'unique:formas_pago,codigo_dgt'],
             'nombre' => ['required', 'string', 'max:255', 'unique:formas_pago,nombre'],
             'descripcion' => ['nullable', 'string', 'max:500'],
             'tipo' => ['nullable', 'string', 'max:50'],

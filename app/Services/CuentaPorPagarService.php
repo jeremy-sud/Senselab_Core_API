@@ -63,6 +63,8 @@ class CuentaPorPagarService
             $data['fecha_recepcion_documento'] = now()->toDateString();
         }
 
+        $data['monto_pendiente'] = $data['monto_original'] - ($data['monto_pagado'] ?? 0);
+
         $cuenta = CuentaPorPagar::create($data);
         $cuenta->load(['proveedor', 'ordenCompra', 'empresa']);
         return $cuenta;

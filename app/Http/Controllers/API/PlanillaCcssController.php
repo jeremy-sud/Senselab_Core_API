@@ -253,7 +253,7 @@ class PlanillaCcssController extends Controller
     {
         $this->authorize('delete', $planillaCcss);
 
-        $planillaCcss->eliminado = now();
+        $planillaCcss->eliminado = true;
         $planillaCcss->save();
 
         $this->flushCache();

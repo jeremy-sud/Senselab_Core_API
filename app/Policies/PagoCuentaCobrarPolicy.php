@@ -15,7 +15,7 @@ class PagoCuentaCobrarPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('pagos_cuentas_cobrar.index');
+        return $user->hasPermission('pagos_cuentas_cobrar.index');
     }
 
     /**
@@ -23,7 +23,7 @@ class PagoCuentaCobrarPolicy
      */
     public function view(User $user, PagoCuentaCobrar $pago): bool
     {
-        return $user->hasPermissionTo('pagos_cuentas_cobrar.show') &&
+        return $user->hasPermission('pagos_cuentas_cobrar.show') &&
                $user->empresa_id === $pago->cuentaPorCobrar->empresa_id;
     }
 
@@ -32,7 +32,7 @@ class PagoCuentaCobrarPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo('pagos_cuentas_cobrar.store');
+        return $user->hasPermission('pagos_cuentas_cobrar.store');
     }
 
     /**
@@ -45,7 +45,7 @@ class PagoCuentaCobrarPolicy
             return false;
         }
 
-        return $user->hasPermissionTo('pagos_cuentas_cobrar.update') &&
+        return $user->hasPermission('pagos_cuentas_cobrar.update') &&
                $user->empresa_id === $pago->cuentaPorCobrar->empresa_id;
     }
 
@@ -63,7 +63,7 @@ class PagoCuentaCobrarPolicy
             return false;
         }
 
-        return $user->hasPermissionTo('pagos_cuentas_cobrar.destroy') &&
+        return $user->hasPermission('pagos_cuentas_cobrar.destroy') &&
                $user->empresa_id === $pago->cuentaPorCobrar->empresa_id;
     }
 }

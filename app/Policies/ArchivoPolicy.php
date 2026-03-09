@@ -15,7 +15,7 @@ class ArchivoPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('archivos.index');
+        return $user->hasPermission('archivos.index');
     }
 
     /**
@@ -24,7 +24,7 @@ class ArchivoPolicy
     public function view(User $user, Archivo $archivo): bool
     {
         // Usuarios pueden ver archivos de su empresa
-        return $user->hasPermissionTo('archivos.show') &&
+        return $user->hasPermission('archivos.show') &&
                $user->empresa_id === $archivo->empresa_id;
     }
 
@@ -33,7 +33,7 @@ class ArchivoPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo('archivos.store');
+        return $user->hasPermission('archivos.store');
     }
 
     /**
@@ -42,7 +42,7 @@ class ArchivoPolicy
     public function update(User $user, Archivo $archivo): bool
     {
         // Solo se permite actualizar metadatos, no el archivo físico
-        return $user->hasPermissionTo('archivos.update') &&
+        return $user->hasPermission('archivos.update') &&
                $user->empresa_id === $archivo->empresa_id;
     }
 
@@ -56,9 +56,9 @@ class ArchivoPolicy
             return true;
         }
 
-        return $user->hasPermissionTo('archivos.destroy') &&
+        return $user->hasPermission('archivos.destroy') &&
                $user->empresa_id === $archivo->empresa_id &&
-               $user->hasRole('admin');
+               $user->hasRole('Administrador');
     }
 
     /**
@@ -66,7 +66,7 @@ class ArchivoPolicy
      */
     public function descargar(User $user, Archivo $archivo): bool
     {
-        return $user->hasPermissionTo('archivos.descargar') &&
+        return $user->hasPermission('archivos.descargar') &&
                $user->empresa_id === $archivo->empresa_id;
     }
 }

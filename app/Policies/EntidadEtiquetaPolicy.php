@@ -16,7 +16,7 @@ class EntidadEtiquetaPolicy extends BasePolicy
      */
     public function viewAny(Usuario $user): bool
     {
-        return $user->hasPermissionTo('ver-etiquetas');
+        return $user->hasPermission('ver-etiquetas');
     }
 
     /**
@@ -24,7 +24,7 @@ class EntidadEtiquetaPolicy extends BasePolicy
      */
     public function view(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
-        return $user->hasPermissionTo('ver-etiquetas');
+        return $user->hasPermission('ver-etiquetas');
     }
 
     /**
@@ -32,7 +32,7 @@ class EntidadEtiquetaPolicy extends BasePolicy
      */
     public function create(Usuario $user): bool
     {
-        return $user->hasPermissionTo('crear-etiquetas');
+        return $user->hasPermission('crear-etiquetas');
     }
 
     /**
@@ -40,7 +40,7 @@ class EntidadEtiquetaPolicy extends BasePolicy
      */
     public function update(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
-        return $user->hasPermissionTo('editar-etiquetas');
+        return $user->hasPermission('editar-etiquetas');
     }
 
     /**
@@ -48,7 +48,7 @@ class EntidadEtiquetaPolicy extends BasePolicy
      */
     public function delete(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
-        return $user->hasPermissionTo('eliminar-etiquetas');
+        return $user->hasPermission('eliminar-etiquetas');
     }
 
     /**
@@ -56,7 +56,7 @@ class EntidadEtiquetaPolicy extends BasePolicy
      */
     public function restore(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
-        return $user->hasPermissionTo('editar-etiquetas');
+        return $user->hasPermission('editar-etiquetas');
     }
 
     /**
@@ -64,6 +64,6 @@ class EntidadEtiquetaPolicy extends BasePolicy
      */
     public function forceDelete(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
-        return $user->hasPermissionTo('eliminar-etiquetas') && $user->hasRole('Administrador');
+        return $user->hasPermission('eliminar-etiquetas') && $user->hasRole('Administrador');
     }
 }

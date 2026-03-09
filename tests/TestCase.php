@@ -401,6 +401,145 @@ abstract class TestCase extends BaseTestCase
             ['nombre' => 'Crear Presupuesto', 'slug' => 'crear-presupuesto', 'modulo' => 'Contabilidad'],
             ['nombre' => 'Editar Presupuesto', 'slug' => 'editar-presupuesto', 'modulo' => 'Contabilidad'],
             ['nombre' => 'Eliminar Presupuesto', 'slug' => 'eliminar-presupuesto', 'modulo' => 'Contabilidad'],
+            // Cajas (Registradoras)
+            ['nombre' => 'Ver Cajas', 'slug' => 'ver-cajas', 'modulo' => 'Finanzas'],
+            ['nombre' => 'Crear Cajas', 'slug' => 'crear-cajas', 'modulo' => 'Finanzas'],
+            ['nombre' => 'Editar Cajas', 'slug' => 'editar-cajas', 'modulo' => 'Finanzas'],
+            ['nombre' => 'Eliminar Cajas', 'slug' => 'eliminar-cajas', 'modulo' => 'Finanzas'],
+            // Usuarios
+            ['nombre' => 'Ver Usuarios', 'slug' => 'ver-usuarios', 'modulo' => 'Sistema'],
+            ['nombre' => 'Crear Usuarios', 'slug' => 'crear-usuarios', 'modulo' => 'Sistema'],
+            ['nombre' => 'Editar Usuarios', 'slug' => 'editar-usuarios', 'modulo' => 'Sistema'],
+            ['nombre' => 'Eliminar Usuarios', 'slug' => 'eliminar-usuarios', 'modulo' => 'Sistema'],
+            // Etiquetas
+            ['nombre' => 'Ver Etiquetas', 'slug' => 'ver-etiquetas', 'modulo' => 'Sistema'],
+            ['nombre' => 'Crear Etiquetas', 'slug' => 'crear-etiquetas', 'modulo' => 'Sistema'],
+            ['nombre' => 'Editar Etiquetas', 'slug' => 'editar-etiquetas', 'modulo' => 'Sistema'],
+            ['nombre' => 'Eliminar Etiquetas', 'slug' => 'eliminar-etiquetas', 'modulo' => 'Sistema'],
+            // Marcas (Policy: BasePolicy $permission='marca')
+            ['nombre' => 'Ver Marcas', 'slug' => 'ver-marca', 'modulo' => 'Inventario'],
+            ['nombre' => 'Crear Marcas', 'slug' => 'crear-marca', 'modulo' => 'Inventario'],
+            ['nombre' => 'Editar Marcas', 'slug' => 'editar-marca', 'modulo' => 'Inventario'],
+            ['nombre' => 'Eliminar Marcas', 'slug' => 'eliminar-marca', 'modulo' => 'Inventario'],
+            // Formas de Pago (Policy: BasePolicy $permission='forma_pago')
+            ['nombre' => 'Ver Formas Pago', 'slug' => 'ver-forma_pago', 'modulo' => 'Ventas'],
+            ['nombre' => 'Crear Formas Pago', 'slug' => 'crear-forma_pago', 'modulo' => 'Ventas'],
+            ['nombre' => 'Editar Formas Pago', 'slug' => 'editar-forma_pago', 'modulo' => 'Ventas'],
+            ['nombre' => 'Eliminar Formas Pago', 'slug' => 'eliminar-forma_pago', 'modulo' => 'Ventas'],
+            // Tipos de Impuesto (Policy: BasePolicy $permission='tipo_impuesto')
+            ['nombre' => 'Ver Tipos Impuesto', 'slug' => 'ver-tipo_impuesto', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Crear Tipos Impuesto', 'slug' => 'crear-tipo_impuesto', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Editar Tipos Impuesto', 'slug' => 'editar-tipo_impuesto', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Eliminar Tipos Impuesto', 'slug' => 'eliminar-tipo_impuesto', 'modulo' => 'Contabilidad'],
+            // Detalle Asiento (Policy: BasePolicy $permission='detalle_asiento')
+            ['nombre' => 'Ver Detalle Asiento', 'slug' => 'ver-detalle_asiento', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Crear Detalle Asiento', 'slug' => 'crear-detalle_asiento', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Editar Detalle Asiento', 'slug' => 'editar-detalle_asiento', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Eliminar Detalle Asiento', 'slug' => 'eliminar-detalle_asiento', 'modulo' => 'Contabilidad'],
+            // Cajas (Policy: dot-notation cajas.X)
+            ['nombre' => 'Cajas Index', 'slug' => 'cajas.index', 'modulo' => 'Configuracion'],
+            ['nombre' => 'Cajas Show', 'slug' => 'cajas.show', 'modulo' => 'Configuracion'],
+            ['nombre' => 'Cajas Store', 'slug' => 'cajas.store', 'modulo' => 'Configuracion'],
+            ['nombre' => 'Cajas Update', 'slug' => 'cajas.update', 'modulo' => 'Configuracion'],
+            ['nombre' => 'Cajas Destroy', 'slug' => 'cajas.destroy', 'modulo' => 'Configuracion'],
+            // Nomina Empleados (Policy: dot-notation nomina_empleados.X)
+            ['nombre' => 'Nomina Empleados Index', 'slug' => 'nomina_empleados.index', 'modulo' => 'Nomina'],
+            ['nombre' => 'Nomina Empleados Show', 'slug' => 'nomina_empleados.show', 'modulo' => 'Nomina'],
+            ['nombre' => 'Nomina Empleados Store', 'slug' => 'nomina_empleados.store', 'modulo' => 'Nomina'],
+            ['nombre' => 'Nomina Empleados Update', 'slug' => 'nomina_empleados.update', 'modulo' => 'Nomina'],
+            ['nombre' => 'Nomina Empleados Destroy', 'slug' => 'nomina_empleados.destroy', 'modulo' => 'Nomina'],
+            // Pagos Cuentas Cobrar (Policy: dot-notation pagos_cuentas_cobrar.X)
+            ['nombre' => 'Pagos Cuentas Cobrar Index', 'slug' => 'pagos_cuentas_cobrar.index', 'modulo' => 'Ventas'],
+            ['nombre' => 'Pagos Cuentas Cobrar Show', 'slug' => 'pagos_cuentas_cobrar.show', 'modulo' => 'Ventas'],
+            ['nombre' => 'Pagos Cuentas Cobrar Store', 'slug' => 'pagos_cuentas_cobrar.store', 'modulo' => 'Ventas'],
+            ['nombre' => 'Pagos Cuentas Cobrar Update', 'slug' => 'pagos_cuentas_cobrar.update', 'modulo' => 'Ventas'],
+            ['nombre' => 'Pagos Cuentas Cobrar Destroy', 'slug' => 'pagos_cuentas_cobrar.destroy', 'modulo' => 'Ventas'],
+            // Pagos Cuentas Pagar (Policy: dot-notation pagos_cuentas_pagar.X)
+            ['nombre' => 'Pagos Cuentas Pagar Index', 'slug' => 'pagos_cuentas_pagar.index', 'modulo' => 'Compras'],
+            ['nombre' => 'Pagos Cuentas Pagar Show', 'slug' => 'pagos_cuentas_pagar.show', 'modulo' => 'Compras'],
+            ['nombre' => 'Pagos Cuentas Pagar Store', 'slug' => 'pagos_cuentas_pagar.store', 'modulo' => 'Compras'],
+            ['nombre' => 'Pagos Cuentas Pagar Update', 'slug' => 'pagos_cuentas_pagar.update', 'modulo' => 'Compras'],
+            ['nombre' => 'Pagos Cuentas Pagar Destroy', 'slug' => 'pagos_cuentas_pagar.destroy', 'modulo' => 'Compras'],
+            // Tasas de Impuesto (Policy: BasePolicy $permission='tasa_impuesto')
+            ['nombre' => 'Ver Tasas Impuesto', 'slug' => 'ver-tasa_impuesto', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Crear Tasas Impuesto', 'slug' => 'crear-tasa_impuesto', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Editar Tasas Impuesto', 'slug' => 'editar-tasa_impuesto', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Eliminar Tasas Impuesto', 'slug' => 'eliminar-tasa_impuesto', 'modulo' => 'Contabilidad'],
+            // Unidad Medida (Policy: BasePolicy $permission='unidad_medida')
+            ['nombre' => 'Ver Unidad Medida', 'slug' => 'ver-unidad_medida', 'modulo' => 'Inventario'],
+            ['nombre' => 'Crear Unidad Medida', 'slug' => 'crear-unidad_medida', 'modulo' => 'Inventario'],
+            ['nombre' => 'Editar Unidad Medida', 'slug' => 'editar-unidad_medida', 'modulo' => 'Inventario'],
+            ['nombre' => 'Eliminar Unidad Medida', 'slug' => 'eliminar-unidad_medida', 'modulo' => 'Inventario'],
+            // Salida Inventario (Policy: BasePolicy $permission='salida_inventario')
+            ['nombre' => 'Ver Salida Inventario', 'slug' => 'ver-salida_inventario', 'modulo' => 'Inventario'],
+            ['nombre' => 'Crear Salida Inventario', 'slug' => 'crear-salida_inventario', 'modulo' => 'Inventario'],
+            ['nombre' => 'Editar Salida Inventario', 'slug' => 'editar-salida_inventario', 'modulo' => 'Inventario'],
+            ['nombre' => 'Eliminar Salida Inventario', 'slug' => 'eliminar-salida_inventario', 'modulo' => 'Inventario'],
+            // Codigo Actividad Economica (Policy: BasePolicy $permission='codigo_actividad_economica')
+            ['nombre' => 'Ver Codigo Actividad', 'slug' => 'ver-codigo_actividad_economica', 'modulo' => 'Catálogos'],
+            ['nombre' => 'Crear Codigo Actividad', 'slug' => 'crear-codigo_actividad_economica', 'modulo' => 'Catálogos'],
+            ['nombre' => 'Editar Codigo Actividad', 'slug' => 'editar-codigo_actividad_economica', 'modulo' => 'Catálogos'],
+            ['nombre' => 'Eliminar Codigo Actividad', 'slug' => 'eliminar-codigo_actividad_economica', 'modulo' => 'Catálogos'],
+            // Deduccion Legal (Policy: BasePolicy $permission='deduccion_legal')
+            ['nombre' => 'Ver Deduccion Legal', 'slug' => 'ver-deduccion_legal', 'modulo' => 'Nómina'],
+            ['nombre' => 'Crear Deduccion Legal', 'slug' => 'crear-deduccion_legal', 'modulo' => 'Nómina'],
+            ['nombre' => 'Editar Deduccion Legal', 'slug' => 'editar-deduccion_legal', 'modulo' => 'Nómina'],
+            ['nombre' => 'Eliminar Deduccion Legal', 'slug' => 'eliminar-deduccion_legal', 'modulo' => 'Nómina'],
+            // Cargo (Policy: BasePolicy $permission='cargo')
+            ['nombre' => 'Ver Cargo', 'slug' => 'ver-cargo', 'modulo' => 'Nómina'],
+            ['nombre' => 'Crear Cargo', 'slug' => 'crear-cargo', 'modulo' => 'Nómina'],
+            ['nombre' => 'Editar Cargo', 'slug' => 'editar-cargo', 'modulo' => 'Nómina'],
+            ['nombre' => 'Eliminar Cargo', 'slug' => 'eliminar-cargo', 'modulo' => 'Nómina'],
+            // Pago (Policy: BasePolicy $permission='pago')
+            ['nombre' => 'Ver Pago', 'slug' => 'ver-pago', 'modulo' => 'Finanzas'],
+            ['nombre' => 'Crear Pago', 'slug' => 'crear-pago', 'modulo' => 'Finanzas'],
+            ['nombre' => 'Editar Pago', 'slug' => 'editar-pago', 'modulo' => 'Finanzas'],
+            ['nombre' => 'Eliminar Pago', 'slug' => 'eliminar-pago', 'modulo' => 'Finanzas'],
+            // DetallePresupuesto (Policy: BasePolicy $permission='detalle_presupuesto')
+            ['nombre' => 'Ver Detalle Presupuesto', 'slug' => 'ver-detalle_presupuesto', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Crear Detalle Presupuesto', 'slug' => 'crear-detalle_presupuesto', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Editar Detalle Presupuesto', 'slug' => 'editar-detalle_presupuesto', 'modulo' => 'Contabilidad'],
+            ['nombre' => 'Eliminar Detalle Presupuesto', 'slug' => 'eliminar-detalle_presupuesto', 'modulo' => 'Contabilidad'],
+            // PlanillaCcss (Policy: BasePolicy $permission='planilla_ccss')
+            ['nombre' => 'Ver Planilla CCSS', 'slug' => 'ver-planilla_ccss', 'modulo' => 'Nómina'],
+            ['nombre' => 'Crear Planilla CCSS', 'slug' => 'crear-planilla_ccss', 'modulo' => 'Nómina'],
+            ['nombre' => 'Editar Planilla CCSS', 'slug' => 'editar-planilla_ccss', 'modulo' => 'Nómina'],
+            ['nombre' => 'Eliminar Planilla CCSS', 'slug' => 'eliminar-planilla_ccss', 'modulo' => 'Nómina'],
+            // Ruta (middleware: ver-rutas, rutas.crear, etc. + Policy: BasePolicy $permission='ruta')
+            ['nombre' => 'Ver Rutas', 'slug' => 'ver-rutas', 'modulo' => 'Transporte'],
+            ['nombre' => 'Crear Rutas', 'slug' => 'rutas.crear', 'modulo' => 'Transporte'],
+            ['nombre' => 'Editar Rutas', 'slug' => 'rutas.actualizar', 'modulo' => 'Transporte'],
+            ['nombre' => 'Eliminar Rutas', 'slug' => 'rutas.eliminar', 'modulo' => 'Transporte'],
+            ['nombre' => 'Ver Ruta', 'slug' => 'ver-ruta', 'modulo' => 'Transporte'],
+            ['nombre' => 'Crear Ruta', 'slug' => 'crear-ruta', 'modulo' => 'Transporte'],
+            ['nombre' => 'Editar Ruta', 'slug' => 'editar-ruta', 'modulo' => 'Transporte'],
+            ['nombre' => 'Eliminar Ruta', 'slug' => 'eliminar-ruta', 'modulo' => 'Transporte'],
+            // ModeloBus (Policy: BasePolicy $permission='modelo_bus')
+            ['nombre' => 'Ver Modelo Bus', 'slug' => 'ver-modelo_bus', 'modulo' => 'Transporte'],
+            ['nombre' => 'Crear Modelo Bus', 'slug' => 'crear-modelo_bus', 'modulo' => 'Transporte'],
+            ['nombre' => 'Editar Modelo Bus', 'slug' => 'editar-modelo_bus', 'modulo' => 'Transporte'],
+            ['nombre' => 'Eliminar Modelo Bus', 'slug' => 'eliminar-modelo_bus', 'modulo' => 'Transporte'],
+            // Cabys (Policy: BasePolicy $permission='cabys')
+            ['nombre' => 'Ver Cabys', 'slug' => 'ver-cabys', 'modulo' => 'Catálogos'],
+            ['nombre' => 'Crear Cabys', 'slug' => 'crear-cabys', 'modulo' => 'Catálogos'],
+            ['nombre' => 'Editar Cabys', 'slug' => 'editar-cabys', 'modulo' => 'Catálogos'],
+            ['nombre' => 'Eliminar Cabys', 'slug' => 'eliminar-cabys', 'modulo' => 'Catálogos'],
+            // DeduccionLegal (Policy: BasePolicy $permission='deduccion_legal')
+            ['nombre' => 'Ver Deducción Legal', 'slug' => 'ver-deduccion_legal', 'modulo' => 'Nómina'],
+            ['nombre' => 'Crear Deducción Legal', 'slug' => 'crear-deduccion_legal', 'modulo' => 'Nómina'],
+            ['nombre' => 'Editar Deducción Legal', 'slug' => 'editar-deduccion_legal', 'modulo' => 'Nómina'],
+            ['nombre' => 'Eliminar Deducción Legal', 'slug' => 'eliminar-deduccion_legal', 'modulo' => 'Nómina'],
+            // TipoCliente (Policy: BasePolicy $permission='tipos-clientes')
+            ['nombre' => 'Ver Tipos Clientes', 'slug' => 'ver-tipos-clientes', 'modulo' => 'Clientes'],
+            ['nombre' => 'Crear Tipos Clientes', 'slug' => 'crear-tipos-clientes', 'modulo' => 'Clientes'],
+            ['nombre' => 'Editar Tipos Clientes', 'slug' => 'editar-tipos-clientes', 'modulo' => 'Clientes'],
+            ['nombre' => 'Eliminar Tipos Clientes', 'slug' => 'eliminar-tipos-clientes', 'modulo' => 'Clientes'],
+            // Etiqueta (Policy: dot-notation pattern)
+            ['nombre' => 'Etiquetas Index', 'slug' => 'etiquetas.index', 'modulo' => 'Sistema'],
+            ['nombre' => 'Etiquetas Show', 'slug' => 'etiquetas.show', 'modulo' => 'Sistema'],
+            ['nombre' => 'Etiquetas Store', 'slug' => 'etiquetas.store', 'modulo' => 'Sistema'],
+            ['nombre' => 'Etiquetas Update', 'slug' => 'etiquetas.update', 'modulo' => 'Sistema'],
+            ['nombre' => 'Etiquetas Destroy', 'slug' => 'etiquetas.destroy', 'modulo' => 'Sistema'],
         ];
 
         foreach ($permisos as $permiso) {

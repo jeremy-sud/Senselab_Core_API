@@ -15,7 +15,7 @@ class PagoCuentaPagarPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('pagos_cuentas_pagar.index');
+        return $user->hasPermission('pagos_cuentas_pagar.index');
     }
 
     /**
@@ -23,7 +23,7 @@ class PagoCuentaPagarPolicy
      */
     public function view(User $user, PagoCuentaPagar $pago): bool
     {
-        return $user->hasPermissionTo('pagos_cuentas_pagar.show') &&
+        return $user->hasPermission('pagos_cuentas_pagar.show') &&
                $user->empresa_id === $pago->cuentaPorPagar->empresa_id;
     }
 
@@ -32,7 +32,7 @@ class PagoCuentaPagarPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo('pagos_cuentas_pagar.store');
+        return $user->hasPermission('pagos_cuentas_pagar.store');
     }
 
     /**
@@ -45,7 +45,7 @@ class PagoCuentaPagarPolicy
             return false;
         }
 
-        return $user->hasPermissionTo('pagos_cuentas_pagar.update') &&
+        return $user->hasPermission('pagos_cuentas_pagar.update') &&
                $user->empresa_id === $pago->cuentaPorPagar->empresa_id;
     }
 
@@ -63,7 +63,7 @@ class PagoCuentaPagarPolicy
             return false;
         }
 
-        return $user->hasPermissionTo('pagos_cuentas_pagar.destroy') &&
+        return $user->hasPermission('pagos_cuentas_pagar.destroy') &&
                $user->empresa_id === $pago->cuentaPorPagar->empresa_id;
     }
 }

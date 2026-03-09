@@ -15,7 +15,7 @@ class DetalleOrdenCompraPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('detalle_ordenes_compra.index');
+        return $user->hasPermission('detalle_ordenes_compra.index');
     }
 
     /**
@@ -23,7 +23,7 @@ class DetalleOrdenCompraPolicy
      */
     public function view(User $user, DetalleOrdenCompra $detalleOrden): bool
     {
-        return $user->hasPermissionTo('detalle_ordenes_compra.show') &&
+        return $user->hasPermission('detalle_ordenes_compra.show') &&
                $user->empresa_id === $detalleOrden->ordenCompra->empresa_id;
     }
 
@@ -32,7 +32,7 @@ class DetalleOrdenCompraPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo('detalle_ordenes_compra.store');
+        return $user->hasPermission('detalle_ordenes_compra.store');
     }
 
     /**
@@ -46,7 +46,7 @@ class DetalleOrdenCompraPolicy
             return false;
         }
 
-        return $user->hasPermissionTo('detalle_ordenes_compra.update') &&
+        return $user->hasPermission('detalle_ordenes_compra.update') &&
                $user->empresa_id === $detalleOrden->ordenCompra->empresa_id;
     }
 
@@ -61,7 +61,7 @@ class DetalleOrdenCompraPolicy
             return false;
         }
 
-        return $user->hasPermissionTo('detalle_ordenes_compra.destroy') &&
+        return $user->hasPermission('detalle_ordenes_compra.destroy') &&
                $user->empresa_id === $detalleOrden->ordenCompra->empresa_id;
     }
 }
