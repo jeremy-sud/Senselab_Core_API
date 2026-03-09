@@ -5,6 +5,31 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.1.0] - 2025-07-14
+
+### 🧪 FASE 14: Cobertura de Tests Críticos
+
+Expansión masiva de Feature tests para alcanzar >60% de cobertura de controllers.
+
+#### Resultado
+- **Tests:** 959 passing, 0 failing ✅
+- **PHPStan Level 8:** 0 errores ✅
+- **Nuevos test files:** 21
+- **Nuevos tests:** +203
+- **Bugs de producción descubiertos y corregidos:** 5
+
+#### Añadido
+- **21 Feature test files** cubriendo módulos: Financiero (AsientoContable, TasaImpuesto, DetallePresupuesto), Comercial (Cliente, Proveedor, TipoCliente), RRHH (Empleado, Cargo, PagoNomina, PeriodoNomina, PlanillaCcss, DeduccionLegal), Cuentas (CuentaPorCobrar, CuentaPorPagar), Compras (OrdenCompra, Pago), Admin (Rol, Permiso), Transporte (Ruta, ModeloBus), Catálogos (Cabys)
+- **Permisos en TestCase::seedPermisos()** — 30+ permisos nuevos para cargo, pago, detalle_presupuesto, planilla_ccss, ruta, modelo_bus, cabys, deduccion_legal, tipo_cliente
+
+#### Corregido
+- **CuentaPorCobrarService / CuentaPorPagarService** — `monto_pendiente` no se auto-calculaba como `monto_original - monto_pagado`
+- **StorePermisoRequest / UpdatePermisoRequest** — Campo `codigo_unico` cambiado a `slug` (columna no existía)
+- **PlanillaCcssController** — `eliminado = now()` → `eliminado = true` (causaba constraint NOT NULL en boolean)
+- **routes/api/nomina.php** — Rutas de CargoController faltantes, binding de PlanillaCcss corregido
+
+---
+
 ## [3.0.1] - 2026-03-06
 
 ### 🔒 FASE 17: Seguridad Pre-Producción

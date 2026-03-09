@@ -13,6 +13,8 @@
 > v2.8.0: FASE 11 — 42 tests pre-existentes corrigidos (0 failing), 8 bugs de producción descubiertos y corregidos, 8 modelos con timestamps faltantes, 52 permisos de test agregados
 > v2.9.0: FASE 12 — Migración PHPUnit attributes (405 @test→#[Test], @covers→#[CoversClass], @group→#[Group]), 4 test suites nuevos (35 tests), 2 bugs producción corregidos, 2 tests skipped recuperados
 > v3.0.0: FASE 13 — Eliminación CQRS dead code (34 archivos + CQRSServiceProvider), 7 factories corregidas (campos alineados con migraciones reales), conteos de documentación verificados
+> v3.0.1: FASE 17 — Seguridad pre-producción: Swagger auth, rate limiters, FormRequest validation (30+ campos string con max: añadido)
+> v3.1.0: FASE 14 — Cobertura de tests críticos: 21 Feature test files nuevos, +203 tests, 5 bugs producción corregidos
 
 ---
 
@@ -27,8 +29,8 @@
 - **Traits Reutilizables:** 10+ (1 deprecated: EncryptsAttributes)
 - **Observers:** 6+ (registrados en ObserverServiceProvider dedicado)
 - **Services:** 40 (10 AI, 8 Hacienda, 22 core/utilidad)
-- **Tests (archivos):** 68 archivos
-- **Tests (total):** 756 passing, 0 failing ✅
+- **Tests (archivos):** 89 archivos (+21 en FASE 14)
+- **Tests (total):** 959 passing, 0 failing ✅
 - **Providers:** 3 (AppServiceProvider, AuthServiceProvider, ObserverServiceProvider)
 - **Factories:** 83 (7 corregidas en FASE 13)
 - **Rutas API:** Configuradas en routes/api.php con 14 archivos en routes/api/

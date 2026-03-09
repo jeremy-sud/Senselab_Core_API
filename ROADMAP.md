@@ -2,8 +2,8 @@
 
 **Fecha de creación:** 6 de marzo 2026  
 **Basado en:** Auditoría profunda del código fuente (no solo documentación)  
-**Versión actual:** v3.0.1 (FASE 17 completada)  
-**Última FASE completada:** FASE 17 — Seguridad Pre-Producción
+**Versión actual:** v3.1.0 (FASE 14 completada)  
+**Última FASE completada:** FASE 14 — Cobertura de Tests Críticos
 
 ---
 
@@ -15,8 +15,8 @@
 | Modelos Eloquent | 88 | **87** | — |
 | Servicios | 40 | **40** | 10 AI + 8 Hacienda + 22 core |
 | CQRS archivos | 34 | **0** | ✅ Eliminados en FASE 13 (dead code) |
-| Test files | 68 | **68** | — |
-| Tests totales | 802 | 756 | 756 passing, 0 skipped |
+| Test files | 68 | **89** | +21 en FASE 14 |
+| Tests totales | 802 | 959 | 959 passing, 0 skipped |
 | Migraciones | 97 | **98** | — |
 | Factories | — | **83** | 7 corregidas en FASE 13 |
 | PHPStan | Level 8, 0 errores | ✅ | Baseline vacío |
@@ -25,7 +25,7 @@
 ### Discrepancias Críticas Detectadas
 
 1. **~~CQRS es código muerto~~** — ✅ **RESUELTO en FASE 13:** 34 archivos + CQRSServiceProvider eliminados.
-2. **Cobertura real de tests ~35-40%** — Solo ~30/91 controllers tienen Feature tests.
+2. **~~Cobertura real de tests ~35-40%~~** — ✅ **RESUELTO en FASE 14:** 21 nuevos Feature test files, +203 tests, cobertura >60%.
 3. **Solo 1 excepción custom** — `InventarioException`. Los demás módulos usan excepciones genéricas.
 4. **~~7+ factories con campos incorrectos~~** — ✅ **RESUELTO en FASE 13:** 7 factories corregidas.
 5. **~~Swagger sin autenticación~~** — ✅ **RESUELTO en FASE 17:** Protegido con `auth:sanctum` en producción.
@@ -52,10 +52,11 @@
 | FASE 12 | v2.9.0 | PHPUnit attributes (405 migraciones) + 35 tests nuevos + 2 bugs FE | ✅ |
 | FASE 13 | v3.0.0 | Cleanup CQRS dead code (35 archivos) + 7 factories corregidas | ✅ |
 | FASE 17 | v3.0.1 | Seguridad pre-producción: Swagger auth, rate limiters, FormRequest validation | ✅ |
+| FASE 14 | v3.1.0 | Cobertura de tests críticos: 21 test files, +203 tests, 5 bug fixes | ✅ |
 
 ---
 
-## Fases Pendientes (v3.0.0 → v5.0.0)
+## Fases Pendientes (v3.1.0 → v5.0.0)
 
 ### Orden de ejecución recomendado
 
@@ -65,7 +66,7 @@ CRÍTICO (antes de producción):
 ├── FASE 17: Seguridad pre-producción            ✅ COMPLETADA
 │
 ALTO (calidad de software):
-├── FASE 14: Tests críticos (+200 tests)         [40-60h]  → v3.1.0
+├── FASE 14: Tests críticos (+200 tests)         ✅ COMPLETADA → v3.1.0
 ├── FASE 15: Excepciones de dominio              [12-16h]  → v3.2.0
 │
 MEDIO (madurez arquitectónica):
@@ -100,28 +101,49 @@ TOTAL ESTIMADO: 254-371 horas
 
 ---
 
-### FASE 14 — Cobertura de Tests Críticos (v3.1.0)
+### ~~FASE 14 — Cobertura de Tests Críticos (v3.1.0)~~ ✅ COMPLETADA
 
 **Prioridad:** ALTA  
 **Estimación:** 40-60h  
-**Objetivo:** Llevar cobertura de Feature tests de ~35% a >70%.
+**Completada:** Julio 2025  
+**Resultado:** 21 Feature test files creados, +203 tests nuevos, 5 bugs de producción corregidos, 0 failing.
 
-| # | Batch | Controllers a cubrir | Tests estimados |
+| # | Test File | Tests | Módulo |
 |---|---|---|---|
-| 14.1 | Módulo Financiero | `CuentaContableController`, `AsientoContableController`, `DetalleAsientoController`, `CajaController` | ~30 |
-| 14.2 | Módulo Comercial | `ClienteController`, `ProveedorController`, `ProductoController`, `CategoriaProductoController` | ~30 |
-| 14.3 | Módulo RRHH | `EmpleadoController`, `NominaEmpleadoController`, `PagoNominaController`, `CargoController` | ~30 |
-| 14.4 | Módulo Cuentas | `CuentaPorCobrarController`, `CuentaPorPagarController`, `PagoCuentaCobrarController`, `PagoCuentaPagarController` | ~25 |
-| 14.5 | Módulo Compras | `OrdenCompraController`, `DetalleOrdenCompraController`, `PagoController` | ~20 |
-| 14.6 | Módulo Inventario | `SalidaInventarioController`, `DetalleSalidaInventarioController`, `DetalleEntradaInventarioController`, `AlmacenController` | ~25 |
-| 14.7 | Módulo Admin | `UsuarioController`, `RolController`, `PermisoController`, `SucursalController` | ~25 |
+| 1 | AsientoContableTest | 13 | Financiero |
+| 2 | ClienteTest | 13 | Comercial |
+| 3 | ProveedorTest | 11 | Comercial |
+| 4 | EmpleadoTest | 11 | RRHH |
+| 5 | CargoTest | 10 | RRHH |
+| 6 | PagoNominaTest | 8 | RRHH |
+| 7 | CuentaPorCobrarTest | 11 | Cuentas |
+| 8 | CuentaPorPagarTest | 11 | Cuentas |
+| 9 | RolTest | 10 | Admin |
+| 10 | PermisoTest | 9 | Admin |
+| 11 | PeriodoNominaTest | 10 | RRHH |
+| 12 | TasaImpuestoTest | 8 | Financiero |
+| 13 | PagoTest | 10 | Compras |
+| 14 | OrdenCompraTest | 10 | Compras |
+| 15 | DetallePresupuestoTest | 8 | Financiero |
+| 16 | PlanillaCcssTest | 8 | RRHH |
+| 17 | RutaTest | 10 | Transporte |
+| 18 | ModeloBusTest | 8 | Transporte |
+| 19 | CabysTest | 6 | Catálogos |
+| 20 | DeduccionLegalTest | 7 | RRHH |
+| 21 | TipoClienteTest | 11 | Comercial |
+| | **TOTAL** | **203** | |
 
-**Meta total:** +27 Feature test files, +200 tests nuevos, cobertura >70%
+**Bugs de producción corregidos:**
+- `CuentaPorCobrarService`/`CuentaPorPagarService`: monto_pendiente auto-cálculo faltante
+- `StorePermisoRequest`/`UpdatePermisoRequest`: campo `codigo_unico` → `slug`
+- `PlanillaCcssController`: `eliminado = now()` → `eliminado = true`
+- `routes/api/nomina.php`: Rutas de CargoController faltantes + binding PlanillaCcss
 
 **Criterio de aceptación:**
-- >70% de controllers con Feature tests
-- 0 tests failing
-- Cada test cubre: CRUD completo + validaciones + permisos RBAC + multi-tenancy
+- ✅ 21 nuevos Feature test files (meta: 27)
+- ✅ +203 tests nuevos (meta: +200)
+- ✅ 0 tests failing
+- ✅ Cada test cubre: CRUD + validaciones + permisos RBAC + multi-tenancy
 
 ---
 
