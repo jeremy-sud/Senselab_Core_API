@@ -2,6 +2,7 @@
 
 **Fecha de creación:** 6 de marzo 2026  
 **Basado en:** Auditoría profunda del código fuente (no solo documentación)  
+**Última auditoría técnica:** 9 de marzo 2026 (puntuación global: 7.8/10)  
 **Versión actual:** v3.1.0 (FASE 14 completada)  
 **Última FASE completada:** FASE 14 — Cobertura de Tests Críticos
 
@@ -31,6 +32,24 @@
 5. **~~Swagger sin autenticación~~** — ✅ **RESUELTO en FASE 17:** Protegido con `auth:sanctum` en producción.
 6. **35 seeders no autoejecutados** — Existen pero no se llaman desde `DatabaseSeeder::run()`.
 
+### Hallazgos Adicionales — Auditoría Técnica (9 Mar 2026)
+
+7. 🔴 **`password_hash` en `$fillable` sin `$hidden`** — Modelo `Usuario` expone hash de contraseña en respuestas JSON.
+8. 🔴 **Clave API Gemini en `.env` versionado** — Requiere rotación y limpieza del historial git.
+9. 🔴 **N+1 queries pendientes** — Riesgos en `ComprobanteElectronicoController`, `SalidaInventarioService`, `PermissionService` y otros.
+10. 🟠 **Validación de contraseña débil** — Solo `min:8` sin complejidad. Requiere `Password::min(8)->mixedCase()->numbers()->symbols()`.
+11. 🟠 **`SESSION_ENCRYPT=false`** por defecto — Habilitar en producción.
+12. 🟠 **Respuestas API inconsistentes** — 3 formatos distintos de respuesta, sin envelope estandarizado.
+13. 🟠 **Campos financieros `float` en lugar de `decimal`** — Errores de precisión en cálculos monetarios.
+14. 🟠 **Cache sin prefijo de tenant** — Riesgo de fuga cross-tenant en cache.
+15. 🟠 **`$e->getMessage()` expuesto en respuestas** — Riesgo de fuga de información interna.
+16. 🟡 **4 modelos con timestamps inconsistentes** — `ZonaGeografica`, `CuentaBancaria`, `PlanillaCcss`, `MovimientoBancario` usan `created_at`/`updated_at` en lugar de `creado_en`/`actualizado_en`. `ModeloBus` sin timestamps.
+17. 🟡 **3 Observers vacíos** — `AsientoContableObserver`, `ClienteObserver`, `VentaObserver` declarados sin implementación.
+18. 🟡 **Factories faltantes** — `DataRetentionPolicy`, `GdprDeletionRequest` (limita testing de compliance).
+19. 🟡 **Sin regex para formatos específicos** — Teléfono, cédula costarricense sin validación de formato.
+20. 🟡 **Cobertura DTO ~21%** — Solo 19 DTOs para 91 controladores.
+21. 🟡 **Sin clase base para servicios** — 22 servicios core repiten patrones CRUD sin abstracción compartida.
+
 ---
 
 ## Fases Completadas (v2.0.0 → v2.9.0)
@@ -54,6 +73,8 @@
 | FASE 17 | v3.0.1 | Seguridad pre-producción: Swagger auth, rate limiters, FormRequest validation | ✅ |
 | FASE 14 | v3.1.0 | Cobertura de tests críticos: 21 test files, +203 tests, 5 bug fixes | ✅ |
 
+> **📋 Auditoría técnica (9 Mar 2026):** Puntuación 7.8/10. Fortalezas en seguridad, testing y documentación. Debilidades principales: manejo de excepciones (2/10), consistencia de respuestas API (6/10), N+1 queries y hallazgos de seguridad críticos. Ver secciones FASE 14.5 y Deuda Técnica.
+
 ---
 
 ## Fases Pendientes (v3.1.0 → v5.0.0)
@@ -67,7 +88,8 @@ CRÍTICO (antes de producción):
 │
 ALTO (calidad de software):
 ├── FASE 14: Tests críticos (+200 tests)         ✅ COMPLETADA → v3.1.0
-├── FASE 15: Excepciones de dominio              [12-16h]  → v3.2.0
+├── FASE 14.5: Correcciones críticas auditoría   [6-10h]   → v3.1.1
+├── FASE 15: Excepciones + Respuestas API        [16-22h]  → v3.2.0
 │
 MEDIO (madurez arquitectónica):
 ├── FASE 16: Service Layer secundarios            [60-80h]  → v3.3.0
@@ -81,7 +103,10 @@ MEDIO-BAJO (features avanzados):
 BAJO (escalabilidad futura):
 └── FASE 22: Optimización + Escalabilidad        [30-40h]  → v5.0.0
 
-TOTAL ESTIMADO: 254-371 horas
+BAJO (deuda técnica):
+└── Deuda técnica de auditoría                   [8-12h]   → (integrar en fases)
+
+TOTAL ESTIMADO: 268-415 horas
 ```
 
 ---
@@ -147,11 +172,37 @@ TOTAL ESTIMADO: 254-371 horas
 
 ---
 
-### FASE 15 — Excepciones de Dominio + Error Handling (v3.2.0)
+### FASE 14.5 — Correcciones Críticas de Auditoría (v3.1.1)
+
+**Prioridad:** CRÍTICA  
+**Estimación:** 6-10h  
+**Origen:** Auditoría técnica del 9 de marzo 2026  
+**Objetivo:** Resolver hallazgos de seguridad críticos y altos antes de cualquier despliegue.
+
+| # | Tarea | Detalle | Severidad |
+|---|---|---|---|
+| 14.5.1 | `$hidden` en modelo Usuario | Agregar `$hidden = ['password_hash']` a `app/Models/Usuario.php` para prevenir filtración en JSON | 🔴 CRÍTICO |
+| 14.5.2 | Rotar API key Gemini | Rotar clave API de Gemini, limpiar historial git con BFG Repo-Cleaner, verificar `.env` en `.gitignore` | 🔴 CRÍTICO |
+| 14.5.3 | Validación de contraseña fuerte | Cambiar a `Password::min(8)->mixedCase()->numbers()->symbols()` en `StoreUsuarioRequest` y `UpdateUsuarioRequest` | 🟠 ALTO |
+| 14.5.4 | `SESSION_ENCRYPT=true` | Habilitar encriptación de sesión en producción (`config/session.php`) | 🟠 ALTO |
+| 14.5.5 | Prefijo tenant en cache | Implementar prefijo automático de `empresa_id` en claves de cache para prevenir fuga cross-tenant | 🟠 ALTO |
+| 14.5.6 | N+1 queries críticos | Agregar eager loading faltante en `ComprobanteElectronicoController`, `SalidaInventarioService`, `PermissionService` | 🔴 CRÍTICO |
+| 14.5.7 | Ocultar `$e->getMessage()` | Reemplazar exposición de mensajes internos de excepción por mensajes genéricos en respuestas de error de controladores | 🟠 ALTO |
+
+**Criterio de aceptación:**
+- 0 campos sensibles expuestos en respuestas JSON
+- 0 secrets en historial de git
+- Validación de contraseñas con complejidad requerida
+- Cache aislado por tenant
+- 0 N+1 queries en endpoints de listado críticos
+
+---
+
+### FASE 15 — Excepciones de Dominio + Respuestas API Estandarizadas (v3.2.0)
 
 **Prioridad:** MEDIA-ALTA  
-**Estimación:** 12-16h  
-**Objetivo:** Reemplazar excepciones genéricas por excepciones de dominio semánticas.
+**Estimación:** 16-22h  
+**Objetivo:** Reemplazar excepciones genéricas por excepciones de dominio semánticas y estandarizar el formato de respuestas API.
 
 | # | Tarea | Detalle |
 |---|---|---|
@@ -159,11 +210,15 @@ TOTAL ESTIMADO: 254-371 horas
 | 15.2 | Integrar en Services | Reemplazar `throw new \Exception(...)` por excepciones tipadas en los 40 services existentes |
 | 15.3 | Exception Handler | Configurar `Handler.php` para mapear cada excepción de dominio a HTTP status codes semánticos (409, 422, 502, etc.) |
 | 15.4 | Tests de excepciones | Tests unitarios para cada escenario de error por excepción |
+| 15.5 | Envelope de respuesta unificado | Implementar formato estándar `{success, code, message, data?, errors?, meta?}` en todos los endpoints (actualmente 3 formatos distintos) |
+| 15.6 | Trait ApiResponse | Crear trait reutilizable para controladores con métodos `successResponse()`, `errorResponse()`, `paginatedResponse()` |
 
 **Criterio de aceptación:**
 - 0 `throw new \Exception()` genéricos en services
 - Cada módulo tiene su excepción tipada
 - Exception handler mapea correctamente a HTTP codes
+- 1 solo formato de respuesta API en todos los endpoints
+- 0 exposiciones de `$e->getMessage()` al cliente
 
 ---
 
@@ -183,10 +238,20 @@ TOTAL ESTIMADO: 254-371 horas
 
 **Patrón a seguir:** Mismo patrón de FASE 8-10: Service con DI, DTO `toArray()`, controller delegando en service.
 
+**Tareas adicionales (auditoría 9 Mar 2026):**
+
+| # | Tarea | Detalle |
+|---|---|---|
+| 16.6 | Extraer `BaseService` abstracto | Clase base con operaciones CRUD genéricas (`listar()`, `crear()`, `actualizar()`, `eliminar()`) para eliminar duplicación en los 22+ servicios |
+| 16.7 | Ampliar cobertura de DTOs | Crear DTOs para módulos críticos (ventas, contabilidad, nómina) — de 21% a 60%+ de cobertura |
+| 16.8 | Refactorizar `UsuarioController` | Viola SOLID: usa queries directas en lugar de servicio, tiene lógica de cache manual. Migrar a `UsuarioService` |
+
 **Criterio de aceptación:**
 - +20 Services nuevos
 - Controllers reducidos ~50% en LOC
 - Tests unitarios para cada service nuevo
+- `BaseService` implementado y heredado por todos los servicios
+- Cobertura DTOs ≥60% en módulos críticos
 
 ---
 
@@ -318,28 +383,51 @@ TOTAL ESTIMADO: 254-371 horas
 
 ---
 
+## Deuda Técnica — Auditoría 9 Mar 2026
+
+Items identificados en la auditoría técnica que no encajan directamente en una FASE pero deben resolverse progresivamente.
+
+| # | Item | Severidad | Detalle | FASE sugerida |
+|---|---|---|---|---|
+| DT-1 | Timestamps inconsistentes | 🟡 MEDIO | Estandarizar a `creado_en`/`actualizado_en` en: `ZonaGeografica`, `CuentaBancaria`, `PlanillaCcss`, `MovimientoBancario`. Agregar timestamps a `ModeloBus`. | Migración independiente |
+| DT-2 | Observers vacíos | 🟡 MEDIO | Implementar o eliminar: `AsientoContableObserver`, `ClienteObserver`, `VentaObserver` | FASE 16 |
+| DT-3 | Factories faltantes | 🟡 MEDIO | Crear factories para `DataRetentionPolicy` y `GdprDeletionRequest` (compliance/GDPR) | FASE 19 |
+| DT-4 | Campos `float` → `decimal` | 🟠 ALTO | Migración para convertir campos financieros de `float` a `decimal` en migraciones existentes (precisión monetaria) | Migración independiente |
+| DT-5 | Regex formatos CR | 🟡 MEDIO | Agregar validación regex para teléfono (`/^[2-8]\d{7}$/`), cédula física/jurídica, IBAN costarricense en FormRequests | FASE 15 |
+| DT-6 | 35 seeders huérfanos | 🟡 MEDIO | Incluir los 35 seeders existentes en `DatabaseSeeder::run()` o eliminar los obsoletos | Migración independiente |
+| DT-7 | `shell_exec()` en HealthCheck | 🟡 MEDIO | Reemplazar `shell_exec()` en `HealthCheckController` por alternativa segura (input actualmente hardcoded pero riesgo potencial) | FASE 14.5 |
+| DT-8 | Distributed tracing | 🟢 BAJO | Implementar OpenTelemetry para tracing distribuido | FASE 22 |
+| DT-9 | QUICK_START.md | 🟢 BAJO | Crear guía de inicio rápido separada del README extenso (25+ secciones) | Documentación |
+| DT-10 | Tests detección N+1 | 🟢 BAJO | Implementar tests automáticos de rendimiento para detectar regresiones N+1 (e.g., `laravel-query-detector`) | FASE 19 |
+| DT-11 | `tenant_id` en logs | 🟢 BAJO | Agregar `empresa_id` automáticamente en todos los canales de logging para trazabilidad cross-tenant | FASE 22 |
+
+---
+
 ## Resumen de Versiones Planificadas
 
 | Versión | Fases | Tipo | Horas Est. |
 |---|---|---|---|
 | **v3.0.0** | FASE 13 | Cleanup + Factories | ✅ COMPLETADA |
-| **v3.0.1** | FASE 17 | Seguridad pre-producción | 8-12h |
-| **v3.1.0** | FASE 14 | Tests críticos | 40-60h |
-| **v3.2.0** | FASE 15 | Excepciones de dominio | 12-16h |
-| **v3.3.0** | FASE 16 | Service Layer secundarios | 60-80h |
+| **v3.0.1** | FASE 17 | Seguridad pre-producción | ✅ COMPLETADA |
+| **v3.1.0** | FASE 14 | Tests críticos | ✅ COMPLETADA |
+| **v3.1.1** | FASE 14.5 | Correcciones críticas auditoría | 6-10h |
+| **v3.2.0** | FASE 15 | Excepciones + Respuestas API | 16-22h |
+| **v3.3.0** | FASE 16 | Service Layer + BaseService + DTOs | 60-80h |
 | **v4.0.0** | FASE 18 | API Versionado (BREAKING) | 20-30h |
 | **v4.1.0** | FASE 19 | Testing avanzado + CI/CD | 20-25h |
 | **v4.2.0** | FASE 20 | Webhooks | 25-35h |
 | **v4.3.0** | FASE 21 | Reporting Engine | 30-40h |
 | **v5.0.0** | FASE 22 | Escalabilidad | 30-40h |
-| | | **TOTAL** | **254-371h** |
+| | | **Deuda técnica** | 8-12h |
+| | | **TOTAL** | **268-415h** |
 
 ---
 
 ## Notas
 
 - Las estimaciones son para **1 desarrollador**. Con 2 devs, reducir ~40% en fases paralelizables (14, 16, 20, 21).
-- **~~FASE 13~~** ✅ completada + **FASE 17 es pre-requisito** para cualquier despliegue a producción.
+- **~~FASE 13~~** ✅ completada + **FASE 17** ✅ completada — pre-requisitos de producción listos.
+- **FASE 14.5 es pre-requisito** para cualquier despliegue a producción (hallazgos críticos de auditoría).
 - FASE 18 (API Versioning) es un **breaking change** — requiere coordinación con frontend.
 - Las fases 20-22 son **opcionales** según las necesidades del negocio.
-- Este roadmap se basa en la auditoría del código fuente realizada el 6 de marzo 2026, no en documentación previa.
+- Este roadmap se basa en la auditoría del código fuente (6 Mar 2026) y la auditoría técnica integral (9 Mar 2026).
