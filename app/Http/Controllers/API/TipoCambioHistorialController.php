@@ -184,7 +184,7 @@ class TipoCambioHistorialController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al registrar tipo de cambio',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -349,7 +349,7 @@ class TipoCambioHistorialController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al actualizar tipo de cambio',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -399,7 +399,7 @@ class TipoCambioHistorialController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al eliminar tipo de cambio',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

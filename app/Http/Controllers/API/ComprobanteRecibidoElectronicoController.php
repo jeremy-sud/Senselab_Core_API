@@ -74,7 +74,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
             ], 201);
         } catch (\Throwable $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => 'Error al registrar', 'error' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'Error al registrar', 'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'], 500);
         }
     }
 
@@ -127,7 +127,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
             ]);
         } catch (\Throwable $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => 'Error al actualizar', 'error' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'Error al actualizar', 'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'], 500);
         }
     }
 

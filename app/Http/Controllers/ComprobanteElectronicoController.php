@@ -425,13 +425,13 @@ class ComprobanteElectronicoController extends Controller
             DB::rollBack();
 
             Log::error('Error al crear comprobante electrónico', [
-                'error' => $e->getMessage(),
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor',
                 'trace' => $e->getTraceAsString(),
             ]);
 
             return response()->json([
                 'message' => 'Error al crear comprobante',
-                'error' => $e->getMessage(),
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor',
             ], 500);
         }
     }
@@ -807,12 +807,12 @@ class ComprobanteElectronicoController extends Controller
             DB::rollBack();
 
             Log::error('Error al crear nota crédito', [
-                'error' => $e->getMessage(),
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor',
             ]);
 
             return response()->json([
                 'message' => 'Error al crear nota crédito',
-                'error' => $e->getMessage(),
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor',
             ], 500);
         }
     }

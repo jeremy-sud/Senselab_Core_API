@@ -91,7 +91,7 @@ class AsientoContableController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Error al crear asiento contable',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 422);
         }
     }
@@ -157,7 +157,7 @@ class AsientoContableController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Error al actualizar asiento',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 422);
         }
     }
@@ -195,7 +195,7 @@ class AsientoContableController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Error al eliminar asiento',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

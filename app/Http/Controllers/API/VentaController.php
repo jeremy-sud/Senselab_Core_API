@@ -93,7 +93,7 @@ class VentaController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Error al crear venta',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 422);
         }
     }
@@ -161,7 +161,7 @@ class VentaController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Error al actualizar venta',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 422);
         }
     }
@@ -195,7 +195,7 @@ class VentaController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Error al anular venta',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

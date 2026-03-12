@@ -98,7 +98,7 @@ class PagoController extends Controller
             ], 201);
         } catch (\Throwable $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => 'Error al registrar pago', 'error' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'Error al registrar pago', 'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'], 500);
         }
     }
 
@@ -162,7 +162,7 @@ class PagoController extends Controller
             ]);
         } catch (\Throwable $e) {
             DB::rollBack();
-            return response()->json(['message' => 'Error al actualizar', 'error' => $e->getMessage()], 500);
+            return response()->json(['message' => 'Error al actualizar', 'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'], 500);
         }
     }
 
@@ -200,7 +200,7 @@ class PagoController extends Controller
             return response()->json(['success' => true, 'message' => 'Pago eliminado exitosamente']);
         } catch (\Throwable $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => 'Error al eliminar', 'error' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'Error al eliminar', 'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'], 500);
         }
     }
 

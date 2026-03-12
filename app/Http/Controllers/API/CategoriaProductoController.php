@@ -143,7 +143,7 @@ class CategoriaProductoController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al crear categoría',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -267,7 +267,7 @@ class CategoriaProductoController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al actualizar categoría',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -331,7 +331,7 @@ class CategoriaProductoController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al eliminar categoría',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

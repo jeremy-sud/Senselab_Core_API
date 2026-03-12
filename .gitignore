@@ -1,9 +1,9 @@
 *.log
 .DS_Store
-# Archivos sensibles ahora incluidos (repositorio privado)
-# .env
-# .env.backup
-# .env.production
+# Archivos sensibles — NUNCA versionar
+.env
+.env.backup
+.env.production
 # api_db.sql
 # *.sql
 .phpactor.json

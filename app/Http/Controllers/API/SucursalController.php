@@ -96,7 +96,7 @@ class SucursalController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener sucursales',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -168,7 +168,7 @@ class SucursalController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al crear sucursal',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -325,7 +325,7 @@ class SucursalController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al eliminar sucursal',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

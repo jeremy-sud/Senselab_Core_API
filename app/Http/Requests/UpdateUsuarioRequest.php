@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 class UpdateUsuarioRequest extends FormRequest
 {
@@ -31,7 +32,7 @@ class UpdateUsuarioRequest extends FormRequest
                 'max:255',
                 Rule::unique('usuarios', 'email')->ignore($usuarioId)
             ],
-            'password' => ['sometimes', 'string', 'min:8', 'confirmed'],
+            'password' => ['sometimes', 'string', Password::min(8)->mixedCase()->numbers()->symbols(), 'confirmed'],
             'telefono' => ['nullable', 'string', 'max:50'],
             'direccion' => ['nullable', 'string', 'max:500'],
             'activo' => ['sometimes', 'boolean'],
@@ -51,6 +52,7 @@ class UpdateUsuarioRequest extends FormRequest
             'email.email' => 'El email no tiene un formato válido',
             'email.unique' => 'Ya existe un usuario con este email',
             'password.min' => 'La contraseña debe tener al menos 8 caracteres',
+            'password' => 'La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas, números y símbolos',
             'password.confirmed' => 'Las contraseñas no coinciden',
             'cargo_id.exists' => 'El cargo seleccionado no existe',
             'roles.*.exists' => 'Uno o más roles seleccionados no existen'

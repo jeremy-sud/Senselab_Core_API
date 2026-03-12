@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * Modelo para la tabla `planillas_ccss`.
  * Gestiona planillas de CCSS mensuales por empresa.
  * 
+ * @property bool $eliminado
  * @author Jeremy Arias Solano <deadmooncr@gmail.com>
  * @copyright 2025 Sistemas Ursol S.A.
  */

@@ -193,7 +193,7 @@ class NominaEmpleadoController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al crear nómina',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -303,7 +303,7 @@ class NominaEmpleadoController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al actualizar nómina',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -356,7 +356,7 @@ class NominaEmpleadoController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al eliminar nómina',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

@@ -203,7 +203,7 @@ class ArchivoController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al subir archivo',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -342,7 +342,7 @@ class ArchivoController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al actualizar archivo',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -401,7 +401,7 @@ class ArchivoController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al eliminar archivo',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

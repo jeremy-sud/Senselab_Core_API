@@ -127,7 +127,7 @@ class EmpleadoController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al crear empleado',
-                'error' => $e->getMessage(),
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor',
             ], 500);
         }
     }

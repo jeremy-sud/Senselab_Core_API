@@ -176,7 +176,7 @@ class EmpresaController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al crear empresa',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -356,7 +356,7 @@ class EmpresaController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al eliminar empresa',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

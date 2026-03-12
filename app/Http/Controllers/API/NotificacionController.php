@@ -196,7 +196,7 @@ class NotificacionController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al crear notificación',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -318,7 +318,7 @@ class NotificacionController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al marcar notificaciones',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -368,7 +368,7 @@ class NotificacionController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al eliminar notificación',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

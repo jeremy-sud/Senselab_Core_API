@@ -91,7 +91,7 @@ class SalidaInventarioController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Error al crear salida de inventario',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 422);
         }
     }
@@ -157,7 +157,7 @@ class SalidaInventarioController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Error al actualizar salida',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 422);
         }
     }
@@ -195,7 +195,7 @@ class SalidaInventarioController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Error al eliminar salida',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -232,7 +232,7 @@ class SalidaInventarioController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Error al procesar salida',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 422);
         }
     }
