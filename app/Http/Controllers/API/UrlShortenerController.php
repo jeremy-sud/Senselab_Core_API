@@ -138,7 +138,7 @@ class UrlShortenerController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error al crear URL acortada',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -175,7 +175,7 @@ class UrlShortenerController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'URL no encontrada',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 404);
         }
     }
@@ -216,7 +216,7 @@ class UrlShortenerController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error al actualizar URL',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -256,7 +256,7 @@ class UrlShortenerController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error al eliminar URL',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -323,7 +323,7 @@ class UrlShortenerController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'URL no encontrada',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 404);
         }
     }

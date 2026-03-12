@@ -20,13 +20,15 @@ trait HasPermissionCache
 
     /**
      * Obtener la clave de cache para permisos del usuario/rol.
+     * Incluye empresa_id para aislamiento tenant-aware.
      *
      * @return string
      */
     protected function getPermissionCacheKey(): string
     {
         $modelType = class_basename(static::class);
-        return "permissions.{$modelType}.{$this->id}";
+        $empresaId = $this->empresa_id ?? 0;
+        return "permissions.{$empresaId}.{$modelType}.{$this->id}";
     }
 
     /**

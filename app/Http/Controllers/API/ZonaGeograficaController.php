@@ -130,7 +130,7 @@ class ZonaGeograficaController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener zonas geográficas',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -176,7 +176,7 @@ class ZonaGeograficaController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al crear zona geográfica',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -297,7 +297,7 @@ class ZonaGeograficaController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al eliminar zona geográfica',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

@@ -133,7 +133,7 @@ class RetencionImpuestoController extends Controller
             } catch (\Exception $e) {
                 return response()->json([
                     'message' => 'Error al obtener retenciones de impuestos',
-                    'error' => $e->getMessage()
+                    'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
                 ], 500);
             }
         });
@@ -183,7 +183,7 @@ class RetencionImpuestoController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al crear retención de impuesto',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -226,7 +226,7 @@ class RetencionImpuestoController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener retención de impuesto',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -285,7 +285,7 @@ class RetencionImpuestoController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al actualizar retención de impuesto',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -332,7 +332,7 @@ class RetencionImpuestoController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al eliminar retención de impuesto',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -363,7 +363,7 @@ class RetencionImpuestoController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al marcar retención como declarada',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

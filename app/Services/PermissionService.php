@@ -173,9 +173,10 @@ class PermissionService
      */
     protected function clearCacheForUsersWithRole(Rol $rol): int
     {
-        $usuarios = Usuario::whereHas('roles', function ($query) use ($rol) {
-            $query->where('roles.id', $rol->id);
-        })->get();
+        $usuarios = Usuario::select('id', 'empresa_id')
+            ->whereHas('roles', function ($query) use ($rol) {
+                $query->where('roles.id', $rol->id);
+            })->get();
         
         foreach ($usuarios as $usuario) {
             $usuario->clearPermissionCache();

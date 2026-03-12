@@ -84,7 +84,7 @@ class PagoNominaController extends Controller
             ], 201);
         } catch (\Throwable $e) {
             DB::rollBack();
-            return response()->json(['message' => 'Error al crear pago', 'error' => $e->getMessage()], 500);
+            return response()->json(['message' => 'Error al crear pago', 'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'], 500);
         }
     }
 
@@ -135,7 +135,7 @@ class PagoNominaController extends Controller
             ]);
         } catch (\Throwable $e) {
             DB::rollBack();
-            return response()->json(['message' => 'Error al actualizar', 'error' => $e->getMessage()], 500);
+            return response()->json(['message' => 'Error al actualizar', 'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'], 500);
         }
     }
 

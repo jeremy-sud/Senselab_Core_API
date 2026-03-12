@@ -255,7 +255,7 @@ class MovimientoBancarioController extends Controller
 
             return response()->json([
                 'message' => 'Error al crear movimiento bancario',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -295,7 +295,7 @@ class MovimientoBancarioController extends Controller
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404, self::MSG_NOT_FOUND);
         } catch (\Exception $e) {
-            abort(500, 'Error al obtener movimiento bancario: ' . $e->getMessage());
+            abort(500, 'Error al obtener movimiento bancario: ');
         }
     }
 
@@ -339,7 +339,7 @@ class MovimientoBancarioController extends Controller
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404, self::MSG_NOT_FOUND);
         } catch (\Exception $e) {
-            abort(500, 'Error al actualizar movimiento bancario: ' . $e->getMessage());
+            abort(500, 'Error al actualizar movimiento bancario: ');
         }
     }
 
@@ -402,7 +402,7 @@ class MovimientoBancarioController extends Controller
 
             return response()->json([
                 'message' => 'Error al eliminar movimiento bancario',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -433,7 +433,7 @@ class MovimientoBancarioController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al conciliar movimiento',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

@@ -113,7 +113,7 @@ class CuentaBancariaController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener cuentas bancarias',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -163,7 +163,7 @@ class CuentaBancariaController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al crear cuenta bancaria',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -206,7 +206,7 @@ class CuentaBancariaController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener cuenta bancaria',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -267,7 +267,7 @@ class CuentaBancariaController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al actualizar cuenta bancaria',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -317,7 +317,7 @@ class CuentaBancariaController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al eliminar cuenta bancaria',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

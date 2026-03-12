@@ -265,7 +265,7 @@ class ConsecutivoFeController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error al obtener el consecutivo',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

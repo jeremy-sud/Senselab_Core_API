@@ -161,7 +161,7 @@ class CajaChicaController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al crear fondo',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -264,7 +264,7 @@ class CajaChicaController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al actualizar fondo',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -322,7 +322,7 @@ class CajaChicaController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al cerrar fondo',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -375,7 +375,7 @@ class CajaChicaController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al eliminar fondo',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

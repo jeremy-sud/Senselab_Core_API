@@ -41,7 +41,7 @@ class HealthCheckController extends Controller
                 DB::connection()->getPdo();
                 $checks['database'] = 'ok';
             } catch (\Exception $e) {
-                $checks['database'] = 'error: ' . $e->getMessage();
+                $checks['database'] = 'error: ' . (config('app.debug') ? $e->getMessage() : 'connection failed');
                 throw new \Exception('Database connection failed');
             }
 
@@ -53,7 +53,7 @@ class HealthCheckController extends Controller
                 }
                 $checks['cache'] = 'ok';
             } catch (\Exception $e) {
-                $checks['cache'] = 'warning: ' . $e->getMessage();
+                $checks['cache'] = 'warning: ' . (config('app.debug') ? $e->getMessage() : 'unavailable');
             }
 
             // ✅ Verificar Storage
@@ -63,7 +63,7 @@ class HealthCheckController extends Controller
                 }
                 $checks['storage'] = 'ok';
             } catch (\Exception $e) {
-                $checks['storage'] = 'error: ' . $e->getMessage();
+                $checks['storage'] = 'error: ' . (config('app.debug') ? $e->getMessage() : 'not writable');
                 throw new \Exception('Storage not writable');
             }
 
@@ -76,7 +76,7 @@ class HealthCheckController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'not_ready',
-                'error' => $e->getMessage(),
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor',
                 'timestamp' => now()->iso8601Micro(),
                 'checks' => $checks,
             ], 503);
@@ -146,7 +146,7 @@ class HealthCheckController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => $e->getMessage(),
+                'message' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor',
                 'timestamp' => now()->iso8601Micro(),
             ], 500);
         }
@@ -176,7 +176,7 @@ class HealthCheckController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Unable to gather metrics',
-                'message' => $e->getMessage(),
+                'message' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor',
             ], 500);
         }
     }
@@ -220,18 +220,21 @@ class HealthCheckController extends Controller
     private function getServerUptime(): string
     {
         try {
-            if (PHP_OS_FAMILY === 'Windows') {
-                // Windows
-                $output = shell_exec('wmic os get lastbootuptime | findstr /r [0-9]');
-                return $output ? trim($output) : 'unknown';
-            } else {
-                // Linux/Unix
-                $output = shell_exec('uptime -p 2>/dev/null || uptime');
-                return $output ? trim(str_replace('up ', '', $output)) : 'unknown';
+            if (PHP_OS_FAMILY === 'Linux') {
+                $uptime = @file_get_contents('/proc/uptime');
+                if ($uptime !== false) {
+                    $seconds = (int) explode(' ', trim($uptime))[0];
+                    $days = intdiv($seconds, 86400);
+                    $hours = intdiv($seconds % 86400, 3600);
+                    $minutes = intdiv($seconds % 3600, 60);
+                    return "{$days}d {$hours}h {$minutes}m";
+                }
             }
         } catch (\Exception $e) {
-            return 'unknown';
+            // silently fail
         }
+
+        return 'unknown';
     }
 
     /**

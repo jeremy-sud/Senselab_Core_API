@@ -57,7 +57,7 @@ class ComplianceDashboardController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error obteniendo dashboard: ' . $e->getMessage(),
+                'message' => config('app.debug') ? 'Error obteniendo dashboard: ' . $e->getMessage() : 'Error obteniendo dashboard',
             ], 500);
         }
     }
@@ -114,7 +114,7 @@ class ComplianceDashboardController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error obteniendo logs: ' . $e->getMessage(),
+                'message' => config('app.debug') ? 'Error obteniendo logs: ' . $e->getMessage() : 'Error obteniendo logs',
             ], 500);
         }
     }
@@ -178,7 +178,7 @@ class ComplianceDashboardController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error obteniendo políticas: ' . $e->getMessage(),
+                'message' => config('app.debug') ? 'Error obteniendo políticas: ' . $e->getMessage() : 'Error obteniendo políticas',
             ], 500);
         }
     }
@@ -258,7 +258,7 @@ class ComplianceDashboardController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error ejecutando política: ' . $e->getMessage(),
+                'message' => config('app.debug') ? 'Error ejecutando política: ' . $e->getMessage() : 'Error ejecutando política',
             ], 500);
         }
     }
@@ -321,7 +321,7 @@ class ComplianceDashboardController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error generando reporte: ' . $e->getMessage(),
+                'message' => config('app.debug') ? 'Error generando reporte: ' . $e->getMessage() : 'Error generando reporte',
             ], 500);
         }
     }

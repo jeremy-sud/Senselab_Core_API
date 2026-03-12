@@ -91,7 +91,7 @@ class EntradaInventarioController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Error al crear entrada de inventario',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 422);
         }
     }
@@ -157,7 +157,7 @@ class EntradaInventarioController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Error al actualizar entrada',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 422);
         }
     }
@@ -195,7 +195,7 @@ class EntradaInventarioController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Error al eliminar entrada',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -232,7 +232,7 @@ class EntradaInventarioController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Error al procesar entrada',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 422);
         }
     }
@@ -269,7 +269,7 @@ class EntradaInventarioController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Error al cancelar entrada',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 422);
         }
     }

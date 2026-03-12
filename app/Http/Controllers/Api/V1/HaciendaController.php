@@ -49,7 +49,7 @@ class HaciendaController extends ApiController
                 'tipo' => $haciendaComprobante->tipo_comprobante,
             ], 'Comprobante generado exitosamente', 201);
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 500);
+            return $this->error(config('app.debug') ? $e->getMessage() : 'Error interno del servidor', 500);
         }
     }
 
@@ -75,7 +75,7 @@ class HaciendaController extends ApiController
                 'xml_preview' => substr($haciendaComprobante->fresh()->xml_content, 0, 500) . '...',
             ], 'XML generado exitosamente');
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 500);
+            return $this->error(config('app.debug') ? $e->getMessage() : 'Error interno del servidor', 500);
         }
     }
 
@@ -112,7 +112,7 @@ class HaciendaController extends ApiController
                 'estado' => $haciendaComprobante->fresh()->estado,
             ], 'Comprobante firmado exitosamente');
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 500);
+            return $this->error(config('app.debug') ? $e->getMessage() : 'Error interno del servidor', 500);
         }
     }
 
@@ -139,7 +139,7 @@ class HaciendaController extends ApiController
                 'estado' => $haciendaComprobante->fresh()->estado,
             ], 'Comprobante enviado a Hacienda exitosamente');
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 500);
+            return $this->error(config('app.debug') ? $e->getMessage() : 'Error interno del servidor', 500);
         }
     }
 
@@ -163,7 +163,7 @@ class HaciendaController extends ApiController
 
             return $this->success($status, 'Estado obtenido exitosamente');
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 500);
+            return $this->error(config('app.debug') ? $e->getMessage() : 'Error interno del servidor', 500);
         }
     }
 
@@ -182,7 +182,7 @@ class HaciendaController extends ApiController
 
             return $this->success($stats, 'Estadísticas de comprobantes');
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 500);
+            return $this->error(config('app.debug') ? $e->getMessage() : 'Error interno del servidor', 500);
         }
     }
 
@@ -222,7 +222,7 @@ class HaciendaController extends ApiController
 
             return $this->success($haciendaComprobantes);
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 500);
+            return $this->error(config('app.debug') ? $e->getMessage() : 'Error interno del servidor', 500);
         }
     }
 
@@ -250,7 +250,7 @@ class HaciendaController extends ApiController
                 'respuesta_hacienda' => $haciendaComprobante->respuesta_hacienda ? json_decode($haciendaComprobante->respuesta_hacienda) : null,
             ]);
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 500);
+            return $this->error(config('app.debug') ? $e->getMessage() : 'Error interno del servidor', 500);
         }
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Password;
 
 class StoreUsuarioRequest extends FormRequest
 {
@@ -23,7 +24,7 @@ class StoreUsuarioRequest extends FormRequest
             'apellidos' => ['required', 'string', 'max:255'],
             'cargo_id' => ['nullable', 'integer', 'exists:cargos,id'],
             'email' => ['required', 'email', 'max:255', 'unique:usuarios,email'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['required', 'string', Password::min(8)->mixedCase()->numbers()->symbols(), 'confirmed'],
             'telefono' => ['nullable', 'string', 'max:50'],
             'direccion' => ['nullable', 'string', 'max:500'],
             'activo' => ['sometimes', 'boolean'],
@@ -47,6 +48,7 @@ class StoreUsuarioRequest extends FormRequest
             'email.unique' => 'Ya existe un usuario con este email',
             'password.required' => 'La contraseña es obligatoria',
             'password.min' => 'La contraseña debe tener al menos 8 caracteres',
+            'password' => 'La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas, números y símbolos',
             'password.confirmed' => 'Las contraseñas no coinciden',
             'cargo_id.exists' => 'El cargo seleccionado no existe',
             'roles.*.exists' => 'Uno o más roles seleccionados no existen'

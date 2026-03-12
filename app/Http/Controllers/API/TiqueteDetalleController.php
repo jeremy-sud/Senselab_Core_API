@@ -198,7 +198,7 @@ class TiqueteDetalleController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            abort(500, 'Error al crear el tiquete: ' . $e->getMessage());
+            abort(500, 'Error al crear el tiquete: ');
         }
     }
 
@@ -373,7 +373,7 @@ class TiqueteDetalleController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al cancelar el tiquete',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

@@ -264,7 +264,7 @@ class PeriodoNominaController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al procesar el período de nómina',
-                'error' => $e->getMessage(),
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor',
             ], 500);
         }
     }

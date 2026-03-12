@@ -131,7 +131,7 @@ class RegimenTributarioController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al crear régimen tributario',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -236,7 +236,7 @@ class RegimenTributarioController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al actualizar régimen tributario',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -289,7 +289,7 @@ class RegimenTributarioController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al eliminar régimen tributario',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

@@ -193,7 +193,7 @@ class PagoCuentaPagarController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al registrar pago',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -295,7 +295,7 @@ class PagoCuentaPagarController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al actualizar pago',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -351,7 +351,7 @@ class PagoCuentaPagarController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al anular pago',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

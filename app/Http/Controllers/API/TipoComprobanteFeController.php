@@ -141,7 +141,7 @@ class TipoComprobanteFeController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al crear tipo de comprobante FE',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -215,7 +215,7 @@ class TipoComprobanteFeController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al actualizar tipo de comprobante FE',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -265,7 +265,7 @@ class TipoComprobanteFeController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al eliminar tipo de comprobante FE',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

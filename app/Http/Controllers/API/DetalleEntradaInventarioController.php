@@ -162,7 +162,7 @@ class DetalleEntradaInventarioController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error al agregar el producto',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -308,7 +308,7 @@ class DetalleEntradaInventarioController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error al actualizar el detalle',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -386,7 +386,7 @@ class DetalleEntradaInventarioController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error al eliminar el producto',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

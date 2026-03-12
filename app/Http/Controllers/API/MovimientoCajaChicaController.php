@@ -212,7 +212,7 @@ class MovimientoCajaChicaController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al registrar movimiento',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -312,7 +312,7 @@ class MovimientoCajaChicaController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al actualizar movimiento',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -376,7 +376,7 @@ class MovimientoCajaChicaController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al anular movimiento',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

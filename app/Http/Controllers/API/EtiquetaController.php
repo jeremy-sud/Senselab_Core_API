@@ -143,7 +143,7 @@ class EtiquetaController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al crear etiqueta',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -245,7 +245,7 @@ class EtiquetaController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al actualizar etiqueta',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -298,7 +298,7 @@ class EtiquetaController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al eliminar etiqueta',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

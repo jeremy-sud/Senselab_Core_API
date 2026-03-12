@@ -60,6 +60,15 @@ class Usuario extends Authenticatable
     ];
 
     /**
+     * Atributos ocultos en serialización JSON.
+     *
+     * @var list<string>
+     */
+    protected $hidden = [
+        'password_hash',
+    ];
+
+    /**
      * Atributos que deben ser convertidos a tipos nativos.
      *
      * @var array<string, string>

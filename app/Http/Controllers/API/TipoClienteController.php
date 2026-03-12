@@ -136,7 +136,7 @@ class TipoClienteController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al crear tipo de cliente',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -218,7 +218,7 @@ class TipoClienteController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al actualizar tipo de cliente',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -268,7 +268,7 @@ class TipoClienteController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al eliminar tipo de cliente',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

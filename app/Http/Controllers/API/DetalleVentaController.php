@@ -196,7 +196,7 @@ class DetalleVentaController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al crear detalle de venta',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -312,7 +312,7 @@ class DetalleVentaController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al actualizar detalle de venta',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -373,7 +373,7 @@ class DetalleVentaController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Error al eliminar detalle de venta',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

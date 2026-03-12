@@ -211,7 +211,7 @@ class DeclaracionTributariaController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al crear declaración tributaria',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -251,7 +251,7 @@ class DeclaracionTributariaController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener declaración tributaria',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -325,7 +325,7 @@ class DeclaracionTributariaController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al actualizar declaración tributaria',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }
@@ -379,7 +379,7 @@ class DeclaracionTributariaController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al eliminar declaración tributaria',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }
     }

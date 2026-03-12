@@ -138,7 +138,7 @@ class CreditController extends Controller
                 } catch (\Exception $e) {
                     $results[] = [
                         'cliente_id' => $clienteId,
-                        'error' => $e->getMessage(),
+                        'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor',
                     ];
                 }
             }

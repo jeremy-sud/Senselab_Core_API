@@ -100,7 +100,7 @@ class GdprController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error creando solicitud: ' . $e->getMessage(),
+                'message' => config('app.debug') ? 'Error creando solicitud: ' . $e->getMessage() : 'Error creando solicitud',
             ], 500);
         }
     }
@@ -197,7 +197,7 @@ class GdprController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error verificando identidad: ' . $e->getMessage(),
+                'message' => config('app.debug') ? 'Error verificando identidad: ' . $e->getMessage() : 'Error verificando identidad',
             ], 500);
         }
     }
@@ -253,7 +253,7 @@ class GdprController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error aprobando solicitud: ' . $e->getMessage(),
+                'message' => config('app.debug') ? 'Error aprobando solicitud: ' . $e->getMessage() : 'Error aprobando solicitud',
             ], 500);
         }
     }
@@ -303,7 +303,7 @@ class GdprController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error rechazando solicitud: ' . $e->getMessage(),
+                'message' => config('app.debug') ? 'Error rechazando solicitud: ' . $e->getMessage() : 'Error rechazando solicitud',
             ], 500);
         }
     }
@@ -334,7 +334,7 @@ class GdprController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error listando solicitudes: ' . $e->getMessage(),
+                'message' => config('app.debug') ? 'Error listando solicitudes: ' . $e->getMessage() : 'Error listando solicitudes',
             ], 500);
         }
     }
@@ -373,7 +373,7 @@ class GdprController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error obteniendo estadísticas: ' . $e->getMessage(),
+                'message' => config('app.debug') ? 'Error obteniendo estadísticas: ' . $e->getMessage() : 'Error obteniendo estadísticas',
             ], 500);
         }
     }

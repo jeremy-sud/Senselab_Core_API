@@ -34,7 +34,7 @@ class MetricsController extends Controller
                 ->header('Cache-Control', 'no-cache, no-store, must-revalidate');
         } catch (\Exception $e) {
             Log::error('Error generando métricas', ['error' => $e->getMessage()]);
-            return response('Error generando métricas: ' . $e->getMessage(), 500);
+            return response(config('app.debug') ? 'Error generando métricas: ' . $e->getMessage() : 'Error generando métricas', 500);
         }
     }
 
