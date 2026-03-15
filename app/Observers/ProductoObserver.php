@@ -90,9 +90,21 @@ class ProductoObserver
     private function flushProductCache(): void
     {
         if (Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(['productos', 'catalogos'])->flush();
+            $tenantId = $this->resolveTenantId();
+            Cache::tags(["tenant_{$tenantId}:productos", "tenant_{$tenantId}:catalogos"])->flush();
         } else {
             Cache::flush();
         }
+    }
+
+    private function resolveTenantId(): int
+    {
+        if (auth('sanctum')->check()) {
+            /** @var \App\Models\Usuario|null $user */
+            $user = auth('sanctum')->user();
+            return $user->empresa_id ?? 0;
+        }
+
+        return 0;
     }
 }

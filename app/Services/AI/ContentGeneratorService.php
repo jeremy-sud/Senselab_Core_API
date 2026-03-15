@@ -447,7 +447,7 @@ PROMPT;
             } catch (\Exception $e) {
                 $errors[] = [
                     'cuenta_id' => $cuenta['id'] ?? null,
-                    'error' => $e->getMessage(),
+                    'error' => config('app.debug') ? $e->getMessage() : 'Error procesando cuenta',
                 ];
             }
         }

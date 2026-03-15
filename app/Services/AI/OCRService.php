@@ -137,7 +137,7 @@ class OCRService
 
             return [
                 'success' => false,
-                'error' => 'Error al procesar la factura: ' . $e->getMessage(),
+                'error' => config('app.debug') ? 'Error al procesar la factura: ' . $e->getMessage() : 'Error al procesar la factura',
             ];
         }
     }

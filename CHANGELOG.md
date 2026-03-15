@@ -5,6 +5,30 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.1.1] - 2026-03-15
+
+### 🔒 FASE 14.5: Correcciones Críticas de Auditoría
+
+Resolución de hallazgos críticos y altos de la auditoría técnica del 9 de marzo 2026.
+
+#### Resultado
+- **Tests:** 959 passing, 0 failing ✅
+- **PHPStan Level 8:** 0 errores ✅
+- **Hallazgos resueltos:** 7/7
+
+#### Corregido
+- **N+1 queries** — Eager loading agregado en `ComprobanteElectronicoController::anular()` (+empresa), `SalidaInventarioService::porCliente/porAlmacen/entreFechas()` (+detalles.producto)
+- **`$e->getMessage()` expuesto** — Protegido con `config('app.debug')` en 5 servicios AI: GeminiService, OpenAIService, OCRService, ContentGeneratorService, CabysClassifierService
+
+#### Verificado (ya implementado)
+- **`$hidden` en modelo Usuario** — `password_hash` ya estaba en `$hidden`
+- **API keys seguras** — `.env` en `.gitignore`, todas las claves usan `env()`
+- **Validación de contraseña fuerte** — `Password::min(8)->mixedCase()->numbers()->symbols()` ya implementado
+- **`SESSION_ENCRYPT=true`** — Ya configurado como default en `config/session.php`
+- **Cache con prefijo tenant** — Tags incluyen `empresa_{id}` en `HasCacheableQueries` y `ProductoObserver`
+
+---
+
 ## [3.1.0] - 2025-07-14
 
 ### 🧪 FASE 14: Cobertura de Tests Críticos

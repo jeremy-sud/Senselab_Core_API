@@ -1,6 +1,6 @@
 # Estado Actual del Proyecto - Ursol CAST API
 
-**Fecha de actualización:** 6 de marzo 2026  
+**Fecha de actualización:** 15 de marzo 2026  
 **Desarrollado por:** Sistemas Ursol S.A.  
 **Desarrollador principal:** Jeremy Arias Solano  
 
@@ -15,6 +15,7 @@
 > v3.0.0: FASE 13 — Eliminación CQRS dead code (34 archivos + CQRSServiceProvider), 7 factories corregidas (campos alineados con migraciones reales), conteos de documentación verificados
 > v3.0.1: FASE 17 — Seguridad pre-producción: Swagger auth, rate limiters, FormRequest validation (30+ campos string con max: añadido)
 > v3.1.0: FASE 14 — Cobertura de tests críticos: 21 Feature test files nuevos, +203 tests, 5 bugs producción corregidos
+> v3.1.1: FASE 14.5 — Correcciones críticas auditoría: N+1 queries, cache tenant, $e->getMessage() protegido en servicios AI
 
 ---
 

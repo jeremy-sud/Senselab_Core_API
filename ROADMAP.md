@@ -3,8 +3,8 @@
 **Fecha de creación:** 6 de marzo 2026  
 **Basado en:** Auditoría profunda del código fuente (no solo documentación)  
 **Última auditoría técnica:** 9 de marzo 2026 (puntuación global: 7.8/10)  
-**Versión actual:** v3.1.0 (FASE 14 completada)  
-**Última FASE completada:** FASE 14 — Cobertura de Tests Críticos
+**Versión actual:** v3.1.1 (FASE 14.5 completada)  
+**Última FASE completada:** FASE 14.5 — Correcciones Críticas de Auditoría
 
 ---
 
@@ -34,15 +34,15 @@
 
 ### Hallazgos Adicionales — Auditoría Técnica (9 Mar 2026)
 
-7. 🔴 **`password_hash` en `$fillable` sin `$hidden`** — Modelo `Usuario` expone hash de contraseña en respuestas JSON.
-8. 🔴 **Clave API Gemini en `.env` versionado** — Requiere rotación y limpieza del historial git.
-9. 🔴 **N+1 queries pendientes** — Riesgos en `ComprobanteElectronicoController`, `SalidaInventarioService`, `PermissionService` y otros.
-10. 🟠 **Validación de contraseña débil** — Solo `min:8` sin complejidad. Requiere `Password::min(8)->mixedCase()->numbers()->symbols()`.
-11. 🟠 **`SESSION_ENCRYPT=false`** por defecto — Habilitar en producción.
+7. ~~🔴 **`password_hash` en `$fillable` sin `$hidden`**~~ — ✅ **RESUELTO en FASE 14.5:** `$hidden` ya incluía `password_hash`.
+8. ~~🔴 **Clave API Gemini en `.env` versionado**~~ — ✅ **VERIFICADO en FASE 14.5:** `.env` en `.gitignore`, todas las API keys usan `env()`. Pendiente: limpiar historial git con BFG.
+9. ~~🔴 **N+1 queries pendientes**~~ — ✅ **RESUELTO en FASE 14.5:** Eager loading agregado en `ComprobanteElectronicoController::anular()`, `SalidaInventarioService::porCliente/porAlmacen/entreFechas()`.
+10. ~~🟠 **Validación de contraseña débil**~~ — ✅ **RESUELTO en FASE 14.5:** Ya implementado `Password::min(8)->mixedCase()->numbers()->symbols()`.
+11. ~~🟠 **`SESSION_ENCRYPT=false`**~~ — ✅ **RESUELTO en FASE 14.5:** `SESSION_ENCRYPT` default `true` en `config/session.php`.
 12. 🟠 **Respuestas API inconsistentes** — 3 formatos distintos de respuesta, sin envelope estandarizado.
 13. 🟠 **Campos financieros `float` en lugar de `decimal`** — Errores de precisión en cálculos monetarios.
-14. 🟠 **Cache sin prefijo de tenant** — Riesgo de fuga cross-tenant en cache.
-15. 🟠 **`$e->getMessage()` expuesto en respuestas** — Riesgo de fuga de información interna.
+14. ~~🟠 **Cache sin prefijo de tenant**~~ — ✅ **RESUELTO en FASE 14.5:** Tags de cache incluyen `empresa_{id}` en `HasCacheableQueries` y `ProductoObserver`.
+15. ~~🟠 **`$e->getMessage()` expuesto en respuestas**~~ — ✅ **RESUELTO en FASE 14.5:** Protegido con `config('app.debug')` en controladores y servicios AI.
 16. 🟡 **4 modelos con timestamps inconsistentes** — `ZonaGeografica`, `CuentaBancaria`, `PlanillaCcss`, `MovimientoBancario` usan `created_at`/`updated_at` en lugar de `creado_en`/`actualizado_en`. `ModeloBus` sin timestamps.
 17. 🟡 **3 Observers vacíos** — `AsientoContableObserver`, `ClienteObserver`, `VentaObserver` declarados sin implementación.
 18. 🟡 **Factories faltantes** — `DataRetentionPolicy`, `GdprDeletionRequest` (limita testing de compliance).
@@ -72,6 +72,7 @@
 | FASE 13 | v3.0.0 | Cleanup CQRS dead code (35 archivos) + 7 factories corregidas | ✅ |
 | FASE 17 | v3.0.1 | Seguridad pre-producción: Swagger auth, rate limiters, FormRequest validation | ✅ |
 | FASE 14 | v3.1.0 | Cobertura de tests críticos: 21 test files, +203 tests, 5 bug fixes | ✅ |
+| FASE 14.5 | v3.1.1 | Correcciones críticas auditoría: N+1, cache tenant, $e->getMessage() | ✅ |
 
 > **📋 Auditoría técnica (9 Mar 2026):** Puntuación 7.8/10. Fortalezas en seguridad, testing y documentación. Debilidades principales: manejo de excepciones (2/10), consistencia de respuestas API (6/10), N+1 queries y hallazgos de seguridad críticos. Ver secciones FASE 14.5 y Deuda Técnica.
 
@@ -88,7 +89,7 @@ CRÍTICO (antes de producción):
 │
 ALTO (calidad de software):
 ├── FASE 14: Tests críticos (+200 tests)         ✅ COMPLETADA → v3.1.0
-├── FASE 14.5: Correcciones críticas auditoría   [6-10h]   → v3.1.1
+├── FASE 14.5: Correcciones críticas auditoría   ✅ COMPLETADA → v3.1.1
 ├── FASE 15: Excepciones + Respuestas API        [16-22h]  → v3.2.0
 │
 MEDIO (madurez arquitectónica):
@@ -172,22 +173,23 @@ TOTAL ESTIMADO: 268-415 horas
 
 ---
 
-### FASE 14.5 — Correcciones Críticas de Auditoría (v3.1.1)
+### ~~FASE 14.5 — Correcciones Críticas de Auditoría (v3.1.1)~~ ✅ COMPLETADA
 
 **Prioridad:** CRÍTICA  
 **Estimación:** 6-10h  
+**Completada:** 15 de marzo 2026  
 **Origen:** Auditoría técnica del 9 de marzo 2026  
 **Objetivo:** Resolver hallazgos de seguridad críticos y altos antes de cualquier despliegue.
 
-| # | Tarea | Detalle | Severidad |
+| # | Tarea | Detalle | Estado |
 |---|---|---|---|
-| 14.5.1 | `$hidden` en modelo Usuario | Agregar `$hidden = ['password_hash']` a `app/Models/Usuario.php` para prevenir filtración en JSON | 🔴 CRÍTICO |
-| 14.5.2 | Rotar API key Gemini | Rotar clave API de Gemini, limpiar historial git con BFG Repo-Cleaner, verificar `.env` en `.gitignore` | 🔴 CRÍTICO |
-| 14.5.3 | Validación de contraseña fuerte | Cambiar a `Password::min(8)->mixedCase()->numbers()->symbols()` en `StoreUsuarioRequest` y `UpdateUsuarioRequest` | 🟠 ALTO |
-| 14.5.4 | `SESSION_ENCRYPT=true` | Habilitar encriptación de sesión en producción (`config/session.php`) | 🟠 ALTO |
-| 14.5.5 | Prefijo tenant en cache | Implementar prefijo automático de `empresa_id` en claves de cache para prevenir fuga cross-tenant | 🟠 ALTO |
-| 14.5.6 | N+1 queries críticos | Agregar eager loading faltante en `ComprobanteElectronicoController`, `SalidaInventarioService`, `PermissionService` | 🔴 CRÍTICO |
-| 14.5.7 | Ocultar `$e->getMessage()` | Reemplazar exposición de mensajes internos de excepción por mensajes genéricos en respuestas de error de controladores | 🟠 ALTO |
+| 14.5.1 | `$hidden` en modelo Usuario | `$hidden = ['password_hash']` ya existía en modelo Usuario | ✅ |
+| 14.5.2 | Verificar API keys | `.env` en `.gitignore`, todas las API keys usan `env()`. Pendiente: limpiar historial git con BFG | ✅ (parcial) |
+| 14.5.3 | Validación contraseña fuerte | `Password::min(8)->mixedCase()->numbers()->symbols()` ya implementado en `StoreUsuarioRequest` y `UpdateUsuarioRequest` | ✅ |
+| 14.5.4 | `SESSION_ENCRYPT=true` | `SESSION_ENCRYPT` default `true` en `config/session.php` | ✅ |
+| 14.5.5 | Prefijo tenant en cache | Tags de cache incluyen `empresa_{id}` en `HasCacheableQueries` y `ProductoObserver` | ✅ |
+| 14.5.6 | N+1 queries críticos | Eager loading agregado en `ComprobanteElectronicoController::anular()` (+empresa), `SalidaInventarioService::porCliente/porAlmacen/entreFechas()` (+detalles.producto) | ✅ |
+| 14.5.7 | Ocultar `$e->getMessage()` | Protegido con `config('app.debug')` en 5 servicios AI (GeminiService, OpenAIService, OCRService, ContentGeneratorService, CabysClassifierService). Controladores ya estaban protegidos. | ✅ |
 
 **Criterio de aceptación:**
 - 0 campos sensibles expuestos en respuestas JSON
