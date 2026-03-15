@@ -689,7 +689,7 @@ class ComprobanteElectronicoController extends Controller
     )]
     public function anular(int $id, Request $request): JsonResponse
     {
-        $comprobanteOriginal = ComprobanteElectronicoFe::with('lineasDetalle')->findOrFail($id);
+        $comprobanteOriginal = ComprobanteElectronicoFe::with(['empresa', 'lineasDetalle'])->findOrFail($id);
 
         // Verificar autorización
         /** @var \App\Models\Usuario $user */

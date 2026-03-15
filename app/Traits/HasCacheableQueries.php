@@ -33,6 +33,20 @@ trait HasCacheableQueries
     }
 
     /**
+     * Obtiene el empresa_id del tenant actual para aislamiento de cache.
+     */
+    protected function getTenantId(): int|string
+    {
+        if (auth('sanctum')->check()) {
+            /** @var \App\Models\Usuario|null $user */
+            $user = auth('sanctum')->user();
+            return $user?->empresa_id ?? 0;
+        }
+
+        return 0;
+    }
+
+    /**
      * Genera una clave de cache única basada en parámetros
      *
      * @param string $method Nombre del método (ej: 'index', 'show')
@@ -41,17 +55,15 @@ trait HasCacheableQueries
     protected function getCacheKey(string $method, array $params = []): string
     {
         $prefix = $this->getCachePrefix();
+        $tenantId = $this->getTenantId();
 
-        // Agregar empresa_id del usuario autenticado si existe
-        if (auth('sanctum')->check() && !isset($params['empresa_id'])) {
-            /** @var \App\Models\Usuario|null $user */
-            $user = auth('sanctum')->user();
-            $params['empresa_id'] = $user?->empresa_id;
+        if (!isset($params['empresa_id'])) {
+            $params['empresa_id'] = $tenantId;
         }
 
         $hash = md5((string) json_encode($params));
 
-        return "{$prefix}:{$method}:{$hash}";
+        return "tenant_{$tenantId}:{$prefix}:{$method}:{$hash}";
     }
 
     /**
@@ -75,8 +87,13 @@ trait HasCacheableQueries
     protected function getCacheTags(): array
     {
         /** @var array<int, string> $tags */
-        $tags = $this->cacheTags ?? [$this->getCachePrefix(), 'catalogos'];
-        return $tags;
+        $baseTags = $this->cacheTags ?? [$this->getCachePrefix(), 'catalogos'];
+        $tenantId = $this->getTenantId();
+
+        return array_map(
+            fn (string $tag): string => "tenant_{$tenantId}:{$tag}",
+            $baseTags
+        );
     }
 
     /**

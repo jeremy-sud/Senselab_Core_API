@@ -105,7 +105,7 @@ class OpenAIService implements AIServiceInterface
 
             return [
                 'success' => false,
-                'error' => $e->getMessage(),
+                'error' => config('app.debug') ? $e->getMessage() : 'Error en la comunicación con el servicio de IA',
                 'model' => $model,
             ];
         }
@@ -165,7 +165,7 @@ class OpenAIService implements AIServiceInterface
 
             return [
                 'success' => false,
-                'error' => $e->getMessage(),
+                'error' => config('app.debug') ? $e->getMessage() : 'Error analizando imagen',
             ];
         }
     }
@@ -204,7 +204,7 @@ class OpenAIService implements AIServiceInterface
 
             return [
                 'success' => false,
-                'error' => $e->getMessage(),
+                'error' => config('app.debug') ? $e->getMessage() : 'Error generando embeddings',
             ];
         }
     }

@@ -64,7 +64,7 @@ class SalidaInventarioService
     public function porCliente(int $clienteId, int $perPage = 15): LengthAwarePaginator
     {
         return SalidaInventario::where('cliente_id', $clienteId)
-            ->with(['almacen', 'cliente', 'detalles'])
+            ->with(['almacen', 'cliente', 'detalles.producto'])
             ->orderByDesc('fecha_salida')
             ->paginate($perPage);
     }
@@ -75,7 +75,7 @@ class SalidaInventarioService
     public function porAlmacen(int $almacenId, int $perPage = 15): LengthAwarePaginator
     {
         return SalidaInventario::where('almacen_id', $almacenId)
-            ->with(['almacen', 'cliente', 'detalles'])
+            ->with(['almacen', 'cliente', 'detalles.producto'])
             ->orderByDesc('fecha_salida')
             ->paginate($perPage);
     }
@@ -86,7 +86,7 @@ class SalidaInventarioService
     public function entreFechas(\DateTime $inicio, \DateTime $fin, int $perPage = 15): LengthAwarePaginator
     {
         return SalidaInventario::whereBetween('fecha_salida', [$inicio->format('Y-m-d'), $fin->format('Y-m-d')])
-            ->with(['almacen', 'cliente', 'detalles'])
+            ->with(['almacen', 'cliente', 'detalles.producto'])
             ->orderByDesc('fecha_salida')
             ->paginate($perPage);
     }

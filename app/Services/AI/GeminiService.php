@@ -126,7 +126,7 @@ class GeminiService implements AIServiceInterface
             Log::error('Gemini chat error', ['error' => $e->getMessage()]);
             return [
                 'success' => false,
-                'error' => 'Error en la comunicación con Gemini: ' . $e->getMessage(),
+                'error' => config('app.debug') ? 'Error en la comunicación con Gemini: ' . $e->getMessage() : 'Error en la comunicación con el servicio de IA',
             ];
         }
     }
@@ -195,7 +195,7 @@ class GeminiService implements AIServiceInterface
             Log::error('Gemini vision error', ['error' => $e->getMessage()]);
             return [
                 'success' => false,
-                'error' => 'Error analizando imagen: ' . $e->getMessage(),
+                'error' => config('app.debug') ? 'Error analizando imagen: ' . $e->getMessage() : 'Error analizando imagen',
             ];
         }
     }

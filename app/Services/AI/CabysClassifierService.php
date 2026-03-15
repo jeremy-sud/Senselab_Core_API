@@ -123,7 +123,7 @@ class CabysClassifierService
             } catch (\Exception $e) {
                 $errors[] = [
                     'producto' => $producto['nombre'] ?? "Producto {$index}",
-                    'error' => $e->getMessage(),
+                    'error' => config('app.debug') ? $e->getMessage() : 'Error clasificando producto',
                 ];
             }
         }
