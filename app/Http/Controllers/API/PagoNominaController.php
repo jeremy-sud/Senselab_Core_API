@@ -68,24 +68,19 @@ class PagoNominaController extends Controller
     {
         $this->authorize('create', PagoNomina::class);
 
-        try {
-            DB::beginTransaction();
-            $pago = PagoNomina::create([
-                'empresa_id' => $this->getEmpresaId(),
-                ...$request->validated(),
-                'estado' => $request->estado ?? 'pendiente',
-                'activo' => 1
-            ]);
-            DB::commit();
+        DB::beginTransaction();
+        $pago = PagoNomina::create([
+            'empresa_id' => $this->getEmpresaId(),
+            ...$request->validated(),
+            'estado' => $request->estado ?? 'pendiente',
+            'activo' => 1
+        ]);
+        DB::commit();
 
-            return response()->json([
-                'data' => PagoNominaResource::make($pago->load(['empleado', 'periodoNomina', 'metodoPago']))->resolve(),
-                'message' => 'Pago creado exitosamente'
-            ], 201);
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            return response()->json(['message' => 'Error al crear pago', 'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'], 500);
-        }
+        return $this->createdResponse(
+            PagoNominaResource::make($pago->load(['empleado', 'periodoNomina', 'metodoPago']))->resolve(),
+            'Pago creado exitosamente'
+        );
     }
 
     #[OA\Get(
@@ -121,22 +116,17 @@ class PagoNominaController extends Controller
         $this->authorize('update', $pago);
 
         if ($pago->estado === 'pagado') {
-            return response()->json(['message' => 'No se puede modificar un pago ya pagado'], 422);
+            return $this->errorResponse('No se puede modificar un pago ya pagado', 422);
         }
 
-        try {
-            DB::beginTransaction();
-            $pago->update($request->validated());
-            DB::commit();
+        DB::beginTransaction();
+        $pago->update($request->validated());
+        DB::commit();
 
-            return response()->json([
-                'data' => PagoNominaResource::make($pago->fresh(['empleado', 'periodoNomina', 'metodoPago']))->resolve(),
-                'message' => 'Pago actualizado exitosamente'
-            ]);
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            return response()->json(['message' => 'Error al actualizar', 'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'], 500);
-        }
+        return $this->successResponse(
+            PagoNominaResource::make($pago->fresh(['empleado', 'periodoNomina', 'metodoPago']))->resolve(),
+            'Pago actualizado exitosamente'
+        );
     }
 
     #[OA\Delete(
@@ -154,11 +144,11 @@ class PagoNominaController extends Controller
         $this->authorize('delete', $pago);
 
         if ($pago->estado === 'pagado') {
-            return response()->json(['message' => 'No se puede eliminar un pago ya pagado'], 422);
+            return $this->errorResponse('No se puede eliminar un pago ya pagado', 422);
         }
 
         $pago->update(['eliminado' => 1, 'activo' => 0]);
-        return response()->json(['message' => 'Pago eliminado exitosamente']);
+        return $this->deletedResponse('Pago eliminado exitosamente');
     }
 
     #[OA\Post(

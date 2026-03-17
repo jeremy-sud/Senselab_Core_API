@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DTOs\API\VentaCreateDTO;
+use App\Exceptions\VentaException;
 use App\Models\Cliente;
 use App\Models\Sucursal;
 use App\Models\Usuario;
@@ -155,7 +156,7 @@ class VentaService
         $estadosValidos = ['pendiente', 'pagada', 'parcial', 'anulada'];
         
         if (!in_array($nuevoEstado, $estadosValidos)) {
-            throw new \InvalidArgumentException("Estado '{$nuevoEstado}' no válido");
+            throw VentaException::estadoInvalido($nuevoEstado);
         }
         
         $venta->update(['estado_venta' => $nuevoEstado]);

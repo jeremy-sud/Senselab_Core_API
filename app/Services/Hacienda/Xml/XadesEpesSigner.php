@@ -2,6 +2,7 @@
 
 namespace App\Services\Hacienda\Xml;
 
+use App\Exceptions\HaciendaException;
 use DOMDocument;
 use DOMElement;
 use DOMXPath;
@@ -115,7 +116,7 @@ class XadesEpesSigner
         // Parsear información del certificado
         $certInfo = openssl_x509_parse($certificate);
         if ($certInfo === false) {
-            throw new \Exception('No se pudo parsear el certificado X.509');
+            throw HaciendaException::certificadoParseError('No se pudo parsear el certificado X.509');
         }
         $this->certInfo = $certInfo;
         
@@ -128,7 +129,7 @@ class XadesEpesSigner
         $this->doc->formatOutput = false;
         
         if (!$this->doc->loadXML($xml)) {
-            throw new \Exception('No se pudo cargar el documento XML');
+            throw HaciendaException::xmlParseError();
         }
 
         // Crear y agregar elemento de firma
@@ -140,7 +141,7 @@ class XadesEpesSigner
 
         $xmlFirmado = $this->doc->saveXML();
         if ($xmlFirmado === false) {
-            throw new \RuntimeException('Error al generar XML firmado');
+            throw HaciendaException::xmlGeneracionError();
         }
 
         Log::debug('XAdES-EPES: XML firmado exitosamente', [
@@ -293,7 +294,7 @@ class XadesEpesSigner
         $result = openssl_sign($c14n, $signature, $this->privateKey, OPENSSL_ALGO_SHA256);
         
         if (!$result) {
-            throw new \Exception('Error al firmar: ' . openssl_error_string());
+            throw HaciendaException::firmaError(openssl_error_string() ?: 'Error desconocido');
         }
 
         $signatureValue = $this->doc->createElementNS(

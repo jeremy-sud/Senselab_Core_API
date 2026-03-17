@@ -53,16 +53,7 @@ class InventarioProductoController extends Controller
 
         $inventarios = $query->paginate($request->get('per_page', 15));
 
-        return response()->json([
-            'success' => true,
-            'data' => InventarioProductoResource::collection($inventarios),
-            'meta' => [
-                'current_page' => $inventarios->currentPage(),
-                'last_page' => $inventarios->lastPage(),
-                'per_page' => $inventarios->perPage(),
-                'total' => $inventarios->total(),
-            ]
-        ]);
+        return $this->paginatedResponse($inventarios, InventarioProductoResource::class);
     }
 
         #[OA\Post(
@@ -81,11 +72,10 @@ class InventarioProductoController extends Controller
     {
         $inventario = InventarioProducto::create($request->validated());
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Inventario de producto creado exitosamente',
-            'data' => new InventarioProductoResource($inventario)
-        ], 201);
+        return $this->createdResponse(
+            new InventarioProductoResource($inventario),
+            'Inventario de producto creado exitosamente'
+        );
     }
 
         #[OA\Get(
@@ -105,10 +95,7 @@ class InventarioProductoController extends Controller
 
     public function show(InventarioProducto $inventarioProducto): JsonResponse
     {
-        return response()->json([
-            'success' => true,
-            'data' => new InventarioProductoResource($inventarioProducto)
-        ]);
+        return $this->successResponse(new InventarioProductoResource($inventarioProducto));
     }
 
         #[OA\Put(
@@ -130,21 +117,17 @@ class InventarioProductoController extends Controller
     {
         $inventarioProducto->update($request->validated());
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Inventario de producto actualizado exitosamente',
-            'data' => new InventarioProductoResource($inventarioProducto)
-        ]);
+        return $this->successResponse(
+            new InventarioProductoResource($inventarioProducto),
+            'Inventario de producto actualizado exitosamente'
+        );
     }
 
     public function destroy(InventarioProducto $inventarioProducto): JsonResponse
     {
         $inventarioProducto->update(['eliminado' => 1, 'activo' => 0]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Inventario de producto eliminado exitosamente'
-        ]);
+        return $this->deletedResponse('Inventario de producto eliminado exitosamente');
     }
 
     public function porAlmacen(int $almacenId): JsonResponse
@@ -158,10 +141,7 @@ class InventarioProductoController extends Controller
             ->where('eliminado', 0)
             ->get();
 
-        return response()->json([
-            'success' => true,
-            'data' => InventarioProductoResource::collection($inventarios)
-        ]);
+        return $this->successResponse(InventarioProductoResource::collection($inventarios));
     }
 
     public function bajoStockMinimo(): JsonResponse
@@ -175,11 +155,7 @@ class InventarioProductoController extends Controller
             })
             ->get();
 
-        return response()->json([
-            'success' => true,
-            'data' => InventarioProductoResource::collection($inventarios),
-            'total' => $inventarios->count()
-        ]);
+        return $this->successResponse(InventarioProductoResource::collection($inventarios));
     }
 
     public function sobreStockMaximo(): JsonResponse
@@ -193,11 +169,7 @@ class InventarioProductoController extends Controller
             })
             ->get();
 
-        return response()->json([
-            'success' => true,
-            'data' => InventarioProductoResource::collection($inventarios),
-            'total' => $inventarios->count()
-        ]);
+        return $this->successResponse(InventarioProductoResource::collection($inventarios));
     }
 
     public function resumenPorAlmacen(): JsonResponse
@@ -212,9 +184,6 @@ class InventarioProductoController extends Controller
             ->groupBy('almacen_id')
             ->get();
 
-        return response()->json([
-            'success' => true,
-            'data' => $resumen
-        ]);
+        return $this->successResponse($resumen);
     }
 }

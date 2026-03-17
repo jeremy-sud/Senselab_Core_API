@@ -81,19 +81,12 @@ class SalidaInventarioController extends Controller
     {
         $this->authorize('create', SalidaInventario::class);
 
-        try {
-            $salida = $this->salidaService->crear($request->validated());
+        $salida = $this->salidaService->crear($request->validated());
 
-            return response()->json([
-                'message' => 'Salida de inventario creada exitosamente',
-                'data' => SalidaInventarioResource::make($salida)->resolve()
-            ], 201);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'message' => 'Error al crear salida de inventario',
-                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
-            ], 422);
-        }
+        return $this->createdResponse(
+            SalidaInventarioResource::make($salida)->resolve(),
+            'Salida de inventario creada exitosamente'
+        );
     }
 
     /**
@@ -112,13 +105,13 @@ class SalidaInventarioController extends Controller
         $salida = $this->salidaService->obtener($id);
 
         if (!$salida) {
-            return response()->json(['message' => 'Salida no encontrada'], 404);
+            return $this->errorResponse('Salida no encontrada', 404);
         }
 
         $this->authorize('view', $salida);
         $this->assertEmpresa($salida);
 
-        return response()->json(SalidaInventarioResource::make($salida)->resolve());
+        return $this->successResponse(SalidaInventarioResource::make($salida)->resolve());
     }
 
     /**
@@ -137,29 +130,22 @@ class SalidaInventarioController extends Controller
         $salida = $this->salidaService->obtener($id);
 
         if (!$salida) {
-            return response()->json(['message' => 'Salida no encontrada'], 404);
+            return $this->errorResponse('Salida no encontrada', 404);
         }
 
         $this->authorize('update', $salida);
         $this->assertEmpresa($salida);
 
         if ($salida->estado === 'Procesada') {
-            return response()->json(['message' => 'No se puede modificar una salida ya procesada'], 422);
+            return $this->errorResponse('No se puede modificar una salida ya procesada', 422);
         }
 
-        try {
-            $salida = $this->salidaService->actualizar($salida, $request->validated());
+        $salida = $this->salidaService->actualizar($salida, $request->validated());
 
-            return response()->json([
-                'message' => 'Salida actualizada exitosamente',
-                'data' => SalidaInventarioResource::make($salida)->resolve()
-            ]);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'message' => 'Error al actualizar salida',
-                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
-            ], 422);
-        }
+        return $this->successResponse(
+            SalidaInventarioResource::make($salida)->resolve(),
+            'Salida actualizada exitosamente'
+        );
     }
 
     /**
@@ -178,26 +164,19 @@ class SalidaInventarioController extends Controller
         $salida = $this->salidaService->obtener($id);
 
         if (!$salida) {
-            return response()->json(['message' => 'Salida no encontrada'], 404);
+            return $this->errorResponse('Salida no encontrada', 404);
         }
 
         $this->authorize('delete', $salida);
         $this->assertEmpresa($salida);
 
         if ($salida->estado === 'Procesada') {
-            return response()->json(['message' => 'No se puede eliminar una salida ya procesada'], 422);
+            return $this->errorResponse('No se puede eliminar una salida ya procesada', 422);
         }
 
-        try {
-            $this->salidaService->eliminar($salida);
+        $this->salidaService->eliminar($salida);
 
-            return response()->json(['message' => 'Salida eliminada exitosamente']);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'message' => 'Error al eliminar salida',
-                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
-            ], 500);
-        }
+        return $this->deletedResponse('Salida eliminada exitosamente');
     }
 
     /**
@@ -216,24 +195,17 @@ class SalidaInventarioController extends Controller
         $salida = $this->salidaService->obtener($id);
 
         if (!$salida) {
-            return response()->json(['message' => 'Salida no encontrada'], 404);
+            return $this->errorResponse('Salida no encontrada', 404);
         }
 
         $this->authorize('update', $salida);
         $this->assertEmpresa($salida);
 
-        try {
-            $salida = $this->salidaService->procesar($salida);
+        $salida = $this->salidaService->procesar($salida);
 
-            return response()->json([
-                'message' => 'Salida procesada exitosamente, stock actualizado',
-                'data' => SalidaInventarioResource::make($salida)->resolve()
-            ]);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'message' => 'Error al procesar salida',
-                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
-            ], 422);
-        }
+        return $this->successResponse(
+            SalidaInventarioResource::make($salida)->resolve(),
+            'Salida procesada exitosamente, stock actualizado'
+        );
     }
 }

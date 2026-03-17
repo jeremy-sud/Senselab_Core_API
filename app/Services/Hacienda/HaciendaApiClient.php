@@ -2,6 +2,7 @@
 
 namespace App\Services\Hacienda;
 
+use App\Exceptions\HaciendaException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
@@ -273,11 +274,7 @@ class HaciendaApiClient
                     continue;
                 }
 
-                throw new \Exception(
-                    "Error en comunicación con API Hacienda después de {$maxAttempts} intentos: " . $e->getMessage(),
-                    $e->getCode(),
-                    $e
-                );
+                throw HaciendaException::apiCommunicationError($e->getMessage(), $maxAttempts, $e);
 
             } catch (GuzzleException $e) {
                 Log::error('Error de Guzzle en API Hacienda', [
@@ -287,15 +284,11 @@ class HaciendaApiClient
                     'ambiente' => $this->ambiente,
                 ]);
 
-                throw new \Exception(
-                    "Error de red con API Hacienda: " . $e->getMessage(),
-                    $e->getCode(),
-                    $e
-                );
+                throw HaciendaException::networkError($e->getMessage(), $e);
             }
         }
 
-        throw new \Exception("No se pudo completar la petición a API Hacienda después de {$maxAttempts} intentos");
+        throw HaciendaException::maxRetriesExceeded($maxAttempts);
     }
 
     /**
@@ -359,7 +352,7 @@ class HaciendaApiClient
     public function setAmbiente(string $ambiente): self
     {
         if (!in_array($ambiente, ['sandbox', 'production'])) {
-            throw new \InvalidArgumentException("Ambiente inválido: {$ambiente}");
+            throw HaciendaException::invalidAmbiente($ambiente);
         }
 
         $this->ambiente = $ambiente;

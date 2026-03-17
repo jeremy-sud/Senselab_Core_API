@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\CrIdentificacion;
+use App\Rules\CrTelefono;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -27,12 +29,12 @@ class StoreProveedorRequest extends FormRequest
         return [
             'empresa_id' => ['required', 'exists:empresas,id'],
             'tipo_identificacion' => ['required', 'in:fisica,juridica,dimex,nite,extranjero'],
-            'numero_identificacion' => ['required', 'string', 'max:50'],
+            'numero_identificacion' => ['required', 'string', 'max:50', new CrIdentificacion()],
             'nombre' => ['required', 'string', 'max:255'],
             'nombre_comercial' => ['nullable', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255'],
-            'telefono' => ['nullable', 'string', 'max:50'],
-            'celular' => ['nullable', 'string', 'max:50'],
+            'telefono' => ['nullable', 'string', 'max:50', new CrTelefono()],
+            'celular' => ['nullable', 'string', 'max:50', new CrTelefono()],
             'direccion' => ['nullable', 'string', 'max:500'],
             'pais' => ['nullable', 'string', 'max:100'],
             'provincia' => ['nullable', 'string', 'max:100'],

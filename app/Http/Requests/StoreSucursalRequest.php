@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\CrTelefono;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -29,7 +30,7 @@ class StoreSucursalRequest extends FormRequest
             'nombre' => ['required', 'string', 'max:255'],
             'codigo' => ['nullable', 'string', 'max:20'],
             'email' => ['nullable', 'email', 'max:255'],
-            'telefono' => ['nullable', 'string', 'max:50'],
+            'telefono' => ['nullable', 'string', 'max:50', new CrTelefono()],
             'direccion' => ['nullable', 'string', 'max:500'],
             'provincia' => ['nullable', 'string', 'max:100'],
             'canton' => ['nullable', 'string', 'max:100'],

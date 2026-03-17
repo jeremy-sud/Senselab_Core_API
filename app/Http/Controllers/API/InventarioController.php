@@ -438,10 +438,10 @@ class InventarioController extends Controller
         $entrada = $this->service->obtenerEntrada($this->getEmpresaId(), $id);
         $this->service->cancelarEntrada($entrada);
 
-        return response()->json([
-            'message' => 'Entrada de inventario cancelada exitosamente',
-            'data' => new EntradaInventarioResource($entrada)
-        ]);
+        return $this->successResponse(
+            new EntradaInventarioResource($entrada),
+            'Entrada de inventario cancelada exitosamente'
+        );
     }
 
     /**
@@ -494,9 +494,9 @@ class InventarioController extends Controller
         $salida = $this->service->obtenerSalida($this->getEmpresaId(), $id);
         $this->service->cancelarSalida($salida);
 
-        return response()->json([
-            'message' => 'Salida de inventario cancelada exitosamente',
-            'data' => new SalidaInventarioResource($salida)
-        ]);
+        return $this->successResponse(
+            new SalidaInventarioResource($salida),
+            'Salida de inventario cancelada exitosamente'
+        );
     }
 }

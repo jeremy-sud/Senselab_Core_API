@@ -3,8 +3,8 @@
 **Fecha de creación:** 6 de marzo 2026  
 **Basado en:** Auditoría profunda del código fuente (no solo documentación)  
 **Última auditoría técnica:** 9 de marzo 2026 (puntuación global: 7.8/10)  
-**Versión actual:** v3.1.1 (FASE 14.5 completada)  
-**Última FASE completada:** FASE 14.5 — Correcciones Críticas de Auditoría
+**Versión actual:** v3.2.0 (FASE 15 completada)  
+**Última FASE completada:** FASE 15 — Excepciones de Dominio + Respuestas API Estandarizadas
 
 ---
 
@@ -16,8 +16,8 @@
 | Modelos Eloquent | 88 | **87** | — |
 | Servicios | 40 | **40** | 10 AI + 8 Hacienda + 22 core |
 | CQRS archivos | 34 | **0** | ✅ Eliminados en FASE 13 (dead code) |
-| Test files | 68 | **89** | +21 en FASE 14 |
-| Tests totales | 802 | 959 | 959 passing, 0 skipped |
+| Test files | 68 | **93** | +4 en FASE 15 |
+| Tests totales | 802 | 997 | 997 passing, 0 skipped |
 | Migraciones | 97 | **98** | — |
 | Factories | — | **83** | 7 corregidas en FASE 13 |
 | PHPStan | Level 8, 0 errores | ✅ | Baseline vacío |
@@ -395,7 +395,7 @@ Items identificados en la auditoría técnica que no encajan directamente en una
 | DT-2 | Observers vacíos | 🟡 MEDIO | Implementar o eliminar: `AsientoContableObserver`, `ClienteObserver`, `VentaObserver` | FASE 16 |
 | DT-3 | Factories faltantes | 🟡 MEDIO | Crear factories para `DataRetentionPolicy` y `GdprDeletionRequest` (compliance/GDPR) | FASE 19 |
 | DT-4 | Campos `float` → `decimal` | 🟠 ALTO | Migración para convertir campos financieros de `float` a `decimal` en migraciones existentes (precisión monetaria) | Migración independiente |
-| DT-5 | Regex formatos CR | 🟡 MEDIO | Agregar validación regex para teléfono (`/^[2-8]\d{7}$/`), cédula física/jurídica, IBAN costarricense en FormRequests | FASE 15 |
+| DT-5 | Regex formatos CR | ✅ RESUELTO | `CrTelefono`, `CrIdentificacion` Rules + IBAN regex. Aplicados en 7 FormRequests + 27 tests | FASE 15 |
 | DT-6 | 35 seeders huérfanos | 🟡 MEDIO | Incluir los 35 seeders existentes en `DatabaseSeeder::run()` o eliminar los obsoletos | Migración independiente |
 | DT-7 | `shell_exec()` en HealthCheck | 🟡 MEDIO | Reemplazar `shell_exec()` en `HealthCheckController` por alternativa segura (input actualmente hardcoded pero riesgo potencial) | FASE 14.5 |
 | DT-8 | Distributed tracing | 🟢 BAJO | Implementar OpenTelemetry para tracing distribuido | FASE 22 |

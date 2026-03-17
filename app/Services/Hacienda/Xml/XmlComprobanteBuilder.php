@@ -2,6 +2,7 @@
 
 namespace App\Services\Hacienda\Xml;
 
+use App\Exceptions\HaciendaException;
 use App\Models\ComprobanteElectronicoFe;
 use DOMDocument;
 use DOMElement;
@@ -96,7 +97,7 @@ class XmlComprobanteBuilder
         // Generar XML string
         $xml = $this->doc->saveXML();
         if ($xml === false) {
-            throw new \RuntimeException('Error al generar XML');
+            throw HaciendaException::xmlGeneracionError();
         }
 
         Log::info('XML v4.4 generado exitosamente', [

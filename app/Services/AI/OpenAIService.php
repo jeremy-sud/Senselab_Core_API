@@ -2,6 +2,7 @@
 
 namespace App\Services\AI;
 
+use App\Exceptions\AIServiceException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -299,7 +300,7 @@ class OpenAIService implements AIServiceInterface
                     continue;
                 }
 
-                throw new \Exception('OpenAI API error: ' . ($response->json()['error']['message'] ?? $response->body()));
+                throw AIServiceException::apiError('OpenAI', $response->json()['error']['message'] ?? $response->body());
             } catch (RequestException $e) {
                 $lastException = $e;
                 $attempt++;
@@ -307,7 +308,7 @@ class OpenAIService implements AIServiceInterface
             }
         }
 
-        throw $lastException ?? new \Exception('Max retries exceeded');
+        throw $lastException ?? AIServiceException::apiError('OpenAI', 'Max retries exceeded');
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Services\Hacienda;
 
+use App\Exceptions\HaciendaException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
@@ -71,10 +72,7 @@ class RateLimiter
             'max_per_minute' => $this->maxRequestsPerMinute,
         ]);
 
-        throw new \Exception(
-            'No se pudo realizar el request debido a rate limiting después de esperar ' . 
-            $waitedSeconds . ' segundos'
-        );
+        throw HaciendaException::rateLimitExceeded((int) $waitedSeconds);
     }
 
     /**

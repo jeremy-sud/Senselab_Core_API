@@ -1,8 +1,11 @@
 <?php
 
+use App\Exceptions\DomainException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Str;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -51,5 +54,24 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->throttleApi();
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // FASE 15: Mapeo centralizado de excepciones de dominio a HTTP responses
+        $exceptions->renderable(function (DomainException $e): JsonResponse {
+            $traceId = request()->header('X-Trace-ID') ?? (string) Str::uuid();
+
+            $response = [
+                'success' => false,
+                'message' => $e->getMessage(),
+                'code' => $e->getHttpStatusCode(),
+                'trace_id' => $traceId,
+            ];
+
+            if (config('app.debug')) {
+                $response['exception'] = get_class($e);
+                $response['file'] = $e->getFile();
+                $response['line'] = $e->getLine();
+            }
+
+            return response()->json($response, $e->getHttpStatusCode())
+                ->withHeaders(['X-Trace-ID' => $traceId]);
+        });
     })->create();
