@@ -2,6 +2,7 @@
 
 namespace App\Services\Hacienda;
 
+use App\Exceptions\HaciendaException;
 use App\Models\FeOAuthToken;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -125,14 +126,14 @@ class OAuthTokenManager
                     'ambiente' => $this->ambiente,
                 ]);
 
-                throw new \Exception(
-                    "Error al obtener token OAuth: " . ($data['error_description'] ?? $data['error'] ?? 'Error desconocido'),
+                throw HaciendaException::oauthTokenError(
+                    $data['error_description'] ?? $data['error'] ?? 'Error desconocido',
                     $statusCode
                 );
             }
 
             if (!isset($data['access_token'])) {
-                throw new \Exception('Respuesta OAuth no contiene access_token');
+                throw HaciendaException::oauthMissingAccessToken();
             }
 
             // Guardar token en BD
@@ -153,10 +154,9 @@ class OAuthTokenManager
                 'error' => $e->getMessage(),
             ]);
 
-            throw new \Exception(
-                "Error de conexión con servidor OAuth de Hacienda: " . $e->getMessage(),
-                $e->getCode(),
-                $e
+            throw HaciendaException::oauthTokenError(
+                'Error de conexión con servidor OAuth de Hacienda: ' . $e->getMessage(),
+                502
             );
         }
     }
@@ -219,26 +219,26 @@ class OAuthTokenManager
     /**
      * Validar que las credenciales OAuth estén configuradas
      * 
-     * @throws \Exception
+     * @throws HaciendaException
      */
     protected function validateCredentials(): void
     {
         if (empty($this->credentials['client_id'])) {
-            throw new \Exception(
+            throw HaciendaException::oauthConfigError(
                 'HACIENDA_OAUTH_CLIENT_ID no está configurado en .env. ' .
                 'Debes obtener las credenciales OAuth del portal de Hacienda.'
             );
         }
 
         if (empty($this->credentials['client_secret'])) {
-            throw new \Exception(
+            throw HaciendaException::oauthConfigError(
                 'HACIENDA_OAUTH_CLIENT_SECRET no está configurado en .env. ' .
                 'Debes obtener las credenciales OAuth del portal de Hacienda.'
             );
         }
 
         if (empty($this->tokenUrl)) {
-            throw new \Exception(
+            throw HaciendaException::oauthConfigError(
                 "URL de OAuth para ambiente {$this->ambiente} no está configurada."
             );
         }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\CrTelefono;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -41,7 +42,7 @@ class StoreEmpresaRequest extends FormRequest
             'actividad_economica_principal' => ['nullable', 'string', 'max:6'],
             'regimen_tributario_id' => ['required', 'exists:regimenes_tributarios,id'],
             'email' => ['nullable', 'email', 'max:255', 'unique:empresas,email'],
-            'telefono' => ['nullable', 'string', 'max:50'],
+            'telefono' => ['nullable', 'string', 'max:50', new CrTelefono()],
             'direccion' => ['nullable', 'string', 'max:500'],
             'provincia' => ['nullable', 'string', 'max:2'],
             'canton' => ['nullable', 'string', 'max:2'],

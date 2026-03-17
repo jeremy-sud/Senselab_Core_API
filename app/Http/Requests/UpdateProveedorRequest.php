@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\CrIdentificacion;
+use App\Rules\CrTelefono;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -26,12 +28,12 @@ class UpdateProveedorRequest extends FormRequest
     {
         return [
             'tipo_identificacion' => ['sometimes', 'required', 'in:fisica,juridica,dimex,nite,extranjero'],
-            'numero_identificacion' => ['sometimes', 'required', 'string', 'max:50'],
+            'numero_identificacion' => ['sometimes', 'required', 'string', 'max:50', new CrIdentificacion()],
             'nombre' => ['sometimes', 'required', 'string', 'max:255'],
             'nombre_comercial' => ['nullable', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255'],
-            'telefono' => ['nullable', 'string', 'max:50'],
-            'celular' => ['nullable', 'string', 'max:50'],
+            'telefono' => ['nullable', 'string', 'max:50', new CrTelefono()],
+            'celular' => ['nullable', 'string', 'max:50', new CrTelefono()],
             'direccion' => ['nullable', 'string', 'max:500'],
             'pais' => ['nullable', 'string', 'max:100'],
             'provincia' => ['nullable', 'string', 'max:100'],

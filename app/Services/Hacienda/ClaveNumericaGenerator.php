@@ -2,6 +2,7 @@
 
 namespace App\Services\Hacienda;
 
+use App\Exceptions\HaciendaException;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
@@ -76,8 +77,8 @@ class ClaveNumericaGenerator
 
         // Verificar longitud final
         if (strlen($clave) !== self::LONGITUD_TOTAL) {
-            throw new \RuntimeException(
-                "Error interno: La clave generada tiene longitud incorrecta (" . strlen($clave) . " en lugar de 50)"
+            throw HaciendaException::claveNumericaInvalida(
+                'La clave generada tiene longitud incorrecta (' . strlen($clave) . ' en lugar de 50)'
             );
         }
 

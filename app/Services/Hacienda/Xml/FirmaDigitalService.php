@@ -2,6 +2,7 @@
 
 namespace App\Services\Hacienda\Xml;
 
+use App\Exceptions\HaciendaException;
 use App\Models\FeCertificadoDigital;
 use RobRichards\XMLSecLibs\XMLSecurityDSig;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
@@ -78,10 +79,9 @@ class FirmaDigitalService
         $this->xadesSigner = new XadesEpesSigner();
 
         if (!$this->certData || !isset($this->certData['cert'])) {
-            throw new \RuntimeException('No se pudo obtener el certificado del almacén PKCS12');
+            throw HaciendaException::pkcs12Error();
         }
 
-        // Firmar documento usando método sign
         $xmlFirmado = $this->xadesSigner->sign($xmlString, $this->privateKey, $this->certData['cert']);
 
         Log::info('XML firmado con XAdES-EPES exitosamente', [
@@ -139,7 +139,7 @@ class FirmaDigitalService
         $objDSig->sign($objKey);
 
         if (!$this->certData || !isset($this->certData['cert'])) {
-            throw new \RuntimeException('No se pudo obtener el certificado del almacén PKCS12');
+            throw HaciendaException::pkcs12Error();
         }
 
         // Agregar certificado a la firma
@@ -152,10 +152,10 @@ class FirmaDigitalService
         // Obtener XML firmado
         $xmlFirmado = $doc->saveXML();
         if ($xmlFirmado === false) {
-            throw new \RuntimeException('Error al generar XML firmado');
+            throw HaciendaException::xmlGeneracionError();
         }
 
-        Log::warning('XML firmado con método legacy (sin XAdES-EPES completo)', [
+        Log::info('XML firmado con método legacy (sin XAdES-EPES completo)', [
             'certificado_id' => $certificadoId,
             'xml_length' => strlen($xmlFirmado),
         ]);
@@ -174,16 +174,16 @@ class FirmaDigitalService
         $this->certificado = FeCertificadoDigital::find($certificadoId);
 
         if (!$this->certificado) {
-            throw new \Exception("Certificado digital no encontrado (ID: {$certificadoId})");
+            throw HaciendaException::certificadoNoEncontrado($certificadoId);
         }
 
         if (!$this->certificado->activo) {
-            throw new \Exception("El certificado digital está inactivo");
+            throw HaciendaException::certificadoInactivo();
         }
 
         if ($this->certificado->vencido) {
-            throw new \Exception(
-                "El certificado digital está vencido (venció el {$this->certificado->fecha_vencimiento->format('d/m/Y')})"
+            throw HaciendaException::certificadoVencido(
+                $this->certificado->fecha_vencimiento->format('d/m/Y')
             );
         }
 
@@ -197,8 +197,8 @@ class FirmaDigitalService
 
         // Verificar que el archivo existe
         if (!Storage::exists($this->certificado->ruta_archivo)) {
-            throw new \Exception(
-                "El archivo del certificado no existe: {$this->certificado->ruta_archivo}"
+            throw HaciendaException::certificadoArchivoNoEncontrado(
+                $this->certificado->ruta_archivo
             );
         }
 
@@ -216,14 +216,14 @@ class FirmaDigitalService
         $rutaCompleta = Storage::path($this->certificado->ruta_archivo);
         
         if (!file_exists($rutaCompleta)) {
-            throw new \Exception("Archivo de certificado no encontrado: {$rutaCompleta}");
+            throw HaciendaException::certificadoArchivoNoEncontrado($rutaCompleta);
         }
 
         // Leer contenido del certificado
         $p12Content = file_get_contents($rutaCompleta);
 
         if ($p12Content === false) {
-            throw new \Exception("No se pudo leer el archivo del certificado");
+            throw HaciendaException::certificadoLecturaError();
         }
 
         // Desencriptar password del certificado
@@ -234,14 +234,16 @@ class FirmaDigitalService
         $success = openssl_pkcs12_read($p12Content, $certs, $password);
 
         if (!$success) {
-            throw new \Exception(
-                "Error al leer el certificado .p12. Verifica que la contraseña sea correcta. " .
-                "Error OpenSSL: " . openssl_error_string()
+            throw HaciendaException::certificadoPasswordError(
+                'Error al leer el certificado .p12. Verifica que la contraseña sea correcta. ' .
+                'Error OpenSSL: ' . openssl_error_string()
             );
         }
 
         if (!isset($certs['pkey']) || !isset($certs['cert'])) {
-            throw new \Exception("El certificado .p12 no contiene la clave privada o el certificado público");
+            throw HaciendaException::certificadoParseError(
+                'El certificado .p12 no contiene la clave privada o el certificado público'
+            );
         }
 
         // Guardar datos del certificado
@@ -270,7 +272,7 @@ class FirmaDigitalService
         $certData = openssl_x509_parse($certPem);
 
         if ($certData === false) {
-            throw new \Exception("Error al parsear el certificado X.509");
+            throw HaciendaException::certificadoParseError('Error al parsear el certificado X.509');
         }
 
         // Verificar fechas de validez
@@ -279,15 +281,13 @@ class FirmaDigitalService
         $now = Carbon::now();
 
         if ($now->isBefore($validFrom)) {
-            throw new \Exception(
-                "El certificado aún no es válido. Será válido desde: " . $validFrom->format('d/m/Y H:i:s')
+            throw HaciendaException::certificadoParseError(
+                'El certificado aún no es válido. Será válido desde: ' . $validFrom->format('d/m/Y H:i:s')
             );
         }
 
         if ($now->isAfter($validTo)) {
-            throw new \Exception(
-                "El certificado está vencido. Venció el: " . $validTo->format('d/m/Y H:i:s')
-            );
+            throw HaciendaException::certificadoVencido($validTo->format('d/m/Y H:i:s'));
         }
 
         // Actualizar información en BD si es necesario
@@ -341,7 +341,9 @@ class FirmaDigitalService
     protected function desencriptarPassword(): string
     {
         if (!$this->certificado->password_encrypted) {
-            throw new \Exception("El certificado no tiene contraseña configurada");
+            throw HaciendaException::certificadoPasswordError(
+                'El certificado no tiene contraseña configurada'
+            );
         }
 
         // Por ahora usamos base64, pero deberías usar encriptación real (Laravel Crypt)
@@ -351,7 +353,9 @@ class FirmaDigitalService
         $password = base64_decode($this->certificado->password_encrypted);
 
         if ($password === false) {
-            throw new \Exception("Error al desencriptar la contraseña del certificado");
+            throw HaciendaException::certificadoPasswordError(
+                'Error al desencriptar la contraseña del certificado'
+            );
         }
 
         return $password;
@@ -376,12 +380,12 @@ class FirmaDigitalService
         $signatureNodes = $xpath->query('//ds:Signature');
 
         if ($signatureNodes === false || $signatureNodes->length === 0) {
-            throw new \Exception("El XML no contiene firma digital");
+            throw HaciendaException::xmlSinFirma();
         }
 
         $signatureNode = $signatureNodes->item(0);
         if (!$signatureNode instanceof \DOMElement) {
-            throw new \Exception("El nodo de firma no es un elemento válido");
+            throw HaciendaException::xmlFirmaInvalida();
         }
 
         // Crear objeto de verificación
@@ -396,11 +400,11 @@ class FirmaDigitalService
         $objKey = $objDSig->locateKey();
         
         if (!$objKey) {
-            throw new \Exception("No se pudo localizar la clave pública en el XML firmado");
+            throw HaciendaException::xmlClavePublicaNoEncontrada();
         }
 
         if (!$this->certData || !isset($this->certData['cert'])) {
-            throw new \RuntimeException('No se pudo obtener el certificado del almacén PKCS12');
+            throw HaciendaException::pkcs12Error();
         }
 
         $objKey->loadKey($this->certData['cert'], false, true);

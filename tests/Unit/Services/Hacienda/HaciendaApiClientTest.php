@@ -80,7 +80,7 @@ class HaciendaApiClientTest extends TestCase
     #[Test]
     public function rechaza_ambiente_invalido(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\App\Exceptions\HaciendaException::class);
         $this->expectExceptionMessage('Ambiente inválido: test');
 
         $client = new HaciendaApiClient('sandbox');

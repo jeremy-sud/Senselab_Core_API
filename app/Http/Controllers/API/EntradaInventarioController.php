@@ -81,19 +81,12 @@ class EntradaInventarioController extends Controller
     {
         $this->authorize('create', EntradaInventario::class);
 
-        try {
-            $entrada = $this->entradaService->crear($request->validated());
+        $entrada = $this->entradaService->crear($request->validated());
 
-            return response()->json([
-                'message' => 'Entrada de inventario creada exitosamente',
-                'data' => EntradaInventarioResource::make($entrada)->resolve()
-            ], 201);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'message' => 'Error al crear entrada de inventario',
-                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
-            ], 422);
-        }
+        return $this->createdResponse(
+            EntradaInventarioResource::make($entrada)->resolve(),
+            'Entrada de inventario creada exitosamente'
+        );
     }
 
     /**
@@ -112,13 +105,13 @@ class EntradaInventarioController extends Controller
         $entrada = $this->entradaService->obtener($id);
 
         if (!$entrada) {
-            return response()->json(['message' => 'Entrada no encontrada'], 404);
+            return $this->errorResponse('Entrada no encontrada', 404);
         }
 
         $this->authorize('view', $entrada);
         $this->assertEmpresa($entrada);
 
-        return response()->json(EntradaInventarioResource::make($entrada)->resolve());
+        return $this->successResponse(EntradaInventarioResource::make($entrada)->resolve());
     }
 
     /**
@@ -137,29 +130,22 @@ class EntradaInventarioController extends Controller
         $entrada = $this->entradaService->obtener($id);
 
         if (!$entrada) {
-            return response()->json(['message' => 'Entrada no encontrada'], 404);
+            return $this->errorResponse('Entrada no encontrada', 404);
         }
 
         $this->authorize('update', $entrada);
         $this->assertEmpresa($entrada);
 
         if ($entrada->estado !== 'pendiente') {
-            return response()->json(['message' => 'No se puede modificar una entrada procesada o anulada'], 422);
+            return $this->errorResponse('No se puede modificar una entrada procesada o anulada', 422);
         }
 
-        try {
-            $entrada = $this->entradaService->actualizar($entrada, $request->validated());
+        $entrada = $this->entradaService->actualizar($entrada, $request->validated());
 
-            return response()->json([
-                'message' => 'Entrada actualizada exitosamente',
-                'data' => EntradaInventarioResource::make($entrada)->resolve()
-            ]);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'message' => 'Error al actualizar entrada',
-                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
-            ], 422);
-        }
+        return $this->successResponse(
+            EntradaInventarioResource::make($entrada)->resolve(),
+            'Entrada actualizada exitosamente'
+        );
     }
 
     /**
@@ -178,26 +164,19 @@ class EntradaInventarioController extends Controller
         $entrada = $this->entradaService->obtener($id);
 
         if (!$entrada) {
-            return response()->json(['message' => 'Entrada no encontrada'], 404);
+            return $this->errorResponse('Entrada no encontrada', 404);
         }
 
         $this->authorize('delete', $entrada);
         $this->assertEmpresa($entrada);
 
         if ($entrada->estado !== 'pendiente') {
-            return response()->json(['message' => 'No se puede eliminar una entrada procesada o anulada'], 422);
+            return $this->errorResponse('No se puede eliminar una entrada procesada o anulada', 422);
         }
 
-        try {
-            $this->entradaService->eliminar($entrada);
+        $this->entradaService->eliminar($entrada);
 
-            return response()->json(['message' => 'Entrada eliminada exitosamente']);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'message' => 'Error al eliminar entrada',
-                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
-            ], 500);
-        }
+        return $this->deletedResponse('Entrada eliminada exitosamente');
     }
 
     /**
@@ -216,25 +195,18 @@ class EntradaInventarioController extends Controller
         $entrada = $this->entradaService->obtener($id);
 
         if (!$entrada) {
-            return response()->json(['message' => 'Entrada no encontrada'], 404);
+            return $this->errorResponse('Entrada no encontrada', 404);
         }
 
         $this->authorize('update', $entrada);
         $this->assertEmpresa($entrada);
 
-        try {
-            $entrada = $this->entradaService->procesar($entrada);
+        $entrada = $this->entradaService->procesar($entrada);
 
-            return response()->json([
-                'message' => 'Entrada procesada exitosamente, stock actualizado',
-                'data' => EntradaInventarioResource::make($entrada)->resolve()
-            ]);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'message' => 'Error al procesar entrada',
-                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
-            ], 422);
-        }
+        return $this->successResponse(
+            EntradaInventarioResource::make($entrada)->resolve(),
+            'Entrada procesada exitosamente, stock actualizado'
+        );
     }
 
     /**
@@ -253,24 +225,17 @@ class EntradaInventarioController extends Controller
         $entrada = $this->entradaService->obtener($id);
 
         if (!$entrada) {
-            return response()->json(['message' => 'Entrada no encontrada'], 404);
+            return $this->errorResponse('Entrada no encontrada', 404);
         }
 
         $this->authorize('update', $entrada);
         $this->assertEmpresa($entrada);
 
-        try {
-            $entrada = $this->entradaService->cancelar($entrada);
+        $entrada = $this->entradaService->cancelar($entrada);
 
-            return response()->json([
-                'message' => 'Entrada cancelada exitosamente',
-                'data' => EntradaInventarioResource::make($entrada)->resolve()
-            ]);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'message' => 'Error al cancelar entrada',
-                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
-            ], 422);
-        }
+        return $this->successResponse(
+            EntradaInventarioResource::make($entrada)->resolve(),
+            'Entrada cancelada exitosamente'
+        );
     }
 }

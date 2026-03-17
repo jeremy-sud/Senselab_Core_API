@@ -2,12 +2,12 @@
 
 namespace App\Exceptions;
 
-use Exception;
-
 /**
  * Excepción para operaciones de inventario
+ *
+ * FASE 15: Extiende DomainException para mapeo automático de HTTP status codes.
  */
-class InventarioException extends Exception
+class InventarioException extends DomainException
 {
     public static function entradaYaProcesada(): self
     {

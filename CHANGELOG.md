@@ -5,6 +5,37 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.2.0] - 2025-07-22
+
+### 🎯 FASE 15: Excepciones de Dominio + Respuestas API Estandarizadas
+
+Reemplazo de excepciones genéricas por excepciones de dominio semánticas, estandarización del formato de respuestas API y validación de formatos costarricenses.
+
+#### Resultado
+- **Tests:** 497 passing, 0 failing ✅
+- **PHPStan Level 8:** 0 errores ✅
+- **Nuevos test files:** 4 (DomainExceptionTest, ExceptionHandlerTest, ApiResponseTest, CrFormatsTest)
+- **Nuevos tests:** +84
+
+#### Agregado
+- **DomainException** base abstracta con `httpStatusCode` y mapeo HTTP automático
+- **9 clases de excepción de dominio:** HaciendaException (25 factory methods), InventarioException, VentaException, ContabilidadException, CompraException, NominaException, MultiTenancyException, FacturacionElectronicaException, AIServiceException
+- **ApiResponse trait** con métodos `successResponse()`, `createdResponse()`, `paginatedResponse()`, `errorResponse()`, `deletedResponse()` — envelope unificado `{success, data?, message?, meta?, errors?, trace_id}`
+- **Exception Handler centralizado** en `bootstrap/app.php` — DomainException → JSON con HTTP status code semántico + trace_id
+- **CrTelefono Rule** — Valida teléfonos CR: `/^[2-8]\d{7}$/`, acepta +506 y formatos con guiones
+- **CrIdentificacion Rule** — Valida cédula física (9 dígitos), jurídica (10 dígitos, inicia 3), DIMEX (11-12), NITE (10)
+
+#### Cambiado
+- 30+ `throw new \Exception(...)` reemplazados por excepciones tipadas en 10 servicios (Hacienda, Venta, AI)
+- ApiResponse trait añadido al `Controller` base — heredado por los 91 controladores
+- 5 controladores migrados a envelope unificado: EntradaInventario, SalidaInventario, PagoNomina, InventarioProducto, Inventario
+- 7 FormRequests actualizados con `CrTelefono`/`CrIdentificacion`: Store/UpdateCliente, Store/UpdateProveedor, Store/UpdateEmpresa, StoreSucursal
+
+#### DT-5 Resuelto
+- Regex formatos CR implementados como Laravel Rules reutilizables con 27 tests unitarios
+
+---
+
 ## [3.1.1] - 2026-03-15
 
 ### 🔒 FASE 14.5: Correcciones Críticas de Auditoría
