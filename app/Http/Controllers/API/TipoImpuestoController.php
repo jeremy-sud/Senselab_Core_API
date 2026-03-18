@@ -7,6 +7,7 @@ use App\Http\Requests\StoreTipoImpuestoRequest;
 use App\Http\Requests\UpdateTipoImpuestoRequest;
 use App\Http\Resources\TipoImpuestoResource;
 use App\Models\TipoImpuesto;
+use App\Services\TipoImpuestoService;
 use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -29,6 +30,10 @@ class TipoImpuestoController extends Controller
     /** @var array<int, string> */
     protected array $cacheTags = ['tipos-impuesto', 'catalogos'];
     protected int $cacheTTL = 86400; // 24 horas - catálogo fiscal muy estable
+
+    public function __construct(
+        private readonly TipoImpuestoService $service
+    ) {}
 
     /**
      * Listar todos los tipos de impuesto
@@ -106,36 +111,18 @@ class TipoImpuestoController extends Controller
     {
         $this->authorize('viewAny', TipoImpuesto::class);
 
-        $cacheKey = $this->getCacheKey('index', [
-            'activo' => $request->input('activo'),
+        $filtros = array_filter([
+            'activo' => $request->filled('activo') ? $request->activo : null,
             'buscar' => $request->input('buscar'),
             'sort_by' => $request->get('sort_by', 'nombre'),
             'sort_order' => $request->get('sort_order', 'asc'),
-            'per_page' => $request->get('per_page', 15)
-        ]);
+        ], fn ($v) => $v !== null);
 
-        $tipos = $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
-            $query = TipoImpuesto::where('eliminado', 0);
+        $perPage = (int) $request->get('per_page', 15);
 
-            // Filtro por estado activo
-            if ($request->filled('activo')) {
-                $query->where('activo', $request->activo);
-            }
+        $cacheKey = $this->getCacheKey('index', [...$filtros, 'per_page' => $perPage]);
 
-            // Búsqueda por nombre o código
-            if ($request->filled('buscar')) {
-                $buscar = $request->buscar;
-                $query->where(function ($q) use ($buscar) {
-                    $q->where('nombre', 'like', "%{$buscar}%")
-                      ->orWhere('codigo_hacienda', 'like', "%{$buscar}%");
-                });
-            }
-
-            // Ordenamiento
-            $query->orderBy($request->get('sort_by', 'nombre'), $request->get('sort_order', 'asc'));
-
-            return $query->paginate($request->get('per_page', 15));
-        });
+        $tipos = $this->cacheQueryIfEnabled($cacheKey, fn () => $this->service->listar($filtros, $perPage));
 
         return TipoImpuestoResource::collection($tipos);
     }
@@ -191,7 +178,7 @@ class TipoImpuestoController extends Controller
     {
         $this->authorize('create', TipoImpuesto::class);
 
-        $tipo = TipoImpuesto::create($request->validated());
+        $tipo = $this->service->crear($request->validated());
 
         $this->flushCache();
 
@@ -246,9 +233,7 @@ class TipoImpuestoController extends Controller
     )]
     public function show(int $id): TipoImpuestoResource
     {
-        $tipo = TipoImpuesto::where('id', $id)
-            ->where('eliminado', 0)
-            ->firstOrFail();
+        $tipo = $this->service->obtener($id);
 
         $this->authorize('view', $tipo);
 
@@ -317,13 +302,11 @@ class TipoImpuestoController extends Controller
     )]
     public function update(UpdateTipoImpuestoRequest $request, int $id): TipoImpuestoResource
     {
-        $tipo = TipoImpuesto::where('id', $id)
-            ->where('eliminado', 0)
-            ->firstOrFail();
+        $tipo = $this->service->obtener($id);
 
         $this->authorize('update', $tipo);
 
-        $tipo->update($request->validated());
+        $tipo = $this->service->actualizar($tipo, $request->validated());
 
         $this->flushCache();
 
@@ -378,21 +361,11 @@ class TipoImpuestoController extends Controller
     )]
     public function destroy(int $id): JsonResponse
     {
-        $tipo = TipoImpuesto::where('id', $id)
-            ->where('eliminado', 0)
-            ->firstOrFail();
+        $tipo = $this->service->obtener($id);
 
         $this->authorize('delete', $tipo);
 
-        // Validar que no sea el IVA (código 01) que no debe borrarse
-        if ($tipo->codigo_hacienda === '01') {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se puede eliminar el tipo de impuesto IVA (01). Es requerido por Hacienda.'
-            ], 422);
-        }
-
-        $tipo->update(['eliminado' => 1, 'activo' => 0]);
+        $this->service->eliminar($tipo);
 
         $this->flushCache();
 
@@ -438,12 +411,7 @@ class TipoImpuestoController extends Controller
     {
         $cacheKey = $this->getCacheKey('activos', []);
 
-        $tipos = $this->cacheQueryIfEnabled($cacheKey, function() {
-            return TipoImpuesto::where('eliminado', 0)
-                ->where('activo', 1)
-                ->orderBy('nombre')
-                ->get();
-        });
+        $tipos = $this->cacheQueryIfEnabled($cacheKey, fn () => $this->service->activos());
 
         return response()->json([
             'success' => true,

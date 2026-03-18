@@ -7,6 +7,7 @@ use App\Http\Requests\StoreMarcaRequest;
 use App\Http\Requests\UpdateMarcaRequest;
 use App\Http\Resources\MarcaResource;
 use App\Models\Marca;
+use App\Services\MarcaService;
 use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -28,6 +29,10 @@ class MarcaController extends Controller
     /** @var array<int, string> */
     protected array $cacheTags = ['marcas', 'catalogos'];
     protected int $cacheTTL = 3600; // 1 hora - catálogo estable
+
+    public function __construct(
+        private readonly MarcaService $service
+    ) {}
 
     /**
      * Listar todas las marcas activas
@@ -66,19 +71,13 @@ class MarcaController extends Controller
     {
         $this->authorize('viewAny', Marca::class);
 
-        $cacheKey = $this->getCacheKey('index', [
-            'activo' => $request->input('activo')
-        ]);
+        $filtros = array_filter([
+            'activo' => $request->has('activo') ? $request->boolean('activo') : null,
+        ], fn ($v) => $v !== null);
 
-        $marcas = $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
-            $query = Marca::query();
+        $cacheKey = $this->getCacheKey('index', $filtros);
 
-            if ($request->has('activo')) {
-                $query->where('activo', $request->boolean('activo'));
-            }
-
-            return $query->get();
-        });
+        $marcas = $this->cacheQueryIfEnabled($cacheKey, fn () => $this->service->listarTodos($filtros));
 
         return MarcaResource::collection($marcas);
     }
@@ -121,7 +120,8 @@ class MarcaController extends Controller
     public function store(StoreMarcaRequest $request): JsonResponse
     {
         $this->authorize('create', Marca::class);
-        $marca = Marca::create($request->validated());
+
+        $marca = $this->service->crear($request->validated());
 
         $this->flushCache();
 
@@ -166,7 +166,7 @@ class MarcaController extends Controller
     )]
     public function show(int $id): MarcaResource
     {
-        $marca = Marca::findOrFail($id);
+        $marca = $this->service->obtener($id);
 
         $this->authorize('view', $marca);
 
@@ -222,11 +222,11 @@ class MarcaController extends Controller
     )]
     public function update(UpdateMarcaRequest $request, int $id): MarcaResource
     {
-        $marca = Marca::findOrFail($id);
+        $marca = $this->service->obtener($id);
 
         $this->authorize('update', $marca);
 
-        $marca->update($request->validated());
+        $marca = $this->service->actualizar($marca, $request->validated());
 
         $this->flushCache();
 
@@ -274,19 +274,17 @@ class MarcaController extends Controller
     )]
     public function destroy(int $id): JsonResponse
     {
-        $marca = Marca::findOrFail($id);
+        $marca = $this->service->obtener($id);
 
         $this->authorize('delete', $marca);
 
-        $marca->eliminado = now();
-        $marca->activo = 0;
-        $marca->save();
+        $this->service->eliminar($marca);
 
         $this->flushCache();
 
         return response()->json([
             'message' => 'Marca eliminada exitosamente',
-            'data' => new MarcaResource($marca)
+            'data' => new MarcaResource($marca->fresh())
         ], 200);
     }
 }

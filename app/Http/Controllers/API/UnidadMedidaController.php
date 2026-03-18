@@ -7,6 +7,7 @@ use App\Http\Requests\StoreUnidadMedidaRequest;
 use App\Http\Requests\UpdateUnidadMedidaRequest;
 use App\Http\Resources\UnidadMedidaResource;
 use App\Models\UnidadMedida;
+use App\Services\UnidadMedidaService;
 use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -28,6 +29,10 @@ class UnidadMedidaController extends Controller
     /** @var array<int, string> */
     protected array $cacheTags = ['unidades-medida', 'catalogos'];
     protected int $cacheTTL = 86400; // 24 horas - catálogo muy estable
+
+    public function __construct(
+        private readonly UnidadMedidaService $service
+    ) {}
 
     /**
      * Listar todas las unidades de medida
@@ -66,19 +71,13 @@ class UnidadMedidaController extends Controller
     {
         $this->authorize('viewAny', UnidadMedida::class);
 
-        $cacheKey = $this->getCacheKey('index', [
-            'activo' => $request->input('activo')
-        ]);
+        $filtros = array_filter([
+            'activo' => $request->has('activo') ? $request->boolean('activo') : null,
+        ], fn ($v) => $v !== null);
 
-        $unidades = $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
-            $query = UnidadMedida::query();
+        $cacheKey = $this->getCacheKey('index', $filtros);
 
-            if ($request->has('activo')) {
-                $query->where('activo', $request->boolean('activo'));
-            }
-
-            return $query->get();
-        });
+        $unidades = $this->cacheQueryIfEnabled($cacheKey, fn () => $this->service->listarTodos($filtros));
 
         return UnidadMedidaResource::collection($unidades);
     }
@@ -122,7 +121,8 @@ class UnidadMedidaController extends Controller
     public function store(StoreUnidadMedidaRequest $request): JsonResponse
     {
         $this->authorize('create', UnidadMedida::class);
-        $unidad = UnidadMedida::create($request->validated());
+
+        $unidad = $this->service->crear($request->validated());
 
         $this->flushCache();
 
@@ -167,7 +167,7 @@ class UnidadMedidaController extends Controller
     )]
     public function show(int $id): UnidadMedidaResource
     {
-        $unidad = UnidadMedida::findOrFail($id);
+        $unidad = $this->service->obtener($id);
 
         $this->authorize('view', $unidad);
 
@@ -224,11 +224,11 @@ class UnidadMedidaController extends Controller
     )]
     public function update(UpdateUnidadMedidaRequest $request, int $id): UnidadMedidaResource
     {
-        $unidad = UnidadMedida::findOrFail($id);
+        $unidad = $this->service->obtener($id);
 
         $this->authorize('update', $unidad);
 
-        $unidad->update($request->validated());
+        $unidad = $this->service->actualizar($unidad, $request->validated());
 
         $this->flushCache();
 
@@ -276,19 +276,17 @@ class UnidadMedidaController extends Controller
     )]
     public function destroy(int $id): JsonResponse
     {
-        $unidad = UnidadMedida::findOrFail($id);
+        $unidad = $this->service->obtener($id);
 
         $this->authorize('delete', $unidad);
 
-        $unidad->eliminado = now();
-        $unidad->activo = 0;
-        $unidad->save();
+        $this->service->eliminar($unidad);
 
         $this->flushCache();
 
         return response()->json([
             'message' => 'Unidad de medida eliminada exitosamente',
-            'data' => new UnidadMedidaResource($unidad)
+            'data' => new UnidadMedidaResource($unidad->fresh())
         ], 200);
     }
 }

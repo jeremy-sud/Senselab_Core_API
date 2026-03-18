@@ -7,13 +7,11 @@ use App\Http\Requests\StorePagoRequest;
 use App\Http\Requests\UpdatePagoRequest;
 use App\Http\Resources\PagoResource;
 use App\Models\Pago;
-use App\Models\CuentaPorCobrar;
-use App\Models\CuentaPorPagar;
+use App\Services\PagoService;
 use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\DB;
 use OpenApi\Attributes as OA;
 
 /**
@@ -27,6 +25,10 @@ class PagoController extends Controller
 {
     use HasEmpresaContext;
 
+    public function __construct(private readonly PagoService $service)
+    {
+    }
+
     #[OA\Get(
         path: '/api/pagos',
         summary: 'Listar todos los pagos',
@@ -38,30 +40,14 @@ class PagoController extends Controller
     {
         $this->authorize('viewAny', Pago::class);
 
-        $query = Pago::where('empresa_id', $this->getEmpresaId())
-            ->where('eliminado', 0)
-            ->with(['formaPago', 'proveedor', 'cliente', 'cuentaPorPagar', 'cuentaPorCobrar', 'ordenCompra']);
-
-        if ($request->filled('estado')) {
-            $query->where('estado', $request->estado);
-        }
-        if ($request->filled('forma_pago_id')) {
-            $query->where('forma_pago_id', $request->forma_pago_id);
-        }
-        if ($request->filled('proveedor_id')) {
-            $query->where('proveedor_id', $request->proveedor_id);
-        }
-        if ($request->filled('cliente_id')) {
-            $query->where('cliente_id', $request->cliente_id);
-        }
-        if ($request->filled(['desde', 'hasta'])) {
-            $query->whereBetween('fecha_pago', [$request->desde, $request->hasta]);
-        }
-
-        return PagoResource::collection(
-            $query->orderBy($request->get('sort_by', 'fecha_pago'), $request->get('sort_order', 'desc'))
-                ->paginate($request->get('per_page', 15))
+        $filtros = array_merge(
+            $request->only(['estado', 'forma_pago_id', 'proveedor_id', 'cliente_id', 'desde', 'hasta', 'sort_by', 'sort_order']),
+            ['empresa_id' => $this->getEmpresaId()]
         );
+
+        $pagos = $this->service->listar($filtros, (int) $request->get('per_page', 15));
+
+        return PagoResource::collection($pagos);
     }
 
     #[OA\Post(
@@ -75,31 +61,15 @@ class PagoController extends Controller
     {
         $this->authorize('create', Pago::class);
 
-        try {
-            DB::beginTransaction();
+        $pago = $this->service->crear([
+            'empresa_id' => $this->getEmpresaId(),
+            ...$request->validated()
+        ]);
 
-            $pago = Pago::create([
-                'empresa_id' => $this->getEmpresaId(),
-                ...$request->validated()
-            ]);
-
-            if ($pago->cuenta_por_pagar_id) {
-                $this->actualizarCuentaPorPagar($pago->cuenta_por_pagar_id, $pago->monto);
-            }
-            if ($pago->cuenta_por_cobrar_id) {
-                $this->actualizarCuentaPorCobrar($pago->cuenta_por_cobrar_id, $pago->monto);
-            }
-
-            DB::commit();
-
-            return response()->json([
-                'data' => PagoResource::make($pago->load(['formaPago', 'proveedor', 'cliente', 'cuentaPorPagar', 'cuentaPorCobrar']))->resolve(),
-                'message' => 'Pago registrado exitosamente'
-            ], 201);
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            return response()->json(['success' => false, 'message' => 'Error al registrar pago', 'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'], 500);
-        }
+        return response()->json([
+            'data' => PagoResource::make($pago)->resolve(),
+            'message' => 'Pago registrado exitosamente'
+        ], 201);
     }
 
     #[OA\Get(
@@ -111,10 +81,7 @@ class PagoController extends Controller
     )]
     public function show(int $id): PagoResource
     {
-        $pago = Pago::where('empresa_id', $this->getEmpresaId())
-            ->where('eliminado', 0)
-            ->with(['formaPago', 'proveedor', 'cliente', 'cuentaPorPagar', 'cuentaPorCobrar', 'ordenCompra'])
-            ->findOrFail($id);
+        $pago = $this->service->obtener($id);
 
         $this->authorize('view', $pago);
         return new PagoResource($pago);
@@ -129,41 +96,16 @@ class PagoController extends Controller
     )]
     public function update(UpdatePagoRequest $request, int $id): JsonResponse
     {
-        $pago = Pago::where('empresa_id', $this->getEmpresaId())
-            ->where('eliminado', 0)->findOrFail($id);
+        $pago = $this->service->obtener($id);
 
         $this->authorize('update', $pago);
 
-        if ($pago->estado === 'Pagado') {
-            return response()->json(['message' => 'No se puede modificar un pago ya procesado'], 422);
-        }
+        $pago = $this->service->actualizar($pago, $request->validated());
 
-        try {
-            DB::beginTransaction();
-
-            $montoAnterior = $pago->monto;
-            $pago->update($request->validated());
-
-            if ($request->filled('monto') && $request->monto != $montoAnterior) {
-                $diferencia = $request->monto - $montoAnterior;
-                if ($pago->cuenta_por_pagar_id) {
-                    $this->actualizarCuentaPorPagar($pago->cuenta_por_pagar_id, $diferencia);
-                }
-                if ($pago->cuenta_por_cobrar_id) {
-                    $this->actualizarCuentaPorCobrar($pago->cuenta_por_cobrar_id, $diferencia);
-                }
-            }
-
-            DB::commit();
-
-            return response()->json([
-                'data' => PagoResource::make($pago->fresh(['formaPago', 'proveedor', 'cliente', 'cuentaPorPagar', 'cuentaPorCobrar']))->resolve(),
-                'message' => 'Pago actualizado exitosamente'
-            ]);
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            return response()->json(['message' => 'Error al actualizar', 'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'], 500);
-        }
+        return response()->json([
+            'data' => PagoResource::make($pago)->resolve(),
+            'message' => 'Pago actualizado exitosamente'
+        ]);
     }
 
     #[OA\Delete(
@@ -175,33 +117,13 @@ class PagoController extends Controller
     )]
     public function destroy(int $id): JsonResponse
     {
-        $pago = Pago::where('empresa_id', $this->getEmpresaId())
-            ->where('eliminado', 0)->findOrFail($id);
+        $pago = $this->service->obtener($id);
 
         $this->authorize('delete', $pago);
 
-        if ($pago->estado === 'Pagado') {
-            return response()->json(['success' => false, 'message' => 'No se puede eliminar un pago ya procesado'], 422);
-        }
+        $this->service->eliminar($pago);
 
-        try {
-            DB::beginTransaction();
-
-            if ($pago->cuenta_por_pagar_id) {
-                $this->actualizarCuentaPorPagar($pago->cuenta_por_pagar_id, -$pago->monto);
-            }
-            if ($pago->cuenta_por_cobrar_id) {
-                $this->actualizarCuentaPorCobrar($pago->cuenta_por_cobrar_id, -$pago->monto);
-            }
-
-            $pago->update(['eliminado' => 1, 'activo' => 0]);
-            DB::commit();
-
-            return response()->json(['success' => true, 'message' => 'Pago eliminado exitosamente']);
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            return response()->json(['success' => false, 'message' => 'Error al eliminar', 'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'], 500);
-        }
+        return response()->json(['success' => true, 'message' => 'Pago eliminado exitosamente']);
     }
 
     #[OA\Get(
@@ -213,46 +135,8 @@ class PagoController extends Controller
     )]
     public function resumenPorFormaPago(): JsonResponse
     {
-        $resumen = Pago::where('empresa_id', $this->getEmpresaId())
-            ->where('eliminado', 0)
-            ->where('estado', 'Pagado')
-            ->select('forma_pago_id', DB::raw('COUNT(*) as cantidad'), DB::raw('SUM(monto) as total'))
-            ->groupBy('forma_pago_id')
-            ->with('formaPago')
-            ->get();
+        $resumen = $this->service->resumenPorFormaPago($this->getEmpresaId());
 
         return response()->json(['success' => true, 'data' => $resumen]);
-    }
-
-    private function actualizarCuentaPorPagar(int $cuentaId, float $monto): void
-    {
-        $cuenta = CuentaPorPagar::findOrFail($cuentaId);
-        $cuenta->increment('monto_pagado', $monto);
-
-        $nuevoEstado = match (true) {
-            $cuenta->monto_pagado >= $cuenta->monto_original => 'Pagada Totalmente',
-            $cuenta->monto_pagado > 0 => 'Pagada Parcialmente',
-            default => $cuenta->estado
-        };
-
-        if ($nuevoEstado !== $cuenta->estado) {
-            $cuenta->update(['estado' => $nuevoEstado]);
-        }
-    }
-
-    private function actualizarCuentaPorCobrar(int $cuentaId, float $monto): void
-    {
-        $cuenta = CuentaPorCobrar::findOrFail($cuentaId);
-        $cuenta->increment('monto_pagado', $monto);
-
-        $nuevoEstado = match (true) {
-            $cuenta->monto_pagado >= $cuenta->monto_original => 'Pagada Totalmente',
-            $cuenta->monto_pagado > 0 => 'Pagada Parcialmente',
-            default => $cuenta->estado
-        };
-
-        if ($nuevoEstado !== $cuenta->estado) {
-            $cuenta->update(['estado' => $nuevoEstado]);
-        }
     }
 }
