@@ -7,9 +7,9 @@ use App\Http\Resources\FeCertificadoDigitalResource;
 use App\Http\Requests\StoreFeCertificadoDigitalRequest;
 use App\Http\Requests\UpdateFeCertificadoDigitalRequest;
 use App\Models\FeCertificadoDigital;
+use App\Services\FeCertificadoDigitalService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use OpenApi\Attributes as OA;
 
@@ -19,6 +19,9 @@ use OpenApi\Attributes as OA;
 )]
 class FeCertificadoDigitalController extends Controller
 {
+    public function __construct(
+        private readonly FeCertificadoDigitalService $service
+    ) {}
     #[OA\Get(
         path: '/api/fe-certificados-digitales',
         summary: 'Listar certificados digitales',
@@ -87,31 +90,12 @@ class FeCertificadoDigitalController extends Controller
         /** @var \App\Models\Usuario $user */
         $user = $request->user();
 
-        $query = FeCertificadoDigital::where('empresa_id', $user->empresa_id);
+        $filtros = [
+            'empresa_id' => $user->empresa_id,
+            ...$request->only(['activo', 'ambiente', 'solo_vigentes', 'dias_vencimiento']),
+        ];
 
-        // Filtrar por estado activo
-        if ($request->has('activo')) {
-            $query->where('activo', $request->boolean('activo'));
-        }
-
-        // Filtrar por ambiente
-        if ($request->has('ambiente')) {
-            $query->where('ambiente', $request->ambiente);
-        }
-
-        // Filtrar certificados vigentes
-        if ($request->boolean('solo_vigentes')) {
-            $query->where('fecha_vencimiento', '>=', now());
-        }
-
-        // Filtrar certificados próximos a vencer
-        if ($request->has('dias_vencimiento')) {
-            $diasVencimiento = (int) $request->dias_vencimiento;
-            $query->whereDate('fecha_vencimiento', '<=', now()->addDays($diasVencimiento))
-                ->whereDate('fecha_vencimiento', '>=', now());
-        }
-
-        $certificados = $query->latest()->get();
+        $certificados = $this->service->listarTodos($filtros);
 
         return response()->json([
             'data' => FeCertificadoDigitalResource::collection($certificados),
@@ -167,30 +151,20 @@ class FeCertificadoDigitalController extends Controller
         // Manejar subida del archivo .p12
         if ($request->hasFile('archivo_certificado')) {
             $file = $request->file('archivo_certificado');
-            $nombreOriginal = $file->getClientOriginalName();
             $nombreUnico = Str::uuid() . '.p12';
 
-            // Guardar en almacenamiento seguro
             $ruta = $file->storeAs(
                 'certificados_fe/' . $user->empresa_id,
                 $nombreUnico,
                 'private'
             );
 
-            $data['nombre_archivo_original'] = $nombreOriginal;
             $data['ruta_archivo'] = $ruta;
-        }
-
-        // Si es el primer certificado o se marca como activo, desactivar otros
-        if ($data['activo'] ?? false) {
-            FeCertificadoDigital::where('empresa_id', $user->empresa_id)
-                ->where('ambiente', $data['ambiente'])
-                ->update(['activo' => false]);
         }
 
         $data['empresa_id'] = $user->empresa_id;
 
-        $certificado = FeCertificadoDigital::create($data);
+        $certificado = $this->service->crear($data);
 
         return response()->json([
             'message' => 'Certificado digital creado exitosamente',
@@ -217,24 +191,11 @@ class FeCertificadoDigitalController extends Controller
     {
         $this->authorize('update', $feCertificadoDigital);
 
-        /** @var \App\Models\Usuario $user */
-        $user = $request->user();
-
-        $validated = $request->validated();
-
-        // Si se marca como activo, desactivar otros certificados del mismo ambiente
-        if (($validated['activo'] ?? false) && !$feCertificadoDigital->activo) {
-            FeCertificadoDigital::where('empresa_id', $user->empresa_id)
-                ->where('ambiente', $feCertificadoDigital->ambiente)
-                ->where('id', '!=', $feCertificadoDigital->id)
-                ->update(['activo' => false]);
-        }
-
-        $feCertificadoDigital->update($validated);
+        $certificado = $this->service->actualizar($feCertificadoDigital, $request->validated());
 
         return response()->json([
             'message' => 'Certificado digital actualizado exitosamente',
-            'data' => new FeCertificadoDigitalResource($feCertificadoDigital),
+            'data' => new FeCertificadoDigitalResource($certificado),
         ]);
     }
 
@@ -245,12 +206,7 @@ class FeCertificadoDigitalController extends Controller
     {
         $this->authorize('delete', $certificado);
 
-        // Eliminar archivo físico
-        if ($certificado->ruta_archivo && Storage::disk('private')->exists($certificado->ruta_archivo)) {
-            Storage::disk('private')->delete($certificado->ruta_archivo);
-        }
-
-        $certificado->delete();
+        $this->service->eliminar($certificado);
 
         return response()->json([
             'message' => 'Certificado digital eliminado exitosamente',
@@ -293,20 +249,11 @@ class FeCertificadoDigitalController extends Controller
         /** @var \App\Models\Usuario $user */
         $user = $request->user();
 
-        // Verificar que no esté vencido
-        if ($certificado->fecha_vencimiento < now()) {
-            return response()->json([
-                'message' => 'No se puede activar un certificado vencido',
-            ], 422);
+        try {
+            $certificado = $this->service->activar($certificado, $user->empresa_id);
+        } catch (\App\Exceptions\BusinessException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
         }
-
-        // Desactivar otros certificados del mismo ambiente
-        FeCertificadoDigital::where('empresa_id', $user->empresa_id)
-            ->where('ambiente', $certificado->ambiente)
-            ->where('id', '!=', $certificado->id)
-            ->update(['activo' => false]);
-
-        $certificado->update(['activo' => true]);
 
         return response()->json([
             'message' => 'Certificado activado exitosamente',
@@ -321,7 +268,7 @@ class FeCertificadoDigitalController extends Controller
     {
         $this->authorize('update', $certificado);
 
-        $certificado->update(['activo' => false]);
+        $this->service->desactivar($certificado);
 
         return response()->json([
             'message' => 'Certificado desactivado exitosamente',
@@ -366,11 +313,7 @@ class FeCertificadoDigitalController extends Controller
 
         $ambiente = $request->get('ambiente', 'produccion');
 
-        $certificado = FeCertificadoDigital::where('empresa_id', $user->empresa_id)
-            ->where('ambiente', $ambiente)
-            ->where('activo', true)
-            ->where('fecha_vencimiento', '>=', now())
-            ->first();
+        $certificado = $this->service->obtenerActivo($user->empresa_id, $ambiente);
 
         if (!$certificado) {
             return response()->json([
@@ -393,13 +336,9 @@ class FeCertificadoDigitalController extends Controller
         /** @var \App\Models\Usuario $user */
         $user = $request->user();
 
-        $dias = $request->get('dias', 30);
+        $dias = (int) $request->get('dias', 30);
 
-        $certificados = FeCertificadoDigital::where('empresa_id', $user->empresa_id)
-            ->whereDate('fecha_vencimiento', '<=', now()->addDays($dias))
-            ->whereDate('fecha_vencimiento', '>=', now())
-            ->orderBy('fecha_vencimiento')
-            ->get();
+        $certificados = $this->service->proximosVencer($user->empresa_id, $dias);
 
         return response()->json([
             'data' => FeCertificadoDigitalResource::collection($certificados),

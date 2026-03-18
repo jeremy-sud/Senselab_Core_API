@@ -7,11 +7,11 @@ use App\Http\Requests\StoreFormaPagoRequest;
 use App\Http\Requests\UpdateFormaPagoRequest;
 use App\Http\Resources\FormaPagoResource;
 use App\Models\FormaPago;
+use App\Services\FormaPagoService;
 use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\Cache;
 use OpenApi\Attributes as OA;
 
 /**
@@ -30,6 +30,10 @@ class FormaPagoController extends Controller
     /** @var array<int, string> */
     protected array $cacheTags = ['formas-pago', 'catalogos'];
     protected int $cacheTTL = 86400; // 24 horas - catálogo muy estable
+
+    public function __construct(
+        private readonly FormaPagoService $service
+    ) {}
 
     /**
      * Listar todas las formas de pago
@@ -54,24 +58,14 @@ class FormaPagoController extends Controller
     {
         $this->authorize('viewAny', FormaPago::class);
 
-        $cacheKey = $this->getCacheKey('index', [
-            'activo' => $request->input('activo'),
-            'tipo' => $request->input('tipo')
-        ]);
+        $filtros = array_filter([
+            'activo' => $request->has('activo') ? $request->boolean('activo') : null,
+            'tipo' => $request->input('tipo'),
+        ], fn ($v) => $v !== null);
 
-        $formasPago = $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
-            $query = FormaPago::query();
+        $cacheKey = $this->getCacheKey('index', $filtros);
 
-            if ($request->has('activo')) {
-                $query->where('activo', $request->boolean('activo'));
-            }
-
-            if ($request->filled('tipo')) {
-                $query->where('tipo', $request->tipo);
-            }
-
-            return $query->get();
-        });
+        $formasPago = $this->cacheQueryIfEnabled($cacheKey, fn () => $this->service->listarTodos($filtros));
 
         return FormaPagoResource::collection($formasPago);
     }
@@ -106,7 +100,8 @@ class FormaPagoController extends Controller
     public function store(StoreFormaPagoRequest $request): JsonResponse
     {
         $this->authorize('create', FormaPago::class);
-        $formaPago = FormaPago::create($request->validated());
+
+        $formaPago = $this->service->crear($request->validated());
 
         $this->flushCache();
 
@@ -133,7 +128,7 @@ class FormaPagoController extends Controller
     )]
     public function show(int $id): FormaPagoResource
     {
-        $formaPago = FormaPago::findOrFail($id);
+        $formaPago = $this->service->obtener($id);
 
         $this->authorize('view', $formaPago);
 
@@ -155,14 +150,13 @@ class FormaPagoController extends Controller
     )]
     public function update(UpdateFormaPagoRequest $request, int $id): FormaPagoResource
     {
-        $formaPago = FormaPago::findOrFail($id);
+        $formaPago = $this->service->obtener($id);
 
         $this->authorize('update', $formaPago);
 
-        $formaPago->update($request->validated());
+        $formaPago = $this->service->actualizar($formaPago, $request->validated());
 
-        // Invalidar cache de formas de pago
-        Cache::tags(['formas_pago', 'catalogos'])->flush();
+        $this->flushCache();
 
         return new FormaPagoResource($formaPago);
     }
@@ -183,20 +177,17 @@ class FormaPagoController extends Controller
     )]
     public function destroy(int $id): JsonResponse
     {
-        $formaPago = FormaPago::findOrFail($id);
+        $formaPago = $this->service->obtener($id);
 
         $this->authorize('delete', $formaPago);
 
-        $formaPago->eliminado = now();
-        $formaPago->activo = 0;
-        $formaPago->save();
+        $this->service->eliminar($formaPago);
 
-        // Invalidar cache de formas de pago
-        Cache::tags(['formas_pago', 'catalogos'])->flush();
+        $this->flushCache();
 
         return response()->json([
             'message' => 'Forma de pago eliminada exitosamente',
-            'data' => new FormaPagoResource($formaPago)
+            'data' => new FormaPagoResource($formaPago->fresh())
         ], 200);
     }
 }

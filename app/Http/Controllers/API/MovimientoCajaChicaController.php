@@ -5,11 +5,10 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MovimientoCajaChicaResource;
 use App\Models\MovimientoCajaChica;
-use App\Models\CajaChica;
+use App\Services\MovimientoCajaChicaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\DB;
 use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
 
@@ -19,9 +18,9 @@ class MovimientoCajaChicaController extends Controller
 
     /** @var array<int, string> */
     protected array $cacheTags = ['movimientos_caja_chica', 'caja_chica', 'tesoreria'];
-    protected int $cacheTTL = 600; // 10 minutos
+    protected int $cacheTTL = 600;
 
-    public function __construct()
+    public function __construct(private readonly MovimientoCajaChicaService $service)
     {
         $this->middleware('auth:sanctum');
     }
@@ -92,24 +91,8 @@ class MovimientoCajaChicaController extends Controller
         $cacheKey = $this->generateCacheKey('movimientos_caja_chica.index', $request->all());
 
         return $this->getCached($cacheKey, function () use ($request) {
-            $perPage = $request->input('per_page', 15);
-
-            $query = MovimientoCajaChica::with(['cajaChica', 'cuentaContable'])
-                ->activos();
-
-            if ($request->filled('caja_chica_id')) {
-                $query->porCaja($request->caja_chica_id);
-            }
-
-            if ($request->filled('tipo_movimiento')) {
-                $query->porTipo($request->tipo_movimiento);
-            }
-
-            if ($request->filled('fecha_desde') && $request->filled('fecha_hasta')) {
-                $query->fechaBetween($request->fecha_desde, $request->fecha_hasta);
-            }
-
-            $movimientos = $query->orderBy('id', 'desc')->paginate($perPage);
+            $filtros = $request->only(['caja_chica_id', 'tipo_movimiento', 'fecha_desde', 'fecha_hasta']);
+            $movimientos = $this->service->listar($filtros, (int) $request->input('per_page', 15));
 
             return MovimientoCajaChicaResource::collection($movimientos);
         });
@@ -166,55 +149,16 @@ class MovimientoCajaChicaController extends Controller
             'cuenta_contable_id' => 'nullable|exists:cuentas_contables,id',
         ]);
 
-        DB::beginTransaction();
-        try {
-            $cajaChica = CajaChica::findOrFail($validated['caja_chica_id']);
+        $movimiento = $this->service->crear($validated);
+        $this->clearCache();
 
-            // Verificar que el fondo esté abierto
-            if (!$cajaChica->estaAbierta()) {
-                return response()->json([
-                    'message' => 'Solo se pueden registrar movimientos en fondos abiertos'
-                ], 422);
-            }
-
-            // Verificar saldo disponible para egresos
-            if ($validated['tipo_movimiento'] === MovimientoCajaChica::TIPO_EGRESO) {
-                if ($cajaChica->saldo_actual < $validated['monto']) {
-                    return response()->json([
-                        'message' => 'Saldo insuficiente en caja chica',
-                        'saldo_actual' => $cajaChica->saldo_actual
-                    ], 422);
-                }
-            }
-
-            // Crear movimiento
-            $movimiento = MovimientoCajaChica::create($validated);
-
-            // Actualizar saldo de caja chica
-            if ($validated['tipo_movimiento'] === MovimientoCajaChica::TIPO_EGRESO) {
-                $cajaChica->decrement('saldo_actual', $validated['monto']);
-            } else {
-                $cajaChica->increment('saldo_actual', $validated['monto']);
-            }
-
-            DB::commit();
-            $this->clearCache();
-
-            return (new MovimientoCajaChicaResource($movimiento->load(['cajaChica', 'cuentaContable'])))
-                ->additional([
-                    'message' => 'Movimiento registrado exitosamente',
-                    'saldo_actual' => $cajaChica->fresh()->saldo_actual
-                ])
-                ->response()
-                ->setStatusCode(201);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => 'Error al registrar movimiento',
-                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
-            ], 500);
-        }
+        return (new MovimientoCajaChicaResource($movimiento))
+            ->additional([
+                'message' => 'Movimiento registrado exitosamente',
+                'saldo_actual' => $movimiento->cajaChica->fresh()->saldo_actual
+            ])
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
@@ -244,7 +188,7 @@ class MovimientoCajaChicaController extends Controller
     )]
     public function show(string $id): MovimientoCajaChicaResource
     {
-        $movimiento = MovimientoCajaChica::with(['cajaChica', 'cuentaContable'])->findOrFail($id);
+        $movimiento = $this->service->obtener((int) $id);
         $this->authorize('view', $movimiento);
 
         $cacheKey = $this->generateCacheKey("movimientos_caja_chica.show.{$id}");
@@ -290,7 +234,7 @@ class MovimientoCajaChicaController extends Controller
     )]
     public function update(Request $request, string $id): MovimientoCajaChicaResource|JsonResponse
     {
-        $movimiento = MovimientoCajaChica::findOrFail($id);
+        $movimiento = $this->service->obtener((int) $id);
         $this->authorize('update', $movimiento);
 
         $validated = $request->validate([
@@ -298,23 +242,11 @@ class MovimientoCajaChicaController extends Controller
             'concepto' => 'sometimes|string',
         ]);
 
-        DB::beginTransaction();
-        try {
-            $movimiento->update($validated);
+        $movimiento = $this->service->actualizar($movimiento, $validated);
+        $this->clearCache();
 
-            DB::commit();
-            $this->clearCache();
-
-            return (new MovimientoCajaChicaResource($movimiento->fresh(['cajaChica', 'cuentaContable'])))
-                ->additional(['message' => 'Movimiento actualizado exitosamente']);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => 'Error al actualizar movimiento',
-                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
-            ], 500);
-        }
+        return (new MovimientoCajaChicaResource($movimiento))
+            ->additional(['message' => 'Movimiento actualizado exitosamente']);
     }
 
     /**
@@ -344,40 +276,14 @@ class MovimientoCajaChicaController extends Controller
     )]
     public function destroy(string $id): JsonResponse
     {
-        $movimiento = MovimientoCajaChica::findOrFail($id);
+        $movimiento = $this->service->obtener((int) $id);
         $this->authorize('delete', $movimiento);
 
-        DB::beginTransaction();
-        try {
-            $cajaChica = CajaChica::findOrFail($movimiento->caja_chica_id);
+        $this->service->eliminar($movimiento);
+        $this->clearCache();
 
-            // Revertir saldo
-            if ($movimiento->tipo_movimiento === MovimientoCajaChica::TIPO_EGRESO) {
-                $cajaChica->increment('saldo_actual', $movimiento->monto);
-            } else {
-                $cajaChica->decrement('saldo_actual', $movimiento->monto);
-            }
-
-            // Soft delete
-            $movimiento->update([
-                'eliminado' => true,
-                'activo' => false
-            ]);
-
-            DB::commit();
-            $this->clearCache();
-
-            return response()->json([
-                'message' => 'Movimiento anulado exitosamente',
-                'saldo_actual' => $cajaChica->fresh()->saldo_actual
-            ]);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => 'Error al anular movimiento',
-                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
-            ], 500);
-        }
+        return response()->json([
+            'message' => 'Movimiento anulado exitosamente',
+        ]);
     }
 }

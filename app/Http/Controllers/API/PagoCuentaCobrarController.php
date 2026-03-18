@@ -4,9 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\PagoCuentaCobrar;
-use App\Models\CuentaPorCobrar;
+use App\Services\PagoCuentaCobrarService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
 
@@ -16,9 +15,9 @@ class PagoCuentaCobrarController extends Controller
 
     /** @var array<int, string> */
     protected array $cacheTags = ['pagos_cuentas_cobrar', 'cuentas_cobrar', 'transacciones'];
-    protected int $cacheTTL = 600; // 10 minutos
+    protected int $cacheTTL = 600;
 
-    public function __construct()
+    public function __construct(private readonly PagoCuentaCobrarService $service)
     {
         $this->middleware('auth:sanctum');
     }
@@ -89,24 +88,8 @@ class PagoCuentaCobrarController extends Controller
         $cacheKey = $this->generateCacheKey('pagos_cuentas_cobrar.index', $request->all());
 
         return $this->getCached($cacheKey, function () use ($request) {
-            $perPage = $request->input('per_page', 15);
-
-            $query = PagoCuentaCobrar::with(['cuentaPorCobrar', 'formaPago'])
-                ->activos();
-
-            if ($request->filled('cuenta_por_cobrar_id')) {
-                $query->where('cuenta_por_cobrar_id', $request->cuenta_por_cobrar_id);
-            }
-
-            if ($request->filled('forma_pago_id')) {
-                $query->where('forma_pago_id', $request->forma_pago_id);
-            }
-
-            if ($request->filled('fecha_desde') && $request->filled('fecha_hasta')) {
-                $query->fechaBetween($request->fecha_desde, $request->fecha_hasta);
-            }
-
-            $pagos = $query->orderBy('id', 'desc')->paginate($perPage);
+            $filtros = $request->only(['cuenta_por_cobrar_id', 'forma_pago_id', 'fecha_desde', 'fecha_hasta']);
+            $pagos = $this->service->listar($filtros, (int) $request->input('per_page', 15));
 
             return response()->json($pagos);
         });
@@ -164,40 +147,13 @@ class PagoCuentaCobrarController extends Controller
             'observaciones' => 'nullable|string',
         ]);
 
-        DB::beginTransaction();
-        try {
-            // Verificar que el monto no exceda el saldo pendiente
-            $cuenta = CuentaPorCobrar::findOrFail($validated['cuenta_por_cobrar_id']);
-            $saldoPendiente = $cuenta->monto_original - $cuenta->monto_pagado;
+        $pago = $this->service->crear($validated);
+        $this->clearCache();
 
-            if ($validated['monto_pago'] > $saldoPendiente) {
-                return response()->json([
-                    'message' => 'El monto del pago excede el saldo pendiente',
-                    'saldo_pendiente' => $saldoPendiente
-                ], 422);
-            }
-
-            // Crear el pago
-            $pago = PagoCuentaCobrar::create($validated);
-
-            // Actualizar monto pagado en la cuenta
-            $cuenta->increment('monto_pagado', $validated['monto_pago']);
-
-            DB::commit();
-            $this->clearCache();
-
-            return response()->json([
-                'message' => 'Pago registrado exitosamente',
-                'data' => $pago->load(['cuentaPorCobrar', 'formaPago'])
-            ], 201);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => 'Error al registrar pago',
-                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
-            ], 500);
-        }
+        return response()->json([
+            'message' => 'Pago registrado exitosamente',
+            'data' => $pago
+        ], 201);
     }
 
     /**
@@ -228,7 +184,7 @@ class PagoCuentaCobrarController extends Controller
     )]
     public function show(string $id): \Illuminate\Http\JsonResponse
     {
-        $pago = PagoCuentaCobrar::with(['cuentaPorCobrar', 'formaPago'])->findOrFail($id);
+        $pago = $this->service->obtener((int) $id);
         $this->authorize('view', $pago);
 
         $cacheKey = $this->generateCacheKey("pagos_cuentas_cobrar.show.{$id}");
@@ -274,7 +230,7 @@ class PagoCuentaCobrarController extends Controller
     )]
     public function update(Request $request, string $id): \Illuminate\Http\JsonResponse
     {
-        $pago = PagoCuentaCobrar::findOrFail($id);
+        $pago = $this->service->obtener((int) $id);
         $this->authorize('update', $pago);
 
         $validated = $request->validate([
@@ -282,25 +238,13 @@ class PagoCuentaCobrarController extends Controller
             'observaciones' => 'nullable|string',
         ]);
 
-        DB::beginTransaction();
-        try {
-            $pago->update($validated);
+        $pago = $this->service->actualizar($pago, $validated);
+        $this->clearCache();
 
-            DB::commit();
-            $this->clearCache();
-
-            return response()->json([
-                'message' => 'Pago actualizado exitosamente',
-                'data' => $pago->fresh(['cuentaPorCobrar', 'formaPago'])
-            ]);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => 'Error al actualizar pago',
-                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
-            ], 500);
-        }
+        return response()->json([
+            'message' => 'Pago actualizado exitosamente',
+            'data' => $pago
+        ]);
     }
 
     /**
@@ -330,34 +274,14 @@ class PagoCuentaCobrarController extends Controller
     )]
     public function destroy(string $id): \Illuminate\Http\JsonResponse
     {
-        $pago = PagoCuentaCobrar::findOrFail($id);
+        $pago = $this->service->obtener((int) $id);
         $this->authorize('delete', $pago);
 
-        DB::beginTransaction();
-        try {
-            // Revertir monto pagado en la cuenta
-            $cuenta = CuentaPorCobrar::findOrFail($pago->cuenta_por_cobrar_id);
-            $cuenta->decrement('monto_pagado', $pago->monto_pago);
+        $this->service->eliminar($pago);
+        $this->clearCache();
 
-            // Soft delete del pago
-            $pago->update([
-                'eliminado' => true,
-                'activo' => false
-            ]);
-
-            DB::commit();
-            $this->clearCache();
-
-            return response()->json([
-                'message' => 'Pago anulado exitosamente'
-            ]);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => 'Error al anular pago',
-                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
-            ], 500);
-        }
+        return response()->json([
+            'message' => 'Pago anulado exitosamente'
+        ]);
     }
 }

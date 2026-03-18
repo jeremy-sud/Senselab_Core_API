@@ -8,11 +8,11 @@ use App\Http\Requests\UpdateComprobanteRecibidoElectronicoRequest;
 use App\Http\Requests\ActualizarRespuestaHaciendaRequest;
 use App\Http\Resources\ComprobanteRecibidoElectronicoResource;
 use App\Models\ComprobanteRecibidoElectronico;
+use App\Services\ComprobanteRecibidoElectronicoService;
 use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\DB;
 use OpenApi\Attributes as OA;
 
 /**
@@ -25,6 +25,10 @@ class ComprobanteRecibidoElectronicoController extends Controller
 {
     use HasEmpresaContext;
 
+    public function __construct(
+        private readonly ComprobanteRecibidoElectronicoService $service
+    ) {}
+
     #[OA\Get(
         path: '/api/comprobantes-recibidos-electronicos',
         summary: 'Listar comprobantes electrónicos recibidos',
@@ -36,10 +40,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
     {
         $this->authorize('viewAny', ComprobanteRecibidoElectronico::class);
 
-        $comprobantes = ComprobanteRecibidoElectronico::where('empresa_id', $this->getEmpresaId())
-            ->with(['proveedor', 'entradaInventario', 'usuarioConfirmacion'])
-            ->orderByDesc('fecha_recepcion_sistema')
-            ->paginate(15);
+        $comprobantes = $this->service->listar(['empresa_id' => $this->getEmpresaId()]);
 
         return ComprobanteRecibidoElectronicoResource::collection($comprobantes)
             ->additional(['success' => true]);
@@ -56,26 +57,18 @@ class ComprobanteRecibidoElectronicoController extends Controller
     {
         $this->authorize('create', ComprobanteRecibidoElectronico::class);
 
-        try {
-            DB::beginTransaction();
-            $comprobante = ComprobanteRecibidoElectronico::create([
-                'empresa_id' => $this->getEmpresaId(),
-                ...$request->validated(),
-                'moneda' => $request->moneda ?? 'CRC',
-                'estado_hacienda' => 'Procesando',
-                'confirmado_usuario' => 0
-            ]);
-            DB::commit();
+        $data = [
+            'empresa_id' => $this->getEmpresaId(),
+            ...$request->validated(),
+        ];
 
-            return response()->json([
-                'success' => true,
-                'data' => ComprobanteRecibidoElectronicoResource::make($comprobante->load('proveedor'))->resolve(),
-                'message' => 'Comprobante registrado exitosamente'
-            ], 201);
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            return response()->json(['success' => false, 'message' => 'Error al registrar', 'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'], 500);
-        }
+        $comprobante = $this->service->crear($data);
+
+        return response()->json([
+            'success' => true,
+            'data' => ComprobanteRecibidoElectronicoResource::make($comprobante->load('proveedor'))->resolve(),
+            'message' => 'Comprobante registrado exitosamente'
+        ], 201);
     }
 
     #[OA\Get(
@@ -87,9 +80,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
     )]
     public function show(int $id): JsonResponse
     {
-        $comprobante = ComprobanteRecibidoElectronico::where('empresa_id', $this->getEmpresaId())
-            ->with(['proveedor', 'entradaInventario', 'usuarioConfirmacion'])
-            ->findOrFail($id);
+        $comprobante = $this->service->obtenerPorEmpresa($this->getEmpresaId(), $id);
 
         $this->authorize('view', $comprobante);
 
@@ -108,27 +99,20 @@ class ComprobanteRecibidoElectronicoController extends Controller
     )]
     public function update(UpdateComprobanteRecibidoElectronicoRequest $request, int $id): JsonResponse
     {
-        $comprobante = ComprobanteRecibidoElectronico::where('empresa_id', $this->getEmpresaId())->findOrFail($id);
+        $comprobante = $this->service->obtenerPorEmpresa($this->getEmpresaId(), $id);
         $this->authorize('update', $comprobante);
 
-        if ($comprobante->confirmado_usuario == 1) {
-            return response()->json(['success' => false, 'message' => 'No se puede modificar un comprobante confirmado'], 422);
-        }
-
         try {
-            DB::beginTransaction();
-            $comprobante->update($request->validated());
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'data' => ComprobanteRecibidoElectronicoResource::make($comprobante->fresh('proveedor'))->resolve(),
-                'message' => 'Comprobante actualizado exitosamente'
-            ]);
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            return response()->json(['success' => false, 'message' => 'Error al actualizar', 'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'], 500);
+            $this->service->actualizar($comprobante, $request->validated());
+        } catch (\App\Exceptions\BusinessException $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
         }
+
+        return response()->json([
+            'success' => true,
+            'data' => ComprobanteRecibidoElectronicoResource::make($comprobante->fresh('proveedor'))->resolve(),
+            'message' => 'Comprobante actualizado exitosamente'
+        ]);
     }
 
     #[OA\Delete(
@@ -140,14 +124,15 @@ class ComprobanteRecibidoElectronicoController extends Controller
     )]
     public function destroy(int $id): JsonResponse
     {
-        $comprobante = ComprobanteRecibidoElectronico::where('empresa_id', $this->getEmpresaId())->findOrFail($id);
+        $comprobante = $this->service->obtenerPorEmpresa($this->getEmpresaId(), $id);
         $this->authorize('delete', $comprobante);
 
-        if ($comprobante->confirmado_usuario == 1) {
-            return response()->json(['success' => false, 'message' => 'No se puede eliminar un comprobante confirmado'], 422);
+        try {
+            $this->service->eliminar($comprobante);
+        } catch (\App\Exceptions\BusinessException $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
         }
 
-        $comprobante->delete();
         return response()->json(['success' => true, 'message' => 'Comprobante eliminado exitosamente']);
     }
 
@@ -160,21 +145,17 @@ class ComprobanteRecibidoElectronicoController extends Controller
     )]
     public function confirmar(Request $request, int $id): JsonResponse
     {
-        $comprobante = ComprobanteRecibidoElectronico::where('empresa_id', $this->getEmpresaId())->findOrFail($id);
+        $comprobante = $this->service->obtenerPorEmpresa($this->getEmpresaId(), $id);
 
-        if ($comprobante->confirmado_usuario == 1) {
-            return response()->json(['success' => false, 'message' => 'El comprobante ya fue confirmado'], 422);
+        try {
+            $comprobante = $this->service->confirmar($comprobante, $request->user()->id);
+        } catch (\App\Exceptions\BusinessException $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
         }
-
-        $comprobante->update([
-            'confirmado_usuario' => 1,
-            'fecha_confirmacion_usuario' => now(),
-            'usuario_confirmacion_id' => $request->user()->id
-        ]);
 
         return response()->json([
             'success' => true,
-            'data' => ComprobanteRecibidoElectronicoResource::make($comprobante->fresh(['proveedor', 'usuarioConfirmacion']))->resolve(),
+            'data' => ComprobanteRecibidoElectronicoResource::make($comprobante)->resolve(),
             'message' => 'Comprobante confirmado exitosamente'
         ]);
     }
@@ -188,17 +169,13 @@ class ComprobanteRecibidoElectronicoController extends Controller
     )]
     public function rechazar(Request $request, int $id): JsonResponse
     {
-        $comprobante = ComprobanteRecibidoElectronico::where('empresa_id', $this->getEmpresaId())->findOrFail($id);
+        $comprobante = $this->service->obtenerPorEmpresa($this->getEmpresaId(), $id);
 
-        $comprobante->update([
-            'confirmado_usuario' => 2,
-            'fecha_confirmacion_usuario' => now(),
-            'usuario_confirmacion_id' => $request->user()->id
-        ]);
+        $comprobante = $this->service->rechazar($comprobante, $request->user()->id);
 
         return response()->json([
             'success' => true,
-            'data' => ComprobanteRecibidoElectronicoResource::make($comprobante->fresh(['proveedor', 'usuarioConfirmacion']))->resolve(),
+            'data' => ComprobanteRecibidoElectronicoResource::make($comprobante)->resolve(),
             'message' => 'Comprobante rechazado exitosamente'
         ]);
     }
@@ -212,11 +189,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
     )]
     public function porProveedor(int $proveedorId): AnonymousResourceCollection
     {
-        $comprobantes = ComprobanteRecibidoElectronico::where('empresa_id', $this->getEmpresaId())
-            ->where('proveedor_id', $proveedorId)
-            ->with(['proveedor', 'entradaInventario'])
-            ->orderByDesc('fecha_emision_comprobante')
-            ->paginate(15);
+        $comprobantes = $this->service->porProveedor($this->getEmpresaId(), $proveedorId);
 
         return ComprobanteRecibidoElectronicoResource::collection($comprobantes)
             ->additional(['success' => true]);
@@ -231,11 +204,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
     )]
     public function pendientes(): AnonymousResourceCollection
     {
-        $comprobantes = ComprobanteRecibidoElectronico::where('empresa_id', $this->getEmpresaId())
-            ->where('confirmado_usuario', 0)
-            ->with(['proveedor'])
-            ->orderBy('fecha_recepcion_sistema')
-            ->get();
+        $comprobantes = $this->service->pendientes($this->getEmpresaId());
 
         return ComprobanteRecibidoElectronicoResource::collection($comprobantes)
             ->additional(['success' => true]);
@@ -250,10 +219,7 @@ class ComprobanteRecibidoElectronicoController extends Controller
     )]
     public function resumenPorProveedor(): JsonResponse
     {
-        $resumen = ComprobanteRecibidoElectronico::where('empresa_id', $this->getEmpresaId())
-            ->selectRaw('estado_hacienda, COUNT(*) as total_comprobantes, SUM(total_comprobante) as monto_total')
-            ->groupBy('estado_hacienda')
-            ->get();
+        $resumen = $this->service->resumenPorEstadoHacienda($this->getEmpresaId());
 
         return response()->json(['success' => true, 'data' => $resumen]);
     }
@@ -267,14 +233,9 @@ class ComprobanteRecibidoElectronicoController extends Controller
     )]
     public function actualizarRespuestaHacienda(ActualizarRespuestaHaciendaRequest $request, int $id): JsonResponse
     {
-        $comprobante = ComprobanteRecibidoElectronico::where('empresa_id', $this->getEmpresaId())->findOrFail($id);
+        $comprobante = $this->service->obtenerPorEmpresa($this->getEmpresaId(), $id);
 
-        $comprobante->update([
-            'xml_respuesta_hacienda' => $request->xml_respuesta_hacienda,
-            'estado_hacienda' => $request->estado_hacienda,
-            'mensaje_hacienda' => $request->mensaje_hacienda,
-            'fecha_respuesta_hacienda' => now()
-        ]);
+        $comprobante = $this->service->actualizarRespuestaHacienda($comprobante, $request->validated());
 
         return response()->json([
             'success' => true,

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MensajeHaciendaResource;
 use App\Models\MensajeHacienda;
+use App\Services\MensajeHaciendaService;
 use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -23,7 +24,11 @@ class MensajeHaciendaController extends Controller
 
     /** @var array<int, string> */
     protected array $cacheTags = ['mensajes-hacienda', 'hacienda', 'facturacion-electronica'];
-    protected int $cacheTTL = 900; // 15 minutos - mensajes dinámicos de Hacienda
+    protected int $cacheTTL = 900;
+
+    public function __construct(
+        private readonly MensajeHaciendaService $service
+    ) {}
 
     /**
      * Display a listing of the resource.
@@ -42,42 +47,17 @@ class MensajeHaciendaController extends Controller
     {
         $this->authorize('viewAny', MensajeHacienda::class);
 
-        $cacheKey = $this->getCacheKey('index', [
-            'estado' => $request->get('estado'),
-            'tipo_mensaje' => $request->get('tipo_mensaje'),
-            'comprobante_id' => $request->get('comprobante_id'),
-            'fecha_desde' => $request->get('fecha_desde'),
-            'fecha_hasta' => $request->get('fecha_hasta'),
-            'per_page' => $request->get('per_page', 20),
-        ]);
+        $perPage = (int) $request->get('per_page', 20);
 
-        $mensajes = $this->cacheQueryIfEnabled($cacheKey, function () use ($request) {
-            $query = MensajeHacienda::query()
-                ->where('empresa_id', auth('sanctum')->user()->empresa_id)
-                ->with(['comprobante']);
+        $filtros = [
+            'empresa_id' => auth('sanctum')->user()->empresa_id,
+            ...$request->only(['estado', 'tipo_mensaje', 'comprobante_id', 'fecha_desde', 'fecha_hasta']),
+        ];
 
-            if ($request->filled('estado')) {
-                $query->where('estado', $request->get('estado'));
-            }
+        $cacheKey = $this->getCacheKey('index', [...$filtros, 'per_page' => $perPage]);
 
-            if ($request->filled('tipo_mensaje')) {
-                $query->porTipo($request->get('tipo_mensaje'));
-            }
-
-            if ($request->filled('comprobante_id')) {
-                $query->where('comprobante_id', $request->get('comprobante_id'));
-            }
-
-            if ($request->filled('fecha_desde')) {
-                $query->where('fecha_emision', '>=', $request->get('fecha_desde'));
-            }
-
-            if ($request->filled('fecha_hasta')) {
-                $query->where('fecha_emision', '<=', $request->get('fecha_hasta'));
-            }
-
-            return $query->orderBy('fecha_emision', 'desc')
-                ->paginate($request->get('per_page', 20));
+        $mensajes = $this->cacheQueryIfEnabled($cacheKey, function () use ($filtros, $perPage) {
+            return $this->service->listar($filtros, $perPage);
         });
 
         return MensajeHaciendaResource::collection($mensajes);
@@ -119,7 +99,7 @@ class MensajeHaciendaController extends Controller
             ], 422);
         }
 
-        $mensaje = MensajeHacienda::create([
+        $data = [
             'empresa_id' => auth('sanctum')->user()->empresa_id,
             'comprobante_id' => $request->get('comprobante_id'),
             'clave_numerica' => $request->get('clave_numerica'),
@@ -128,10 +108,10 @@ class MensajeHaciendaController extends Controller
             'detalle_mensaje' => $request->get('detalle_mensaje'),
             'xml_respuesta' => $request->get('xml_respuesta'),
             'fecha_emision' => $request->get('fecha_emision'),
-            'fecha_procesamiento' => $request->get('estado') === 'procesado' ? now() : null,
             'estado' => $request->get('estado', 'pendiente'),
-            'intentos_envio' => 0,
-        ]);
+        ];
+
+        $mensaje = $this->service->crear($data);
 
         $this->flushCache();
 
@@ -209,11 +189,7 @@ class MensajeHaciendaController extends Controller
             'ultimo_error',
         ]);
 
-        if ($request->filled('estado') && $request->get('estado') === 'procesado') {
-            $data['fecha_procesamiento'] = now();
-        }
-
-        $mensajeHacienda->update($data);
+        $this->service->actualizar($mensajeHacienda, $data);
 
         $this->flushCache();
 
@@ -242,8 +218,7 @@ class MensajeHaciendaController extends Controller
     {
         $this->authorize('delete', $mensajeHacienda);
 
-        $mensajeHacienda->eliminado = now();
-        $mensajeHacienda->save();
+        $this->service->eliminar($mensajeHacienda);
 
         $this->flushCache();
 

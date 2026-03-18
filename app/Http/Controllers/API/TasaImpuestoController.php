@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateTasaImpuestoRequest;
 use App\Http\Requests\TasaImpuestoVigenteRequest;
 use App\Http\Resources\TasaImpuestoResource;
 use App\Models\TasaImpuesto;
+use App\Services\TasaImpuestoService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -24,30 +25,26 @@ use OpenApi\Attributes as OA;
  */
 class TasaImpuestoController extends Controller
 {
+    public function __construct(
+        private readonly TasaImpuestoService $service
+    ) {}
+
     #[OA\Get(path: '/api/tasas-impuesto', summary: 'Listar tasas de impuesto', description: 'Listado paginado con filtros por tipo, activo, vigentes', security: [['sanctum' => []]], tags: ['Catálogos Fiscales'])]
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', TasaImpuesto::class);
 
-        $query = TasaImpuesto::where('eliminado', 0)->with('tipoImpuesto');
+        $filtros = array_filter([
+            'tipo_impuesto_id' => $request->input('tipo_impuesto_id'),
+            'activo' => $request->input('activo'),
+            'vigentes' => $request->input('vigentes'),
+            'sort_by' => $request->get('sort_by'),
+            'sort_order' => $request->get('sort_order'),
+        ], fn ($v) => $v !== null);
 
-        if ($request->filled('tipo_impuesto_id')) {
-            $query->where('tipo_impuesto_id', $request->tipo_impuesto_id);
-        }
+        $perPage = (int) $request->get('per_page', 15);
 
-        if ($request->filled('activo')) {
-            $query->where('activo', $request->activo);
-        }
-
-        if ($request->filled('vigentes')) {
-            $now = Carbon::now();
-            $query->where('fecha_inicio_vigencia', '<=', $now)
-                ->where(fn($q) => $q->whereNull('fecha_fin_vigencia')->orWhere('fecha_fin_vigencia', '>=', $now));
-        }
-
-        $query->orderBy($request->get('sort_by', 'fecha_inicio_vigencia'), $request->get('sort_order', 'desc'));
-
-        return TasaImpuestoResource::collection($query->paginate($request->get('per_page', 15)));
+        return TasaImpuestoResource::collection($this->service->listar($filtros, $perPage));
     }
 
     #[OA\Post(path: '/api/tasas-impuesto', summary: 'Crear tasa de impuesto', description: 'Crea nueva tasa con vigencia temporal', security: [['sanctum' => []]], tags: ['Catálogos Fiscales'])]
@@ -55,8 +52,7 @@ class TasaImpuestoController extends Controller
     {
         $this->authorize('create', TasaImpuesto::class);
 
-        $tasa = TasaImpuesto::create($request->validated());
-        $tasa->load('tipoImpuesto');
+        $tasa = $this->service->crear($request->validated());
 
         return response()->json([
             'success' => true,
@@ -68,7 +64,7 @@ class TasaImpuestoController extends Controller
     #[OA\Get(path: '/api/tasas-impuesto/{id}', summary: 'Obtener tasa de impuesto', description: 'Detalles de una tasa específica', security: [['sanctum' => []]], tags: ['Catálogos Fiscales'])]
     public function show(int $id): JsonResponse
     {
-        $tasa = TasaImpuesto::where('id', $id)->where('eliminado', 0)->with('tipoImpuesto')->firstOrFail();
+        $tasa = $this->service->obtener($id);
         $this->authorize('view', $tasa);
 
         return response()->json(['success' => true, 'data' => new TasaImpuestoResource($tasa)]);
@@ -77,11 +73,10 @@ class TasaImpuestoController extends Controller
     #[OA\Put(path: '/api/tasas-impuesto/{id}', summary: 'Actualizar tasa de impuesto', description: 'Actualiza datos de tasa existente', security: [['sanctum' => []]], tags: ['Catálogos Fiscales'])]
     public function update(UpdateTasaImpuestoRequest $request, int $id): JsonResponse
     {
-        $tasa = TasaImpuesto::where('id', $id)->where('eliminado', 0)->firstOrFail();
+        $tasa = $this->service->obtener($id);
         $this->authorize('update', $tasa);
 
-        $tasa->update($request->validated());
-        $tasa->load('tipoImpuesto');
+        $tasa = $this->service->actualizar($tasa, $request->validated());
 
         return response()->json([
             'success' => true,
@@ -93,10 +88,10 @@ class TasaImpuestoController extends Controller
     #[OA\Delete(path: '/api/tasas-impuesto/{id}', summary: 'Eliminar tasa de impuesto', description: 'Eliminación lógica de tasa', security: [['sanctum' => []]], tags: ['Catálogos Fiscales'])]
     public function destroy(int $id): JsonResponse
     {
-        $tasa = TasaImpuesto::where('id', $id)->where('eliminado', 0)->firstOrFail();
+        $tasa = $this->service->obtener($id);
         $this->authorize('delete', $tasa);
 
-        $tasa->update(['eliminado' => 1, 'activo' => 0]);
+        $this->service->eliminar($tasa);
 
         return response()->json(['success' => true, 'message' => 'Tasa de impuesto eliminada exitosamente']);
     }
@@ -104,15 +99,9 @@ class TasaImpuestoController extends Controller
     #[OA\Get(path: '/api/tasas-impuesto/vigente', summary: 'Obtener tasa vigente', description: 'Tasa vigente para un tipo de impuesto en fecha específica', security: [['sanctum' => []]], tags: ['Catálogos Fiscales'])]
     public function vigente(TasaImpuestoVigenteRequest $request): JsonResponse
     {
-        $fecha = $request->filled('fecha') ? Carbon::parse($request->fecha) : Carbon::now();
+        $fecha = $request->filled('fecha') ? Carbon::parse($request->fecha) : null;
 
-        $tasa = TasaImpuesto::where('tipo_impuesto_id', $request->tipo_impuesto_id)
-            ->where('eliminado', 0)
-            ->where('activo', 1)
-            ->where('fecha_inicio_vigencia', '<=', $fecha)
-            ->where(fn($q) => $q->whereNull('fecha_fin_vigencia')->orWhere('fecha_fin_vigencia', '>=', $fecha))
-            ->with('tipoImpuesto')
-            ->first();
+        $tasa = $this->service->vigente((int) $request->tipo_impuesto_id, $fecha);
 
         if (!$tasa) {
             return response()->json(['success' => false, 'message' => 'No se encontró tasa vigente'], 404);
@@ -124,14 +113,7 @@ class TasaImpuestoController extends Controller
     #[OA\Get(path: '/api/tasas-impuesto/vigentes-actuales', summary: 'Tasas vigentes actuales', description: 'Todas las tasas vigentes a fecha actual', security: [['sanctum' => []]], tags: ['Catálogos Fiscales'])]
     public function vigentesActuales(): JsonResponse
     {
-        $now = Carbon::now();
-
-        $tasas = TasaImpuesto::where('eliminado', 0)
-            ->where('activo', 1)
-            ->where('fecha_inicio_vigencia', '<=', $now)
-            ->where(fn($q) => $q->whereNull('fecha_fin_vigencia')->orWhere('fecha_fin_vigencia', '>=', $now))
-            ->with('tipoImpuesto')
-            ->get();
+        $tasas = $this->service->vigentesActuales();
 
         return response()->json(['success' => true, 'data' => TasaImpuestoResource::collection($tasas)]);
     }
@@ -139,11 +121,7 @@ class TasaImpuestoController extends Controller
     #[OA\Get(path: '/api/tasas-impuesto/historico/{tipoImpuestoId}', summary: 'Histórico de tasas', description: 'Histórico completo de tasas por tipo de impuesto', security: [['sanctum' => []]], tags: ['Catálogos Fiscales'])]
     public function historico(int $tipoImpuestoId): JsonResponse
     {
-        $tasas = TasaImpuesto::where('tipo_impuesto_id', $tipoImpuestoId)
-            ->where('eliminado', 0)
-            ->with('tipoImpuesto')
-            ->orderBy('fecha_inicio_vigencia', 'desc')
-            ->get();
+        $tasas = $this->service->historico($tipoImpuestoId);
 
         return response()->json(['success' => true, 'data' => TasaImpuestoResource::collection($tasas)]);
     }
