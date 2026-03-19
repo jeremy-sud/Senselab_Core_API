@@ -44,7 +44,7 @@ class TiqueteDetalle extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'precio_final_tiquete' => 'float',
+        'precio_final_tiquete' => 'decimal:2',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
         'creado_en' => 'datetime',
