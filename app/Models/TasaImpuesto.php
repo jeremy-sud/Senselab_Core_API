@@ -46,7 +46,7 @@ class TasaImpuesto extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'tasa_porcentaje' => 'float',
+        'tasa_porcentaje' => 'decimal:2',
         'fecha_inicio_vigencia' => 'date',
         'fecha_fin_vigencia' => 'date',
         'activo' => 'boolean',

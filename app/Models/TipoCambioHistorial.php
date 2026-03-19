@@ -42,8 +42,8 @@ class TipoCambioHistorial extends Model
      */
     protected $casts = [
         'fecha' => 'date',
-        'tasa_compra' => 'float',
-        'tasa_venta' => 'float',
+        'tasa_compra' => 'decimal:5',
+        'tasa_venta' => 'decimal:5',
         'creado_en' => 'datetime',
     ];
 

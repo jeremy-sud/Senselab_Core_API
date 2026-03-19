@@ -58,7 +58,7 @@ class SalidaInventario extends Model
      */
     protected $casts = [
         'fecha_salida' => 'datetime',
-        'monto_total' => 'float',
+        'monto_total' => 'decimal:2',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
         'creado_en' => 'datetime',

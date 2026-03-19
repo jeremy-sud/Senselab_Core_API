@@ -51,9 +51,9 @@ class Ruta extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'distancia_km' => 'float',
+        'distancia_km' => 'decimal:2',
         'duracion_estimada' => 'integer',
-        'tarifa_base' => 'float',
+        'tarifa_base' => 'decimal:2',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
         'creado_en' => 'datetime',
