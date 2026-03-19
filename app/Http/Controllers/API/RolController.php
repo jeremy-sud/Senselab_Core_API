@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateRolRequest;
 use App\Http\Requests\AsignarPermisosRolRequest;
 use App\Http\Resources\RolResource;
 use App\Models\Rol;
+use App\Services\RolService;
 use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -30,6 +31,10 @@ class RolController extends Controller
     /** @var array<int, string> */
     protected array $cacheTags = ['roles', 'rbac'];
     protected int $cacheTTL = 1800; // 30 minutos - datos RBAC cambian ocasionalmente
+
+    public function __construct(
+        private readonly RolService $service
+    ) {}
 
     /**
      * Listar todos los roles activos
@@ -57,14 +62,8 @@ class RolController extends Controller
             'activo' => $request->input('activo')
         ]);
 
-        $roles = $this->cacheQueryIfEnabled($cacheKey, function() use ($request) {
-            $query = Rol::query()->with(['permisos']);
-
-            if ($request->has('activo')) {
-                $query->where('activo', $request->boolean('activo'));
-            }
-
-            return $query->get();
+        $roles = $this->cacheQueryIfEnabled($cacheKey, function () use ($request) {
+            return $this->service->listarTodos($request->all());
         });
 
         return RolResource::collection($roles);
@@ -101,20 +100,7 @@ class RolController extends Controller
     {
         $this->authorize('create', Rol::class);
 
-        $validated = $request->validated();
-
-        $rol = Rol::create([
-            'nombre' => $validated['nombre'],
-            'descripcion' => $validated['descripcion'] ?? null,
-            'activo' => $validated['activo'] ?? true
-        ]);
-
-        // Asignar permisos si fueron proporcionados
-        if (isset($validated['permisos'])) {
-            $rol->permisos()->attach($validated['permisos']);
-        }
-
-        $rol->load('permisos');
+        $rol = $this->service->crear($request->validated());
 
         $this->flushCache();
 
@@ -142,7 +128,7 @@ class RolController extends Controller
     )]
     public function show(int $id): RolResource
     {
-        $rol = Rol::with(['permisos', 'usuarios'])->findOrFail($id);
+        $rol = $this->service->obtener($id);
 
         $this->authorize('view', $rol);
 
@@ -168,20 +154,7 @@ class RolController extends Controller
 
         $this->authorize('update', $rol);
 
-        $validated = $request->validated();
-
-        $rol->update([
-            'nombre' => $validated['nombre'] ?? $rol->nombre,
-            'descripcion' => $validated['descripcion'] ?? $rol->descripcion,
-            'activo' => $validated['activo'] ?? $rol->activo
-        ]);
-
-        // Sincronizar permisos si fueron proporcionados
-        if (isset($validated['permisos'])) {
-            $rol->permisos()->sync($validated['permisos']);
-        }
-
-        $rol->load('permisos');
+        $rol = $this->service->actualizar($rol, $request->validated());
 
         $this->flushCache();
 
@@ -211,23 +184,11 @@ class RolController extends Controller
 
         $this->authorize('delete', $rol);
 
-        // Validar que no tenga usuarios asignados
-        if ($rol->usuarios()->count() > 0) {
-            return response()->json([
-                'message' => 'No se puede eliminar el rol porque tiene usuarios asignados'
-            ], 422);
-        }
-
-        $rol->eliminado = now();
-        $rol->activo = 0;
-        $rol->save();
+        $this->service->eliminar($rol);
 
         $this->flushCache();
 
-        return response()->json([
-            'message' => 'Rol eliminado exitosamente',
-            'data' => new RolResource($rol)
-        ], 200);
+        return $this->deletedResponse('Rol eliminado exitosamente');
     }
 
     /**
@@ -255,10 +216,9 @@ class RolController extends Controller
     )]
     public function asignarPermisos(AsignarPermisosRolRequest $request, int $id): JsonResponse
     {
-
         $rol = Rol::findOrFail($id);
-        $rol->permisos()->sync($request->permisos);
-        $rol->load('permisos');
+
+        $rol = $this->service->asignarPermisos($rol, $request->permisos);
 
         $this->flushCache();
 
@@ -274,8 +234,8 @@ class RolController extends Controller
     public function removerPermiso(int $id, int $permiso_id): JsonResponse
     {
         $rol = Rol::findOrFail($id);
-        $rol->permisos()->detach($permiso_id);
-        $rol->load('permisos');
+
+        $rol = $this->service->removerPermiso($rol, $permiso_id);
 
         $this->flushCache();
 

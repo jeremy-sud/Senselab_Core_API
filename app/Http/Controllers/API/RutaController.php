@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\API;
 
+use App\DTOs\API\RutaCreateDTO;
+use App\DTOs\API\RutaUpdateDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRutaRequest;
 use App\Http\Requests\UpdateRutaRequest;
 use App\Http\Resources\RutaResource;
 use App\Models\Ruta;
+use App\Services\RutaService;
 use App\Traits\HasCacheableQueries;
 use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
@@ -30,6 +33,10 @@ class RutaController extends Controller
     /** @var array<int, string> */
     protected array $cacheTags = ['rutas', 'transporte'];
     protected int $cacheTTL = 1800; // 30 min - rutas cambian ocasionalmente
+
+    public function __construct(
+        private readonly RutaService $service
+    ) {}
     /**
      * Listar todas las rutas de la empresa autenticada
      *
@@ -82,38 +89,18 @@ class RutaController extends Controller
     {
         $this->authorize('viewAny', Ruta::class);
 
-        $empresaId = $this->getEmpresaId();
-
-        $cacheKey = $this->getCacheKey('index', [
-            'empresa_id' => $empresaId,
+        $filtros = array_filter([
+            'empresa_id' => $this->getEmpresaId(),
             'origen' => $request->get('origen'),
             'destino' => $request->get('destino'),
-            'activo' => $request->get('activo')
-        ]);
+            'activo' => $request->get('activo'),
+        ], fn ($v) => $v !== null);
 
-        return $this->cacheQueryIfEnabled($cacheKey, function () use ($request, $empresaId) {
-            $query = Ruta::where('empresa_id', $empresaId)
-                ->where('eliminado', 0)
-                ->with(['empresa']);
+        $cacheKey = $this->getCacheKey('index', $filtros);
 
-            // Filtro por origen o destino
-            if ($request->filled('origen')) {
-                $query->where('origen', 'like', '%' . $request->origen . '%');
-            }
+        $rutas = $this->cacheQueryIfEnabled($cacheKey, fn () => $this->service->listar($filtros));
 
-            if ($request->filled('destino')) {
-                $query->where('destino', 'like', '%' . $request->destino . '%');
-            }
-
-            // Filtro por activo
-            if ($request->filled('activo')) {
-                $query->where('activo', $request->activo);
-            }
-
-            $rutas = $query->orderBy('id')->paginate(15);
-
-            return RutaResource::collection($rutas);
-        });
+        return RutaResource::collection($rutas);
     }
 
     /**
@@ -154,23 +141,16 @@ class RutaController extends Controller
     {
         $this->authorize('create', Ruta::class);
 
-        $empresaId = $this->getEmpresaId();
-
-        $ruta = Ruta::create([
-            'empresa_id' => $empresaId,
-            'nombre' => $request->nombre,
-            'origen' => $request->origen,
-            'destino' => $request->destino,
-            'distancia_km' => $request->distancia_km,
-            'duracion_estimada' => $request->duracion_estimada,
-            'tarifa_base' => $request->tarifa_base,
-            'observaciones' => $request->observaciones,
-            'activo' => $request->activo ?? 1
+        $dto = RutaCreateDTO::fromRequest($request);
+        $data = array_merge($dto->toArray(), [
+            'empresa_id' => $this->getEmpresaId(),
         ]);
+
+        $ruta = $this->service->crear($data);
 
         $this->flushCache();
 
-        return (new RutaResource($ruta->load(['empresa'])))
+        return (new RutaResource($ruta))
             ->response()
             ->setStatusCode(201);
     }
@@ -205,12 +185,7 @@ class RutaController extends Controller
     )]
     public function show(int $id, Request $request): RutaResource
     {
-        $empresaId = $this->getEmpresaId();
-
-        $ruta = Ruta::where('empresa_id', $empresaId)
-            ->where('eliminado', 0)
-            ->with(['empresa', 'horariosRuta'])
-            ->findOrFail($id);
+        $ruta = $this->service->obtenerPorEmpresa($id, $this->getEmpresaId());
 
         $this->authorize('view', $ruta);
 
@@ -263,28 +238,15 @@ class RutaController extends Controller
     )]
     public function update(UpdateRutaRequest $request, int $id): RutaResource
     {
-        $empresaId = $this->getEmpresaId();
-
-        $ruta = Ruta::where('empresa_id', $empresaId)
-            ->where('eliminado', 0)
-            ->findOrFail($id);
+        $ruta = $this->service->obtenerPorEmpresa($id, $this->getEmpresaId());
 
         $this->authorize('update', $ruta);
 
-        $ruta->update($request->only([
-            'nombre',
-            'origen',
-            'destino',
-            'distancia_km',
-            'duracion_estimada',
-            'tarifa_base',
-            'observaciones',
-            'activo'
-        ]));
+        $ruta = $this->service->actualizar($ruta, RutaUpdateDTO::fromRequest($request)->toArray());
 
         $this->flushCache();
 
-        return new RutaResource($ruta->load(['empresa']));
+        return new RutaResource($ruta);
     }
 
     /**
@@ -326,28 +288,15 @@ class RutaController extends Controller
     )]
     public function destroy(int $id, Request $request): JsonResponse
     {
-        $empresaId = $this->getEmpresaId();
-
-        $ruta = Ruta::where('empresa_id', $empresaId)
-            ->where('eliminado', 0)
-            ->findOrFail($id);
+        $ruta = $this->service->obtenerPorEmpresa($id, $this->getEmpresaId());
 
         $this->authorize('delete', $ruta);
 
-        // Validar que no tenga horarios activos
-        if ($ruta->horariosRuta()->where('estado', '!=', 'Finalizado')->exists()) {
-            return response()->json([
-                'message' => 'No se puede eliminar una ruta con horarios activos'
-            ], 422);
-        }
-
-        $ruta->update(['eliminado' => 1, 'activo' => 0]);
+        $this->service->eliminar($ruta);
 
         $this->flushCache();
 
-        return response()->json([
-            'message' => 'Ruta eliminada exitosamente'
-        ]);
+        return $this->deletedResponse('Ruta eliminada exitosamente');
     }
 
     /**
@@ -391,14 +340,7 @@ class RutaController extends Controller
         $cacheKey = $this->getCacheKey('activas', ['empresa_id' => $empresaId]);
 
         return $this->cacheQueryIfEnabled($cacheKey, function () use ($empresaId) {
-            $rutas = Ruta::where('empresa_id', $empresaId)
-                ->where('eliminado', 0)
-                ->where('activo', 1)
-                ->select('id', 'nombre', 'origen', 'destino', 'tarifa_base', 'duracion_estimada')
-                ->orderBy('nombre')
-                ->get();
-
-            return response()->json($rutas);
+            return response()->json($this->service->activas($empresaId));
         });
     }
 
@@ -470,34 +412,22 @@ class RutaController extends Controller
     )]
     public function calcularTarifa(int $id, Request $request): JsonResponse
     {
-        $empresaId = $this->getEmpresaId();
+        $ruta = $this->service->obtenerPorEmpresa($id, $this->getEmpresaId());
 
-        $ruta = Ruta::where('empresa_id', $empresaId)
-            ->where('eliminado', 0)
-            ->findOrFail($id);
-
-        $cantidadPasajeros = $request->input('cantidad_pasajeros', 1);
-        $descuento = $request->input('descuento_porcentaje', 0);
-
-        $tarifaBase = $ruta->tarifa_base * $cantidadPasajeros;
-        $montoDescuento = ($tarifaBase * $descuento) / 100;
-        $tarifaFinal = $tarifaBase - $montoDescuento;
+        $calculo = $this->service->calcularTarifa(
+            $ruta,
+            (int) $request->input('cantidad_pasajeros', 1),
+            (float) $request->input('descuento_porcentaje', 0)
+        );
 
         return response()->json([
             'ruta' => [
                 'id' => $ruta->id,
                 'nombre' => $ruta->nombre,
                 'origen' => $ruta->origen,
-                'destino' => $ruta->destino
+                'destino' => $ruta->destino,
             ],
-            'calculo' => [
-                'tarifa_base_unitaria' => number_format($ruta->tarifa_base, 2),
-                'cantidad_pasajeros' => $cantidadPasajeros,
-                'subtotal' => number_format($tarifaBase, 2),
-                'descuento_porcentaje' => $descuento,
-                'monto_descuento' => number_format($montoDescuento, 2),
-                'tarifa_final' => number_format($tarifaFinal, 2)
-            ]
+            'calculo' => $calculo,
         ]);
     }
 
@@ -559,17 +489,7 @@ class RutaController extends Controller
     )]
     public function estadisticas(int $id, Request $request): JsonResponse
     {
-        $empresaId = $this->getEmpresaId();
-
-        $ruta = Ruta::where('empresa_id', $empresaId)
-            ->where('eliminado', 0)
-            ->with(['horariosRuta'])
-            ->findOrFail($id);
-
-        $totalViajes = $ruta->horariosRuta()->count();
-        $viajesFinalizados = $ruta->horariosRuta()->where('estado', 'Finalizado')->count();
-        $viajesEnCurso = $ruta->horariosRuta()->where('estado', 'En Viaje')->count();
-        $viajesProgramados = $ruta->horariosRuta()->where('estado', 'Programado')->count();
+        $ruta = $this->service->obtenerPorEmpresa($id, $this->getEmpresaId());
 
         return response()->json([
             'ruta' => [
@@ -577,14 +497,9 @@ class RutaController extends Controller
                 'nombre' => $ruta->nombre,
                 'origen' => $ruta->origen,
                 'destino' => $ruta->destino,
-                'distancia_km' => $ruta->distancia_km
+                'distancia_km' => $ruta->distancia_km,
             ],
-            'estadisticas' => [
-                'total_viajes' => $totalViajes,
-                'finalizados' => $viajesFinalizados,
-                'en_curso' => $viajesEnCurso,
-                'programados' => $viajesProgramados
-            ]
+            'estadisticas' => $this->service->estadisticas($ruta),
         ]);
     }
 }

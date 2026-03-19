@@ -7,6 +7,7 @@ use App\Http\Requests\StoreModeloBusRequest;
 use App\Http\Requests\UpdateModeloBusRequest;
 use App\Http\Resources\ModeloBusResource;
 use App\Models\ModeloBus;
+use App\Services\ModeloBusService;
 use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -29,6 +30,10 @@ class ModeloBusController extends Controller
     /** @var array<int, string> */
     protected array $cacheTags = ['modelos-buses', 'transporte', 'catalogos'];
     protected int $cacheTTL = 7200; // 2 horas - catálogo estable
+
+    public function __construct(
+        private readonly ModeloBusService $service
+    ) {}
     /**
      * Listar todos los modelos de buses
      *
@@ -60,13 +65,13 @@ class ModeloBusController extends Controller
 
         $cacheKey = $this->getCacheKey('index', []);
 
-        return $this->cacheQueryIfEnabled($cacheKey, function () {
-            $modelos = ModeloBus::withCount('busesUnidades')
+        $modelos = $this->cacheQueryIfEnabled($cacheKey, function () {
+            return ModeloBus::withCount('busesUnidades')
                 ->orderBy('nombre')
                 ->paginate(20);
-
-            return ModeloBusResource::collection($modelos);
         });
+
+        return ModeloBusResource::collection($modelos);
     }
 
     /**
@@ -100,9 +105,7 @@ class ModeloBusController extends Controller
     {
         $this->authorize('create', ModeloBus::class);
 
-        $modelo = ModeloBus::create([
-            'nombre' => $request->nombre
-        ]);
+        $modelo = $this->service->crear($request->validated());
 
         $this->flushCache();
 
@@ -141,8 +144,7 @@ class ModeloBusController extends Controller
     )]
     public function show(int $id): ModeloBusResource
     {
-        $modelo = ModeloBus::withCount('busesUnidades')
-            ->findOrFail($id);
+        $modelo = ModeloBus::withCount('busesUnidades')->findOrFail($id);
 
         $this->authorize('view', $modelo);
 
@@ -193,9 +195,7 @@ class ModeloBusController extends Controller
 
         $this->authorize('update', $modelo);
 
-        $modelo->update([
-            'nombre' => $request->nombre
-        ]);
+        $modelo = $this->service->actualizar($modelo, $request->validated());
 
         $this->flushCache();
 
@@ -245,20 +245,11 @@ class ModeloBusController extends Controller
 
         $this->authorize('delete', $modelo);
 
-        // Validar que no tenga buses asociados
-        if ($modelo->busesUnidades()->exists()) {
-            return response()->json([
-                'message' => 'No se puede eliminar un modelo con buses asociados'
-            ], 422);
-        }
-
-        $modelo->delete();
+        $this->service->eliminar($modelo);
 
         $this->flushCache();
 
-        return response()->json([
-            'message' => 'Modelo de bus eliminado exitosamente'
-        ]);
+        return $this->deletedResponse('Modelo de bus eliminado exitosamente');
     }
 
     /**
@@ -292,10 +283,6 @@ class ModeloBusController extends Controller
     )]
     public function activos(): AnonymousResourceCollection
     {
-        $modelos = ModeloBus::select('id', 'nombre')
-            ->orderBy('nombre')
-            ->get();
-
-        return ModeloBusResource::collection($modelos);
+        return ModeloBusResource::collection($this->service->activos());
     }
 }

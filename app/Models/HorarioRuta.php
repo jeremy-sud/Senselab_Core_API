@@ -30,8 +30,8 @@ class HorarioRuta extends Model
     protected $casts = [
         'fecha_salida' => 'date',
         'fecha_llegada_estimada' => 'date',
-        'hora_salida' => 'time',
-        'hora_llegada_estimada' => 'time',
+        'hora_salida' => 'string',
+        'hora_llegada_estimada' => 'string',
         'asientos_disponibles' => 'integer',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
