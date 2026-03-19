@@ -11,7 +11,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Notificacion;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Services\NotificacionService;
 use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
 
@@ -23,8 +23,9 @@ class NotificacionController extends Controller
     protected array $cacheTags = ['notificaciones'];
     protected int $cacheTTL = 300; // 5 minutos (muy dinámico)
 
-    public function __construct()
-    {
+    public function __construct(
+        private readonly NotificacionService $service
+    ) {
         $this->middleware('auth:sanctum');
     }
 
@@ -85,38 +86,15 @@ class NotificacionController extends Controller
     {
         $this->authorize('viewAny', Notificacion::class);
 
-        $cacheKey = $this->generateCacheKey('notificaciones.index', array_merge(
-            $request->all(),
-            ['usuario_id' => auth('sanctum')->id()]
-        ));
+        $usuarioId = auth('sanctum')->id();
+        $filtros = array_merge($request->all(), ['usuario_id' => $usuarioId]);
 
-        return $this->getCached($cacheKey, function () use ($request) {
-            $perPage = $request->input('per_page', 15);
+        $cacheKey = $this->generateCacheKey('notificaciones.index', $filtros);
 
-            $query = Notificacion::where('usuario_id', auth('sanctum')->id());
+        return $this->getCached($cacheKey, function () use ($filtros) {
+            $notificaciones = $this->service->listar($filtros);
 
-            if ($request->filled('tipo')) {
-                $query->tipo($request->tipo);
-            }
-
-            if ($request->has('leida')) {
-                if ($request->boolean('leida')) {
-                    $query->leidas();
-                } else {
-                    $query->noLeidas();
-                }
-            }
-
-            if ($request->filled('prioridad')) {
-                $query->where('prioridad', '>=', $request->prioridad);
-            }
-
-            $notificaciones = $query->orderBy('id', 'desc')->paginate($perPage);
-
-            // Contar no leídas
-            $noLeidasCount = Notificacion::where('usuario_id', auth('sanctum')->id())
-                ->noLeidas()
-                ->count();
+            $noLeidasCount = $this->service->contarNoLeidas((int) $filtros['usuario_id']);
 
             $response = $notificaciones->toArray();
             $response['no_leidas_count'] = $noLeidasCount;
@@ -176,29 +154,16 @@ class NotificacionController extends Controller
             'prioridad' => 'nullable|integer|in:0,1,2',
         ]);
 
-        DB::beginTransaction();
-        try {
-            $validated['empresa_id'] = auth('sanctum')->user()->empresa_id;
-            $validated['prioridad'] = $validated['prioridad'] ?? Notificacion::PRIORIDAD_NORMAL;
-            $validated['leida'] = false;
+        $validated['empresa_id'] = auth('sanctum')->user()->empresa_id;
 
-            $notificacion = Notificacion::create($validated);
+        $notificacion = $this->service->crear($validated);
 
-            DB::commit();
-            $this->clearCache();
+        $this->clearCache();
 
-            return response()->json([
-                'message' => 'Notificación creada exitosamente',
-                'data' => $notificacion
-            ], 201);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => 'Error al crear notificación',
-                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
-            ], 500);
-        }
+        return response()->json([
+            'message' => 'Notificación creada exitosamente',
+            'data' => $notificacion
+        ], 201);
     }
 
     /**
@@ -233,11 +198,11 @@ class NotificacionController extends Controller
 
         // Auto-marcar como leída al visualizar
         if (!$notificacion->leida) {
-            $notificacion->marcarComoLeida();
+            $notificacion = $this->service->marcarLeida($notificacion);
             $this->clearCache();
         }
 
-        return response()->json(['data' => $notificacion->fresh()]);
+        return response()->json(['data' => $notificacion]);
     }
 
     /**
@@ -270,12 +235,12 @@ class NotificacionController extends Controller
         $notificacion = Notificacion::findOrFail($id);
         $this->authorize('update', $notificacion);
 
-        $notificacion->marcarComoLeida();
+        $notificacion = $this->service->marcarLeida($notificacion);
         $this->clearCache();
 
         return response()->json([
             'message' => 'Notificación marcada como leída',
-            'data' => $notificacion->fresh()
+            'data' => $notificacion
         ]);
     }
 
@@ -297,30 +262,14 @@ class NotificacionController extends Controller
     )]
     public function marcarTodasLeidas(): \Illuminate\Http\JsonResponse
     {
-        DB::beginTransaction();
-        try {
-            $updated = Notificacion::where('usuario_id', auth('sanctum')->id())
-                ->noLeidas()
-                ->update([
-                    'leida' => true,
-                    'leida_en' => now()
-                ]);
+        $updated = $this->service->marcarTodasLeidas((int) auth('sanctum')->id());
 
-            DB::commit();
-            $this->clearCache();
+        $this->clearCache();
 
-            return response()->json([
-                'message' => 'Todas las notificaciones marcadas como leídas',
-                'count' => $updated
-            ]);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => 'Error al marcar notificaciones',
-                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
-            ], 500);
-        }
+        return response()->json([
+            'message' => 'Todas las notificaciones marcadas como leídas',
+            'count' => $updated
+        ]);
     }
 
     /**
@@ -353,23 +302,9 @@ class NotificacionController extends Controller
         $notificacion = Notificacion::findOrFail($id);
         $this->authorize('delete', $notificacion);
 
-        DB::beginTransaction();
-        try {
-            $notificacion->delete();
+        $this->service->eliminar($notificacion);
+        $this->clearCache();
 
-            DB::commit();
-            $this->clearCache();
-
-            return response()->json([
-                'message' => 'Notificación eliminada exitosamente'
-            ]);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => 'Error al eliminar notificación',
-                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
-            ], 500);
-        }
+        return $this->deletedResponse('Notificación eliminada exitosamente');
     }
 }

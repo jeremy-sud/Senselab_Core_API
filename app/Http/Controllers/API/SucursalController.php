@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\API;
 
+use App\DTOs\API\SucursalCreateDTO;
+use App\DTOs\API\SucursalUpdateDTO;
 use App\Http\Controllers\Controller;
 use App\Models\Sucursal;
 use Illuminate\Http\JsonResponse;
@@ -10,6 +12,7 @@ use App\Http\Requests\StoreSucursalRequest;
 use App\Http\Requests\UpdateSucursalRequest;
 use App\Http\Resources\SucursalResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use App\Services\SucursalService;
 use App\Traits\HasCacheableQueries;
 use OpenApi\Attributes as OA;
 
@@ -20,6 +23,10 @@ class SucursalController extends Controller
     /** @var array<int, string> */
     protected array $cacheTags = ['sucursales', 'catalogos'];
     protected int $cacheTTL = 3600; // 1 hora
+
+    public function __construct(
+        private readonly SucursalService $service
+    ) {}
     /**
      * Display a listing of the resource.
      *
@@ -71,34 +78,12 @@ class SucursalController extends Controller
     {
         $this->authorize('viewAny', Sucursal::class);
 
-        try {
-            $perPage = $request->input('per_page', 15);
-            $empresaId = $request->input('empresa_id');
+        $sucursales = $this->cacheQueryIfEnabled(
+            $this->getCacheKey('index', $request->all()),
+            fn () => $this->service->listar($request->all())
+        );
 
-            $sucursales = $this->cacheQueryIfEnabled(
-                $this->getCacheKey('index', $request->all()),
-                function() use ($request, $perPage, $empresaId) {
-                    $query = Sucursal::with('empresa');
-
-                    if ($empresaId) {
-                        $query->where('empresa_id', $empresaId);
-                    }
-
-                    if ($request->boolean('activos')) {
-                        $query->where('activo', true);
-                    }
-
-                    return $query->orderBy('id', 'asc')->paginate($perPage);
-                }
-            );
-
-            return SucursalResource::collection($sucursales);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener sucursales',
-                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
-            ], 500);
-        }
+        return SucursalResource::collection($sucursales);
     }
 
     /**
@@ -149,28 +134,14 @@ class SucursalController extends Controller
     {
         $this->authorize('create', Sucursal::class);
 
-        try {
-            // Si es principal, desmarcar otras sucursales principales
-            if ($request->boolean('es_principal')) {
-                Sucursal::where('empresa_id', $request->empresa_id)
-                        ->update(['es_principal' => false]);
-            }
+        $sucursal = $this->service->crear(SucursalCreateDTO::fromRequest($request)->toArray());
 
-            $sucursal = Sucursal::create($request->validated());
-            $sucursal->load('empresa');
+        $this->flushCache();
 
-            $this->flushCache();
-
-            return (new SucursalResource($sucursal))
-                ->additional(['message' => 'Sucursal creada exitosamente'])
-                ->response()
-                ->setStatusCode(201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al crear sucursal',
-                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
-            ], 500);
-        }
+        return (new SucursalResource($sucursal))
+            ->additional(['message' => 'Sucursal creada exitosamente'])
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
@@ -199,20 +170,11 @@ class SucursalController extends Controller
     )]
     public function show(int $id): SucursalResource
     {
-        try {
-            $sucursal = Sucursal::with([
-                'empresa',
-                'almacenes',
-                'cajas'
-            ])->findOrFail($id);
-            $this->authorize('view', $sucursal);
+        $sucursal = $this->service->obtener($id);
 
-            return new SucursalResource($sucursal);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404, 'Sucursal no encontrada');
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $this->authorize('view', $sucursal);
+
+        return new SucursalResource($sucursal);
     }
 
     /**
@@ -248,29 +210,16 @@ class SucursalController extends Controller
     )]
     public function update(UpdateSucursalRequest $request, int $id): SucursalResource
     {
-        try {
-            $sucursal = Sucursal::findOrFail($id);
-            $this->authorize('update', $sucursal);
+        $sucursal = Sucursal::findOrFail($id);
 
-            // Si es principal, desmarcar otras sucursales principales
-            if ($request->has('es_principal') && $request->boolean('es_principal')) {
-                Sucursal::where('empresa_id', $sucursal->empresa_id)
-                        ->where('id', '!=', $id)
-                        ->update(['es_principal' => false]);
-            }
+        $this->authorize('update', $sucursal);
 
-            $sucursal->update($request->validated());
-            $sucursal->load('empresa');
+        $sucursal = $this->service->actualizar($sucursal, SucursalUpdateDTO::fromRequest($request)->toArray());
 
-            $this->flushCache();
+        $this->flushCache();
 
-            return (new SucursalResource($sucursal))
-                ->additional(['message' => 'Sucursal actualizada exitosamente']);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404, 'Sucursal no encontrada');
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        return (new SucursalResource($sucursal))
+            ->additional(['message' => 'Sucursal actualizada exitosamente']);
     }
 
     /**
@@ -296,37 +245,14 @@ class SucursalController extends Controller
     )]
     public function destroy(int $id): JsonResponse
     {
-        try {
-            $sucursal = Sucursal::findOrFail($id);
-            $this->authorize('delete', $sucursal);
+        $sucursal = Sucursal::findOrFail($id);
 
-            // No permitir eliminar sucursal principal
-            if ($sucursal->es_principal) {
-                return response()->json([
-                    'message' => 'No se puede eliminar la sucursal principal'
-                ], 422);
-            }
+        $this->authorize('delete', $sucursal);
 
-            // Soft delete
-            $sucursal->update([
-                'activo' => false,
-                'eliminado' => true
-            ]);
+        $this->service->eliminar($sucursal);
 
-            $this->flushCache();
+        $this->flushCache();
 
-            return response()->json([
-                'message' => 'Sucursal eliminada exitosamente'
-            ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Sucursal no encontrada'
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al eliminar sucursal',
-                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
-            ], 500);
-        }
+        return $this->deletedResponse('Sucursal eliminada exitosamente');
     }
 }

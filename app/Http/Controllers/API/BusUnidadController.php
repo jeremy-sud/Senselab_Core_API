@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\API;
 
+use App\DTOs\API\BusUnidadCreateDTO;
+use App\DTOs\API\BusUnidadUpdateDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBusUnidadRequest;
 use App\Http\Requests\UpdateBusUnidadRequest;
 use App\Http\Resources\BusUnidadResource;
 use App\Models\BusUnidad;
+use App\Services\BusUnidadService;
 use App\Traits\HasCacheableQueries;
 use App\Traits\HasEmpresaContext;
 use Illuminate\Http\JsonResponse;
@@ -30,6 +33,10 @@ class BusUnidadController extends Controller
     /** @var array<int, string> */
     protected array $cacheTags = ['buses-unidades', 'transporte'];
     protected int $cacheTTL = 1800; // 30 min - flota cambia ocasionalmente
+
+    public function __construct(
+        private readonly BusUnidadService $service
+    ) {}
     /**
      * Listar todos los buses de la empresa autenticada
      *
@@ -83,41 +90,18 @@ class BusUnidadController extends Controller
         $this->authorize('viewAny', BusUnidad::class);
         $empresaId = $this->getEmpresaId();
 
-        $cacheKey = $this->getCacheKey('index', [
+        $filtros = array_filter([
             'empresa_id' => $empresaId,
             'modelo_id' => $request->get('modelo_id'),
             'activo' => $request->get('activo'),
-            'buscar' => $request->get('buscar')
-        ]);
+            'search' => $request->get('buscar'),
+        ], fn ($v) => $v !== null);
 
-        return $this->cacheQueryIfEnabled($cacheKey, function () use ($request, $empresaId) {
-            $query = BusUnidad::where('empresa_id', $empresaId)
-                ->where('eliminado', 0)
-                ->with(['empresa', 'modelo']);
+        $cacheKey = $this->getCacheKey('index', $filtros);
 
-            // Filtro por modelo
-            if ($request->filled('modelo_id')) {
-                $query->where('modelo_id', $request->modelo_id);
-            }
+        $buses = $this->cacheQueryIfEnabled($cacheKey, fn () => $this->service->listar($filtros));
 
-            // Filtro por activo
-            if ($request->filled('activo')) {
-                $query->where('activo', $request->activo);
-            }
-
-            // Búsqueda por placa o identificador
-            if ($request->filled('buscar')) {
-                $buscar = $request->buscar;
-                $query->where(function ($q) use ($buscar) {
-                    $q->where('placa', 'like', "%{$buscar}%")
-                      ->orWhere('identificador_interno', 'like', "%{$buscar}%");
-                });
-            }
-
-            $buses = $query->orderBy('id')->paginate(15);
-
-            return BusUnidadResource::collection($buses);
-        });
+        return BusUnidadResource::collection($buses);
     }
 
     /**
@@ -154,20 +138,17 @@ class BusUnidadController extends Controller
     public function store(StoreBusUnidadRequest $request): JsonResponse
     {
         $this->authorize('create', BusUnidad::class);
-        $empresaId = $this->getEmpresaId();
 
-        $bus = BusUnidad::create([
-            'empresa_id' => $empresaId,
-            'placa' => $request->placa,
-            'modelo_id' => $request->modelo_id,
-            'capacidad_asientos' => $request->capacidad_asientos,
-            'identificador_interno' => $request->identificador_interno,
-            'activo' => $request->activo ?? 1
+        $dto = BusUnidadCreateDTO::fromRequest($request);
+        $data = array_merge($dto->toArray(), [
+            'empresa_id' => $this->getEmpresaId(),
         ]);
+
+        $bus = $this->service->crear($data);
 
         $this->flushCache();
 
-        return (new BusUnidadResource($bus->load(['empresa', 'modelo'])))
+        return (new BusUnidadResource($bus))
             ->additional(['message' => 'Bus creado exitosamente'])
             ->response()
             ->setStatusCode(201);
@@ -203,12 +184,7 @@ class BusUnidadController extends Controller
     )]
     public function show(int $id, Request $request): BusUnidadResource
     {
-        $empresaId = $this->getEmpresaId();
-
-        $bus = BusUnidad::where('empresa_id', $empresaId)
-            ->where('eliminado', 0)
-            ->with(['empresa', 'modelo', 'horariosRuta'])
-            ->findOrFail($id);
+        $bus = $this->service->obtenerPorEmpresa($id, $this->getEmpresaId());
 
         $this->authorize('view', $bus);
 
@@ -258,25 +234,15 @@ class BusUnidadController extends Controller
     )]
     public function update(UpdateBusUnidadRequest $request, int $id): BusUnidadResource
     {
-        $empresaId = $this->getEmpresaId();
-
-        $bus = BusUnidad::where('empresa_id', $empresaId)
-            ->where('eliminado', 0)
-            ->findOrFail($id);
+        $bus = $this->service->obtenerPorEmpresa($id, $this->getEmpresaId());
 
         $this->authorize('update', $bus);
 
-        $bus->update($request->only([
-            'placa',
-            'modelo_id',
-            'capacidad_asientos',
-            'identificador_interno',
-            'activo'
-        ]));
+        $bus = $this->service->actualizar($bus, BusUnidadUpdateDTO::fromRequest($request)->toArray());
 
         $this->flushCache();
 
-        return (new BusUnidadResource($bus->load(['empresa', 'modelo'])))
+        return (new BusUnidadResource($bus))
             ->additional(['message' => 'Bus actualizado exitosamente']);
     }
 
@@ -319,28 +285,15 @@ class BusUnidadController extends Controller
     )]
     public function destroy(int $id, Request $request): JsonResponse
     {
-        $empresaId = $this->getEmpresaId();
-
-        $bus = BusUnidad::where('empresa_id', $empresaId)
-            ->where('eliminado', 0)
-            ->findOrFail($id);
+        $bus = $this->service->obtenerPorEmpresa($id, $this->getEmpresaId());
 
         $this->authorize('delete', $bus);
 
-        // Validar que no tenga horarios activos asignados
-        if ($bus->horariosRuta()->where('estado', '!=', 'Finalizado')->exists()) {
-            return response()->json([
-                'message' => 'No se puede eliminar un bus con horarios de ruta activos'
-            ], 422);
-        }
-
-        $bus->update(['eliminado' => 1, 'activo' => 0]);
+        $this->service->eliminar($bus);
 
         $this->flushCache();
 
-        return response()->json([
-            'message' => 'Bus eliminado exitosamente'
-        ]);
+        return $this->deletedResponse('Bus eliminado exitosamente');
     }
 
     /**
@@ -378,16 +331,7 @@ class BusUnidadController extends Controller
     )]
     public function disponibles(Request $request): AnonymousResourceCollection
     {
-        $empresaId = $this->getEmpresaId();
-
-        $buses = BusUnidad::where('empresa_id', $empresaId)
-            ->where('eliminado', 0)
-            ->where('activo', 1)
-            ->with(['modelo'])
-            ->whereDoesntHave('horariosRuta', function ($query) {
-                $query->where('estado', 'En Viaje');
-            })
-            ->get();
+        $buses = $this->service->disponibles($this->getEmpresaId());
 
         return BusUnidadResource::collection($buses);
     }
@@ -422,29 +366,7 @@ class BusUnidadController extends Controller
     )]
     public function resumenEstado(Request $request): JsonResponse
     {
-        $empresaId = $this->getEmpresaId();
-
-        $resumen = [
-            'total_buses' => BusUnidad::where('empresa_id', $empresaId)
-                ->where('eliminado', 0)
-                ->count(),
-            'buses_activos' => BusUnidad::where('empresa_id', $empresaId)
-                ->where('eliminado', 0)
-                ->where('activo', 1)
-                ->count(),
-            'buses_en_viaje' => BusUnidad::where('empresa_id', $empresaId)
-                ->where('eliminado', 0)
-                ->whereHas('horariosRuta', function ($query) {
-                    $query->where('estado', 'En Viaje');
-                })
-                ->count(),
-            'capacidad_total' => BusUnidad::where('empresa_id', $empresaId)
-                ->where('eliminado', 0)
-                ->where('activo', 1)
-                ->sum('capacidad_asientos')
-        ];
-
-        return response()->json($resumen);
+        return response()->json($this->service->resumenFlota($this->getEmpresaId()));
     }
 
     /**
@@ -484,13 +406,7 @@ class BusUnidadController extends Controller
     )]
     public function porModelo(int $modeloId, Request $request): AnonymousResourceCollection
     {
-        $empresaId = $this->getEmpresaId();
-
-        $buses = BusUnidad::where('empresa_id', $empresaId)
-            ->where('modelo_id', $modeloId)
-            ->where('eliminado', 0)
-            ->with(['modelo'])
-            ->get();
+        $buses = $this->service->porModelo($this->getEmpresaId(), $modeloId);
 
         return BusUnidadResource::collection($buses);
     }

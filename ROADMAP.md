@@ -224,7 +224,7 @@ TOTAL ESTIMADO: 268-415 horas
 
 ---
 
-### FASE 16 — Service Layer Pattern: Módulos Secundarios (v3.3.0)
+### ~~FASE 16 — Service Layer Pattern: Módulos Secundarios (v3.3.0)~~ ✅ COMPLETADA
 
 **Prioridad:** MEDIA  
 **Estimación:** 60-80h  
@@ -232,11 +232,11 @@ TOTAL ESTIMADO: 268-415 horas
 
 | # | Batch | Controllers a refactorizar |
 |---|---|---|
-| 16.1 | Catálogos Core | `TipoImpuestoController`, `TasaImpuestoController`, `FormaPagoController`, `UnidadMedidaController`, `MarcaController` |
-| 16.2 | Transacciones | `PagoController`, `MovimientoCajaChicaController`, `PagoCuentaCobrarController`, `PagoCuentaPagarController` |
-| 16.3 | Facturación | `FeCertificadoDigitalController`, `ConsecutivoFeController`, `MensajeHaciendaController`, `ComprobanteRecibidoElectronicoController` |
-| 16.4 | Transporte | `RutaController`, `HorarioRutaController`, `BusUnidadController`, `ModeloBusController` |
-| 16.5 | Admin | `UsuarioController`, `RolController`, `SucursalController`, `NotificacionController` |
+| 16.1 | Catálogos Core | `TipoImpuestoController`, `TasaImpuestoController`, `FormaPagoController`, `UnidadMedidaController`, `MarcaController` | ✅ |
+| 16.2 | Transacciones | `PagoController`, `MovimientoCajaChicaController`, `PagoCuentaCobrarController`, `PagoCuentaPagarController` | ✅ |
+| 16.3 | Facturación | `FeCertificadoDigitalController`, `ConsecutivoFeController`, `MensajeHaciendaController`, `ComprobanteRecibidoElectronicoController` | ✅ |
+| 16.4 | Transporte | `RutaController`, `HorarioRutaController`, `BusUnidadController`, `ModeloBusController` | ✅ |
+| 16.5 | Admin | `UsuarioController`, `RolController`, `SucursalController`, `NotificacionController` | ✅ |
 
 **Patrón a seguir:** Mismo patrón de FASE 8-10: Service con DI, DTO `toArray()`, controller delegando en service.
 
@@ -244,9 +244,9 @@ TOTAL ESTIMADO: 268-415 horas
 
 | # | Tarea | Detalle |
 |---|---|---|
-| 16.6 | Extraer `BaseService` abstracto | Clase base con operaciones CRUD genéricas (`listar()`, `crear()`, `actualizar()`, `eliminar()`) para eliminar duplicación en los 22+ servicios |
-| 16.7 | Ampliar cobertura de DTOs | Crear DTOs para módulos críticos (ventas, contabilidad, nómina) — de 21% a 60%+ de cobertura |
-| 16.8 | Refactorizar `UsuarioController` | Viola SOLID: usa queries directas en lugar de servicio, tiene lógica de cache manual. Migrar a `UsuarioService` |
+| 16.6 | Extraer `BaseService` abstracto | Clase base con operaciones CRUD genéricas (`listar()`, `crear()`, `actualizar()`, `eliminar()`) para eliminar duplicación en los 22+ servicios | ✅ |
+| 16.7 | Ampliar cobertura de DTOs | Crear DTOs para módulos críticos (ventas, contabilidad, nómina) — de 21% a 60%+ de cobertura | ✅ |
+| 16.8 | Refactorizar `UsuarioController` | Viola SOLID: usa queries directas en lugar de servicio, tiene lógica de cache manual. Migrar a `UsuarioService` | ✅ |
 
 **Criterio de aceptación:**
 - +20 Services nuevos

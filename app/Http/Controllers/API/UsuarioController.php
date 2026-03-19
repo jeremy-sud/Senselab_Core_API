@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\API;
 
+use App\DTOs\API\UsuarioCreateDTO;
+use App\DTOs\API\UsuarioUpdateDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUsuarioRequest;
 use App\Http\Requests\UpdateUsuarioRequest;
@@ -9,11 +11,11 @@ use App\Http\Requests\AsignarRolesRequest;
 use App\Http\Requests\CambiarPasswordRequest;
 use App\Http\Resources\UsuarioResource;
 use App\Models\Usuario;
+use App\Services\UsuarioService;
 use App\Traits\HasCacheableQueries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\Hash;
 use OpenApi\Attributes as OA;
 
 /**
@@ -32,6 +34,10 @@ class UsuarioController extends Controller
     /** @var array<int, string> */
     protected array $cacheTags = ['usuarios', 'auth'];
     protected int $cacheTTL = 900; // 15 minutos
+
+    public function __construct(
+        private readonly UsuarioService $service
+    ) {}
     /**
      * Listar todos los usuarios de la empresa
      *
@@ -57,22 +63,11 @@ class UsuarioController extends Controller
 
         $empresaId = auth('sanctum')->user()->empresa_id;
 
+        $filtros = array_merge($request->all(), ['empresa_id' => $empresaId]);
+
         $usuarios = $this->cacheQueryIfEnabled(
-            $this->getCacheKey('index', array_merge($request->all(), ['empresa_id' => $empresaId])),
-            function() use ($request, $empresaId) {
-                $query = Usuario::where('empresa_id', $empresaId)
-                    ->with(['roles', 'cargo', 'empresa']);
-
-                if ($request->has('activo')) {
-                    $query->where('activo', $request->boolean('activo'));
-                }
-
-                if ($request->filled('cargo_id')) {
-                    $query->where('cargo_id', $request->cargo_id);
-                }
-
-                return $query->get();
-            }
+            $this->getCacheKey('index', $filtros),
+            fn () => $this->service->listarTodos($filtros)
         );
 
         return UsuarioResource::collection($usuarios);
@@ -113,19 +108,13 @@ class UsuarioController extends Controller
     {
         $this->authorize('create', Usuario::class);
 
-        $validated = $request->validated();
-        $validated['empresa_id'] = auth('sanctum')->user()->empresa_id;
-        $validated['password_hash'] = Hash::make($validated['password']);
-        unset($validated['password']);
+        $dto = UsuarioCreateDTO::fromRequest($request);
+        $data = array_merge($dto->toArray(), [
+            'empresa_id' => auth('sanctum')->user()->empresa_id,
+            'roles' => $dto->getRoles(),
+        ]);
 
-        $usuario = Usuario::create($validated);
-
-        // Asignar roles si fueron proporcionados
-        if (isset($validated['roles'])) {
-            $usuario->roles()->attach($validated['roles']);
-        }
-
-        $usuario->load(['roles', 'cargo', 'empresa']);
+        $usuario = $this->service->crear($data);
 
         $this->flushCache();
 
@@ -155,11 +144,11 @@ class UsuarioController extends Controller
     {
         $empresaId = auth('sanctum')->user()->empresa_id;
 
-        $usuario = Usuario::where('empresa_id', $empresaId)
-            ->with(['roles.permisos', 'cargo', 'empresa', 'empleado'])
-            ->findOrFail($id);
+        $usuario = Usuario::where('empresa_id', $empresaId)->findOrFail($id);
 
         $this->authorize('view', $usuario);
+
+        $usuario = $this->service->obtener($usuario->id);
 
         return new UsuarioResource($usuario);
     }
@@ -185,22 +174,14 @@ class UsuarioController extends Controller
 
         $this->authorize('update', $usuario);
 
-        $validated = $request->validated();
-
-        // Si se proporciona nueva contraseña, hashearla
-        if (isset($validated['password'])) {
-            $validated['password_hash'] = Hash::make($validated['password']);
-            unset($validated['password']);
+        $dto = UsuarioUpdateDTO::fromRequest($request);
+        $data = $dto->toArray();
+        $roles = $dto->getRoles();
+        if ($roles !== null) {
+            $data['roles'] = $roles;
         }
 
-        $usuario->update($validated);
-
-        // Sincronizar roles si fueron proporcionados
-        if (isset($validated['roles'])) {
-            $usuario->roles()->sync($validated['roles']);
-        }
-
-        $usuario->load(['roles', 'cargo', 'empresa']);
+        $usuario = $this->service->actualizar($usuario, $data);
 
         $this->flushCache();
 
@@ -239,19 +220,11 @@ class UsuarioController extends Controller
             ], 422);
         }
 
-        $usuario->eliminado = now();
-        $usuario->activo = 0;
-        $usuario->save();
-
-        // Revocar todos los tokens de acceso
-        $usuario->tokens()->delete();
+        $this->service->eliminar($usuario);
 
         $this->flushCache();
 
-        return response()->json([
-            'message' => 'Usuario eliminado exitosamente',
-            'data' => new UsuarioResource($usuario)
-        ], 200);
+        return $this->deletedResponse('Usuario eliminado exitosamente');
     }
 
     /**
@@ -279,12 +252,10 @@ class UsuarioController extends Controller
     )]
     public function asignarRoles(AsignarRolesRequest $request, int $id): JsonResponse
     {
-
         $empresaId = auth('sanctum')->user()->empresa_id;
         $usuario = Usuario::where('empresa_id', $empresaId)->findOrFail($id);
 
-        $usuario->roles()->sync($request->roles);
-        $usuario->load('roles');
+        $usuario = $this->service->asignarRoles($usuario, $request->roles);
 
         $this->flushCache();
 
@@ -327,15 +298,7 @@ class UsuarioController extends Controller
         $empresaId = auth('sanctum')->user()->empresa_id;
         $usuario = Usuario::where('empresa_id', $empresaId)->findOrFail($id);
 
-        // Verificar password actual
-        if (!Hash::check($request->password_actual, $usuario->password_hash)) {
-            return response()->json([
-                'message' => 'La contraseña actual es incorrecta'
-            ], 422);
-        }
-
-        $usuario->password_hash = Hash::make($request->password_nueva);
-        $usuario->save();
+        $this->service->cambiarPassword($usuario, $request->password_actual, $request->password_nueva);
 
         return response()->json([
             'message' => 'Contraseña actualizada exitosamente'
