@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Modelo para la tabla `tipos_clientes`.
  * Catálogo de tipos de clientes (Mayorista, Minorista, Gobierno, etc.).
- * 
+ *
  * @author Jeremy Arias Solano <deadmooncr@gmail.com>
  * @copyright 2025 Sistemas Ursol S.A.
  */

@@ -14,14 +14,14 @@ use Illuminate\Support\Facades\Log;
  *
  * Implementa firma XAdES-EPES según ETSI TS 101 903 v1.3.2+
  * Requerido por Ministerio de Hacienda de Costa Rica.
- * 
+ *
  * Características:
  * - Firma XMLDSig con perfil XAdES-EPES (Extended Policy Explicit Signature)
  * - Empaquetado ENVELOPED
  * - Algoritmos: RSA-SHA256, SHA-256
  * - Canonicalización: Exclusive C14N
  * - SignaturePolicyIdentifier obligatorio
- * 
+ *
  * @see DGT-R-000-2024 Anexo 2 "Mecanismo de seguridad para la autenticación e integridad"
  */
 class XadesEpesSigner
@@ -473,7 +473,7 @@ class XadesEpesSigner
 
     /**
      * Crear xades:SignaturePolicyIdentifier
-     * 
+     *
      * Este nodo es OBLIGATORIO para XAdES-EPES según Hacienda CR
      */
     protected function createSignaturePolicyIdentifier(): DOMElement

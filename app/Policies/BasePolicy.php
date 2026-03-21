@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * BasePolicy - Clase base para todas las policies del sistema
- * 
+ *
  * Proporciona lógica común de autorización multi-tenant y verificación de permisos.
  * Todas las policies deben extender esta clase.
- * 
+ *
  * @package App\Policies
  * @author Jeremy Arias Solano <deadmooncr@gmail.com>
  * @copyright 2025 Sistemas Ursol S.A.
@@ -20,14 +20,14 @@ abstract class BasePolicy
     /**
      * Prefijo del permiso (ej: 'empresas', 'productos', 'ventas')
      * Debe ser definido en cada policy hija
-     * 
+     *
      * @var string
      */
     protected string $permission;
 
     /**
      * Verificar si el usuario pertenece a la misma empresa que el recurso
-     * 
+     *
      * @param Usuario $user
      * @param Model $model
      * @return bool
@@ -50,7 +50,7 @@ abstract class BasePolicy
 
     /**
      * Verificar si el usuario tiene el permiso requerido
-     * 
+     *
      * @param Usuario $user
      * @param string $action
      * @return bool
@@ -64,7 +64,7 @@ abstract class BasePolicy
 
     /**
      * Determinar si el usuario puede ver cualquier modelo
-     * 
+     *
      * @param Usuario $user
      * @return bool
      */
@@ -75,20 +75,20 @@ abstract class BasePolicy
 
     /**
      * Determinar si el usuario puede ver el modelo
-     * 
+     *
      * @param Usuario $user
      * @param Model $model
      * @return bool
      */
     public function view(Usuario $user, Model $model): bool
     {
-        return $this->ownsResource($user, $model) && 
+        return $this->ownsResource($user, $model) &&
                $this->hasPermission($user, 'ver');
     }
 
     /**
      * Determinar si el usuario puede crear modelos
-     * 
+     *
      * @param Usuario $user
      * @return bool
      */
@@ -99,46 +99,46 @@ abstract class BasePolicy
 
     /**
      * Determinar si el usuario puede actualizar el modelo
-     * 
+     *
      * @param Usuario $user
      * @param Model $model
      * @return bool
      */
     public function update(Usuario $user, Model $model): bool
     {
-        return $this->ownsResource($user, $model) && 
+        return $this->ownsResource($user, $model) &&
                $this->hasPermission($user, 'editar');
     }
 
     /**
      * Determinar si el usuario puede eliminar el modelo
-     * 
+     *
      * @param Usuario $user
      * @param Model $model
      * @return bool
      */
     public function delete(Usuario $user, Model $model): bool
     {
-        return $this->ownsResource($user, $model) && 
+        return $this->ownsResource($user, $model) &&
                $this->hasPermission($user, 'eliminar');
     }
 
     /**
      * Determinar si el usuario puede restaurar el modelo
-     * 
+     *
      * @param Usuario $user
      * @param Model $model
      * @return bool
      */
     public function restore(Usuario $user, Model $model): bool
     {
-        return $this->ownsResource($user, $model) && 
+        return $this->ownsResource($user, $model) &&
                $this->hasPermission($user, 'editar');
     }
 
     /**
      * Determinar si el usuario puede forzar eliminación del modelo
-     * 
+     *
      * @param Usuario $user
      * @param Model $model
      * @return bool
@@ -146,7 +146,7 @@ abstract class BasePolicy
     public function forceDelete(Usuario $user, Model $model): bool
     {
         // Solo administradores pueden forzar eliminación
-        return $user->hasRole('Administrador') && 
+        return $user->hasRole('Administrador') &&
                $this->ownsResource($user, $model);
     }
 }

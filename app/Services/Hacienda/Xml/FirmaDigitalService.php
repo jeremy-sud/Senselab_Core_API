@@ -14,13 +14,13 @@ use Carbon\Carbon;
 
 /**
  * Servicio de Firma Digital XAdES-EPES para Comprobantes Electrónicos
- * 
+ *
  * Implementa firma digital XML según estándar XAdES-EPES requerido por Hacienda CR v4.4.
  * Usa certificados digitales en formato .p12 (PKCS#12).
- * 
+ *
  * Esta clase actúa como fachada para el firmador XAdES-EPES, proporcionando
  * integración con el sistema de certificados de la base de datos.
- * 
+ *
  * @see XadesEpesSigner Para la implementación de firma XAdES-EPES
  * @see DGT-R-000-2024 Anexo 2 - Mecanismo de seguridad
  */
@@ -56,12 +56,12 @@ class FirmaDigitalService
 
     /**
      * Firmar XML de comprobante electrónico usando XAdES-EPES
-     * 
+     *
      * Implementa la firma según el Anexo 2 de DGT-R-000-2024:
      * - Firma XAdES-EPES (Extended-Electronic Signature con Policy)
      * - SignaturePolicyIdentifier obligatorio
      * - QualifyingProperties con SigningCertificate, DataObjectFormat
-     * 
+     *
      * @param string $xmlString XML sin firmar (versión 4.4)
      * @param int $certificadoId ID del certificado a usar
      * @return string XML firmado con XAdES-EPES
@@ -96,10 +96,10 @@ class FirmaDigitalService
 
     /**
      * Firmar XML usando método legacy (XMLDSig básico)
-     * 
+     *
      * DEPRECATED: Usar firmar() para XAdES-EPES completo
      * Mantenido para compatibilidad con XML v4.3 existentes
-     * 
+     *
      * @deprecated Use firmar() en su lugar
      * @param string $xmlString XML sin firmar
      * @param int $certificadoId ID del certificado a usar
@@ -165,7 +165,7 @@ class FirmaDigitalService
 
     /**
      * Cargar y validar certificado digital
-     * 
+     *
      * @param int $certificadoId ID del certificado
      * @throws \Exception
      */
@@ -208,7 +208,7 @@ class FirmaDigitalService
 
     /**
      * Leer y parsear certificado .p12
-     * 
+     *
      * @throws \Exception
      */
     protected function leerCertificadoP12(): void
@@ -263,7 +263,7 @@ class FirmaDigitalService
 
     /**
      * Validar información del certificado X.509
-     * 
+     *
      * @param string $certPem Certificado en formato PEM
      * @throws \Exception
      */
@@ -334,7 +334,7 @@ class FirmaDigitalService
 
     /**
      * Desencriptar password del certificado
-     * 
+     *
      * @return string Password desencriptado
      * @throws \Exception
      */
@@ -363,7 +363,7 @@ class FirmaDigitalService
 
     /**
      * Verificar firma de un XML firmado
-     * 
+     *
      * @param string $xmlFirmado XML con firma digital
      * @return bool True si la firma es válida
      * @throws \Exception
@@ -421,7 +421,7 @@ class FirmaDigitalService
 
     /**
      * Extraer certificado de un XML firmado
-     * 
+     *
      * @param string $xmlFirmado XML con firma
      * @return array<string, mixed>|null Datos del certificado
      */
@@ -444,8 +444,8 @@ class FirmaDigitalService
             return null;
         }
         $certBase64 = $certNode->nodeValue;
-        $certPem = "-----BEGIN CERTIFICATE-----\n" . 
-                   chunk_split($certBase64, 64) . 
+        $certPem = "-----BEGIN CERTIFICATE-----\n" .
+                   chunk_split($certBase64, 64) .
                    "-----END CERTIFICATE-----";
 
         $certData = openssl_x509_parse($certPem);
@@ -458,16 +458,16 @@ class FirmaDigitalService
             'numero_serie' => $certData['serialNumber'] ?? null,
             'emisor' => $certData['issuer']['CN'] ?? $certData['issuer']['O'] ?? null,
             'sujeto' => $certData['subject']['CN'] ?? $certData['subject']['O'] ?? null,
-            'valido_desde' => isset($certData['validFrom_time_t']) ? 
+            'valido_desde' => isset($certData['validFrom_time_t']) ?
                 Carbon::createFromTimestamp($certData['validFrom_time_t'])->toDateTimeString() : null,
-            'valido_hasta' => isset($certData['validTo_time_t']) ? 
+            'valido_hasta' => isset($certData['validTo_time_t']) ?
                 Carbon::createFromTimestamp($certData['validTo_time_t'])->toDateTimeString() : null,
         ];
     }
 
     /**
      * Convertir XML firmado a Base64 para envío a Hacienda
-     * 
+     *
      * @param string $xmlFirmado XML firmado
      * @return string XML en Base64
      */
@@ -478,7 +478,7 @@ class FirmaDigitalService
 
     /**
      * Obtener información del certificado actualmente cargado
-     * 
+     *
      * @return array<string, mixed>|null
      */
     public function getInformacionCertificado(): ?array

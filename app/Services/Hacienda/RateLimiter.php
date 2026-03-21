@@ -9,11 +9,11 @@ use Carbon\Carbon;
 
 /**
  * Rate Limiter para cumplir con límites del API de Hacienda
- * 
+ *
  * Implementa algoritmo Leaky Bucket para:
  * - Burst: 20 req/seg por 5 seg (max 100)
  * - Sostenido: 10 req/seg por 120 seg (max 1200)
- * 
+ *
  * Evita bloqueos de IP por 10 minutos.
  */
 class RateLimiter
@@ -44,7 +44,7 @@ class RateLimiter
 
     /**
      * Verificar si se puede hacer un request (esperar si es necesario)
-     * 
+     *
      * @throws \Exception Si el rate limiting está deshabilitado
      */
     public function waitIfNeeded(): void
@@ -77,7 +77,7 @@ class RateLimiter
 
     /**
      * Verificar si se puede hacer un request en este momento
-     * 
+     *
      * @return bool
      */
     public function canMakeRequest(): bool
@@ -138,7 +138,7 @@ class RateLimiter
 
     /**
      * Obtener cantidad de requests en un período
-     * 
+     *
      * @param string $period 'second' o 'minute'
      * @param string $key Clave del período (timestamp)
      * @return int Cantidad de requests
@@ -151,7 +151,7 @@ class RateLimiter
 
     /**
      * Incrementar contador de requests
-     * 
+     *
      * @param string $period 'second' o 'minute'
      * @param string $key Clave del período
      * @param int $ttl Tiempo de vida en segundos
@@ -166,7 +166,7 @@ class RateLimiter
 
     /**
      * Obtener estadísticas actuales de rate limiting
-     * 
+     *
      * @return array<string, mixed> Estadísticas
      */
     public function getEstadisticas(): array
@@ -215,7 +215,7 @@ class RateLimiter
 
     /**
      * Limpiar contadores antiguos del cache
-     * 
+     *
      * @return int Cantidad de claves eliminadas
      */
     public function limpiarCache(): int
@@ -230,7 +230,7 @@ class RateLimiter
 
     /**
      * Obtener configuración actual
-     * 
+     *
      * @return array<string, mixed> Configuración
      */
     public function getConfiguracion(): array

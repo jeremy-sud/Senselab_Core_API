@@ -10,10 +10,10 @@ use Illuminate\Cache\TaggableStore;
 /**
  * Observer para Producto
  * Sprint 8.3 - Observer Pattern
- * 
+ *
  * Maneja eventos del ciclo de vida de Producto:
  * - Limpiar cache cuando se modifica
- * - Log de cambios críticos  
+ * - Log de cambios críticos
  * - Validaciones adicionales
  */
 class ProductoObserver

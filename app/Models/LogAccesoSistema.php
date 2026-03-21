@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Modelo para la tabla `logs_acceso_sistema`.
  * Registra auditoría de accesos al sistema (login, logout, intentos fallidos).
- * 
+ *
  * @author Jeremy Arias Solano <deadmooncr@gmail.com>
  * @copyright 2025 Sistemas Ursol S.A.
  */

@@ -6,7 +6,7 @@ use App\Models\PagoNomina;
 
 /**
  * PagoNominaPolicy - Gestión de autorización para PagoNomina
- * 
+ *
  * @package App\Policies
  * @author Jeremy Arias Solano <deadmooncr@gmail.com>
  * @copyright 2025 Sistemas Ursol S.A.
@@ -15,7 +15,7 @@ class PagoNominaPolicy extends BasePolicy
 {
     /**
      * Prefijo del permiso
-     * 
+     *
      * @var string
      */
     protected string $permission = 'pago_nomina';

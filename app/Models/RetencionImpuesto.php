@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Modelo para la tabla `retenciones_impuestos`.
  * Gestiona retenciones de impuestos (renta, IVA) aplicadas a proveedores.
- * 
+ *
  * @author Jeremy Arias Solano <deadmooncr@gmail.com>
  * @copyright 2025 Sistemas Ursol S.A.
  */

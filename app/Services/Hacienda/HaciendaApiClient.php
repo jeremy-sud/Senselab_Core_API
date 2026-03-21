@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * Cliente HTTP para comunicación con el API de Hacienda Costa Rica
- * 
+ *
  * Maneja autenticación OAuth 2.0, rate limiting y reintentos automáticos.
  */
 class HaciendaApiClient
@@ -27,7 +27,7 @@ class HaciendaApiClient
 
     /**
      * Configuración del ambiente actual
-     * 
+     *
      * @var array<string, mixed>
      */
     protected array $config;
@@ -63,7 +63,7 @@ class HaciendaApiClient
 
     /**
      * Enviar comprobante electrónico a Hacienda
-     * 
+     *
      * @param string $clave Clave numérica única de 50 posiciones
      * @param string $xmlFirmado XML firmado digitalmente en base64
      * @param string $fecha Fecha de emisión ISO 8601
@@ -95,7 +95,7 @@ class HaciendaApiClient
 
     /**
      * Consultar estado de un comprobante
-     * 
+     *
      * @param string $clave Clave numérica del comprobante
      * @return array<string, mixed> Estado del comprobante
      * @throws \Exception
@@ -107,7 +107,7 @@ class HaciendaApiClient
 
     /**
      * Listar comprobantes enviados
-     * 
+     *
      * @param array<string, mixed> $filtros Filtros de búsqueda (fecha_inicio, fecha_fin, etc.)
      * @return array<string, mixed> Lista de comprobantes
      * @throws \Exception
@@ -119,7 +119,7 @@ class HaciendaApiClient
 
     /**
      * Obtener detalles de un comprobante específico
-     * 
+     *
      * @param string $clave Clave numérica del comprobante
      * @return array<string, mixed> Detalles del comprobante
      * @throws \Exception
@@ -131,7 +131,7 @@ class HaciendaApiClient
 
     /**
      * Realizar petición GET
-     * 
+     *
      * @param string $endpoint Endpoint de la API
      * @param array<string, mixed> $query Parámetros query string
      * @return array<string, mixed> Respuesta decodificada
@@ -146,7 +146,7 @@ class HaciendaApiClient
 
     /**
      * Realizar petición POST
-     * 
+     *
      * @param string $endpoint Endpoint de la API
      * @param array<string, mixed> $data Datos del body
      * @return array<string, mixed> Respuesta decodificada
@@ -161,7 +161,7 @@ class HaciendaApiClient
 
     /**
      * Realizar petición HTTP con reintentos y rate limiting
-     * 
+     *
      * @param string $method Método HTTP
      * @param string $endpoint Endpoint relativo
      * @param array<string, mixed> $options Opciones de Guzzle
@@ -293,7 +293,7 @@ class HaciendaApiClient
 
     /**
      * Extraer headers relevantes de la respuesta
-     * 
+     *
      * @return array<string, mixed>
      */
     protected function extractHeaders(\Psr\Http\Message\ResponseInterface $response): array
@@ -308,7 +308,7 @@ class HaciendaApiClient
 
     /**
      * Registrar log de request
-     * 
+     *
      * @param array<string, mixed> $options
      */
     protected function logRequest(string $method, string $url, array $options): void
@@ -327,7 +327,7 @@ class HaciendaApiClient
 
     /**
      * Registrar log de response
-     * 
+     *
      * @param array<string, mixed> $data
      */
     protected function logResponse(int $statusCode, array $data, float $duration): void

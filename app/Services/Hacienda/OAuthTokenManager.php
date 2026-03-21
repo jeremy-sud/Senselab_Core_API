@@ -11,7 +11,7 @@ use Carbon\Carbon;
 
 /**
  * Gestor de Tokens OAuth 2.0 para API de Hacienda
- * 
+ *
  * Maneja obtención, almacenamiento y refresco automático de tokens.
  */
 class OAuthTokenManager
@@ -33,7 +33,7 @@ class OAuthTokenManager
 
     /**
      * Credenciales OAuth
-     * 
+     *
      * @var array<string, mixed>
      */
     protected array $credentials;
@@ -58,7 +58,7 @@ class OAuthTokenManager
 
     /**
      * Obtener un token válido (existente o nuevo)
-     * 
+     *
      * @return string Access token
      * @throws \Exception
      */
@@ -90,7 +90,7 @@ class OAuthTokenManager
 
     /**
      * Obtener un nuevo token desde el servidor OAuth
-     * 
+     *
      * @return string Access token
      * @throws \Exception
      */
@@ -163,7 +163,7 @@ class OAuthTokenManager
 
     /**
      * Guardar token en la base de datos
-     * 
+     *
      * @param array<string, mixed> $data
      */
     protected function guardarToken(array $data): FeOAuthToken
@@ -197,7 +197,7 @@ class OAuthTokenManager
 
     /**
      * Refrescar token (invalidar el actual y obtener uno nuevo)
-     * 
+     *
      * @return string Nuevo access token
      * @throws \Exception
      */
@@ -218,7 +218,7 @@ class OAuthTokenManager
 
     /**
      * Validar que las credenciales OAuth estén configuradas
-     * 
+     *
      * @throws HaciendaException
      */
     protected function validateCredentials(): void
@@ -246,7 +246,7 @@ class OAuthTokenManager
 
     /**
      * Limpiar tokens expirados del ambiente actual
-     * 
+     *
      * @return int Cantidad de tokens eliminados
      */
     public function limpiarTokensExpirados(): int
@@ -267,7 +267,7 @@ class OAuthTokenManager
 
     /**
      * Obtener estadísticas de uso de tokens
-     * 
+     *
      * @return array<string, mixed> Estadísticas
      */
     public function getEstadisticas(): array
