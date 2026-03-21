@@ -26,7 +26,7 @@ class AsientoContableFactory extends Factory
             'total_haber' => $monto,
             'estado' => $this->faker->randomElement(['borrador', 'registrado', 'mayorizado', 'anulado']),
             'mayorizado' => $this->faker->boolean(60),
-            'fecha_mayorizacion' => fn (array $attributes) => 
+            'fecha_mayorizacion' => fn (array $attributes) =>
                 $attributes['mayorizado'] ? $this->faker->dateTimeBetween($fecha, 'now') : null,
             'usuario_id' => Usuario::factory(),
             'observaciones' => $this->faker->optional()->sentence(10),

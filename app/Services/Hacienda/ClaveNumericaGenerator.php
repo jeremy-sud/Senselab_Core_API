@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * Generador de Clave Numérica para Comprobantes Electrónicos
- * 
+ *
  * Genera la clave numérica única de 50 posiciones según el formato oficial de Hacienda.
- * 
+ *
  * Formato (50 posiciones):
  * - Posición 1: País (siempre "5" para Costa Rica)
  * - Posiciones 2-9: Fecha de emisión (ddmmyyyy)
@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Log;
  * - Posiciones 22-41: Consecutivo (20 dígitos)
  * - Posición 42: Situación (1=Normal, 2=Contingencia, 3=Sin internet)
  * - Posiciones 43-50: Código de seguridad (8 dígitos aleatorios)
- * 
+ *
  * Ejemplo: 50608202300310112345600100001000000001000000001112345678
  */
 class ClaveNumericaGenerator
@@ -48,7 +48,7 @@ class ClaveNumericaGenerator
 
     /**
      * Generar clave numérica completa
-     * 
+     *
      * @param Carbon $fechaEmision Fecha de emisión del comprobante
      * @param string $cedulaEmisor Cédula jurídica o física del emisor (sin guiones)
      * @param string $consecutivo Número consecutivo interno
@@ -95,7 +95,7 @@ class ClaveNumericaGenerator
 
     /**
      * Formatear fecha de emisión (ddmmyyyy)
-     * 
+     *
      * @param Carbon $fecha Fecha de emisión
      * @return string 8 dígitos
      */
@@ -106,7 +106,7 @@ class ClaveNumericaGenerator
 
     /**
      * Formatear cédula del emisor (12 dígitos con padding de ceros)
-     * 
+     *
      * @param string $cedula Cédula sin guiones
      * @return string 12 dígitos
      */
@@ -126,7 +126,7 @@ class ClaveNumericaGenerator
 
     /**
      * Formatear consecutivo (20 dígitos con padding de ceros)
-     * 
+     *
      * @param string $consecutivo Número consecutivo
      * @return string 20 dígitos
      */
@@ -146,7 +146,7 @@ class ClaveNumericaGenerator
 
     /**
      * Generar código de seguridad aleatorio (8 dígitos)
-     * 
+     *
      * @return string 8 dígitos aleatorios
      */
     protected function generarCodigoSeguridad(): string
@@ -161,7 +161,7 @@ class ClaveNumericaGenerator
 
     /**
      * Validar parámetros de entrada
-     * 
+     *
      * @throws \InvalidArgumentException
      */
     protected function validarParametros(
@@ -226,7 +226,7 @@ class ClaveNumericaGenerator
 
     /**
      * Validar formato de una clave numérica existente
-     * 
+     *
      * @param string $clave Clave a validar
      * @return array<string, mixed>|bool Si se llama desde tests retorna array ['valido' => bool, 'errores' => array], sino bool
      */
@@ -273,8 +273,8 @@ class ClaveNumericaGenerator
 
         $valido = empty($errores);
 
-        return $this->debeRetornarArray() ? 
-            ['valido' => $valido, 'errores' => $errores] : 
+        return $this->debeRetornarArray() ?
+            ['valido' => $valido, 'errores' => $errores] :
             $valido;
     }
 
@@ -290,7 +290,7 @@ class ClaveNumericaGenerator
 
     /**
      * Validar formato de fecha en clave (ddmmyyyy)
-     * 
+     *
      * @param string $fecha 8 dígitos
      * @return bool
      */
@@ -323,7 +323,7 @@ class ClaveNumericaGenerator
 
     /**
      * Extraer información de una clave numérica
-     * 
+     *
      * @param string $clave Clave numérica de 50 posiciones
      * @return array<string, mixed> Información extraída
      * @throws \InvalidArgumentException Si la clave es inválida
@@ -378,7 +378,7 @@ class ClaveNumericaGenerator
 
     /**
      * Generar múltiples claves numéricas consecutivas
-     * 
+     *
      * @param Carbon $fechaEmision Fecha de emisión
      * @param string $cedulaEmisor Cédula del emisor
      * @param string $consecutivoInicial Consecutivo inicial

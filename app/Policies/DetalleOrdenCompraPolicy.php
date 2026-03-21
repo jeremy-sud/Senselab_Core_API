@@ -41,7 +41,7 @@ class DetalleOrdenCompraPolicy
     public function update(User $user, DetalleOrdenCompra $detalleOrden): bool
     {
         // No se permite editar detalles de órdenes ya aprobadas o recibidas
-        if ($detalleOrden->ordenCompra && 
+        if ($detalleOrden->ordenCompra &&
             in_array($detalleOrden->ordenCompra->estado, ['Aprobada', 'Recibida', 'Cancelada'])) {
             return false;
         }
@@ -56,7 +56,7 @@ class DetalleOrdenCompraPolicy
     public function delete(User $user, DetalleOrdenCompra $detalleOrden): bool
     {
         // No se permite eliminar detalles de órdenes ya aprobadas o recibidas
-        if ($detalleOrden->ordenCompra && 
+        if ($detalleOrden->ordenCompra &&
             in_array($detalleOrden->ordenCompra->estado, ['Aprobada', 'Recibida', 'Cancelada'])) {
             return false;
         }

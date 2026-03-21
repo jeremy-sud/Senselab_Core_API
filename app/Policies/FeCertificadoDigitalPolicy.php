@@ -38,7 +38,7 @@ class FeCertificadoDigitalPolicy extends BasePolicy
      */
     public function create(Usuario $user): bool
     {
-        return $user->hasPermission('crear-facturacion_electronica') 
+        return $user->hasPermission('crear-facturacion_electronica')
             && ($user->hasRole('Administrador') || $user->hasRole('Gerente'));
     }
 

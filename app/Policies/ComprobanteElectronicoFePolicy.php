@@ -84,7 +84,7 @@ class ComprobanteElectronicoFePolicy extends BasePolicy
     public function restore(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
         $comprobante = $model;
-        return $user->hasPermission('editar-facturacion_electronica') 
+        return $user->hasPermission('editar-facturacion_electronica')
             && $comprobante->empresa_id === $user->empresa_id;
     }
 

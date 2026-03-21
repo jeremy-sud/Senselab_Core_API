@@ -397,7 +397,7 @@ class OpenAIService implements AIServiceInterface
     {
         $model = $options['model'] ?? config('openai.models.mini', 'gpt-4o-mini');
 
-        $systemPrompt = "Eres un asistente que extrae información estructurada. 
+        $systemPrompt = "Eres un asistente que extrae información estructurada.
         Responde ÚNICAMENTE con JSON válido siguiendo exactamente este schema:
         " . json_encode($schema, JSON_PRETTY_PRINT);
 
