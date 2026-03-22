@@ -1,0 +1,64 @@
+# GitHub Actions — Contract Tests con Pact PHP
+# FASE 19.2: Consumer-driven contract testing
+# Valida que los contratos API entre frontend y backend se mantengan
+
+name: Contract Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'app/Http/**'
+      - 'routes/**'
+      - 'tests/Contract/**'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'app/Http/**'
+      - 'routes/**'
+      - 'tests/Contract/**'
+
+env:
+  PHP_VERSION: '8.4'
+
+jobs:
+  consumer-contracts:
+    name: Consumer Contract Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, xml, ctype, json, bcmath, curl, ffi
+          coverage: none
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Composer Dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Run Consumer Contract Tests
+        run: php vendor/bin/phpunit --testsuite Contract-Consumer --no-coverage
+
+      - name: Upload Pact contracts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pact-contracts
+          path: tests/Contract/pacts/*.json
+          retention-days: 30

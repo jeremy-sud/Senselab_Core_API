@@ -24,8 +24,10 @@
 
 <p align="center">
   <img src="https://github.com/jeremy-sud/Ursol-CAST-API/actions/workflows/tests.yml/badge.svg" alt="Tests">
-  <img src="https://img.shields.io/badge/coverage-90%25-brightgreen" alt="Coverage">
-  <img src="https://img.shields.io/badge/PHPStan-level%208-blue" alt="PHPStan">
+  <img src="https://github.com/jeremy-sud/Ursol-CAST-API/actions/workflows/phpstan.yml/badge.svg" alt="PHPStan">
+  <img src="https://github.com/jeremy-sud/Ursol-CAST-API/actions/workflows/mutation-testing.yml/badge.svg" alt="Mutation Testing">
+  <img src="https://codecov.io/gh/jeremy-sud/Ursol-CAST-API/branch/main/graph/badge.svg" alt="Coverage">
+  <img src="https://img.shields.io/badge/PHPStan-level%208-blue" alt="PHPStan Level 8">
   <img src="https://img.shields.io/badge/PSR--12-compliant-green" alt="PSR-12">
   <img src="https://img.shields.io/badge/Laravel-12.x-red" alt="Laravel">
   <img src="https://img.shields.io/badge/PHP-8.4+-blue" alt="PHP">

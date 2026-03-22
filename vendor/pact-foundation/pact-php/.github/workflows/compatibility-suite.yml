@@ -1,0 +1,83 @@
+name: Compatibility Suite
+
+on:
+  push:
+    branches:
+      - master
+      - 'release/**'
+      - '!release/9.x'
+  pull_request:
+    branches:
+      - master
+      - 'release/**'
+      - '!release/9.x'
+
+env:
+  PACT_LOGLEVEL: debug
+  PACT_DO_NOT_TRACK: true
+
+jobs:
+  v1:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+        with:
+          submodules: recursive
+
+      - uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # v2
+        with:
+          php-version: 8.1
+          coverage: none
+
+      - uses: ramsey/composer-install@v3
+
+      - name: Run Behat
+        run: vendor/bin/behat compatibility-suite/pact-compatibility-suite/features/V1 --colors
+  v2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+        with:
+          submodules: recursive
+
+      - uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # v2
+        with:
+          php-version: 8.1
+          coverage: none
+
+      - uses: ramsey/composer-install@v3
+
+      - name: Run Behat
+        run: vendor/bin/behat compatibility-suite/pact-compatibility-suite/features/V2 --colors
+  v3:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+        with:
+          submodules: recursive
+
+      - uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # v2
+        with:
+          php-version: 8.1
+          coverage: none
+
+      - uses: ramsey/composer-install@v3
+
+      - name: Run Behat
+        run: vendor/bin/behat compatibility-suite/pact-compatibility-suite/features/V3 --name '/^((?!binary body \(negative|Message provider).)*$/' --colors
+  v4:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+        with:
+          submodules: recursive
+
+      - uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # v2
+        with:
+          php-version: 8.1
+          coverage: none
+
+      - uses: ramsey/composer-install@v3
+
+      - name: Run Behat
+        run: vendor/bin/behat compatibility-suite/pact-compatibility-suite/features/V4 --colors

@@ -343,9 +343,9 @@ TOTAL ESTIMADO: 268-415 horas
 | # | Tarea | Detalle |
 |---|---|---|
 | 19.1 | ~~Load testing~~ | ✅ **COMPLETADO en FASE 18.5:** 3 scripts k6 (smoke, ventas/facturación, N+1 detection) con métricas custom, umbrales por tipo de endpoint, 4 escenarios de carga (smoke/normal/stress/spike). |
-| 19.2 | Contract testing | Pact tests para validar contratos de API con consumidores frontend. |
-| 19.3 | Mutation testing | Infection PHP para validar la calidad real de los tests existentes (¿realmente detectan bugs?). |
-| 19.4 | CI pipeline mejorado | GitHub Actions: PHPStan + tests + mutation + coverage badge + deploy automático a staging. |
+| 19.2 | ~~Contract testing~~ | ✅ **COMPLETADO:** Pact PHP 10.2.1 (FFI) instalado. PactTestCase base class con mock server via curl. 6 consumer test suites (22 tests): ClienteApi (4), VentaApi (3), ProductoApi (3), ComprobanteFe (3), Auth (5), Inventario (4). Provider verification test. Workflow `contract-tests.yml` en CI con artifact upload de pacts. 3 targets Makefile: `contract-test`, `contract-test-consumer`, `contract-test-provider`. Contrato generado: `UrsolCastFrontend-UrsolCastApi.json`. |
+| 19.3 | ~~Mutation testing~~ | ✅ **COMPLETADO:** Infection PHP 0.32 instalado y configurado. `infection.json5` apunta a `app/Services`, `app/Rules`, `app/Exceptions` (excluye AI). Workflow `mutation-testing.yml` en CI: full en push a main (MSI≥50%, covered MSI≥70%), incremental en PRs (git-diff-lines). 5 targets Makefile: `mutation-test`, `mutation-test-quick`, `mutation-test-filter`, `mutation-test-services`, `mutation-test-rules`. |
+| 19.4 | ~~CI pipeline mejorado~~ | ✅ **COMPLETADO:** Todos los workflows GitHub Actions auditados y corregidos. `tests.yml` reescrito: 3 jobs separados (tests con pcov, code-quality PHPStan Level 8 + CS Fixer, security audit), Composer cache v4, Codecov v4. `ci-cd.yml` corregido: eliminadas instalaciones on-the-fly, cache, pcov, Codecov v4. `phpstan.yml` corregido: Level 6→8 en 5 instancias. `mutation-testing.yml` mejorado con Composer cache. `codecov.yml` creado: 70% proyecto / 80% patch. README badges dinámicos (Codecov, PHPStan, Mutation Testing). |
 | 19.5 | ~~Migration rollback tests~~ | ✅ **COMPLETADO en FASE 18.5:** 4 tests verifican up/down de las 98 migraciones (full rollback, re-migrate, individual rollback por migración, tablas críticas). |
 | 19.6 | E2E Hacienda sandbox | Test suite contra sandbox real de Hacienda con certificado de prueba del Ministerio de Hacienda. |
 

@@ -24,7 +24,7 @@ on:
 
 jobs:
   phpstan-analysis:
-    name: PHPStan Level 6 Analysis
+    name: PHPStan Level 8 Analysis
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -70,10 +70,10 @@ jobs:
 
       - name: PHPStan Analysis (No Baseline)
         run: |
-          echo "🔍 Running PHPStan Level 6 WITHOUT baseline..."
+          echo "🔍 Running PHPStan Level 8 WITHOUT baseline..."
           echo "This checks for NEW type errors introduced in this commit."
           vendor/bin/phpstan analyse app \
-            --level=6 \
+            --level=8 \
             --memory-limit=1G \
             --no-progress \
             --error-format=github \
@@ -85,7 +85,7 @@ jobs:
           echo "❌ PHPStan found new type errors!"
           echo ""
           echo "📊 To fix locally:"
-          echo "  1. Run: vendor/bin/phpstan analyse app --level=6 --memory-limit=1G"
+          echo "  1. Run: vendor/bin/phpstan analyse app --level=8 --memory-limit=1G"
           echo "  2. Fix the errors shown above"
           echo "  3. Commit and push again"
           echo ""
@@ -97,7 +97,7 @@ jobs:
         run: |
           echo "📊 Running PHPStan WITH baseline for reference..."
           vendor/bin/phpstan analyse app \
-            --level=6 \
+            --level=8 \
             --memory-limit=1G \
             --no-progress \
             --error-format=table || true
@@ -107,7 +107,7 @@ jobs:
         run: |
           echo "📄 Generating detailed error report..."
           vendor/bin/phpstan analyse app \
-            --level=6 \
+            --level=8 \
             --memory-limit=1G \
             --no-progress \
             --error-format=json \
@@ -202,7 +202,7 @@ jobs:
           echo ""
           
           # Total errors without baseline
-          TOTAL_ERRORS=$(vendor/bin/phpstan analyse app --level=6 --memory-limit=1G --no-progress --configuration=phpstan-no-baseline.neon 2>&1 | grep -oP 'Found \K[0-9]+' || echo "0")
+          TOTAL_ERRORS=$(vendor/bin/phpstan analyse app --level=8 --memory-limit=1G --no-progress --configuration=phpstan-no-baseline.neon 2>&1 | grep -oP 'Found \K[0-9]+' || echo "0")
           
           # Baseline errors
           BASELINE_ERRORS=$(grep -c 'message:' phpstan-baseline-reduced.neon || echo '0')
@@ -221,4 +221,4 @@ jobs:
           
           # Error categories
           echo "📋 Error Distribution:"
-          vendor/bin/phpstan analyse app --level=6 --memory-limit=1G --no-progress --error-format=raw --configuration=phpstan-no-baseline.neon 2>&1 | grep "identifier:" | sort | uniq -c | sort -rn | head -10 || echo "No errors to categorize"
+          vendor/bin/phpstan analyse app --level=8 --memory-limit=1G --no-progress --error-format=raw --configuration=phpstan-no-baseline.neon 2>&1 | grep "identifier:" | sort | uniq -c | sort -rn | head -10 || echo "No errors to categorize"

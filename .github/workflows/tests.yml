@@ -1,3 +1,7 @@
+# GitHub Actions — Tests + Code Quality + Security
+# FASE 19.4: Pipeline CI consolidado y optimizado
+# Workflow autoritativo para validación de código
+
 name: Tests
 
 on:
@@ -6,95 +10,80 @@ on:
   pull_request:
     branches: [ main, develop ]
 
+env:
+  PHP_VERSION: '8.4'
+
 jobs:
   tests:
+    name: Tests + Coverage
     runs-on: ubuntu-latest
-    
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: ursol_cast_test
-          MYSQL_USER: ursol_user
-          MYSQL_PASSWORD: ursol_password
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    timeout-minutes: 15
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup PHP
+      - name: Setup PHP with pcov
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
-          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, json, zip
-          coverage: xdebug
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, xml, ctype, json, bcmath, pdo, pdo_sqlite, dom, libxml
+          coverage: pcov
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache Composer dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
-          path: vendor
+          path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
+          restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
 
-      - name: Copy .env
-        run: cp .env.example .env
-
-      - name: Generate application key
-        run: php artisan key:generate
-
-      - name: Set testing environment
+      - name: Prepare environment
         run: |
-          echo "DB_CONNECTION=mysql" >> .env
-          echo "DB_HOST=127.0.0.1" >> .env
-          echo "DB_PORT=3306" >> .env
-          echo "DB_DATABASE=ursol_cast_test" >> .env
-          echo "DB_USERNAME=ursol_user" >> .env
-          echo "DB_PASSWORD=ursol_password" >> .env
-
-      - name: Run migrations
-        run: php artisan migrate --force
-
-      - name: Run PHPStan
-        run: vendor/bin/phpstan analyse --memory-limit=2G --error-format=github
-
-      - name: Run PHP CS Fixer (dry-run)
-        run: vendor/bin/php-cs-fixer fix --dry-run --diff --verbose
+          cp .env.example .env || echo 'APP_KEY=' > .env
+          php artisan key:generate --ansi
 
       - name: Run tests with coverage
-        run: vendor/bin/phpunit --coverage-clover coverage.xml --coverage-text
+        run: |
+          vendor/bin/phpunit \
+            --coverage-clover coverage.xml \
+            --coverage-text \
+            --colors=always
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        if: always()
+        uses: codecov/codecov-action@v4
         with:
           files: ./coverage.xml
+          flags: unittests
           fail_ci_if_error: false
-          verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
 
-      - name: Check test coverage threshold
+      - name: Enforce coverage threshold (70%)
         run: |
           COVERAGE=$(php -r "
             \$xml = simplexml_load_file('coverage.xml');
             \$metrics = \$xml->project->metrics;
-            \$percentage = (\$metrics['coveredstatements'] / \$metrics['statements']) * 100;
-            echo round(\$percentage, 2);
+            if ((int)\$metrics['statements'] === 0) { echo '0'; exit; }
+            echo round((\$metrics['coveredstatements'] / \$metrics['statements']) * 100, 2);
           ")
-          echo "Test coverage: $COVERAGE%"
+          echo "::notice::Test coverage: ${COVERAGE}%"
           if (( $(echo "$COVERAGE < 70.0" | bc -l) )); then
-            echo "Coverage is below 70% threshold"
+            echo "::error::Coverage ${COVERAGE}% is below 70% threshold"
             exit 1
           fi
 
   code-quality:
+    name: Code Quality
     runs-on: ubuntu-latest
-    
+    timeout-minutes: 10
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -102,29 +91,40 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
-          extensions: mbstring, xml, ctype, iconv, intl, dom, filter, json
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, xml, ctype, json, bcmath, dom
+          coverage: none
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache Composer dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
-          path: vendor
+          path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
+          restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
 
-      - name: Run PHPStan (strict)
-        run: vendor/bin/phpstan analyse --memory-limit=2G --error-format=github --no-progress
+      - name: Prepare environment
+        run: |
+          cp .env.example .env || echo 'APP_KEY=' > .env
+          php artisan key:generate --ansi
 
-      - name: Check code style (PSR-12)
+      - name: PHPStan Level 8
+        run: vendor/bin/phpstan analyse --memory-limit=1G --error-format=github --no-progress
+
+      - name: PHP CS Fixer (PSR-12)
         run: vendor/bin/php-cs-fixer fix --dry-run --diff --verbose --show-progress=none
 
   security:
+    name: Security Audit
     runs-on: ubuntu-latest
-    
+    timeout-minutes: 5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -132,9 +132,11 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
+          php-version: ${{ env.PHP_VERSION }}
+          coverage: none
 
-      - name: Security check
-        run: |
-          composer require --dev enlightn/security-checker
-          vendor/bin/security-checker security:check composer.lock
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Composer security audit
+        run: composer audit --format=plain

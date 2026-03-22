@@ -54,11 +54,13 @@
     "require-dev": {
         "fakerphp/faker": "^1.23",
         "friendsofphp/php-cs-fixer": "^3.94",
+        "infection/infection": "^0.32",
         "larastan/larastan": "^3.0",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
+        "pact-foundation/pact-php": "^10.2",
         "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^11.5.3"
     },
@@ -120,7 +122,9 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "infection/extension-installer": true,
+            "pact-foundation/composer-downloads-plugin": true
         }
     },
     "minimum-stability": "stable",

@@ -52,7 +52,7 @@ jobs:
         with:
           php-version: ${{ env.PHP_VERSION }}
           extensions: mbstring, xml, ctype, json, bcmath, pdo, pdo_mysql, redis
-          coverage: xdebug
+          coverage: pcov
       
       - name: Copy .env
         run: |
@@ -83,16 +83,19 @@ jobs:
         run: php artisan test --coverage --coverage-clover coverage.xml
       
       - name: Upload Coverage to Codecov
-        uses: codecov/codecov-action@v3
+        if: always()
+        uses: codecov/codecov-action@v4
         with:
           files: ./coverage.xml
           flags: unittests
           name: codecov-umbrella
+          token: ${{ secrets.CODECOV_TOKEN }}
   
-  # Job 2: Code Quality
+  # Job 2: Code Quality (delegado a tests.yml para PHPStan/CS-Fixer)
   code-quality:
     name: Code Quality Checks
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     
     steps:
       - name: Checkout code
@@ -103,21 +106,32 @@ jobs:
         with:
           php-version: ${{ env.PHP_VERSION }}
           extensions: mbstring, xml, ctype, json, bcmath
+          coverage: none
       
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
       - name: Install Composer Dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
       
-      - name: PHP Code Sniffer
+      - name: Prepare environment
         run: |
-          composer require --dev squizlabs/php_codesniffer
-          vendor/bin/phpcs --standard=PSR12 app/
-        continue-on-error: true
+          cp .env.example .env || echo 'APP_KEY=' > .env
+          php artisan key:generate --ansi
+
+      - name: PHPStan Level 8
+        run: vendor/bin/phpstan analyse --memory-limit=1G --error-format=github --no-progress
       
-      - name: PHPStan Static Analysis
-        run: |
-          composer require --dev phpstan/phpstan
-          vendor/bin/phpstan analyse app/ --level=5
-        continue-on-error: true
+      - name: PHP CS Fixer (PSR-12)
+        run: vendor/bin/php-cs-fixer fix --dry-run --diff --show-progress=none
   
   # Job 3: Build Docker Image
   build-docker:
