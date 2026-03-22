@@ -19,16 +19,20 @@ class TipoImpuestoSeeder extends Seeder
         ];
 
         foreach ($tipos as $tipo) {
-            DB::table('tipos_impuesto')->insert([
-                'codigo_hacienda' => $tipo['codigo_hacienda'],
-                'nombre' => $tipo['nombre'],
-                'descripcion' => $tipo['descripcion'],
-                'Comentario' => $tipo['comentario'],
-                'activo' => true,
-                'eliminado' => false,
-                'creado_en' => now(),
-                'actualizado_en' => now(),
-            ]);
+            DB::table('tipos_impuesto')->updateOrInsert(
+                ['codigo_hacienda' => $tipo['codigo_hacienda']],
+                [
+                    'nombre' => $tipo['nombre'],
+                    'descripcion' => $tipo['descripcion'],
+                    'comentario' => $tipo['comentario'],
+                    'activo' => true,
+                    'eliminado' => false,
+                    'creado_en' => now(),
+                    'actualizado_en' => now(),
+                ]
+            );
         }
+
+        $this->command->info('Tipos de impuesto Hacienda cargados exitosamente.');
     }
 }

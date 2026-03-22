@@ -3,8 +3,8 @@
 **Fecha de creación:** 6 de marzo 2026  
 **Basado en:** Auditoría profunda del código fuente (no solo documentación)  
 **Última auditoría técnica:** 9 de marzo 2026 (puntuación global: 7.8/10)  
-**Versión actual:** v3.2.0 (FASE 15 completada)  
-**Última FASE completada:** FASE 15 — Excepciones de Dominio + Respuestas API Estandarizadas
+**Versión actual:** v3.2.1 (FASE 18.5 completada)
+**Última FASE completada:** FASE 18.5 — Seeders Separados + Migration Rollback Tests + Load Testing k6
 
 ---
 
@@ -16,7 +16,7 @@
 | Modelos Eloquent | 88 | **87** | — |
 | Servicios | 40 | **40** | 10 AI + 8 Hacienda + 22 core |
 | CQRS archivos | 34 | **0** | ✅ Eliminados en FASE 13 (dead code) |
-| Test files | 68 | **93** | +4 en FASE 15 |
+| Test files | 68 | **95** | +6 en FASE 18.5 (MigrationRollbackTest, SeederIntegrityTest) |
 | Tests totales | 802 | 997 | 997 passing, 0 skipped |
 | Migraciones | 97 | **98** | — |
 | Factories | — | **83** | 7 corregidas en FASE 13 |
@@ -30,7 +30,7 @@
 3. **Solo 1 excepción custom** — `InventarioException`. Los demás módulos usan excepciones genéricas.
 4. **~~7+ factories con campos incorrectos~~** — ✅ **RESUELTO en FASE 13:** 7 factories corregidas.
 5. **~~Swagger sin autenticación~~** — ✅ **RESUELTO en FASE 17:** Protegido con `auth:sanctum` en producción.
-6. **35 seeders no autoejecutados** — Existen pero no se llaman desde `DatabaseSeeder::run()`.
+6. ~~**35 seeders no autoejecutados**~~ — ✅ **RESUELTO en FASE 18.5:** Separados en `MasterDataSeeder` (14 catálogos de producción) y `DemoDataSeeder` (empresa + usuarios demo). Todos idempotentes con `updateOrInsert()`.
 
 ### Hallazgos Adicionales — Auditoría Técnica (9 Mar 2026)
 
@@ -40,7 +40,7 @@
 10. ~~🟠 **Validación de contraseña débil**~~ — ✅ **RESUELTO en FASE 14.5:** Ya implementado `Password::min(8)->mixedCase()->numbers()->symbols()`.
 11. ~~🟠 **`SESSION_ENCRYPT=false`**~~ — ✅ **RESUELTO en FASE 14.5:** `SESSION_ENCRYPT` default `true` en `config/session.php`.
 12. 🟠 **Respuestas API inconsistentes** — 3 formatos distintos de respuesta, sin envelope estandarizado.
-13. 🟠 **Campos financieros `float` en lugar de `decimal`** — Errores de precisión en cálculos monetarios.
+13. ~~🟠 **Campos financieros `float` en lugar de `decimal`**~~ — ✅ **VERIFICADO en FASE 18.5:** Todas las migraciones ya usan `decimal()` para campos monetarios. 0 campos `float`/`double` en columnas financieras.
 14. ~~🟠 **Cache sin prefijo de tenant**~~ — ✅ **RESUELTO en FASE 14.5:** Tags de cache incluyen `empresa_{id}` en `HasCacheableQueries` y `ProductoObserver`.
 15. ~~🟠 **`$e->getMessage()` expuesto en respuestas**~~ — ✅ **RESUELTO en FASE 14.5:** Protegido con `config('app.debug')` en controladores y servicios AI.
 16. 🟡 **4 modelos con timestamps inconsistentes** — `ZonaGeografica`, `CuentaBancaria`, `PlanillaCcss`, `MovimientoBancario` usan `created_at`/`updated_at` en lugar de `creado_en`/`actualizado_en`. `ModeloBus` sin timestamps.
@@ -73,6 +73,7 @@
 | FASE 17 | v3.0.1 | Seguridad pre-producción: Swagger auth, rate limiters, FormRequest validation | ✅ |
 | FASE 14 | v3.1.0 | Cobertura de tests críticos: 21 test files, +203 tests, 5 bug fixes | ✅ |
 | FASE 14.5 | v3.1.1 | Correcciones críticas auditoría: N+1, cache tenant, $e->getMessage() | ✅ |
+| FASE 18.5 | v3.2.1 | Seeders separados (master/demo) + Migration rollback tests + Load testing k6 | ✅ |
 
 > **📋 Auditoría técnica (9 Mar 2026):** Puntuación 7.8/10. Fortalezas en seguridad, testing y documentación. Debilidades principales: manejo de excepciones (2/10), consistencia de respuestas API (6/10), N+1 queries y hallazgos de seguridad críticos. Ver secciones FASE 14.5 y Deuda Técnica.
 
@@ -275,6 +276,42 @@ TOTAL ESTIMADO: 268-415 horas
 
 ---
 
+### ~~FASE 18.5 — Seeders Separados + Migration Rollback Tests + Load Testing (v3.2.1)~~ ✅ COMPLETADA
+
+**Prioridad:** ALTA  
+**Completada:** 22 de marzo 2026  
+**Objetivo:** Resolver deuda técnica de seeders, verificar integridad de migraciones y crear infraestructura de load testing.
+
+| # | Tarea | Detalle | Estado |
+|---|---|---|---|
+| 18.5.1 | Verificar float→decimal | Auditados los 98 archivos de migración: todos usan `decimal()` para campos monetarios. 0 `float`/`double`. | ✅ |
+| 18.5.2 | Migration rollback tests | `MigrationRollbackTest` con 4 tests: full rollback (98→0→98), re-migrate, rollback individual por migración, verificación de tablas críticas. | ✅ |
+| 18.5.3 | Separar seeders | `MasterDataSeeder` (14 catálogos producción) + `DemoDataSeeder` (empresa + usuarios demo). `DatabaseSeeder` orquesta ambos. | ✅ |
+| 18.5.4 | Idempotencia seeders | Corregidos 4 seeders de `insert()` a `updateOrInsert()`: `TiposComprobantesFESeeder`, `CodigosActividadEconomicaSeeder`, `ZonasGeograficasCRSeeder`, `FormasPagoSeeder`. | ✅ |
+| 18.5.5 | SeederIntegrityTest | 7 tests: MasterData runs, expected record counts, idempotencia, DemoData post-master, full DatabaseSeeder, IVA rates Ley 9635, 68 permisos en 17 módulos. | ✅ |
+| 18.5.6 | Load testing k6 | 3 scripts: `smoke-test.js` (flujo crítico), `load-ventas-facturacion.js` (endpoints financieros, 4 escenarios), `load-n1-detection.js` (detección N+1 por comparación de paginación). | ✅ |
+
+**Archivos creados:**
+- `tests/Feature/MigrationRollbackTest.php` — 4 tests, 98 migraciones verificadas
+- `tests/Feature/SeederIntegrityTest.php` — 7 tests de integridad de seeders
+- `database/seeders/MasterDataSeeder.php` — 14 catálogos de producción
+- `database/seeders/DemoDataSeeder.php` — Empresa + usuarios demo
+- `tests/Load/k6-config.js` — Configuración y umbrales compartidos
+- `tests/Load/helpers.js` — Auth y request helpers para k6
+- `tests/Load/smoke-test.js` — Smoke test del flujo crítico
+- `tests/Load/load-ventas-facturacion.js` — Load test de endpoints financieros
+- `tests/Load/load-n1-detection.js` — Detección de N+1 queries
+- `tests/Load/README.md` — Documentación de ejecución
+
+**Criterio de aceptación:**
+- ✅ 98 migraciones con rollback reversible verificado
+- ✅ Seeders separados: master (producción) vs demo (desarrollo)
+- ✅ 4 seeders corregidos para idempotencia
+- ✅ 3 scripts k6 con 4 escenarios de carga (smoke/normal/stress/spike)
+- ✅ 11 tests nuevos (4 rollback + 7 seeders), todos passing
+
+---
+
 ### FASE 18 — API Versionado (v4.0.0)
 
 **Prioridad:** MEDIA  
@@ -305,11 +342,11 @@ TOTAL ESTIMADO: 268-415 horas
 
 | # | Tarea | Detalle |
 |---|---|---|
-| 19.1 | Load testing | Scripts con k6 o Artillery para benchmarking de endpoints críticos (login, ventas, facturación). |
+| 19.1 | ~~Load testing~~ | ✅ **COMPLETADO en FASE 18.5:** 3 scripts k6 (smoke, ventas/facturación, N+1 detection) con métricas custom, umbrales por tipo de endpoint, 4 escenarios de carga (smoke/normal/stress/spike). |
 | 19.2 | Contract testing | Pact tests para validar contratos de API con consumidores frontend. |
 | 19.3 | Mutation testing | Infection PHP para validar la calidad real de los tests existentes (¿realmente detectan bugs?). |
 | 19.4 | CI pipeline mejorado | GitHub Actions: PHPStan + tests + mutation + coverage badge + deploy automático a staging. |
-| 19.5 | Migration rollback tests | Verificar que las 98 migraciones ejecutan `up()` y `down()` correctamente. |
+| 19.5 | ~~Migration rollback tests~~ | ✅ **COMPLETADO en FASE 18.5:** 4 tests verifican up/down de las 98 migraciones (full rollback, re-migrate, individual rollback por migración, tablas críticas). |
 | 19.6 | E2E Hacienda sandbox | Test suite contra sandbox real de Hacienda con certificado de prueba del Ministerio de Hacienda. |
 
 **Criterio de aceptación:**
@@ -394,9 +431,9 @@ Items identificados en la auditoría técnica que no encajan directamente en una
 | DT-1 | Timestamps inconsistentes | 🟡 MEDIO | Estandarizar a `creado_en`/`actualizado_en` en: `ZonaGeografica`, `CuentaBancaria`, `PlanillaCcss`, `MovimientoBancario`. Agregar timestamps a `ModeloBus`. | Migración independiente |
 | DT-2 | Observers vacíos | 🟡 MEDIO | Implementar o eliminar: `AsientoContableObserver`, `ClienteObserver`, `VentaObserver` | FASE 16 |
 | DT-3 | Factories faltantes | 🟡 MEDIO | Crear factories para `DataRetentionPolicy` y `GdprDeletionRequest` (compliance/GDPR) | FASE 19 |
-| DT-4 | Campos `float` → `decimal` | 🟠 ALTO | Migración para convertir campos financieros de `float` a `decimal` en migraciones existentes (precisión monetaria) | Migración independiente |
+| DT-4 | ~~Campos `float` → `decimal`~~ | ✅ RESUELTO | Verificado: todas las migraciones ya usan `decimal()` para campos monetarios. 0 campos `float`/`double` en columnas financieras. | Verificado en FASE 18.5 |
 | DT-5 | Regex formatos CR | ✅ RESUELTO | `CrTelefono`, `CrIdentificacion` Rules + IBAN regex. Aplicados en 7 FormRequests + 27 tests | FASE 15 |
-| DT-6 | 35 seeders huérfanos | 🟡 MEDIO | Incluir los 35 seeders existentes en `DatabaseSeeder::run()` o eliminar los obsoletos | Migración independiente |
+| DT-6 | ~~35 seeders huérfanos~~ | ✅ RESUELTO | Separados en `MasterDataSeeder` (14 catálogos producción) + `DemoDataSeeder` (empresa+usuarios demo). 4 seeders corregidos a `updateOrInsert()` para idempotencia. 7 tests de integridad. | FASE 18.5 |
 | DT-7 | `shell_exec()` en HealthCheck | 🟡 MEDIO | Reemplazar `shell_exec()` en `HealthCheckController` por alternativa segura (input actualmente hardcoded pero riesgo potencial) | FASE 14.5 |
 | DT-8 | Distributed tracing | 🟢 BAJO | Implementar OpenTelemetry para tracing distribuido | FASE 22 |
 | DT-9 | QUICK_START.md | 🟢 BAJO | Crear guía de inicio rápido separada del README extenso (25+ secciones) | Documentación |

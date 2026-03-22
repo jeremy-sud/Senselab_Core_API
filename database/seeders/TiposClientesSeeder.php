@@ -81,8 +81,13 @@ class TiposClientesSeeder extends Seeder
             ],
         ];
 
-        DB::table('tipos_clientes')->insert($tiposClientes);
+        foreach ($tiposClientes as $tipo) {
+            DB::table('tipos_clientes')->updateOrInsert(
+                ['codigo' => $tipo['codigo']],
+                collect($tipo)->except('codigo')->toArray()
+            );
+        }
 
-        $this->command->info('✓ 6 tipos de clientes creados exitosamente.');
+        $this->command->info('✓ 6 tipos de clientes cargados exitosamente.');
     }
 }
