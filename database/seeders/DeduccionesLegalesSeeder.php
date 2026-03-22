@@ -99,8 +99,13 @@ class DeduccionesLegalesSeeder extends Seeder
             ],
         ];
 
-        DB::table('deducciones_legales')->insert($deducciones);
+        foreach ($deducciones as $deduccion) {
+            DB::table('deducciones_legales')->updateOrInsert(
+                ['codigo' => $deduccion['codigo']],
+                collect($deduccion)->except('codigo')->toArray()
+            );
+        }
 
-        $this->command->info('✓ 6 deducciones legales de Costa Rica creadas exitosamente.');
+        $this->command->info('✓ 6 deducciones legales de Costa Rica cargadas exitosamente.');
     }
 }

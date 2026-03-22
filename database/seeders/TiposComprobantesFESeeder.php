@@ -114,8 +114,13 @@ class TiposComprobantesFESeeder extends Seeder
             ],
         ];
 
-        DB::table('tipos_comprobantes_fe')->insert($tiposComprobantes);
+        foreach ($tiposComprobantes as $tipo) {
+            DB::table('tipos_comprobantes_fe')->updateOrInsert(
+                ['codigo_dgt' => $tipo['codigo_dgt']],
+                collect($tipo)->except('codigo_dgt')->toArray()
+            );
+        }
 
-        $this->command->info('✓ 9 tipos de comprobantes FE creados exitosamente.');
+        $this->command->info('✓ 9 tipos de comprobantes FE cargados exitosamente.');
     }
 }

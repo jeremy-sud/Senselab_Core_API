@@ -106,8 +106,13 @@ class ZonasGeograficasCRSeeder extends Seeder
             ],
         ];
 
-        DB::table('zonas_geograficas')->insert($provincias);
+        foreach ($provincias as $provincia) {
+            DB::table('zonas_geograficas')->updateOrInsert(
+                ['codigo' => $provincia['codigo'], 'tipo' => 'provincia'],
+                collect($provincia)->except('codigo', 'tipo')->toArray()
+            );
+        }
 
-        $this->command->info('✓ 7 provincias de Costa Rica creadas exitosamente.');
+        $this->command->info('✓ 7 provincias de Costa Rica cargadas exitosamente.');
     }
 }
