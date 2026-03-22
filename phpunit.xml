@@ -11,6 +11,12 @@
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
         </testsuite>
+        <testsuite name="Contract-Consumer">
+            <directory>tests/Contract/Consumer</directory>
+        </testsuite>
+        <testsuite name="Contract-Provider">
+            <directory>tests/Contract/Provider</directory>
+        </testsuite>
     </testsuites>
     <source>
         <include>

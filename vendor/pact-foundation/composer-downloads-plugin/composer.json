@@ -1,0 +1,47 @@
+{
+    "name": "pact-foundation/composer-downloads-plugin",
+    "description": "Composer plugin for downloading additional files within any composer package.",
+    "type": "composer-plugin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rob Bayliss",
+            "email": "rob@lastcallmedia.com"
+        },
+        {
+            "name": "Tim Otten",
+            "email": "totten@civicrm.org"
+        },
+        {
+            "name": "Tien Vo",
+            "email": "tien.xuan.vo@gmail.com"
+        }
+    ],
+    "require": {
+        "composer-plugin-api": "^2.1",
+        "php": "^8.1",
+        "leongrdic/smplang": "^1.0.2",
+        "symfony/filesystem": "^5.4 || ^6.4 || ^7.0 || ^8.0",
+        "symfony/finder": "^5.4 || ^6.4 || ^7.0 || ^8.0"
+    },
+    "require-dev": {
+        "composer/composer": "^2.3",
+        "phpunit/phpunit": "^9.6",
+        "symfony/process": "^5.4 || ^6.4 || ^7.0 || ^8.0",
+        "php-vfs/php-vfs": "^1.4",
+        "friendsofphp/php-cs-fixer": "^3.51"
+    },
+    "autoload": {
+        "psr-4": {
+            "LastCall\\DownloadsPlugin\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "LastCall\\DownloadsPlugin\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "class": "LastCall\\DownloadsPlugin\\Composer\\Plugin\\ExtraDownloadsPlugin"
+    }
+}

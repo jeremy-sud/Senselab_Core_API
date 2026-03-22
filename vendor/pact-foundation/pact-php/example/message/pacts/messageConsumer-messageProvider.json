@@ -1,0 +1,76 @@
+{
+  "consumer": {
+    "name": "messageConsumer"
+  },
+  "messages": [
+    {
+      "contents": {
+        "number": 13,
+        "text": "Hello Mary"
+      },
+      "description": "an alligator named Mary exists",
+      "generators": {
+        "body": {
+          "$.number": {
+            "max": 10,
+            "min": 0,
+            "type": "RandomInt"
+          }
+        },
+        "metadata": {
+          "routing_key": {
+            "size": 10,
+            "type": "RandomString"
+          }
+        }
+      },
+      "matchingRules": {
+        "body": {
+          "$.number": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "integer"
+              }
+            ]
+          }
+        },
+        "metadata": {
+          "routing_key": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        }
+      },
+      "metadata": {
+        "contentType": "application/json",
+        "queue": "wind cries",
+        "routing_key": ""
+      },
+      "providerStates": [
+        {
+          "name": "a message",
+          "params": {
+            "foo": "bar"
+          }
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "pactRust": {
+      "ffi": "0.4.22",
+      "models": "1.2.3"
+    },
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  },
+  "provider": {
+    "name": "messageProvider"
+  }
+}

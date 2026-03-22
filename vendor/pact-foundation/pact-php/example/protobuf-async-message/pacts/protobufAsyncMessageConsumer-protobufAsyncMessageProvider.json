@@ -1,0 +1,150 @@
+{
+  "consumer": {
+    "name": "protobufAsyncMessageConsumer"
+  },
+  "interactions": [
+    {
+      "contents": {
+        "content": "CiRkMWYwNzdiNS0wZjkxLTQwYWEtYjhmOS01NjhiNTBlZTRkZDkSEAoFR2l2ZW4SB1N1cm5hbWUaCAoEWmFuZRAMIghwYWludGluZw==",
+        "contentType": "application/protobuf;message=.library.Person",
+        "contentTypeHint": "BINARY",
+        "encoded": "base64"
+      },
+      "description": "Person message sent",
+      "interactionMarkup": {
+        "markup": "```protobuf\nmessage Person {\n    string id = 1;\n    message .library.Name name = 2;\n    map<message .library.Person.ChildrenEntry> children = 3;\n    repeated string hobbies = 4;\n}\n```\n",
+        "markupType": "COMMON_MARK"
+      },
+      "matchingRules": {
+        "body": {
+          "$.children": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "eachKey",
+                "rules": [
+                  {
+                    "match": "type"
+                  }
+                ]
+              },
+              {
+                "match": "eachValue",
+                "rules": [
+                  {
+                    "match": "number"
+                  }
+                ],
+                "value": "23"
+              },
+              {
+                "match": "type",
+                "min": 1
+              },
+              {
+                "match": "type",
+                "max": 3
+              }
+            ]
+          },
+          "$.hobbies": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "eachValue",
+                "rules": [
+                  {
+                    "match": "type"
+                  }
+                ],
+                "value": "painting"
+              }
+            ]
+          },
+          "$.hobbies.*": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type",
+                "min": 2
+              },
+              {
+                "match": "type",
+                "max": 5
+              }
+            ]
+          },
+          "$.id": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "regex",
+                "regex": "^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+              }
+            ]
+          },
+          "$.name.given": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          },
+          "$.name.surname": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        }
+      },
+      "metadata": {
+        "contentType": "application/protobuf;message=.library.Person"
+      },
+      "pending": false,
+      "pluginConfiguration": {
+        "protobuf": {
+          "descriptorKey": "4f2686d5ddb31f0357894ab0dbb4cb6b",
+          "message": ".library.Person"
+        }
+      },
+      "providerStates": [
+        {
+          "name": "A person with fixed id exists",
+          "params": {
+            "id": "d1f077b5-0f91-40aa-b8f9-568b50ee4dd9",
+            "reuse": 0
+          }
+        }
+      ],
+      "type": "Asynchronous/Messages"
+    }
+  ],
+  "metadata": {
+    "pactRust": {
+      "ffi": "0.4.26",
+      "models": "1.2.7"
+    },
+    "pactSpecification": {
+      "version": "4.0"
+    },
+    "plugins": [
+      {
+        "configuration": {
+          "4f2686d5ddb31f0357894ab0dbb4cb6b": {
+            "protoDescriptors": "CqoCCg9zYXlfaGVsbG8ucHJvdG8SB2xpYnJhcnkizQEKBlBlcnNvbhIOCgJpZBgBIAEoCVICaWQSIQoEbmFtZRgCIAEoCzINLmxpYnJhcnkuTmFtZVIEbmFtZRI5CghjaGlsZHJlbhgDIAMoCzIdLmxpYnJhcnkuUGVyc29uLkNoaWxkcmVuRW50cnlSCGNoaWxkcmVuEhgKB2hvYmJpZXMYBCADKAlSB2hvYmJpZXMaOwoNQ2hpbGRyZW5FbnRyeRIQCgNrZXkYASABKAlSA2tleRIUCgV2YWx1ZRgCIAEoBVIFdmFsdWU6AjgBIjYKBE5hbWUSFAoFZ2l2ZW4YASABKAlSBWdpdmVuEhgKB3N1cm5hbWUYAiABKAlSB3N1cm5hbWViBnByb3RvMw==",
+            "protoFile": "syntax = \"proto3\";\n\npackage library;\n\nmessage Person {\n  string id = 1;\n  Name name = 2;\n  map<string, int32> children = 3;\n  repeated string hobbies = 4;\n}\n\nmessage Name {\n  string given = 1;\n  string surname = 2;\n}\n"
+          }
+        },
+        "name": "protobuf",
+        "version": "0.5.4"
+      }
+    ]
+  },
+  "provider": {
+    "name": "protobufAsyncMessageProvider"
+  }
+}

@@ -136,6 +136,42 @@ test-filter: ## Ejecutar tests filtrados (usar: make test-filter FILTER="AuthTes
 test-coverage: ## Ejecutar tests con cobertura
 	docker-compose exec php php artisan test --coverage
 
+# === MUTATION TESTING ===
+
+mutation-test: ## Ejecutar mutation testing completo (requiere pcov)
+	@echo "$(GREEN)Ejecutando mutation testing...$(NC)"
+	vendor/bin/infection --threads=4 --show-mutations --min-msi=50 --min-covered-msi=70
+
+mutation-test-quick: ## Mutation testing solo en cambios git (diff)
+	@echo "$(GREEN)Ejecutando mutation testing incremental...$(NC)"
+	vendor/bin/infection --threads=4 --git-diff-lines --git-diff-base=main --min-msi=0 --min-covered-msi=0 --show-mutations --ignore-msi-with-no-mutations
+
+mutation-test-filter: ## Mutation testing filtrado (usar: make mutation-test-filter FILTER="ClaveNumerica")
+	@echo "$(GREEN)Ejecutando mutation testing para $(FILTER)...$(NC)"
+	vendor/bin/infection --threads=4 --filter="$(FILTER)" --show-mutations --min-msi=0 --min-covered-msi=0
+
+mutation-test-services: ## Mutation testing solo de Services
+	@echo "$(GREEN)Ejecutando mutation testing de servicios...$(NC)"
+	vendor/bin/infection --threads=4 --filter="app/Services" --show-mutations --min-msi=50 --min-covered-msi=70
+
+mutation-test-rules: ## Mutation testing solo de Rules (CrTelefono, CrIdentificacion)
+	@echo "$(GREEN)Ejecutando mutation testing de reglas de validación...$(NC)"
+	vendor/bin/infection --threads=4 --filter="app/Rules" --show-mutations --min-msi=80 --min-covered-msi=90
+
+# === CONTRACT TESTING ===
+
+contract-test: ## Ejecutar todos los contract tests (consumer + verificación)
+	@echo "$(GREEN)Ejecutando contract tests...$(NC)"
+	php vendor/bin/phpunit --testsuite Contract-Consumer --no-coverage
+
+contract-test-consumer: ## Ejecutar solo consumer contract tests (genera pacts)
+	@echo "$(GREEN)Ejecutando consumer contract tests...$(NC)"
+	php vendor/bin/phpunit --testsuite Contract-Consumer --no-coverage
+
+contract-test-provider: ## Verificar contratos contra el provider real
+	@echo "$(GREEN)Ejecutando provider contract verification...$(NC)"
+	php vendor/bin/phpunit --testsuite Contract-Provider --no-coverage
+
 # === CACHE ===
 
 cache-clear: ## Limpiar todos los cachés

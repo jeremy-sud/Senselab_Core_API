@@ -1,0 +1,71 @@
+{
+    "$schema": "vendor/infection/infection/resources/schema.json",
+    "source": {
+        "directories": [
+            "app/Services",
+            "app/Rules",
+            "app/Exceptions"
+        ],
+        "excludes": [
+            "Services/AI"
+        ]
+    },
+    "logs": {
+        "text": "storage/logs/infection.log",
+        "html": "storage/logs/infection.html",
+        "summary": "storage/logs/infection-summary.log",
+        "json": "storage/logs/infection.json"
+    },
+    "mutators": {
+        // Operadores aritméticos — crítico para cálculos financieros
+        "@arithmetic": true,
+
+        // Booleanos — detecta guards y condiciones invertidas
+        "@boolean": true,
+
+        // Límites condicionales — > vs >= en validaciones
+        "@conditional_boundary": true,
+
+        // Negación condicional — == vs != en comparaciones
+        "@conditional_negotiation": true,
+
+        // Retornos — detecta return values incorrectos
+        "@return_value": true,
+
+        // Números — detecta off-by-one y constantes incorrectas
+        "@number": true,
+
+        // Operadores — ?? , ternarios, throw
+        "@operator": true,
+
+        // Regex — crítico para CrTelefono/CrIdentificacion
+        "@regex": true,
+
+        // Removal — detecta código muerto
+        "@removal": true,
+
+        // Loops — detecta iteraciones mortas
+        "@loop": true,
+
+        // Sort / Spaceship — para ordenamiento
+        "@sort": true,
+
+        // Unwrap — detecta funciones decorativas sin efecto
+        "@unwrap": true,
+
+        // Casts — detecta conversiones de tipo innecesarias
+        "@cast": true,
+
+        // Visibilidad — detecta encapsulación rota
+        "@function_signature": true
+    },
+    "phpUnit": {
+        "configDir": ".",
+        "customPath": "vendor/bin/phpunit"
+    },
+    "testFramework": "phpunit",
+    "timeout": 30,
+    "tmpDir": "storage/framework/cache/infection",
+    "minMsi": 50,
+    "minCoveredMsi": 70
+}

@@ -5,6 +5,47 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [Unreleased] — FASE 19.2: Contract Testing con Pact PHP
+
+### Agregado
+- **Pact PHP 10.2.1** instalado como dependencia de desarrollo (FFI, Pact Specification V4)
+- **`tests/Contract/PactTestCase.php`** — Base class con mock server via curl, helpers: `callMockServer()`, `authenticatedRequest()`, `successEnvelope()`, `paginatedEnvelope()`, `errorEnvelope()`, `iso8601()`
+- **6 consumer test suites** (22 tests total):
+  - `ClienteApiTest` (4): list, show, create, 404
+  - `VentaApiTest` (3): list, show con detalles, create
+  - `ProductoApiTest` (3): list, show con relaciones, filtered by categoría
+  - `ComprobanteFeApiTest` (3): list, show, generate for Hacienda
+  - `AuthApiTest` (5): login, invalid credentials, me profile, unauthenticated, validation errors
+  - `InventarioApiTest` (4): list entradas, show entrada, list salidas, create entrada
+- **`tests/Contract/Provider/UrsolCastApiVerificationTest.php`** — Provider verification con Verifier
+- **`.github/workflows/contract-tests.yml`** — CI workflow con artifact upload de pacts
+- **3 targets Makefile**: `contract-test`, `contract-test-consumer`, `contract-test-provider`
+- **PHPUnit suites** `Contract-Consumer` y `Contract-Provider` añadidos a `phpunit.xml`
+
+## [Unreleased] — FASE 19.4: CI Pipeline Mejorado
+
+### Agregado
+- **`codecov.yml`** — Configuración de umbrales Codecov: 70% proyecto, 80% patch. Ignora tests/, config/, vendor/, database/, bootstrap/, resources/, storage/
+- **Badges dinámicos en README** — Codecov (coverage real), PHPStan workflow, Mutation Testing workflow. Reemplaza badge estático de 90%
+- **Composer cache** (`actions/cache@v4`) añadido a `mutation-testing.yml`
+
+### Corregido
+- **`tests.yml`** — Reescritura completa: 3 jobs separados (tests con pcov + coverage threshold 70%, code-quality con PHPStan Level 8 + CS Fixer, security con `composer audit`). Eliminado servicio MySQL innecesario (phpunit.xml usa SQLite). Actualizado a `actions/cache@v4` y `codecov/codecov-action@v4`
+- **`ci-cd.yml`** — Job `code-quality`: eliminadas instalaciones on-the-fly de phpcs/phpstan (ya son dev deps), añadido Composer cache, PHPStan Level 5→8. Job `test`: xdebug→pcov para coverage más rápido. Codecov v3→v4 con token
+- **`phpstan.yml`** — Corregido Level 6→8 en 5 instancias (3 comandos `--level=`, nombre del job, mensaje de ayuda). Ahora consistente con `phpstan.neon` y `phpstan-no-baseline.neon`
+
+## [Unreleased] — FASE 19.3: Mutation Testing con Infection PHP
+
+### Agregado
+- **Infection PHP 0.32.6** instalado como dependencia de desarrollo
+- **`infection.json5`** — Configuración con source dirs: `app/Services`, `app/Rules`, `app/Exceptions` (excluye `Services/AI`). 14 categorías de mutadores habilitados. Umbrales: MSI≥50%, covered MSI≥70%
+- **`.github/workflows/mutation-testing.yml`** — CI workflow: full mutation en push a main, incremental (git-diff-lines) en PRs. Usa pcov via `shivammathur/setup-php`, sube artifacts de logs
+- **5 targets Makefile**: `mutation-test` (completo), `mutation-test-quick` (incremental git diff), `mutation-test-filter` (por archivo), `mutation-test-services` (solo Services), `mutation-test-rules` (solo Rules CR)
+
+### Nota
+- Requiere `pcov` o `xdebug` para ejecución local. En CI se provee automáticamente via `shivammathur/setup-php`
+- Para instalar pcov localmente: `sudo apt install php8.4-pcov` o `pecl install pcov`
+
 ## [3.2.0] - 2025-07-22
 
 ### 🎯 FASE 15: Excepciones de Dominio + Respuestas API Estandarizadas

@@ -1,0 +1,98 @@
+# GitHub Actions — Mutation Testing con Infection PHP
+# FASE 19.3: Valida la calidad real de los tests existentes
+# Se ejecuta en PRs y pushes a main/develop
+
+name: Mutation Testing
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'app/Services/**'
+      - 'app/Rules/**'
+      - 'app/Exceptions/**'
+      - 'tests/**'
+      - 'infection.json5'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'app/Services/**'
+      - 'app/Rules/**'
+      - 'app/Exceptions/**'
+      - 'tests/**'
+      - 'infection.json5'
+
+env:
+  PHP_VERSION: '8.4'
+
+jobs:
+  mutation-testing:
+    name: Infection PHP
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP with pcov
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, xml, ctype, json, bcmath, pdo, pdo_sqlite, dom, libxml
+          coverage: pcov
+          tools: infection
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Composer Dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Run Mutation Testing (full — on push to main)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          vendor/bin/infection \
+            --threads=$(nproc) \
+            --min-msi=50 \
+            --min-covered-msi=70 \
+            --test-framework-options="--testsuite=Unit" \
+            --logger-github \
+            --show-mutations
+        env:
+          INFECTION_BADGE_API_KEY: ${{ secrets.INFECTION_BADGE_API_KEY }}
+
+      - name: Run Mutation Testing (incremental — on PR)
+        if: github.event_name == 'pull_request'
+        run: |
+          vendor/bin/infection \
+            --threads=$(nproc) \
+            --git-diff-lines \
+            --git-diff-base=origin/${{ github.base_ref }} \
+            --min-msi=0 \
+            --min-covered-msi=60 \
+            --test-framework-options="--testsuite=Unit" \
+            --logger-github \
+            --show-mutations \
+            --ignore-msi-with-no-mutations
+
+      - name: Upload Infection logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: infection-logs
+          path: |
+            storage/logs/infection.log
+            storage/logs/infection.html
+            storage/logs/infection.json
+          retention-days: 14
