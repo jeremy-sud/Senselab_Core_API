@@ -80,10 +80,12 @@ return [
     'api_urls' => [
         'sandbox' => [
             'oauth' => env('HACIENDA_OAUTH_URL_SANDBOX', 'https://idp.comprobanteselectronicos.go.cr/auth/realms/rut-stag/protocol/openid-connect/token'),
+            'logout' => env('HACIENDA_LOGOUT_URL_SANDBOX', 'https://idp.comprobanteselectronicos.go.cr/auth/realms/rut-stag/protocol/openid-connect/logout'),
             'recepcion' => env('HACIENDA_API_URL_SANDBOX', 'https://api-sandbox.comprobanteselectronicos.go.cr/recepcion/v1'),
         ],
         'production' => [
             'oauth' => env('HACIENDA_OAUTH_URL_PROD', 'https://idp.comprobanteselectronicos.go.cr/auth/realms/rut/protocol/openid-connect/token'),
+            'logout' => env('HACIENDA_LOGOUT_URL_PROD', 'https://idp.comprobanteselectronicos.go.cr/auth/realms/rut/protocol/openid-connect/logout'),
             'recepcion' => env('HACIENDA_API_URL_PROD', 'https://api.comprobanteselectronicos.go.cr/recepcion/v1'),
         ],
     ],
@@ -93,14 +95,21 @@ return [
     | Credenciales OAuth 2.0
     |--------------------------------------------------------------------------
     |
-    | Credenciales para autenticación con el sistema de Hacienda.
-    | Se obtienen registrando la aplicación en el portal de Hacienda.
+    | Credenciales para autenticación con el IdP de Hacienda.
+    | Utiliza el flujo Resource Owner Password Credentials (grant_type=password).
+    |
+    | - client_id: 'api-stag' para Sandbox, 'api-prod' para Producción
+    | - username: Usuario generado en la Oficina Virtual (OVi) > Tico Factura
+    | - password: Contraseña generada en OVi (debe estar URL-encoded si contiene símbolos)
+    | - client_secret y scope: No requeridos por Hacienda
     |
     */
     'oauth' => [
-        'client_id' => env('HACIENDA_OAUTH_CLIENT_ID'),
-        'client_secret' => env('HACIENDA_OAUTH_CLIENT_SECRET'),
-        'grant_type' => 'client_credentials',
+        'client_id' => env('HACIENDA_OAUTH_CLIENT_ID', 'api-stag'),
+        'client_secret' => env('HACIENDA_OAUTH_CLIENT_SECRET', ''),
+        'grant_type' => 'password',
+        'username' => env('HACIENDA_OAUTH_USERNAME'),
+        'password' => env('HACIENDA_OAUTH_PASSWORD'),
         'scope' => env('HACIENDA_OAUTH_SCOPE', ''),
     ],
 

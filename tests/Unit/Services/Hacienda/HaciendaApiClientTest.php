@@ -31,11 +31,15 @@ class HaciendaApiClientTest extends TestCase
             'hacienda.environment' => 'sandbox',
             'hacienda.api_urls.sandbox.recepcion' => 'https://api-sandbox.comprobanteselectronicos.go.cr/recepcion/v1',
             'hacienda.api_urls.sandbox.oauth' => 'https://idp.comprobanteselectronicos.go.cr/auth/realms/rut-stag/protocol/openid-connect/token',
+            'hacienda.api_urls.sandbox.logout' => 'https://idp.comprobanteselectronicos.go.cr/auth/realms/rut-stag/protocol/openid-connect/logout',
             'hacienda.api_urls.production.recepcion' => 'https://api.comprobanteselectronicos.go.cr/recepcion/v1',
             'hacienda.api_urls.production.oauth' => 'https://idp.comprobanteselectronicos.go.cr/auth/realms/rut/protocol/openid-connect/token',
-            'hacienda.oauth.client_id' => 'test_client',
-            'hacienda.oauth.client_secret' => 'test_secret',
-            'hacienda.oauth.grant_type' => 'client_credentials',
+            'hacienda.api_urls.production.logout' => 'https://idp.comprobanteselectronicos.go.cr/auth/realms/rut/protocol/openid-connect/logout',
+            'hacienda.oauth.client_id' => 'api-stag',
+            'hacienda.oauth.client_secret' => '',
+            'hacienda.oauth.grant_type' => 'password',
+            'hacienda.oauth.username' => 'cpf-01-0123-0456@stag.comprobanteselectronicos.go.cr',
+            'hacienda.oauth.password' => 'test_password_12345',
         ]);
     }
 

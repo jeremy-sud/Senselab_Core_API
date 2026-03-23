@@ -3,24 +3,26 @@
 ## Índice
 1. [Requisitos Previos](#requisitos-previos)
 2. [Configuración Inicial](#configuración-inicial)
-3. [Obtener Credenciales OAuth](#obtener-credenciales-oauth)
-4. [Certificado Digital](#certificado-digital)
-5. [Ambiente de Pruebas (ATV)](#ambiente-de-pruebas-atv)
-6. [Configuración de Variables](#configuración-de-variables)
-7. [Ejecución de Migraciones](#ejecución-de-migraciones)
-8. [Primer Comprobante](#primer-comprobante)
-9. [Troubleshooting](#troubleshooting)
+3. [Obtener Credenciales de Pruebas (Sandbox)](#obtener-credenciales-de-pruebas-sandbox)
+4. [Llave Criptográfica de Pruebas](#llave-criptográfica-de-pruebas)
+5. [Autenticación OAuth 2.0](#autenticación-oauth-20)
+6. [Gestión del Token y Sesión](#gestión-del-token-y-sesión)
+7. [Endpoints de Conexión](#endpoints-de-conexión)
+8. [Certificado Digital (Producción)](#certificado-digital-producción)
+9. [Configuración de Variables](#configuración-de-variables)
+10. [Ejecución de Migraciones](#ejecución-de-migraciones)
+11. [Primer Comprobante](#primer-comprobante)
+12. [Troubleshooting](#troubleshooting)
 
 ---
 
 ## Requisitos Previos
 
-### 1. Acceso al Sistema de Hacienda
-- Cuenta en el portal de Administración Tributaria Virtual (ATV)
-- URL: https://atv.hacienda.go.cr/
-- Credenciales de acceso (usuario y contraseña)
+### 1. Acceso a la Oficina Virtual (OVi) del Ministerio de Hacienda
+- Cuenta en la Oficina Virtual del Ministerio de Hacienda
+- Credenciales de acceso (identificación y contraseña)
 
-### 2. Certificado Digital
+### 2. Certificado Digital (para Producción)
 - Certificado .p12 emitido por una Autoridad Certificadora autorizada
 - Proveedores autorizados en Costa Rica:
   * ECASA (https://www.ecasa.cr/)
@@ -28,6 +30,8 @@
   * FIRMA DIGITAL (https://www.firmadigital.cr/)
 - Costo aproximado: $50-150 USD anuales
 - Vigencia: 1-2 años
+
+> **Nota**: Para el ambiente Sandbox (pruebas), Hacienda proporciona una llave criptográfica de pruebas que se genera desde el portal. Ver sección [Llave Criptográfica de Pruebas](#llave-criptográfica-de-pruebas).
 
 ### 3. Código de Actividad Económica
 - Debe estar registrado en Hacienda
@@ -58,58 +62,170 @@ php artisan key:generate
 
 ---
 
-## Obtener Credenciales OAuth
+## Obtener Credenciales de Pruebas (Sandbox)
 
-### Paso 1: Acceder al Portal de Hacienda
-1. Ingresar a https://atv.hacienda.go.cr/
-2. Iniciar sesión con sus credenciales
-3. Ir a **Servicios > Facturación Electrónica**
+> **Importante**: Las credenciales del entorno Sandbox (Staging) del Ministerio de Hacienda **no son públicas**. Cada contribuyente debe generarlas de forma individual a través de los portales oficiales.
 
-### Paso 2: Solicitar Credenciales API
-1. Menú: **Configuración > API OAuth**
-2. Crear nueva aplicación:
-   - Nombre: `Mi Sistema de Facturación`
-   - Tipo: `Aplicación de Servidor`
-   - URL de Redirección: `https://tu-dominio.com/api/hacienda/callback`
-3. Copiar credenciales generadas:
-   - **Client ID**: `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
-   - **Client Secret**: `yyyyyyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy`
+### Paso 1: Acceder a la Oficina Virtual (OVi)
+1. Ingresar a la Oficina Virtual del Ministerio de Hacienda con tu identificación y contraseña.
 
-### Paso 3: Solicitar Acceso al Ambiente de Pruebas (ATV)
-**Importante**: Hacienda requiere solicitud por correo electrónico.
+### Paso 2: Módulo Tico Factura
+1. Seleccionar el bloque denominado **"Tico Factura"**.
 
-Enviar correo a: **facturacionelectronica@hacienda.go.cr**
+### Paso 3: Generar Credenciales de Pruebas
+1. Si no tienes credenciales aún, selecciona la opción **"Necesito un usuario de pruebas"**.
+2. El sistema generará automáticamente:
+   - **Usuario**: Con formato `cpf-XX-XXXX-XXXX@stag.comprobanteselectronicos.go.cr`
+   - **Contraseña**: Cadena de aproximadamente 20 caracteres generada automáticamente
+3. Estos datos siempre estarán disponibles para descargar o copiar en la sección **"Mi Perfil" > "Credenciales de pruebas"**.
 
-**Asunto**: Solicitud de acceso al ambiente ATV para pruebas
-
-**Cuerpo del correo**:
-```
-Estimados señores:
-
-Por medio de la presente solicito acceso al ambiente de pruebas ATV 
-para desarrollar y probar la integración de facturación electrónica.
-
-Datos de la empresa:
-- Razón Social: [Nombre de su empresa]
-- Cédula Jurídica: [Número de cédula]
-- Representante Legal: [Nombre completo]
-- Correo electrónico: [correo@empresa.com]
-- Teléfono: [número de contacto]
-- Sistema a utilizar: Ursol-CAST-API
-
-Usuario ATV: [su usuario]
-
-Quedo atento a sus instrucciones.
-
-Saludos cordiales,
-[Su nombre]
-```
-
-**Tiempo de respuesta**: 2-5 días hábiles
+> **Nota sobre la contraseña**: Si la contraseña contiene símbolos especiales, asegúrate de que estén correctamente codificados (URL encoded) al configurarlos en el sistema para evitar errores de "credenciales inválidas".
 
 ---
 
-## Certificado Digital
+## Llave Criptográfica de Pruebas
+
+Para firmar los archivos XML en el entorno Sandbox, necesitas una llave criptográfica específica de pruebas:
+
+### Generar la Llave
+1. En la Oficina Virtual (OVi), acceder a **"Credenciales de pruebas"**.
+2. Seleccionar **"Generar llave criptográfica"**.
+3. Definir un **PIN de 4 dígitos** que servirá para proteger la llave.
+4. Descargar el archivo `.p12` generado.
+5. Instalar/copiar el archivo en tu equipo y configurarlo usando el PIN definido.
+
+### Configurar la Llave en el Sistema
+```bash
+# Crear directorio para certificados
+mkdir -p storage/app/certificates
+chmod 755 storage/app/certificates
+
+# Copiar llave criptográfica de pruebas
+cp /ruta/al/llave_pruebas.p12 storage/app/certificates/
+chmod 600 storage/app/certificates/llave_pruebas.p12
+```
+
+Configurar en `.env`:
+```env
+HACIENDA_CERT_PATH=storage/app/certificates/llave_pruebas.p12
+HACIENDA_CERT_PASSWORD=1234  # Tu PIN de 4 dígitos
+```
+
+---
+
+## Autenticación OAuth 2.0
+
+Hacienda utiliza **OAuth 2.0 con OpenID Connect** mediante el flujo **Resource Owner Password Credentials** (grant_type=password).
+
+### Parámetros de Autenticación
+
+Para obtener el token de acceso, se envía una petición `POST` al endpoint del Identity Provider (IdP) con los siguientes campos en formato `application/x-www-form-urlencoded`:
+
+| Parámetro | Valor | Descripción |
+|-----------|-------|-------------|
+| `grant_type` | `password` | Siempre `password` para obtención inicial del token |
+| `client_id` | `api-stag` (Sandbox) / `api-prod` (Producción) | Identificador del cliente según el ambiente |
+| `username` | `cpf-XX-XXXX-XXXX@stag...` | Usuario generado en el portal OVi / Tico Factura |
+| `password` | *(contraseña generada)* | Contraseña de ~20 caracteres generada en OVi |
+| `scope` | *(vacío)* | No requerido por Hacienda |
+| `client_secret` | *(vacío)* | No requerido por Hacienda |
+
+### Ejemplo de Petición (cURL)
+
+```bash
+curl -X POST \
+  "https://idp.comprobanteselectronicos.go.cr/auth/realms/rut-stag/protocol/openid-connect/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=password" \
+  -d "client_id=api-stag" \
+  -d "username=cpf-01-0123-0456@stag.comprobanteselectronicos.go.cr" \
+  -d "password=TU_PASSWORD_URL_ENCODED"
+```
+
+---
+
+## Gestión del Token y Sesión
+
+### Respuesta del IdP
+
+La respuesta JSON del servidor de autenticación contiene los siguientes campos:
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `access_token` | string (JWT) | Token que se incluye en el header `Authorization` de cada petición a la API |
+| `token_type` | string | Normalmente `bearer` |
+| `expires_in` | int | Tiempo de vida del access token en segundos (**actualmente 300 = 5 minutos**) |
+| `refresh_token` | string | Token para renovar el access token sin reenviar usuario/contraseña |
+| `refresh_expires_in` | int | Tiempo de vida del refresh token (**actualmente 36000 = 10 horas**) |
+
+### Ciclo de Vida de la Sesión
+
+```
+┌──────────────────────────────────────────────────────────┐
+│  1. Autenticación inicial (grant_type=password)          │
+│     → Obtiene access_token (5 min) + refresh_token (10h)│
+├──────────────────────────────────────────────────────────┤
+│  2. Uso del access_token                                 │
+│     Header: Authorization: bearer {access_token}         │
+│     → Cada petición a la API de comprobantes             │
+├──────────────────────────────────────────────────────────┤
+│  3. Refresco del token (antes de que expire)             │
+│     grant_type=refresh_token + refresh_token={token}     │
+│     → Nuevo access_token sin reenviar credenciales       │
+├──────────────────────────────────────────────────────────┤
+│  4. Logout (al terminar procesos)                        │
+│     POST al LOGOUT_URL con refresh_token                 │
+│     → OBLIGATORIO para evitar sesiones huérfanas         │
+└──────────────────────────────────────────────────────────┘
+```
+
+### Header de Autorización
+
+Toda interacción con la API de Recepción de comprobantes debe incluir:
+
+```
+Authorization: bearer {access_token}
+```
+
+### Logout (Cierre de Sesión)
+
+> **Buena práctica**: El sistema siempre debe realizar un **Logout** al terminar los procesos para evitar actividades maliciosas, enviando el `refresh_token` al `LOGOUT_URL`.
+
+```bash
+curl -X POST \
+  "https://idp.comprobanteselectronicos.go.cr/auth/realms/rut-stag/protocol/openid-connect/logout" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "client_id=api-stag" \
+  -d "refresh_token={refresh_token}"
+```
+
+---
+
+## Endpoints de Conexión
+
+### URLs por Ambiente
+
+| Dato | Sandbox (Staging) | Producción |
+|------|-------------------|------------|
+| **Token URL** | `https://idp.comprobanteselectronicos.go.cr/auth/realms/rut-stag/protocol/openid-connect/token` | `https://idp.comprobanteselectronicos.go.cr/auth/realms/rut/protocol/openid-connect/token` |
+| **Logout URL** | `https://idp.comprobanteselectronicos.go.cr/auth/realms/rut-stag/protocol/openid-connect/logout` | `https://idp.comprobanteselectronicos.go.cr/auth/realms/rut/protocol/openid-connect/logout` |
+| **API Recepción** | `https://api-sandbox.comprobanteselectronicos.go.cr/recepcion/v1` | `https://api.comprobanteselectronicos.go.cr/recepcion/v1` |
+| **Client ID** | `api-stag` | `api-prod` |
+
+### Diferencias Sandbox vs Producción
+
+| Característica | Sandbox (Staging) | Producción |
+|---------------|-------------------|------------|
+| Validación XML | Estricta | Estricta |
+| Firma digital | Requerida (llave de pruebas) | Requerida (certificado real) |
+| Cédulas válidas | Ficticias aceptadas | Solo reales |
+| Rate limiting | 100 req/min | 60 req/min |
+| Persistencia | 30 días | Permanente |
+| Certificados | Llave criptográfica de pruebas | Solo certificados reales |
+
+---
+
+## Certificado Digital (Producción)
 
 ### Obtener Certificado .p12
 
@@ -129,9 +245,9 @@ Saludos cordiales,
 2. Proceso similar a ECASA
 3. Certificados compatibles con Hacienda
 
-### Configurar Certificado en el Sistema
+### Configurar Certificado de Producción en el Sistema
 
-1. Crear directorio para certificados:
+1. Crear directorio para certificados (si no existe):
 ```bash
 mkdir -p storage/app/certificates
 chmod 755 storage/app/certificates
@@ -178,31 +294,6 @@ echo $passwordEncriptado;
 
 ---
 
-## Ambiente de Pruebas (ATV)
-
-### URLs del Sistema
-
-**Ambiente de Pruebas (ATV)**:
-- API OAuth: `https://idp.comprobanteselectronicos.go.cr/auth/realms/rut-stag/protocol/openid-connect/token`
-- API Comprobantes: `https://api-sandbox.comprobanteselectronicos.go.cr/recepcion/v1`
-
-**Ambiente de Producción**:
-- API OAuth: `https://idp.comprobanteselectronicos.go.cr/auth/realms/rut/protocol/openid-connect/token`
-- API Comprobantes: `https://api.comprobanteselectronicos.go.cr/recepcion/v1`
-
-### Diferencias ATV vs Producción
-
-| Característica | ATV (Pruebas) | Producción |
-|---------------|---------------|------------|
-| Validación XML | Estricta | Estricta |
-| Firma digital | Requerida | Requerida |
-| Cédulas válidas | Ficticias aceptadas | Solo reales |
-| Rate limiting | 100 req/min | 60 req/min |
-| Persistencia | 30 días | Permanente |
-| Certificados | Prueba o reales | Solo reales |
-
----
-
 ## Configuración de Variables
 
 ### Archivo `.env`
@@ -212,22 +303,28 @@ echo $passwordEncriptado;
 # FACTURACIÓN ELECTRÓNICA - HACIENDA
 # ==========================================
 
-# Ambiente: sandbox (ATV) o production
+# Ambiente: sandbox (Staging) o production
 HACIENDA_ENVIRONMENT=sandbox
 
-# Credenciales OAuth (obtenidas del portal ATV)
-HACIENDA_CLIENT_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-HACIENDA_CLIENT_SECRET=yyyyyyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy
-HACIENDA_USERNAME=usuario@empresa.com
-HACIENDA_PASSWORD=contraseña_atv
+# Credenciales OAuth 2.0 (grant_type=password)
+# Sandbox: client_id=api-stag | Producción: client_id=api-prod
+HACIENDA_OAUTH_CLIENT_ID=api-stag
+HACIENDA_OAUTH_USERNAME=cpf-01-0123-0456@stag.comprobanteselectronicos.go.cr
+HACIENDA_OAUTH_PASSWORD=tu_contraseña_generada_en_ovi
 
-# URLs Ambiente Sandbox (ATV)
+# URLs Ambiente Sandbox (Staging)
 HACIENDA_OAUTH_URL_SANDBOX=https://idp.comprobanteselectronicos.go.cr/auth/realms/rut-stag/protocol/openid-connect/token
+HACIENDA_LOGOUT_URL_SANDBOX=https://idp.comprobanteselectronicos.go.cr/auth/realms/rut-stag/protocol/openid-connect/logout
 HACIENDA_API_URL_SANDBOX=https://api-sandbox.comprobanteselectronicos.go.cr/recepcion/v1
 
 # URLs Ambiente Producción (comentadas por defecto)
-#HACIENDA_OAUTH_URL_PRODUCTION=https://idp.comprobanteselectronicos.go.cr/auth/realms/rut/protocol/openid-connect/token
-#HACIENDA_API_URL_PRODUCTION=https://api.comprobanteselectronicos.go.cr/recepcion/v1
+#HACIENDA_OAUTH_URL_PROD=https://idp.comprobanteselectronicos.go.cr/auth/realms/rut/protocol/openid-connect/token
+#HACIENDA_LOGOUT_URL_PROD=https://idp.comprobanteselectronicos.go.cr/auth/realms/rut/protocol/openid-connect/logout
+#HACIENDA_API_URL_PROD=https://api.comprobanteselectronicos.go.cr/recepcion/v1
+
+# Certificado Digital / Llave Criptográfica (.p12)
+HACIENDA_CERT_PATH=storage/app/certificates/llave_pruebas.p12
+HACIENDA_CERT_PASSWORD=1234
 
 # Rate Limiting
 HACIENDA_RATE_LIMIT_REQUESTS=60
@@ -254,7 +351,9 @@ php artisan tinker
 En tinker:
 ```php
 config('hacienda.environment'); // Debe retornar 'sandbox'
-config('hacienda.oauth.client_id'); // Debe mostrar su client_id
+config('hacienda.oauth.client_id'); // Debe retornar 'api-stag'
+config('hacienda.oauth.grant_type'); // Debe retornar 'password'
+config('hacienda.oauth.username'); // Debe mostrar su usuario
 ```
 
 ---
@@ -373,14 +472,16 @@ Estados posibles:
 
 ## Troubleshooting
 
-### Error: "Invalid client credentials"
+### Error: "Invalid client credentials" o "invalid_grant"
 
-**Causa**: Client ID o Secret incorrectos.
+**Causa**: Usuario, contraseña o client_id incorrectos.
 
 **Solución**:
-1. Verificar credenciales en `.env`
-2. Confirmar que coinciden con las del portal ATV
-3. Ejecutar `php artisan config:clear`
+1. Verificar que `HACIENDA_OAUTH_CLIENT_ID` sea `api-stag` (sandbox) o `api-prod` (producción)
+2. Verificar que `HACIENDA_OAUTH_USERNAME` y `HACIENDA_OAUTH_PASSWORD` coincidan con los generados en la OVi
+3. Asegurar que la contraseña esté correctamente codificada (URL encoded) si contiene símbolos especiales
+4. Ejecutar `php artisan config:clear`
+5. Consultar las credenciales en la OVi: **"Mi Perfil" > "Credenciales de pruebas"**
 
 ### Error: "Certificate not found or expired"
 
@@ -399,7 +500,7 @@ WHERE fecha_vencimiento > NOW();
 
 ### Error: "Invalid XML structure"
 
-**Causa**: XML no cumple con XSD v4.3 de Hacienda.
+**Causa**: XML no cumple con XSD v4.4 de Hacienda.
 
 **Solución**:
 1. Revisar logs: `storage/logs/laravel.log`
