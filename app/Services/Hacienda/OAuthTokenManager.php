@@ -32,6 +32,11 @@ class OAuthTokenManager
     protected string $tokenUrl;
 
     /**
+     * URL del endpoint de Logout
+     */
+    protected string $logoutUrl;
+
+    /**
      * Credenciales OAuth
      *
      * @var array<string, mixed>
@@ -45,6 +50,7 @@ class OAuthTokenManager
     {
         $this->ambiente = $ambiente;
         $this->tokenUrl = config("hacienda.api_urls.{$ambiente}.oauth");
+        $this->logoutUrl = config("hacienda.api_urls.{$ambiente}.logout", '');
         $this->credentials = config('hacienda.oauth');
 
         $this->client = new Client([
@@ -102,13 +108,23 @@ class OAuthTokenManager
         ]);
 
         try {
+            $formParams = [
+                'grant_type' => $this->credentials['grant_type'],
+                'client_id' => $this->credentials['client_id'],
+                'username' => $this->credentials['username'],
+                'password' => $this->credentials['password'],
+            ];
+
+            // client_secret y scope son opcionales para Hacienda
+            if (!empty($this->credentials['client_secret'])) {
+                $formParams['client_secret'] = $this->credentials['client_secret'];
+            }
+            if (!empty($this->credentials['scope'])) {
+                $formParams['scope'] = $this->credentials['scope'];
+            }
+
             $response = $this->client->post($this->tokenUrl, [
-                'form_params' => [
-                    'grant_type' => $this->credentials['grant_type'],
-                    'client_id' => $this->credentials['client_id'],
-                    'client_secret' => $this->credentials['client_secret'],
-                    'scope' => $this->credentials['scope'] ?? '',
-                ],
+                'form_params' => $formParams,
                 'headers' => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
                     'Accept' => 'application/json',
@@ -196,7 +212,11 @@ class OAuthTokenManager
     }
 
     /**
-     * Refrescar token (invalidar el actual y obtener uno nuevo)
+     * Refrescar token usando el refresh_token existente
+     *
+     * Si hay un refresh_token válido, lo usa para obtener un nuevo access_token
+     * sin reenviar usuario/contraseña. Si no hay refresh_token o está expirado,
+     * inicia una nueva sesión completa.
      *
      * @return string Nuevo access token
      * @throws \Exception
@@ -207,13 +227,122 @@ class OAuthTokenManager
             'ambiente' => $this->ambiente,
         ]);
 
+        // Buscar token actual con refresh_token
+        $tokenActual = FeOAuthToken::ambiente($this->ambiente)
+            ->activos()
+            ->first();
+
+        if ($tokenActual && !empty($tokenActual->refresh_token)) {
+            try {
+                $response = $this->client->post($this->tokenUrl, [
+                    'form_params' => [
+                        'grant_type' => 'refresh_token',
+                        'client_id' => $this->credentials['client_id'],
+                        'refresh_token' => $tokenActual->refresh_token,
+                    ],
+                    'headers' => [
+                        'Content-Type' => 'application/x-www-form-urlencoded',
+                        'Accept' => 'application/json',
+                    ],
+                ]);
+
+                $statusCode = $response->getStatusCode();
+                $data = json_decode((string) $response->getBody(), true);
+
+                if ($statusCode === 200 && isset($data['access_token'])) {
+                    // Desactivar token anterior
+                    $tokenActual->update(['activo' => false]);
+
+                    $nuevoToken = $this->guardarToken($data);
+
+                    Log::info('Token OAuth refrescado exitosamente', [
+                        'ambiente' => $this->ambiente,
+                        'token_id' => $nuevoToken->id,
+                        'expires_in' => $data['expires_in'] ?? 'unknown',
+                    ]);
+
+                    return $nuevoToken->access_token;
+                }
+
+                Log::warning('Refresh token inválido o expirado, iniciando nueva sesión', [
+                    'ambiente' => $this->ambiente,
+                    'status_code' => $statusCode,
+                ]);
+            } catch (GuzzleException $e) {
+                Log::warning('Error al refrescar token, iniciando nueva sesión', [
+                    'ambiente' => $this->ambiente,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
         // Marcar token actual como inactivo
         FeOAuthToken::where('ambiente', $this->ambiente)
             ->where('activo', true)
             ->update(['activo' => false]);
 
-        // Obtener nuevo token
+        // Obtener nuevo token con credenciales completas
         return $this->obtenerNuevoToken();
+    }
+
+    /**
+     * Cerrar sesión (Logout) con el servidor OAuth
+     *
+     * Envía el refresh_token al LOGOUT_URL para invalidar la sesión.
+     * Buena práctica recomendada por Hacienda para evitar sesiones huérfanas.
+     *
+     * @return bool true si el logout fue exitoso
+     */
+    public function logout(): bool
+    {
+        if (empty($this->logoutUrl)) {
+            Log::warning('URL de logout no configurada', [
+                'ambiente' => $this->ambiente,
+            ]);
+            return false;
+        }
+
+        $tokenActual = FeOAuthToken::ambiente($this->ambiente)
+            ->activos()
+            ->first();
+
+        if (!$tokenActual || empty($tokenActual->refresh_token)) {
+            Log::debug('No hay sesión activa para cerrar', [
+                'ambiente' => $this->ambiente,
+            ]);
+            return false;
+        }
+
+        try {
+            $response = $this->client->post($this->logoutUrl, [
+                'form_params' => [
+                    'client_id' => $this->credentials['client_id'],
+                    'refresh_token' => $tokenActual->refresh_token,
+                ],
+                'headers' => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                ],
+            ]);
+
+            $tokenActual->update(['activo' => false]);
+
+            Log::info('Logout OAuth exitoso', [
+                'ambiente' => $this->ambiente,
+                'status_code' => $response->getStatusCode(),
+            ]);
+
+            return $response->getStatusCode() >= 200 && $response->getStatusCode() < 300;
+        } catch (GuzzleException $e) {
+            Log::error('Error al cerrar sesión OAuth', [
+                'ambiente' => $this->ambiente,
+                'error' => $e->getMessage(),
+            ]);
+
+            // Desactivar token local aunque falle el logout remoto
+            $tokenActual->update(['activo' => false]);
+
+            return false;
+        }
     }
 
     /**
@@ -226,14 +355,21 @@ class OAuthTokenManager
         if (empty($this->credentials['client_id'])) {
             throw HaciendaException::oauthConfigError(
                 'HACIENDA_OAUTH_CLIENT_ID no está configurado en .env. ' .
-                'Debes obtener las credenciales OAuth del portal de Hacienda.'
+                'Debe ser "api-stag" para Sandbox o "api-prod" para Producción.'
             );
         }
 
-        if (empty($this->credentials['client_secret'])) {
+        if (empty($this->credentials['username'])) {
             throw HaciendaException::oauthConfigError(
-                'HACIENDA_OAUTH_CLIENT_SECRET no está configurado en .env. ' .
-                'Debes obtener las credenciales OAuth del portal de Hacienda.'
+                'HACIENDA_OAUTH_USERNAME no está configurado en .env. ' .
+                'Genera tus credenciales de pruebas en la Oficina Virtual (OVi) > Tico Factura.'
+            );
+        }
+
+        if (empty($this->credentials['password'])) {
+            throw HaciendaException::oauthConfigError(
+                'HACIENDA_OAUTH_PASSWORD no está configurado en .env. ' .
+                'Genera tus credenciales de pruebas en la Oficina Virtual (OVi) > Tico Factura.'
             );
         }
 

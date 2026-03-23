@@ -36,12 +36,16 @@ class OAuthTokenManagerTest extends TestCase
 
         // Configurar credenciales OAuth de prueba
         config([
-            'hacienda.oauth.client_id' => 'test_client_id',
-            'hacienda.oauth.client_secret' => 'test_client_secret',
-            'hacienda.oauth.grant_type' => 'client_credentials',
+            'hacienda.oauth.client_id' => 'api-stag',
+            'hacienda.oauth.client_secret' => '',
+            'hacienda.oauth.grant_type' => 'password',
+            'hacienda.oauth.username' => 'cpf-01-0123-0456@stag.comprobanteselectronicos.go.cr',
+            'hacienda.oauth.password' => 'test_password_12345',
             'hacienda.oauth.scope' => '',
             'hacienda.api_urls.sandbox.oauth' => 'https://idp.comprobanteselectronicos.go.cr/auth/realms/rut-stag/protocol/openid-connect/token',
+            'hacienda.api_urls.sandbox.logout' => 'https://idp.comprobanteselectronicos.go.cr/auth/realms/rut-stag/protocol/openid-connect/logout',
             'hacienda.api_urls.production.oauth' => 'https://idp.comprobanteselectronicos.go.cr/auth/realms/rut/protocol/openid-connect/token',
+            'hacienda.api_urls.production.logout' => 'https://idp.comprobanteselectronicos.go.cr/auth/realms/rut/protocol/openid-connect/logout',
         ]);
     }
 
