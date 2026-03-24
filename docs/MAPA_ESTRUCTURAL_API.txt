@@ -1,103 +1,209 @@
 Documento de Estudio Estructural para reducir el riesgo operativo: Ursol CAST API (REST Multi-tenant)
 
-Este análisis es 100% de lectura del repositorio. No se hizo ningún cambio de código.
+Última actualización: 24 de marzo de 2026
+Versión del proyecto: v3.3.0 (FASE 16 completada)
+Análisis basado en: lectura directa del repositorio + auditorías técnicas (7 Feb, 9 Mar 2026)
+Referencia: ROADMAP.md para historial de fases
 
 1) Vista general de arquitectura
-Ursol-CAST-API es un backend Laravel 12 orientado a ERP multi-módulo, multi-tenant por empresa, con RBAC, facturación electrónica CR (Hacienda), componentes de IA, observabilidad y despliegue Docker/Kubernetes.
-El sistema está en una fase madura funcionalmente, pero con deuda de cohesión técnica por crecimiento acelerado.
+Ursol-CAST-API es un backend Laravel 12 (PHP 8.4) orientado a ERP multi-módulo, multi-tenant por empresa, con RBAC granular (80 policies), facturación electrónica CR v4.4 (Hacienda DGT-R-000-2024), componentes de IA (10 servicios), observabilidad (Sentry, health checks, métricas), y despliegue Docker/Kubernetes.
+El sistema ha pasado por 18+ fases de mejora documentadas. La deuda técnica principal ya no es funcional sino de consistencia arquitectónica residual y validación E2E de Hacienda.
 
-Métricas observadas del código:
+Métricas verificadas del código (24 Mar 2026):
 
-95 controladores
-85 modelos
-80 policies
+92 controladores (excluye Controller.php base)
+87 modelos Eloquent
+80 policies RBAC
 170 FormRequests
-80 API Resources
-31 servicios
-95 migraciones
-86 seeders
-24 tests feature
-22 tests unit
-578 rutas API registradas (php artisan route:list --path=api)
+79 API Resources
+62 servicios (44 core + 10 AI + 8 Hacienda)
+43 DTOs
+11 excepciones de dominio (DomainException base + 10 tipadas)
+12 traits reutilizables
+7 observers
+2 custom rules (CrTelefono, CrIdentificacion)
+3 providers (App, Auth, Observer)
+98 migraciones (rollback verificado)
+73 seeders (separados: MasterData producción + DemoData desarrollo)
+83 factories
+141 archivos de tests (75 Feature + 58 Unit + 8 Contract)
+997 tests passing, 0 failing
+PHPStan Level 8, 0 errores, baseline vacío
+14 archivos de rutas particionados por dominio (routes/api/)
+7 workflows CI/CD en GitHub Actions
 2) Mapa mental en texto (organización real del sistema)
 
-URSOL CAST API (Laravel 12)
+URSOL CAST API (Laravel 12, PHP 8.4) — v3.3.0
 ├── Capa de entrada HTTP
 │   ├── bootstrap/app.php
 │   │   ├── routing: web/api/console + /up
-│   │   ├── aliases middleware (permission, security.headers, throttle.granular, metrics.request, etc.)
-│   │   └── stack global append/prepend (CORS, throttle custom, request log, metrics, security headers)
-│   ├── routes/api.php (1287 líneas)
-│   │   ├── auth pública: /api/login
-│   │   ├── bloque auth:sanctum + throttle general
-│   │   ├── módulos ERP CRUD masivos (inventario, ventas, compras, contabilidad, nómina, transporte, catálogos)
-│   │   ├── FE/Hacienda (comprobantes + /api/v1/hacienda/*)
-│   │   ├── IA (/api/ai/*)
-│   │   ├── observabilidad (/api/health/*, /api/metrics*)
-│   │   └── compliance/GDPR
+│   │   ├── aliases middleware: permission, security.headers, throttle.granular, metrics.request, cors.advanced, log.request
+│   │   ├── stack global (orden de ejecución):
+│   │   │   1. HandleCors (prepend) — CORS nativo Laravel
+│   │   │   2. ThrottleRequestsWithRetryAfter — rate limiting granular (FASE 1.5)
+│   │   │   3. LogRequest — logging estructurado con trace_id (FASE 1.3)
+│   │   │   4. RequestMetricsMiddleware — duración, memoria, status codes (FASE 2.3)
+│   │   │   5. HandleCorsAdvanced — CORS logging/auditoría (FASE 1.2)
+│   │   │   6. SecurityHeaders — OWASP Top 10, HSTS, CSP (FASE 1.2)
+│   │   └── exception handler: DomainException → JSON con trace_id (FASE 15)
+│   ├── routes/api.php (81 líneas — orquestador)
+│   │   └── require de 14 archivos particionados en routes/api/:
+│   │       ├── auth.php — login, logout, me
+│   │       ├── core.php — empresas, sucursales, usuarios, roles
+│   │       ├── ventas.php — ventas y clientes
+│   │       ├── compras.php — compras y proveedores
+│   │       ├── inventario.php — gestión de inventario
+│   │       ├── contabilidad.php — contabilidad y presupuestos
+│   │       ├── nomina.php — nómina y RRHH
+│   │       ├── transporte.php — buses, rutas, tiquetes
+│   │       ├── catalogos.php — catálogos del sistema
+│   │       ├── fe.php — facturación electrónica y Hacienda
+│   │       ├── ai.php — inteligencia artificial
+│   │       ├── compliance.php — GDPR y auditoría
+│   │       ├── configuracion.php — configuraciones y utilidades
+│   │       └── observabilidad.php — health checks y métricas
 │   └── routes/web.php
 │       ├── redirect raíz a Swagger
 │       └── URL shortener público /s/{slug}
 │
-├── Capa de controladores
-│   ├── app/Http/Controllers/API/* (núcleo CRUD legacy/monolítico)
+├── Capa de controladores (92)
+│   ├── app/Http/Controllers/API/* (núcleo CRUD — patrón Service + DTO en expansión)
 │   ├── app/Http/Controllers/Api/V1/* (segmento versionado parcial)
-│   ├── app/Http/Controllers/* (controladores transversales: FE, GDPR, health, metrics, etc.)
-│   └── estado mixto:
-│       ├── algunos controladores en patrón Service + DTO (ej. Venta refactor)
-│       └── mayoría con lógica de negocio acoplada al controlador
+│   ├── app/Http/Controllers/* (transversales: FE, GDPR, health, metrics)
+│   └── patrón dominante post-FASE 16:
+│       ├── controladores delegando a servicios vía DI
+│       ├── BaseService abstracto con CRUD genérico + hooks
+│       └── DTOs con toArray() para validación tipada
 │
-├── Capa de dominio/datos
-│   ├── app/Models/* (85 modelos)
-│   ├── app/Policies/* (80 policies, base policy RBAC+tenant ownership)
-│   ├── app/Observers/* (auditoría y eventos de modelos críticos)
-│   ├── app/Traits/*
-│   │   ├── multi-tenant (BelongsToTenant, HasEmpresaContext)
-│   │   ├── seguridad/auditoría/encriptación
-│   │   └── cache de permisos y utilidades
-│   └── app/Services/*
-│       ├── servicios de negocio ERP
-│       ├── servicios Hacienda (OAuth, cliente API, XML, firma)
-│       └── servicios IA (Gemini/OpenAI + verticales de predicción/contenido/OCR)
+├── Capa de dominio
+│   ├── app/Services/ (62 servicios)
+│   │   ├── BaseService.php — CRUD genérico, hooks (before/afterCreate, applyFilters, etc.)
+│   │   ├── 44 servicios core (ERP: ventas, compras, inventario, contabilidad, nómina, transporte, admin)
+│   │   ├── AI/ (10 servicios: Gemini, OpenAI, OCR, Chatbot, Predicción, Anomalías, Contenido, CAByS, Credit)
+│   │   └── Hacienda/ (8 servicios):
+│   │       ├── OAuthTokenManager — OAuth 2.0 password flow + refresh + logout
+│   │       ├── HaciendaApiClient — HTTP con rate limiting y reintentos
+│   │       ├── HaciendaIntegrationService — orquestación del flujo completo
+│   │       ├── ClaveNumericaGenerator — clave de 50 caracteres
+│   │       ├── RateLimiter — 8 req/seg, algoritmo Leaky Bucket
+│   │       └── Xml/ (XmlComprobanteBuilder v4.4, XadesEpesSigner, FirmaDigitalService)
+│   ├── app/Models/ (87 modelos)
+│   │   └── diseño: empresa_id, soft-delete custom (activo/eliminado), creado_en/actualizado_en
+│   ├── app/Policies/ (80 policies — BasePolicy con $permission + RBAC por tenant)
+│   ├── app/Exceptions/ (11 excepciones)
+│   │   ├── DomainException — base abstracta
+│   │   └── HaciendaException, InventarioException, VentaException, ContabilidadException,
+│   │       CompraException, NominaException, MultiTenancyException, FacturacionElectronicaException,
+│   │       AIServiceException, BusinessException
+│   ├── app/Observers/ (7: Audit, Permiso, Venta, Rol, AsientoContable, Producto, Cliente)
+│   ├── app/Traits/ (12)
+│   │   ├── ApiResponse — envelope unificado {success, code, message, data, errors, meta}
+│   │   ├── multi-tenant: BelongsToTenant, HasEmpresaContext
+│   │   ├── seguridad: HasEncryptedAttributes, HasSafeErrorHandling
+│   │   ├── auditoría: HasAuditableEvents, HasAuditFields
+│   │   └── utilidades: HasPermissionCache, HasCacheableQueries, HasActiveScope, HasCustomSoftDeletes
+│   └── app/Rules/ (2: CrTelefono, CrIdentificacion)
 │
 ├── Contratos de entrada/salida
-│   ├── app/Http/Requests/* (FormRequests extensivos por recurso)
-│   ├── app/Http/Resources/* (serialización por entidad)
-│   └── app/DTOs/* (iniciado pero adopción parcial)
+│   ├── app/Http/Requests/ (170 FormRequests — validación completa con max: en strings)
+│   ├── app/Http/Resources/ (79 API Resources)
+│   └── app/DTOs/ (43 DTOs — cobertura ~47% de controladores)
 │
 ├── Persistencia
-│   ├── database/migrations/* (95)
-│   ├── database/seeders/* (muy amplia carga de datos base/demo)
-│   ├── database/factories/* (cobertura alta)
-│   └── diseño centrado en empresa_id + soft-delete custom (activo/eliminado + creado_en/actualizado_en)
+│   ├── database/migrations/ (98 — rollback verificado con MigrationRollbackTest)
+│   ├── database/seeders/ (73)
+│   │   ├── MasterDataSeeder — 14 catálogos de producción (idempotentes)
+│   │   └── DemoDataSeeder — empresa + usuarios demo (solo desarrollo)
+│   └── database/factories/ (83 — verificadas contra migraciones en FASE 13)
 │
 ├── Calidad y pruebas
-│   ├── tests/Feature + tests/Unit
-│   ├── phpunit.xml (SQLite in-memory para tests)
-│   ├── PHPStan + baseline + workflows dedicados
-│   └── CI/CD múltiple en GitHub Actions (tests, análisis, deploy)
+│   ├── tests/Feature/ (75 archivos)
+│   ├── tests/Unit/ (58 archivos)
+│   ├── tests/Contract/ (8 archivos — Pact PHP 10.2.1, 22 consumer tests)
+│   ├── tests/Load/ (3 scripts k6: smoke, ventas/facturación, N+1 detection)
+│   ├── 997 tests passing, 0 failing, 0 skipped
+│   ├── PHPStan Level 8, 0 errores, baseline vacío
+│   ├── Infection PHP 0.32 — mutation testing (MSI ≥50%, covered MSI ≥70%)
+│   ├── Codecov — 70% proyecto / 80% patch
+│   └── phpunit.xml (SQLite in-memory)
+│
+├── CI/CD (7 workflows GitHub Actions)
+│   ├── tests.yml — 3 jobs (tests+coverage pcov, code-quality PHPStan L8, security audit)
+│   ├── ci-cd.yml — test → code-quality → docker-build → deploy-staging
+│   ├── phpstan.yml — Level 8 + baseline check
+│   ├── mutation-testing.yml — Infection (full en main, incremental en PRs)
+│   ├── contract-tests.yml — Pact consumer/provider + artifact upload
+│   ├── deploy-staging.yml
+│   └── deploy-production.yml
 │
 ├── Operación/infra
 │   ├── Dockerfile + docker-compose (nginx/php/mysql/redis/queue/scheduler)
-│   ├── kubernetes/base + overlays
-│   └── scripts de deploy/rollback/backup/instalación
+│   ├── kubernetes/base + overlays (staging/production)
+│   └── scripts/ (deploy, rollback, install, backup, verificación)
 │
 └── Documentación
-    ├── README principal muy extenso
-    ├── docs/ con guías técnicas, sprints, auditorías
-    └── histórico grande en docs/archive
+    ├── README.md — documentación principal
+    ├── ROADMAP.md — 18+ fases documentadas con criterios de aceptación
+    ├── ESTADO_ACTUAL_PROYECTO.md — estadísticas verificadas
+    ├── CHANGELOG.md — historial de cambios por versión
+    ├── docs/release_checklist.md — checklist pre-producción vinculado al ROADMAP
+    ├── docs/hacienda/ — 5+ docs técnicos de facturación electrónica v4.4
+    └── docs/archive/ — análisis y auditorías históricas
 3) Fortalezas reales del proyecto
 
-Cobertura funcional ERP muy amplia y verticalizada por dominio.
-Seguridad base bien planteada: auth:sanctum + middleware de permisos + policies por modelo (AppServiceProvider.php (line 145)).
+Cobertura funcional ERP muy amplia y verticalizada por dominio (92 controladores, 87 modelos, 62 servicios).
+Seguridad robusta: auth:sanctum + middleware de permisos + 80 policies por modelo + SecurityHeaders OWASP + rate limiting granular por tipo de endpoint.
+Service Layer Pattern generalizado: BaseService abstracto con CRUD genérico + hooks, adoptado en 22+ servicios (FASE 16).
+Excepciones de dominio tipadas: DomainException base + 10 excepciones por módulo con mapeo automático a HTTP status codes (FASE 15).
+ApiResponse trait: envelope unificado {success, code, message, data, errors, meta} heredado por todos los controladores (FASE 15).
+43 DTOs implementados con cobertura ~47% de controladores (FASE 16).
 Infraestructura lista para entornos reales: Docker, K8s, colas, scheduler.
-Ecosistema de calidad presente: PHPUnit, PHPStan, Sonar, workflows CI/CD.
-Integración Hacienda y FE avanzada a nivel de componentes (app/Services/Hacienda/*).
-Buen esfuerzo de observabilidad (logging estructurado, health, métricas).
-Multi-tenant con Spatie y resolución por header/subdominio (multitenancy.php, HeaderSubdomainTenantFinder.php).
-4) Hallazgos críticos / riesgos técnicos
+Suite de testing avanzada: 997 tests (Feature + Unit + Contract + Load), mutation testing, Codecov.
+PHPStan Level 8 con 0 errores y baseline vacío — garantía de type safety real.
+CI/CD maduro: 7 workflows GitHub Actions auditados (tests, quality, security, deploy).
+Integración Hacienda v4.4 completa: OAuth, XML, firma XAdES-EPES, rate limiting, 55 tests unitarios (FASE 19.6).
+Seeders separados y verificados: MasterDataSeeder (producción) vs DemoDataSeeder (desarrollo), idempotentes (FASE 18.5).
+98 migraciones con rollback up/down verificado por tests (FASE 18.5).
+Rutas particionadas en 14 archivos por dominio (ya no es monolítico).
+Observabilidad presente: logging estructurado con trace_id, health checks, métricas, Sentry.
+Multi-tenant con Spatie y resolución por header/subdominio, cache aislado por tenant.
+4) Hallazgos y riesgos pendientes
 
-Inconsistencia fuerte de naming y clases en FE/Hacienda.
+Estado: la mayoria de hallazgos criticos del analisis original (Feb 2026) ya fueron resueltos en FASES 13-18.5.
+Se listan SOLO los que siguen pendientes o parcialmente resueltos.
+
+4.1 [PENDIENTE — MEDIO] Inconsistencia de naming en FE/Hacienda.
+Dualidad ConsecutivoFEController / ConsecutivoFeController con contratos distintos.
+Recursos duplicados: ConsecutivoFEResource / ConsecutivoFeResource con campos incompatibles.
+Referencias a modelos inexistentes (Comprobante, Factura, InventarioMovimiento).
+FASE sugerida: resolver en pre-produccion o FASE 19.6.
+
+4.2 [PENDIENTE — BAJO] Aislamiento multi-tenant no uniforme.
+BelongsToTenant es un global scope pero su adopcion no es universal.
+Mitigado por: policies con tenant ownership + filtros manuales + cache con tags empresa_{id}.
+
+4.3 [PENDIENTE — BAJO] Metricas con implementacion parcial.
+MetricsController tiene placeholders. RequestMetricsMiddleware con snapshot desacoplado.
+FASE sugerida: DT-8 / FASE 22.
+
+4.4 [PENDIENTE — BAJO] 3 Observers declarados sin implementacion (DT-2).
+4.5 [PENDIENTE — BAJO] 4 modelos con timestamps inconsistentes (DT-1).
+4.6 [PENDIENTE — BAJO] shell_exec() en HealthCheckController (DT-7).
+
+RESUELTOS desde analisis original (Feb 2026):
+- Rutas monoliticas -> particionado en 14 archivos por dominio
+- Rate limiting debil -> normalizado (FASE 17)
+- Tests desbalanceados -> de 46 a 997 tests
+- Artefactos backup -> eliminados
+- Provider sobredimensionado -> separado en Auth + Observer providers
+- Solo 1 excepcion custom -> 11 excepciones tipadas (FASE 15)
+- Service Layer parcial -> BaseService + 22+ servicios (FASE 16)
+- DTOs parcial -> de 19 a 43 DTOs (FASE 16)
+- PHPStan ignores masivos -> Level 8, 0 errores, baseline vacio
+- CQRS dead code -> 34 archivos eliminados (FASE 13)
+- Seeders desorganizados -> MasterData/DemoData (FASE 18.5)
+- Swagger sin auth -> protegido (FASE 17)
+- CORS no configurado -> HandleCors + SecurityHeaders (FASE 1.2)
 Hay referencias a modelos que no existen (Comprobante, Factura, InventarioMovimiento) en HaciendaIntegrationService.php (line 6), HaciendaController.php (line 5), audit.php (line 54), encryption.php (line 124), InstallSecurityFeatures.php (line 36).
 Esto es deuda de compilación/lógica latente y dificulta mantener seguridad/compliance.
 
@@ -131,25 +237,47 @@ AppServiceProvider contiene un registro manual muy grande de modelos/policies/ob
 Artefactos históricos dentro del código vivo.
 Archivos backup/versiones antiguas dentro de árbol principal (VentaController.backup.php, api.php.backup, 2025_02_07_000000_create_audit_logs_table.php.bak), generando ruido y riesgo operativo.
 
-5) Observaciones de diseño (anotaciones de arquitectura)
 
-La arquitectura actual es modular por entidad, no por bounded context. Funciona para velocidad inicial, pero penaliza consistencia transversal.
-Hay una transición parcial hacia Service + DTO, visible en ventas (VentaController.php + VentaService.php + VentaCreateDTO.php), pero no generalizada.
-La política multi-tenant está bien conceptualizada, pero ejecutada de forma híbrida: un mix de global scope, policy ownership y filtros manuales.
-El sistema tiene señales de “producto vivo” con múltiples fases/sprints y documentación histórica extensa; eso explica heterogeneidad de estilos.
-6) Recomendaciones de mejora (priorizadas)
+5) Observaciones de diseno (actualizacion Mar 2026)
 
-Unificar contratos FE/Hacienda y clases canónicas: resolver naming (ConsecutivoFe/ConsecutivoFE) y retirar referencias a modelos inexistentes.
-Estandarizar multi-tenancy por defecto: aplicar scope tenant consistente en todos los modelos con empresa_id y tests de aislamiento cross-tenant por módulo.
-Particionar api.php por dominio/versionado: *.php con RouteServiceProvider modular.
-Consolidar esquema de autorización: elegir una sola convención de permisos y eliminar combinaciones ambiguas (can:view ... con espacios, slugs mixtos).
-Corregir observabilidad ejecutable: reparar MetricsController y alinear RequestMetricsMiddleware con su snapshot.
-Reducir complejidad de controladores grandes: plan de refactor por lotes hacia Service + DTO + Action classes.
-Limpiar artefactos backup del árbol de app y moverlos a docs/archive o eliminar seguimiento en git.
-Racionalizar workflows CI/CD: hay overlap de pipelines; conviene definir una cadena oficial mínima y otra extendida opcional.
-Ampliar test suite orientada a riesgo: prioridad en FE/Hacienda, multi-tenant, permisos y endpoints críticos financieros.
-Extraer registro de policies/observers a convención/autodiscovery para reducir acoplamiento en AppServiceProvider.
-7) Conclusión ejecutiva
-La API está funcionalmente muy completa y tiene una base sólida de seguridad, RBAC, módulos ERP e infraestructura.
-La principal deuda no es “falta de features”, sino consistencia arquitectónica: naming, multi-tenancy homogéneo, rutas monolíticas, observabilidad incompleta y contratos duplicados en FE/Hacienda.
-Si se corrigen esos ejes, el proyecto puede pasar de “maduro con deuda” a “plataforma robusta y escalable” con riesgo operativo significativamente menor.
+La arquitectura ha evolucionado significativamente desde Feb 2026:
+- De modular por entidad hacia Service Layer Pattern con BaseService abstracto y hooks (FASE 16).
+- Service + DTO ya no es parcial: 22+ controladores refactorizados, 43 DTOs, adopcion ~47%.
+- ApiResponse trait unifica respuestas en envelope estandar para todos los controladores (FASE 15).
+- Excepciones de dominio tipadas con handler centralizado -> HTTP status codes semanticos (FASE 15).
+- Multi-tenant sigue hibrido (global scope + policy + filtros) pero con cache aislado por tenant.
+- Facturacion electronica Hacienda v4.4 completa: OAuth, XML, firma XAdES-EPES, rate limiter, 55 tests.
+  Falta solo validacion E2E contra sandbox real (FASE 19.6).
+- CI/CD madurado: 7 workflows, mutation testing, contract testing, load testing.
+- El sistema ya no tiene heterogeneidad severa de estilos; las fases han ido estandarizando.
+
+6) Recomendaciones priorizadas (actualizacion Mar 2026)
+
+BLOQUEANTE PARA PRODUCCION:
+1. Completar FASE 19.6: E2E Hacienda sandbox (auth -> XML v4.4 -> firma -> envio -> consulta -> logout).
+
+PRE-PRODUCCION (recomendado):
+2. Unificar naming FE/Hacienda: resolver dualidad ConsecutivoFE/ConsecutivoFe y retirar imports muertos.
+3. Ejecutar checklist completo de docs/release_checklist.md (vinculado al ROADMAP).
+
+DEUDA TECNICA (no bloqueante):
+4. DT-1: Estandarizar timestamps en 4 modelos.
+5. DT-2: Implementar o eliminar 3 observers vacios.
+6. DT-7: Reemplazar shell_exec() en HealthCheckController.
+7. Metricas: reparar placeholders en MetricsController.
+
+FUTURO (segun ROADMAP):
+8. FASE 18: API versionado (v1/v2) — breaking change, coordinar con frontend.
+9. FASE 20: Webhooks + Event-Driven.
+10. FASE 21: Reporting Engine.
+11. FASE 22: Escalabilidad (read replicas, Horizon, OpenTelemetry).
+
+7) Conclusion ejecutiva (actualizada Mar 2026)
+
+La API ha madurado significativamente desde el analisis original de Feb 2026. De una puntuacion de 6.6/10 con multiples hallazgos criticos, el proyecto ha resuelto la gran mayoria de issues a traves de 18+ fases documentadas.
+
+Estado actual: plataforma funcionalmente completa, con seguridad solida, testing avanzado (997 tests, mutation, contract, load), CI/CD verificado, y Service Layer Pattern generalizado. PHPStan Level 8 con 0 errores garantiza type safety real.
+
+La principal deuda residual es de consistencia menor (naming FE/Hacienda, metricas parciales, observers vacios) y la validacion E2E pendiente contra el sandbox de Hacienda (FASE 19.6).
+
+El proyecto esta a una fase (19.6) de estar listo para produccion.
