@@ -10,12 +10,16 @@
         </testsuite>
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
+            <exclude>tests/Feature/Hacienda/HaciendaSandboxE2ETest.php</exclude>
         </testsuite>
         <testsuite name="Contract-Consumer">
             <directory>tests/Contract/Consumer</directory>
         </testsuite>
         <testsuite name="Contract-Provider">
             <directory>tests/Contract/Provider</directory>
+        </testsuite>
+        <testsuite name="E2E-Sandbox">
+            <file>tests/Feature/Hacienda/HaciendaSandboxE2ETest.php</file>
         </testsuite>
     </testsuites>
     <source>
