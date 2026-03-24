@@ -172,6 +172,21 @@ contract-test-provider: ## Verificar contratos contra el provider real
 	@echo "$(GREEN)Ejecutando provider contract verification...$(NC)"
 	php vendor/bin/phpunit --testsuite Contract-Provider --no-coverage
 
+# === E2E HACIENDA SANDBOX ===
+
+e2e-hacienda: ## Ejecutar tests E2E contra sandbox real de Hacienda (requiere credenciales)
+	@echo "$(GREEN)Ejecutando E2E tests contra Hacienda Sandbox...$(NC)"
+	@echo "$(YELLOW)Requiere: HACIENDA_SANDBOX_USERNAME, HACIENDA_SANDBOX_PASSWORD, HACIENDA_SANDBOX_CERT_PIN$(NC)"
+	php vendor/bin/phpunit --group=e2e-sandbox --no-coverage
+
+e2e-hacienda-verbose: ## E2E Hacienda con output detallado
+	@echo "$(GREEN)Ejecutando E2E tests contra Hacienda Sandbox (verbose)...$(NC)"
+	php vendor/bin/phpunit --group=e2e-sandbox --no-coverage -v
+
+e2e-hacienda-filter: ## E2E Hacienda filtrado (usar: make e2e-hacienda-filter FILTER="flujo_completo")
+	@echo "$(GREEN)Ejecutando E2E Hacienda para $(FILTER)...$(NC)"
+	php vendor/bin/phpunit --group=e2e-sandbox --filter="$(FILTER)" --no-coverage -v
+
 # === CACHE ===
 
 cache-clear: ## Limpiar todos los cachés

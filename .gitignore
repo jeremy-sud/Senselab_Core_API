@@ -29,6 +29,7 @@
 /public/hot
 /public/storage
 # /storage/*.key (permitir certificados)
+/storage/app/certificates/
 /storage/pail
 # /vendor (incluir dependencias)
 Homestead.json

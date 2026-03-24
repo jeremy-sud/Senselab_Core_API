@@ -1,0 +1,100 @@
+# GitHub Actions — E2E Hacienda Sandbox Tests
+# FASE 19.6: Tests E2E contra sandbox real de Hacienda Costa Rica
+# Ejecuta el flujo completo: OAuth → XML v4.4 → XAdES-EPES → Enviar → Consultar → Logout
+#
+# REQUIERE los siguientes secrets configurados en GitHub:
+# - HACIENDA_SANDBOX_USERNAME
+# - HACIENDA_SANDBOX_PASSWORD
+# - HACIENDA_SANDBOX_CERT_PIN
+# - HACIENDA_SANDBOX_CERT_P12_BASE64 (certificado .p12 codificado en base64)
+
+name: E2E Hacienda Sandbox
+
+on:
+  # Solo ejecución manual o push a main (no PRs para evitar abuso de sandbox)
+  workflow_dispatch:
+    inputs:
+      verbose:
+        description: 'Verbose output'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+  push:
+    branches: [ main ]
+    paths:
+      - 'app/Services/Hacienda/**'
+      - 'tests/Feature/Hacienda/**'
+      - 'config/hacienda.php'
+
+env:
+  PHP_VERSION: '8.4'
+
+jobs:
+  e2e-sandbox:
+    name: E2E Hacienda Sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    # Solo ejecutar si los secrets están configurados
+    if: ${{ github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, xml, ctype, json, bcmath, curl, openssl, dom
+          coverage: none
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Prepare certificate
+        run: |
+          mkdir -p storage/app/certificates/sandbox
+          echo "${{ secrets.HACIENDA_SANDBOX_CERT_P12_BASE64 }}" | base64 -d > storage/app/certificates/sandbox/010647095827.p12
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Run E2E Hacienda Sandbox Tests
+        env:
+          APP_ENV: testing
+          DB_CONNECTION: testing
+          HACIENDA_SANDBOX_USERNAME: ${{ secrets.HACIENDA_SANDBOX_USERNAME }}
+          HACIENDA_SANDBOX_PASSWORD: ${{ secrets.HACIENDA_SANDBOX_PASSWORD }}
+          HACIENDA_SANDBOX_CERT_PIN: ${{ secrets.HACIENDA_SANDBOX_CERT_PIN }}
+          HACIENDA_SANDBOX_CERT_PATH: ${{ github.workspace }}/storage/app/certificates/sandbox/010647095827.p12
+        run: |
+          VERBOSE_FLAG=""
+          if [ "${{ inputs.verbose }}" = "true" ]; then
+            VERBOSE_FLAG="-v"
+          fi
+          php vendor/bin/phpunit --group=e2e-sandbox --no-coverage $VERBOSE_FLAG
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-hacienda-logs
+          path: storage/logs/
+          retention-days: 7
