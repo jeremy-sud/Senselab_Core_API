@@ -34,8 +34,8 @@ DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=api_db
-DB_USERNAME=root
-DB_PASSWORD=
+DB_USERNAME=ursol_user
+DB_PASSWORD=ursol_password
 ```
 
 ### Archivo .env.testing (Testing) - Crear si no existe
@@ -44,8 +44,8 @@ DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=api_db_testing
-DB_USERNAME=root
-DB_PASSWORD=
+DB_USERNAME=ursol_user
+DB_PASSWORD=ursol_password
 ```
 
 ### PHPUnit (tests/phpunit.xml)
@@ -144,7 +144,7 @@ php artisan test --coverage
 
 ## 🔐 Seguridad
 
-### Producción
+### Producción ##esta informacion aún no se ha compartido, pero es importante destacar que en producción se deben usar credenciales seguras y no el usuario root. además de configurar el acceso remoto a la base de datos solo para IPs autorizadas. ya cuando se tenga la información de producción, se actualizará esta sección con los detalles específicos.
 En un entorno de producción, configurar:
 ```env
 DB_HOST=<servidor-mysql-remoto>
@@ -174,7 +174,7 @@ Ver archivo `api_db.sql` para la estructura completa de 59 tablas:
 
 ---
 
-**Última actualización:** 21 de noviembre de 2025  
+**Última actualización:** 24 de Marzo de 2026  
 **Motor:** MySQL 8.0+  
 **Charset:** utf8mb4  
 **Collation:** utf8mb4_unicode_ci
