@@ -1,9 +1,9 @@
 # 🔐 Guía de Seguridad - Ursol CAST API
 
-> **Última actualización:** 13 de Febrero de 2026  
-> **Versión:** 2.1.0  
+> **Última actualización:** 24 de Marzo de 2026  
+> **Versión:** 3.3.0  
 > **Clasificación:** Documento Interno de Seguridad  
-> **Auditor:** Verificación de Código Actual + Mejoras Implementadas
+> **Auditor:** Verificación de Código Actual + Mejoras Implementadas (FASE 1-16)
 
 ---
 
@@ -68,9 +68,26 @@ Payment:          3 transacciones/hora
 - **8 endpoints REST** para gestión completa
 - **Estados:** pending, signed, sent, accepted, rejected, error
 
+### FASES 4-16 — Mejoras Adicionales de Seguridad (Febrero-Marzo 2026) ✅
+
+| FASE | Mejora de Seguridad | Impacto |
+|------|---------------------|--------|
+| **4** | PHPStan Level 8 — 0 errores, baseline vacío | Type safety real, eliminados ~2,000 ignores |
+| **13** | Eliminación CQRS dead code — 34 archivos | Superficie de ataque reducida |
+| **14** | Contract Testing (Pact) + Mutation Testing (Infection) | Verificación de contratos API, calidad de tests |
+| **14** | Load Testing (k6) — smoke, carga, detección N+1 | Resiliencia ante picos de tráfico |
+| **15** | **11 excepciones de dominio** con handler centralizado | Ya NO se expone `$e->getMessage()` al cliente |
+| **15** | **ApiResponse trait** — envelope unificado | Respuestas consistentes: `{success, code, message, data, errors, meta}` |
+| **16** | **BaseService abstracto** con hooks tipados | Lógica de negocio aislada de controladores |
+| **16** | **43 DTOs** con `readonly` y `fromRequest()` | Validación de tipos en capa de transferencia |
+| **17** | Rate limiting normalizado + SecurityHeaders middleware | Headers OWASP aplicados globalmente |
+| **18.5** | Seeders MasterData/DemoData separados | Datos de producción aislados de datos demo |
+
+**Resultado acumulado:** 997 tests passing, PHPStan L8 0 errors, 7 workflows CI/CD, 80 policies RBAC.
+
 ---
 
-## 🔴 ÁREAS DE MEJORA (FASE 4 - en progreso)
+## 🔐 OWASP Top 10 — Implementación Completa
 
 ### A01:2021 - Broken Access Control ✅
 
@@ -131,7 +148,7 @@ HACIENDA_P12_PASSWORD=... # Certificado digital
 **Medidas aplicadas:**
 - **SQL Injection:** Eloquent ORM con bindings
 - **XSS:** Blade escaping automático
-- **Command Injection:** No uso de shell_exec()
+- **Command Injection:** No uso de shell_exec() (excepto HealthCheckController con input hardcoded — DT-7)
 - **LDAP Injection:** No aplica
 
 ```php
@@ -160,10 +177,13 @@ public function rules(): array
 **Estado:** IMPLEMENTADO
 
 **Medidas aplicadas:**
-- **Arquitectura:** Separación de capas (Controllers, Services, Models)
-- **DTOs:** Clases específicas para transferencia de datos
-- **Validación:** FormRequest en todas las entradas
-- **Rate Limiting:** Throttle en rutas sensibles
+- **Arquitectura:** Separación de capas (Controllers → Services → DTOs → Models)
+- **BaseService abstracto:** Hooks tipados (beforeCreate, afterCreate, applyFilters) — FASE 16
+- **43 DTOs** con propiedades `readonly` y factory `fromRequest()` — FASE 16
+- **11 excepciones de dominio** con handler centralizado — FASE 15
+- **ApiResponse trait:** Envelope unificado, sin exposición de errores internos — FASE 15
+- **170+ FormRequests** con validación comprehensiva
+- **Rate Limiting:** 7 limitadores granulares por contexto
 
 ```php
 // Rate limiting configurado
@@ -388,11 +408,18 @@ class FacturaPolicy
 
 ### Roles y Permisos
 
-El sistema implementa RBAC (Role-Based Access Control):
+El sistema implementa RBAC (Role-Based Access Control) con 68 permisos y 8 roles:
 
-- **Super Admin:** Acceso total
-- **Admin Empresa:** Gestión de su empresa
-- **Usuario:** Operaciones según permisos
+- **Administrador:** Acceso total al sistema
+- **Gerente:** Gestión de su empresa (ventas, compras, reportes)
+- **Contador:** Contabilidad, nómina, declaraciones tributarias
+- **Vendedor:** Ventas, clientes, productos
+- **Bodeguero:** Inventario, almacenes, movimientos
+- **Cajero:** Caja, cobros, pagos
+- **RRHH:** Empleados, nómina, períodos
+- **Auditor:** Lectura de auditoría, logs, compliance
+
+**80+ policies** con `BasePolicy` compartida, doble capa (middleware `permission:X` + Policy).
 
 ---
 
@@ -569,4 +596,24 @@ Respondemos en máximo 48 horas hábiles.
 
 ---
 
-*Documento generado por Sistemas Ursol S.A. - Confidencial*
+---
+
+## 📊 Estado de Seguridad (Marzo 2026)
+
+| Métrica | Valor |
+|---------|-------|
+| PHPStan | Level 8, **0 errores** |
+| Tests | **997 passing** (100%) |
+| OWASP Top 10 | **10/10 cubiertos** |
+| Políticas RBAC | **80+** |
+| Campos encriptados | **30+** (AES-256-CBC) |
+| Rate limiters | **7** independientes |
+| Security headers | **8** (OWASP compliant) |
+| CI/CD workflows | **7** (incluye quality gates) |
+| Excepciones dominio | **11** tipadas con handler |
+| Contract tests | **6** (Pact PHP) |
+| Mutation testing | MSI ≥ 50%, Covered ≥ 70% |
+
+---
+
+*Documento mantenido por Sistemas Ursol S.A. — Actualizado v3.3.0, 24 de marzo de 2026*

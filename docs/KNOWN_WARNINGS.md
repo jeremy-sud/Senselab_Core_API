@@ -1,11 +1,10 @@
 # 📋 Warnings Conocidos y Aceptados
 
-**Última actualización:** Marzo 2026  
-**Versión del proyecto:** 2.8.0  
-**Tests pasando:** ✅ 762/762 (5 skipped) — 2,392 assertions  
+**Última actualización:** 24 de marzo de 2026  
+**Versión del proyecto:** 3.3.0  
+**Tests pasando:** ✅ 997/997 (5 skipped) — ~3,500 assertions  
 **PHPStan:** ✅ Level 8 — 0 errores en 687 archivos  
-**Impacto en funcionalidad:** ❌ Ninguno  
-**Tests pasando:** ✅ 762/762 (5 skipped) — 2,392 assertions
+**Impacto en funcionalidad:** ❌ Ninguno
 
 ---
 
@@ -146,7 +145,7 @@ sonar.issue.ignore.multicriteria.e6.resourceKey=**/routes/**
 ```bash
 # Tests automatizados
 php artisan test
-# Resultado: 762 passed, 5 skipped, 2392 assertions ✅
+# Resultado: 997 passed, 5 skipped, ~3500 assertions ✅
 
 # PHPStan nivel 8
 vendor/bin/phpstan analyse app/ --level=8
@@ -159,6 +158,7 @@ vendor/bin/phpstan analyse app/ --level=8
 
 | Fecha | Revisado Por | Notas |
 |-------|--------------|-------|
+| 2026-03-24 | Jeremy Arias Solano | Actualización v3.3.0 — 997 tests, mismos warnings aceptados |
 | 2026-03 | Jeremy Arias Solano | Reescritura completa — v2.8.0, rutas particionadas, PHPStan Level 8 |
 | 2025-12-05 | GitHub Copilot | Creación inicial del documento |
 

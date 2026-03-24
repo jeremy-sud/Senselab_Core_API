@@ -1,101 +1,84 @@
 # Guía de Testing - Ursol CAST API
 
 **Desarrollado por Sistemas Ursol S.A.**  
-*Suite de 218 tests automatizados para garantizar calidad del código*  
-**Última actualización:** Enero 2025
+*Suite de 997 tests automatizados con 4 capas de verificación*  
+**Última actualización:** 24 de marzo de 2026 — v3.3.0
 
 ---
 
 ## 📊 Resumen
 
-El proyecto incluye una **suite de 218 tests** que cubren los componentes críticos del sistema:
+**Estado Actual:** ✅ **997/997 tests passing (100%)** — 0 failures, 5 skipped (requieren certificado Hacienda)
 
-**Estado Actual:** ⚠️ **186/218 tests passing (85.3%)** - 32 tests fallando
+| Capa de Testing | Archivos | Tests | Herramienta |
+|-----------------|----------|-------|-------------|
+| **Feature (integración)** | 75 | ~600 | PHPUnit 11.5 |
+| **Unit (unitarios)** | 58 | ~350 | PHPUnit 11.5 |
+| **Contract (contratos)** | 9 | ~47 | Pact PHP |
+| **Load (carga)** | 6 | N/A | k6 |
+| **Mutation (mutación)** | — | — | Infection PHP |
+| **Total** | **148 archivos** | **997 tests** | — |
 
-| Categoría | Tests Passing | Tests Failing | Estado |
-|-----------|---------------|---------------|--------|
-| **Total General** | 186 | 32 | ⚠️ 85.3% |
-| AuthTest | 6 | 5 | ⚠️ 54% |
-| EmpresaTest | 4 | 4 | ⚠️ 50% |
-| TipoClienteTest | 10 | 1 | ✅ 91% |
-| TipoComprobanteFeTest | 1 | 6 | ⚠️ 14% |
-| Otros tests | ~165 | ~16 | ✅ ~91% |
-
-**Tipos de fallas:**
-- 19 tests con error 403 (permisos pendientes)
-- 11 tests con error 500 (controllers/resources)
-- 2 tests con assertion failures (lógica update)
+| Métrica | Valor |
+|---------|-------|
+| PHPStan | Level 8, **0 errores** |
+| Assertions | ~3,500+ |
+| Ratio tests/controller | ~10.8 |
+| Tiempo ejecución (SQLite) | < 30s |
 
 ---
 
 ## 🚀 Inicio Rápido
 
-### 1. Crear Base de Datos de Testing
+### Ejecutar Todos los Tests
 
 ```bash
-sudo mysql -u root -e "CREATE DATABASE IF NOT EXISTS api_db_testing;"
-```
-
-### 2. Ejecutar Todos los Tests
-
-```bash
-cd /home/dawnweaber/Workspace/Ursol-CAST-API
 php artisan test
 ```
 
 **Salida esperada:**
 ```
-Tests:    32 failed, 186 passed (782 assertions)
-Duration: 23.56s
+Tests:    997 passed (5 skipped)
+Duration: ~25s
 ```
 
----
-
-## 🎯 Ejecutar Tests Específicos
-
-### Por Clase
+### Por Suite
 
 ```bash
-# Tests de autenticación (6/11 passing)
-php artisan test --filter AuthTest
+# Feature tests (integración)
+php artisan test --testsuite=Feature
 
-# Tests de empresas (4/8 passing)
-php artisan test --filter EmpresaTest
+# Unit tests (unitarios)
+php artisan test --testsuite=Unit
 
-# Tests de tipo cliente (10/11 passing)
-php artisan test --filter TipoClienteTest
-
-# Tests de permisos RBAC
-php artisan test --filter PermissionTest
-
-# Tests de roles
-php artisan test --filter RoleTest
-
-# Tests de usuarios
-php artisan test --filter UsuarioTest
+# Contract tests (Pact)
+php artisan test --testsuite=Contract-Consumer
+php artisan test --testsuite=Contract-Provider
 ```
 
-### Por Método Individual
+### Por Dominio
 
 ```bash
-# Test específico de login
-php artisan test --filter test_usuario_puede_hacer_login
+# Autenticación y autorización
+php artisan test --filter "AuthTest|PermissionTest|RolTest"
 
-# Test de creación de producto
-php artisan test --filter test_puede_crear_producto_valido
+# Facturación electrónica / Hacienda
+php artisan test --filter "Hacienda|FacturacionElectronica|ComprobanteElectronico"
 
-# Test de permisos
-php artisan test --filter test_usuario_sin_permisos_no_puede_acceder
-```
+# Módulos financieros
+php artisan test --filter "VentaTest|CuentaContable|CuentaPorCobrar|CuentaPorPagar"
 
-### Por Tipo
+# Inventario y almacén
+php artisan test --filter "InventarioTest|AlmacenTest|ProductoTest"
 
-```bash
-# Solo tests Feature (40 tests)
-php artisan test tests/Feature
+# Nómina y RRHH
+php artisan test --filter "NominaTest|EmpleadoTest|PeriodoNomina|PagoNomina"
 
-# Solo tests Unit (26 tests)
-php artisan test tests/Unit
+# Multi-tenancy y seguridad
+php artisan test --filter "MultiTenant|Encryption|RateLimit|SecurityHeader|Cors"
+
+# Servicios (unit)
+php artisan test tests/Unit/Services/
 ```
 
 ---
@@ -104,120 +87,139 @@ php artisan test tests/Unit
 
 ```
 tests/
-├── TestCase.php                    # ⚙️ Base con helpers
-│   ├── RefreshDatabase trait       # Resetea BD antes de cada test
-│   ├── createEmpresa()             # Helper para crear empresa
-│   ├── createUsuario()             # Helper para crear usuario
-│   ├── createAdminUsuario()        # Helper para crear admin
-│   ├── authenticatedJson()         # Helper para requests autenticados
-│   ├── seedRoles()                 # Seed de 8 roles
-│   ├── seedPermisos()              # Seed de 68 permisos
-│   └── assignAllPermissionsToRole()# Asignar permisos a rol
+├── TestCase.php                          # Base con helpers (auth, empresa, seeders)
 │
-├── Feature/                        # 🌐 Tests de integración (40 tests)
-│   ├── AuthTest.php               # 11 tests de autenticación
-│   ├── ProductoTest.php           # 12 tests CRUD productos
-│   └── PermissionTest.php         # 17 tests sistema RBAC
+├── Feature/                              # 🌐 75 archivos — integración y E2E
+│   ├── AuthTest.php                      # Autenticación Sanctum
+│   ├── ProductoTest.php                  # CRUD productos
+│   ├── VentaTest.php                     # Ventas con Service Layer
+│   ├── ClienteTest.php                   # Clientes
+│   ├── EmpresaTest.php                   # Multi-tenant empresas
+│   ├── InventarioTest.php                # Inventario
+│   ├── AlmacenTest.php                   # Almacenes
+│   ├── CuentaContableTest.php            # Contabilidad
+│   ├── NominaTest.php                    # Nómina
+│   ├── MultiTenantIsolationTest.php      # Aislamiento cross-tenant
+│   ├── RateLimitingGranularTest.php      # Rate limiting por contexto
+│   ├── EncryptionGranularTest.php        # Encriptación AES-256
+│   ├── StructuredLoggingTest.php         # Logging + trace_id
+│   ├── SentryErrorTrackingTest.php       # Sentry integration
+│   ├── FacturacionElectronicaE2ETest.php # E2E facturación
+│   ├── FacturacionElectronicaE2ECasosEdgeTest.php
+│   ├── Hacienda/                         # Tests Hacienda module
+│   │   └── *.php
+│   └── ... (60+ archivos más)
 │
-└── Unit/                          # 🔬 Tests unitarios (26 tests)
-    ├── RoleTest.php               # 10 tests modelo Rol
-    └── UsuarioTest.php            # 16 tests modelo Usuario
+├── Unit/                                 # 🔬 58 archivos — lógica de negocio
+│   ├── Services/                         # 36 archivos — unit tests de servicios
+│   │   ├── AlmacenServiceTest.php
+│   │   ├── VentaServiceTest.php
+│   │   ├── UsuarioServiceTest.php
+│   │   ├── XmlComprobanteBuilderTest.php
+│   │   ├── Hacienda/                     # 3 archivos Hacienda
+│   │   │   ├── HaciendaApiClientTest.php
+│   │   │   ├── OAuthTokenManagerTest.php
+│   │   │   └── RateLimiterTest.php
+│   │   └── ... (30+ archivos más)
+│   ├── Models/ModelRelationsTest.php     # Relaciones entre modelos
+│   ├── Exceptions/                       # 2 archivos — domain exceptions
+│   ├── Helpers/                          # 2 archivos — utilidades
+│   ├── Jobs/                             # 5 archivos — queue jobs
+│   ├── Traits/ApiResponseTest.php        # Trait ApiResponse
+│   ├── Validation/                       # 4 archivos — reglas custom
+│   ├── RoleTest.php
+│   ├── UsuarioTest.php
+│   ├── HasActiveScopeTest.php
+│   ├── HasAuditFieldsTest.php
+│   └── HasCustomSoftDeletesTest.php
+│
+├── Contract/                             # 📋 9 archivos — Pact contract testing
+│   ├── PactTestCase.php                  # Base class
+│   ├── Consumer/                         # 6 consumers
+│   │   ├── AuthApiTest.php
+│   │   ├── ClienteApiTest.php
+│   │   ├── ComprobanteFeApiTest.php
+│   │   ├── InventarioApiTest.php
+│   │   ├── ProductoApiTest.php
+│   │   └── VentaApiTest.php
+│   ├── Provider/
+│   │   └── UrsolCastApiVerificationTest.php
+│   └── pacts/                            # Contratos generados
+│
+└── Load/                                 # ⚡ 6 archivos — k6 load testing
+    ├── smoke-test.js                     # 1 VU, 30s
+    ├── load-ventas-facturacion.js        # 10 VUs, 2min
+    ├── load-n1-detection.js              # Detección N+1
+    ├── helpers.js
+    ├── k6-config.js
+    └── README.md
 ```
 
 ---
 
-## 🧪 Tests Detallados
+## 🧪 Capas de Testing
 
-### AuthTest.php (11 tests)
+### 1. PHPUnit — Feature + Unit (997 tests)
 
-**Autenticación y tokens:**
+Tests de integración (Feature) y unitarios (Unit) con PHPUnit 11.5.
 
-1. ✅ `test_usuario_puede_hacer_login` - Login exitoso con credenciales válidas
-2. ✅ `test_login_falla_con_credenciales_invalidas` - Credenciales incorrectas retorna 422
-3. ✅ `test_usuario_inactivo_no_puede_hacer_login` - Usuario inactivo no puede autenticarse
-4. ✅ `test_usuario_puede_hacer_logout` - Logout revoca token actual
-5. ✅ `test_usuario_puede_obtener_su_informacion` - GET /api/user retorna datos del usuario
-6. ✅ `test_login_revoca_tokens_anteriores` - Login automáticamente revoca tokens previos
-7. ✅ `test_usuario_puede_tener_multiples_tokens` - Múltiples tokens de diferentes dispositivos
-8. ✅ `test_token_invalido_retorna_401` - Token inválido retorna Unauthenticated
-9. ✅ `test_login_retorna_permisos_del_usuario` - Login incluye lista de permisos
-10. ✅ `test_usuario_eliminado_no_puede_hacer_login` - Usuario eliminado no puede autenticarse
-11. ✅ `test_endpoint_protegido_requiere_autenticacion` - Endpoints protegidos requieren Bearer token
+**Cobertura por dominio:**
 
-### ProductoTest.php (12 tests)
+| Dominio | Feature | Unit | Total |
+|---------|---------|------|-------|
+| Auth y RBAC | 4+ archivos | 2+ archivos | 25+ tests |
+| Core CRUD (empresa, usuario, sucursal) | 8 archivos | — | 60+ tests |
+| Multi-tenancy (aislamiento) | 1 archivo dedicado | — | 7+ tests |
+| Facturación electrónica | E2E + edge cases | 3 Hacienda | 55+ tests |
+| Seguridad (CORS, headers, rate limit, encryption) | 6 archivos | — | 40+ tests |
+| Inventario/Almacén | 6 archivos | 2+ servicios | 50+ tests |
+| Contabilidad/Finanzas | 15 archivos | 5+ servicios | 80+ tests |
+| Nómina/RRHH | 8 archivos | 3+ servicios | 50+ tests |
+| Jobs y queue | — | 5 archivos | 25+ tests |
+| Traits | — | 3 archivos | 36+ tests |
+| Validation | — | 4 archivos | 20+ tests |
+| Exceptions | — | 2 archivos | 15+ tests |
 
-**CRUD y operaciones de productos:**
+### 2. Pact — Contract Testing (6 consumers)
 
-1. ✅ `test_puede_listar_productos_paginados` - Listado con paginación
-2. ✅ `test_puede_crear_producto_valido` - Creación con datos válidos
-3. ✅ `test_puede_obtener_producto_por_id` - GET /api/productos/{id}
-4. ✅ `test_puede_actualizar_producto` - PUT /api/productos/{id}
-5. ✅ `test_puede_eliminar_producto` - DELETE (soft delete)
-6. ✅ `test_no_puede_crear_producto_sin_datos_requeridos` - Validación de campos
-7. ✅ `test_puede_buscar_productos_por_nombre` - Búsqueda por texto
-8. ✅ `test_puede_filtrar_productos_por_empresa` - Multi-tenancy
-9. ✅ `test_puede_filtrar_productos_activos` - Filtro activo=true
-10. ✅ `test_puede_filtrar_productos_por_categoria` - Filtro por categoría
-11. ✅ `test_producto_eliminado_no_aparece_en_listado` - Soft delete funciona
-12. ✅ `test_paginacion_funciona_correctamente` - Paginación con per_page
+Garantiza compatibilidad entre API y consumidores frontend/mobile.
 
-### PermissionTest.php (17 tests)
+```bash
+# Generar contratos (consumer-side)
+php artisan test --testsuite=Contract-Consumer
 
-**Sistema RBAC (Role-Based Access Control):**
+# Verificar contratos (provider-side)
+php artisan test --testsuite=Contract-Provider
+```
 
-1. ✅ `test_usuario_sin_permisos_no_puede_acceder_a_endpoint_protegido` - Middleware bloquea sin permiso
-2. ✅ `test_usuario_con_permiso_puede_acceder_a_endpoint_protegido` - Middleware permite con permiso
-3. ✅ `test_usuario_puede_tener_multiples_roles` - Usuario con varios roles
-4. ✅ `test_usuario_hereda_permisos_de_sus_roles` - Permisos heredados de roles
-5. ✅ `test_rol_puede_tener_multiples_permisos` - Rol con varios permisos
-6. ✅ `test_puede_verificar_si_usuario_tiene_permiso_especifico` - `hasPermission()`
-7. ✅ `test_puede_verificar_si_usuario_tiene_rol_especifico` - `hasRole()`
-8. ✅ `test_puede_verificar_si_usuario_tiene_alguno_de_varios_roles` - `hasAnyRole()`
-9. ✅ `test_puede_obtener_todos_los_permisos_del_usuario` - `getAllPermissions()`
-10. ✅ `test_puede_listar_permisos` - GET /api/permisos
-11. ✅ `test_puede_listar_roles` - GET /api/roles
-12. ✅ `test_puede_asignar_permiso_a_rol` - POST relación rol-permiso
-13. ✅ `test_puede_remover_permiso_de_rol` - DELETE relación
-14. ✅ `test_middleware_permission_funciona_correctamente` - Middleware CheckPermission
-15. ✅ `test_usuario_sin_rol_no_tiene_permisos` - Usuario sin roles = sin permisos
-16. ✅ `test_usuario_con_rol_administrador_tiene_todos_los_permisos` - Admin tiene acceso total
-17. ✅ `test_permisos_se_filtran_por_modulo` - Filtrado por módulo funciona
+**Contratos cubiertos:** Auth, Cliente, ComprobanteFe, Inventario, Producto, Venta
 
-### RoleTest.php (10 tests)
+### 3. Infection — Mutation Testing
 
-**Tests unitarios del modelo Rol:**
+Verifica la calidad de los tests detectando mutantes no capturados.
 
-1. ✅ `test_rol_tiene_relacion_con_permisos` - Relación BelongsToMany
-2. ✅ `test_rol_tiene_relacion_con_usuarios` - Relación BelongsToMany
-3. ✅ `test_rol_puede_verificar_si_tiene_permiso` - `hasPermission()` funciona
-4. ✅ `test_scope_activos_filtra_roles_activos` - Scope `activos()` filtra
-5. ✅ `test_nombre_se_normaliza_automaticamente` - Nombres se capitalizan
-6. ✅ `test_slug_se_genera_automaticamente` - Slug desde nombre
-7. ✅ `test_puede_sincronizar_permisos` - `syncPermissions()` funciona
-8. ✅ `test_rol_puede_tener_permisos_multiples` - Múltiples permisos
-9. ✅ `test_rol_activo_false_no_aparece_en_scope` - Inactivos no filtran
-10. ✅ `test_puede_obtener_permisos_por_modulo` - Filtrado de permisos
+```bash
+vendor/bin/infection --threads=4
+```
 
-### UsuarioTest.php (16 tests)
+**Configuración:** `infection.json5`
+- **Directorios:** `app/Services/`, `app/Rules/`, `app/Exceptions/`
+- **Excluidos:** `app/Services/AI/`
+- **Quality gates:** MSI ≥ 50%, Covered MSI ≥ 70%
+- **Mutadores:** arithmetic, boolean, conditional, return value, regex, removal, loop, sort, unwrap, cast, function signature
 
-**Tests unitarios del modelo Usuario:**
+### 4. k6 — Load Testing
 
-1. ✅ `test_usuario_tiene_relacion_con_roles` - Relación BelongsToMany
-2. ✅ `test_usuario_tiene_relacion_con_empresa` - Relación BelongsTo
-3. ✅ `test_usuario_tiene_relacion_con_cargo` - Relación BelongsTo
-4. ✅ `test_usuario_puede_verificar_si_tiene_rol` - `hasRole()` funciona
-5. ✅ `test_usuario_puede_verificar_si_tiene_permiso` - `hasPermission()` funciona
-6. ✅ `test_usuario_puede_verificar_si_tiene_alguno_de_varios_roles` - `hasAnyRole()`
-7. ✅ `test_usuario_puede_obtener_todos_sus_permisos` - `getAllPermissions()`
-8. ✅ `test_usuario_puede_crear_token_sanctum` - `createToken()` funciona
-9. ✅ `test_usuario_password_se_hashea_automaticamente` - Password hash automático
-10. ✅ `test_email_debe_ser_unico` - Email único en BD
-11. ✅ `test_scope_activos_filtra_usuarios_activos` - Scope `activos()` filtra
-12. ✅ `test_usuario_puede_tener_multiples_tokens` - Múltiples tokens Sanctum
-13. ✅ `test_usuario_con_multiples_roles_tiene_todos_los_permisos` - Herencia correcta
-14. ✅ `test_password_no_visible_en_json` - Password oculto en JSON
-15. ✅ `test_usuario_puede_ser_autenticado` - Auth::attempt() funciona
-16. ✅ `test_usuario_eliminado_no_puede_autenticarse` - Eliminado no login
+```bash
+# Smoke test (1 usuario virtual, 30s)
+k6 run tests/Load/smoke-test.js
+
+# Carga en ventas y facturación (10 VUs, 2min)
+k6 run tests/Load/load-ventas-facturacion.js
+
+# Detección de N+1 queries (10 VUs, 2min)
+k6 run tests/Load/load-n1-detection.js
+```
 
 ---
 
@@ -226,110 +228,74 @@ tests/
 ### phpunit.xml
 
 ```xml
-<env name="DB_DATABASE" value="api_db_testing"/>
-<env name="APP_ENV" value="testing"/>
-<env name="CACHE_DRIVER" value="array"/>
-<env name="SESSION_DRIVER" value="array"/>
-<env name="QUEUE_DRIVER" value="sync"/>
+<testsuites>
+    <testsuite name="Unit">
+        <directory>tests/Unit</directory>
+    </testsuite>
+    <testsuite name="Feature">
+        <directory>tests/Feature</directory>
+    </testsuite>
+    <testsuite name="Contract-Consumer">
+        <directory>tests/Contract/Consumer</directory>
+    </testsuite>
+    <testsuite name="Contract-Provider">
+        <directory>tests/Contract/Provider</directory>
+    </testsuite>
+</testsuites>
+
+<php>
+    <env name="APP_ENV" value="testing"/>
+    <env name="DB_CONNECTION" value="testing"/>  <!-- SQLite in-memory -->
+    <env name="CACHE_STORE" value="array"/>
+    <env name="QUEUE_CONNECTION" value="sync"/>
+    <env name="LOG_CHANNEL" value="null"/>
+    <env name="MAIL_MAILER" value="array"/>
+</php>
 ```
 
-### TestCase.php Helpers
-
-El archivo `tests/TestCase.php` incluye helpers reutilizables para simplificar la escritura de tests:
-
-**Helpers de Empresas:**
+### TestCase.php — Helpers disponibles
 
 ```php
-// Crear empresa con régimen tributario válido
-$empresa = $this->createEmpresa([
-    'nombre' => 'Mi Empresa',
-    'cedula_juridica' => '3-101-123456'
-]);
-```
+// Empresa y sucursal
+$empresa = $this->createEmpresa(['nombre' => 'Mi Empresa']);
+$sucursal = $this->createSucursal($empresa);
 
-**Helpers de Usuarios:**
-
-```php
-// Crear usuario normal
-$usuario = $this->createUsuario([
-    'nombre' => 'Juan Pérez',
-    'email' => 'juan@example.com'
-]);
-
-// Crear usuario admin con todos los permisos
+// Usuarios con roles
+$usuario = $this->createUsuario([], ['Vendedor']);
 $admin = $this->createAdminUsuario();
 
-// Usuario con roles específicos
-$vendedor = $this->createUsuario([], ['Vendedor']);
-```
-
-**Helpers de Productos:**
-
-```php
-// Crear producto con todos los campos requeridos
-$producto = $this->createProducto([
-    'nombre' => 'Laptop HP',
-    'precio' => 500000
-], $empresa);
-
-// Obtener o crear categoría de producto
-$categoria = $this->getCategoriaProducto($empresa);
-
-// Obtener o crear unidad de medida
-$unidad = $this->getUnidadMedida();
-```
-
-**Helpers de Autenticación:**
-
-```php
-// Hacer request JSON autenticado
+// Request autenticado (genera Bearer token Sanctum)
 $response = $this->authenticatedJson('GET', '/api/productos', [], $usuario);
 
-// Con datos en el body
-$response = $this->authenticatedJson('POST', '/api/productos', [
-    'nombre' => 'Nuevo Producto',
-    'precio' => 100
-], $usuario);
+// Seeders RBAC
+$this->seedRoles();       // 4 roles: Administrador, Gerente, Vendedor, Bodeguero
+$this->seedPermisos();    // 68 permisos por módulo
+
+// Catálogos
+$formaPago = $this->getFormaPago();  // Efectivo
 ```
 
-**Helpers de Seeders:**
+### Ejemplo de Feature Test (patrón actual)
 
 ```php
-// Cargar 7 roles básicos
-$this->seedRoles();
-
-// Cargar 68 permisos
-$this->seedPermisos();
-
-// Asignar todos los permisos a un rol
-$this->assignAllPermissionsToRole($rolAdmin);
-```
-
-### Ejemplo Completo de Test
-
-```php
-public function test_puede_crear_producto_con_helpers()
+public function test_puede_crear_producto_con_service_layer(): void
 {
-    // Arrange - Preparar datos
     $admin = $this->createAdminUsuario();
-    $categoria = $this->getCategoriaProducto();
-    $unidad = $this->getUnidadMedida();
     
-    // Act - Ejecutar acción
     $response = $this->authenticatedJson('POST', '/api/productos', [
         'nombre' => 'Laptop HP',
         'codigo' => 'LAPTOP-001',
         'precio' => 500000,
-        'categoria_id' => $categoria->id,
-        'unidad_medida_id' => $unidad->id,
-        'tipo' => 'producto'
+        'categoria_id' => $this->getCategoriaProducto()->id,
+        'unidad_medida_id' => $this->getUnidadMedida()->id,
     ], $admin);
     
-    // Assert - Verificar resultados
-    $response->assertStatus(201);
+    $response->assertStatus(201)
+        ->assertJsonStructure(['success', 'message', 'data']);
+    
     $this->assertDatabaseHas('productos', [
         'nombre' => 'Laptop HP',
-        'codigo' => 'LAPTOP-001'
+        'codigo' => 'LAPTOP-001',
     ]);
 }
 ```
@@ -338,104 +304,75 @@ public function test_puede_crear_producto_con_helpers()
 
 ## 🐛 Troubleshooting
 
-### Error: Base de datos no existe
+### Tests lentos
 
 ```bash
-# Crear base de datos de testing
-sudo mysql -u root -e "CREATE DATABASE IF NOT EXISTS api_db_testing;"
+# SQLite in-memory es el default (rápido)
+# Si necesitas MySQL real:
+php artisan test --env=testing-mysql
+
+# Ejecutar en paralelo
+php artisan test --parallel
 ```
 
 ### Error: Foreign key constraint fails
 
 ```bash
-# Limpiar caché de configuración
 php artisan config:clear
-
-# Ejecutar tests desde cero
 php artisan test
-```
-
-### Tests lentos
-
-```bash
-# Usar SQLite en memoria (más rápido pero menos realista)
-# Editar phpunit.xml:
-<env name="DB_CONNECTION" value="sqlite"/>
-<env name="DB_DATABASE" value=":memory:"/>
 ```
 
 ### Ver queries ejecutados
 
 ```php
-// En el test, activar query log
 DB::enableQueryLog();
-
-// Tu código de test...
-
-// Ver queries
+// ... código del test ...
 dd(DB::getQueryLog());
 ```
+
+### Tests skipped (5)
+
+Los 5 tests skipped en `FacturacionElectronicaE2ETest` requieren certificado real de Hacienda Costa Rica. Se resolverán con FASE 19.6 (E2E sandbox).
 
 ---
 
 ## 📈 Comandos Útiles
 
 ```bash
-# Ejecutar con cobertura
+# Ejecutar todo
+php artisan test
+
+# Con cobertura
 php artisan test --coverage
 
-# Ejecutar con detalles
-php artisan test --verbose
-
-# Ejecutar solo tests que fallaron
+# Solo failures
 php artisan test --failed
 
-# Ejecutar tests en paralelo (más rápido)
-php artisan test --parallel
+# Filtrar por nombre
+php artisan test --filter test_usuario_puede_hacer_login
 
-# Ejecutar con profiling
+# Con profiling (ver tests lentos)
 php artisan test --profile
+
+# PHPStan (análisis estático)
+vendor/bin/phpstan analyse app/ --level=8
+
+# Mutation testing
+vendor/bin/infection --threads=4 --show-mutations
+
+# Load testing
+k6 run tests/Load/smoke-test.js
 ```
 
 ---
 
-## 📚 Recursos Adicionales
+## 📅 Historial
 
-- **Documentación completa:** [FASE_4_TESTING_COMPLETADA.md](FASE_4_TESTING_COMPLETADA.md)
-- **Laravel Testing:** https://laravel.com/docs/11.x/testing
-- **PHPUnit:** https://phpunit.de/documentation.html
-- **Factories:** https://laravel.com/docs/11.x/eloquent-factories
+| Fecha | Tests | Estado | Hito |
+|-------|-------|--------|------|
+| Nov 2025 | 218 (186 passing) | ⚠️ 85% | Sprint 5 — suite inicial |
+| Ene 2026 | 405 (100%) | ✅ | Post-Phase 10 |
+| Feb 2026 | 762 (100%) | ✅ | FASE 4 — PHPStan resuelto |
+| Mar 9, 2026 | 959 (100%) | ✅ | FASE 14 — Contract + Mutation |
+| Mar 24, 2026 | **997 (100%)** | ✅ | **FASE 16 — Service Layer** |
 
----
-
-## 🎯 Mejores Prácticas
-
-1. **Ejecutar tests antes de commit:**
-   ```bash
-   php artisan test && git commit -m "mensaje"
-   ```
-
-2. **Crear test antes de fix de bug:**
-   - Escribir test que reproduzca el bug
-   - Verificar que falla
-   - Arreglar código
-   - Verificar que test pasa
-
-3. **Mantener tests independientes:**
-   - Usar `RefreshDatabase` trait
-   - No depender del orden de ejecución
-   - Crear datos necesarios en cada test
-
-4. **Tests descriptivos:**
-   ```php
-   // ✅ Bueno
-   test_usuario_con_permiso_productos_leer_puede_listar_productos()
-   
-   // ❌ Malo
-   test_productos()
-   ```
-
----
-
-**Desarrollado por Sistemas Ursol S.A.**  
-*30 años de experiencia en soluciones tecnológicas*

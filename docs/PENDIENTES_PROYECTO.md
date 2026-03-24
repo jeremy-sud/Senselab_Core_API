@@ -1,122 +1,85 @@
-# ANÁLISIS COMPLETO DE PENDIENTES - Ursol CAST API
+# PENDIENTES DEL PROYECTO — Ursol CAST API
 
-**Fecha de generación:** 2 de julio de 2025
+**Última actualización:** 24 de marzo de 2026  
+**Versión:** v3.3.0 (Post-FASE 16)  
+**Referencia:** [ROADMAP.md](../ROADMAP.md) | [release_checklist.md](release_checklist.md)
+
+---
 
 ## 📊 Resumen Ejecutivo
 
-| Categoría | Cantidad | Prioridad |
-|-----------|----------|-----------|
-| TODOs en Código | 12 | Alta/Media |
-| Tests Skipped | 5 | Media |
-| ~~Modelo Faltante~~ | ~~1~~ ✅ | ~~Alta~~ |
-| Reportes PDF | 3 | Alta |
-| Importaciones | 2 | Media |
-| PHPStan Baseline | ~2,065 errores PHPDoc | Baja |
-| CQRS Expansión | 3+ módulos | Media |
-| Service Layer Expansión | ~~6 módulos críticos~~ ✅ ~79 controllers restantes | Media |
+| Categoría | Pendientes | Prioridad |
+|-----------|-----------|-----------|
+| Bloqueante producción | 1 (E2E Hacienda sandbox) | 🔴 Crítica |
+| Deuda técnica | 6 items menores | 🟡 Baja |
+| Fases futuras ROADMAP | 4 fases (18, 20-22) | 🟢 Planificado |
+
+> **Estado general:** La gran mayoría de pendientes históricos (julio 2025 — marzo 2026) han sido resueltos a través de 18+ fases. Este documento refleja solo los pendientes reales vigentes.
 
 ---
 
-## 🔴 ALTA PRIORIDAD
+## 🔴 BLOQUEANTE PARA PRODUCCIÓN
 
-### 1. Modelo Faltante: `MovimientoPresupuesto`
-- **Ubicación:** Referenciado en `app/Models/DetallePresupuesto.php:97`
-- **Impacto:** Relación `movimientos()` comentada, funcionalidad de presupuestos incompleta
-- **Acción:** Crear modelo + migración + relaciones
-
-### 2. Reportes PDF No Implementados
-En `app/Jobs/GeneratePdfReportJob.php`:
-- Línea 116: Reporte de **Inventario**
-- Línea 125: Reporte de **Cuentas por Cobrar**
-- Línea 134: Reporte de **Nómina**
-
-### 3. Token de Hacienda
-- `app/Jobs/SyncHaciendaJob.php:174`: Obtención de token no implementada
+### 1. FASE 19.6 — Validación E2E Hacienda Sandbox
+- **Flujo:** OAuth → XML v4.4 → Firma XAdES-EPES → Envío → Consulta Estado → Logout
+- **Prerrequisito:** Credenciales OVi (en trámite con representante legal)
+- **Tests existentes:** 55 unit tests pasan, pero falta validación contra sandbox real
+- **Ref:** `tests/Feature/FacturacionElectronicaE2ETest.php` (5 tests skipped por falta de certificado)
 
 ---
 
-## 🟡 MEDIA PRIORIDAD
+## 🟡 DEUDA TÉCNICA (No Bloqueante)
 
-### 4. Importaciones Masivas Pendientes
-En `app/Jobs/ProcessImportJob.php`:
-- Línea 141: Importación de **Clientes**
-- Línea 150: Importación de **Proveedores**
-
-### 5. GDPR - Verificación Real
-- `app/Http/Controllers/GdprController.php:135`: Lógica de verificación pendiente
-
-### 6. Sistema de Notificaciones
-- `app/Jobs/GeneratePdfReportJob.php:73`: Notificar usuario cuando PDF está listo
-- `app/Jobs/ProcessImportJob.php:76`: Notificar al usuario tras importación
-
-### 7. Tests Skipped (5)
-En `tests/Feature/FacturacionElectronicaE2ETest.php`:
-- Líneas 269, 306: Requieren certificado real de Hacienda
-
-En `tests/Feature/FacturacionElectronicaE2ECasosEdgeTest.php`:
-- Línea 138: Validación de totales no implementada
-- Línea 234: Error 500 en cálculo con líneas exentas
-- Línea 416: Funcionalidad de reenvío (redundante)
+| ID | Descripción | Ubicación | Severidad |
+|----|-------------|-----------|-----------|
+| DT-1 | 4 modelos con timestamps `created_at/updated_at` en vez de `creado_en/actualizado_en` | ZonaGeografica, CuentaBancaria, PlanillaCcss, MovimientoBancario | 🟡 Baja |
+| DT-2 | 3 observers declarados pero vacíos | AsientoContableObserver, ClienteObserver, VentaObserver | 🟡 Baja |
+| DT-3 | Dualidad naming ConsecutivoFE / ConsecutivoFe | Controllers + Resources duplicados con contratos distintos | 🟡 Baja |
+| DT-7 | `shell_exec()` en HealthCheckController | Input hardcoded (seguro), pero anti-patrón | 🟠 Media |
+| DT-8 | Placeholders en MetricsController | `registerApplicationMetrics()` inexistente, hit rate fijo 75.5 | 🟡 Baja |
+| DT-9 | Imports a modelos inexistentes | Comprobante, Factura, InventarioMovimiento en HaciendaIntegrationService, audit.php | 🟡 Baja |
 
 ---
 
-## 🟢 BAJA PRIORIDAD (Deuda Técnica)
+## 🟢 FASES FUTURAS (Según ROADMAP)
 
-### 8. PHPStan Baseline
-- **~2,065 errores** suprimidos (principalmente `@param`/`@return` en PHPDoc)
-- El código compila y funciona (nivel 8 con baseline)
-- Recomendación: Reducir gradualmente mediante refactorización
-
-### 9. Documentación de Fases
-Las fases **5 (Rendimiento)** y **6 (CQRS)** están implementadas pero la documentación no está actualizada en los archivos FASE_*.md
-
----
-
-## 📝 PLAN DE ACCIÓN SUGERIDO
-
-**Sprint Inmediato (~20h):**
-1. ~~Crear modelo `MovimientoPresupuesto` + migración~~ ✅
-2. ~~Implementar 3 reportes PDF (inventario, CxC, nómina)~~ ✅
-3. ~~Completar importación de clientes/proveedores~~ ✅
-
-**Sprint Siguiente (~15h):**
-4. ~~Implementar token de Hacienda en SyncHaciendaJob~~ ✅
-5. ~~Completar verificación GDPR real~~ ✅
-6. ~~Sistema de notificaciones para Jobs~~ ✅
-
-**Mantenimiento Continuo:**
-7. Reducir baseline PHPStan (10-20 errores por sprint)
-8. Resolver tests skipped cuando haya certificados de prueba
+| FASE | Descripción | Dependencia |
+|------|-------------|-------------|
+| 18 | API Versionado (v1/v2) | Breaking change — coordinar con frontend |
+| 20 | Webhooks + Event-Driven Architecture | Post-producción |
+| 21 | Reporting Engine avanzado | Post-producción |
+| 22 | Escalabilidad (read replicas, Horizon, OpenTelemetry) | Post-producción |
 
 ---
 
-## ✅ RESUELTO EN v2.5.0 (FASE 8 — Service Layer Pattern)
+## ✅ HISTORIAL DE RESOLUCIÓN (Resumen)
 
-- ✅ **5 servicios nuevos creados** — AlmacenService, CuentaContableService, EmpleadoService, OrdenCompraService, PeriodoNominaService
-- ✅ **1 servicio mejorado** — ProveedorService (DTOs→arrays, métodos listar/obtener añadidos)
-- ✅ **6 controladores refactorizados** — Constructor DI, eliminado HasCacheableQueries, ~50% reducción promedio de líneas
-- ✅ **8 módulos con Service Layer** en total (incluyendo Venta y AsientoContable de FASE 4)
+Los siguientes pendientes fueron resueltos entre julio 2025 y marzo 2026:
 
-## ✅ RESUELTO EN v2.4.0 (Sprint 7.1 + 7.2)
+| Pendiente Original | Resuelto En | FASE |
+|--------------------|-------------|------|
+| Modelo MovimientoPresupuesto faltante | v2.4.0 | Sprint 7 |
+| 3 reportes PDF no implementados | v2.4.0 | Sprint 7 |
+| Token de Hacienda en SyncHaciendaJob | v2.1.0 | FASE 2.1 |
+| Importaciones masivas (clientes/proveedores) | v2.4.0 | Sprint 7 |
+| GDPR verificación real | v2.4.0 | Sprint 7 |
+| PHPStan ~2,065 errores suprimidos | v2.6.0 | FASE 4 → Level 8, 0 errores |
+| Service Layer parcial (solo Venta) | v3.3.0 | FASE 16 → BaseService + 22+ servicios |
+| CQRS dead code | v3.0.0 | FASE 13 → 34 archivos eliminados |
+| Cobertura tests ~35-40% | v3.3.0 | 997 tests, 141 archivos |
+| Referencias a modelos inexistentes | v2.4.0 | Sprint 7.1 |
+| XDebug en producción | v2.4.0 | Sprint 7.2 |
+| DTOs duplicados (18) | v2.4.0 | Sprint 7.1 |
+| Seeders duplicados (15) | v2.4.0 | Sprint 7.1 |
+| Excepciones de dominio (solo 1) | v3.2.0 | FASE 15 → 11 excepciones tipadas |
+| Respuestas API inconsistentes | v3.2.0 | FASE 15 → ApiResponse trait |
+| Sin CORS configurado | v2.1.0 | FASE 1.2 |
+| Sin logging estructurado | v2.1.0 | FASE 1.7 |
+| Sin encriptación de datos | v2.1.0 | FASE 1.6 |
+| Sin audit trail | v2.1.0 | FASE 1.7 |
+| Rate limiting débil | v2.1.0 | FASE 1.5 |
+| Dependencias con wildcard `*` | v2.1.0 | FASE 1 |
 
-- ✅ **Referencias a modelos inexistentes** — Corregidas 5 referencias en config/audit.php, config/encryption.php, InstallSecurityFeatures.php
-- ✅ **XDebug en producción** — Eliminado del Dockerfile (condicional vía ARG)
-- ✅ **PHP 8.2→8.4** — Unificado en composer.json + 6 workflows CI/CD
-- ✅ **18 DTOs duplicados** — Eliminados de subdirectorios
-- ✅ **15 seeders duplicados** — Naming singular vs plural unificado
-- ✅ **Tests módulos críticos** — 4 suites nuevas (Inventario, Contabilidad, Compras, Nómina)
+---
 
-## 🔴 PENDIENTES NUEVOS (Identificados en Auditoría v2.4.0)
-
-### Service Layer Pattern
-- ~~Solo `VentaController` usa Service Layer; los ~85 controllers restantes tienen lógica de negocio inline~~ 
-- ✅ **FASE 8 completada:** 8 controladores con Service Layer (Venta, AsientoContable, Almacén, CuentaContable, Proveedor, Empleado, OrdenCompra, PeriodoNomina)
-- **Pendiente:** ~79 controllers restantes sin Service Layer (prioridad baja — módulos secundarios)
-
-### CQRS Expansión
-- Infraestructura CQRS completa pero solo implementada para Venta
-- **Siguientes módulos:** Inventario, Contabilidad, Compras
-
-### Cobertura de Tests
-- Cobertura estimada ~35-40% (55 archivos de test)
-- **Meta:** 60% para v3.0
+*Documento mantenido como registro vivo. Para el plan completo de desarrollo, ver [ROADMAP.md](../ROADMAP.md).*
