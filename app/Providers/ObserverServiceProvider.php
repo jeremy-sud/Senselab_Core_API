@@ -8,9 +8,8 @@ use Illuminate\Support\ServiceProvider;
 use App\Models\Permiso;
 use App\Models\Rol;
 use App\Models\Producto;
-use App\Models\Venta;
-use App\Models\Cliente;
 use App\Models\AsientoContable;
+use App\Models\Cliente;
 use App\Models\Usuario;
 use App\Models\CuentaBancaria;
 use App\Models\DeclaracionTributaria;
@@ -24,9 +23,6 @@ use App\Models\CajaChica;
 use App\Observers\PermisoObserver;
 use App\Observers\RolObserver;
 use App\Observers\ProductoObserver;
-use App\Observers\VentaObserver;
-use App\Observers\ClienteObserver;
-use App\Observers\AsientoContableObserver;
 use App\Observers\AuditObserver;
 
 /**
@@ -49,9 +45,6 @@ class ObserverServiceProvider extends ServiceProvider
         Permiso::observe(PermisoObserver::class);
         Rol::observe(RolObserver::class);
         Producto::observe(ProductoObserver::class);
-        Venta::observe(VentaObserver::class);
-        Cliente::observe(ClienteObserver::class);
-        AsientoContable::observe(AsientoContableObserver::class);
 
         // FASE 3: Auditoría - AuditObserver en modelos críticos
         Usuario::observe(AuditObserver::class);

@@ -1,6 +1,6 @@
 # Estado Actual del Proyecto - Ursol CAST API
 
-**Fecha de actualización:** 15 de marzo 2026  
+**Fecha de actualización:** 28 de marzo 2026  
 **Desarrollado por:** Sistemas Ursol S.A.  
 **Desarrollador principal:** Jeremy Arias Solano  
 
@@ -16,24 +16,31 @@
 > v3.0.1: FASE 17 — Seguridad pre-producción: Swagger auth, rate limiters, FormRequest validation (30+ campos string con max: añadido)
 > v3.1.0: FASE 14 — Cobertura de tests críticos: 21 Feature test files nuevos, +203 tests, 5 bugs producción corregidos
 > v3.1.1: FASE 14.5 — Correcciones críticas auditoría: N+1 queries, cache tenant, $e->getMessage() protegido en servicios AI
+> v3.2.0: FASE 15 — Excepciones de dominio + Respuestas API estandarizadas + ApiResponse trait + Rules CR
+> v3.3.0: FASE 16 — Service Layer secundarios: BaseService, 8 servicios, 19 DTOs, 72 tests
+> v3.2.1: FASE 18.5 — Seeders separados (master/demo) + Migration rollback tests + Load testing k6
+> v4.0.0: FASE 18 — API versionado con prefijo v1/v2, header-based versioning, Sunset middleware
+> v4.1.0: FASE 19.7 — PHPStan 98→0 errores, +17 DTOs (60 total, ~65% cobertura), 3 observers vacíos eliminados, VentaFactory alineada, 2 GDPR factories
 
 ---
 
-## Estadísticas generales (conteos VERIFICADOS 6 mar 2026)
-- **Controladores implementados:** 91 (excluyendo Controller.php base)
-- **Policies RBAC:** 80 ✅ (registradas en AuthServiceProvider dedicado)
+## Estadísticas generales (conteos VERIFICADOS 28 mar 2026)
+- **Controladores implementados:** 93 (excluyendo Controller.php base)
+- **Policies RBAC:** 80+ ✅ (registradas en AuthServiceProvider dedicado)
 - **Modelos Eloquent:** 87 ✅
 - **Migraciones:** 98
 - **FormRequests:** 170+ (validación completa)
-- **API Resources:** 80+ (transformación JSON)
+- **API Resources:** 79 (transformación JSON)
+- **DTOs:** 60 (~65% cobertura, +17 en FASE 19.7)
 - **Jobs/Queues:** 8+ (procesamiento asíncrono)
-- **Traits Reutilizables:** 10+ (1 deprecated: EncryptsAttributes)
-- **Observers:** 6+ (registrados en ObserverServiceProvider dedicado)
-- **Services:** 40 (10 AI, 8 Hacienda, 22 core/utilidad)
-- **Tests (archivos):** 89 archivos (+21 en FASE 14)
-- **Tests (total):** 959 passing, 0 failing ✅
+- **Traits Reutilizables:** 12 (1 deprecated: EncryptsAttributes)
+- **Observers:** 4 (3 vacíos eliminados en FASE 19.7)
+- **Services:** 62 (10 AI + 8 Hacienda + 44 core)
+- **Tests (archivos):** 141 (58 Unit + 76 Feature + 7 Contract)
+- **Tests (total):** 1261 passing, 0 failing ✅
 - **Providers:** 3 (AppServiceProvider, AuthServiceProvider, ObserverServiceProvider)
-- **Factories:** 83 (7 corregidas en FASE 13)
+- **Factories:** 85 (+2 GDPR en FASE 19.7)
+- **PHPStan:** Level 8, 0 errores ✅
 - **Rutas API:** Configuradas en routes/api.php con 14 archivos en routes/api/
 - **CQRS:** ❌ Eliminado en v3.0.0 (era dead code — 34 archivos, 0 dispatches)
 

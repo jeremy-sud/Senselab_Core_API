@@ -38,9 +38,9 @@ trait HasCacheableQueries
     protected function getTenantId(): int|string
     {
         if (auth('sanctum')->check()) {
-            /** @var \App\Models\Usuario|null $user */
+            /** @var \App\Models\Usuario $user */
             $user = auth('sanctum')->user();
-            return $user?->empresa_id ?? 0;
+            return $user->empresa_id ?? 0;
         }
 
         return 0;
@@ -86,7 +86,7 @@ trait HasCacheableQueries
      */
     protected function getCacheTags(): array
     {
-        /** @var array<int, string> $tags */
+        /** @var array<int, string> $baseTags */
         $baseTags = $this->cacheTags ?? [$this->getCachePrefix(), 'catalogos'];
         $tenantId = $this->getTenantId();
 
