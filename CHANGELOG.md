@@ -5,6 +5,29 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [v4.1.0] — 2026-03-28 — FASE 19.7: PHPStan 0 errores + DTO 65% + Deuda Técnica Limpia
+
+### Corregido
+- **PHPStan 98→0 errores** — Corregidos 2 bugs en `HasCacheableQueries` trait: nullsafe innecesario en `?->empresa_id` (L43) y `@var $tags` no coincidía con variable `$baseTags` (L90). Estos 2 errores se repetían en 49 controllers.
+- **VentaFactory desalineada** — Campos corregidos (`fecha`→`fecha_venta`, `subtotal`→`subtotal_bruto_total`, `impuesto`→`monto_impuesto_total`, `descuento`→`monto_descuento_total`, `total`→`monto_total_venta`, `estado`→`estado_venta`). FKs faltantes agregadas (`empresa_id`, `sucursal_id`, `forma_pago_id`). Cálculos coherentes de montos.
+
+### Agregado
+- **17 nuevos DTOs** — `CargoCreateDTO`, `ModeloBusCreateDTO`, `RolCreateDTO`, `CuentaBancariaCreateDTO`, `TasaImpuestoCreateDTO`, `FormaPagoCreateDTO`, `MarcaCreateDTO`, `TipoClienteCreateDTO`, `TipoImpuestoCreateDTO`, `UnidadMedidaCreateDTO`, `ConfiguracionCreateDTO`, `DeclaracionTributariaCreateDTO`, `FeCertificadoDigitalCreateDTO`, `ZonaGeograficaCreateDTO`, `MovimientoBancarioCreateDTO`, `DetalleSalidaInventarioCreateDTO`, `DetalleEntradaInventarioCreateDTO`. Total: 60 DTOs (~65% cobertura).
+- **`DataRetentionPolicyFactory`** — Factory para testing de políticas de retención de datos (compliance).
+- **`GdprDeletionRequestFactory`** — Factory para testing de solicitudes GDPR de eliminación.
+
+### Eliminado
+- **3 observers vacíos** — `AsientoContableObserver`, `ClienteObserver`, `VentaObserver` (stubs sin implementación) eliminados y desregistrados del `ObserverServiceProvider`.
+
+## [v4.0.0] — 2026-03-28 — FASE 18: API Versionado
+
+### Agregado
+- API versionado con prefijo `/api/v1/` y `/api/v2/`
+- Header-based versioning (`Accept: application/vnd.ursol.v2+json`)
+- Middleware `Sunset` para deprecación de endpoints v1
+- Resources versionados (v1 compatibilidad, v2 con HATEOAS)
+- Swagger UI con selector de versión
+
 ## [Unreleased] — FASE 19.2: Contract Testing con Pact PHP
 
 ### Agregado
