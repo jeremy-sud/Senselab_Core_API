@@ -83,9 +83,7 @@ Proporcionar una plataforma ERP integral, moderna y asequible que permita a las 
 
 ### 📊 Estado del Proyecto
 
-**🔍 ÚLTIMA AUDITORÍA: 5 de Marzo 2026**
-
-**Calificación Global: 9.8/10** ⭐⭐⭐⭐⭐
+**🔍 ÚLTIMA AUDITORÍA: 28 de Marzo 2026**
 
 **📈 Estadísticas Verificadas (Marzo 2026):**
 
@@ -93,23 +91,25 @@ Proporcionar una plataforma ERP integral, moderna y asequible que permita a las 
 -   **✅ 80 Policies RBAC** implementadas (100% cobertura)
 -   **✅ Rutas API** particionadas en 14 archivos (`routes/api/`)
 -   **✅ 87 Modelos Eloquent** sincronizados con BD MySQL 8.0+
--   **✅ 98 Migraciones** de base de datos (landlord + tenant)
--   **✅ 77 Resources** para transformación de respuestas JSON
--   **✅ 64 Archivos de Tests** — 767 tests, 2392 assertions, 0 failing
--   **✅ 40 Servicios** incluyendo 10 servicios de IA integrados
--   **✅ 34 Archivos CQRS** en 3 módulos (Ventas, Contabilidad, Compras)
+-   **✅ 98 Migraciones** de base de datos
+-   **✅ 79 Resources** para transformación de respuestas JSON
+-   **✅ 142 Archivos de Tests** — 1261 tests, 0 failing
+-   **✅ 62 Servicios** incluyendo 10 servicios de IA integrados
+-   **✅ 60 DTOs** (~65% cobertura de validación)
+-   **✅ 85 Factories** para testing
 -   **✅ 0 Errores Críticos** de base de datos o seguridad
 -   **✅ Sistema RBAC** completo (68 permisos + 8 roles)
--   **✅ PHPStan Level 8** — 0 errores en 667 archivos
+-   **✅ PHPStan Level 8** — 0 errores
 -   **✅ Entorno Docker** completamente funcional (Nginx, PHP-FPM, MySQL, Redis, PHPMyAdmin, Mailhog)
 -   **✅ Facturación Electrónica v4.4** implementada (XAdES-EPES) según normativa DGT
 -   **✅ Módulo de IA** con 10 servicios y 32+ endpoints (Google Gemini gratuito + fallback OpenAI)
 -   **✅ Generador de Módulos** `make:erp-module` para crear módulos completos en segundos
--   **✅ Calidad de Código** PHPStan nivel 8 — 0 errores en 667 archivos
+-   **✅ Calidad de Código** PHPStan nivel 8 — 0 errores
 -   **✅ Cache Inteligente** Redis con estrategia integral de cacheo
 -   **✅ Performance** Optimización continua con tests de rendimiento
--   **✅ Tests** 767 tests, 2392 assertions — 100% passing
+-   **✅ Tests** 1261 tests — 100% passing
 -   **✅ Seguridad** Laravel Sanctum + RBAC + Rate Limiting + CORS + Encriptación AES-256
+-   **✅ API Versionado** con prefijo `/api/v1/` y `/api/v2/` + header-based versioning
 
 **✅ FUNCIONALIDADES IA IMPLEMENTADAS (Febrero 2026):**
 
@@ -141,6 +141,7 @@ Proporcionar una plataforma ERP integral, moderna y asequible que permita a las 
     - 📦 Bodeguero (inventario)
     - 👤 Usuario (acceso básico)
     - 🔍 Auditor (solo lectura en auditoría)
+    > **Nota:** Los 8 roles están definidos en `RolesSeeder`.
 -   ✅ **Middleware CheckPermission** para protección de rutas
 -   ✅ **Métodos helper** en modelo Usuario para validaciones RBAC
 -   ✅ **Soporte para múltiples tokens** por usuario
@@ -162,7 +163,7 @@ Proporcionar una plataforma ERP integral, moderna y asequible que permita a las 
 -   ✅ **Soporte para tipos**: 01 (Factura), 02 (Nota Débito), 03 (Nota Crédito), 04 (Tiquete)
 -   ✅ **Retry automático** con backoff exponencial
 -   ✅ **Estado de sincronización** en tiempo real
--   📘 **Guías completas**: [FACTURACION_ELECTRONICA_SETUP.md](FACTURACION_ELECTRONICA_SETUP.md) | [FACTURACION_ELECTRONICA_API.md](FACTURACION_ELECTRONICA_API.md)
+-   📘 **Guías completas**: [FACTURACION_ELECTRONICA_SETUP.md](docs/hacienda/FACTURACION_ELECTRONICA_SETUP.md) | [FACTURACION_ELECTRONICA_API.md](docs/hacienda/FACTURACION_ELECTRONICA_API.md)
 
 ### 📦 Gestión de Inventario Inteligente
 
@@ -351,8 +352,9 @@ Proporcionar una plataforma ERP integral, moderna y asequible que permita a las 
 
 | Versión | Rama | Status | Lanzamiento | Soporte |
 |---------|------|--------|-------------|---------|
-| **2.8** | `main` | 🟢 Activa | Mar 2026 | Indefinido |
-| **2.0** | `v2.0` | 🔴 Legacy | Feb 2026 | Solo críticos |
+| **4.1** | `main` | 🟢 Activa | Mar 2026 | Indefinido |
+| **3.x** | `v3.x` | 🔴 Legacy | Mar 2026 | Solo críticos |
+| **2.x** | `v2.x` | 🔴 EOL | Mar 2026 | Finalizado |
 | **1.0** | `v1.0` | 🔴 EOL | Ene 2026 | Finalizado |
 
 ### Compatibilidad de Navegadores
@@ -391,23 +393,21 @@ Para acceso a Swagger UI y dashboards:
 
 **✅ FASE 11 - Facturación Electrónica Costa Rica (COMPLETADA) 🇨🇷**
 
--   **Sistema completo** de facturación electrónica según normativa DGT v4.3
+-   **Sistema completo** de facturación electrónica según normativa DGT v4.4
 -   **10 Fases implementadas al 100%**:
     1. ✅ Configuración (.env + config/hacienda.php)
     2. ✅ Base de datos (4 tablas: comprobantes, lineas_detalle, certificados, tokens)
     3. ✅ Servicios base (HaciendaApiClient + OAuth + RateLimiter)
     4. ✅ Generador de claves numéricas (50 caracteres - validado)
-    5. ✅ Constructor XML v4.3 (facturas, notas crédito/débito, tiquetes)
+    5. ✅ Constructor XML v4.4 (facturas, notas crédito/débito, tiquetes)
     6. ✅ Firma digital XAdES-EPES (certificados .p12)
     7. ✅ Jobs asíncronos (EnviarComprobante + ConsultarEstado + ProcesarRespuesta)
     8. ✅ API REST (7 endpoints: CRUD + XML download + reenviar + anular + stats)
-    9. ✅ Tests automatizados (41 tests: 18 unit + 9 unit + 14 feature)
+    9. ✅ Tests automatizados
     10. ✅ Documentación completa (Setup + API Reference + Troubleshooting)
--   **Componentes creados**: 23 archivos (4 modelos, 3 servicios, 3 jobs, 1 controller, 1 request, 3 tests, 3 factories, 5 docs)
--   **Líneas de código**: ~8,500 líneas de código productivo
 -   **Integración Hacienda**: OAuth 2.0 + Rate limiting + Retry automático
 -   **Ambientes**: Sandbox (ATV) y Producción configurables
--   Ver documentación: [FACTURACION_ELECTRONICA_SETUP.md](FACTURACION_ELECTRONICA_SETUP.md) | [FACTURACION_ELECTRONICA_API.md](FACTURACION_ELECTRONICA_API.md)
+-   Ver documentación: [FACTURACION_ELECTRONICA_SETUP.md](docs/hacienda/FACTURACION_ELECTRONICA_SETUP.md) | [FACTURACION_ELECTRONICA_API.md](docs/hacienda/FACTURACION_ELECTRONICA_API.md)
 
 ### 🔑 Credenciales de Prueba
 
@@ -447,9 +447,9 @@ El sistema está diseñado con las mejores prácticas de desarrollo, siguiendo l
 
 ## 🔧 Instalación
 
-> **📘 Para colaboradores nuevos:** Revisa la [Guía de Instalación Completa](INSTALLATION_GUIDE.md) con instrucciones paso a paso, troubleshooting y verificación.
+> **📘 Para colaboradores nuevos:** Revisa la [Guía de Instalación Completa](docs/guides/INSTALLATION_GUIDE.md) con instrucciones paso a paso, troubleshooting y verificación.
 
-> **🐳 Instalación con Docker (Recomendado):** Ve directamente a la sección [Instalación con Docker](#-instalación-con-docker) o consulta la [Guía Docker completa](DOCKER_GUIDE.md).
+> **🐳 Instalación con Docker (Recomendado):** Ve directamente a la sección [Instalación con Docker](#-instalación-con-docker) o consulta la [Guía Docker completa](docs/guides/DOCKER_GUIDE.md).
 
 ### Opción A: Instalación con Docker 🐳 (Recomendada)
 
@@ -507,7 +507,7 @@ make swagger         # Regenerar Swagger
 | PHPMyAdmin | http://localhost:8080                   | ursol_user / ursol_password |
 | Mailhog    | http://localhost:8025                   | -                           |
 
-**📖 Guía completa:** [DOCKER_GUIDE.md](DOCKER_GUIDE.md)
+**📖 Guía completa:** [DOCKER_GUIDE.md](docs/guides/DOCKER_GUIDE.md)
 
 ---
 
@@ -582,7 +582,7 @@ php artisan migrate:fresh --seed
 -   `TiposCuentasSeeder` - 8 tipos de cuentas contables
 -   `UnidadesMedidaSeeder` - 11 unidades de medida
 -   `PermisosSeeder` - 68 permisos del sistema (17 módulos)
--   `RolesSeeder` - 7 roles (Administrador, Gerente, Contador, etc.)
+-   `RolesSeeder` - 8 roles (Administrador, Gerente, Contador, Vendedor, Comprador, Bodeguero, Usuario, Auditor)
 -   `CargosSeeder` - 7 cargos de empleados
 -   `EmpresaDemoSeeder` - Empresa demo "Sistemas Ursol S.A." + sucursal
 -   `UsuarioAdminSeeder` - Usuario admin con todos los permisos
@@ -630,7 +630,7 @@ La forma más fácil de probar todos los endpoints:
 http://localhost:8000/api/documentation
 ```
 
-**Guía completa:** [COMO_PROBAR_API.md](COMO_PROBAR_API.md)
+**Guía completa:** [COMO_PROBAR_API.md](docs/guides/COMO_PROBAR_API.md)
 
 ### Opción 2: Postman / Thunder Client / Insomnia
 
@@ -640,7 +640,7 @@ Herramientas profesionales para desarrollo de APIs.
 
 ```bash
 # 1. Login (obtener token)
-curl -X POST http://localhost:8000/api/auth/login \
+curl -X POST http://localhost:8000/api/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "admin@ursol.com",
@@ -653,7 +653,7 @@ curl -X GET http://localhost:8000/api/productos \
   -H "Accept: application/json"
 ```
 
-**📖 Guía completa con todas las opciones:** [COMO_PROBAR_API.md](COMO_PROBAR_API.md)
+**📖 Guía completa con todas las opciones:** [COMO_PROBAR_API.md](docs/guides/COMO_PROBAR_API.md)
 
 ---
 
@@ -771,7 +771,7 @@ El proyecto sigue el patrón **MVC** (Model-View-Controller) con algunas extensi
 -   **Jobs**: [`EnviarComprobanteJob`](app/Jobs/Hacienda/EnviarComprobanteJob.php), [`ConsultarEstadoJob`](app/Jobs/Hacienda/ConsultarEstadoJob.php), [`ProcesarRespuestaJob`](app/Jobs/Hacienda/ProcesarRespuestaJob.php)
 -   **Controller**: [`ComprobanteElectronicoController`](app/Http/Controllers/ComprobanteElectronicoController.php) (7 endpoints REST)
 -   **Funcionalidades**:
-    -   Emisión de comprobantes electrónicos v4.3 (facturas, tiquetes, notas)
+    -   Emisión de comprobantes electrónicos v4.4 (facturas, tiquetes, notas)
     -   Generación automática de claves numéricas de 50 caracteres
     -   Construcción y validación de XML según XSD oficial
     -   Firma digital XAdES-EPES con certificados .p12
@@ -861,10 +861,9 @@ Authorization: Bearer {token}
 Content-Type: application/json
 Accept: application/json
 X-Empresa-Id: {id}
-X-Empresa-Id: {id}
+```
 
 > Usa el header `X-Empresa-Id` (o un subdominio dedicado) para indicar a qué empresa pertenece la solicitud. Si consumes la API desde `https://{subdominio}.api.ursol.com`, el header es opcional.
-```
 
 ### Protección por Permisos
 
@@ -895,7 +894,7 @@ Por seguridad, el endpoint `/register` está **comentado**. Los usuarios se crea
 
 ### Endpoints Principales
 
-Ver documentación completa en [API_DOCUMENTATION.md](API_DOCUMENTATION.md)
+Ver documentación completa en [API_DOCUMENTATION.md](docs/api/API_DOCUMENTATION.md)
 
 #### Almacenes
 
@@ -957,33 +956,33 @@ Ursol-CAST-API/
 │   │       └── MakeErpModule.php    # Generador de módulos
 │   ├── Http/
 │   │   ├── Controllers/
-│   │   │   ├── API/                 # Controladores REST (88 total)
+│   │   │   ├── API/                 # Controladores REST (76 en API/)
 │   │   │   │   ├── AuthController.php
 │   │   │   │   ├── ProductoController.php
 │   │   │   │   ├── ComprobanteElectronicoController.php
 │   │   │   │   └── ...
-│   │   │   └── ...
+│   │   │   └── ...                  # 93 controllers totales
 │   │   ├── Requests/                # Form request validation
-│   │   └── Resources/               # API resources (78 total)
-│   ├── Models/                      # Modelos Eloquent (83 total)
+│   │   └── Resources/               # API resources (79 total)
+│   ├── Models/                      # Modelos Eloquent (87 total)
 │   │   ├── Empresa.php
 │   │   ├── Usuario.php
 │   │   ├── Producto.php
 │   │   └── ...
-│   ├── Services/                    # Servicios de negocio (40)
+│   ├── DTOs/                        # Data Transfer Objects (60 total)
+│   ├── Services/                    # Servicios de negocio (62)
 │   │   ├── Hacienda/                # Facturación electrónica
-│   │   ├── AI/                      # Servicios de IA
+│   │   ├── AI/                      # Servicios de IA (10)
 │   │   ├── Export/                  # Exportación de reportes
-│   │   └── ...                      # 22 servicios core
-│   ├── CQRS/                        # Patrón CQRS (34 archivos, 3 módulos)
-│   ├── Jobs/                        # Trabajos asíncronos
+│   │   └── ...                      # 44 servicios core
+│   ├── Jobs/                        # Trabajos asíncronos (8)
 │   │   ├── Hacienda/
 │   │   └── ...
 │   ├── Policies/                    # Políticas de autorización RBAC (80 total)
-│   ├── Traits/                      # Comportamientos compartidos
+│   ├── Traits/                      # Comportamientos compartidos (12)
 │   │   ├── BelongsToTenant.php
 │   │   └── HasCustomSoftDeletes.php
-│   └── Observers/                   # Event observers
+│   └── Observers/                   # Event observers (4)
 ├── bootstrap/
 │   ├── app.php                      # Bootstrap de aplicación
 │   └── providers.php
@@ -1041,9 +1040,9 @@ Ursol-CAST-API/
 
 ## 🧪 Testing
 
-El proyecto cuenta con una **suite completa de 767 tests** que verifican el funcionamiento de todos los componentes del sistema.
+El proyecto cuenta con una **suite completa de 1261 tests** que verifican el funcionamiento de todos los componentes del sistema.
 
-**Estado Actual:** ✅ **767/767 tests passing (100% success rate)** — 2392 assertions
+**Estado Actual:** ✅ **1261 tests passing (100% success rate)**
 
 ### Base de Datos de Testing
 
@@ -1082,25 +1081,10 @@ make ci-test
 ```
 tests/
 ├── TestCase.php                                    # Base con helpers
-├── Feature/                                        # Tests de integración (E2E)
-│   ├── FacturacionElectronicaE2ETest.php          # 11 tests E2E FE (9 passing, 2 skipped)
-│   ├── FacturacionElectronicaE2ECasosEdgeTest.php # 10 tests casos edge (6 passing, 4 skipped)
-│   ├── ComprobanteElectronicoControllerTest.php   # Tests CRUD comprobantes
-│   ├── ProductoTest.php                           # CRUD productos
-│   └── AuthTest.php                               # Autenticación y autorización
-└── Unit/                                          # Tests unitarios
-    ├── Services/ClaveNumericaGeneratorTest.php    # Generación clave 50 dígitos
-    ├── Services/XmlComprobanteBuilderTest.php     # Construcción XML DGT v4.3
-    ├── Helpers/ArrayHelpersTest.php               # Utilidades de arrays
-    └── Validation/                                # Validaciones custom
+├── Feature/                                        # Tests de integración (76 archivos)
+├── Unit/                                           # Tests unitarios (58 archivos)
+└── Contract/                                       # Contract tests (8 archivos)
 ```
-
-**Cobertura de Tests:**
-- **Unitarios:** 408 tests
-- **Feature/E2E:** 359 tests
-- **Servicios (Unit):** 143 tests (6 suites FASE 9 + 4 suites FASE 10)
-- **Helpers:** 50+ tests
-- **Validaciones:** 45+ tests
 
 ## 🔄 CI/CD Pipeline
 
@@ -1112,7 +1096,7 @@ El proyecto utiliza **GitHub Actions** para integración y despliegue continuo.
 **Trigger:** Push o PR a `main`/`develop`
 
 Ejecuta en cada commit:
-- ✅ Suite completa de PHPUnit (767 tests)
+- ✅ Suite completa de PHPUnit (1261 tests)
 - ✅ PHPStan nivel 8 (análisis estático)
 - ✅ PHP CS Fixer (PSR-12)
 - ✅ Security check (vulnerabilidades)
@@ -1181,8 +1165,7 @@ make rollback          # Rollback de producción
 
 ### Documentación Completa
 
--   ✅ **767 tests passing (100%)**
--   ✅ **2,392 assertions**
+-   ✅ **1261 tests passing (100%)**
 -   ✅ **0 failures**
 
 ---
@@ -1598,7 +1581,7 @@ docker-compose --profile production up -d
 make optimize
 ```
 
-**Ver guía completa:** [DOCKER_GUIDE.md](DOCKER_GUIDE.md#-producción)
+**Ver guía completa:** [DOCKER_GUIDE.md](docs/guides/DOCKER_GUIDE.md#-producción)
 
 ### Opción B: Despliegue Tradicional
 
@@ -1665,7 +1648,7 @@ server {
     error_page 404 /index.php;
 
     location ~ \.php$ {
-        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php8.4-fpm.sock;
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         include fastcgi_params;
     }
@@ -2037,7 +2020,7 @@ php artisan db:seed --class=DatabaseSeeder
 **Soluciones:**
 ```bash
 # Generar nuevo token
-curl -X POST http://localhost:8000/api/auth/login \
+curl -X POST http://localhost:8000/api/login \
   -d "email=admin@ursol.com&password=admin123"
 
 # Verificar token
@@ -2115,10 +2098,10 @@ php artisan db:seed --database=testing
 php -m | grep -i pdo
 
 # Instalar extensión faltante
-sudo apt-get install php8.2-pdo-mysql
+sudo apt-get install php8.4-pdo-mysql
 
 # Reiniciar PHP-FPM
-sudo systemctl restart php8.2-fpm
+sudo systemctl restart php8.4-fpm
 ```
 
 ### Logs Útiles para Debugging
@@ -2770,8 +2753,8 @@ Estamos siempre buscando:
 
 ---
 
-**Última actualización:** 5 de Marzo 2026
+**Última actualización:** 28 de Marzo 2026
 
-**Versión:** 2.8.0
+**Versión:** 4.1.0
 
 **Estado:** ✅ Producción-Ready (Recomendado)
