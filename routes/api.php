@@ -77,5 +77,8 @@ require __DIR__ . '/api/catalogos.php';
 // Configuraciones del sistema
 require __DIR__ . '/api/configuracion.php';
 
+// Webhooks
+require __DIR__ . '/api/webhooks.php';
+
 // Inteligencia Artificial
 require __DIR__ . '/api/ai.php';

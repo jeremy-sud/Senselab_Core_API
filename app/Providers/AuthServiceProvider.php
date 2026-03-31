@@ -61,6 +61,7 @@ use App\Models\TipoImpuesto;
 use App\Models\TiqueteDetalle;
 use App\Models\UnidadMedida;
 use App\Models\UrlShortener;
+use App\Models\Webhook;
 use App\Models\ZonaGeografica;
 use App\Models\InventarioProducto;
 
@@ -120,6 +121,7 @@ use App\Policies\TipoImpuestoPolicy;
 use App\Policies\TiqueteDetallePolicy;
 use App\Policies\UnidadMedidaPolicy;
 use App\Policies\UrlShortenerPolicy;
+use App\Policies\WebhookPolicy;
 use App\Policies\ZonaGeograficaPolicy;
 use App\Policies\InventarioPolicy;
 
@@ -213,6 +215,9 @@ class AuthServiceProvider extends ServiceProvider
         HorarioRuta::class => HorarioRutaPolicy::class,
         TiqueteDetalle::class => TiqueteDetallePolicy::class,
         ZonaGeografica::class => ZonaGeograficaPolicy::class,
+
+        // Webhooks
+        Webhook::class => WebhookPolicy::class,
     ];
 
     /**
