@@ -36,6 +36,19 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureRateLimiting();
+        $this->registerWebhookEvents();
+    }
+
+    /**
+     * Register webhook event listeners.
+     * FASE 20: Event-driven webhook dispatching.
+     */
+    protected function registerWebhookEvents(): void
+    {
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\WebhookEvent::class,
+            \App\Listeners\DispatchWebhookListener::class,
+        );
     }
 
     /**

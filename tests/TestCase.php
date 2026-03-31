@@ -540,6 +540,11 @@ abstract class TestCase extends BaseTestCase
             ['nombre' => 'Etiquetas Store', 'slug' => 'etiquetas.store', 'modulo' => 'Sistema'],
             ['nombre' => 'Etiquetas Update', 'slug' => 'etiquetas.update', 'modulo' => 'Sistema'],
             ['nombre' => 'Etiquetas Destroy', 'slug' => 'etiquetas.destroy', 'modulo' => 'Sistema'],
+            // Webhooks (Policy: BasePolicy $permission='webhooks')
+            ['nombre' => 'Ver Webhooks', 'slug' => 'ver-webhooks', 'modulo' => 'Sistema'],
+            ['nombre' => 'Crear Webhooks', 'slug' => 'crear-webhooks', 'modulo' => 'Sistema'],
+            ['nombre' => 'Editar Webhooks', 'slug' => 'editar-webhooks', 'modulo' => 'Sistema'],
+            ['nombre' => 'Eliminar Webhooks', 'slug' => 'eliminar-webhooks', 'modulo' => 'Sistema'],
         ];
 
         foreach ($permisos as $permiso) {
