@@ -38,6 +38,7 @@
 
 ## 📋 Tabla de Contenidos
 
+- [📖 Curso Completo y Glosario](#-curso-completo-y-glosario)
 - [Acerca del Proyecto](#-acerca-del-proyecto)
 - [Características Principales](#-características-principales)
 - [Stack Tecnológico](#-stack-tecnológico)
@@ -66,7 +67,18 @@
 - [Soporte y Contacto](#-soporte-y-contacto)
 - [Licencia](#-licencia)
 
-## 🚀 Acerca del Proyecto
+## � Curso Completo y Glosario
+
+> **¿Nuevo en el proyecto?** Estos dos documentos te llevarán de cero a experto en la API completa.
+
+| Documento | Descripción |
+|-----------|-------------|
+| [📘 Curso Completo: De Cero a Experto](docs/curso_completo_ursol_cast_api.md) | Curso autodidacta integral — arquitectura, módulos, seguridad, testing, despliegue, IA, facturación electrónica y roadmap |
+| [📗 Glosario Completo de Terminología](docs/GLOSARIO_COMPLETO_URSOL_CAST_API.md) | Referencia exhaustiva de toda la terminología: modelos, servicios, DTOs, traits, eventos, jobs, observers, config y más |
+
+---
+
+## �🚀 Acerca del Proyecto
 
 **Ursol CAST API** es un **sistema ERP empresarial completo** desarrollado por **Sistemas Ursol S.A.** con Laravel 12 y tecnologías modernas, diseñado específicamente para empresas costarricenses que requieren soluciones tecnológicas robustas, escalables y seguras.
 

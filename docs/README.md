@@ -27,6 +27,13 @@ docs/
 | [CHANGELOG.md](../CHANGELOG.md) | Historial de cambios |
 | [SECURITY.md](../SECURITY.md) | Políticas de seguridad |
 
+## 📘 Curso y Glosario
+
+| Archivo | Descripción |
+|---------|-------------|
+| [Curso Completo: De Cero a Experto](curso_completo_ursol_cast_api.md) | Curso autodidacta integral — arquitectura, módulos, seguridad, testing, despliegue, IA, facturación electrónica y roadmap |
+| [Glosario Completo de Terminología](GLOSARIO_COMPLETO_URSOL_CAST_API.md) | Referencia exhaustiva de toda la terminología: modelos, servicios, DTOs, traits, eventos, jobs, observers, config y más |
+
 ## 📄 Documentos de Referencia Activa (este directorio)
 
 | Archivo | Descripción |
