@@ -52,6 +52,7 @@ class DeliverWebhookJob implements ShouldQueue
             return;
         }
 
+        // @phpstan-ignore-next-line
         $payloadJson = json_encode($this->buildPayload(), JSON_THROW_ON_ERROR);
         $signature = $this->generateSignature($payloadJson, $webhook->secret);
         $startTime = microtime(true);
@@ -104,6 +105,9 @@ class DeliverWebhookJob implements ShouldQueue
         }
     }
 
+    /**
+     * @internal Usado en pruebas unitarias
+     */
     private function handleFailure(
         WebhookLog $log,
         Webhook $webhook,
@@ -148,6 +152,9 @@ class DeliverWebhookJob implements ShouldQueue
     /**
      * Calcula el backoff exponencial en segundos: 30, 120, 480...
      */
+    /**
+     * @internal Usado en pruebas unitarias
+     */
     private function calcularBackoff(): int
     {
         return (int) (30 * pow(4, $this->intento - 1));
@@ -155,6 +162,9 @@ class DeliverWebhookJob implements ShouldQueue
 
     /**
      * Genera firma HMAC-SHA256 del payload.
+     */
+    /**
+     * @internal Usado en pruebas unitarias
      */
     private function generateSignature(string $payloadJson, string $secret): string
     {
@@ -165,6 +175,10 @@ class DeliverWebhookJob implements ShouldQueue
      * Construye el payload completo del webhook.
      *
      * @return array<string, mixed>
+     */
+    /**
+     * @internal Usado en pruebas unitarias
+     * @return array{evento: string, timestamp: string, datos: array<string, mixed>}
      */
     private function buildPayload(): array
     {

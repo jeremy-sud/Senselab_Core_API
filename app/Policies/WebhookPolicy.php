@@ -12,10 +12,11 @@ class WebhookPolicy extends BasePolicy
     /**
      * Verificar que el recurso pertenece a la misma empresa.
      */
-    public function view(Usuario $user, Webhook $webhook): bool
+    public function view(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
+        /** @var Webhook $model */
         return $this->hasPermission($user, 'ver')
-            && $this->ownsResource($user, $webhook);
+            && $this->ownsResource($user, $model);
     }
 
     public function create(Usuario $user): bool
@@ -23,15 +24,17 @@ class WebhookPolicy extends BasePolicy
         return $this->hasPermission($user, 'crear');
     }
 
-    public function update(Usuario $user, Webhook $webhook): bool
+    public function update(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
+        /** @var Webhook $model */
         return $this->hasPermission($user, 'editar')
-            && $this->ownsResource($user, $webhook);
+            && $this->ownsResource($user, $model);
     }
 
-    public function delete(Usuario $user, Webhook $webhook): bool
+    public function delete(Usuario $user, \Illuminate\Database\Eloquent\Model $model): bool
     {
+        /** @var Webhook $model */
         return $this->hasPermission($user, 'eliminar')
-            && $this->ownsResource($user, $webhook);
+            && $this->ownsResource($user, $model);
     }
 }
