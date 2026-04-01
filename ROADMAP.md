@@ -5,7 +5,6 @@
 **Última auditoría técnica:** 24 de marzo 2026 (puntuación global: 8.9/10)  
 **Versión actual:** v4.1.0 (FASE 19.7 completada)
 **Última FASE completada:** FASE 19.7 — PHPStan 0 errores + DTO 65% + Deuda Técnica Limpia
-
 ---
 
 ## Estado Verificado del Proyecto (conteos reales del código)
