@@ -80,5 +80,8 @@ require __DIR__ . '/api/configuracion.php';
 // Webhooks
 require __DIR__ . '/api/webhooks.php';
 
+// Reportes y Dashboard
+require __DIR__ . '/api/reporting.php';
+
 // Inteligencia Artificial
 require __DIR__ . '/api/ai.php';

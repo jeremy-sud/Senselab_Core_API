@@ -62,7 +62,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/./pcre',
             'aliases' => array(),
-            'dev_requirement' => true,
+            'dev_requirement' => false,
         ),
         'composer/semver' => array(
             'pretty_version' => '3.4.4',
@@ -724,6 +724,15 @@
             'aliases' => array(),
             'dev_requirement' => true,
         ),
+        'maennchen/zipstream-php' => array(
+            'pretty_version' => '3.2.1',
+            'version' => '3.2.1.0',
+            'reference' => '682f1098a8fddbaf43edac2306a691c7ad508ec5',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../maennchen/zipstream-php',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'marc-mabe/php-enum' => array(
             'pretty_version' => 'v4.7.2',
             'version' => '4.7.2.0',
@@ -732,6 +741,24 @@
             'install_path' => __DIR__ . '/../marc-mabe/php-enum',
             'aliases' => array(),
             'dev_requirement' => true,
+        ),
+        'markbaker/complex' => array(
+            'pretty_version' => '3.0.2',
+            'version' => '3.0.2.0',
+            'reference' => '95c56caa1cf5c766ad6d65b6344b807c1e8405b9',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../markbaker/complex',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'markbaker/matrix' => array(
+            'pretty_version' => '3.0.1',
+            'version' => '3.0.1.0',
+            'reference' => '728434227fe21be27ff6d86621a1b13107a2562c',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../markbaker/matrix',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
         'masterminds/html5' => array(
             'pretty_version' => '2.10.0',
@@ -888,6 +915,15 @@
             'provided' => array(
                 0 => '1.0',
             ),
+        ),
+        'phpoffice/phpspreadsheet' => array(
+            'pretty_version' => '5.5.0',
+            'version' => '5.5.0.0',
+            'reference' => 'eecd31b885a1c8192f12738130f85bbc6e8906ba',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../phpoffice/phpspreadsheet',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
         'phpoption/phpoption' => array(
             'pretty_version' => '1.9.4',

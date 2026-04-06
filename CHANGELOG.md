@@ -5,6 +5,22 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [v4.2.0] — 2026-04-06 — FASE 20: Webhooks + Event-Driven
+
+### Agregado
+- **Sistema de webhooks completo** — Modelo `Webhook` + `WebhookLog`, servicio CRUD con `WebhookService` (extiende BaseService), `WebhookDispatcherService` para despacho multi-tenant, cola dedicada `webhooks`.
+- **5 eventos de dominio conectados** — `VentaCreadaEvent` (VentaService), `ClienteCreadoEvent` (ClienteService), `PagoRecibidoEvent` (PagoService), `FacturaEmitidaEvent` (ComprobanteElectronicoService), `InventarioBajoEvent` (SalidaInventarioService). Cada evento dispara webhooks suscritos automáticamente.
+- **Entrega asíncrona con HMAC-SHA256** — `DeliverWebhookJob` con firma `sha256=`, backoff exponencial (30×4^n), timeout configurable (5-60s), máximo reintentos configurable (1-10).
+- **Admin endpoints** — CRUD `/api/webhooks`, logs de entrega, probar conectividad, regenerar secret, listar eventos disponibles. Swagger annotations completas.
+- **DTOs** — `WebhookCreateDTO`, `WebhookUpdateDTO` con `fromRequest()` y `toArray()`.
+- **Permisos RBAC** — `ver-webhooks`, `crear-webhooks`, `editar-webhooks`, `eliminar-webhooks` en `PermisosSeeder` (18 módulos × 4 = 72 permisos).
+- **Guía de integración** — `docs/guides/webhook-integration.md`: formato de payload por evento, verificación HMAC en PHP/Node.js/Python, política de reintentos, buenas prácticas.
+- **Tests** — 16 tests (9 Feature + 7 Unit): CRUD, validaciones, multi-tenancy, HMAC, dispatcher, delivery job.
+
+### Corregido
+- **Test HMAC bug** — `DeliverWebhookJobTest::test_firma_hmac_sha256_correcta` comparaba sin prefijo `sha256=`.
+- **WebhookTest** — `createUsuario()` con parámetros incorrectos, seed order invertido, email duplicado de empresa.
+
 ## [v4.1.0] — 2026-03-28 — FASE 19.7: PHPStan 0 errores + DTO 65% + Deuda Técnica Limpia
 
 ### Corregido

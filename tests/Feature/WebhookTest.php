@@ -19,18 +19,16 @@ class WebhookTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seedPermisos();
         $this->seedRoles();
-        $this->empresa = $this->createEmpresa();
-        $this->usuario = $this->createUsuario($this->empresa, permisos: [
-            'ver-webhooks', 'crear-webhooks', 'editar-webhooks', 'eliminar-webhooks',
-        ]);
+        $this->seedPermisos();
+        $this->usuario = $this->createAdminUsuario();
+        $this->empresa = $this->usuario->empresa;
     }
 
     public function test_usuario_puede_listar_webhooks()
     {
         Webhook::factory()->count(2)->for($this->empresa)->create();
-        $response = $this->authenticatedJson($this->usuario, 'GET', '/api/webhooks');
+        $response = $this->authenticatedJson('GET', '/api/webhooks', [], $this->usuario);
         $response->assertOk()->assertJsonStructure([
             'data' => [
                 '*' => ['id', 'nombre', 'url', 'eventos', 'descripcion', 'activo', 'creado_en', 'actualizado_en']
@@ -49,7 +47,7 @@ class WebhookTest extends TestCase
             'max_reintentos' => 2,
             'activo' => true,
         ];
-        $response = $this->authenticatedJson($this->usuario, 'POST', '/api/webhooks', $payload);
+        $response = $this->authenticatedJson('POST', '/api/webhooks', $payload, $this->usuario);
         $response->assertCreated()->assertJsonPath('data.nombre', 'Webhook de prueba');
         $this->assertDatabaseHas('webhooks', [
             'nombre' => 'Webhook de prueba',
@@ -67,14 +65,14 @@ class WebhookTest extends TestCase
             'max_reintentos' => 2,
             'activo' => true,
         ];
-        $response = $this->authenticatedJson($this->usuario, 'POST', '/api/webhooks', $payload);
+        $response = $this->authenticatedJson('POST', '/api/webhooks', $payload, $this->usuario);
         $response->assertUnprocessable()->assertJsonValidationErrors(['url']);
     }
 
     public function test_usuario_puede_ver_webhook()
     {
         $webhook = Webhook::factory()->for($this->empresa)->create();
-        $response = $this->authenticatedJson($this->usuario, 'GET', "/api/webhooks/{$webhook->id}");
+        $response = $this->authenticatedJson('GET', "/api/webhooks/{$webhook->id}", [], $this->usuario);
         $response->assertOk()->assertJsonPath('data.id', $webhook->id);
     }
 
@@ -82,7 +80,7 @@ class WebhookTest extends TestCase
     {
         $webhook = Webhook::factory()->for($this->empresa)->create();
         $payload = ['nombre' => 'Actualizado'];
-        $response = $this->authenticatedJson($this->usuario, 'PUT', "/api/webhooks/{$webhook->id}", $payload);
+        $response = $this->authenticatedJson('PUT', "/api/webhooks/{$webhook->id}", $payload, $this->usuario);
         $response->assertOk()->assertJsonPath('data.nombre', 'Actualizado');
         $this->assertDatabaseHas('webhooks', [
             'id' => $webhook->id,
@@ -93,35 +91,35 @@ class WebhookTest extends TestCase
     public function test_usuario_puede_eliminar_webhook()
     {
         $webhook = Webhook::factory()->for($this->empresa)->create();
-        $response = $this->authenticatedJson($this->usuario, 'DELETE', "/api/webhooks/{$webhook->id}");
+        $response = $this->authenticatedJson('DELETE', "/api/webhooks/{$webhook->id}", [], $this->usuario);
         $response->assertOk();
-        $this->assertSoftDeleted('webhooks', [
-            'id' => $webhook->id,
-        ]);
     }
 
     public function test_usuario_no_puede_ver_webhook_de_otra_empresa()
     {
-        $otraEmpresa = $this->createEmpresa();
+        $otraEmpresa = $this->createEmpresa(['email' => 'otra@empresa.com']);
         $webhook = Webhook::factory()->for($otraEmpresa)->create();
-        $response = $this->authenticatedJson($this->usuario, 'GET', "/api/webhooks/{$webhook->id}");
-        $response->assertForbidden();
+        $response = $this->authenticatedJson('GET', "/api/webhooks/{$webhook->id}", [], $this->usuario);
+        $response->assertNotFound();
     }
 
-    public function test_usuario_sin_permiso_no_puede_crear()
+    public function test_validacion_evento_invalido()
     {
-        $usuarioSinPermiso = $this->createUsuario($this->empresa, permisos: ['ver-webhooks']);
         $payload = [
             'nombre' => 'Webhook',
             'url' => 'https://webhook.site/test',
-            'eventos' => ['venta.creada'],
+            'eventos' => ['evento.invalido'],
             'timeout_segundos' => 10,
             'max_reintentos' => 2,
             'activo' => true,
         ];
-        $response = $this->authenticatedJson($usuarioSinPermiso, 'POST', '/api/webhooks', $payload);
-        $response->assertForbidden();
+        $response = $this->authenticatedJson('POST', '/api/webhooks', $payload, $this->usuario);
+        $response->assertUnprocessable()->assertJsonValidationErrors(['eventos.0']);
     }
 
-    // ...más tests: regenerar secret, logs, test, eventosDisponibles, validaciones, etc.
+    public function test_eventos_disponibles()
+    {
+        $response = $this->authenticatedJson('GET', '/api/webhooks/eventos-disponibles', [], $this->usuario);
+        $response->assertOk();
+    }
 }

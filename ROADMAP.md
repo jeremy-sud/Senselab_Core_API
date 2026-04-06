@@ -3,8 +3,8 @@
 **Fecha de creación:** 6 de marzo 2026  
 **Basado en:** Auditoría profunda del código fuente (no solo documentación)  
 **Última auditoría técnica:** 24 de marzo 2026 (puntuación global: 8.9/10)  
-**Versión actual:** v4.1.0 (FASE 19.7 completada)
-**Última FASE completada:** FASE 19.7 — PHPStan 0 errores + DTO 65% + Deuda Técnica Limpia
+**Versión actual:** v4.2.0 (FASE 20 completada)
+**Última FASE completada:** FASE 20 — Webhooks + Event-Driven
 ---
 
 ## Estado Verificado del Proyecto (conteos reales del código)
@@ -100,7 +100,7 @@ MEDIO (madurez arquitectónica):
 ├── FASE 19.7: PHPStan + DTOs + Deuda técnica   ✅ COMPLETADA → v4.1.0
 │
 MEDIO-BAJO (features avanzados):
-├── FASE 20: Webhooks + Event-Driven             [25-35h]  → v4.2.0
+├── FASE 20: Webhooks + Event-Driven             ✅ COMPLETADA → v4.2.0
 ├── FASE 21: Reporting Engine + Dashboard API    [30-40h]  → v4.3.0
 │
 BAJO (escalabilidad futura):
@@ -382,25 +382,55 @@ TOTAL ESTIMADO: 268-415 horas
 
 ---
 
-### FASE 20 — Webhooks + Event-Driven (v4.2.0)
+### ~~FASE 20 — Webhooks + Event-Driven (v4.2.0)~~ ✅ COMPLETADA
 
 **Prioridad:** MEDIA-BAJA  
 **Estimación:** 25-35h  
+**Completada:** 6 de abril 2026  
 **Objetivo:** Permitir integraciones externas vía webhooks.
 
-| # | Tarea | Detalle |
-|---|---|---|
-| 20.1 | Webhook system | Modelo `Webhook` + migración. Campos: `url`, `eventos[]`, `secret`, `activo`, `empresa_id`. |
-| 20.2 | Event dispatchers | Laravel Events para: `venta.creada`, `factura.emitida`, `pago.recibido`, `inventario.bajo`, `cliente.creado`. |
-| 20.3 | Webhook delivery | Job asíncrono con retry (3 intentos, backoff exponencial), firma HMAC-SHA256, timeout configurable. |
-| 20.4 | Webhook logs | Modelo `WebhookLog`: status, response_code, latencia, payload_size, timestamps. |
-| 20.5 | Admin endpoints | CRUD para gestionar webhooks por tenant: `POST /api/webhooks`, `GET /api/webhooks`, `DELETE /api/webhooks/{id}`. |
-| 20.6 | Documentación | Guía de integración para consumidores externos de webhooks. |
+| # | Tarea | Detalle | Estado |
+|---|---|---|---|
+| 20.1 | Webhook system | Modelo `Webhook` + migración. Campos: `url`, `eventos[]`, `secret`, `activo`, `empresa_id`. | ✅ |
+| 20.2 | Event dispatchers | Laravel Events: `VentaCreadaEvent`, `FacturaEmitidaEvent`, `PagoRecibidoEvent`, `InventarioBajoEvent`, `ClienteCreadoEvent`. Conectados en VentaService, ComprobanteElectronicoService, PagoService, SalidaInventarioService, ClienteService. | ✅ |
+| 20.3 | Webhook delivery | `DeliverWebhookJob` asíncrono con retry (backoff exponencial 30×4^n), firma HMAC-SHA256 (`sha256=` prefix), timeout configurable, cola `webhooks`. | ✅ |
+| 20.4 | Webhook logs | Modelo `WebhookLog`: estado, codigo_respuesta, latencia_ms, intento, payload_size. | ✅ |
+| 20.5 | Admin endpoints | CRUD completo: `POST/GET/PUT/DELETE /api/webhooks`, logs, test, regenerar-secret, eventos-disponibles. Swagger annotations. | ✅ |
+| 20.6 | Documentación | `docs/guides/webhook-integration.md`: payload por evento, verificación HMAC (PHP/Node/Python), política de reintentos, buenas prácticas. | ✅ |
+
+**Archivos creados/modificados:**
+- `app/Models/Webhook.php`, `app/Models/WebhookLog.php` — Modelos
+- `app/Events/WebhookEvent.php` + 5 eventos concretos — Event-driven
+- `app/Listeners/DispatchWebhookListener.php` — Listener centralizado
+- `app/Services/WebhookService.php`, `WebhookDispatcherService.php` — Service Layer
+- `app/Jobs/DeliverWebhookJob.php` — Entrega asíncrona con retry
+- `app/Http/Controllers/API/WebhookController.php` — CRUD + acciones extra
+- `app/DTOs/API/WebhookCreateDTO.php`, `WebhookUpdateDTO.php` — DTOs
+- `app/Policies/WebhookPolicy.php` — RBAC
+- `routes/api/webhooks.php` — Rutas
+- `docs/guides/webhook-integration.md` — Guía de integración
+
+**Eventos conectados en servicios:**
+- `VentaService::crear()` → `VentaCreadaEvent`
+- `ClienteService::crear()` → `ClienteCreadoEvent`
+- `PagoService::crear()` → `PagoRecibidoEvent`
+- `ComprobanteElectronicoService::cambiarEstado()` → `FacturaEmitidaEvent` (al pasar a aceptado/emitido/enviado)
+- `SalidaInventarioService::procesar()` → `InventarioBajoEvent` (cuando stock ≤ stock_minimo)
+
+**Bugs corregidos:**
+- `DeliverWebhookJobTest::test_firma_hmac_sha256_correcta` — assertion sin prefijo `sha256=`
+- `WebhookTest` — `createUsuario()` llamado con parámetros incorrectos, seed order invertido, email duplicado de empresa
+- `WebhookServiceTest` — email duplicado al crear empresa de prueba
+
+**Permisos:** `ver-webhooks`, `crear-webhooks`, `editar-webhooks`, `eliminar-webhooks` agregados a `PermisosSeeder` (18 módulos × 4 = 72 permisos)
 
 **Criterio de aceptación:**
-- Webhooks configurables por tenant
-- Entrega confirmada con retry automático
-- Logs de entrega consultables vía API
+- ✅ Webhooks configurables por tenant
+- ✅ Entrega confirmada con retry automático (backoff exponencial)
+- ✅ Logs de entrega consultables vía API
+- ✅ 5 eventos despachados desde lógica de negocio
+- ✅ 16 tests passing (9 Feature + 7 Unit)
+- ✅ PHPStan Level 8: 0 errores
 
 ---
 

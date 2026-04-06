@@ -545,6 +545,11 @@ abstract class TestCase extends BaseTestCase
             ['nombre' => 'Crear Webhooks', 'slug' => 'crear-webhooks', 'modulo' => 'Sistema'],
             ['nombre' => 'Editar Webhooks', 'slug' => 'editar-webhooks', 'modulo' => 'Sistema'],
             ['nombre' => 'Eliminar Webhooks', 'slug' => 'eliminar-webhooks', 'modulo' => 'Sistema'],
+            // Reportes (FASE 21 — Reporting Engine)
+            ['nombre' => 'Ver Reportes', 'slug' => 'ver-reportes', 'modulo' => 'Reportes'],
+            ['nombre' => 'Crear Reportes', 'slug' => 'crear-reportes', 'modulo' => 'Reportes'],
+            ['nombre' => 'Editar Reportes', 'slug' => 'editar-reportes', 'modulo' => 'Reportes'],
+            ['nombre' => 'Eliminar Reportes', 'slug' => 'eliminar-reportes', 'modulo' => 'Reportes'],
         ];
 
         foreach ($permisos as $permiso) {
