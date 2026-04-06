@@ -4,6 +4,7 @@ use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 use App\Jobs\CleanCacheJob;
+use App\Jobs\DispatchScheduledReportsJob;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
@@ -55,3 +56,14 @@ Schedule::command('permission:cache warmup')
     ->everySixHours()
     ->name('permission:warmup')
     ->withoutOverlapping();
+
+// ============================================================================
+// FASE 21 - Reportes Programados
+// ============================================================================
+
+// Despachar reportes programados cada hora
+Schedule::job(new DispatchScheduledReportsJob())
+    ->hourly()
+    ->name('reports:dispatch-scheduled')
+    ->withoutOverlapping()
+    ->onOneServer();

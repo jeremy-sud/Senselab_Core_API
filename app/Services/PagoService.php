@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\PagoRecibidoEvent;
 use App\Exceptions\BusinessException;
 use App\Models\CuentaPorCobrar;
 use App\Models\CuentaPorPagar;
@@ -79,7 +80,18 @@ class PagoService extends BaseService
                 $this->actualizarCuentaPorCobrar($pago->cuenta_por_cobrar_id, (float) $pago->monto);
             }
 
-            return $pago->load($this->getRelationsForDetail());
+            $pago->load($this->getRelationsForDetail());
+
+            PagoRecibidoEvent::dispatch($pago->empresa_id, [
+                'pago_id' => $pago->id,
+                'monto' => $pago->monto,
+                'estado' => $pago->estado,
+                'forma_pago_id' => $pago->forma_pago_id,
+                'cliente_id' => $pago->cliente_id,
+                'proveedor_id' => $pago->proveedor_id,
+            ]);
+
+            return $pago;
         });
     }
 

@@ -31,6 +31,7 @@ class PermisosSeeder extends Seeder
             'facturacion' => 'Facturación Electrónica',
             'reportes' => 'Reportes',
             'configuracion' => 'Configuración',
+            'webhooks' => 'Webhooks',
         ];
 
         $acciones = ['ver', 'crear', 'editar', 'eliminar'];

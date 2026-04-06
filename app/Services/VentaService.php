@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DTOs\API\VentaCreateDTO;
+use App\Events\VentaCreadaEvent;
 use App\Exceptions\VentaException;
 use App\Models\Cliente;
 use App\Models\Sucursal;
@@ -83,8 +84,18 @@ class VentaService
             ]);
             
             DB::commit();
-            
-            return $venta->load(['cliente', 'detalles.producto', 'empresa', 'sucursal', 'usuario']);
+
+            $venta->load(['cliente', 'detalles.producto', 'empresa', 'sucursal', 'usuario']);
+
+            VentaCreadaEvent::dispatch($venta->empresa_id, [
+                'venta_id' => $venta->id,
+                'numero_comprobante' => $venta->numero_comprobante,
+                'monto_total' => $venta->monto_total_venta,
+                'cliente_id' => $venta->cliente_id,
+                'estado' => $venta->estado_venta,
+            ]);
+
+            return $venta;
             
         } catch (\Throwable $e) {
             DB::rollBack();

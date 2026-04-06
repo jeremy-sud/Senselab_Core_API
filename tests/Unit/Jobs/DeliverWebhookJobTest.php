@@ -37,7 +37,7 @@ class DeliverWebhookJobTest extends TestCase
         $method->setAccessible(true);
         $payloadJson = json_encode($payload);
         $signature = $method->invoke($job, $payloadJson, $this->webhook->secret);
-        $this->assertEquals(hash_hmac('sha256', $payloadJson, $this->webhook->secret), $signature);
+        $this->assertEquals('sha256=' . hash_hmac('sha256', $payloadJson, $this->webhook->secret), $signature);
     }
 
     public function test_no_envia_si_webhook_inactivo()

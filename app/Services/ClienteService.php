@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\ClienteCreadoEvent;
 use App\Models\Cliente;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -59,6 +60,14 @@ class ClienteService
     {
         $cliente = Cliente::create($data);
         $cliente->load('empresa');
+
+        ClienteCreadoEvent::dispatch($cliente->empresa_id, [
+            'cliente_id' => $cliente->id,
+            'nombre' => $cliente->nombre,
+            'numero_identificacion' => $cliente->numero_identificacion,
+            'email' => $cliente->email,
+        ]);
+
         return $cliente;
     }
 

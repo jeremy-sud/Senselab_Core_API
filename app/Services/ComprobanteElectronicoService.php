@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DTOs\API\ComprobanteElectronicoCreateDTO;
+use App\Events\FacturaEmitidaEvent;
 use App\Models\ComprobanteElectronicoFe;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -51,9 +52,23 @@ class ComprobanteElectronicoService
      */
     public function cambiarEstado(ComprobanteElectronicoFe $comprobante, string $nuevoEstado): ComprobanteElectronicoFe
     {
+        $estadoAnterior = $comprobante->estado;
         $comprobante->estado = $nuevoEstado;
         $comprobante->save();
-        return $comprobante->fresh() ?? $comprobante;
+        $comprobante = $comprobante->fresh() ?? $comprobante;
+
+        $estadosEmision = ['aceptado', 'emitido', 'enviado'];
+        if (in_array($nuevoEstado, $estadosEmision, true) && !in_array($estadoAnterior, $estadosEmision, true)) {
+            FacturaEmitidaEvent::dispatch($comprobante->empresa_id, [
+                'comprobante_id' => $comprobante->id,
+                'clave_numerica' => $comprobante->clave_numerica ?? null,
+                'tipo_comprobante' => $comprobante->tipo_comprobante ?? null,
+                'estado' => $nuevoEstado,
+                'venta_id' => $comprobante->venta_id ?? null,
+            ]);
+        }
+
+        return $comprobante;
     }
 
     /**

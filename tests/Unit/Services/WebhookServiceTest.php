@@ -41,7 +41,7 @@ class WebhookServiceTest extends TestCase
     public function test_listar_filtra_por_empresa()
     {
         Webhook::factory()->count(2)->for($this->empresa)->create();
-        $otraEmpresa = $this->createEmpresa();
+        $otraEmpresa = $this->createEmpresa(['email' => 'otra' . rand(1000, 9999) . '@empresa.com']);
         Webhook::factory()->for($otraEmpresa)->create();
         $result = $this->service->listar(['empresa_id' => $this->empresa->id]);
         $this->assertCount(2, $result);

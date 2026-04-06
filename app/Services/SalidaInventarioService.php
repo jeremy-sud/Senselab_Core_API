@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Events\InventarioBajoEvent;
 use App\Exceptions\InventarioException;
+use App\Models\Producto;
 use App\Models\SalidaInventario;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
@@ -126,6 +128,8 @@ class SalidaInventarioService
         }
 
         return DB::transaction(function () use ($salida) {
+            $productosBajoStock = [];
+
             foreach ($salida->detalles as $detalle) {
                 $inventario = DB::table('inventarios')
                     ->where('producto_id', $detalle->producto_id)
@@ -139,10 +143,29 @@ class SalidaInventarioService
                 DB::table('inventarios')
                     ->where('id', $inventario->id)
                     ->decrement('cantidad_actual', (float) $detalle->cantidad);
+
+                $nuevaCantidad = $inventario->cantidad_actual - $detalle->cantidad;
+                $producto = Producto::find($detalle->producto_id);
+                if ($producto && $producto->stock_minimo > 0 && $nuevaCantidad <= $producto->stock_minimo) {
+                    $productosBajoStock[] = [
+                        'producto_id' => $producto->id,
+                        'nombre' => $producto->nombre,
+                        'codigo' => $producto->codigo,
+                        'stock_actual' => $nuevaCantidad,
+                        'stock_minimo' => $producto->stock_minimo,
+                        'almacen_id' => $salida->almacen_id,
+                    ];
+                }
             }
 
             $salida->update(['estado' => 'Procesada']);
-            return $salida->fresh(['almacen', 'cliente', 'detalles.producto']) ?? $salida;
+            $resultado = $salida->fresh(['almacen', 'cliente', 'detalles.producto']) ?? $salida;
+
+            foreach ($productosBajoStock as $productoBajo) {
+                InventarioBajoEvent::dispatch($salida->empresa_id, $productoBajo);
+            }
+
+            return $resultado;
         });
     }
 }
