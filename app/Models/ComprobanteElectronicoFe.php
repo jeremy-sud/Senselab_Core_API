@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 /** @use HasFactory<\Database\Factories\ComprobanteElectronicoFeFactory> */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -40,27 +41,44 @@ class ComprobanteElectronicoFe extends Model
         'receptor_numero_identificacion',
         'receptor_nombre',
         'receptor_email',
+        'receptor_provincia',
+        'receptor_canton',
+        'receptor_distrito',
+        'receptor_barrio',
+        'receptor_otras_senas',
+        'receptor_otras_senas_extranjero',
+        'receptor_nombre_comercial',
+        'receptor_telefono_codigo_pais',
+        'receptor_telefono_numero',
+        'codigo_actividad_receptor',
         'moneda',
         'tipo_cambio',
         'total_servicios_gravados',
         'total_servicios_exentos',
         'total_servicios_exonerados',
+        'total_servicios_no_sujeto',
         'total_mercancias_gravadas',
         'total_mercancias_exentas',
         'total_mercancias_exoneradas',
+        'total_mercancias_no_sujeta',
         'total_gravado',
         'total_exento',
         'total_exonerado',
+        'total_no_sujeto',
         'total_venta',
         'total_descuentos',
         'total_venta_neta',
         'total_impuesto',
+        'total_imp_asum_emisor_fabrica',
         'total_iva_devuelto',
         'total_otros_cargos',
         'total_comprobante',
         'condicion_venta',
+        'condicion_venta_otros',
         'medio_pago',
         'plazo_credito',
+        'tipo_transaccion',
+        'emisor_otras_senas_extranjero',
         'xml_original',
         'xml_firmado',
         'estado',
@@ -87,16 +105,20 @@ class ComprobanteElectronicoFe extends Model
         'total_servicios_gravados' => 'decimal:5',
         'total_servicios_exentos' => 'decimal:5',
         'total_servicios_exonerados' => 'decimal:5',
+        'total_servicios_no_sujeto' => 'decimal:5',
         'total_mercancias_gravadas' => 'decimal:5',
         'total_mercancias_exentas' => 'decimal:5',
         'total_mercancias_exoneradas' => 'decimal:5',
+        'total_mercancias_no_sujeta' => 'decimal:5',
         'total_gravado' => 'decimal:5',
         'total_exento' => 'decimal:5',
         'total_exonerado' => 'decimal:5',
+        'total_no_sujeto' => 'decimal:5',
         'total_venta' => 'decimal:5',
         'total_descuentos' => 'decimal:5',
         'total_venta_neta' => 'decimal:5',
         'total_impuesto' => 'decimal:5',
+        'total_imp_asum_emisor_fabrica' => 'decimal:5',
         'total_iva_devuelto' => 'decimal:5',
         'total_otros_cargos' => 'decimal:5',
         'total_comprobante' => 'decimal:5',
@@ -133,6 +155,30 @@ class ComprobanteElectronicoFe extends Model
     public function lineas(): HasMany
     {
         return $this->lineasDetalle();
+    }
+
+    /**
+     * Relación: Tiene muchos medios de pago.
+     */
+    public function mediosPago(): HasMany
+    {
+        return $this->hasMany(FeMedioPago::class, 'comprobante_id');
+    }
+
+    /**
+     * Relación: Tiene muchas referencias.
+     */
+    public function informacionReferencia(): HasMany
+    {
+        return $this->hasMany(FeInformacionReferencia::class, 'comprobante_id');
+    }
+
+    /**
+     * Relación: Tiene muchos otros cargos.
+     */
+    public function otrosCargos(): HasMany
+    {
+        return $this->hasMany(FeOtroCargo::class, 'comprobante_id');
     }
 
     /**
