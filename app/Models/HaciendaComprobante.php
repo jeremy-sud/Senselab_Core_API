@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $comprobante_id
  * @property int $empresa_id
- * @property string $clave Clave de la factura electrónica (29 dígitos)
+ * @property string $clave Clave de la factura electrónica (hasta 50 dígitos, v4.4)
  * @property string $tipo_comprobante Tipo: 01=Factura, 03=NotaCredito, 04=NotaDebito, 05=Tiquete, 07=ComprobanteEgreso
  * @property string $estado Estado actual del comprobante (pending, signed, sent, accepted, rejected, error)
  * @property string|null $xml_contedido XML con firma digital

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -13,6 +14,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class FeLineaImpuesto extends Model
 {
+    /** @use HasFactory<\Database\Factories\FeLineaImpuestoFactory> */
+    use HasFactory;
+
     protected $table = 'fe_linea_impuestos';
 
     protected $fillable = [

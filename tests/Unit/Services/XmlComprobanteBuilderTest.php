@@ -242,7 +242,7 @@ class XmlComprobanteBuilderTest extends TestCase
 
         $this->assertStringContainsString('<Impuesto>', $xml);
         $this->assertStringContainsString('<Codigo>01</Codigo>', $xml);
-        $this->assertStringContainsString('<CodigoTarifa>08</CodigoTarifa>', $xml);
+        $this->assertStringContainsString('<CodigoTarifaIVA>08</CodigoTarifaIVA>', $xml);
         $this->assertStringContainsString('<Tarifa>13.00000</Tarifa>', $xml);
         $this->assertStringContainsString('<Monto>2600.00000</Monto>', $xml);
     }
