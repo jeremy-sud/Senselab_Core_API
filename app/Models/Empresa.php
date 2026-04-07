@@ -29,6 +29,8 @@ class Empresa extends Tenant
         'provincia',
         'canton',
         'distrito',
+        'barrio',
+        'registro_fiscal_8707',
         'telefono',
         'email',
         'subdominio',
