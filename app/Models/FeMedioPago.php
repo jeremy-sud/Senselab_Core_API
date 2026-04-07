@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -12,6 +13,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class FeMedioPago extends Model
 {
+    /** @use HasFactory<\Database\Factories\FeMedioPagoFactory> */
+    use HasFactory;
+
     protected $table = 'fe_medios_pago';
 
     protected $fillable = [

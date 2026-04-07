@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\ComprobanteElectronicoFe;
 use App\Models\FeLineaDetalle;
+use App\Models\FeLineaImpuesto;
+use App\Models\FeLineaDescuento;
+use App\Models\FeMedioPago;
+use App\Models\FeInformacionReferencia;
+use App\Models\FeOtroCargo;
 use App\Http\Requests\StoreComprobanteElectronicoRequest;
 use App\Jobs\Hacienda\EnviarComprobanteJob;
 use App\Services\Hacienda\ClaveNumericaGenerator;
@@ -292,21 +297,26 @@ class ComprobanteElectronicoController extends Controller
                 'consecutivo' => $request->consecutivo,
                 'fecha_emision' => $fechaEmision,
                 'condicion_venta' => $request->condicion_venta,
+                'condicion_venta_otros' => $request->condicion_venta_otros,
                 'plazo_credito' => $request->plazo_credito,
                 'medio_pago' => $request->medio_pago,
                 'situacion' => $request->situacion ?? '1',
+                'codigo_actividad_receptor' => $request->codigo_actividad_receptor,
                 
                 // Receptor
                 'receptor_nombre' => $request->receptor_nombre,
+                'receptor_nombre_comercial' => $request->receptor_nombre_comercial,
                 'receptor_tipo_identificacion' => $request->receptor_tipo_identificacion,
                 'receptor_numero_identificacion' => $request->receptor_numero_identificacion,
                 'receptor_email' => $request->receptor_email,
-                'receptor_telefono' => $request->receptor_telefono,
+                'receptor_telefono_codigo_pais' => $request->receptor_telefono_codigo_pais,
+                'receptor_telefono_numero' => $request->receptor_telefono_numero,
                 'receptor_provincia' => $request->receptor_provincia,
                 'receptor_canton' => $request->receptor_canton,
                 'receptor_distrito' => $request->receptor_distrito,
                 'receptor_barrio' => $request->receptor_barrio,
                 'receptor_otras_senas' => $request->receptor_otras_senas,
+                'receptor_otras_senas_extranjero' => $request->receptor_otras_senas_extranjero,
                 
                 // Moneda
                 'moneda' => $request->moneda ?? $request->codigo_moneda ?? 'CRC',
@@ -335,7 +345,7 @@ class ComprobanteElectronicoController extends Controller
             $totalExento = 0;
 
             foreach ($request->lineas as $linea) {
-                // Procesar impuestos (tomar el primero si es un array)
+                // Procesar impuestos (tomar el primero si es un array para campos legacy)
                 $impuestoCodigo = null;
                 $impuestoCodigoTarifa = null;
                 $impuestoTarifa = 0;
@@ -349,26 +359,84 @@ class ComprobanteElectronicoController extends Controller
                     $impuestoMonto = $primerImpuesto['monto'] ?? null;
                 }
                 
-                FeLineaDetalle::create([
+                $lineaDetalle = FeLineaDetalle::create([
                     'comprobante_id' => $comprobante->id,
                     'numero_linea' => $linea['numero_linea'],
                     'codigo_tipo' => $linea['codigo_tipo'] ?? '04',
-                    'codigo' => $linea['codigo'],
+                    'codigo' => $linea['codigo'] ?? null,
+                    'codigo_cabys' => $linea['codigo_cabys'] ?? null,
+                    'partida_arancelaria' => $linea['partida_arancelaria'] ?? null,
                     'cantidad' => $linea['cantidad'],
                     'unidad_medida' => $linea['unidad_medida'] ?? 'Sp',
+                    'unidad_medida_comercial' => $linea['unidad_medida_comercial'] ?? null,
                     'detalle' => $linea['detalle'],
                     'precio_unitario' => $linea['precio_unitario'],
                     'monto_total' => $linea['monto_total'],
+                    'tipo_transaccion' => $linea['tipo_transaccion'] ?? null,
                     'monto_descuento' => $linea['monto_descuento'] ?? 0,
                     'naturaleza_descuento' => $linea['naturaleza_descuento'] ?? null,
+                    'codigo_descuento' => $linea['codigo_descuento'] ?? null,
+                    'codigo_descuento_otro' => $linea['codigo_descuento_otro'] ?? null,
                     'subtotal' => $linea['subtotal'],
                     'base_imponible' => $linea['base_imponible'] ?? $linea['subtotal'],
                     'monto_total_linea' => $linea['monto_total_linea'],
+                    'numero_vin_serie' => $linea['numero_vin_serie'] ?? null,
+                    'registro_medicamento' => $linea['registro_medicamento'] ?? null,
+                    'forma_farmaceutica' => $linea['forma_farmaceutica'] ?? null,
+                    'iva_cobrado_fabrica' => $linea['iva_cobrado_fabrica'] ?? null,
+                    'impuesto_asumido_emisor_fabrica' => $linea['impuesto_asumido_emisor_fabrica'] ?? null,
+                    'monto_exportacion' => $linea['monto_exportacion'] ?? null,
+                    // Campos legacy de impuesto (primer impuesto)
                     'impuesto_codigo' => $impuestoCodigo,
                     'impuesto_codigo_tarifa' => $impuestoCodigoTarifa,
                     'impuesto_tarifa' => $impuestoTarifa,
                     'impuesto_monto' => $impuestoMonto,
                 ]);
+
+                // Persistir impuestos normalizados (tabla fe_linea_impuestos)
+                if (isset($linea['impuestos']) && is_array($linea['impuestos'])) {
+                    foreach ($linea['impuestos'] as $impuesto) {
+                        FeLineaImpuesto::create([
+                            'linea_detalle_id' => $lineaDetalle->id,
+                            'codigo' => $impuesto['codigo'],
+                            'codigo_impuesto_otro' => $impuesto['codigo_impuesto_otro'] ?? null,
+                            'codigo_tarifa' => $impuesto['codigo_tarifa'] ?? null,
+                            'codigo_tarifa_iva' => $impuesto['codigo_tarifa'] ?? null,
+                            'tarifa' => $impuesto['tarifa'],
+                            'factor_calculo_iva' => $impuesto['factor_calculo_iva'] ?? null,
+                            'monto' => $impuesto['monto'],
+                            'impuesto_asumido_emisor_fabrica' => $impuesto['impuesto_asumido_emisor_fabrica'] ?? null,
+                            'monto_exportacion' => $impuesto['monto_exportacion'] ?? null,
+                            'dato_especifico_codigo' => $impuesto['dato_especifico_codigo'] ?? null,
+                            'dato_especifico_tipo_gravamen' => $impuesto['dato_especifico_tipo_gravamen'] ?? null,
+                            'dato_especifico_unidad_medida' => $impuesto['dato_especifico_unidad_medida'] ?? null,
+                            'dato_especifico_cantidad_base' => $impuesto['dato_especifico_cantidad_base'] ?? null,
+                            'dato_especifico_monto_gravamen' => $impuesto['dato_especifico_monto_gravamen'] ?? null,
+                            'exoneracion_tipo_documento' => $impuesto['exoneracion_tipo_documento'] ?? null,
+                            'exoneracion_tipo_documento_otro' => $impuesto['exoneracion_tipo_documento_otro'] ?? null,
+                            'exoneracion_numero_documento' => $impuesto['exoneracion_numero_documento'] ?? null,
+                            'exoneracion_nombre_institucion' => $impuesto['exoneracion_nombre_institucion'] ?? null,
+                            'exoneracion_nombre_institucion_otros' => $impuesto['exoneracion_nombre_institucion_otros'] ?? null,
+                            'exoneracion_fecha_emision' => $impuesto['exoneracion_fecha_emision'] ?? null,
+                            'exoneracion_porcentaje' => $impuesto['exoneracion_porcentaje_compra'] ?? null,
+                            'exoneracion_monto' => $impuesto['exoneracion_monto_impuesto'] ?? null,
+                        ]);
+                    }
+                }
+
+                // Persistir descuentos normalizados (tabla fe_linea_descuentos)
+                if (isset($linea['descuentos']) && is_array($linea['descuentos'])) {
+                    foreach ($linea['descuentos'] as $orden => $descuento) {
+                        FeLineaDescuento::create([
+                            'linea_detalle_id' => $lineaDetalle->id,
+                            'orden' => $orden + 1,
+                            'monto_descuento' => $descuento['monto_descuento'],
+                            'codigo_descuento' => $descuento['codigo_descuento'],
+                            'codigo_descuento_otro' => $descuento['codigo_descuento_otro'] ?? null,
+                            'naturaleza_descuento' => $descuento['naturaleza_descuento'] ?? null,
+                        ]);
+                    }
+                }
 
                 // Sumar impuestos al total
                 if (isset($linea['impuestos'])) {
@@ -403,6 +471,57 @@ class ComprobanteElectronicoController extends Controller
                 'total_exento' => $totalExento,
                 'total_comprobante' => $totalComprobante,
             ]);
+
+            // Persistir medios de pago normalizados (tabla fe_medios_pago)
+            if ($request->has('medios_pago') && is_array($request->medios_pago)) {
+                foreach ($request->medios_pago as $medio) {
+                    FeMedioPago::create([
+                        'comprobante_id' => $comprobante->id,
+                        'tipo_medio_pago' => $medio['tipo_medio_pago'],
+                        'medio_pago_otros' => $medio['medio_pago_otros'] ?? null,
+                        'total_medio_pago' => $medio['total_medio_pago'],
+                    ]);
+                }
+            }
+
+            // Persistir información de referencia normalizada (tabla fe_informacion_referencia)
+            if ($request->has('informacion_referencia') && is_array($request->informacion_referencia)) {
+                foreach ($request->informacion_referencia as $ref) {
+                    FeInformacionReferencia::create([
+                        'comprobante_id' => $comprobante->id,
+                        'tipo_doc' => $ref['tipo_doc'],
+                        'tipo_doc_otro' => $ref['tipo_doc_otro'] ?? null,
+                        'numero' => $ref['numero'],
+                        'fecha_emision' => $ref['fecha_emision'],
+                        'codigo' => $ref['codigo'],
+                        'codigo_referencia_otro' => $ref['codigo_referencia_otro'] ?? null,
+                        'razon' => $ref['razon'],
+                    ]);
+                }
+            }
+
+            // Persistir otros cargos normalizados (tabla fe_otros_cargos)
+            if ($request->has('otros_cargos') && is_array($request->otros_cargos)) {
+                $totalOtrosCargos = 0;
+                foreach ($request->otros_cargos as $cargo) {
+                    FeOtroCargo::create([
+                        'comprobante_id' => $comprobante->id,
+                        'tipo_documento_oc' => $cargo['tipo_documento_oc'],
+                        'tipo_identidad_tercero' => $cargo['tipo_identidad_tercero'] ?? null,
+                        'numero_identidad_tercero' => $cargo['numero_identidad_tercero'] ?? null,
+                        'nombre_tercero' => $cargo['nombre_tercero'] ?? null,
+                        'detalle' => $cargo['detalle'],
+                        'porcentaje_oc' => $cargo['porcentaje_oc'] ?? null,
+                        'monto_cargo' => $cargo['monto_cargo'],
+                    ]);
+                    $totalOtrosCargos += (float) $cargo['monto_cargo'];
+                }
+                // Actualizar total otros cargos y total comprobante
+                $comprobante->update([
+                    'total_otros_cargos' => $totalOtrosCargos,
+                    'total_comprobante' => $totalComprobante + $totalOtrosCargos,
+                ]);
+            }
 
             DB::commit();
 
@@ -689,7 +808,7 @@ class ComprobanteElectronicoController extends Controller
     )]
     public function anular(int $id, Request $request): JsonResponse
     {
-        $comprobanteOriginal = ComprobanteElectronicoFe::with(['empresa', 'lineasDetalle'])->findOrFail($id);
+        $comprobanteOriginal = ComprobanteElectronicoFe::with(['empresa', 'lineasDetalle.impuestos', 'lineasDetalle.descuentos'])->findOrFail($id);
 
         // Verificar autorización
         /** @var \App\Models\Usuario $user */
@@ -732,13 +851,23 @@ class ComprobanteElectronicoController extends Controller
                 'consecutivo' => $consecutivo,
                 'fecha_emision' => $fechaEmision,
                 'condicion_venta' => $comprobanteOriginal->condicion_venta,
+                'condicion_venta_otros' => $comprobanteOriginal->condicion_venta_otros,
                 'medio_pago' => $comprobanteOriginal->medio_pago,
                 
-                // Receptor (mismo del original)
+                // Receptor (mismo del original, incluyendo campos v4.4)
                 'receptor_nombre' => $comprobanteOriginal->receptor_nombre,
+                'receptor_nombre_comercial' => $comprobanteOriginal->receptor_nombre_comercial,
                 'receptor_tipo_identificacion' => $comprobanteOriginal->receptor_tipo_identificacion,
                 'receptor_numero_identificacion' => $comprobanteOriginal->receptor_numero_identificacion,
                 'receptor_email' => $comprobanteOriginal->receptor_email,
+                'receptor_telefono_codigo_pais' => $comprobanteOriginal->receptor_telefono_codigo_pais,
+                'receptor_telefono_numero' => $comprobanteOriginal->receptor_telefono_numero,
+                'receptor_provincia' => $comprobanteOriginal->receptor_provincia,
+                'receptor_canton' => $comprobanteOriginal->receptor_canton,
+                'receptor_distrito' => $comprobanteOriginal->receptor_distrito,
+                'receptor_barrio' => $comprobanteOriginal->receptor_barrio,
+                'receptor_otras_senas' => $comprobanteOriginal->receptor_otras_senas,
+                'receptor_otras_senas_extranjero' => $comprobanteOriginal->receptor_otras_senas_extranjero,
                 
                 // Moneda
                 'moneda' => $comprobanteOriginal->moneda,
@@ -750,10 +879,12 @@ class ComprobanteElectronicoController extends Controller
                 'total_venta_neta' => $comprobanteOriginal->total_venta_neta,
                 'total_impuesto' => $comprobanteOriginal->total_impuesto,
                 'total_comprobante' => $comprobanteOriginal->total_comprobante,
+                'total_gravado' => $comprobanteOriginal->total_gravado,
+                'total_exento' => $comprobanteOriginal->total_exento,
                 
                 'estado' => 'pendiente',
                 
-                // Referencia al documento original (en metadata JSON)
+                // Referencia al documento original (en metadata JSON — para compatibilidad legacy)
                 'metadata' => [
                     'documento_referencia' => [
                         'tipo_documento' => $comprobanteOriginal->tipo_documento,
@@ -765,19 +896,35 @@ class ComprobanteElectronicoController extends Controller
                 ],
             ]);
 
-            // Copiar líneas de detalle
+            // Crear información de referencia normalizada
+            FeInformacionReferencia::create([
+                'comprobante_id' => $notaCredito->id,
+                'tipo_doc' => $comprobanteOriginal->tipo_documento,
+                'numero' => $comprobanteOriginal->consecutivo,
+                'fecha_emision' => $comprobanteOriginal->fecha_emision->format('Y-m-d\TH:i:sP'),
+                'codigo' => '01', // Anula documento de referencia
+                'razon' => $request->razon_anulacion,
+            ]);
+
+            // Copiar líneas de detalle con campos v4.4
             foreach ($comprobanteOriginal->lineasDetalle as $linea) {
-                FeLineaDetalle::create([
+                $nuevaLinea = FeLineaDetalle::create([
                     'comprobante_id' => $notaCredito->id,
                     'numero_linea' => $linea->numero_linea,
                     'codigo_tipo' => $linea->codigo_tipo,
                     'codigo' => $linea->codigo,
+                    'codigo_cabys' => $linea->codigo_cabys,
+                    'partida_arancelaria' => $linea->partida_arancelaria,
                     'cantidad' => $linea->cantidad,
                     'unidad_medida' => $linea->unidad_medida,
+                    'unidad_medida_comercial' => $linea->unidad_medida_comercial,
                     'detalle' => $linea->detalle,
                     'precio_unitario' => $linea->precio_unitario,
                     'monto_total' => $linea->monto_total,
+                    'tipo_transaccion' => $linea->tipo_transaccion,
                     'monto_descuento' => $linea->monto_descuento,
+                    'naturaleza_descuento' => $linea->naturaleza_descuento,
+                    'codigo_descuento' => $linea->codigo_descuento,
                     'subtotal' => $linea->subtotal,
                     'base_imponible' => $linea->base_imponible,
                     'impuesto_codigo' => $linea->impuesto_codigo,
@@ -786,6 +933,26 @@ class ComprobanteElectronicoController extends Controller
                     'impuesto_monto' => $linea->impuesto_monto,
                     'monto_total_linea' => $linea->monto_total_linea,
                 ]);
+
+                // Copiar impuestos normalizados si existen
+                if ($linea->relationLoaded('impuestos')) {
+                    foreach ($linea->impuestos as $impuesto) {
+                        FeLineaImpuesto::create(array_merge(
+                            $impuesto->only($impuesto->getFillable()),
+                            ['linea_detalle_id' => $nuevaLinea->id]
+                        ));
+                    }
+                }
+
+                // Copiar descuentos normalizados si existen
+                if ($linea->relationLoaded('descuentos')) {
+                    foreach ($linea->descuentos as $descuento) {
+                        FeLineaDescuento::create(array_merge(
+                            $descuento->only($descuento->getFillable()),
+                            ['linea_detalle_id' => $nuevaLinea->id]
+                        ));
+                    }
+                }
             }
 
             DB::commit();

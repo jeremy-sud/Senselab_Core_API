@@ -75,9 +75,15 @@ class EnviarComprobanteJob implements ShouldQueue
         ]);
 
         try {
-            // Cargar comprobante con relaciones
-            $comprobante = ComprobanteElectronicoFe::with(['empresa', 'lineasDetalle'])
-                ->findOrFail($this->comprobanteId);
+            // Cargar comprobante con relaciones (incluye tablas normalizadas v4.4)
+            $comprobante = ComprobanteElectronicoFe::with([
+                'empresa',
+                'lineasDetalle.impuestos',
+                'lineasDetalle.descuentos',
+                'mediosPago',
+                'informacionReferencia',
+                'otrosCargos',
+            ])->findOrFail($this->comprobanteId);
 
             // Validar que esté en estado pendiente o con error
             if (!in_array($comprobante->estado, ['pendiente', 'error'])) {

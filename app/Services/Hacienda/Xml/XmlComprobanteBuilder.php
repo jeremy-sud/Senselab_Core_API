@@ -997,7 +997,7 @@ class XmlComprobanteBuilder
             if ($linea->relationLoaded('impuestos') && $linea->impuestos->isNotEmpty()) {
                 foreach ($linea->impuestos as $impuesto) {
                     $codigo = $impuesto->codigo ?? '01';
-                    $codigoTarifa = $impuesto->codigo_tarifa ?? '';
+                    $codigoTarifa = $impuesto->codigo_tarifa_iva ?? '';
                     $key = $codigo . '|' . $codigoTarifa;
 
                     if (!isset($impuestosAgrupados[$key])) {
