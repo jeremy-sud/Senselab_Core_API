@@ -1067,7 +1067,10 @@ class XmlComprobanteBuilder
                 $numero = $this->doc->createElement('Numero', $ref->numero);
                 $infoRefElement->appendChild($numero);
 
-                $fechaEmision = $this->doc->createElement('FechaEmision', $ref->fecha_emision);
+                $fechaFormatted = $ref->fecha_emision instanceof \DateTimeInterface
+                    ? $ref->fecha_emision->format('Y-m-d\TH:i:sP')
+                    : (string) $ref->fecha_emision;
+                $fechaEmision = $this->doc->createElement('FechaEmision', $fechaFormatted);
                 $infoRefElement->appendChild($fechaEmision);
 
                 $codigo = $this->doc->createElement('Codigo', $ref->codigo);
@@ -1149,16 +1152,24 @@ class XmlComprobanteBuilder
         foreach ($comprobante->otrosCargos as $cargo) {
             $otrosCargos = $this->doc->createElement('OtrosCargos');
 
-            $tipoDocumento = $this->doc->createElement('TipoDocumento', $cargo->tipo_documento_oc);
+            // v4.4: Renombrado a TipoDocumentoOC (era TipoDocumento)
+            $tipoDocumento = $this->doc->createElement('TipoDocumentoOC', $cargo->tipo_documento_oc);
             $otrosCargos->appendChild($tipoDocumento);
 
-            // Identificación del tercero (opcional, solo para tipo 12)
-            if ($cargo->numero_identidad_tercero) {
-                $tipoId = $this->doc->createElement('TipoIdentidadTercero', $cargo->tipo_identidad_tercero ?? '');
-                $otrosCargos->appendChild($tipoId);
+            // TipoDocumentoOTROS: obligatorio cuando tipo=99
+            if ($cargo->tipo_documento_oc === '99' && $cargo->tipo_documento_otros) {
+                $tipoOtros = $this->doc->createElement('TipoDocumentoOTROS', $this->escaparXml($cargo->tipo_documento_otros));
+                $otrosCargos->appendChild($tipoOtros);
+            }
 
-                $numId = $this->doc->createElement('NumeroIdentidadTercero', $cargo->numero_identidad_tercero);
-                $otrosCargos->appendChild($numId);
+            // IdentificacionTercero: obligatorio cuando tipo_documento_oc=04
+            if ($cargo->tercero_numero_identificacion) {
+                $identificacionTercero = $this->doc->createElement('IdentificacionTercero');
+                $tipoId = $this->doc->createElement('Tipo', $cargo->tercero_tipo_identificacion ?? '01');
+                $numId = $this->doc->createElement('Numero', $cargo->tercero_numero_identificacion);
+                $identificacionTercero->appendChild($tipoId);
+                $identificacionTercero->appendChild($numId);
+                $otrosCargos->appendChild($identificacionTercero);
 
                 if ($cargo->nombre_tercero) {
                     $nombre = $this->doc->createElement('NombreTercero', $this->escaparXml($cargo->nombre_tercero));
@@ -1169,8 +1180,9 @@ class XmlComprobanteBuilder
             $detalle = $this->doc->createElement('Detalle', $this->escaparXml($cargo->detalle));
             $otrosCargos->appendChild($detalle);
 
+            // v4.4: Renombrado a PorcentajeOC (era Porcentaje)
             if ($cargo->porcentaje_oc > 0) {
-                $porcentaje = $this->doc->createElement('Porcentaje', $this->formatearDecimal($cargo->porcentaje_oc));
+                $porcentaje = $this->doc->createElement('PorcentajeOC', $this->formatearDecimal($cargo->porcentaje_oc));
                 $otrosCargos->appendChild($porcentaje);
             }
 
@@ -1182,19 +1194,32 @@ class XmlComprobanteBuilder
     }
 
     /**
-     * Agregar otros elementos opcionales
+     * Agregar otros elementos opcionales (Brecha #38: OtroContenido)
      */
     protected function agregarOtros(DOMElement $parent, ComprobanteElectronicoFe $comprobante): void
     {
-        if (!isset($comprobante->metadata['otros'])) {
+        $tieneOtroTexto = isset($comprobante->metadata['otros']);
+        $tieneOtroContenido = isset($comprobante->metadata['otros_contenido']);
+
+        if (!$tieneOtroTexto && !$tieneOtroContenido) {
             return;
         }
 
         $otros = $this->doc->createElement('Otros');
-        
-        foreach ($comprobante->metadata['otros'] as $otro) {
-            $otroTexto = $this->doc->createElement('OtroTexto', $this->escaparXml($otro));
-            $otros->appendChild($otroTexto);
+
+        if ($tieneOtroTexto) {
+            foreach ($comprobante->metadata['otros'] as $otro) {
+                $otroTexto = $this->doc->createElement('OtroTexto', $this->escaparXml($otro));
+                $otros->appendChild($otroTexto);
+            }
+        }
+
+        // Brecha #38: OtroContenido — contenido estructurado opcional
+        if ($tieneOtroContenido) {
+            foreach ($comprobante->metadata['otros_contenido'] as $contenido) {
+                $otroContenido = $this->doc->createElement('OtroContenido', $this->escaparXml($contenido));
+                $otros->appendChild($otroContenido);
+            }
         }
         
         $parent->appendChild($otros);

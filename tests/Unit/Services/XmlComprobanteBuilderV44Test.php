@@ -462,7 +462,7 @@ class XmlComprobanteBuilderV44Test extends TestCase
         $xml = $this->builder->build($comprobante);
 
         $this->assertStringContainsString('<OtrosCargos>', $xml);
-        $this->assertStringContainsString('<TipoDocumento>06</TipoDocumento>', $xml);
+        $this->assertStringContainsString('<TipoDocumentoOC>06</TipoDocumentoOC>', $xml);
         $this->assertStringContainsString('<Detalle>Cargo por envío</Detalle>', $xml);
         $this->assertStringContainsString('<MontoCargo>5000.00000</MontoCargo>', $xml);
     }
@@ -697,5 +697,151 @@ class XmlComprobanteBuilderV44Test extends TestCase
         // Sin relación mediosPago, usa legacy
         $this->assertStringContainsString('<TipoMedioPago>02</TipoMedioPago>', $xml);
         $this->assertStringContainsString('<TotalMedioPago>22600.00000</TotalMedioPago>', $xml);
+    }
+
+    // ==========================================
+    // OtrosCargos — XML v4.4 element names
+    // ==========================================
+
+    #[Test]
+    public function otros_cargos_con_tercero_genera_identificacion_tercero()
+    {
+        $comprobante = $this->crearComprobante([
+            'total_otros_cargos' => 8000.00000,
+        ]);
+
+        FeOtroCargo::factory()->create([
+            'comprobante_id' => $comprobante->id,
+            'tipo_documento_oc' => '04',
+            'tercero_tipo_identificacion' => '01',
+            'tercero_numero_identificacion' => '109876543',
+            'nombre_tercero' => 'Tercero S.A.',
+            'detalle' => 'Cargo por tercero',
+            'monto_cargo' => 8000.00000,
+        ]);
+
+        $comprobante->load('otrosCargos');
+        $this->crearLinea($comprobante->id);
+
+        $xml = $this->builder->build($comprobante);
+
+        $this->assertStringContainsString('<TipoDocumentoOC>04</TipoDocumentoOC>', $xml);
+        $this->assertStringContainsString('<IdentificacionTercero>', $xml);
+        $this->assertStringContainsString('<NombreTercero>Tercero S.A.</NombreTercero>', $xml);
+    }
+
+    #[Test]
+    public function otros_cargos_tipo_99_incluye_tipo_documento_otros()
+    {
+        $comprobante = $this->crearComprobante([
+            'total_otros_cargos' => 3000.00000,
+        ]);
+
+        FeOtroCargo::factory()->create([
+            'comprobante_id' => $comprobante->id,
+            'tipo_documento_oc' => '99',
+            'tipo_documento_otros' => 'Cargo especial por servicio',
+            'detalle' => 'Otro cargo',
+            'monto_cargo' => 3000.00000,
+        ]);
+
+        $comprobante->load('otrosCargos');
+        $this->crearLinea($comprobante->id);
+
+        $xml = $this->builder->build($comprobante);
+
+        $this->assertStringContainsString('<TipoDocumentoOC>99</TipoDocumentoOC>', $xml);
+        $this->assertStringContainsString('<TipoDocumentoOTROS>Cargo especial por servicio</TipoDocumentoOTROS>', $xml);
+    }
+
+    #[Test]
+    public function otros_cargos_porcentaje_usa_nombre_v44()
+    {
+        $comprobante = $this->crearComprobante([
+            'total_otros_cargos' => 2000.00000,
+        ]);
+
+        FeOtroCargo::factory()->create([
+            'comprobante_id' => $comprobante->id,
+            'tipo_documento_oc' => '01',
+            'detalle' => 'Servicio adicional',
+            'porcentaje_oc' => 10.00000,
+            'monto_cargo' => 2000.00000,
+        ]);
+
+        $comprobante->load('otrosCargos');
+        $this->crearLinea($comprobante->id);
+
+        $xml = $this->builder->build($comprobante);
+
+        // v4.4: PorcentajeOC (no Porcentaje)
+        $this->assertStringContainsString('<PorcentajeOC>', $xml);
+        $this->assertStringNotContainsString('<Porcentaje>', $xml);
+    }
+
+    // ==========================================
+    // InformacionReferencia — fecha formateada ISO8601
+    // ==========================================
+
+    #[Test]
+    public function informacion_referencia_fecha_formato_iso8601()
+    {
+        $comprobante = $this->crearComprobante(['tipo_documento' => '03']);
+        FeInformacionReferencia::factory()->create([
+            'comprobante_id' => $comprobante->id,
+            'tipo_doc' => '01',
+            'numero' => '52611202531011234567800000000000000000001154489877',
+            'fecha_emision' => '2026-03-15 10:30:00',
+            'codigo' => '01',
+            'razon' => 'Corrección',
+        ]);
+
+        $comprobante->load('informacionReferencia');
+        $this->crearLinea($comprobante->id);
+
+        $xml = $this->builder->build($comprobante);
+
+        // Verify fecha_emision is formatted as ISO 8601, not raw object string
+        $this->assertMatchesRegularExpression('/<FechaEmision>20\d{2}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/', $xml);
+    }
+
+    // ==========================================
+    // Brecha #38: OtroContenido en sección Otros
+    // ==========================================
+
+    #[Test]
+    public function brecha38_otro_contenido_en_xml()
+    {
+        $comprobante = $this->crearComprobante([
+            'metadata' => [
+                'otros' => ['Texto adicional 1'],
+                'otros_contenido' => ['Contenido estructurado 1', 'Contenido estructurado 2'],
+            ],
+        ]);
+        $this->crearLinea($comprobante->id);
+
+        $xml = $this->builder->build($comprobante);
+
+        $this->assertStringContainsString('<Otros>', $xml);
+        $this->assertStringContainsString('<OtroTexto>Texto adicional 1</OtroTexto>', $xml);
+        $this->assertStringContainsString('<OtroContenido>Contenido estructurado 1</OtroContenido>', $xml);
+        $this->assertStringContainsString('<OtroContenido>Contenido estructurado 2</OtroContenido>', $xml);
+    }
+
+    #[Test]
+    public function brecha38_solo_otro_contenido_sin_otro_texto()
+    {
+        $comprobante = $this->crearComprobante([
+            'metadata' => [
+                'otros_contenido' => ['Solo contenido'],
+            ],
+        ]);
+        $this->crearLinea($comprobante->id);
+
+        $xml = $this->builder->build($comprobante);
+
+        $this->assertStringContainsString('<Otros>', $xml);
+        $this->assertStringNotContainsString('<OtroTexto>', $xml);
+        $this->assertStringContainsString('<OtroContenido>Solo contenido</OtroContenido>', $xml);
     }
 }
