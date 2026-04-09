@@ -92,8 +92,9 @@ class StoreComprobanteElectronicoRequest extends FormRequest
             // Brecha #13: Otros cargos
             'otros_cargos' => 'nullable|array|max:15',
             'otros_cargos.*.tipo_documento_oc' => 'required|in:01,02,03,04,05,06,07,08,09,10,11,12,99',
-            'otros_cargos.*.tipo_identidad_tercero' => 'nullable|in:01,02,03,04',
-            'otros_cargos.*.numero_identidad_tercero' => 'nullable|string|max:20',
+            'otros_cargos.*.tipo_documento_otros' => 'required_if:otros_cargos.*.tipo_documento_oc,99|nullable|string|min:5|max:100',
+            'otros_cargos.*.tercero_tipo_identificacion' => 'nullable|in:01,02,03,04,05',
+            'otros_cargos.*.tercero_numero_identificacion' => 'nullable|string|max:20',
             'otros_cargos.*.nombre_tercero' => 'nullable|string|max:100',
             'otros_cargos.*.detalle' => 'required|string|max:160',
             'otros_cargos.*.porcentaje_oc' => 'nullable|numeric|min:0|max:100',

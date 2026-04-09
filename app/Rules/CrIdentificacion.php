@@ -13,8 +13,11 @@ use Illuminate\Contracts\Validation\ValidationRule;
  *  02 / juridica → Cédula jurídica: 10 dígitos (inicia con 3)
  *  03 / dimex    → DIMEX: 11-12 dígitos
  *  04 / nite     → NITE: 10 dígitos
+ *  05            → Extranjero No Domiciliado: hasta 20 caracteres alfanuméricos
+ *  06            → No Contribuyente: hasta 20 caracteres alfanuméricos
  *
  * FASE 15 — DT-5: Regex formatos CR.
+ * Brecha #37: Agregados tipos 05 y 06 según v4.4.
  */
 class CrIdentificacion implements ValidationRule
 {
@@ -24,6 +27,8 @@ class CrIdentificacion implements ValidationRule
         'juridica' => '02',
         'dimex'    => '03',
         'nite'     => '04',
+        'extranjero' => '05',
+        'no_contribuyente' => '06',
     ];
 
     /** @var array<string, array{pattern: string, label: string}> */
@@ -32,6 +37,8 @@ class CrIdentificacion implements ValidationRule
         '02' => ['pattern' => '/^3\d{9}$/',         'label' => 'cédula jurídica (10 dígitos, inicia con 3)'],
         '03' => ['pattern' => '/^\d{11,12}$/',       'label' => 'DIMEX (11-12 dígitos)'],
         '04' => ['pattern' => '/^\d{10}$/',          'label' => 'NITE (10 dígitos)'],
+        '05' => ['pattern' => '/^[a-zA-Z0-9]{1,20}$/', 'label' => 'Extranjero No Domiciliado (hasta 20 caracteres alfanuméricos)'],
+        '06' => ['pattern' => '/^[a-zA-Z0-9]{1,20}$/', 'label' => 'No Contribuyente (hasta 20 caracteres alfanuméricos)'],
     ];
 
     public function __construct(

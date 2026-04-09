@@ -179,11 +179,85 @@ class CrFormatsTest extends TestCase
     public function tipo_desconocido_no_falla(): void
     {
         $failed = false;
-        $rule = new CrIdentificacion('extranjero');
+        $rule = new CrIdentificacion('tipo_inventado');
         $rule->validate('id', 'WHATEVER-123', function () use (&$failed) {
             $failed = true;
         });
 
         $this->assertFalse($failed, "Tipo desconocido debería pasar sin validar formato");
+    }
+
+    // ─── Brecha #37: Tipos 05 (Extranjero) y 06 (No Contribuyente) ──────
+
+    #[Test]
+    public function extranjero_no_domiciliado_acepta_alfanumerico(): void
+    {
+        $failed = false;
+        $rule = new CrIdentificacion('05');
+        $rule->validate('id', 'PASS12345678', function () use (&$failed) {
+            $failed = true;
+        });
+
+        $this->assertFalse($failed);
+    }
+
+    #[Test]
+    public function extranjero_no_domiciliado_rechaza_caracteres_especiales(): void
+    {
+        $failed = false;
+        $rule = new CrIdentificacion('05');
+        $rule->validate('id', 'PASS@12345!', function () use (&$failed) {
+            $failed = true;
+        });
+
+        $this->assertTrue($failed, 'Tipo 05 no debe aceptar caracteres especiales como @, !');
+    }
+
+    #[Test]
+    public function extranjero_no_domiciliado_rechaza_mas_de_20_caracteres(): void
+    {
+        $failed = false;
+        $rule = new CrIdentificacion('05');
+        $rule->validate('id', 'ABCDEFGHIJKLMNOPQRSTU', function () use (&$failed) {
+            $failed = true;
+        });
+
+        $this->assertTrue($failed, 'Tipo 05 no debe aceptar más de 20 caracteres');
+    }
+
+    #[Test]
+    public function no_contribuyente_acepta_alfanumerico(): void
+    {
+        $failed = false;
+        $rule = new CrIdentificacion('06');
+        $rule->validate('id', 'NC2026001234', function () use (&$failed) {
+            $failed = true;
+        });
+
+        $this->assertFalse($failed);
+    }
+
+    #[Test]
+    public function tipo_texto_extranjero_mapea_a_05(): void
+    {
+        $failed = false;
+        $rule = new CrIdentificacion('extranjero');
+        $rule->validate('id', 'EXT123456789', function () use (&$failed) {
+            $failed = true;
+        });
+
+        $this->assertFalse($failed, "'extranjero' debería mapearse a tipo 05");
+    }
+
+    #[Test]
+    public function tipo_texto_no_contribuyente_mapea_a_06(): void
+    {
+        $failed = false;
+        $rule = new CrIdentificacion('no_contribuyente');
+        $rule->validate('id', 'NC001234', function () use (&$failed) {
+            $failed = true;
+        });
+
+        $this->assertFalse($failed, "'no_contribuyente' debería mapearse a tipo 06");
     }
 }
