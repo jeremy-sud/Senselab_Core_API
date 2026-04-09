@@ -14,14 +14,14 @@
 > | Criticidad | Total | ✅ Resueltas | ⏳ Fase C |
 > |:----------:|:-----:|:-----------:|:---------:|
 > | 🔴 Crítico | 8 | **8** | 0 |
-> | 🟠 Alto | 11 | **8** | 3 |
+> | 🟠 Alto | 11 | **10** | 1 |
 > | 🟡 Medio | 14 | **11** | 3 |
 > | 🟢 Bajo | 5 | **5** | 0 |
-> | **Total** | **38** | **32** | **6** |
+> | **Total** | **38** | **34** | **4** |
 >
 > **Archivos principales modificados:**
 > - Migración: `2026_04_07_000000_hacienda_v44_compliance_full.php` (5 tablas nuevas, 20+ columnas)
-> - XML: `XmlComprobanteBuilder.php` (OtrosCargos, InformacionReferencia, OtroContenido, Exoneraciones)
+> - XML: `XmlComprobanteBuilder.php` (OtrosCargos, InformacionReferencia, OtroContenido, Exoneraciones, BaseImponible, Emails múltiples)
 > - Modelos: `ComprobanteElectronicoFe`, `FeLineaDetalle`, + 5 modelos nuevos
 > - Validaciones: `StoreComprobanteElectronicoRequest`, `CrIdentificacion`
 > - Config: `config/hacienda.php` (catálogos completos v4.4)
@@ -1083,8 +1083,8 @@ CREATE TABLE fe_linea_descuentos (
 | 14 | `InformacionReferencia` como tabla | Referencia | 🟠 | Alto | Tabla nueva + XML | ✅ |
 | 15 | Múltiples descuentos {0,5} | Detalle | 🟠 | Alto | Tabla nueva + XML | ✅ |
 | 16 | `ImpuestoAsumidoEmisorFabrica` | Detalle/Resumen | 🟠 | Medio | Migración + XML | ✅ |
-| 17 | Emisor CorreoElectronico {1,4} | Encabezado | 🟠 | Medio | Migración + XML | ⏳ Fase C |
-| 18 | `BaseImponible` cálculo | Detalle | 🟠 | Medio | Lógica | ⏳ Fase C |
+| 17 | Emisor CorreoElectronico {1,4} | Encabezado | 🟠 | Medio | Migración + XML | ✅ |
+| 18 | `BaseImponible` cálculo | Detalle | 🟠 | Medio | Lógica | ✅ |
 | 19 | Totales Exonerados en XML | Resumen | 🟠 | Bajo | XML | ✅ |
 | 20 | `PartidaArancelaria` | Detalle | 🟡 | Bajo | Migración + XML | ✅ |
 | 21 | `TipoTransaccion` no conectado | Detalle | 🟡 | Bajo | Modelo + XML | ✅ |
@@ -1156,15 +1156,15 @@ CREATE TABLE fe_linea_descuentos (
 ### Fase C — Mediano Plazo (Campos Específicos por Industria) ⏳ PARCIAL
 
 **Objetivo:** Cubrir casos de uso especializados.  
-**Estado:** 6 brechas pendientes para futuros sprints. El resto ya implementadas.  
-**Esfuerzo restante estimado:** 1-2 sprints  
+**Estado:** 4 brechas pendientes para futuros sprints. El resto ya implementadas.  
+**Esfuerzo restante estimado:** 1 sprint  
 
 | Tarea | Brechas | Industria | Estado |
 |-------|:-------:|-----------|:------:|
 | `DetalleSurtido` completo | #31 | Manufactura / Retail | ⏳ Pendiente |
 | `CodigoComercial` estructura {0,5} | #33 | Retail / Manufactura | ⏳ Pendiente |
-| Soporte múltiples correos emisor | #17 | General | ⏳ Pendiente |
-| `BaseImponible` auditoría de cálculo (imp. 02,04,05,12) | #18 | General | ⏳ Pendiente |
+| Soporte múltiples correos emisor | #17 | General | ✅ Resuelto |
+| `BaseImponible` auto-cálculo (imp. 02,12) | #18 | General | ✅ Resuelto |
 | `DatosImpuestoEspecifico` (códigos 03-06) | #27 | Combustibles, Alcohol, Tabaco | ✅ |
 | `PartidaArancelaria`, `MontoExportacion` | #20, #29 | Exportación | ✅ |
 | `Registrofiscal8707` | #22 | Bebidas Alcohólicas | ✅ |

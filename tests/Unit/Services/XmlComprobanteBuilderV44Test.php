@@ -844,4 +844,212 @@ class XmlComprobanteBuilderV44Test extends TestCase
         $this->assertStringNotContainsString('<OtroTexto>', $xml);
         $this->assertStringContainsString('<OtroContenido>Solo contenido</OtroContenido>', $xml);
     }
+
+    // ==========================================
+    // Brecha #18: BaseImponible cálculo correcto
+    // ==========================================
+
+    #[Test]
+    public function brecha18_base_imponible_usa_valor_explicito_cuando_existe()
+    {
+        $comprobante = $this->crearComprobante();
+        $linea = $this->crearLinea($comprobante->id, [
+            'subtotal' => 10000.00000,
+            'base_imponible' => 15000.00000,
+        ]);
+
+        $xml = $this->builder->build($comprobante);
+
+        $this->assertStringContainsString('<BaseImponible>15000.00000</BaseImponible>', $xml);
+    }
+
+    #[Test]
+    public function brecha18_base_imponible_auto_calcula_subtotal_mas_imp_02_12()
+    {
+        $comprobante = $this->crearComprobante();
+        $linea = $this->crearLinea($comprobante->id, [
+            'subtotal' => 10000.00000,
+            'base_imponible' => 0,
+            'impuesto_monto' => 0,
+        ]);
+
+        // IVA (01) - NO suma a BaseImponible
+        FeLineaImpuesto::factory()->create([
+            'linea_detalle_id' => $linea->id,
+            'codigo' => '01',
+            'codigo_tarifa_iva' => '08',
+            'tarifa' => 13.00,
+            'monto' => 1300.00000,
+        ]);
+
+        // Impuesto Selectivo de Consumo (02) - SÍ suma
+        FeLineaImpuesto::factory()->create([
+            'linea_detalle_id' => $linea->id,
+            'codigo' => '02',
+            'tarifa' => 10.00,
+            'monto' => 1000.00000,
+        ]);
+
+        // Impuesto al Cemento (12) - SÍ suma
+        FeLineaImpuesto::factory()->create([
+            'linea_detalle_id' => $linea->id,
+            'codigo' => '12',
+            'tarifa' => 5.00,
+            'monto' => 500.00000,
+        ]);
+
+        $xml = $this->builder->build($comprobante);
+
+        // BaseImponible = 10000 + 1000 (02) + 500 (12) = 11500
+        $this->assertStringContainsString('<BaseImponible>11500.00000</BaseImponible>', $xml);
+    }
+
+    #[Test]
+    public function brecha18_base_imponible_sin_imp_especiales_usa_subtotal()
+    {
+        $comprobante = $this->crearComprobante();
+        $linea = $this->crearLinea($comprobante->id, [
+            'subtotal' => 10000.00000,
+            'base_imponible' => 0,
+            'impuesto_monto' => 0,
+        ]);
+
+        // Solo IVA (01) - no se suma a BaseImponible
+        FeLineaImpuesto::factory()->create([
+            'linea_detalle_id' => $linea->id,
+            'codigo' => '01',
+            'codigo_tarifa_iva' => '08',
+            'tarifa' => 13.00,
+            'monto' => 1300.00000,
+        ]);
+
+        $xml = $this->builder->build($comprobante);
+
+        // BaseImponible = subtotal (10000) sin impuestos adicionales
+        $this->assertStringContainsString('<BaseImponible>10000.00000</BaseImponible>', $xml);
+    }
+
+    // ==========================================
+    // Legacy InformacionReferencia mejorada
+    // ==========================================
+
+    #[Test]
+    public function legacy_referencia_tipo_doc_99_incluye_tipo_doc_otro()
+    {
+        $comprobante = $this->crearComprobante([
+            'tipo_documento' => '03',
+            'metadata' => [
+                'documento_referencia' => [
+                    'tipo_documento' => '99',
+                    'tipo_documento_otro' => 'Factura proforma internacional',
+                    'numero' => '001-00001',
+                    'fecha_emision' => '2026-04-01T10:00:00-06:00',
+                    'codigo' => '01',
+                    'razon' => 'Referencia a documento externo',
+                ],
+            ],
+        ]);
+        $this->crearLinea($comprobante->id);
+
+        $xml = $this->builder->build($comprobante);
+
+        $this->assertStringContainsString('<TipoDoc>99</TipoDoc>', $xml);
+        $this->assertStringContainsString('<TipoDocRefOTRO>Factura proforma internacional</TipoDocRefOTRO>', $xml);
+    }
+
+    #[Test]
+    public function legacy_referencia_codigo_99_incluye_codigo_referencia_otro()
+    {
+        $comprobante = $this->crearComprobante([
+            'tipo_documento' => '03',
+            'metadata' => [
+                'documento_referencia' => [
+                    'tipo_documento' => '01',
+                    'numero' => '001-00002',
+                    'fecha_emision' => '2026-04-01',
+                    'codigo' => '99',
+                    'codigo_referencia_otro' => 'Ajuste por tipo de cambio',
+                    'razon' => 'Diferencia cambiaria',
+                ],
+            ],
+        ]);
+        $this->crearLinea($comprobante->id);
+
+        $xml = $this->builder->build($comprobante);
+
+        $this->assertStringContainsString('<Codigo>99</Codigo>', $xml);
+        $this->assertStringContainsString('<CodigoReferenciaOTRO>Ajuste por tipo de cambio</CodigoReferenciaOTRO>', $xml);
+    }
+
+    #[Test]
+    public function legacy_referencia_fecha_formateada_iso8601()
+    {
+        $comprobante = $this->crearComprobante([
+            'tipo_documento' => '03',
+            'metadata' => [
+                'documento_referencia' => [
+                    'tipo_documento' => '01',
+                    'numero' => '001-00003',
+                    'fecha_emision' => '2026-04-01',
+                    'codigo' => '01',
+                    'razon' => 'Anulación',
+                ],
+            ],
+        ]);
+        $this->crearLinea($comprobante->id);
+
+        $xml = $this->builder->build($comprobante);
+
+        // Debe contener formato ISO 8601 (T y timezone)
+        $this->assertMatchesRegularExpression(
+            '/<FechaEmision>2026-04-01T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}<\/FechaEmision>/',
+            $xml
+        );
+    }
+
+    // ==========================================
+    // Brecha #17: Múltiples correos emisor {1,4}
+    // ==========================================
+
+    #[Test]
+    public function brecha17_un_solo_email_genera_un_correo_electronico()
+    {
+        $comprobante = $this->crearComprobante(['receptor_email' => null]);
+        $this->crearLinea($comprobante->id);
+
+        $xml = $this->builder->build($comprobante);
+
+        $this->assertStringContainsString('<CorreoElectronico>test@test.com</CorreoElectronico>', $xml);
+        // Solo 1 del emisor (receptor sin email)
+        $this->assertSame(1, substr_count($xml, '<CorreoElectronico>'));
+    }
+
+    #[Test]
+    public function brecha17_multiples_emails_separados_por_coma()
+    {
+        $this->empresa->update(['email' => 'info@test.com, ventas@test.com, admin@test.com']);
+        $comprobante = $this->crearComprobante(['receptor_email' => null]);
+        $this->crearLinea($comprobante->id);
+
+        $xml = $this->builder->build($comprobante);
+
+        $this->assertStringContainsString('<CorreoElectronico>info@test.com</CorreoElectronico>', $xml);
+        $this->assertStringContainsString('<CorreoElectronico>ventas@test.com</CorreoElectronico>', $xml);
+        $this->assertStringContainsString('<CorreoElectronico>admin@test.com</CorreoElectronico>', $xml);
+        $this->assertSame(3, substr_count($xml, '<CorreoElectronico>'));
+    }
+
+    #[Test]
+    public function brecha17_maximo_4_emails_generados()
+    {
+        $this->empresa->update(['email' => 'a@t.com;b@t.com;c@t.com;d@t.com;e@t.com']);
+        $comprobante = $this->crearComprobante(['receptor_email' => null]);
+        $this->crearLinea($comprobante->id);
+
+        $xml = $this->builder->build($comprobante);
+
+        // Máximo 4 según spec Hacienda (5to se descarta)
+        $this->assertSame(4, substr_count($xml, '<CorreoElectronico>'));
+        $this->assertStringNotContainsString('e@t.com', $xml);
+    }
 }
