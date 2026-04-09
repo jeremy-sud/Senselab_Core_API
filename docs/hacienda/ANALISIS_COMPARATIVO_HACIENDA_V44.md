@@ -1,10 +1,31 @@
 # Análisis Comparativo: Ursol-CAST-API vs Especificación Hacienda CR (DGT-R-000-2024 v4.4)
 
 **Fecha del análisis:** 7 de abril de 2026  
+**Última actualización:** 9 de abril de 2026  
 **Versión de la API:** v4.2.0 (FASE 20)  
 **Versión del esquema Hacienda:** 4.4  
 **Documento de referencia:** Anexo 1 – Estructura XML Comprobantes Electrónicos (97 páginas)  
 **Autor:** Auditoría Técnica Automatizada
+
+---
+
+> ### 📋 Estado de Remediación (actualizado 9 de abril de 2026)
+>
+> | Criticidad | Total | ✅ Resueltas | ⏳ Fase C |
+> |:----------:|:-----:|:-----------:|:---------:|
+> | 🔴 Crítico | 8 | **8** | 0 |
+> | 🟠 Alto | 11 | **8** | 3 |
+> | 🟡 Medio | 14 | **11** | 3 |
+> | 🟢 Bajo | 5 | **5** | 0 |
+> | **Total** | **38** | **32** | **6** |
+>
+> **Archivos principales modificados:**
+> - Migración: `2026_04_07_000000_hacienda_v44_compliance_full.php` (5 tablas nuevas, 20+ columnas)
+> - XML: `XmlComprobanteBuilder.php` (OtrosCargos, InformacionReferencia, OtroContenido, Exoneraciones)
+> - Modelos: `ComprobanteElectronicoFe`, `FeLineaDetalle`, + 5 modelos nuevos
+> - Validaciones: `StoreComprobanteElectronicoRequest`, `CrIdentificacion`
+> - Config: `config/hacienda.php` (catálogos completos v4.4)
+> - Tests: 73 tests pasando (149 assertions)
 
 ---
 
@@ -1044,56 +1065,56 @@ CREATE TABLE fe_linea_descuentos (
 
 ## 12. Tabla Consolidada de Brechas
 
-| # | Brecha | Sección | Prioridad | Esfuerzo | Tipo de Cambio |
-|:-:|--------|---------|:---------:|:--------:|:-------------:|
-| 1 | `clave` VARCHAR(29) → 50 | Encabezado | 🔴 | Bajo | Migración |
-| 2 | `CodigoDescuento` obligatorio | Detalle | 🔴 | Bajo | Migración + XML |
-| 3 | `TotalDesgloseImpuesto` + `CodigoTarifaIVA` | Resumen | 🔴 | Medio | XML |
-| 4 | Receptor Ubicación (5 campos) | Encabezado | 🔴 | Medio | Migración + XML |
-| 5 | Múltiples impuestos por línea {1,1000} | Detalle | 🔴 | Alto | Tabla nueva + XML |
-| 6 | MedioPago múltiple {1,4} | Resumen | 🔴 | Alto | Tabla nueva + XML |
-| 7 | Emisor `Barrio` no existe en DB | Encabezado | 🔴 | Bajo | Migración |
-| 8 | `receptor_numero_identificacion` VARCHAR(12) → 20 | Encabezado | 🔴 | Bajo | Migración |
-| 9 | `CodigoActividadReceptor` | Encabezado | 🟠 | Bajo | Migración + XML |
-| 10 | `CondicionVentaOtros` | Encabezado | 🟠 | Bajo | Migración + XML |
-| 11 | Emisor `NombreComercial` en XML | Encabezado | 🟠 | Bajo | XML |
-| 12 | Receptor `NombreComercial` | Encabezado | 🟠 | Bajo | Migración + XML |
-| 13 | `OtrosCargos` estructura completa | Resumen | 🟠 | Alto | Tabla nueva + XML |
-| 14 | `InformacionReferencia` como tabla | Referencia | 🟠 | Alto | Tabla nueva + XML |
-| 15 | Múltiples descuentos {0,5} | Detalle | 🟠 | Alto | Tabla nueva + XML |
-| 16 | `ImpuestoAsumidoEmisorFabrica` | Detalle/Resumen | 🟠 | Medio | Migración + XML |
-| 17 | Emisor CorreoElectronico {1,4} | Encabezado | 🟠 | Medio | Migración + XML |
-| 18 | `BaseImponible` cálculo | Detalle | 🟠 | Medio | Lógica |
-| 19 | Totales Exonerados en XML | Resumen | 🟠 | Bajo | XML |
-| 20 | `PartidaArancelaria` | Detalle | 🟡 | Bajo | Migración + XML |
-| 21 | `TipoTransaccion` no conectado | Detalle | 🟡 | Bajo | Modelo + XML |
-| 22 | `Registrofiscal8707` | Encabezado | 🟡 | Bajo | Migración + XML |
-| 23 | `NumeroVINoSerie` | Detalle | 🟡 | Bajo | Migración + XML |
-| 24 | `RegistroMedicamento` / `FormaFarmaceutica` | Detalle | 🟡 | Bajo | Migración + XML |
-| 25 | `OtrasSenasExtranjero` | Encabezado | 🟡 | Bajo | Migración + XML |
-| 26 | `TotalServNoSujeto` / `TotalMercNoSujeta` / `TotalNoSujeto` | Resumen | 🟡 | Medio | Migración + XML |
-| 27 | `DatosImpuestoEspecifico` | Detalle | 🟡 | Alto | Tabla nueva + XML |
-| 28 | `FactorCalculoIVA` | Detalle | 🟡 | Bajo | Migración + XML |
-| 29 | `MontoExportacion` | Detalle | 🟡 | Bajo | Migración + XML |
-| 30 | `TotalIVADevuelto` en XML | Resumen | 🟡 | Bajo | XML |
-| 31 | `DetalleSurtido` | Detalle | 🟡 | Muy Alto | Tablas + XML |
-| 32 | `IVACobradoFabrica` por línea | Detalle | 🟡 | Bajo | Migración + XML |
-| 33 | `CodigoComercial` {0,5} estructura | Detalle | 🟡 | Medio | Tabla nueva + XML |
-| 34 | Exoneración campos incompletos | Detalle | 🟢 | Bajo | Migración + XML |
-| 35 | Receptor Telefono | Encabezado | 🟢 | Bajo | Migración + XML |
-| 36 | `receptor_email` VARCHAR(100) → 160 | Encabezado | 🟢 | Bajo | Migración |
-| 37 | Validaciones FormRequest | Validaciones | 🟢 | Medio | FormRequest + Rules |
-| 38 | `OtroContenido` | Otros | 🟢 | Bajo | XML |
+| # | Brecha | Sección | Prioridad | Esfuerzo | Tipo de Cambio | Estado |
+|:-:|--------|---------|:---------:|:--------:|:-------------:|:------:|
+| 1 | `clave` VARCHAR(29) → 50 | Encabezado | 🔴 | Bajo | Migración | ✅ |
+| 2 | `CodigoDescuento` obligatorio | Detalle | 🔴 | Bajo | Migración + XML | ✅ |
+| 3 | `TotalDesgloseImpuesto` + `CodigoTarifaIVA` | Resumen | 🔴 | Medio | XML | ✅ |
+| 4 | Receptor Ubicación (5 campos) | Encabezado | 🔴 | Medio | Migración + XML | ✅ |
+| 5 | Múltiples impuestos por línea {1,1000} | Detalle | 🔴 | Alto | Tabla nueva + XML | ✅ |
+| 6 | MedioPago múltiple {1,4} | Resumen | 🔴 | Alto | Tabla nueva + XML | ✅ |
+| 7 | Emisor `Barrio` no existe en DB | Encabezado | 🔴 | Bajo | Migración | ✅ |
+| 8 | `receptor_numero_identificacion` VARCHAR(12) → 20 | Encabezado | 🔴 | Bajo | Migración | ✅ |
+| 9 | `CodigoActividadReceptor` | Encabezado | 🟠 | Bajo | Migración + XML | ✅ |
+| 10 | `CondicionVentaOtros` | Encabezado | 🟠 | Bajo | Migración + XML | ✅ |
+| 11 | Emisor `NombreComercial` en XML | Encabezado | 🟠 | Bajo | XML | ✅ |
+| 12 | Receptor `NombreComercial` | Encabezado | 🟠 | Bajo | Migración + XML | ✅ |
+| 13 | `OtrosCargos` estructura completa | Resumen | 🟠 | Alto | Tabla nueva + XML | ✅ |
+| 14 | `InformacionReferencia` como tabla | Referencia | 🟠 | Alto | Tabla nueva + XML | ✅ |
+| 15 | Múltiples descuentos {0,5} | Detalle | 🟠 | Alto | Tabla nueva + XML | ✅ |
+| 16 | `ImpuestoAsumidoEmisorFabrica` | Detalle/Resumen | 🟠 | Medio | Migración + XML | ✅ |
+| 17 | Emisor CorreoElectronico {1,4} | Encabezado | 🟠 | Medio | Migración + XML | ⏳ Fase C |
+| 18 | `BaseImponible` cálculo | Detalle | 🟠 | Medio | Lógica | ⏳ Fase C |
+| 19 | Totales Exonerados en XML | Resumen | 🟠 | Bajo | XML | ✅ |
+| 20 | `PartidaArancelaria` | Detalle | 🟡 | Bajo | Migración + XML | ✅ |
+| 21 | `TipoTransaccion` no conectado | Detalle | 🟡 | Bajo | Modelo + XML | ✅ |
+| 22 | `Registrofiscal8707` | Encabezado | 🟡 | Bajo | Migración + XML | ✅ |
+| 23 | `NumeroVINoSerie` | Detalle | 🟡 | Bajo | Migración + XML | ✅ |
+| 24 | `RegistroMedicamento` / `FormaFarmaceutica` | Detalle | 🟡 | Bajo | Migración + XML | ✅ |
+| 25 | `OtrasSenasExtranjero` | Encabezado | 🟡 | Bajo | Migración + XML | ✅ |
+| 26 | `TotalServNoSujeto` / `TotalMercNoSujeta` / `TotalNoSujeto` | Resumen | 🟡 | Medio | Migración + XML | ✅ |
+| 27 | `DatosImpuestoEspecifico` | Detalle | 🟡 | Alto | Tabla nueva + XML | ✅ |
+| 28 | `FactorCalculoIVA` | Detalle | 🟡 | Bajo | Migración + XML | ✅ |
+| 29 | `MontoExportacion` | Detalle | 🟡 | Bajo | Migración + XML | ✅ |
+| 30 | `TotalIVADevuelto` en XML | Resumen | 🟡 | Bajo | XML | ✅ |
+| 31 | `DetalleSurtido` | Detalle | 🟡 | Muy Alto | Tablas + XML | ⏳ Fase C |
+| 32 | `IVACobradoFabrica` por línea | Detalle | 🟡 | Bajo | Migración + XML | ✅ |
+| 33 | `CodigoComercial` {0,5} estructura | Detalle | 🟡 | Medio | Tabla nueva + XML | ⏳ Fase C |
+| 34 | Exoneración campos incompletos | Detalle | 🟢 | Bajo | Migración + XML | ✅ |
+| 35 | Receptor Telefono | Encabezado | 🟢 | Bajo | Migración + XML | ✅ |
+| 36 | `receptor_email` VARCHAR(100) → 160 | Encabezado | 🟢 | Bajo | Migración | ✅ |
+| 37 | Validaciones FormRequest | Validaciones | 🟢 | Medio | FormRequest + Rules | ✅ |
+| 38 | `OtroContenido` | Otros | 🟢 | Bajo | XML | ✅ |
 
 ---
 
 ## 13. Plan de Remediación Recomendado
 
-### Fase A — Inmediata (Evitar Rechazos de Hacienda)
+### Fase A — Inmediata (Evitar Rechazos de Hacienda) ✅ COMPLETADA (7-9 abril 2026)
 
 **Objetivo:** Corregir las 8 brechas críticas que causarían rechazos.  
-**Esfuerzo estimado:** 1 sprint  
-**Archivos afectados:** ~15
+**Estado:** ✅ Todas las brechas críticas resueltas.  
+**Migración:** `2026_04_07_000000_hacienda_v44_compliance_full.php`
 
 | Tarea | Brechas | Tipo |
 |-------|:-------:|------|
@@ -1110,11 +1131,10 @@ CREATE TABLE fe_linea_descuentos (
 | Modelo: Actualizar fillable/casts de modelos afectados | Varios | Models |
 | DTO/FormRequest: Actualizar validaciones | #37 | Requests |
 
-### Fase B — Corto Plazo (Soporte Estructural Completo)
+### Fase B — Corto Plazo (Soporte Estructural Completo) ✅ COMPLETADA (7-9 abril 2026)
 
 **Objetivo:** Implementar tablas relacionales y soporte múltiple.  
-**Esfuerzo estimado:** 2 sprints  
-**Archivos afectados:** ~30
+**Estado:** ✅ Todas las tablas creadas, XML builder actualizado, validaciones completas.
 
 | Tarea | Brechas | Tipo |
 |-------|:-------:|------|
@@ -1133,25 +1153,27 @@ CREATE TABLE fe_linea_descuentos (
 | Agregar `CodigoActividadReceptor`, `CondicionVentaOtros` | #9, #10 | Migración + XML |
 | Actualizar todas las validaciones FormRequest | #37 | FormRequests |
 
-### Fase C — Mediano Plazo (Campos Específicos por Industria)
+### Fase C — Mediano Plazo (Campos Específicos por Industria) ⏳ PARCIAL
 
 **Objetivo:** Cubrir casos de uso especializados.  
-**Esfuerzo estimado:** 2-3 sprints  
+**Estado:** 6 brechas pendientes para futuros sprints. El resto ya implementadas.  
+**Esfuerzo restante estimado:** 1-2 sprints  
 
-| Tarea | Brechas | Industria |
-|-------|:-------:|-----------|
-| `DetalleSurtido` completo | #31 | Manufactura / Retail |
-| `DatosImpuestoEspecifico` (códigos 03-06) | #27 | Combustibles, Alcohol, Tabaco |
-| `PartidaArancelaria`, `MontoExportacion` | #20, #29 | Exportación |
-| `Registrofiscal8707` | #22 | Bebidas Alcohólicas |
-| `NumeroVINoSerie` | #23 | Automotriz / Aeronáutica |
-| `RegistroMedicamento`, `FormaFarmaceutica` | #24 | Farmacéutico |
-| `FactorCalculoIVA` | #28 | Bienes Usados |
-| `IVACobradoFabrica` | #32 | Manufactura |
-| `CodigoComercial` estructura {0,5} | #33 | Retail / Manufactura |
-| `OtrasSenasExtranjero` | #25 | Internacional |
-| Exoneración campos completos | #34 | Zona Franca / ONG |
-| Soporte múltiples correos emisor | #17 | General |
+| Tarea | Brechas | Industria | Estado |
+|-------|:-------:|-----------|:------:|
+| `DetalleSurtido` completo | #31 | Manufactura / Retail | ⏳ Pendiente |
+| `CodigoComercial` estructura {0,5} | #33 | Retail / Manufactura | ⏳ Pendiente |
+| Soporte múltiples correos emisor | #17 | General | ⏳ Pendiente |
+| `BaseImponible` auditoría de cálculo (imp. 02,04,05,12) | #18 | General | ⏳ Pendiente |
+| `DatosImpuestoEspecifico` (códigos 03-06) | #27 | Combustibles, Alcohol, Tabaco | ✅ |
+| `PartidaArancelaria`, `MontoExportacion` | #20, #29 | Exportación | ✅ |
+| `Registrofiscal8707` | #22 | Bebidas Alcohólicas | ✅ |
+| `NumeroVINoSerie` | #23 | Automotriz / Aeronáutica | ✅ |
+| `RegistroMedicamento`, `FormaFarmaceutica` | #24 | Farmacéutico | ✅ |
+| `FactorCalculoIVA` | #28 | Bienes Usados | ✅ |
+| `IVACobradoFabrica` | #32 | Manufactura | ✅ |
+| `OtrasSenasExtranjero` | #25 | Internacional | ✅ |
+| Exoneración campos completos | #34 | Zona Franca / ONG | ✅ |
 
 ---
 

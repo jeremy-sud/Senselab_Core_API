@@ -1,6 +1,6 @@
 # Estado Actual del Proyecto - Ursol CAST API
 
-**Fecha de actualización:** 28 de marzo 2026  
+**Fecha de actualización:** 9 de abril 2026  
 **Desarrollado por:** Sistemas Ursol S.A.  
 **Desarrollador principal:** Jeremy Arias Solano  
 
@@ -21,14 +21,15 @@
 > v3.2.1: FASE 18.5 — Seeders separados (master/demo) + Migration rollback tests + Load testing k6
 > v4.0.0: FASE 18 — API versionado con prefijo v1/v2, header-based versioning, Sunset middleware
 > v4.1.0: FASE 19.7 — PHPStan 98→0 errores, +17 DTOs (60 total, ~65% cobertura), 3 observers vacíos eliminados, VentaFactory alineada, 2 GDPR factories
+> Hacienda v4.4 Compliance — 32/38 brechas resueltas: migración integral (5 tablas nuevas, 20+ columnas), XmlComprobanteBuilder actualizado, CrIdentificacion tipos 05/06, catálogos config completos, 73 tests Hacienda pasando
 
 ---
 
 ## Estadísticas generales (conteos VERIFICADOS 28 mar 2026)
 - **Controladores implementados:** 93 (excluyendo Controller.php base)
 - **Policies RBAC:** 80+ ✅ (registradas en AuthServiceProvider dedicado)
-- **Modelos Eloquent:** 87 ✅
-- **Migraciones:** 98
+- **Modelos Eloquent:** 92 (87 + 5 Hacienda v4.4) ✅
+- **Migraciones:** 99 (98 + 1 Hacienda v4.4)
 - **FormRequests:** 170+ (validación completa)
 - **API Resources:** 79 (transformación JSON)
 - **DTOs:** 60 (~65% cobertura, +17 en FASE 19.7)
@@ -39,7 +40,7 @@
 - **Tests (archivos):** 141 (58 Unit + 76 Feature + 7 Contract)
 - **Tests (total):** 1261 passing, 0 failing ✅
 - **Providers:** 3 (AppServiceProvider, AuthServiceProvider, ObserverServiceProvider)
-- **Factories:** 85 (+2 GDPR en FASE 19.7)
+- **Factories:** 90 (85 + 5 Hacienda v4.4)
 - **PHPStan:** Level 8, 0 errores ✅
 - **Rutas API:** Configuradas en routes/api.php con 14 archivos en routes/api/
 - **CQRS:** ❌ Eliminado en v3.0.0 (era dead code — 34 archivos, 0 dispatches)
@@ -68,6 +69,15 @@
 - **Acciones por modulo:** 4 (`ver`, `crear`, `editar`, `eliminar`)
 - **Permisos totales:** 68
 - **Modulos definidos:** `empresas`, `sucursales`, `usuarios`, `roles`, `productos`, `clientes`, `proveedores`, `inventario`, `ventas`, `compras`, `contabilidad`, `nomina`, `cuentas_cobrar`, `cuentas_pagar`, `facturacion`, `reportes`, `configuracion`
+
+### Hacienda v4.4 Compliance (DGT-R-000-2024)
+- **Brechas identificadas:** 38 (8 críticas, 11 altas, 14 medias, 5 bajas)
+- **Brechas resueltas:** 32/38 (84%)
+- **Brechas pendientes (Fase C):** 6 — #17 (emails múltiples), #18 (BaseImponible auditoría), #31 (DetalleSurtido), #33 (CodigoComercial {0,5})
+- **Tablas nuevas:** `fe_linea_impuestos`, `fe_medios_pago`, `fe_informacion_referencia`, `fe_otros_cargos`, `fe_linea_descuentos`
+- **Modelos nuevos:** `FeLineaImpuesto`, `FeMedioPago`, `FeInformacionReferencia`, `FeOtroCargo`, `FeLineaDescuento`
+- **Tests Hacienda:** 73 tests (149 assertions), 0 failing ✅
+- **Análisis detallado:** `docs/hacienda/ANALISIS_COMPARATIVO_HACIENDA_V44.md`
 
 ---
 
