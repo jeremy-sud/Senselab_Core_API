@@ -5,6 +5,31 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [Unreleased] — Hacienda v4.4 Compliance (DGT-R-000-2024)
+
+### Agregado
+- **Migración integral Hacienda v4.4** — `2026_04_07_000000_hacienda_v44_compliance_full.php`: 5 tablas nuevas (`fe_linea_impuestos`, `fe_medios_pago`, `fe_informacion_referencia`, `fe_otros_cargos`, `fe_linea_descuentos`), 20+ columnas nuevas en tablas existentes. Cubre 32 de 38 brechas identificadas.
+- **5 modelos nuevos** — `FeLineaImpuesto`, `FeMedioPago`, `FeInformacionReferencia`, `FeOtroCargo`, `FeLineaDescuento` con fillable, casts, timestamps españoles y relaciones.
+- **Factories** para los 5 modelos nuevos (`FeLineaImpuestoFactory`, `FeMedioPagoFactory`, `FeInformacionReferenciaFactory`, `FeOtroCargoFactory`, `FeLineaDescuentoFactory`).
+- **XML: OtrosCargos** — Estructura completa con `TipoDocumentoOC`, `IdentificacionTercero` anidado (`Tipo`/`Numero`), `PorcentajeOC`, `TipoDocumentoOTROS` para código 99.
+- **XML: InformacionReferencia** — Formato ISO 8601 para `FechaEmision`, soporte tabla relacional con fallback legacy (metadata).
+- **XML: OtroContenido** — Sección Otros soporta `OtroContenido` desde `metadata['otros_contenido']` (Brecha #38).
+- **XML: Exonerados** — `TotalServExonerado`, `TotalMercExonerada`, `TotalExonerado`, `TotalIVADevuelto` generados cuando > 0.
+- **CrIdentificacion** — Tipos 05 (Extranjero No Domiciliado) y 06 (No Contribuyente): alfanumérico hasta 20 chars, mapeo texto→código.
+- **Config catálogos v4.4** — `condiciones_venta` completo (01-15, 99), `medios_pago` con SINPE Móvil (06) y Plataforma Digital (07).
+- **Tests** — 31 tests XML builder + 15 tests CrFormats + 9 tests XML original = 73 tests (149 assertions), 0 failing.
+
+### Corregido
+- **OtrosCargos XML** — Nombres de elementos corregidos: `TipoDocumento` → `TipoDocumentoOC`, `Porcentaje` → `PorcentajeOC` según spec v4.4.
+- **OtrosCargos XML** — Propiedades alineadas con modelo: `numero_identidad_tercero` → `tercero_numero_identificacion`, `tipo_identidad_tercero` → `tercero_tipo_identificacion`.
+- **OtrosCargos XML** — Estructura `IdentificacionTercero` anidada con sub-elementos `Tipo`/`Numero` en vez de flat.
+- **InformacionReferencia** — `fecha_emision` formateada como ISO 8601 (`Y-m-d\TH:i:sP`) en lugar de raw Carbon.
+- **StoreRequest** — Campos `otros_cargos` renombrados para coincidir con modelo + validación `tipo_documento_otros`.
+- **StoreRequest** — Medios de pago validación expandida a `01-07,99` (antes solo `01-05,99`).
+
+### Documentación
+- **ANALISIS_COMPARATIVO_HACIENDA_V44.md** — Actualizado con estado de remediación: 32/38 brechas resueltas, 6 pendientes Fase C.
+
 ## [v4.2.0] — 2026-04-06 — FASE 20: Webhooks + Event-Driven
 
 ### Agregado

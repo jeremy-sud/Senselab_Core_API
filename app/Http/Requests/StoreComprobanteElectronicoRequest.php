@@ -36,7 +36,7 @@ class StoreComprobanteElectronicoRequest extends FormRequest
             'condicion_venta' => 'required|in:01,02,03,04,05,06,07,08,09,10,11,12,13,14,15,99',
             'condicion_venta_otros' => 'required_if:condicion_venta,99|nullable|string|max:100',
             'plazo_credito' => 'nullable|integer|min:0',
-            'medio_pago' => 'nullable|in:01,02,03,04,05,99',
+            'medio_pago' => 'nullable|in:01,02,03,04,05,06,07,99',
             'situacion' => 'nullable|in:1,2,3',
 
             // Brecha #9: Código de actividad económica del receptor
@@ -85,7 +85,7 @@ class StoreComprobanteElectronicoRequest extends FormRequest
 
             // Brecha #6: Medios de pago — soporta 1-4 medios
             'medios_pago' => 'nullable|array|min:1|max:4',
-            'medios_pago.*.tipo_medio_pago' => 'required|in:01,02,03,04,05,99',
+            'medios_pago.*.tipo_medio_pago' => 'required|in:01,02,03,04,05,06,07,99',
             'medios_pago.*.medio_pago_otros' => 'required_if:medios_pago.*.tipo_medio_pago,99|nullable|string|max:100',
             'medios_pago.*.total_medio_pago' => 'required|numeric|min:0',
 
