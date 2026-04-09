@@ -286,10 +286,13 @@ class XmlComprobanteBuilder
             $emisor->appendChild($telefono);
         }
 
-        // Correo electrónico
+        // Correo electrónico — Brecha #17: soporta hasta 4 emails (separados por coma o punto y coma)
         if ($comprobante->empresa->email) {
-            $correo = $this->doc->createElement('CorreoElectronico', $this->escaparXml($comprobante->empresa->email));
-            $emisor->appendChild($correo);
+            $emails = array_slice(preg_split('/[;,]\s*/', $comprobante->empresa->email), 0, 4);
+            foreach (array_filter($emails) as $email) {
+                $correo = $this->doc->createElement('CorreoElectronico', $this->escaparXml(trim($email)));
+                $emisor->appendChild($correo);
+            }
         }
 
         $parent->appendChild($emisor);
@@ -494,8 +497,9 @@ class XmlComprobanteBuilder
             }
 
             // BaseImponible (v4.4 - Obligatorio cuando hay impuesto)
+            // Brecha #18: BaseImponible = Subtotal + ImpSelectivoConsumo(02) + ImpCemento(12)
             if ($linea->impuesto_monto > 0 || $linea->impuestos->isNotEmpty()) {
-                $baseImponible = $linea->base_imponible ?? $linea->subtotal;
+                $baseImponible = ($linea->base_imponible > 0) ? $linea->base_imponible : $this->calcularBaseImponible($linea);
                 $baseElement = $this->doc->createElement('BaseImponible', $this->formatearDecimal($baseImponible));
                 $lineaDetalle->appendChild($baseElement);
             }
@@ -811,6 +815,26 @@ class XmlComprobanteBuilder
     }
 
     /**
+     * Brecha #18: Calcular BaseImponible = Subtotal + ImpSelectivoConsumo(02) + ImpCemento(12)
+     *
+     * Según spec Hacienda v4.4: "Se obtiene de la suma entre el campo Subtotal, más
+     * el impuesto selectivo de consumo (02) y el impuesto al cemento (12)"
+     */
+    protected function calcularBaseImponible(FeLineaDetalle $linea): float
+    {
+        $base = (float) ($linea->subtotal ?? 0);
+
+        if ($linea->impuestos->isNotEmpty()) {
+            $impuestosAdicionales = $linea->impuestos
+                ->whereIn('codigo', ['02', '12'])
+                ->sum('monto');
+            $base += (float) $impuestosAdicionales;
+        }
+
+        return $base;
+    }
+
+    /**
      * Agregar resumen de factura (totales) v4.4
      *
      * Incluye nuevo campo TotalDesgloseImpuesto para v4.4
@@ -1103,16 +1127,46 @@ class XmlComprobanteBuilder
 
         $informacionReferencia = $this->doc->createElement('InformacionReferencia');
 
-        $tipoDoc = $this->doc->createElement('TipoDoc', $infoRef['tipo_documento'] ?? '01');
+        $tipoDocValue = $infoRef['tipo_documento'] ?? '01';
+        $tipoDoc = $this->doc->createElement('TipoDoc', $tipoDocValue);
+        $informacionReferencia->appendChild($tipoDoc);
+
+        // TipoDocRefOTRO: requerido cuando TipoDoc = '99'
+        if ($tipoDocValue === '99' && !empty($infoRef['tipo_documento_otro'])) {
+            $tipoDocOtro = $this->doc->createElement('TipoDocRefOTRO', $this->escaparXml($infoRef['tipo_documento_otro']));
+            $informacionReferencia->appendChild($tipoDocOtro);
+        }
+
         $numero = $this->doc->createElement('Numero', $infoRef['numero'] ?? '');
-        $fechaEmision = $this->doc->createElement('FechaEmision', $infoRef['fecha_emision'] ?? '');
-        $codigo = $this->doc->createElement('Codigo', $infoRef['codigo'] ?? '01');
+
+        // Formatear fecha como ISO 8601
+        $fechaRaw = $infoRef['fecha_emision'] ?? '';
+        if ($fechaRaw instanceof \DateTimeInterface) {
+            $fechaRaw = $fechaRaw->format('Y-m-d\TH:i:sP');
+        } elseif (is_string($fechaRaw) && $fechaRaw !== '') {
+            try {
+                $fechaRaw = \Carbon\Carbon::parse($fechaRaw)->format('Y-m-d\TH:i:sP');
+            } catch (\Exception) {
+                // mantener valor original si no se puede parsear
+            }
+        }
+        $fechaEmision = $this->doc->createElement('FechaEmision', $fechaRaw);
+
+        $codigoValue = $infoRef['codigo'] ?? '01';
+        $codigo = $this->doc->createElement('Codigo', $codigoValue);
+
         $razon = $this->doc->createElement('Razon', $this->escaparXml($infoRef['razon'] ?? ''));
 
-        $informacionReferencia->appendChild($tipoDoc);
         $informacionReferencia->appendChild($numero);
         $informacionReferencia->appendChild($fechaEmision);
         $informacionReferencia->appendChild($codigo);
+
+        // CodigoReferenciaOTRO: requerido cuando Codigo = '99'
+        if ($codigoValue === '99' && !empty($infoRef['codigo_referencia_otro'])) {
+            $codigoOtro = $this->doc->createElement('CodigoReferenciaOTRO', $this->escaparXml($infoRef['codigo_referencia_otro']));
+            $informacionReferencia->appendChild($codigoOtro);
+        }
+
         $informacionReferencia->appendChild($razon);
 
         $parent->appendChild($informacionReferencia);
@@ -1198,8 +1252,9 @@ class XmlComprobanteBuilder
      */
     protected function agregarOtros(DOMElement $parent, ComprobanteElectronicoFe $comprobante): void
     {
-        $tieneOtroTexto = isset($comprobante->metadata['otros']);
-        $tieneOtroContenido = isset($comprobante->metadata['otros_contenido']);
+        $metadata = $comprobante->metadata ?? [];
+        $tieneOtroTexto = isset($metadata['otros']);
+        $tieneOtroContenido = isset($metadata['otros_contenido']);
 
         if (!$tieneOtroTexto && !$tieneOtroContenido) {
             return;
@@ -1208,7 +1263,7 @@ class XmlComprobanteBuilder
         $otros = $this->doc->createElement('Otros');
 
         if ($tieneOtroTexto) {
-            foreach ($comprobante->metadata['otros'] as $otro) {
+            foreach ($metadata['otros'] as $otro) {
                 $otroTexto = $this->doc->createElement('OtroTexto', $this->escaparXml($otro));
                 $otros->appendChild($otroTexto);
             }
@@ -1216,7 +1271,7 @@ class XmlComprobanteBuilder
 
         // Brecha #38: OtroContenido — contenido estructurado opcional
         if ($tieneOtroContenido) {
-            foreach ($comprobante->metadata['otros_contenido'] as $contenido) {
+            foreach ($metadata['otros_contenido'] as $contenido) {
                 $otroContenido = $this->doc->createElement('OtroContenido', $this->escaparXml($contenido));
                 $otros->appendChild($otroContenido);
             }

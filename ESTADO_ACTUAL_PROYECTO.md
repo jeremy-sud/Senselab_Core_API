@@ -21,7 +21,7 @@
 > v3.2.1: FASE 18.5 — Seeders separados (master/demo) + Migration rollback tests + Load testing k6
 > v4.0.0: FASE 18 — API versionado con prefijo v1/v2, header-based versioning, Sunset middleware
 > v4.1.0: FASE 19.7 — PHPStan 98→0 errores, +17 DTOs (60 total, ~65% cobertura), 3 observers vacíos eliminados, VentaFactory alineada, 2 GDPR factories
-> Hacienda v4.4 Compliance — 32/38 brechas resueltas: migración integral (5 tablas nuevas, 20+ columnas), XmlComprobanteBuilder actualizado, CrIdentificacion tipos 05/06, catálogos config completos, 73 tests Hacienda pasando
+> Hacienda v4.4 Compliance — 34/38 brechas resueltas: migración integral (5 tablas nuevas, 20+ columnas), XmlComprobanteBuilder actualizado (BaseImponible auto-cálculo, múltiples emails emisor, legacy ref código 99), CrIdentificacion tipos 05/06, catálogos config completos, 808 unit tests pasando
 
 ---
 

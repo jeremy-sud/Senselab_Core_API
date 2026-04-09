@@ -8,7 +8,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 ## [Unreleased] — Hacienda v4.4 Compliance (DGT-R-000-2024)
 
 ### Agregado
-- **Migración integral Hacienda v4.4** — `2026_04_07_000000_hacienda_v44_compliance_full.php`: 5 tablas nuevas (`fe_linea_impuestos`, `fe_medios_pago`, `fe_informacion_referencia`, `fe_otros_cargos`, `fe_linea_descuentos`), 20+ columnas nuevas en tablas existentes. Cubre 32 de 38 brechas identificadas.
+- **Migración integral Hacienda v4.4** — `2026_04_07_000000_hacienda_v44_compliance_full.php`: 5 tablas nuevas (`fe_linea_impuestos`, `fe_medios_pago`, `fe_informacion_referencia`, `fe_otros_cargos`, `fe_linea_descuentos`), 20+ columnas nuevas en tablas existentes. Cubre 34 de 38 brechas identificadas.
 - **5 modelos nuevos** — `FeLineaImpuesto`, `FeMedioPago`, `FeInformacionReferencia`, `FeOtroCargo`, `FeLineaDescuento` con fillable, casts, timestamps españoles y relaciones.
 - **Factories** para los 5 modelos nuevos (`FeLineaImpuestoFactory`, `FeMedioPagoFactory`, `FeInformacionReferenciaFactory`, `FeOtroCargoFactory`, `FeLineaDescuentoFactory`).
 - **XML: OtrosCargos** — Estructura completa con `TipoDocumentoOC`, `IdentificacionTercero` anidado (`Tipo`/`Numero`), `PorcentajeOC`, `TipoDocumentoOTROS` para código 99.
@@ -18,6 +18,9 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 - **CrIdentificacion** — Tipos 05 (Extranjero No Domiciliado) y 06 (No Contribuyente): alfanumérico hasta 20 chars, mapeo texto→código.
 - **Config catálogos v4.4** — `condiciones_venta` completo (01-15, 99), `medios_pago` con SINPE Móvil (06) y Plataforma Digital (07).
 - **Tests** — 31 tests XML builder + 15 tests CrFormats + 9 tests XML original = 73 tests (149 assertions), 0 failing.
+- **XML: BaseImponible auto-cálculo** (Brecha #18) — Método `calcularBaseImponible()`: `Subtotal + Imp.Selectivo(02) + Imp.Cemento(12)`. Usa valor almacenado si > 0, auto-calcula si es 0.
+- **XML: Múltiples emails emisor** (Brecha #17) — Soporte hasta 4 `<CorreoElectronico>` del emisor separados por coma o punto y coma. `array_slice(preg_split(...), 0, 4)`.
+- **XML: InformacionReferencia legacy código 99** — `TipoDocRefOTRO` cuando tipo_documento='99', `CodigoReferenciaOTRO` cuando codigo='99', fecha ISO 8601 con `Carbon::parse`.
 
 ### Corregido
 - **OtrosCargos XML** — Nombres de elementos corregidos: `TipoDocumento` → `TipoDocumentoOC`, `Porcentaje` → `PorcentajeOC` según spec v4.4.
@@ -28,7 +31,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 - **StoreRequest** — Medios de pago validación expandida a `01-07,99` (antes solo `01-05,99`).
 
 ### Documentación
-- **ANALISIS_COMPARATIVO_HACIENDA_V44.md** — Actualizado con estado de remediación: 32/38 brechas resueltas, 6 pendientes Fase C.
+- **ANALISIS_COMPARATIVO_HACIENDA_V44.md** — Actualizado con estado de remediación: 34/38 brechas resueltas, 4 pendientes Fase C.
 
 ## [v4.2.0] — 2026-04-06 — FASE 20: Webhooks + Event-Driven
 
