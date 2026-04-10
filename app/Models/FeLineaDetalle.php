@@ -124,6 +124,22 @@ class FeLineaDetalle extends Model
     }
 
     /**
+     * Relación: Tiene muchos códigos comerciales (tabla normalizada, hasta 5).
+     */
+    public function codigosComerciales(): HasMany
+    {
+        return $this->hasMany(FeCodigoComercial::class, 'linea_detalle_id');
+    }
+
+    /**
+     * Relación: Tiene muchos items de detalle surtido (hasta 20).
+     */
+    public function detalleSurtido(): HasMany
+    {
+        return $this->hasMany(FeDetalleSurtido::class, 'linea_detalle_id');
+    }
+
+    /**
      * Accessor: Verificar si la línea tiene descuento.
      */
     public function getTieneDescuentoAttribute(): bool

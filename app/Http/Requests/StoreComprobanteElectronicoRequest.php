@@ -172,6 +172,28 @@ class StoreComprobanteElectronicoRequest extends FormRequest
             // Monto total línea
             'lineas.*.monto_total_linea' => 'required|numeric|min:0',
 
+            // Brecha #33: Códigos comerciales múltiples {0,5}
+            'lineas.*.codigos_comerciales' => 'nullable|array|max:5',
+            'lineas.*.codigos_comerciales.*.tipo' => 'required|in:01,02,03,04,99',
+            'lineas.*.codigos_comerciales.*.codigo' => 'required|string|max:20',
+
+            // Brecha #31: Detalle surtido {0,20}
+            'lineas.*.detalle_surtido' => 'nullable|array|max:20',
+            'lineas.*.detalle_surtido.*.numero_linea_surtido' => 'required|integer|min:1|max:20',
+            'lineas.*.detalle_surtido.*.codigo_cabys_surtido' => 'required|string|max:13',
+            'lineas.*.detalle_surtido.*.cantidad_surtido' => 'required|numeric|min:0',
+            'lineas.*.detalle_surtido.*.unidad_medida_surtido' => 'nullable|string|max:15',
+            'lineas.*.detalle_surtido.*.detalle_surtido' => 'required|string|max:200',
+            'lineas.*.detalle_surtido.*.precio_unitario_surtido' => 'required|numeric|min:0',
+            'lineas.*.detalle_surtido.*.monto_total_surtido' => 'required|numeric|min:0',
+            'lineas.*.detalle_surtido.*.monto_descuento_surtido' => 'nullable|numeric|min:0',
+            'lineas.*.detalle_surtido.*.subtotal_surtido' => 'required|numeric|min:0',
+            'lineas.*.detalle_surtido.*.impuestos' => 'nullable|array',
+            'lineas.*.detalle_surtido.*.impuestos.*.codigo' => 'required|in:01,02,03,04,05,06,07,08,99',
+            'lineas.*.detalle_surtido.*.impuestos.*.codigo_tarifa_iva' => 'nullable|in:01,02,03,04,05,06,07,08',
+            'lineas.*.detalle_surtido.*.impuestos.*.tarifa' => 'nullable|numeric|min:0|max:100',
+            'lineas.*.detalle_surtido.*.impuestos.*.monto' => 'required|numeric|min:0',
+
             // Certificado digital a usar
             'certificado_id' => 'required|integer|exists:fe_certificados_digitales,id',
         ];
