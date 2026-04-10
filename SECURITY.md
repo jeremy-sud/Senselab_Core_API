@@ -83,7 +83,7 @@ Payment:          3 transacciones/hora
 | **17** | Rate limiting normalizado + SecurityHeaders middleware | Headers OWASP aplicados globalmente |
 | **18.5** | Seeders MasterData/DemoData separados | Datos de producción aislados de datos demo |
 
-**Resultado acumulado:** 997 tests passing, PHPStan L8 0 errors, 7 workflows CI/CD, 80 policies RBAC.
+**Resultado acumulado:** 1261 tests passing, PHPStan L8 0 errors, 9 workflows CI/CD, 80 policies RBAC.
 
 ---
 
@@ -616,4 +616,4 @@ Respondemos en máximo 48 horas hábiles.
 
 ---
 
-*Documento mantenido por Sistemas Ursol S.A. — Actualizado v3.3.0, 24 de marzo de 2026*
+*Documento mantenido por Sistemas Ursol S.A. — Actualizado v4.2.0, 10 de abril de 2026*

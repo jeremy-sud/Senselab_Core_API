@@ -1,14 +1,14 @@
 # Guía de Testing - Ursol CAST API
 
 **Desarrollado por Sistemas Ursol S.A.**  
-*Suite de 997 tests automatizados con 4 capas de verificación*  
-**Última actualización:** 24 de marzo de 2026 — v3.3.0
+*Suite de 1261+ tests automatizados con 4 capas de verificación*  
+**Última actualización:** 10 de abril de 2026 — v4.2.0
 
 ---
 
 ## 📊 Resumen
 
-**Estado Actual:** ✅ **997/997 tests passing (100%)** — 0 failures, 5 skipped (requieren certificado Hacienda)
+**Estado Actual:** ✅ **1261/1261 tests passing (100%)** — 0 failures, 5 skipped (requieren certificado Hacienda)
 
 | Capa de Testing | Archivos | Tests | Herramienta |
 |-----------------|----------|-------|-------------|
@@ -17,7 +17,7 @@
 | **Contract (contratos)** | 9 | ~47 | Pact PHP |
 | **Load (carga)** | 6 | N/A | k6 |
 | **Mutation (mutación)** | — | — | Infection PHP |
-| **Total** | **148 archivos** | **997 tests** | — |
+| **Total** | **148+ archivos** | **1261 tests** | — |
 
 | Métrica | Valor |
 |---------|-------|
@@ -38,7 +38,7 @@ php artisan test
 
 **Salida esperada:**
 ```
-Tests:    997 passed (5 skipped)
+Tests:    1261 passed (5 skipped)
 Duration: ~25s
 ```
 
@@ -159,7 +159,7 @@ tests/
 
 ## 🧪 Capas de Testing
 
-### 1. PHPUnit — Feature + Unit (997 tests)
+### 1. PHPUnit — Feature + Unit (1261 tests)
 
 Tests de integración (Feature) y unitarios (Unit) con PHPUnit 11.5.
 
@@ -375,4 +375,5 @@ k6 run tests/Load/smoke-test.js
 | Feb 2026 | 762 (100%) | ✅ | FASE 4 — PHPStan resuelto |
 | Mar 9, 2026 | 959 (100%) | ✅ | FASE 14 — Contract + Mutation |
 | Mar 24, 2026 | **997 (100%)** | ✅ | **FASE 16 — Service Layer** |
+| Abr 10, 2026 | **1261 (100%)** | ✅ | **FASE 20 + Hacienda v4.4 100%** |
 

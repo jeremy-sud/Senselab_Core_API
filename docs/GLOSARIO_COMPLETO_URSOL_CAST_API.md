@@ -256,7 +256,7 @@ Clase base de excepciones de dominio (`app/Exceptions/DomainException.php`). Las
 Campo booleano para soft delete custom. `false` = registro visible, `true` = registro eliminado lógicamente. Implementado por el trait `HasCustomSoftDeletes`. A diferencia del soft delete estándar de Laravel (`deleted_at`), este proyecto usa un booleano por compatibilidad con el esquema de BD.
 
 ### Eloquent
-ORM (Object-Relational Mapping) de Laravel. El proyecto tiene 87 modelos Eloquent que mapean las tablas de MySQL.
+ORM (Object-Relational Mapping) de Laravel. El proyecto tiene 95 modelos Eloquent que mapean las tablas de MySQL.
 
 ### Empleado
 Modelo para empleados. Campos: `nombre`, `primer_apellido`, `segundo_apellido`, `tipo_documento`, `numero_documento`, `fecha_nacimiento`, `fecha_ingreso`, `cargo_id`, `departamento_id`, `salario`, `email`, `telefono`. Relaciones: `belongsTo(Empresa, Cargo, Departamento)`, `hasMany(PagoNomina, NominaEmpleado)`.
@@ -529,7 +529,7 @@ Servicio que procesa y almacena las respuestas del API de Hacienda, interpretand
 Campo en comprobantes electrónicos: `01` (Efectivo), `02` (Tarjeta), `03` (Cheque), `04` (Transferencia — depósito bancario), `05` (Recaudado por terceros), `99` (Otros).
 
 ### Migración (Migration)
-El proyecto tiene 98 migraciones que definen el esquema de la base de datos. Convenciones:
+El proyecto tiene 100 migraciones que definen el esquema de la base de datos. Convenciones:
 - Nombres: `YYYY_MM_DD_HHMMSS_create_{tabla}_table.php`
 - Timestamps: `creado_en` / `actualizado_en` (en español)
 - Soft delete: campo `eliminado` (boolean)

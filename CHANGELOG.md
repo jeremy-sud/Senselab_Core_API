@@ -5,9 +5,17 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
-## [Unreleased] — Hacienda v4.4 Compliance (DGT-R-000-2024)
+## [Unreleased] — Hacienda v4.4 Compliance (DGT-R-000-2024) — 100% Completado
 
 ### Agregado
+- **Migración Fase C Hacienda v4.4** — `2026_04_10_000000_hacienda_v44_fase_c_surtido_codigo_comercial.php`: 3 tablas nuevas (`fe_codigo_comercial`, `fe_detalle_surtido`, `fe_surtido_impuesto`). Completa las brechas #31 y #33 — cobertura 38/38 (100%).
+- **3 modelos nuevos** — `FeCodigoComercial`, `FeDetalleSurtido`, `FeSurtidoImpuesto` con fillable, casts, timestamps españoles y relaciones.
+- **3 factories nuevas** — `FeCodigoComercialFactory` (states: ean, interno, proveedor), `FeDetalleSurtidoFactory` (state: conDescuento), `FeSurtidoImpuestoFactory` (states: iva13, iva4).
+- **XML: CodigoComercial {0,5}** — Método `agregarCodigosComerciales()` en `XmlComprobanteBuilder`: genera hasta 5 `<CodigoComercial>` con `<Tipo>` y `<Codigo>` desde tabla normalizada `fe_codigo_comercial`, con fallback a campo legacy `codigo` de `FeLineaDetalle` (Brecha #33).
+- **XML: DetalleSurtido {0,20}** — Método `agregarDetalleSurtido()`: genera `<DetalleSurtido>` con hasta 20 `<LineaDetalleSurtido>`, cada una con `CodigoCABySSurtido`, `CantidadSurtido`, `PrecioUnitarioSurtido`, `MontoTotalSurtido`, `MontoDescuentoSurtido` y `<ImpuestoSurtido>` anidados (Brecha #31).
+- **Relaciones en FeLineaDetalle** — `codigosComerciales()` (HasMany → FeCodigoComercial), `detalleSurtido()` (HasMany → FeDetalleSurtido).
+- **Validaciones** — `StoreComprobanteElectronicoRequest` ampliado con: `lineas.*.codigos_comerciales` (array|max:5), `lineas.*.detalle_surtido` (array|max:20 con impuestos anidados).
+- **9 tests nuevos** — Brechas #31 y #33 cubiertas: CodigoComercial normalizado/legacy/max5/vacío, DetalleSurtido básico/múltiple/descuento/vacío/max20. Total V44: 49 tests (124 assertions).
 - **Migración integral Hacienda v4.4** — `2026_04_07_000000_hacienda_v44_compliance_full.php`: 5 tablas nuevas (`fe_linea_impuestos`, `fe_medios_pago`, `fe_informacion_referencia`, `fe_otros_cargos`, `fe_linea_descuentos`), 20+ columnas nuevas en tablas existentes. Cubre 34 de 38 brechas identificadas.
 - **5 modelos nuevos** — `FeLineaImpuesto`, `FeMedioPago`, `FeInformacionReferencia`, `FeOtroCargo`, `FeLineaDescuento` con fillable, casts, timestamps españoles y relaciones.
 - **Factories** para los 5 modelos nuevos (`FeLineaImpuestoFactory`, `FeMedioPagoFactory`, `FeInformacionReferenciaFactory`, `FeOtroCargoFactory`, `FeLineaDescuentoFactory`).
@@ -31,7 +39,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 - **StoreRequest** — Medios de pago validación expandida a `01-07,99` (antes solo `01-05,99`).
 
 ### Documentación
-- **ANALISIS_COMPARATIVO_HACIENDA_V44.md** — Actualizado con estado de remediación: 34/38 brechas resueltas, 4 pendientes Fase C.
+- **ANALISIS_COMPARATIVO_HACIENDA_V44.md** — Actualizado con estado de remediación: 38/38 brechas resueltas, 0 pendientes. Fase C completada 10 de abril de 2026.
 
 ## [v4.2.0] — 2026-04-06 — FASE 20: Webhooks + Event-Driven
 
