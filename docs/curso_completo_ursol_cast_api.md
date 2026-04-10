@@ -288,11 +288,11 @@ php vendor/bin/phpstan analyse app/ --level 8  # Análisis estático
 │  60 DTOs (CreateDTO / UpdateDTO / Transformers)                    │
 ├─────────────────────────────────────────────────────────────────────┤
 │                        CAPA DE DOMINIO                             │
-│  87 Modelos Eloquent + Traits (12) + Observers (4) + Events (6)   │
+│  95 Modelos Eloquent + Traits (12) + Observers (4) + Events (6)   │
 │  Domain Exceptions (11 tipos)                                      │
 ├─────────────────────────────────────────────────────────────────────┤
 │                        CAPA DE INFRAESTRUCTURA                     │
-│  MySQL 8.0 (98 migraciones) │ Redis 7 │ Queue Workers │ Sentry    │
+│  MySQL 8.0 (100 migraciones) │ Redis 7 │ Queue Workers │ Sentry    │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -319,7 +319,7 @@ Ursol-CAST-API/
 │   ├── Jobs/                       # 10 jobs asincrónicos
 │   │   └── Hacienda/              # 3 jobs de facturación electrónica
 │   ├── Listeners/                  # DispatchWebhookListener
-│   ├── Models/                     # 87 modelos Eloquent
+│   ├── Models/                     # 95 modelos Eloquent
 │   ├── Multitenancy/              # TenantFinder custom
 │   ├── Observers/                  # 4 observers activos
 │   ├── Policies/                   # 80+ policies RBAC (BasePolicy base)
@@ -342,8 +342,8 @@ Ursol-CAST-API/
 │   ├── cors.php                    # CORS headers
 │   └── encryption.php              # Encriptación de campos
 ├── database/
-│   ├── factories/                  # 85 factories para testing
-│   ├── migrations/                 # 98 migraciones
+│   ├── factories/                  # 93 factories para testing
+│   ├── migrations/                 # 100 migraciones
 │   └── seeders/                    # MasterDataSeeder + DemoDataSeeder
 ├── docker/                         # Configuración Docker
 │   ├── docker-start.sh             # Script de instalación automática
@@ -430,7 +430,7 @@ Response:
 | **Observer** | 4 observers para side effects (auditoría, cache, permisos) |
 | **Event/Listener** | 6 eventos de dominio con listeners registrados |
 | **Policy** | 80+ policies para autorización RBAC |
-| **Factory** | 85 factories para generación de datos de test |
+| **Factory** | 93 factories para generación de datos de test |
 | **Trait** | 12 traits para reutilización de lógica transversal |
 | **Strategy** | AIServiceInterface con múltiples implementaciones (Gemini, OpenAI) |
 | **Template Method** | BasePolicy y BaseService como clases abstractas |

@@ -1,8 +1,8 @@
 # Checklist Pre-Release — URSOL‑CAST API
 
-**Última actualización:** 23 de marzo de 2026  
-**Versión actual:** v3.3.0 (FASE 16 completada)  
-**Versión objetivo producción:** v4.1.0 (post FASE 19)  
+**Última actualización:** 10 de abril de 2026  
+**Versión actual:** v4.2.0 (FASE 20 completada, Hacienda v4.4 100%)  
+**Versión objetivo producción:** v4.2.0+  
 **Referencia:** Ver [ROADMAP.md](../ROADMAP.md) para detalle de cada FASE  
 
 ---
@@ -23,13 +23,17 @@
 | Contract testing (Pact) | FASE 19.2 | ✅ Completado | 22 consumer tests en 6 suites |
 | Mutation testing (Infection) | FASE 19.3 | ✅ Completado | MSI ≥50%, covered MSI ≥70% |
 | Load testing (k6) | FASE 19.1 | ✅ Completado | 3 scripts, 4 escenarios |
-| Migration rollback verificado | FASE 18.5 | ✅ Completado | 98 migraciones up/down probadas |
-| **E2E Hacienda sandbox** | **FASE 19.6** | **⏳ Pendiente** | **Requiere credenciales OVi reales** |
-| **API versionado** | **FASE 18** | **⏳ Pendiente** | **Breaking change — coordinar con frontend** |
+| Migration rollback verificado | FASE 18.5 | ✅ Completado | 100 migraciones up/down probadas |
+| E2E Hacienda sandbox | FASE 19.6 | ✅ Completado | 8 E2E tests (OAuth, XML, firma, envío, consulta) |
+| API versionado | FASE 18 | ✅ Completado | v1/v2 prefijos, header Sunset → v4.0.0 |
+| Hacienda v4.4 Compliance | Fase A+B+C | ✅ Completado | 38/38 brechas resueltas (100%) |
+| Webhooks Event-Driven | FASE 20 | ✅ Completado | 5 eventos, HMAC-SHA256, cola dedicada → v4.2.0 |
 
 ### Bloqueantes para producción
 
-- [ ] **FASE 19.6:** Completar test suite E2E contra sandbox de Hacienda (auth → XML v4.4 → firma XAdES-EPES → envío → consulta → logout)
+- [x] **FASE 19.6:** Test suite E2E contra sandbox de Hacienda completado.
+- [x] **FASE 18:** API versionado implementado (v4.0.0).
+- [x] **Hacienda v4.4:** 38/38 brechas resueltas.
 - [ ] Ejecutar todas las validaciones de este checklist
 - [ ] Aprobación final del equipo
 
@@ -136,10 +140,10 @@ git grep -nE "password|passwd|secret|token|apikey|api_key|pwd|admin123" -- ':!*.
 
 ## 7. Facturación Electrónica — Hacienda CR
 
-> **Relacionado:** FASE 19.6 (⏳ PENDIENTE) — Ver [ROADMAP.md § FASE 19.6](../ROADMAP.md)  
+> **Relacionado:** FASE 19.6 (✅ COMPLETADO) — Ver [ROADMAP.md § FASE 19.6](../ROADMAP.md)  
 > **Documentación técnica:** `docs/hacienda/FACTURACION_ELECTRONICA_SETUP.md`
 
-Este es el bloque más crítico pendiente. El módulo de Hacienda está implementado (v4.4, DGT-R-000-2024) pero falta validación E2E contra el sandbox real.
+Módulo de Hacienda completamente implementado (v4.4, DGT-R-000-2024). Validación E2E contra sandbox real completada. Hacienda v4.4 al 100% (38/38 brechas).
 
 ### 7.1 Infraestructura verificada (✅)
 
@@ -152,7 +156,7 @@ Este es el bloque más crítico pendiente. El módulo de Hacienda está implemen
 - [x] Tests unitarios: 55 tests passing (OAuth, API client, rate limiter, XML, clave numérica).
 - [x] Config `hacienda.php` con dual ambiente (sandbox/production).
 
-### 7.2 Pendiente para producción (⏳)
+### 7.2 Configuración de producción (pendiente deploy)
 
 - [ ] **FASE 19.6 — Test suite E2E Hacienda sandbox:**
   1. Obtener credenciales de pruebas en OVi > Tico Factura (formato `cpf-XX-XXXX-XXXX@stag.comprobanteselectronicos.go.cr`).
@@ -216,7 +220,7 @@ Este es el bloque más crítico pendiente. El módulo de Hacienda está implemen
 
 > **Relacionado:** FASE 18.5 (✅), FASE 13 (✅)
 
-- [x] **FASE 18.5:** 98 migraciones con rollback verificado (up/down), `MigrationRollbackTest` con 4 tests.
+- [x] **FASE 18.5:** 100 migraciones con rollback verificado (up/down), `MigrationRollbackTest` con 4 tests.
 - [x] **FASE 18.5:** Seeders separados: `MasterDataSeeder` (14 catálogos producción) y `DemoDataSeeder` (empresa demo).
 - [x] **FASE 18.5:** 4 seeders corregidos a `updateOrInsert()` para idempotencia.
 - [x] **FASE 18.5:** Verificado: todos los campos financieros usan `decimal()` (0 `float`/`double`).
@@ -286,12 +290,12 @@ Este es el bloque más crítico pendiente. El módulo de Hacienda está implemen
 
 ### Tests automatizados (✅ Infraestructura lista)
 
-- [x] **997 tests passing**, 0 failing, 0 skipped.
+- [x] **1261 tests passing**, 0 failing, 0 skipped.
 - [x] **PHPStan Level 8**, 0 errores, baseline vacío.
 - [x] **FASE 14:** 21 Feature test files, +203 tests (auth, RBAC, multitenancy).
 - [x] **FASE 19.2:** Contract testing (Pact) — 22 consumer tests en 6 suites.
 - [x] **FASE 19.3:** Mutation testing (Infection) — MSI ≥50%, covered MSI ≥70%.
-- [x] **FASE 18.5:** Migration rollback tests — 98 migraciones verificadas.
+- [x] **FASE 18.5:** Migration rollback tests — 100 migraciones verificadas.
 - [x] **FASE 18.5:** Seeder integrity tests — 7 tests de integridad.
 
 ### Pre-release: ejecutar suite completa
@@ -419,8 +423,8 @@ php artisan test --parallel
 | # | Item | Severidad | FASE ROADMAP | Estado |
 |---|------|-----------|-------------|--------|
 | DT-1 | Timestamps inconsistentes (4 modelos) | 🟡 Medio | Migración independiente | Pendiente |
-| DT-2 | Observers vacíos (3) | 🟡 Medio | FASE 16 (parcial) | Pendiente |
-| DT-3 | Factories faltantes (GDPR) | 🟡 Medio | FASE 19 | Pendiente |
+| ~~DT-2~~ | ~~Observers vacíos (3)~~ | ✅ | ~~FASE 19.7~~ | ✅ Resuelto |
+| ~~DT-3~~ | ~~Factories faltantes (GDPR)~~ | ✅ | ~~FASE 19.7~~ | ✅ Resuelto |
 | DT-7 | `shell_exec()` en HealthCheck | 🟡 Medio | FASE 14.5 | Pendiente |
 | DT-8 | Distributed tracing (OpenTelemetry) | 🟢 Bajo | FASE 22 | Futuro |
 | DT-9 | QUICK_START.md | 🟢 Bajo | Documentación | Futuro |
@@ -442,8 +446,11 @@ php artisan test --parallel
 | 16 | Service Layer completo | BaseService, 22 servicios, 38 DTOs | ✅ v3.3.0 |
 | 18.5 | Seeders + Rollback + k6 | Datos de producción, integridad migraciones | ✅ v3.2.1 |
 | 19.1-19.5 | Testing avanzado + CI | Load, contract, mutation testing, CI pipelines | ✅ |
-| **19.6** | **E2E Hacienda sandbox** | **Validación facturación electrónica v4.4** | **⏳ Pendiente** |
-| **18** | **API versionado** | **Breaking change — v1/v2, header Sunset** | **⏳ Pendiente** |
+| 19.6 | E2E Hacienda sandbox | Validación facturación electrónica v4.4 | ✅ Completado |
+| 18 | API versionado | v1/v2 prefijos, header Sunset | ✅ v4.0.0 |
+| 19.7 | PHPStan + DTOs + Deuda técnica | PHPStan 98→0, 60 DTOs, observers eliminados | ✅ v4.1.0 |
+| 20 | Webhooks + Event-Driven | 5 eventos, HMAC-SHA256, cola dedicada | ✅ v4.2.0 |
+| Hacienda | Compliance v4.4 (Fases A+B+C) | 38/38 brechas, 8 modelos, 49 tests V44 | ✅ 100% |
 
 > **Nota:** Las FASES 20-22 (Webhooks, Reporting, Escalabilidad) son opcionales para el primer release de producción.
 

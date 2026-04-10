@@ -12,13 +12,13 @@
 | Métrica | Documentación | Código Real | Nota |
 |---|---|---|---|
 | Controllers | 95 | **91** | Excluye `Controller.php` base |
-| Modelos Eloquent | 88 | **87** | — |
+| Modelos Eloquent | 88 | **95** | 87 base + 8 Hacienda v4.4 |
 | Servicios | 40 | **40** | 10 AI + 8 Hacienda + 22 core |
 | CQRS archivos | 34 | **0** | ✅ Eliminados en FASE 13 (dead code) |
 | Test files | 68 | **141** | +6 en FASE 18.5, +7 Contract, 5 Load k6 |
 | Tests totales | 802 | **1261** | 1261 passing, 0 skipped |
-| Migraciones | 97 | **98** | — |
-| Factories | — | **85** | +2 GDPR factories en FASE 19.7 |
+| Migraciones | 97 | **100** | +2 Hacienda v4.4 |
+| Factories | — | **93** | +8 Hacienda v4.4 en FASE 19.7+Compliance |
 | DTOs | 43 | **60** | +17 en FASE 19.7. Cobertura ~65% |
 | PHPStan | Level 8, 0 errores | ✅ | 98→0 errores en FASE 19.7 |
 | Providers | 4 | **3** | CQRSServiceProvider eliminado |
@@ -293,7 +293,7 @@ TOTAL ESTIMADO: 268-415 horas
 | 18.5.6 | Load testing k6 | 3 scripts: `smoke-test.js` (flujo crítico), `load-ventas-facturacion.js` (endpoints financieros, 4 escenarios), `load-n1-detection.js` (detección N+1 por comparación de paginación). | ✅ |
 
 **Archivos creados:**
-- `tests/Feature/MigrationRollbackTest.php` — 4 tests, 98 migraciones verificadas
+- `tests/Feature/MigrationRollbackTest.php` — 4 tests, 100 migraciones verificadas
 - `tests/Feature/SeederIntegrityTest.php` — 7 tests de integridad de seeders
 - `database/seeders/MasterDataSeeder.php` — 14 catálogos de producción
 - `database/seeders/DemoDataSeeder.php` — Empresa + usuarios demo
@@ -305,7 +305,7 @@ TOTAL ESTIMADO: 268-415 horas
 - `tests/Load/README.md` — Documentación de ejecución
 
 **Criterio de aceptación:**
-- ✅ 98 migraciones con rollback reversible verificado
+- ✅ 100 migraciones con rollback reversible verificado
 - ✅ Seeders separados: master (producción) vs demo (desarrollo)
 - ✅ 4 seeders corregidos para idempotencia
 - ✅ 3 scripts k6 con 4 escenarios de carga (smoke/normal/stress/spike)
@@ -348,7 +348,7 @@ TOTAL ESTIMADO: 268-415 horas
 | 19.2 | ~~Contract testing~~ | ✅ **COMPLETADO:** Pact PHP 10.2.1 (FFI) instalado. PactTestCase base class con mock server via curl. 6 consumer test suites (22 tests): ClienteApi (4), VentaApi (3), ProductoApi (3), ComprobanteFe (3), Auth (5), Inventario (4). Provider verification test. Workflow `contract-tests.yml` en CI con artifact upload de pacts. 3 targets Makefile: `contract-test`, `contract-test-consumer`, `contract-test-provider`. Contrato generado: `UrsolCastFrontend-UrsolCastApi.json`. |
 | 19.3 | ~~Mutation testing~~ | ✅ **COMPLETADO:** Infection PHP 0.32 instalado y configurado. `infection.json5` apunta a `app/Services`, `app/Rules`, `app/Exceptions` (excluye AI). Workflow `mutation-testing.yml` en CI: full en push a main (MSI≥50%, covered MSI≥70%), incremental en PRs (git-diff-lines). 5 targets Makefile: `mutation-test`, `mutation-test-quick`, `mutation-test-filter`, `mutation-test-services`, `mutation-test-rules`. |
 | 19.4 | ~~CI pipeline mejorado~~ | ✅ **COMPLETADO:** Todos los workflows GitHub Actions auditados y corregidos. `tests.yml` reescrito: 3 jobs separados (tests con pcov, code-quality PHPStan Level 8 + CS Fixer, security audit), Composer cache v4, Codecov v4. `ci-cd.yml` corregido: eliminadas instalaciones on-the-fly, cache, pcov, Codecov v4. `phpstan.yml` corregido: Level 6→8 en 5 instancias. `mutation-testing.yml` mejorado con Composer cache. `codecov.yml` creado: 70% proyecto / 80% patch. README badges dinámicos (Codecov, PHPStan, Mutation Testing). |
-| 19.5 | ~~Migration rollback tests~~ | ✅ **COMPLETADO en FASE 18.5:** 4 tests verifican up/down de las 98 migraciones (full rollback, re-migrate, individual rollback por migración, tablas críticas). |
+| 19.5 | ~~Migration rollback tests~~ | ✅ **COMPLETADO en FASE 18.5:** 4 tests verifican up/down de las 100 migraciones (full rollback, re-migrate, individual rollback por migración, tablas críticas). |
 | 19.6 | ~~E2E Hacienda sandbox~~ | ✅ **COMPLETADO:** Test suite E2E contra sandbox real de Hacienda. `HaciendaSandboxE2ETest.php` con 8 tests: OAuth autenticación, token refresh, logout, generación XML v4.4, firma XAdES-EPES con .p12 real, envío factura a sandbox, envío tiquete sin receptor, consulta de estado, flujo completo factura, flujo completo nota de crédito. Tests se saltan automáticamente si credenciales no están configuradas (`markTestSkipped`). Credenciales vía env vars: `HACIENDA_SANDBOX_USERNAME`, `HACIENDA_SANDBOX_PASSWORD`, `HACIENDA_SANDBOX_CERT_PIN`. Workflow CI `e2e-hacienda.yml` (manual + push a main, secrets en GitHub). Certificado .p12 en `storage/app/certificates/sandbox/` (gitignored). 3 Makefile targets: `e2e-hacienda`, `e2e-hacienda-verbose`, `e2e-hacienda-filter`. phpunit.xml testsuite `E2E-Sandbox` agregada. `.env.example` actualizado con variables sandbox. |
 
 **Criterio de aceptación:**
