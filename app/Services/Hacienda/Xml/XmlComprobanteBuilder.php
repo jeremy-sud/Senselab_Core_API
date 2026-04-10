@@ -4,6 +4,7 @@ namespace App\Services\Hacienda\Xml;
 
 use App\Exceptions\HaciendaException;
 use App\Models\ComprobanteElectronicoFe;
+use App\Models\FeDetalleSurtido;
 use App\Models\FeLineaDetalle;
 use App\Models\FeLineaImpuesto;
 use DOMDocument;
@@ -425,15 +426,8 @@ class XmlComprobanteBuilder
                 $lineaDetalle->appendChild($cabys);
             }
 
-            // Código del producto/servicio
-            if ($linea->codigo) {
-                $codigo = $this->doc->createElement('CodigoComercial');
-                $tipoCodigo = $this->doc->createElement('Tipo', $linea->codigo_tipo ?? '04');
-                $codigoValor = $this->doc->createElement('Codigo', $linea->codigo);
-                $codigo->appendChild($tipoCodigo);
-                $codigo->appendChild($codigoValor);
-                $lineaDetalle->appendChild($codigo);
-            }
+            // Brecha #33: CodigoComercial — soporta tabla normalizada {0,5} y campo legacy
+            $this->agregarCodigosComerciales($lineaDetalle, $linea);
 
             // Cantidad
             $cantidad = $this->doc->createElement('Cantidad', $this->formatearDecimal($linea->cantidad));
@@ -474,6 +468,9 @@ class XmlComprobanteBuilder
                 $formaFarm = $this->doc->createElement('FormaFarmaceutica', $linea->forma_farmaceutica);
                 $lineaDetalle->appendChild($formaFarm);
             }
+
+            // Brecha #31: DetalleSurtido — estructura completa de surtidos/combos
+            $this->agregarDetalleSurtido($lineaDetalle, $linea);
 
             // Precio unitario
             $precioUnitario = $this->doc->createElement('PrecioUnitario', $this->formatearDecimal($linea->precio_unitario));
@@ -1278,6 +1275,125 @@ class XmlComprobanteBuilder
         }
         
         $parent->appendChild($otros);
+    }
+
+    /**
+     * Brecha #33: CodigoComercial — soporta tabla normalizada {0,5} y campo legacy
+     */
+    protected function agregarCodigosComerciales(DOMElement $lineaDetalle, FeLineaDetalle $linea): void
+    {
+        // Preferir tabla normalizada fe_codigo_comercial (hasta 5 códigos)
+        if ($linea->codigosComerciales->isNotEmpty()) {
+            foreach ($linea->codigosComerciales->sortBy('orden')->take(5) as $codigoComercial) {
+                $elemento = $this->doc->createElement('CodigoComercial');
+                $tipo = $this->doc->createElement('Tipo', $codigoComercial->tipo);
+                $codigo = $this->doc->createElement('Codigo', $codigoComercial->codigo);
+                $elemento->appendChild($tipo);
+                $elemento->appendChild($codigo);
+                $lineaDetalle->appendChild($elemento);
+            }
+            return;
+        }
+
+        // Fallback: campo legacy (un solo código)
+        if ($linea->codigo) {
+            $elemento = $this->doc->createElement('CodigoComercial');
+            $tipo = $this->doc->createElement('Tipo', $linea->codigo_tipo ?? '04');
+            $codigo = $this->doc->createElement('Codigo', $linea->codigo);
+            $elemento->appendChild($tipo);
+            $elemento->appendChild($codigo);
+            $lineaDetalle->appendChild($elemento);
+        }
+    }
+
+    /**
+     * Brecha #31: DetalleSurtido — estructura completa de surtidos/combos
+     *
+     * Genera la sección DetalleSurtido con hasta 20 LineaDetalleSurtido,
+     * cada una con su CodigoCABYS, cantidad, precio e impuestos individuales.
+     */
+    protected function agregarDetalleSurtido(DOMElement $lineaDetalle, FeLineaDetalle $linea): void
+    {
+        if ($linea->detalleSurtido->isEmpty()) {
+            return;
+        }
+
+        $detalleSurtidoElement = $this->doc->createElement('DetalleSurtido');
+
+        foreach ($linea->detalleSurtido->sortBy('numero_linea_surtido')->take(20) as $surtido) {
+            $lineaSurtido = $this->doc->createElement('LineaDetalleSurtido');
+
+            $numLinea = $this->doc->createElement('NumeroLineaSurtido', $surtido->numero_linea_surtido);
+            $lineaSurtido->appendChild($numLinea);
+
+            $cabys = $this->doc->createElement('CodigoCABYSSurtido', $surtido->codigo_cabys_surtido);
+            $lineaSurtido->appendChild($cabys);
+
+            $cantidad = $this->doc->createElement('CantidadSurtido', number_format((float) $surtido->cantidad_surtido, 3, '.', ''));
+            $lineaSurtido->appendChild($cantidad);
+
+            $unidad = $this->doc->createElement('UnidadMedidaSurtido', $surtido->unidad_medida_surtido);
+            $lineaSurtido->appendChild($unidad);
+
+            $detalle = $this->doc->createElement('DetalleSurtido', $this->escaparXml($surtido->detalle_surtido));
+            $lineaSurtido->appendChild($detalle);
+
+            $precioUnit = $this->doc->createElement('PrecioUnitarioSurtido', $this->formatearDecimal($surtido->precio_unitario_surtido));
+            $lineaSurtido->appendChild($precioUnit);
+
+            $montoTotal = $this->doc->createElement('MontoTotalSurtido', $this->formatearDecimal($surtido->monto_total_surtido));
+            $lineaSurtido->appendChild($montoTotal);
+
+            if ($surtido->monto_descuento_surtido > 0) {
+                $montoDesc = $this->doc->createElement('MontoDescuentoSurtido', $this->formatearDecimal($surtido->monto_descuento_surtido));
+                $lineaSurtido->appendChild($montoDesc);
+            }
+
+            $subtotal = $this->doc->createElement('SubTotalSurtido', $this->formatearDecimal($surtido->subtotal_surtido));
+            $lineaSurtido->appendChild($subtotal);
+
+            // ImpuestoSurtido {1,1000}
+            if ($surtido->impuestos->isNotEmpty()) {
+                foreach ($surtido->impuestos as $impuesto) {
+                    $this->agregarImpuestoSurtidoElement($lineaSurtido, $impuesto);
+                }
+            }
+
+            $detalleSurtidoElement->appendChild($lineaSurtido);
+        }
+
+        $lineaDetalle->appendChild($detalleSurtidoElement);
+    }
+
+    /**
+     * Agregar un elemento ImpuestoSurtido al XML
+     */
+    protected function agregarImpuestoSurtidoElement(DOMElement $parent, \App\Models\FeSurtidoImpuesto $impuesto): void
+    {
+        $impuestoElement = $this->doc->createElement('ImpuestoSurtido');
+
+        $codigo = $this->doc->createElement('Codigo', $impuesto->codigo);
+        $impuestoElement->appendChild($codigo);
+
+        if ($impuesto->codigo_tarifa_iva) {
+            $codigoTarifa = $this->doc->createElement('CodigoTarifaIVA', $impuesto->codigo_tarifa_iva);
+            $impuestoElement->appendChild($codigoTarifa);
+        }
+
+        if ($impuesto->tarifa !== null) {
+            $tarifa = $this->doc->createElement('Tarifa', number_format((float) $impuesto->tarifa, 2, '.', ''));
+            $impuestoElement->appendChild($tarifa);
+        }
+
+        $monto = $this->doc->createElement('Monto', $this->formatearDecimal($impuesto->monto));
+        $impuestoElement->appendChild($monto);
+
+        if ($impuesto->monto_exportacion > 0) {
+            $montoExp = $this->doc->createElement('MontoExportacion', $this->formatearDecimal($impuesto->monto_exportacion));
+            $impuestoElement->appendChild($montoExp);
+        }
+
+        $parent->appendChild($impuestoElement);
     }
 
     /**

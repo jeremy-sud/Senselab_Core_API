@@ -1,7 +1,7 @@
 # Análisis Comparativo: Ursol-CAST-API vs Especificación Hacienda CR (DGT-R-000-2024 v4.4)
 
 **Fecha del análisis:** 7 de abril de 2026  
-**Última actualización:** 9 de abril de 2026  
+**Última actualización:** 10 de abril de 2026  
 **Versión de la API:** v4.2.0 (FASE 20)  
 **Versión del esquema Hacienda:** 4.4  
 **Documento de referencia:** Anexo 1 – Estructura XML Comprobantes Electrónicos (97 páginas)  
@@ -9,23 +9,24 @@
 
 ---
 
-> ### 📋 Estado de Remediación (actualizado 9 de abril de 2026)
+> ### 📋 Estado de Remediación (actualizado 10 de abril de 2026)
 >
 > | Criticidad | Total | ✅ Resueltas | ⏳ Fase C |
 > |:----------:|:-----:|:-----------:|:---------:|
 > | 🔴 Crítico | 8 | **8** | 0 |
-> | 🟠 Alto | 11 | **10** | 1 |
-> | 🟡 Medio | 14 | **11** | 3 |
+> | 🟠 Alto | 11 | **11** | 0 |
+> | 🟡 Medio | 14 | **14** | 0 |
 > | 🟢 Bajo | 5 | **5** | 0 |
-> | **Total** | **38** | **34** | **4** |
+> | **Total** | **38** | **38** | **0** |
 >
 > **Archivos principales modificados:**
 > - Migración: `2026_04_07_000000_hacienda_v44_compliance_full.php` (5 tablas nuevas, 20+ columnas)
-> - XML: `XmlComprobanteBuilder.php` (OtrosCargos, InformacionReferencia, OtroContenido, Exoneraciones, BaseImponible, Emails múltiples)
-> - Modelos: `ComprobanteElectronicoFe`, `FeLineaDetalle`, + 5 modelos nuevos
+> - Migración: `2026_04_10_000000_hacienda_v44_fase_c_surtido_codigo_comercial.php` (3 tablas nuevas: `fe_codigo_comercial`, `fe_detalle_surtido`, `fe_surtido_impuesto`)
+> - XML: `XmlComprobanteBuilder.php` (OtrosCargos, InformacionReferencia, OtroContenido, Exoneraciones, BaseImponible, Emails múltiples, CodigoComercial {0,5}, DetalleSurtido)
+> - Modelos: `ComprobanteElectronicoFe`, `FeLineaDetalle`, + 8 modelos nuevos (incl. `FeCodigoComercial`, `FeDetalleSurtido`, `FeSurtidoImpuesto`)
 > - Validaciones: `StoreComprobanteElectronicoRequest`, `CrIdentificacion`
 > - Config: `config/hacienda.php` (catálogos completos v4.4)
-> - Tests: 73 tests pasando (149 assertions)
+> - Tests: 49 tests V44 pasando (124 assertions)
 
 ---
 
@@ -1097,9 +1098,9 @@ CREATE TABLE fe_linea_descuentos (
 | 28 | `FactorCalculoIVA` | Detalle | 🟡 | Bajo | Migración + XML | ✅ |
 | 29 | `MontoExportacion` | Detalle | 🟡 | Bajo | Migración + XML | ✅ |
 | 30 | `TotalIVADevuelto` en XML | Resumen | 🟡 | Bajo | XML | ✅ |
-| 31 | `DetalleSurtido` | Detalle | 🟡 | Muy Alto | Tablas + XML | ⏳ Fase C |
+| 31 | `DetalleSurtido` | Detalle | 🟡 | Muy Alto | Tablas + XML | ✅ |
 | 32 | `IVACobradoFabrica` por línea | Detalle | 🟡 | Bajo | Migración + XML | ✅ |
-| 33 | `CodigoComercial` {0,5} estructura | Detalle | 🟡 | Medio | Tabla nueva + XML | ⏳ Fase C |
+| 33 | `CodigoComercial` {0,5} estructura | Detalle | 🟡 | Medio | Tabla nueva + XML | ✅ |
 | 34 | Exoneración campos incompletos | Detalle | 🟢 | Bajo | Migración + XML | ✅ |
 | 35 | Receptor Telefono | Encabezado | 🟢 | Bajo | Migración + XML | ✅ |
 | 36 | `receptor_email` VARCHAR(100) → 160 | Encabezado | 🟢 | Bajo | Migración | ✅ |
@@ -1153,16 +1154,16 @@ CREATE TABLE fe_linea_descuentos (
 | Agregar `CodigoActividadReceptor`, `CondicionVentaOtros` | #9, #10 | Migración + XML |
 | Actualizar todas las validaciones FormRequest | #37 | FormRequests |
 
-### Fase C — Mediano Plazo (Campos Específicos por Industria) ⏳ PARCIAL
+### Fase C — Mediano Plazo (Campos Específicos por Industria) ✅ COMPLETADA (10 abril 2026)
 
 **Objetivo:** Cubrir casos de uso especializados.  
-**Estado:** 4 brechas pendientes para futuros sprints. El resto ya implementadas.  
-**Esfuerzo restante estimado:** 1 sprint  
+**Estado:** ✅ Todas las brechas resueltas. 38/38 cumplimiento completo.  
+**Migración:** `2026_04_10_000000_hacienda_v44_fase_c_surtido_codigo_comercial.php`  
 
 | Tarea | Brechas | Industria | Estado |
 |-------|:-------:|-----------|:------:|
-| `DetalleSurtido` completo | #31 | Manufactura / Retail | ⏳ Pendiente |
-| `CodigoComercial` estructura {0,5} | #33 | Retail / Manufactura | ⏳ Pendiente |
+| `DetalleSurtido` completo (tabla `fe_detalle_surtido` + `fe_surtido_impuesto`) | #31 | Manufactura / Retail | ✅ Resuelto |
+| `CodigoComercial` estructura {0,5} (tabla `fe_codigo_comercial`) | #33 | Retail / Manufactura | ✅ Resuelto |
 | Soporte múltiples correos emisor | #17 | General | ✅ Resuelto |
 | `BaseImponible` auto-cálculo (imp. 02,12) | #18 | General | ✅ Resuelto |
 | `DatosImpuestoEspecifico` (códigos 03-06) | #27 | Combustibles, Alcohol, Tabaco | ✅ |

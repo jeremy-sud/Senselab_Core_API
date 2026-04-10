@@ -4,12 +4,15 @@ namespace Tests\Unit\Services;
 
 use App\Models\ComprobanteElectronicoFe;
 use App\Models\Empresa;
+use App\Models\FeCodigoComercial;
+use App\Models\FeDetalleSurtido;
 use App\Models\FeInformacionReferencia;
 use App\Models\FeLineaDescuento;
 use App\Models\FeLineaDetalle;
 use App\Models\FeLineaImpuesto;
 use App\Models\FeMedioPago;
 use App\Models\FeOtroCargo;
+use App\Models\FeSurtidoImpuesto;
 use App\Services\Hacienda\Xml\XmlComprobanteBuilder;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -1051,5 +1054,254 @@ class XmlComprobanteBuilderV44Test extends TestCase
         // Máximo 4 según spec Hacienda (5to se descarta)
         $this->assertSame(4, substr_count($xml, '<CorreoElectronico>'));
         $this->assertStringNotContainsString('e@t.com', $xml);
+    }
+
+    // ==========================================
+    // Brecha #33: CodigoComercial {0,5} estructura
+    // ==========================================
+
+    #[Test]
+    public function brecha33_codigo_comercial_desde_tabla_normalizada()
+    {
+        $comprobante = $this->crearComprobante();
+        $linea = $this->crearLinea($comprobante->id, [
+            'codigo' => '',
+        ]);
+
+        FeCodigoComercial::factory()->create([
+            'linea_detalle_id' => $linea->id,
+            'orden' => 1,
+            'tipo' => '03',
+            'codigo' => '7441234567890',
+        ]);
+
+        FeCodigoComercial::factory()->create([
+            'linea_detalle_id' => $linea->id,
+            'orden' => 2,
+            'tipo' => '01',
+            'codigo' => 'PROD-001',
+        ]);
+
+        $xml = $this->builder->build($comprobante);
+
+        $this->assertEquals(2, substr_count($xml, '<CodigoComercial>'));
+        $this->assertStringContainsString('<Tipo>03</Tipo>', $xml);
+        $this->assertStringContainsString('<Codigo>7441234567890</Codigo>', $xml);
+        $this->assertStringContainsString('<Tipo>01</Tipo>', $xml);
+        $this->assertStringContainsString('<Codigo>PROD-001</Codigo>', $xml);
+    }
+
+    #[Test]
+    public function brecha33_codigo_comercial_maximo_5()
+    {
+        $comprobante = $this->crearComprobante();
+        $linea = $this->crearLinea($comprobante->id, [
+            'codigo' => '',
+        ]);
+
+        // Crear 6 códigos (solo 5 se generan)
+        for ($i = 1; $i <= 6; $i++) {
+            FeCodigoComercial::factory()->create([
+                'linea_detalle_id' => $linea->id,
+                'orden' => $i,
+                'tipo' => '04',
+                'codigo' => "CODE-{$i}",
+            ]);
+        }
+
+        $xml = $this->builder->build($comprobante);
+
+        $this->assertEquals(5, substr_count($xml, '<CodigoComercial>'));
+        $this->assertStringNotContainsString('CODE-6', $xml);
+    }
+
+    #[Test]
+    public function brecha33_codigo_comercial_legacy_fallback()
+    {
+        $comprobante = $this->crearComprobante();
+        $this->crearLinea($comprobante->id, [
+            'codigo' => 'LEGACY-001',
+            'codigo_tipo' => '02',
+        ]);
+
+        $xml = $this->builder->build($comprobante);
+
+        $this->assertEquals(1, substr_count($xml, '<CodigoComercial>'));
+        $this->assertStringContainsString('<Tipo>02</Tipo>', $xml);
+        $this->assertStringContainsString('<Codigo>LEGACY-001</Codigo>', $xml);
+    }
+
+    #[Test]
+    public function brecha33_sin_codigo_comercial_no_genera_tag()
+    {
+        $comprobante = $this->crearComprobante();
+        $this->crearLinea($comprobante->id, [
+            'codigo' => '',
+        ]);
+
+        $xml = $this->builder->build($comprobante);
+
+        $this->assertStringNotContainsString('<CodigoComercial>', $xml);
+    }
+
+    // ==========================================
+    // Brecha #31: DetalleSurtido completo
+    // ==========================================
+
+    #[Test]
+    public function brecha31_detalle_surtido_basico()
+    {
+        $comprobante = $this->crearComprobante();
+        $linea = $this->crearLinea($comprobante->id);
+
+        $surtido = FeDetalleSurtido::factory()->create([
+            'linea_detalle_id' => $linea->id,
+            'numero_linea_surtido' => 1,
+            'codigo_cabys_surtido' => '8523102100000',
+            'cantidad_surtido' => 2.000,
+            'unidad_medida_surtido' => 'Unid',
+            'detalle_surtido' => 'Producto A del combo',
+            'precio_unitario_surtido' => 5000.00000,
+            'monto_total_surtido' => 10000.00000,
+            'monto_descuento_surtido' => 0,
+            'subtotal_surtido' => 10000.00000,
+        ]);
+
+        FeSurtidoImpuesto::factory()->create([
+            'detalle_surtido_id' => $surtido->id,
+            'codigo' => '01',
+            'codigo_tarifa_iva' => '08',
+            'tarifa' => 13.00,
+            'monto' => 1300.00000,
+        ]);
+
+        $xml = $this->builder->build($comprobante);
+
+        $this->assertStringContainsString('<DetalleSurtido>', $xml);
+        $this->assertStringContainsString('<LineaDetalleSurtido>', $xml);
+        $this->assertStringContainsString('<NumeroLineaSurtido>1</NumeroLineaSurtido>', $xml);
+        $this->assertStringContainsString('<CodigoCABYSSurtido>8523102100000</CodigoCABYSSurtido>', $xml);
+        $this->assertStringContainsString('<CantidadSurtido>2.000</CantidadSurtido>', $xml);
+        $this->assertStringContainsString('<UnidadMedidaSurtido>Unid</UnidadMedidaSurtido>', $xml);
+        $this->assertStringContainsString('<PrecioUnitarioSurtido>5000.00000</PrecioUnitarioSurtido>', $xml);
+        $this->assertStringContainsString('<SubTotalSurtido>10000.00000</SubTotalSurtido>', $xml);
+        $this->assertStringContainsString('<ImpuestoSurtido>', $xml);
+        $this->assertStringContainsString('<Tarifa>13.00</Tarifa>', $xml);
+        $this->assertStringContainsString('<Monto>1300.00000</Monto>', $xml);
+    }
+
+    #[Test]
+    public function brecha31_detalle_surtido_multiples_lineas_con_impuestos()
+    {
+        $comprobante = $this->crearComprobante();
+        $linea = $this->crearLinea($comprobante->id);
+
+        $surtido1 = FeDetalleSurtido::factory()->create([
+            'linea_detalle_id' => $linea->id,
+            'numero_linea_surtido' => 1,
+            'codigo_cabys_surtido' => '8523102100000',
+            'cantidad_surtido' => 1.000,
+            'detalle_surtido' => 'Item A',
+            'precio_unitario_surtido' => 10000.00000,
+            'monto_total_surtido' => 10000.00000,
+            'subtotal_surtido' => 10000.00000,
+        ]);
+
+        $surtido2 = FeDetalleSurtido::factory()->create([
+            'linea_detalle_id' => $linea->id,
+            'numero_linea_surtido' => 2,
+            'codigo_cabys_surtido' => '9012345600000',
+            'cantidad_surtido' => 3.000,
+            'detalle_surtido' => 'Item B',
+            'precio_unitario_surtido' => 5000.00000,
+            'monto_total_surtido' => 15000.00000,
+            'subtotal_surtido' => 15000.00000,
+        ]);
+
+        FeSurtidoImpuesto::factory()->create([
+            'detalle_surtido_id' => $surtido1->id,
+            'codigo' => '01',
+            'codigo_tarifa_iva' => '08',
+            'tarifa' => 13.00,
+            'monto' => 1300.00000,
+        ]);
+
+        FeSurtidoImpuesto::factory()->create([
+            'detalle_surtido_id' => $surtido2->id,
+            'codigo' => '01',
+            'codigo_tarifa_iva' => '03',
+            'tarifa' => 4.00,
+            'monto' => 600.00000,
+        ]);
+
+        $xml = $this->builder->build($comprobante);
+
+        $this->assertEquals(2, substr_count($xml, '<LineaDetalleSurtido>'));
+        $this->assertEquals(2, substr_count($xml, '<ImpuestoSurtido>'));
+        $this->assertStringContainsString('<NumeroLineaSurtido>1</NumeroLineaSurtido>', $xml);
+        $this->assertStringContainsString('<NumeroLineaSurtido>2</NumeroLineaSurtido>', $xml);
+        $this->assertStringContainsString('<CodigoTarifaIVA>08</CodigoTarifaIVA>', $xml);
+        $this->assertStringContainsString('<CodigoTarifaIVA>03</CodigoTarifaIVA>', $xml);
+    }
+
+    #[Test]
+    public function brecha31_detalle_surtido_con_descuento()
+    {
+        $comprobante = $this->crearComprobante();
+        $linea = $this->crearLinea($comprobante->id);
+
+        FeDetalleSurtido::factory()->create([
+            'linea_detalle_id' => $linea->id,
+            'numero_linea_surtido' => 1,
+            'codigo_cabys_surtido' => '8523102100000',
+            'cantidad_surtido' => 1.000,
+            'detalle_surtido' => 'Producto con descuento',
+            'precio_unitario_surtido' => 10000.00000,
+            'monto_total_surtido' => 10000.00000,
+            'monto_descuento_surtido' => 1000.00000,
+            'subtotal_surtido' => 9000.00000,
+        ]);
+
+        $xml = $this->builder->build($comprobante);
+
+        $this->assertStringContainsString('<MontoDescuentoSurtido>1000.00000</MontoDescuentoSurtido>', $xml);
+        $this->assertStringContainsString('<SubTotalSurtido>9000.00000</SubTotalSurtido>', $xml);
+    }
+
+    #[Test]
+    public function brecha31_sin_detalle_surtido_no_genera_tag()
+    {
+        $comprobante = $this->crearComprobante();
+        $this->crearLinea($comprobante->id);
+
+        $xml = $this->builder->build($comprobante);
+
+        $this->assertStringNotContainsString('<DetalleSurtido>', $xml);
+        $this->assertStringNotContainsString('<LineaDetalleSurtido>', $xml);
+    }
+
+    #[Test]
+    public function brecha31_detalle_surtido_maximo_20_lineas()
+    {
+        $comprobante = $this->crearComprobante();
+        $linea = $this->crearLinea($comprobante->id);
+
+        // Crear 22 líneas de surtido (solo 20 se generan)
+        for ($i = 1; $i <= 22; $i++) {
+            FeDetalleSurtido::factory()->create([
+                'linea_detalle_id' => $linea->id,
+                'numero_linea_surtido' => $i,
+                'codigo_cabys_surtido' => '8523102100000',
+                'detalle_surtido' => "Item #{$i}",
+                'cantidad_surtido' => 1.000,
+                'precio_unitario_surtido' => 1000.00000,
+                'monto_total_surtido' => 1000.00000,
+                'subtotal_surtido' => 1000.00000,
+            ]);
+        }
+
+        $xml = $this->builder->build($comprobante);
+
+        $this->assertEquals(20, substr_count($xml, '<LineaDetalleSurtido>'));
     }
 }
