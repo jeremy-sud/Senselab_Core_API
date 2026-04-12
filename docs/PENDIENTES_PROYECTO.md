@@ -1,7 +1,7 @@
 # PENDIENTES DEL PROYECTO — Ursol CAST API
 
-**Última actualización:** 10 de abril de 2026  
-**Versión:** v4.2.0 (Post-FASE 20 + Hacienda v4.4 100%)  
+**Última actualización:** 12 de abril de 2026  
+**Versión:** v5.0.0 (Post-FASE 22 + FASE 21)  
 **Referencia:** [ROADMAP.md](../ROADMAP.md) | [release_checklist.md](release_checklist.md)
 
 ---
@@ -40,14 +40,14 @@
 
 ---
 
-## 🟢 FASES FUTURAS (Según ROADMAP)
+## ✅ FASES COMPLETADAS
 
-| FASE | Descripción | Dependencia |
+| FASE | Descripción | Versión |
 |------|-------------|-------------|
-| ~~18~~ | ~~API Versionado (v1/v2)~~ | ✅ Completada → v4.0.0 |
-| ~~20~~ | ~~Webhooks + Event-Driven Architecture~~ | ✅ Completada → v4.2.0 |
-| 21 | Reporting Engine avanzado | Post-producción |
-| 22 | Escalabilidad (read replicas, Horizon, OpenTelemetry) | Post-producción |
+| ~~18~~ | ~~API Versionado (v1/v2)~~ | ✅ v4.0.0 |
+| ~~20~~ | ~~Webhooks + Event-Driven Architecture~~ | ✅ v4.2.0 |
+| ~~21~~ | ~~Reporting Engine avanzado~~ | ✅ v4.3.0 |
+| ~~22~~ | ~~Escalabilidad (read replicas, Horizon, OpenTelemetry)~~ | ✅ v5.0.0 |
 
 ---
 

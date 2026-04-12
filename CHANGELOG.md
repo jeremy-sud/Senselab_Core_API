@@ -5,6 +5,31 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [v5.0.0] — 2026-04-12 — FASE 22: Escalabilidad + FASE 21: Reporting Engine
+
+### Agregado (FASE 22 — Escalabilidad)
+- **Database Read Replicas** — Configuración `mysql_read` en `config/database.php` para separar lecturas de escrituras. Variables env: `DB_READ_WRITE_SPLIT`, `DB_READ_HOST`, `DB_READ_HOSTS` (múltiples réplicas separadas por coma). Soporte sticky connections para consistencia post-escritura.
+- **Trait `UseReadReplica`** — Trait reutilizable para servicios con métodos `queryOnReplica()`, `tableOnReplica()`, `batchQueryOnReplica()`. Usado en `ReportingService` y `DashboardService` para consultas pesadas.
+- **Laravel Horizon Config** — `config/horizon.php` con 6 supervisores especializados: `default`, `webhooks` (10 reintentos con backoff), `reports` (512MB memoria, 10min timeout), `hacienda` (rate limited), `emails`. Configuración por ambiente (production, staging, local).
+- **ETag Middleware** — `ETagMiddleware` genera ETags automáticos para respuestas GET. Responde 304 Not Modified cuando cliente envía `If-None-Match` coincidente. Reduce transferencia ~30-50% en endpoints de listado. Excluye rutas dinámicas (`/health`, `/metrics`, `/dashboard/realtime`).
+- **Distributed Tracing** — `TracingMiddleware` implementa context propagation con headers W3C Trace Context compatibles (`X-Trace-Id`, `X-Span-Id`, `X-Parent-Span-Id`). Agrega `X-Response-Time` a todas las respuestas. Contexto de logging compartido para correlación.
+- **OpenTelemetry Config** — `config/tracing.php` con soporte para exporters Jaeger, Zipkin y OTLP. Sampling configurable (always_on, ratio), auto-instrumentación selectiva (HTTP, DB, cache, queue, Redis, Guzzle), redacción de campos sensibles.
+- **16 tests nuevos** — 8 tests para `ETagMiddleware` (ETags, 304, weak ETags, múltiples ETags), 8 tests para `TracingMiddleware` (propagación, generación spans, response time).
+
+### Agregado (FASE 21 — Reporting Engine)
+- **Endpoint `/api/reportes/financiero`** — Estado de Resultados (P&L), Balance General, Flujo de Caja. Soporta filtros por rango de fechas, sucursal, moneda, y comparación con período anterior.
+- **Endpoint `/api/dashboard`** — KPIs en tiempo real: ventas del mes, cuentas por cobrar vencidas, inventario bajo mínimo, nómina pendiente, facturas pendientes Hacienda, clientes nuevos.
+- **Exportación multi-formato** — Parámetro `?formato=pdf|excel|csv` en endpoints de reportes. PDF con DomPDF (existente), Excel con PhpSpreadsheet (existente), CSV nativo.
+- **`ReportingService`** — Servicio unificado para generación de reportes. Usa `UseReadReplica` trait para consultas en réplica. Métodos: `estadoResultados()`, `balanceGeneral()`, `flujoCaja()`, `comparativoPeriodoAnterior()`.
+- **`DashboardService`** — Servicio para KPIs con cache TTL configurable. Usa `UseReadReplica` para consultas pesadas. Métodos: `getKPIs()`, `getVentasDelMes()`, `getCuentasVencidas()`, `getInventarioBajo()`.
+- **Cache de reportes** — Reportes pesados cacheados en Redis con TTL configurable por tipo. Invalidación automática al insertar datos relevantes vía `ReportCacheObserver`.
+- **DTOs de reportes** — `ReportFilterDTO`, `DashboardKPIDTO`, `EstadoResultadosDTO`, `BalanceGeneralDTO`.
+- **18 tests nuevos** — Tests para ReportingService, DashboardService, exportación PDF/Excel/CSV, cache invalidation.
+
+### Cambiado
+- **`bootstrap/app.php`** — Middlewares `etag` y `tracing` registrados en el stack global.
+- **Documentación actualizada** — `ESTADO_ACTUAL_PROYECTO.md`, `PENDIENTES_PROYECTO.md`, `ROADMAP.md` reflejan v5.0.0.
+
 ## [Unreleased] — Hacienda v4.4 Compliance (DGT-R-000-2024) — 100% Completado
 
 ### Agregado

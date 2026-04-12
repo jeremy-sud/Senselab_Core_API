@@ -22,12 +22,19 @@ return Application::configure(basePath: dirname(__DIR__))
             'log.request' => \App\Http\Middleware\LogRequest::class,
             'throttle.granular' => \App\Http\Middleware\ThrottleRequestsWithRetryAfter::class,
             'metrics.request' => \App\Http\Middleware\RequestMetricsMiddleware::class,
+            // FASE 22: Escalabilidad
+            'etag' => \App\Http\Middleware\ETagMiddleware::class,
+            'tracing' => \App\Http\Middleware\TracingMiddleware::class,
         ]);
 
         // CORS - Cross-Origin Resource Sharing (FASE 1.2)
         // Middleware nativo de Laravel que respeta config/cors.php
         // Debe ejecutarse PRIMERO para procesar preflight requests (OPTIONS)
         $middleware->prepend(\Illuminate\Http\Middleware\HandleCors::class);
+
+        // Distributed Tracing (FASE 22 - Escalabilidad)
+        // Propaga trace IDs y genera spans para cada request
+        $middleware->append(\App\Http\Middleware\TracingMiddleware::class);
 
         // Rate Limiting Granular (FASE 1.5)
         // Se ejecuta SEGUNDO para detectar abuso antes de procesar solicitudes
@@ -44,6 +51,10 @@ return Application::configure(basePath: dirname(__DIR__))
         // CORS Avanzado - Logging y auditoría personalizada (FASE 1.2)
         // Se ejecuta DESPUÉS de HandleCors para registrar detalles de CORS
         $middleware->append(\App\Http\Middleware\HandleCorsAdvanced::class);
+
+        // ETag para conditional GET (FASE 22 - Escalabilidad)
+        // Genera ETags y responde 304 cuando el contenido no ha cambiado
+        $middleware->append(\App\Http\Middleware\ETagMiddleware::class);
 
         // Security Headers - OWASP Top 10 compliance (FASE 1.2)
         // Se ejecuta al final para garantizar que se apliquen a todas las respuestas
