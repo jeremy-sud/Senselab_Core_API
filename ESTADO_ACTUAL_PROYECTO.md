@@ -1,27 +1,18 @@
 # Estado Actual del Proyecto - Ursol CAST API
 
-**Fecha de actualización:** 10 de abril 2026  
+**Fecha de actualización:** 12 de abril 2026  
 **Desarrollado por:** Sistemas Ursol S.A.  
 **Desarrollador principal:** Jeremy Arias Solano  
+**Versión actual:** v5.0.0 (FASE 22 + FASE 21 completadas)
 
-> Nota: FASE 4 completada: PHPStan ✅ (Level 6+baseline, 229 errores corregidos), Tests 100% passing ✅, Imports limpios ✅  
-> v2.3.0: Auditoría integral — 9 relaciones faltantes, MetricsController reescrito, AppServiceProvider refactorizado, 4 test suites nuevos  
-> v2.4.0: Sprint 7.1 (Limpieza Crítica) + Sprint 7.2 (Tests Críticos) — 18 DTOs duplicados eliminados, 15 seeders duplicados eliminados, PHP unificado a 8.4, 4 test suites nuevos (Inventario, Contabilidad, Compras, Nómina)
-> v2.5.0: FASE 8 — Service Layer Pattern en 6 módulos críticos (Almacén, CuentaContable, Proveedor, Empleado, OrdenCompra, PeriodoNomina). 5 servicios nuevos + 1 mejorado, 6 controladores refactorizados (~50% reducción promedio)
-> v2.6.0: FASE 9 — Tests unitarios para servicios FASE 8 (86 tests nuevos) + corrección de 10 bugs críticos de mapeo DB pre-existentes
-> v2.7.0: FASE 10 — PHPStan baseline vaciado (5→0), CQRS expandido a 3 módulos (14 archivos nuevos), 6 controladores más refactorizados, 4 servicios nuevos + 2 reescritos, 57 tests nuevos, 5 bugs de modelos/servicios corregidos
-> v2.8.0: FASE 11 — 42 tests pre-existentes corrigidos (0 failing), 8 bugs de producción descubiertos y corregidos, 8 modelos con timestamps faltantes, 52 permisos de test agregados
-> v2.9.0: FASE 12 — Migración PHPUnit attributes (405 @test→#[Test], @covers→#[CoversClass], @group→#[Group]), 4 test suites nuevos (35 tests), 2 bugs producción corregidos, 2 tests skipped recuperados
-> v3.0.0: FASE 13 — Eliminación CQRS dead code (34 archivos + CQRSServiceProvider), 7 factories corregidas (campos alineados con migraciones reales), conteos de documentación verificados
-> v3.0.1: FASE 17 — Seguridad pre-producción: Swagger auth, rate limiters, FormRequest validation (30+ campos string con max: añadido)
-> v3.1.0: FASE 14 — Cobertura de tests críticos: 21 Feature test files nuevos, +203 tests, 5 bugs producción corregidos
-> v3.1.1: FASE 14.5 — Correcciones críticas auditoría: N+1 queries, cache tenant, $e->getMessage() protegido en servicios AI
-> v3.2.0: FASE 15 — Excepciones de dominio + Respuestas API estandarizadas + ApiResponse trait + Rules CR
-> v3.3.0: FASE 16 — Service Layer secundarios: BaseService, 8 servicios, 19 DTOs, 72 tests
-> v3.2.1: FASE 18.5 — Seeders separados (master/demo) + Migration rollback tests + Load testing k6
-> v4.0.0: FASE 18 — API versionado con prefijo v1/v2, header-based versioning, Sunset middleware
-> v4.1.0: FASE 19.7 — PHPStan 98→0 errores, +17 DTOs (60 total, ~65% cobertura), 3 observers vacíos eliminados, VentaFactory alineada, 2 GDPR factories
-> Hacienda v4.4 Compliance — 38/38 brechas resueltas (100%): 2 migraciones (8 tablas nuevas, 20+ columnas), XmlComprobanteBuilder actualizado (BaseImponible, emails, CodigoComercial {0,5}, DetalleSurtido {0,20}), 8 modelos nuevos, 49 tests V44 (124 assertions)
+> **Historial de versiones:**
+> - v5.0.0: FASE 22 — Escalabilidad: Read replicas, Laravel Horizon, ETags, OpenTelemetry
+> - v4.3.0: FASE 21 — Reporting Engine: Dashboard KPIs, reportes financieros, exportación PDF/Excel/CSV
+> - v4.2.0: FASE 20 — Webhooks + Event-Driven: 5 eventos, HMAC-SHA256, retry exponencial
+> - v4.1.0: FASE 19.7 — PHPStan 98→0 errores, +17 DTOs (60 total, ~65% cobertura)
+> - v4.0.0: FASE 18 — API versionado con prefijo v1/v2, header-based versioning, Sunset middleware
+> - Hacienda v4.4 Compliance — 38/38 brechas resueltas (100%)
+> - PHPStan Level 8 ✅, Tests 100% passing ✅, Imports limpios ✅
 
 ---
 
