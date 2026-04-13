@@ -4,6 +4,7 @@
 .env
 .env.backup
 .env.production
+credenciales_sandbox_hacienda.txt
 # api_db.sql
 # *.sql
 .phpactor.json

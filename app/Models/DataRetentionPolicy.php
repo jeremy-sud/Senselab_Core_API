@@ -111,30 +111,38 @@ class DataRetentionPolicy extends Model
     // ════════════════════════════════════════════════════════════════
 
     /**
-     * Obtener cantidad de registros que cumplen condiciones
+     * Operadores SQL permitidos para condiciones de retención.
+     */
+    private const ALLOWED_OPERATORS = ['=', '!=', '<', '>', '<=', '>=', '<>', 'like', 'not like'];
+
+    /**
+     * Obtener cantidad de registros que cumplen condiciones.
+     *
+     * Usa query builder con parameter binding para prevenir SQL injection.
      */
     public function getAffectedRecordsCount(): int
     {
-        // Esta es una aproximación, la lógica real depende de la BD
-        $query = "SELECT COUNT(*) as count FROM {$this->table_name}";
-
-        if ($this->conditions) {
-            $whereConditions = [];
-            foreach ($this->conditions as $condition) {
-                $whereConditions[] = "{$condition['field']} {$condition['operator']} '{$condition['value']}'";
-            }
-            $query .= " WHERE " . implode(" AND ", $whereConditions);
-        }
-
-        // Agregar fecha de retención
-        $retentionDate = Carbon::now()->subDays($this->retention_days)->toDateString();
-        $query .= $this->conditions ? " AND " : " WHERE ";
-        $query .= "created_at <= '{$retentionDate}'";
-
-        // Ejecutar conteo
         try {
-            $result = \DB::select(\DB::raw($query));
-            return $result[0]->count ?? 0;
+            $query = \DB::table($this->table_name);
+
+            if ($this->conditions) {
+                foreach ($this->conditions as $condition) {
+                    $operator = strtolower(trim($condition['operator'] ?? '='));
+                    if (!in_array($operator, self::ALLOWED_OPERATORS, true)) {
+                        return 0;
+                    }
+                    $query->where(
+                        $condition['field'],
+                        $operator,
+                        $condition['value']
+                    );
+                }
+            }
+
+            $retentionDate = Carbon::now()->subDays($this->retention_days)->toDateString();
+            $query->where('created_at', '<=', $retentionDate);
+
+            return $query->count();
         } catch (\Exception $e) {
             return 0;
         }
