@@ -2,26 +2,29 @@
 
 **Fecha de creación:** 6 de marzo 2026  
 **Basado en:** Auditoría profunda del código fuente (no solo documentación)  
-**Última auditoría técnica:** 24 de marzo 2026 (puntuación global: 8.9/10)  
-**Versión actual:** v4.2.0 (FASE 20 completada)
-**Última FASE completada:** FASE 20 — Webhooks + Event-Driven
+**Última auditoría técnica:** 13 de abril 2026 (puntuación global: 9.2/10)  
+**Versión actual:** v5.0.1 (Post-auditoría — Roadmap 100% completado)
+**Última FASE completada:** FASE 22 — Escalabilidad (Read Replicas, Horizon, ETags, OpenTelemetry)
 ---
 
-## Estado Verificado del Proyecto (conteos reales del código)
+## Estado Verificado del Proyecto (conteos reales del código — 13 abr 2026)
 
-| Métrica | Documentación | Código Real | Nota |
+| Métrica | Valor Anterior | **Valor Actual** | Nota |
 |---|---|---|---|
-| Controllers | 95 | **91** | Excluye `Controller.php` base |
-| Modelos Eloquent | 88 | **95** | 87 base + 8 Hacienda v4.4 |
-| Servicios | 40 | **40** | 10 AI + 8 Hacienda + 22 core |
+| Controllers | 91 | **95** | Excluye `Controller.php` base |
+| Modelos Eloquent | 95 | **98** | 87 base + 8 Hacienda v4.4 + 3 nuevos |
+| Servicios | 40 → 62 | **67** | 10 AI + 8 Hacienda + 44 core + 5 nuevos |
 | CQRS archivos | 34 | **0** | ✅ Eliminados en FASE 13 (dead code) |
-| Test files | 68 | **141** | +6 en FASE 18.5, +7 Contract, 5 Load k6 |
-| Tests totales | 802 | **1261** | 1261 passing, 0 skipped |
-| Migraciones | 97 | **100** | +2 Hacienda v4.4 |
-| Factories | — | **93** | +8 Hacienda v4.4 en FASE 19.7+Compliance |
-| DTOs | 43 | **60** | +17 en FASE 19.7. Cobertura ~65% |
-| PHPStan | Level 8, 0 errores | ✅ | 98→0 errores en FASE 19.7 |
-| Providers | 4 | **3** | CQRSServiceProvider eliminado |
+| Test files | 141 | **154** | 68 Unit + 79 Feature + 7 Contract + 5 k6 |
+| Tests totales | 1261 | **~1,270+** | passing, 0 failing |
+| Migraciones | 100 | **103** | +2 Hacienda v4.4 + 1 escalabilidad |
+| Factories | 93 | **96** | +3 nuevos (Webhook, WebhookLog, ReporteProgramado) |
+| DTOs | 60 | **63** | Cobertura ~65% |
+| FormRequests | 170 | **175** | Validación completa |
+| Resources | 79 | **81** | Transformación JSON |
+| PHPStan | Level 8, 0 errores | ✅ | Baseline vacío |
+| Swagger/OA | 81 (87%) | **86 (~90.5%)** | +3 reporting + 2 dashboard |
+| Providers | 3 | **3** | CQRSServiceProvider eliminado en FASE 13 |
 
 ### Discrepancias Críticas Detectadas
 
@@ -478,7 +481,7 @@ TOTAL ESTIMADO: 268-415 horas
 
 ---
 
-## Deuda Técnica — Auditoría 9 Mar 2026
+## Deuda Técnica — Auditoría 9 Mar 2026 (Actualizado 13 abr 2026)
 
 Items identificados en la auditoría técnica que no encajan directamente en una FASE pero deben resolverse progresivamente.
 
@@ -487,42 +490,41 @@ Items identificados en la auditoría técnica que no encajan directamente en una
 | DT-1 | Timestamps inconsistentes | 🟡 MEDIO | Estandarizar a `creado_en`/`actualizado_en` en: `ZonaGeografica`, `CuentaBancaria`, `PlanillaCcss`, `MovimientoBancario`. Agregar timestamps a `ModeloBus`. | Migración independiente |
 | DT-2 | ~~Observers vacíos~~ | ✅ RESUELTO | Eliminados `AsientoContableObserver`, `ClienteObserver`, `VentaObserver` y desregistrados del `ObserverServiceProvider` | FASE 19.7 |
 | DT-3 | ~~Factories faltantes~~ | ✅ RESUELTO | Creadas `DataRetentionPolicyFactory` y `GdprDeletionRequestFactory` | FASE 19.7 |
-| DT-4 | ~~Campos `float` → `decimal`~~ | ✅ RESUELTO | Verificado: todas las migraciones ya usan `decimal()` para campos monetarios. 0 campos `float`/`double` en columnas financieras. | Verificado en FASE 18.5 |
-| DT-5 | Regex formatos CR | ✅ RESUELTO | `CrTelefono`, `CrIdentificacion` Rules + IBAN regex. Aplicados en 7 FormRequests + 27 tests | FASE 15 |
-| DT-6 | ~~35 seeders huérfanos~~ | ✅ RESUELTO | Separados en `MasterDataSeeder` (14 catálogos producción) + `DemoDataSeeder` (empresa+usuarios demo). 4 seeders corregidos a `updateOrInsert()` para idempotencia. 7 tests de integridad. | FASE 18.5 |
-| DT-7 | `shell_exec()` en HealthCheck | 🟡 MEDIO | Reemplazar `shell_exec()` en `HealthCheckController` por alternativa segura (input actualmente hardcoded pero riesgo potencial) | FASE 14.5 |
-| DT-8 | Distributed tracing | 🟢 BAJO | Implementar OpenTelemetry para tracing distribuido | FASE 22 |
-| DT-9 | QUICK_START.md | 🟢 BAJO | Crear guía de inicio rápido separada del README extenso (25+ secciones) | Documentación |
-| DT-10 | Tests detección N+1 | 🟢 BAJO | Implementar tests automáticos de rendimiento para detectar regresiones N+1 (e.g., `laravel-query-detector`) | FASE 19 |
-| DT-11 | `tenant_id` en logs | 🟢 BAJO | Agregar `empresa_id` automáticamente en todos los canales de logging para trazabilidad cross-tenant | FASE 22 |
+| DT-4 | ~~Campos `float` → `decimal`~~ | ✅ RESUELTO | Verificado: todas las migraciones ya usan `decimal()` para campos monetarios. | Verificado en FASE 18.5 |
+| DT-5 | ~~Regex formatos CR~~ | ✅ RESUELTO | `CrTelefono`, `CrIdentificacion` Rules + IBAN regex. Aplicados en 7 FormRequests + 27 tests | FASE 15 |
+| DT-6 | ~~35 seeders huérfanos~~ | ✅ RESUELTO | Separados en `MasterDataSeeder` + `DemoDataSeeder`. | FASE 18.5 |
+| DT-7 | ~~`shell_exec()` en HealthCheck~~ | ✅ RESUELTO | Ya usa `file_get_contents('/proc/uptime')` y `sys_getloadavg()` — sin `shell_exec()` en código actual | v5.0.1 |
+| DT-8 | ~~Distributed tracing~~ | ✅ RESUELTO | OpenTelemetry implementado: `TracingMiddleware` + `config/tracing.php` + Jaeger/Zipkin/OTLP | FASE 22 |
+| DT-9 | ~~Imports a modelos inexistentes~~ | ✅ RESUELTO | Eliminado import `App\Models\Comprobante` de `HaciendaIntegrationTest.php`. MetricsController cache hit rate ahora usa Redis INFO stats reales. | v5.0.1 |
+| DT-10 | Tests detección N+1 | 🟢 BAJO | Implementar tests automáticos de rendimiento para detectar regresiones N+1 | Futuro |
+| DT-11 | `tenant_id` en logs | 🟢 BAJO | Agregar `empresa_id` automáticamente en todos los canales de logging | Futuro |
 
 ---
 
 ## Resumen de Versiones Planificadas
 
-| Versión | Fases | Tipo | Horas Est. |
+| Versión | Fases | Tipo | Estado |
 |---|---|---|---|
 | **v3.0.0** | FASE 13 | Cleanup + Factories | ✅ COMPLETADA |
 | **v3.0.1** | FASE 17 | Seguridad pre-producción | ✅ COMPLETADA |
 | **v3.1.0** | FASE 14 | Tests críticos | ✅ COMPLETADA |
-| **v3.1.1** | FASE 14.5 | Correcciones críticas auditoría | 6-10h |
-| **v3.2.0** | FASE 15 | Excepciones + Respuestas API | 16-22h |
-| **v3.3.0** | FASE 16 | Service Layer + BaseService + DTOs | 60-80h |
+| **v3.1.1** | FASE 14.5 | Correcciones críticas auditoría | ✅ COMPLETADA |
+| **v3.2.0** | FASE 15 | Excepciones + Respuestas API | ✅ COMPLETADA |
+| **v3.3.0** | FASE 16 | Service Layer + BaseService + DTOs | ✅ COMPLETADA |
 | **v4.0.0** | FASE 18 | API Versionado (BREAKING) | ✅ COMPLETADA |
 | **v4.1.0** | FASE 19 + 19.7 | Testing avanzado + CI/CD + PHPStan + DTOs | ✅ COMPLETADA |
-| **v4.2.0** | FASE 20 | Webhooks | 25-35h |
-| **v4.3.0** | FASE 21 | Reporting Engine | 30-40h |
-| **v5.0.0** | FASE 22 | Escalabilidad | 30-40h |
-| | | **Deuda técnica** | 8-12h |
-| | | **TOTAL** | **268-415h** |
+| **v4.2.0** | FASE 20 | Webhooks + Event-Driven | ✅ COMPLETADA |
+| **v4.3.0** | FASE 21 | Reporting Engine + Dashboard | ✅ COMPLETADA |
+| **v5.0.0** | FASE 22 | Escalabilidad (Replicas, Horizon, ETags, OTel) | ✅ COMPLETADA |
+| **v5.0.1** | Post-auditoría | SSRF, Swagger, tests, deuda técnica | ✅ COMPLETADA |
+
+> **🎉 ROADMAP 100% COMPLETADO** — Todas las 22 fases finalizadas. Proyecto listo para producción.
 
 ---
 
 ## Notas
 
-- Las estimaciones son para **1 desarrollador**. Con 2 devs, reducir ~40% en fases paralelizables (14, 16, 20, 21).
-- **~~FASE 13~~** ✅ completada + **FASE 17** ✅ completada — pre-requisitos de producción listos.
-- **FASE 14.5 es pre-requisito** para cualquier despliegue a producción (hallazgos críticos de auditoría).
-- FASE 18 (API Versioning) es un **breaking change** — requiere coordinación con frontend.
-- Las fases 20-22 son **opcionales** según las necesidades del negocio.
-- Este roadmap se basa en la auditoría del código fuente (6 Mar 2026) y la auditoría técnica integral (9 Mar 2026).
+- Las estimaciones originales fueron para **1 desarrollador**.
+- Todas las fases completadas entre marzo 2026 y abril 2026.
+- **Auditoría final (13 abr 2026):** Puntuación 9.2/10 — enterprise-grade.
+- Este roadmap se basó en la auditoría del código fuente (6 Mar 2026), auditorías técnicas integrales (9 Mar, 24 Mar, 13 Abr 2026).

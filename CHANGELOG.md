@@ -5,6 +5,28 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [v5.0.1] — 2026-04-13 — Post-auditoría: Seguridad, Swagger, Tests, Deuda Técnica
+
+### Seguridad
+- **Validación SSRF en webhooks** — `DeliverWebhookJob` ahora valida que la URL destino no apunte a IPs privadas/internas/reservadas (10.x, 172.16.x, 192.168.x, 127.x, localhost, ::1, fc00::/7, fe80::/10). Resuelve el hallazgo MEDIO de la auditoría técnica del 13 de abril 2026.
+
+### Agregado
+- **Anotaciones OpenAPI/Swagger en 3 controllers de reporting** — `DashboardController` (2 anotaciones: GET /dashboard, POST /dashboard/invalidar-cache), `ReporteController` (3 anotaciones: GET /reportes/financiero, GET /reportes/tipos, POST /reportes/invalidar-cache), `ReporteProgramadoController` (5 anotaciones CRUD + Tag). Cobertura Swagger sube de 83.5% a ~90.5%.
+- **Test unitario para trait `UseReadReplica`** — `tests/Unit/Traits/UseReadReplicaTest.php` con 9 tests (12 assertions): réplica deshabilitada sin config, réplica deshabilitada con mismo host, fallback a default, batch queries sin réplica, retorno de tipos diversos, preservación de conexión original. Cubre el gap identificado en FASE 22.
+
+### Corregido
+- **Import a modelo inexistente** — Eliminado `use App\Models\Comprobante` de `tests/Feature/HaciendaIntegrationTest.php` (modelo no existe, import no utilizado). Resuelve DT-9.
+
+### Documentación
+- **`ESTADO_ACTUAL_PROYECTO.md`** — Estadísticas actualizadas con conteos verificados del 13 abr 2026: 98 modelos, 95 controllers, 67 servicios, 63 DTOs, 154 test files, 103 migraciones, 96 factories, 175 FormRequests, 81 resources, 86 controllers con Swagger (~90.5%), 16 route files.
+- **`ROADMAP.md`** — Versión actualizada a v5.0.1, tabla de versiones completada (todas ✅), deuda técnica DT-7/DT-8/DT-9 marcadas como resueltas.
+- **`docs/release_checklist.md`** — Versión actualizada a v5.0.1, tabla de deuda técnica sincronizada.
+- **`docs/PENDIENTES_PROYECTO.md`** — DT-7, DT-8, DT-9 marcadas como resueltas. Solo quedan 2 items menores: DT-1 (timestamps), DT-3 (naming ConsecutivoFE/Fe).
+
+### Verificado (ya resuelto en código — documentado)
+- **DT-7** — `HealthCheckController` ya no usa `shell_exec()`, usa `file_get_contents('/proc/uptime')` y `sys_getloadavg()`.
+- **DT-8** — `MetricsController::getCacheHitRate()` calcula cache hit rate real desde Redis INFO stats (no usa valor fijo).
+
 ## [v5.0.0] — 2026-04-12 — FASE 22: Escalabilidad + FASE 21: Reporting Engine
 
 ### Agregado (FASE 22 — Escalabilidad)

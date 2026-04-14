@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Services\Hacienda\HaciendaIntegrationService;
 use App\Models\HaciendaComprobante;
-use App\Models\Comprobante;
 use Illuminate\Foundation\Testing\TestCase;
 use Illuminate\Support\Facades\Config;
 use PHPUnit\Framework\Attributes\CoversClass;

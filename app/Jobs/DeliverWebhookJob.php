@@ -40,6 +40,23 @@ class DeliverWebhookJob implements ShouldQueue
         $this->onQueue('webhooks');
     }
 
+    /**
+     * Rangos de IPs privadas/reservadas no permitidas como destino de webhooks (SSRF protection).
+     *
+     * @var array<string>
+     */
+    private const BLOCKED_IP_RANGES = [
+        '10.0.0.0/8',
+        '172.16.0.0/12',
+        '192.168.0.0/16',
+        '127.0.0.0/8',
+        '169.254.0.0/16',
+        '0.0.0.0/8',
+        '::1/128',
+        'fc00::/7',
+        'fe80::/10',
+    ];
+
     public function handle(): void
     {
         $webhook = Webhook::withoutGlobalScopes()->find($this->webhookId);
@@ -48,6 +65,15 @@ class DeliverWebhookJob implements ShouldQueue
             Log::info('DeliverWebhookJob: Webhook no activo o eliminado', [
                 'webhook_id' => $this->webhookId,
                 'evento' => $this->evento,
+            ]);
+            return;
+        }
+
+        // SSRF Protection: validar que la URL destino no apunte a IPs privadas/internas
+        if (!$this->isUrlSafe($webhook->url)) {
+            Log::warning('DeliverWebhookJob: URL destino bloqueada por validación SSRF', [
+                'webhook_id' => $this->webhookId,
+                'url' => $webhook->url,
             ]);
             return;
         }
@@ -187,5 +213,91 @@ class DeliverWebhookJob implements ShouldQueue
             'timestamp' => now()->toIso8601String(),
             'datos' => $this->payload,
         ];
+    }
+
+    /**
+     * Valida que la URL destino no apunte a IPs privadas/internas (SSRF protection).
+     *
+     * v5.0.1: Resuelve hallazgo de auditoría 2026-04-13 (SSRF en webhooks).
+     */
+    private function isUrlSafe(string $url): bool
+    {
+        $parsed = parse_url($url);
+
+        if (!$parsed || empty($parsed['host'])) {
+            return false;
+        }
+
+        $host = $parsed['host'];
+
+        // Bloquear localhost y variantes
+        if (in_array(strtolower($host), ['localhost', '0.0.0.0', '[::]', '[::1]'], true)) {
+            return false;
+        }
+
+        // Resolver el hostname a IP(s)
+        $ips = gethostbynamel($host);
+
+        if ($ips === false) {
+            // No se pudo resolver — bloquear por precaución
+            return false;
+        }
+
+        foreach ($ips as $ip) {
+            if ($this->isPrivateIp($ip)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Verifica si una IP pertenece a un rango privado/reservado.
+     */
+    private function isPrivateIp(string $ip): bool
+    {
+        foreach (self::BLOCKED_IP_RANGES as $range) {
+            if ($this->ipInRange($ip, $range)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Verifica si una IP está dentro de un rango CIDR.
+     */
+    private function ipInRange(string $ip, string $cidr): bool
+    {
+        [$subnet, $bitsStr] = explode('/', $cidr);
+        $bits = (int) $bitsStr;
+
+        // Manejar IPv6
+        if (str_contains($subnet, ':')) {
+            if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+                return false;
+            }
+            $ipBin = inet_pton($ip);
+            $subnetBin = inet_pton($subnet);
+            if ($ipBin === false || $subnetBin === false) {
+                return false;
+            }
+            $fullBytes = intdiv($bits, 8);
+            $remainderBits = $bits % 8;
+            $mask = str_repeat("\xff", $fullBytes) . ($remainderBits ? chr(256 - (1 << (8 - $remainderBits))) : '') . str_repeat("\x00", 16 - (int) ceil($bits / 8));
+            return ($ipBin & $mask) === ($subnetBin & $mask);
+        }
+
+        // IPv4
+        if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            return false;
+        }
+        $ipLong = ip2long($ip);
+        $subnetLong = ip2long($subnet);
+        $mask = -1 << (32 - $bits);
+
+        return ($ipLong & $mask) === ($subnetLong & $mask);
     }
 }

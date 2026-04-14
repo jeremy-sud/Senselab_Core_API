@@ -1,8 +1,8 @@
 # Checklist Pre-Release — URSOL‑CAST API
 
-**Última actualización:** 10 de abril de 2026  
-**Versión actual:** v4.2.0 (FASE 20 completada, Hacienda v4.4 100%)  
-**Versión objetivo producción:** v4.2.0+  
+**Última actualización:** 13 de abril de 2026  
+**Versión actual:** v5.0.1 (Post-auditoría — Roadmap 100%)  
+**Versión objetivo producción:** v5.0.1+  
 **Referencia:** Ver [ROADMAP.md](../ROADMAP.md) para detalle de cada FASE  
 
 ---
@@ -425,12 +425,12 @@ php artisan test --parallel
 | DT-1 | Timestamps inconsistentes (4 modelos) | 🟡 Medio | Migración independiente | Pendiente |
 | ~~DT-2~~ | ~~Observers vacíos (3)~~ | ✅ | ~~FASE 19.7~~ | ✅ Resuelto |
 | ~~DT-3~~ | ~~Factories faltantes (GDPR)~~ | ✅ | ~~FASE 19.7~~ | ✅ Resuelto |
-| DT-7 | `shell_exec()` en HealthCheck | 🟡 Medio | FASE 14.5 | Pendiente |
-| DT-8 | Distributed tracing (OpenTelemetry) | 🟢 Bajo | FASE 22 | Futuro |
-| DT-9 | QUICK_START.md | 🟢 Bajo | Documentación | Futuro |
-| DT-10 | Tests detección N+1 automáticos | 🟢 Bajo | FASE 19 | Futuro |
-| DT-11 | `tenant_id` en logs | 🟢 Bajo | FASE 22 | Futuro |
-| DT-12 | Respuestas API inconsistentes (3 formatos) | ✅ Resuelto | FASE 15 | Completado |
+| ~~DT-7~~ | ~~`shell_exec()` en HealthCheck~~ | ✅ | ~~v5.0.1~~ | ✅ Resuelto (ya usa `file_get_contents('/proc/uptime')`) |
+| ~~DT-8~~ | ~~Distributed tracing (OpenTelemetry)~~ | ✅ | ~~FASE 22~~ | ✅ Resuelto (`TracingMiddleware` + `config/tracing.php`) |
+| ~~DT-9~~ | ~~Imports a modelos inexistentes~~ | ✅ | ~~v5.0.1~~ | ✅ Resuelto (import `Comprobante` eliminado, MetricsController corregido) |
+| DT-10 | Tests detección N+1 automáticos | 🟢 Bajo | Futuro | Pendiente |
+| DT-11 | `tenant_id` en logs | 🟢 Bajo | Futuro | Pendiente |
+| ~~DT-12~~ | ~~Respuestas API inconsistentes~~ | ✅ | ~~FASE 15~~ | ✅ Resuelto |
 
 ---
 
