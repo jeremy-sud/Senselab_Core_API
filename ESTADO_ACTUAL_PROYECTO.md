@@ -1,11 +1,12 @@
 # Estado Actual del Proyecto - Ursol CAST API
 
-**Fecha de actualización:** 12 de abril 2026  
+**Fecha de actualización:** 13 de abril 2026  
 **Desarrollado por:** Sistemas Ursol S.A.  
 **Desarrollador principal:** Jeremy Arias Solano  
-**Versión actual:** v5.0.0 (FASE 22 + FASE 21 completadas)
+**Versión actual:** v5.0.1 (Post-auditoría 13 abr 2026)
 
 > **Historial de versiones:**
+> - v5.0.1: Post-auditoría — Validación SSRF webhooks, Swagger reporting (+14 anotaciones), test UseReadReplica (+9 tests), fix imports, deuda técnica DT-7/DT-8/DT-9 resuelta
 > - v5.0.0: FASE 22 — Escalabilidad: Read replicas, Laravel Horizon, ETags, OpenTelemetry
 > - v4.3.0: FASE 21 — Reporting Engine: Dashboard KPIs, reportes financieros, exportación PDF/Excel/CSV
 > - v4.2.0: FASE 20 — Webhooks + Event-Driven: 5 eventos, HMAC-SHA256, retry exponencial
@@ -16,24 +17,31 @@
 
 ---
 
-## Estadísticas generales (conteos VERIFICADOS 28 mar 2026)
-- **Controladores implementados:** 93 (excluyendo Controller.php base)
-- **Policies RBAC:** 80+ ✅ (registradas en AuthServiceProvider dedicado)
-- **Modelos Eloquent:** 95 (87 + 8 Hacienda v4.4) ✅
-- **Migraciones:** 100 (98 + 2 Hacienda v4.4)
-- **FormRequests:** 170+ (validación completa)
-- **API Resources:** 79 (transformación JSON)
-- **DTOs:** 60 (~65% cobertura, +17 en FASE 19.7)
-- **Jobs/Queues:** 8+ (procesamiento asíncrono)
-- **Traits Reutilizables:** 12 (1 deprecated: EncryptsAttributes)
+## Estadísticas generales (conteos VERIFICADOS 13 abr 2026)
+- **Controladores implementados:** 95 (excluyendo Controller.php base)
+- **Policies RBAC:** 80 ✅ (registradas en AuthServiceProvider dedicado)
+- **Modelos Eloquent:** 98 (87 base + 8 Hacienda v4.4 + 3 nuevos: Webhook, WebhookLog, ReporteProgramado)
+- **Migraciones:** 103
+- **FormRequests:** 175 (validación completa)
+- **API Resources:** 81 (transformación JSON)
+- **DTOs:** 63 (~65% cobertura)
+- **Jobs/Queues:** 10 (procesamiento asíncrono)
+- **Traits Reutilizables:** 13 (incluye UseReadReplica FASE 22)
 - **Observers:** 4 (3 vacíos eliminados en FASE 19.7)
-- **Services:** 62 (10 AI + 8 Hacienda + 44 core)
-- **Tests (archivos):** 141 (58 Unit + 76 Feature + 7 Contract)
-- **Tests (total):** 1261 passing, 0 failing ✅
+- **Services:** 67 (10 AI + 8 Hacienda + 44 core + 5 nuevos: Webhook, Dispatcher, Reporting, Dashboard, Export)
+- **Tests (archivos):** 154 (68 Unit + 79 Feature + 7 Contract) + 5 Load k6
+- **Tests (total):** ~1,270+ passing, 0 failing ✅
 - **Providers:** 3 (AppServiceProvider, AuthServiceProvider, ObserverServiceProvider)
-- **Factories:** 93 (85 + 8 Hacienda v4.4)
+- **Factories:** 96
+- **Seeders:** 73
+- **Events:** 6 (dominio) + **Listeners:** 1 (DispatchWebhookListener)
+- **Middleware:** 9
+- **Exceptions:** 11 (tipadas por dominio)
 - **PHPStan:** Level 8, 0 errores ✅
-- **Rutas API:** Configuradas en routes/api.php con 14 archivos en routes/api/
+- **Rutas API:** Configuradas en routes/api.php con 16 archivos en routes/api/
+- **Swagger/OpenAPI:** 86 controllers con anotaciones PHP 8 Attributes (~90.5% cobertura)
+- **CI/CD Workflows:** 9
+- **LOC (app/):** ~93,180 | **LOC (tests/):** ~33,872
 - **CQRS:** ❌ Eliminado en v3.0.0 (era dead code — 34 archivos, 0 dispatches)
 
 ### Desglose de controladores (por carpeta)

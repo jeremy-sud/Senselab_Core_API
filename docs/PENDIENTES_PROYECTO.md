@@ -1,7 +1,7 @@
 # PENDIENTES DEL PROYECTO — Ursol CAST API
 
-**Última actualización:** 12 de abril de 2026  
-**Versión:** v5.0.0 (Post-FASE 22 + FASE 21)  
+**Última actualización:** 13 de abril de 2026  
+**Versión:** v5.0.1 (Post-auditoría 13 abr 2026)  
 **Referencia:** [ROADMAP.md](../ROADMAP.md) | [release_checklist.md](release_checklist.md)
 
 ---
@@ -11,10 +11,10 @@
 | Categoría | Pendientes | Prioridad |
 |-----------|-----------|-----------|
 | Bloqueante producción | 0 | ✅ Resuelto |
-| Deuda técnica | 4 items menores | 🟡 Baja |
-| Fases futuras ROADMAP | 2 fases (21-22) | 🟢 Planificado |
+| Deuda técnica | 2 items menores | 🟡 Baja |
+| Fases futuras ROADMAP | 0 (100% completado) | ✅ Completado |
 
-> **Estado general:** La gran mayoría de pendientes históricos (julio 2025 — abril 2026) han sido resueltos a través de 20+ fases. Hacienda v4.4 al 100% (38/38 brechas). Este documento refleja solo los pendientes reales vigentes.
+> **Estado general:** Roadmap 100% completado (22 fases). Auditoría técnica 9.2/10. La post-auditoría v5.0.1 resolvió: SSRF en webhooks, Swagger reporting (3 controllers), test UseReadReplica, DT-7/DT-8/DT-9, e imports no válidos.
 
 ---
 
@@ -34,9 +34,11 @@
 | DT-1 | 4 modelos con timestamps `created_at/updated_at` en vez de `creado_en/actualizado_en` | ZonaGeografica, CuentaBancaria, PlanillaCcss, MovimientoBancario | 🟡 Baja |
 | ~~DT-2~~ | ~~3 observers declarados pero vacíos~~ | ~~Eliminados en FASE 19.7~~ | ✅ Resuelto |
 | DT-3 | Dualidad naming ConsecutivoFE / ConsecutivoFe | Controllers + Resources duplicados con contratos distintos | 🟡 Baja |
-| DT-7 | `shell_exec()` en HealthCheckController | Input hardcoded (seguro), pero anti-patrón | 🟠 Media |
-| DT-8 | Placeholders en MetricsController | `registerApplicationMetrics()` inexistente, hit rate fijo 75.5 | 🟡 Baja |
-| DT-9 | Imports a modelos inexistentes | Comprobante, Factura, InventarioMovimiento en HaciendaIntegrationService, audit.php | 🟡 Baja |
+| ~~DT-7~~ | ~~`shell_exec()` en HealthCheckController~~ | Ya usa `file_get_contents('/proc/uptime')` — sin `shell_exec()` en código | ✅ Resuelto (v5.0.1) |
+| ~~DT-8~~ | ~~Placeholders en MetricsController~~ | Cache hit rate ahora usa Redis INFO stats reales | ✅ Resuelto (v5.0.1) |
+| ~~DT-9~~ | ~~Imports a modelos inexistentes~~ | Import `App\Models\Comprobante` eliminado de HaciendaIntegrationTest | ✅ Resuelto (v5.0.1) |
+| DT-10 | Tests detección N+1 automáticos | Futuro | 🟢 Baja |
+| DT-11 | `tenant_id` automático en logs | Futuro | 🟢 Baja |
 
 ---
 
@@ -48,6 +50,7 @@
 | ~~20~~ | ~~Webhooks + Event-Driven Architecture~~ | ✅ v4.2.0 |
 | ~~21~~ | ~~Reporting Engine avanzado~~ | ✅ v4.3.0 |
 | ~~22~~ | ~~Escalabilidad (read replicas, Horizon, OpenTelemetry)~~ | ✅ v5.0.0 |
+| ~~Post-auditoría~~ | ~~SSRF webhooks, Swagger reporting, test UseReadReplica, DT-7/8/9~~ | ✅ v5.0.1 |
 
 ---
 
