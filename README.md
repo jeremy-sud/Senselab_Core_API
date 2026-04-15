@@ -69,6 +69,7 @@
 - [Mejores Prácticas](#-mejores-prácticas)
 - [Roadmap y Futuras Funcionalidades](#-roadmap-y-futuras-funcionalidades)
 - [Diagramas de Arquitectura](#-diagramas-de-arquitectura)
+- [Documentación Completa](#-documentación-completa)
 - [Contribuir](#-contribuir)
 - [Soporte y Contacto](#-soporte-y-contacto)
 - [Licencia](#-licencia)
@@ -2419,6 +2420,81 @@ El proyecto incluye **8 diagramas Mermaid** que documentan visualmente la arquit
 | 08 | [Benchmarks Redis](docs/diagrams/08-benchmarks-rendimiento-redis.md) | Comparativas de rendimiento + arquitectura cache |
 
 > 📁 Ver todos: [`docs/diagrams/README.md`](docs/diagrams/README.md)
+
+---
+
+## 📚 Documentación Completa
+
+Toda la documentación del proyecto vive en [`docs/`](docs/README.md). A continuación los documentos más relevantes organizados por categoría.
+
+### Archivos Raíz del Proyecto
+
+| Archivo | Descripción |
+|---------|-------------|
+| [CHANGELOG.md](CHANGELOG.md) | Historial de cambios por versión |
+| [ROADMAP.md](ROADMAP.md) | Roadmap completo — 22/22 fases (100%) |
+| [ESTADO_ACTUAL_PROYECTO.md](ESTADO_ACTUAL_PROYECTO.md) | Estado actual del proyecto, comandos útiles y métricas |
+| [SECURITY.md](SECURITY.md) | Política de seguridad y reporte de vulnerabilidades |
+
+### Guías y Tutoriales
+
+| Guía | Descripción |
+|------|-------------|
+| [Guía de Testing](docs/guides/TESTING_GUIDE.md) | Cómo ejecutar y escribir tests (Unit, Feature, Contract, Load) |
+| [CI/CD Pipeline](docs/guides/CI_CD_GUIDE.md) | Configuración de los 9 workflows de GitHub Actions |
+| [Multi-Tenancy](docs/guides/MULTI_TENANCY.md) | Arquitectura Spatie multi-tenant con BD aislada |
+| [Webhooks](docs/guides/webhook-integration.md) | Integración de webhooks con HMAC-SHA256 |
+| [Contribuir al Proyecto](docs/guides/CONTRIBUTING.md) | Guía para colaboradores: estándares, PRs, code review |
+| [Backup Strategy](docs/guides/BACKUP_STRATEGY.md) | Estrategia de respaldos y recuperación |
+| [Sentry Setup](docs/guides/SENTRY_SETUP.md) | Configuración de observabilidad con Sentry |
+| [Docker Quickstart](docs/guides/DOCKER_QUICKSTART.md) | Inicio rápido con Docker en 5 minutos |
+| [Generador de Módulos](docs/guides/GENERADOR_MODULOS.md) | CLI para generar controladores, modelos, policies y tests |
+| [Datos de Testeo](docs/guides/GUIA_DATOS_TESTEO.md) | Seeders y factories para ambiente de desarrollo |
+
+### Referencia API y Arquitectura
+
+| Documento | Descripción |
+|-----------|-------------|
+| [Modelos y Relaciones](docs/api/MODELS_RELATIONS.md) | Mapa de relaciones Eloquent entre los 98 modelos |
+| [Policies Guide](docs/api/POLICIES_GUIDE.md) | Los 80 policies y 68 permisos del sistema RBAC |
+| [FormRequests Summary](docs/api/FORMREQUESTS_SUMMARY.md) | Resumen de las 175 validaciones FormRequest |
+| [Controllers Summary](docs/api/CONTROLLERS_COMPLETE_SUMMARY.md) | Los 95 controladores documentados |
+| [API Resources](docs/api/API_RESOURCES.md) | Los 81 API Resources del sistema |
+| [Database Config](docs/database/DATABASE_CONFIG.md) | Configuración de MySQL, read replicas y Redis |
+
+### Facturación Electrónica (Hacienda)
+
+| Documento | Descripción |
+|-----------|-------------|
+| [Análisis Completo DGT v4.4](docs/hacienda/ANALISIS_HACIENDA_CR_V44_COMPLETO.md) | Análisis de la normativa v4.4 y compliance 38/38 |
+| [Comparativo Hacienda v4.4](docs/hacienda/ANALISIS_COMPARATIVO_HACIENDA_V44.md) | Comparativa con versiones anteriores |
+| [Plan Implementación v4.4](docs/hacienda/PLAN_IMPLEMENTACION_V44_HACIENDA.md) | Plan ejecutado para migrar a v4.4 |
+
+### Valoración Comercial y Pricing
+
+| Documento | Descripción |
+|-----------|-------------|
+| [💰 Valoración Comercial y Pricing](docs/VALORACION_COMERCIAL_Y_PRICING.md) | Estrategia de pricing SaaS 4 tiers, valoración $120K-$150K |
+| [🔍 Estudio de Mercado ERP 2026](docs/ESTUDIO_MERCADO_ERP_2026.md) | Investigación competitiva: 8 ERPs analizados (Alegra, Odoo, SAP, etc.) |
+
+### Auditorías Técnicas
+
+| Auditoría | Puntuación | Fecha |
+|-----------|:----------:|-------|
+| [Auditoría Técnica (última)](docs/AUDITORIA_TECNICA_2026-04-13.md) | **9.2/10** | 13 abr 2026 |
+| [Auditoría Técnica](docs/AUDITORIA_TECNICA_2026-03-24.md) | — | 24 mar 2026 |
+| [Auditoría Técnica](docs/AUDITORIA_TECNICA_2026-03-09.md) | — | 9 mar 2026 |
+
+### Otros Recursos
+
+| Recurso | Descripción |
+|---------|-------------|
+| [Release Checklist](docs/release_checklist.md) | Checklist para publicar nuevas versiones |
+| [Known Warnings](docs/KNOWN_WARNINGS.md) | Warnings conocidos y su justificación |
+| [Pendientes del Proyecto](docs/PENDIENTES_PROYECTO.md) | Tareas pendientes y mejoras futuras |
+| [Índice de Documentación](docs/README.md) | Índice maestro de toda la documentación |
+| [Sprints Históricos](docs/sprints/) | 18 documentos de sprints completados |
+| [Archivo Histórico](docs/archive/) | 75+ documentos del historial del proyecto |
 
 ---
 
