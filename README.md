@@ -32,6 +32,11 @@
   <img src="https://img.shields.io/badge/Laravel-12.x-red" alt="Laravel">
   <img src="https://img.shields.io/badge/PHP-8.4+-blue" alt="PHP">
   <img src="https://img.shields.io/badge/MySQL-8.0+-336791" alt="MySQL">
+  <img src="https://img.shields.io/badge/version-5.0.1-brightgreen" alt="v5.0.1">
+  <img src="https://img.shields.io/badge/Audit%20Score-9.2%2F10-orange" alt="Audit 9.2/10">
+  <img src="https://img.shields.io/badge/Hacienda%20v4.4-38%2F38%20Compliance-teal" alt="Hacienda v4.4">
+  <img src="https://img.shields.io/badge/AI%20Services-10%20Active-purple" alt="AI Services">
+  <img src="https://img.shields.io/badge/Roadmap-100%25%20Complete-success" alt="Roadmap 100%">
 </p>
 
 ---
@@ -63,6 +68,7 @@
 - [FAQ](#-faq)
 - [Mejores Prácticas](#-mejores-prácticas)
 - [Roadmap y Futuras Funcionalidades](#-roadmap-y-futuras-funcionalidades)
+- [Diagramas de Arquitectura](#-diagramas-de-arquitectura)
 - [Contribuir](#-contribuir)
 - [Soporte y Contacto](#-soporte-y-contacto)
 - [Licencia](#-licencia)
@@ -95,33 +101,37 @@ Proporcionar una plataforma ERP integral, moderna y asequible que permita a las 
 
 ### 📊 Estado del Proyecto
 
-**🔍 ÚLTIMA AUDITORÍA: 28 de Marzo 2026**
+**🔍 ÚLTIMA AUDITORÍA: 13 de Abril 2026 — Puntuación: 9.2/10 ⭐**
 
 **📈 Estadísticas Verificadas (Abril 2026):**
 
--   **✅ 93 Controladores API** implementados (100% completitud)
+-   **✅ 95 Controladores API** implementados (100% completitud)
 -   **✅ 80 Policies RBAC** implementadas (100% cobertura)
--   **✅ Rutas API** particionadas en 14 archivos (`routes/api/`)
--   **✅ 95 Modelos Eloquent** sincronizados con BD MySQL 8.0+
--   **✅ 100 Migraciones** de base de datos
--   **✅ 79 Resources** para transformación de respuestas JSON
--   **✅ 142 Archivos de Tests** — 1261 tests, 0 failing
--   **✅ 62 Servicios** incluyendo 10 servicios de IA integrados
--   **✅ 60 DTOs** (~65% cobertura de validación)
--   **✅ 93 Factories** para testing
+-   **✅ Rutas API** particionadas en 16 archivos (`routes/api/`)
+-   **✅ 98 Modelos Eloquent** sincronizados con BD MySQL 8.0+
+-   **✅ 103 Migraciones** de base de datos
+-   **✅ 81 Resources** para transformación de respuestas JSON
+-   **✅ 159 Archivos de Tests** — 1,261+ tests, 0 failing
+-   **✅ 67 Servicios** incluyendo 10 servicios de IA integrados
+-   **✅ 63 DTOs** (~65% cobertura de validación)
+-   **✅ 96 Factories** para testing
 -   **✅ 0 Errores Críticos** de base de datos o seguridad
 -   **✅ Sistema RBAC** completo (68 permisos + 8 roles)
 -   **✅ PHPStan Level 8** — 0 errores
 -   **✅ Entorno Docker** completamente funcional (Nginx, PHP-FPM, MySQL, Redis, PHPMyAdmin, Mailhog)
--   **✅ Facturación Electrónica v4.4** implementada (XAdES-EPES) según normativa DGT
+-   **✅ Facturación Electrónica v4.4** implementada (XAdES-EPES) según normativa DGT — 38/38 brechas resueltas
 -   **✅ Módulo de IA** con 10 servicios y 32+ endpoints (Google Gemini gratuito + fallback OpenAI)
 -   **✅ Generador de Módulos** `make:erp-module` para crear módulos completos en segundos
 -   **✅ Calidad de Código** PHPStan nivel 8 — 0 errores
 -   **✅ Cache Inteligente** Redis con estrategia integral de cacheo
 -   **✅ Performance** Optimización continua con tests de rendimiento
--   **✅ Tests** 1261 tests — 100% passing
+-   **✅ Tests** 1,261+ tests — 100% passing
 -   **✅ Seguridad** Laravel Sanctum + RBAC + Rate Limiting + CORS + Encriptación AES-256
--   **✅ API Versionado** con prefijo `/api/v1/` y `/api/v2/` + header-based versioning
+-   **✅ API Versionado** con prefijo `/api/v1/` y `/api/v2/` + header-based versioning + Sunset middleware
+-   **✅ Webhooks Event-Driven** — 5 eventos, HMAC-SHA256, retry exponencial
+-   **✅ Reporting Engine** — Dashboard KPIs, reportes financieros, exportación PDF/Excel/CSV
+-   **✅ Escalabilidad** — Read Replicas, Laravel Horizon, ETags, OpenTelemetry distributed tracing
+-   **✅ Roadmap 100%** — 22 fases completadas ✅
 
 **✅ FUNCIONALIDADES IA IMPLEMENTADAS (Febrero 2026):**
 
@@ -364,8 +374,9 @@ Proporcionar una plataforma ERP integral, moderna y asequible que permita a las 
 
 | Versión | Rama | Status | Lanzamiento | Soporte |
 |---------|------|--------|-------------|---------|
-| **4.1** | `main` | 🟢 Activa | Mar 2026 | Indefinido |
-| **3.x** | `v3.x` | 🔴 Legacy | Mar 2026 | Solo críticos |
+| **5.0.1** | `main` | 🟢 Activa | Abr 2026 | Indefinido |
+| **4.x** | `v4.x` | 🟡 Mantenimiento | Mar 2026 | Solo críticos |
+| **3.x** | `v3.x` | 🔴 EOL | Mar 2026 | Finalizado |
 | **2.x** | `v2.x` | 🔴 EOL | Mar 2026 | Finalizado |
 | **1.0** | `v1.0` | 🔴 EOL | Ene 2026 | Finalizado |
 
@@ -392,13 +403,13 @@ Para acceso a Swagger UI y dashboards:
 
 
 -   ✅ **Cache optimizado** en todos los controllers API con trait `HasCacheableQueries`
--   **Controllers implementados**: 93 (100% completitud)
+-   **Controllers implementados**: 95 (100% completitud)
 -   **TTL Strategy**: Optimizado desde 10min a 24h según volatilidad
 -   **Tags por área**: 58 tags únicos para invalidación granular
 
 **✅ SPRINT 7 - Completitud Controllers y Policies (COMPLETADO) 🎯**
 
--   **93 Controllers** implementados (100% completitud)
+-   **95 Controllers** implementados (100% completitud)
 -   **80 Policies** implementadas (100% cobertura RBAC)
 -   Cache strategy contextual (5min - 24h TTL)
 -   OpenAPI completo en todos los endpoints
@@ -434,7 +445,7 @@ Este usuario tiene acceso completo con **68 permisos** (todos los módulos del s
 
 ### 🏢 Sobre Sistemas Ursol S.A.
 
-Con **casi 30 años de experiencia** en el mercado costarricense, Sistemas Ursol S.A. es una empresa familiar que se distingue por su **ética inquebrantable**, **atención personalizada** y el **"Toque Humano"** en cada proyecto. Fundada y liderada por **Eduardo Alberto Ureña Solano**, quien aporta más de 35 años de experiencia en el sector tecnológico.
+Con **más de 30 años de experiencia** en el mercado costarricense, Sistemas Ursol S.A. es una empresa familiar que se distingue por su **ética inquebrantable**, **atención personalizada** y el **"Toque Humano"** en cada proyecto. Fundada y liderada por **Eduardo Alberto Ureña Solano**, quien aporta más de 35 años de experiencia en el sector tecnológico.
 
 **Nuestros Servicios:**
 
@@ -973,25 +984,25 @@ Ursol-CAST-API/
 │   │   │   │   ├── ProductoController.php
 │   │   │   │   ├── ComprobanteElectronicoController.php
 │   │   │   │   └── ...
-│   │   │   └── ...                  # 93 controllers totales
-│   │   ├── Requests/                # Form request validation
-│   │   └── Resources/               # API resources (79 total)
-│   ├── Models/                      # Modelos Eloquent (87 total)
+│   │   │   └── ...                  # 95 controllers totales
+│   │   ├── Requests/                # Form request validation (175)
+│   │   └── Resources/               # API resources (81 total)
+│   ├── Models/                      # Modelos Eloquent (98 total)
 │   │   ├── Empresa.php
 │   │   ├── Usuario.php
 │   │   ├── Producto.php
 │   │   └── ...
-│   ├── DTOs/                        # Data Transfer Objects (60 total)
-│   ├── Services/                    # Servicios de negocio (62)
+│   ├── DTOs/                        # Data Transfer Objects (63 total)
+│   ├── Services/                    # Servicios de negocio (67)
 │   │   ├── Hacienda/                # Facturación electrónica
 │   │   ├── AI/                      # Servicios de IA (10)
 │   │   ├── Export/                  # Exportación de reportes
 │   │   └── ...                      # 44 servicios core
-│   ├── Jobs/                        # Trabajos asíncronos (8)
+│   ├── Jobs/                        # Trabajos asíncronos (10)
 │   │   ├── Hacienda/
 │   │   └── ...
 │   ├── Policies/                    # Políticas de autorización RBAC (80 total)
-│   ├── Traits/                      # Comportamientos compartidos (12)
+│   ├── Traits/                      # Comportamientos compartidos (13)
 │   │   ├── BelongsToTenant.php
 │   │   └── HasCustomSoftDeletes.php
 │   └── Observers/                   # Event observers (4)
@@ -1007,13 +1018,13 @@ Ursol-CAST-API/
 ├── database/
 │   ├── migrations/
 │   │   ├── landlord/                # Tablas del sistema central
-│   │   └── tenant/                  # Tablas por tenant (91 migraciones)
-│   ├── factories/                   # Model factories para testing
-│   ├── seeders/                     # Data seeders (9 seeders principales)
+│   │   └── tenant/                  # Tablas por tenant (103 migraciones)
+│   ├── factories/                   # Model factories para testing (96)
+│   ├── seeders/                     # Data seeders (73 seeders)
 │   └── scripts/                     # Scripts de utilidad
 ├── routes/
 │   ├── api.php                      # Cargador de rutas API
-│   ├── api/                         # Rutas particionadas (14 archivos)
+│   ├── api/                         # Rutas particionadas (16 archivos)
 │   ├── web.php                      # Rutas web
 │   └── console.php                  # Rutas de consola
 ├── resources/
@@ -1052,9 +1063,9 @@ Ursol-CAST-API/
 
 ## 🧪 Testing
 
-El proyecto cuenta con una **suite completa de 1261 tests** que verifican el funcionamiento de todos los componentes del sistema.
+El proyecto cuenta con una **suite completa de 1,261+ tests** que verifican el funcionamiento de todos los componentes del sistema.
 
-**Estado Actual:** ✅ **1261 tests passing (100% success rate)**
+**Estado Actual:** ✅ **1,261+ tests passing (100% success rate)**
 
 ### Base de Datos de Testing
 
@@ -1093,9 +1104,10 @@ make ci-test
 ```
 tests/
 ├── TestCase.php                                    # Base con helpers
-├── Feature/                                        # Tests de integración (76 archivos)
-├── Unit/                                           # Tests unitarios (58 archivos)
-└── Contract/                                       # Contract tests (8 archivos)
+├── Feature/                                        # Tests de integración (79 archivos)
+├── Unit/                                           # Tests unitarios (68 archivos)
+├── Contract/                                       # Contract tests (7 archivos)
+└── Load/                                           # Tests de carga k6 (5 archivos)
 ```
 
 ## 🔄 CI/CD Pipeline
@@ -1108,7 +1120,7 @@ El proyecto utiliza **GitHub Actions** para integración y despliegue continuo.
 **Trigger:** Push o PR a `main`/`develop`
 
 Ejecuta en cada commit:
-- ✅ Suite completa de PHPUnit (1261 tests)
+- ✅ Suite completa de PHPUnit (1,261+ tests)
 - ✅ PHPStan nivel 8 (análisis estático)
 - ✅ PHP CS Fixer (PSR-12)
 - ✅ Security check (vulnerabilidades)
@@ -1177,7 +1189,7 @@ make rollback          # Rollback de producción
 
 ### Documentación Completa
 
--   ✅ **1261 tests passing (100%)**
+-   ✅ **1,261+ tests passing (100%)**
 -   ✅ **0 failures**
 
 ---
@@ -2349,12 +2361,22 @@ redis-cli FLUSHDB
 
 ## 🚀 Roadmap y Futuras Funcionalidades
 
+> **🎉 Roadmap original completado al 100% (22 fases).** Las siguientes son funcionalidades futuras planificadas.
+
+### ✅ Completado en v5.0 (FASES 18–22)
+
+- [x] **API Versionado** — Prefijo v1/v2, header-based versioning, Sunset middleware (FASE 18)
+- [x] **PHPStan 0 Errores** — Level 8 estricto, +17 DTOs (FASE 19.7)
+- [x] **Webhooks Event-Driven** — 5 eventos, HMAC-SHA256, retry exponencial (FASE 20)
+- [x] **Reporting Engine** — Dashboard KPIs, reportes financieros, exportación PDF/Excel/CSV (FASE 21)
+- [x] **Escalabilidad** — Read Replicas, Laravel Horizon, ETags, OpenTelemetry (FASE 22)
+- [x] **Hacienda v4.4 Compliance** — 38/38 brechas resueltas (100%)
+
 ### Corto Plazo (Q1-Q2 2026)
 
 - [ ] **PostgreSQL Support** - Soporte para Postgres
 - [ ] **GraphQL API** - Alternativa a REST
 - [ ] **Mobile App** - Aplicación iOS/Android nativa
-- [ ] **Reportería Avanzada** - Dashboards interactivos
 - [ ] **SMS Integration** - Notificaciones por SMS
 - [ ] **Integraciones Bancarias** - Conciliación automática
 
@@ -2365,7 +2387,6 @@ redis-cli FLUSHDB
 - [ ] **Marketplace** - Integración B2B
 - [ ] **POS System** - Sistema punto de venta integrado
 - [ ] **E-Commerce** - Tienda en línea integrada
-- [ ] **API Webhooks** - Event-driven integrations
 
 ### Largo Plazo (2027+)
 
@@ -2379,6 +2400,25 @@ redis-cli FLUSHDB
 
 ¿Qué feature quieres que sea prioridad?
 Vota aquí: [GitHub Discussions](https://github.com/SistemasUrsol/Ursol-CAST-API/discussions)
+
+---
+
+## 📐 Diagramas de Arquitectura
+
+El proyecto incluye **8 diagramas Mermaid** que documentan visualmente la arquitectura, flujos y métricas del sistema.
+
+| # | Diagrama | Descripción |
+|---|----------|-------------|
+| 01 | [Arquitectura Multi-Tenant](docs/diagrams/01-arquitectura-multi-tenant.md) | Topología completa: Nginx → Laravel → Landlord/Tenant DBs → Redis |
+| 02 | [Flujo Facturación Electrónica](docs/diagrams/02-flujo-facturacion-electronica.md) | Secuencia XAdES-EPES completa con Hacienda |
+| 03 | [Ciclo de Vida Dato IA](docs/diagrams/03-ciclo-vida-dato-ia.md) | Pipeline de 5 etapas de datos para IA |
+| 04 | [Precisión Servicios IA](docs/diagrams/04-precision-servicios-ia.md) | Métricas de precisión por servicio |
+| 05 | [ERD Módulo Contable](docs/diagrams/05-erd-modulo-contable.md) | Entidades: Empresa → CuentaContable → AsientoContable |
+| 06 | [ERD Módulo Logística](docs/diagrams/06-erd-modulo-logistica.md) | Entidades: Ruta → HorarioRuta → BusUnidad → Venta |
+| 07 | [Matriz RBAC Seguridad](docs/diagrams/07-matriz-rbac-seguridad.md) | 8 roles × 17 módulos + enforcement dual |
+| 08 | [Benchmarks Redis](docs/diagrams/08-benchmarks-rendimiento-redis.md) | Comparativas de rendimiento + arquitectura cache |
+
+> 📁 Ver todos: [`docs/diagrams/README.md`](docs/diagrams/README.md)
 
 ---
 
@@ -2765,8 +2805,8 @@ Estamos siempre buscando:
 
 ---
 
-**Última actualización:** 28 de Marzo 2026
+**Última actualización:** 14 de Abril 2026
 
-**Versión:** 4.1.0
+**Versión:** 5.0.1
 
 **Estado:** ✅ Producción-Ready (Recomendado)
