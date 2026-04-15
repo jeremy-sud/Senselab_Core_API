@@ -5,7 +5,7 @@ return [
     'documentations' => [
         'default' => [
             'api' => [
-                'title' => 'L5 Swagger UI',
+                'title' => 'Ursol CAST API — Documentación Interactiva',
             ],
 
             'routes' => [
@@ -63,12 +63,11 @@ return [
 
             /*
              * Middleware allows to prevent unexpected access to API documentation
-             * En producción se requiere autenticación para acceder a la documentación.
              */
             'middleware' => [
-                'api' => env('APP_ENV') === 'production' ? ['auth:sanctum'] : [],
+                'api' => [],
                 'asset' => [],
-                'docs' => env('APP_ENV') === 'production' ? ['auth:sanctum'] : [],
+                'docs' => [],
                 'oauth2_callback' => [],
             ],
 

@@ -1,6 +1,13 @@
 # 📚 Documentación del Proyecto Ursol CAST API
 
-**Última actualización:** Marzo 2026
+**Última actualización:** Abril 2026 — v5.0.1
+
+![PHPStan Level 8](images/badges/phpstan-level8.svg)
+![Tests 959+ Passing](images/badges/tests-959-passing.svg)
+![Audit Score 9.2/10](images/badges/audit-score-9.2.svg)
+![Hacienda v4.4 Compliance](images/badges/hacienda-v44-compliance.svg)
+![AI Services](images/badges/ai-services-10.svg)
+![Multi-Tenant](images/badges/multi-tenant-spatie.svg)
 
 Este directorio contiene toda la documentación organizada del proyecto.
 
@@ -11,8 +18,10 @@ docs/
 ├── api/           # Documentación de la API (controllers, models, policies)
 ├── archive/       # Documentación histórica (fases completadas, sprints, sesiones)
 ├── database/      # Configuración y esquema de base de datos
+├── diagrams/      # 📊 Diagramas de arquitectura, ERDs, flujos, benchmarks (Mermaid)
 ├── guides/        # Guías de instalación, docker, testing, refactorización
 ├── hacienda/      # Integración con Ministerio de Hacienda CR (normativa + diagramas)
+├── images/badges/ # 🏆 Badges SVG de auditoría y métricas
 ├── sprints/       # Documentación de sprints y resúmenes ejecutivos
 ├── examples.http  # Ejemplos REST Client para probar endpoints
 └── *.md           # Documentos de referencia activa
@@ -34,7 +43,22 @@ docs/
 | [Curso Completo: De Cero a Experto](curso_completo_ursol_cast_api.md) | Curso autodidacta integral — arquitectura, módulos, seguridad, testing, despliegue, IA, facturación electrónica y roadmap |
 | [Glosario Completo de Terminología](GLOSARIO_COMPLETO_URSOL_CAST_API.md) | Referencia exhaustiva de toda la terminología: modelos, servicios, DTOs, traits, eventos, jobs, observers, config y más |
 
-## 📄 Documentos de Referencia Activa (este directorio)
+## � Diagramas de Arquitectura (NUEVO)
+
+| Diagrama | Tipo | Audiencia |
+|----------|------|-----------|
+| [Arquitectura Multi-Tenant](diagrams/01-arquitectura-multi-tenant.md) | Topología | Desarrolladores, DevOps |
+| [Flujo Facturación Electrónica](diagrams/02-flujo-facturacion-electronica.md) | Secuencia | Desarrolladores, QA |
+| [Ciclo de Vida del Dato con IA](diagrams/03-ciclo-vida-dato-ia.md) | Flujo | Ejecutivos, Ventas |
+| [Precisión de Servicios IA](diagrams/04-precision-servicios-ia.md) | Gráficos | Ejecutivos, Ventas |
+| [ERD Módulo Contable](diagrams/05-erd-modulo-contable.md) | ERD | Desarrolladores |
+| [ERD Módulo Logística](diagrams/06-erd-modulo-logistica.md) | ERD | Desarrolladores |
+| [Matriz RBAC Seguridad](diagrams/07-matriz-rbac-seguridad.md) | Tabla + Grafo | Admins, Seguridad |
+| [Benchmarks Rendimiento Redis](diagrams/08-benchmarks-rendimiento-redis.md) | XY Chart | Ventas, DevOps |
+
+> Ver el [índice completo de diagramas](diagrams/README.md) con resumen ejecutivo y badges.
+
+## �📄 Documentos de Referencia Activa (este directorio)
 
 | Archivo | Descripción |
 |---------|-------------|
@@ -45,22 +69,24 @@ docs/
 | [release_checklist.md](release_checklist.md) | Checklist pre-release para producción |
 | [examples.http](examples.http) | Ejemplos REST Client para probar endpoints |
 
-## 📊 Estado Actual (Marzo 2026 — v2.8.0)
+## 📊 Estado Actual (Abril 2026 — v5.0.1)
 
 | Métrica | Valor |
 |---------|-------|
-| **Controladores API** | 93 |
-| **Modelos Eloquent** | 87 |
-| **Tests** | 762 passing, 5 skipped (2,392 assertions) |
-| **Servicios** | 40 (10 IA + 9 Hacienda + 21 core) |
-| **FormRequests** | 168 |
-| **Resources** | 77 |
+| **Controladores API** | 96 |
+| **Modelos Eloquent** | 98 |
+| **Tests** | 959+ passing (154 archivos) |
+| **Servicios** | 67 (10 IA + 9 Hacienda + 48 core) |
+| **FormRequests** | 175 |
+| **Resources** | 81 |
 | **Policies** | 80 |
-| **Migraciones** | 98 |
-| **CQRS** | 34 archivos (Ventas, Contabilidad, Compras) |
-| **PHPStan** | Level 8 — 0 errores (687 archivos) |
-| **Rutas** | 14 archivos particionados en `routes/api/` |
-| **Fases completadas** | 1-11 ✅ |
+| **Migraciones** | 103 |
+| **DTOs** | 63 (~65% cobertura) |
+| **PHPStan** | Level 8 — 0 errores |
+| **Auditoría** | 9.2/10 |
+| **Hacienda v4.4** | 38/38 compliance (100%) |
+| **Rutas** | 16 archivos particionados en `routes/api/` |
+| **Fases completadas** | 1-22 ✅ (Roadmap 100%) |
 
 ## 🚀 Guías Rápidas
 
