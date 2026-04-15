@@ -63,6 +63,7 @@ docs/
 | Archivo | Descripción |
 |---------|-------------|
 | [IA_FUNCIONALIDADES.md](IA_FUNCIONALIDADES.md) | Módulo de Inteligencia Artificial (10 servicios, 32 endpoints) |
+| [VALORACION_COMERCIAL_Y_PRICING.md](VALORACION_COMERCIAL_Y_PRICING.md) | 💰 Valoración comercial, estudio de mercado y estrategia de pricing (4 tiers) |
 | [KNOWN_WARNINGS.md](KNOWN_WARNINGS.md) | Warnings conocidos y aceptados (PHPStan/SonarQube) |
 | [PENDIENTES_PROYECTO.md](PENDIENTES_PROYECTO.md) | Lista de pendientes y TODOs |
 | [MAPA_ESTRUCTURAL_API.txt](MAPA_ESTRUCTURAL_API.txt) | Mapa estructural de la arquitectura |
