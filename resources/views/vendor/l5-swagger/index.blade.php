@@ -24,6 +24,54 @@
       margin:0;
       background: #fafafa;
     }
+
+    /* Ursol CAST API — Custom Branding */
+    .swagger-ui .topbar {
+        background-color: #1a1a2e;
+        padding: 10px 0;
+    }
+    .swagger-ui .topbar .wrapper {
+        display: flex;
+        align-items: center;
+    }
+    .swagger-ui .topbar a {
+        display: flex;
+        align-items: center;
+        font-size: 0;
+    }
+    .swagger-ui .topbar .topbar-wrapper .link svg {
+        display: none;
+    }
+    .swagger-ui .topbar .topbar-wrapper .link::before {
+        content: '';
+        display: inline-block;
+        width: 44px;
+        height: 44px;
+        background: url('/assets/logos/ursol-cast-api-logo.png') no-repeat center center;
+        background-size: contain;
+        margin-right: 12px;
+    }
+    .swagger-ui .topbar .topbar-wrapper .link::after {
+        content: 'Ursol CAST API';
+        font-size: 20px;
+        font-weight: 700;
+        color: #ffffff;
+        letter-spacing: 0.5px;
+    }
+    .swagger-ui .topbar .download-url-wrapper input[type=text] {
+        border: 1px solid #3a3a5c;
+        background: #16213e;
+        color: #e7e7e7;
+    }
+    .swagger-ui .topbar .download-url-wrapper .select-label select {
+        border: 1px solid #3a3a5c;
+        background: #16213e;
+        color: #e7e7e7;
+    }
+    .swagger-ui .info .title {
+        color: #1a1a2e;
+    }
+
     </style>
     @if(config('l5-swagger.defaults.ui.display.dark_mode'))
         <style>
@@ -111,6 +159,12 @@
             }
             #dark-mode .opblock-summary-description {
                 color: #fafafa;
+            }
+            #dark-mode .swagger-ui .topbar {
+                background-color: #0d0d1a;
+            }
+            #dark-mode .swagger-ui .info .title {
+                color: #e7e7e7;
             }
         </style>
     @endif

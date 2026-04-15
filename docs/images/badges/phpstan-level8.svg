@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="30" role="img" aria-label="PHPStan: Level 8 Verified">
+  <title>PHPStan: Level 8 Verified</title>
+  <linearGradient id="s" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <clipPath id="r">
+    <rect width="220" height="30" rx="5" fill="#fff"/>
+  </clipPath>
+  <g clip-path="url(#r)">
+    <rect width="90" height="30" fill="#555"/>
+    <rect x="90" width="130" height="30" fill="#2196F3"/>
+    <rect width="220" height="30" fill="url(#s)"/>
+  </g>
+  <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="12">
+    <text x="45" y="20" fill="#010101" fill-opacity=".3">PHPStan</text>
+    <text x="45" y="19">PHPStan</text>
+    <text x="155" y="20" fill="#010101" fill-opacity=".3">Level 8 Verified ✓</text>
+    <text x="155" y="19">Level 8 Verified ✓</text>
+  </g>
+</svg>
