@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ursol CAST API v5.0.1 — Documentación Interactiva</title>
+    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.17.14/swagger-ui.css">
+    <style>
+        body { margin: 0; background: #fafafa; }
+        .topbar-wrapper img { content: url(''); }
+        .swagger-ui .topbar { background-color: #1a1a2e; padding: 10px 0; }
+        .swagger-ui .topbar .download-url-wrapper { display: none; }
+        #custom-header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            padding: 30px 40px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        #custom-header h1 { margin: 0 0 8px 0; font-size: 28px; font-weight: 700; }
+        #custom-header p { margin: 0 0 4px 0; opacity: 0.85; font-size: 14px; }
+        .badges { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
+        .badge {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 20px;
+            padding: 5px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        .badge.green { background: rgba(46,204,113,0.25); border-color: rgba(46,204,113,0.5); }
+        .badge.blue { background: rgba(52,152,219,0.25); border-color: rgba(52,152,219,0.5); }
+        .badge.purple { background: rgba(155,89,182,0.25); border-color: rgba(155,89,182,0.5); }
+        .badge.orange { background: rgba(243,156,18,0.25); border-color: rgba(243,156,18,0.5); }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
+        .info-card { background: rgba(255,255,255,0.08); border-radius: 8px; padding: 12px 16px; }
+        .info-card .label { font-size: 11px; text-transform: uppercase; opacity: 0.6; letter-spacing: 1px; }
+        .info-card .value { font-size: 20px; font-weight: 700; margin-top: 4px; }
+        .disclaimer {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px 20px;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 13px;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div id="custom-header">
+        <h1>Ursol CAST API v5.0.1</h1>
+        <p>Sistema ERP Multi-Tenant con IA y Facturación Electrónica — Costa Rica</p>
+        <p style="opacity:0.6; font-size:12px;">Propiedad Intelectual de Sistemas Ursol S.A. • Documentación de referencia para due diligence</p>
+        <div class="badges">
+            <span class="badge green">✅ Auditoría 9.2/10</span>
+            <span class="badge green">✅ PHPStan Level 8 — 0 errores</span>
+            <span class="badge blue">🧪 1,261+ Tests Passing</span>
+            <span class="badge purple">🤖 10 Servicios IA</span>
+            <span class="badge orange">📄 Hacienda v4.4 — 100% Compliance</span>
+        </div>
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="label">Controllers</div>
+                <div class="value">95</div>
+            </div>
+            <div class="info-card">
+                <div class="label">Modelos</div>
+                <div class="value">98</div>
+            </div>
+            <div class="info-card">
+                <div class="label">Endpoints Documentados</div>
+                <div class="value">~90.5%</div>
+            </div>
+            <div class="info-card">
+                <div class="label">Valoración</div>
+                <div class="value">$120K–$150K</div>
+            </div>
+        </div>
+    </div>
+    <div class="disclaimer">
+        ⚠️ <strong>Entorno de referencia (read-only).</strong> Esta documentación interactiva muestra la especificación OpenAPI completa de Ursol CAST API.
+        Los endpoints no están conectados a un backend en vivo — es una vista de la definición de la API para evaluación técnica.
+        Para una demo con backend funcional, solicitar acceso al staging vía <a href="mailto:sistemas@ursol.com">sistemas@ursol.com</a>.
+    </div>
+    <div id="swagger-ui"></div>
+    <script src="https://unpkg.com/swagger-ui-dist@5.17.14/swagger-ui-bundle.js"></script>
+    <script>
+        SwaggerUIBundle({
+            url: './api-docs.json',
+            dom_id: '#swagger-ui',
+            deepLinking: true,
+            presets: [
+                SwaggerUIBundle.presets.apis,
+                SwaggerUIBundle.SwaggerUIStandalonePreset
+            ],
+            layout: "BaseLayout",
+            defaultModelsExpandDepth: 1,
+            defaultModelExpandDepth: 1,
+            docExpansion: "list",
+            filter: true,
+            showExtensions: true,
+            showCommonExtensions: true,
+            tryItOutEnabled: false
+        });
+    </script>
+</body>
+</html>
