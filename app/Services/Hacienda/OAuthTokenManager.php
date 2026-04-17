@@ -4,9 +4,9 @@ namespace App\Services\Hacienda;
 
 use App\Exceptions\HaciendaException;
 use App\Models\FeOAuthToken;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Client\ConnectionException;
 use Carbon\Carbon;
 
 /**
@@ -20,11 +20,6 @@ class OAuthTokenManager
      * Ambiente actual (sandbox o production)
      */
     protected string $ambiente;
-
-    /**
-     * Cliente HTTP
-     */
-    protected Client $client;
 
     /**
      * URL del endpoint OAuth
@@ -52,12 +47,6 @@ class OAuthTokenManager
         $this->tokenUrl = config("hacienda.api_urls.{$ambiente}.oauth");
         $this->logoutUrl = config("hacienda.api_urls.{$ambiente}.logout", '');
         $this->credentials = config('hacienda.oauth');
-
-        $this->client = new Client([
-            'timeout' => 30,
-            'verify' => true,
-            'http_errors' => false,
-        ]);
 
         $this->validateCredentials();
     }
@@ -123,17 +112,13 @@ class OAuthTokenManager
                 $formParams['scope'] = $this->credentials['scope'];
             }
 
-            $response = $this->client->post($this->tokenUrl, [
-                'form_params' => $formParams,
-                'headers' => [
-                    'Content-Type' => 'application/x-www-form-urlencoded',
-                    'Accept' => 'application/json',
-                ],
-            ]);
+            $response = Http::timeout(30)
+                ->asForm()
+                ->accept('application/json')
+                ->post($this->tokenUrl, $formParams);
 
-            $statusCode = $response->getStatusCode();
-            $body = (string) $response->getBody();
-            $data = json_decode($body, true);
+            $statusCode = $response->status();
+            $data = $response->json();
 
             if ($statusCode !== 200) {
                 Log::error('Error al obtener token OAuth', [
@@ -164,7 +149,7 @@ class OAuthTokenManager
 
             return $tokenModel->access_token;
 
-        } catch (GuzzleException $e) {
+        } catch (ConnectionException $e) {
             Log::error('Error de red al obtener token OAuth', [
                 'ambiente' => $this->ambiente,
                 'error' => $e->getMessage(),
@@ -234,20 +219,17 @@ class OAuthTokenManager
 
         if ($tokenActual && !empty($tokenActual->refresh_token)) {
             try {
-                $response = $this->client->post($this->tokenUrl, [
-                    'form_params' => [
+                $response = Http::timeout(30)
+                    ->asForm()
+                    ->accept('application/json')
+                    ->post($this->tokenUrl, [
                         'grant_type' => 'refresh_token',
                         'client_id' => $this->credentials['client_id'],
                         'refresh_token' => $tokenActual->refresh_token,
-                    ],
-                    'headers' => [
-                        'Content-Type' => 'application/x-www-form-urlencoded',
-                        'Accept' => 'application/json',
-                    ],
-                ]);
+                    ]);
 
-                $statusCode = $response->getStatusCode();
-                $data = json_decode((string) $response->getBody(), true);
+                $statusCode = $response->status();
+                $data = $response->json();
 
                 if ($statusCode === 200 && isset($data['access_token'])) {
                     // Desactivar token anterior
@@ -268,7 +250,7 @@ class OAuthTokenManager
                     'ambiente' => $this->ambiente,
                     'status_code' => $statusCode,
                 ]);
-            } catch (GuzzleException $e) {
+            } catch (ConnectionException $e) {
                 Log::warning('Error al refrescar token, iniciando nueva sesión', [
                     'ambiente' => $this->ambiente,
                     'error' => $e->getMessage(),
@@ -314,25 +296,22 @@ class OAuthTokenManager
         }
 
         try {
-            $response = $this->client->post($this->logoutUrl, [
-                'form_params' => [
+            $response = Http::timeout(30)
+                ->asForm()
+                ->post($this->logoutUrl, [
                     'client_id' => $this->credentials['client_id'],
                     'refresh_token' => $tokenActual->refresh_token,
-                ],
-                'headers' => [
-                    'Content-Type' => 'application/x-www-form-urlencoded',
-                ],
-            ]);
+                ]);
 
             $tokenActual->update(['activo' => false]);
 
             Log::info('Logout OAuth exitoso', [
                 'ambiente' => $this->ambiente,
-                'status_code' => $response->getStatusCode(),
+                'status_code' => $response->status(),
             ]);
 
-            return $response->getStatusCode() >= 200 && $response->getStatusCode() < 300;
-        } catch (GuzzleException $e) {
+            return $response->successful();
+        } catch (ConnectionException $e) {
             Log::error('Error al cerrar sesión OAuth', [
                 'ambiente' => $this->ambiente,
                 'error' => $e->getMessage(),

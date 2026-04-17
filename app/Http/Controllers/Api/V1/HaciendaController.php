@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Models\ComprobanteElectronicoFe;
 use App\Models\HaciendaComprobante;
-use App\Services\Hacienda\HaciendaIntegrationService;
+use App\Services\Hacienda\HaciendaApiClient;
+use App\Services\Hacienda\Xml\FirmaDigitalService;
+use App\Services\Hacienda\Xml\XmlComprobanteBuilder;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -18,29 +20,48 @@ use Illuminate\Http\JsonResponse;
  */
 class HaciendaController extends ApiController
 {
+    public function __construct(
+        protected XmlComprobanteBuilder $xmlBuilder,
+        protected FirmaDigitalService $firmaService,
+        protected HaciendaApiClient $apiClient,
+    ) {}
+
     /**
      * POST /api/v1/hacienda/generar
      * Generar comprobante electrónico para envío a Hacienda
      *
-     * @param ComprobanteElectronicoFe $comprobante
      * @param Request $request
      * @return JsonResponse
      */
-    public function generar(ComprobanteElectronicoFe $comprobante, Request $request): JsonResponse
+    public function generar(Request $request): JsonResponse
     {
         try {
-            // Este endpoint crea el registro de `HaciendaComprobante` que
-            // representa el flujo de envío de un comprobante a Hacienda.
-            // No genera ni firma el XML aquí; solo prepara el registro y
-            // calcula la `clave` única. Pasos posteriores (generarXml,
-            // firmar, enviar) realizan el resto del flujo.
-            $tipo = $request->input('tipo', HaciendaIntegrationService::TYPE_FACTURA);
+            $request->validate([
+                'comprobante_id' => 'required|integer|exists:comprobantes_electronicos_fe,id',
+                'tipo' => 'sometimes|string|in:01,03,04,05,07',
+            ]);
 
-            $haciendaComprobante = HaciendaIntegrationService::generateComprobante($comprobante, $tipo);
+            $comprobante = ComprobanteElectronicoFe::findOrFail($request->input('comprobante_id'));
+            $tipo = $request->input('tipo', '01');
 
-            if (! $haciendaComprobante) {
-                return $this->error('No se pudo generar el comprobante electrónico', 422);
+            // Verificar si ya existe en Hacienda
+            $existing = HaciendaComprobante::where('comprobante_id', $comprobante->id)->first();
+            if ($existing) {
+                return $this->success([
+                    'id' => $existing->id,
+                    'clave' => $existing->clave,
+                    'estado' => $existing->estado,
+                    'tipo' => $existing->tipo_comprobante,
+                ], 'Comprobante ya existe', 200);
             }
+
+            $haciendaComprobante = HaciendaComprobante::create([
+                'comprobante_id' => $comprobante->id,
+                'empresa_id' => $comprobante->empresa_id,
+                'clave' => $comprobante->clave,
+                'tipo_comprobante' => $tipo,
+                'estado' => 'pending',
+            ]);
 
             return $this->success([
                 'id' => $haciendaComprobante->id,
@@ -57,22 +78,22 @@ class HaciendaController extends ApiController
      * POST /api/v1/hacienda/{id}/generar-xml
      * Generar XML del comprobante
      *
-     * @param HaciendaComprobante $haciendaComprobante
+     * @param int $id
      * @return JsonResponse
      */
-    public function generarXml(HaciendaComprobante $haciendaComprobante): JsonResponse
+    public function generarXml(int $id): JsonResponse
     {
         try {
-            // Genera el XML conforme al esquema y lo guarda en el registro.
-            // Retorna una vista previa del XML (primeros 500 caracteres)
-            // para facilitar inspección rápida en el cliente.
-            if (! HaciendaIntegrationService::generateXml($haciendaComprobante)) {
-                return $this->error('No se pudo generar el XML', 422);
-            }
+            $haciendaComprobante = HaciendaComprobante::findOrFail($id);
+            $comprobante = ComprobanteElectronicoFe::findOrFail($haciendaComprobante->comprobante_id);
+
+            $xml = $this->xmlBuilder->build($comprobante);
+
+            $haciendaComprobante->update(['xml_contenido' => $xml]);
 
             return $this->success([
                 'id' => $haciendaComprobante->id,
-                'xml_preview' => substr($haciendaComprobante->fresh()->xml_content, 0, 500) . '...',
+                'xml_preview' => substr($xml, 0, 500) . '...',
             ], 'XML generado exitosamente');
         } catch (\Exception $e) {
             return $this->error(config('app.debug') ? $e->getMessage() : 'Error interno del servidor', 500);
@@ -83,29 +104,30 @@ class HaciendaController extends ApiController
      * POST /api/v1/hacienda/{id}/firmar
      * Firmar comprobante con certificado digital XAdES-EPES
      *
-     * @param HaciendaComprobante $haciendaComprobante
+     * @param int $id
      * @param Request $request
      * @return JsonResponse
      */
-    public function firmar(HaciendaComprobante $haciendaComprobante, Request $request): JsonResponse
+    public function firmar(int $id, Request $request): JsonResponse
     {
         try {
-            // Valida que se proporcionen ruta y contraseña del certificado.
-            // En entornos reales, la ruta al certificado debería estar
-            // protegida y/o almacenada en un HSM. Aquí se acepta ruta local
-            // para entornos controlados.
             $request->validate([
-                'certificado_ruta' => 'required|string',
-                'certificado_password' => 'required|string',
+                'certificado_id' => 'required|integer|exists:fe_certificados_digitales,id',
             ]);
 
-            if (! HaciendaIntegrationService::signWithXADES(
-                $haciendaComprobante,
-                $request->input('certificado_ruta'),
-                $request->input('certificado_password')
-            )) {
-                return $this->error('No se pudo firmar el comprobante', 422);
+            $haciendaComprobante = HaciendaComprobante::findOrFail($id);
+
+            if (!$haciendaComprobante->xml_contenido) {
+                return $this->error('El comprobante no tiene XML generado. Llame primero a generar-xml.', 422);
             }
+
+            $xmlFirmado = $this->firmaService->firmar(
+                $haciendaComprobante->xml_contenido,
+                $request->input('certificado_id')
+            );
+
+            $haciendaComprobante->markAsSigned();
+            $haciendaComprobante->update(['xml_contenido' => $xmlFirmado]);
 
             return $this->success([
                 'id' => $haciendaComprobante->id,
@@ -120,24 +142,46 @@ class HaciendaController extends ApiController
      * POST /api/v1/hacienda/{id}/enviar
      * Enviar comprobante a la API de Hacienda
      *
-     * @param HaciendaComprobante $haciendaComprobante
+     * @param int $id
      * @return JsonResponse
      */
-    public function enviar(HaciendaComprobante $haciendaComprobante): JsonResponse
+    public function enviar(int $id): JsonResponse
     {
         try {
-            // Envía el XML firmado a Hacienda usando la URL configurada
-            // en `config/hacienda.php`. Se espera que `sendToHacienda`
-            // persista la respuesta para auditoría.
-            if (! HaciendaIntegrationService::sendToHacienda($haciendaComprobante)) {
-                return $this->error('No se pudo enviar el comprobante a Hacienda', 422);
+            $haciendaComprobante = HaciendaComprobante::findOrFail($id);
+
+            if (!$haciendaComprobante->isReadyForSending()) {
+                return $this->error('El comprobante no está listo para envío. Debe estar firmado.', 422);
+            }
+
+            $comprobante = ComprobanteElectronicoFe::findOrFail($haciendaComprobante->comprobante_id);
+
+            $resultado = $this->apiClient->enviarComprobante(
+                $haciendaComprobante->clave,
+                base64_encode($haciendaComprobante->xml_contenido),
+                $comprobante->fecha_emision->toIso8601String(),
+                [
+                    'tipoIdentificacion' => $comprobante->empresa->tipo_identificacion ?? '01',
+                    'numeroIdentificacion' => $comprobante->empresa->numero_identificacion ?? '',
+                ],
+                $comprobante->receptor_numero_identificacion ? [
+                    'tipoIdentificacion' => $comprobante->receptor_tipo_identificacion,
+                    'numeroIdentificacion' => $comprobante->receptor_numero_identificacion,
+                ] : null
+            );
+
+            if ($resultado['success'] ?? false) {
+                $haciendaComprobante->markAsSent();
+            } else {
+                $haciendaComprobante->markAsError($resultado['error'] ?? 'Error desconocido');
             }
 
             return $this->success([
                 'id' => $haciendaComprobante->id,
                 'clave' => $haciendaComprobante->clave,
                 'estado' => $haciendaComprobante->fresh()->estado,
-            ], 'Comprobante enviado a Hacienda exitosamente');
+                'respuesta' => $resultado,
+            ], $resultado['success'] ? 'Comprobante enviado a Hacienda exitosamente' : 'Error al enviar');
         } catch (\Exception $e) {
             return $this->error(config('app.debug') ? $e->getMessage() : 'Error interno del servidor', 500);
         }
@@ -147,21 +191,35 @@ class HaciendaController extends ApiController
      * GET /api/v1/hacienda/{id}/estado
      * Consultar estado de comprobante en Hacienda
      *
-     * @param HaciendaComprobante $haciendaComprobante
+     * @param int $id
      * @return JsonResponse
      */
-    public function getEstado(HaciendaComprobante $haciendaComprobante): JsonResponse
+    public function getEstado(int $id): JsonResponse
     {
         try {
-            // Consulta el estado actual del comprobante en Hacienda y
-            // sincroniza el estado local si es necesario.
-            $status = HaciendaIntegrationService::getStatus($haciendaComprobante);
+            $haciendaComprobante = HaciendaComprobante::findOrFail($id);
 
-            if (! $status) {
+            $status = $this->apiClient->consultarEstado($haciendaComprobante->clave);
+
+            if (!$status['success']) {
                 return $this->error('No se pudo obtener el estado', 422);
             }
 
-            return $this->success($status, 'Estado obtenido exitosamente');
+            // Sincronizar estado local si cambió
+            $haciendaEstado = $status['data']['ind-estado'] ?? null;
+            if ($haciendaEstado) {
+                $nuevoEstado = match ($haciendaEstado) {
+                    'aceptado' => 'accepted',
+                    'rechazado' => 'rejected',
+                    'recibido', 'procesando' => 'sent',
+                    default => $haciendaComprobante->estado,
+                };
+                if ($nuevoEstado !== $haciendaComprobante->estado) {
+                    $haciendaComprobante->updateEstado($nuevoEstado);
+                }
+            }
+
+            return $this->success($status['data'], 'Estado obtenido exitosamente');
         } catch (\Exception $e) {
             return $this->error(config('app.debug') ? $e->getMessage() : 'Error interno del servidor', 500);
         }
@@ -176,9 +234,14 @@ class HaciendaController extends ApiController
     public function estadisticas(): JsonResponse
     {
         try {
-            // Devuelve métricas agregadas sobre los comprobantes: totales
-            // por estado. Útil para dashboards operativos.
-            $stats = HaciendaIntegrationService::getStatistics();
+            $stats = [
+                'total' => HaciendaComprobante::count(),
+                'pending' => HaciendaComprobante::pending()->count(),
+                'signed' => HaciendaComprobante::signed()->count(),
+                'sent' => HaciendaComprobante::sent()->count(),
+                'accepted' => HaciendaComprobante::accepted()->count(),
+                'rejected' => HaciendaComprobante::rejected()->count(),
+            ];
 
             return $this->success($stats, 'Estadísticas de comprobantes');
         } catch (\Exception $e) {

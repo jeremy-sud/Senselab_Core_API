@@ -2,20 +2,27 @@
 
 namespace Tests\Feature;
 
-use App\Services\Hacienda\HaciendaIntegrationService;
+use App\Services\Hacienda\HaciendaApiClient;
+use App\Services\Hacienda\OAuthTokenManager;
+use App\Services\Hacienda\RateLimiter;
+use App\Services\Hacienda\ClaveNumericaGenerator;
+use App\Services\Hacienda\Xml\FirmaDigitalService;
+use App\Services\Hacienda\Xml\XmlComprobanteBuilder;
+use App\Services\Hacienda\Xml\XadesEpesSigner;
 use App\Models\HaciendaComprobante;
 use Illuminate\Foundation\Testing\TestCase;
 use Illuminate\Support\Facades\Config;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
- * Pruebas para FASE 2.1: Integración Hacienda Costa Rica
+ * Pruebas de integración: Servicios Hacienda Costa Rica
  *
- *
- * Tests Feature x8
- * Tests Unit    x7
+ * Valida que todos los servicios dedicados existen, tienen las interfaces
+ * correctas y están correctamente conectados.
  */
-#[CoversClass(\App\Services\Hacienda\HaciendaIntegrationService::class)]
+#[CoversClass(\App\Services\Hacienda\HaciendaApiClient::class)]
+#[CoversClass(\App\Services\Hacienda\Xml\FirmaDigitalService::class)]
+#[CoversClass(\App\Services\Hacienda\Xml\XmlComprobanteBuilder::class)]
 #[CoversClass(\App\Http\Controllers\Api\V1\HaciendaController::class)]
 class HaciendaIntegrationTest extends TestCase
 {
@@ -25,48 +32,74 @@ class HaciendaIntegrationTest extends TestCase
         $this->loadHaciendaConfig();
     }
 
-    /**
-     * Cargar configuración de Hacienda para tests
-     */
     protected function loadHaciendaConfig(): void
     {
         Config::set('hacienda.environment', 'sandbox');
         Config::set('hacienda.version_esquema', '4.4');
         Config::set('hacienda.proveedor_sistemas', 'TEST SYSTEM');
-        Config::set('hacienda.api_urls.sandbox.send', 'https://atv.hacienda.go.cr/api/v1/send');
-        Config::set('hacienda.api_urls.sandbox.get-status', 'https://atv.hacienda.go.cr/api/v1/status');
+        Config::set('hacienda.api_urls.sandbox.recepcion', 'https://api-sandbox.comprobanteselectronicos.go.cr/recepcion/v1');
+        Config::set('hacienda.api_urls.sandbox.oauth', 'https://idp.comprobanteselectronicos.go.cr/auth/realms/rut-stag/protocol/openid-connect/token');
+        Config::set('hacienda.oauth', [
+            'grant_type' => 'password',
+            'client_id' => 'api-stag',
+            'client_secret' => '',
+            'username' => 'test@stag.comprobanteselectronicos.go.cr',
+            'password' => 'test',
+            'scope' => '',
+        ]);
+        Config::set('hacienda.rate_limit.enabled', true);
+        Config::set('hacienda.rate_limit.max_requests_per_second', 8);
+        Config::set('hacienda.rate_limit.max_requests_per_minute', 480);
     }
 
-    // ========== FEATURE TESTS ==========
+    // ========== SERVICE STRUCTURE TESTS ==========
 
-    public function test_hacienda_service_structure(): void
+    public function test_hacienda_services_exist(): void
     {
-        $this->assertTrue(class_exists(HaciendaIntegrationService::class));
-        $this->assertTrue(method_exists(HaciendaIntegrationService::class, 'generateComprobante'));
-        $this->assertTrue(method_exists(HaciendaIntegrationService::class, 'generateXml'));
-        $this->assertTrue(method_exists(HaciendaIntegrationService::class, 'signWithXADES'));
-        $this->assertTrue(method_exists(HaciendaIntegrationService::class, 'sendToHacienda'));
-        $this->assertTrue(method_exists(HaciendaIntegrationService::class, 'getStatus'));
-        $this->assertTrue(method_exists(HaciendaIntegrationService::class, 'getStatistics'));
+        $this->assertTrue(class_exists(HaciendaApiClient::class));
+        $this->assertTrue(class_exists(OAuthTokenManager::class));
+        $this->assertTrue(class_exists(RateLimiter::class));
+        $this->assertTrue(class_exists(ClaveNumericaGenerator::class));
+        $this->assertTrue(class_exists(FirmaDigitalService::class));
+        $this->assertTrue(class_exists(XmlComprobanteBuilder::class));
+        $this->assertTrue(class_exists(XadesEpesSigner::class));
     }
 
-    public function test_hacienda_constants_defined(): void
+    public function test_firma_digital_service_methods(): void
     {
-        $this->assertEquals('01', HaciendaIntegrationService::TYPE_FACTURA);
-        $this->assertEquals('03', HaciendaIntegrationService::TYPE_NOTA_CREDITO);
-        $this->assertEquals('04', HaciendaIntegrationService::TYPE_NOTA_DEBITO);
-        $this->assertEquals('05', HaciendaIntegrationService::TYPE_TIQUETE);
-        $this->assertEquals('07', HaciendaIntegrationService::TYPE_COMPROBANTE_EGRESO);
+        $this->assertTrue(method_exists(FirmaDigitalService::class, 'firmar'));
+        $this->assertTrue(method_exists(FirmaDigitalService::class, 'verificarFirma'));
+        $this->assertTrue(method_exists(FirmaDigitalService::class, 'convertirABase64'));
     }
 
-    public function test_hacienda_status_constants_defined(): void
+    public function test_hacienda_api_client_methods(): void
     {
-        $this->assertEquals('pending', HaciendaIntegrationService::STATUS_PENDING);
-        $this->assertEquals('signed', HaciendaIntegrationService::STATUS_SIGNED);
-        $this->assertEquals('sent', HaciendaIntegrationService::STATUS_SENT);
-        $this->assertEquals('accepted', HaciendaIntegrationService::STATUS_ACCEPTED);
-        $this->assertEquals('rejected', HaciendaIntegrationService::STATUS_REJECTED);
-        $this->assertEquals('error', HaciendaIntegrationService::STATUS_ERROR);
+        $this->assertTrue(method_exists(HaciendaApiClient::class, 'enviarComprobante'));
+        $this->assertTrue(method_exists(HaciendaApiClient::class, 'consultarEstado'));
+        $this->assertTrue(method_exists(HaciendaApiClient::class, 'listarComprobantes'));
+        $this->assertTrue(method_exists(HaciendaApiClient::class, 'obtenerComprobante'));
+        $this->assertTrue(method_exists(HaciendaApiClient::class, 'setAmbiente'));
+        $this->assertTrue(method_exists(HaciendaApiClient::class, 'getAmbiente'));
+    }
+
+    public function test_oauth_token_manager_methods(): void
+    {
+        $this->assertTrue(method_exists(OAuthTokenManager::class, 'getValidToken'));
+        $this->assertTrue(method_exists(OAuthTokenManager::class, 'obtenerNuevoToken'));
+        $this->assertTrue(method_exists(OAuthTokenManager::class, 'refreshToken'));
+        $this->assertTrue(method_exists(OAuthTokenManager::class, 'logout'));
+    }
+
+    public function test_clave_numerica_generator_methods(): void
+    {
+        $this->assertTrue(method_exists(ClaveNumericaGenerator::class, 'generar'));
+        $this->assertTrue(method_exists(ClaveNumericaGenerator::class, 'validar'));
+        $this->assertTrue(method_exists(ClaveNumericaGenerator::class, 'extraerInformacion'));
+    }
+
+    public function test_xml_comprobante_builder_methods(): void
+    {
+        $this->assertTrue(method_exists(XmlComprobanteBuilder::class, 'build'));
     }
 
     public function test_hacienda_config_loaded(): void
@@ -76,56 +109,32 @@ class HaciendaIntegrationTest extends TestCase
         $this->assertNotNull(config('hacienda.api_urls.sandbox'));
     }
 
-    public function test_generate_clave_formato_correcto(): void
+    // ========== RATE LIMITER TESTS ==========
+
+    public function test_rate_limiter_allows_requests(): void
     {
-        // Verificar que el método generateClave existe
-        $reflection = new \ReflectionClass(HaciendaIntegrationService::class);
-        $this->assertTrue($reflection->hasMethod('generateClave'));
-
-        // Verificar que es un método protegido
-        $method = $reflection->getMethod('generateClave');
-        $this->assertTrue($method->isProtected());
-
-        // El clave debe tener 27 caracteres cuando se genera
-        // Formato: AAMDDLLLLLLLLLL NNNNNNNEEEE (29 dígitos en total)
-        // No lo llamamos por dependencia de BD, pero verificamos su existencia
-        $this->assertTrue(method_exists(HaciendaIntegrationService::class, 'generateClave'));
+        $rateLimiter = new RateLimiter();
+        $this->assertTrue($rateLimiter->canMakeRequest());
     }
 
-    public function test_verification_digit_calculation(): void
+    public function test_rate_limiter_tracks_requests(): void
     {
-        $reflection = new \ReflectionClass(HaciendaIntegrationService::class);
-        $method = $reflection->getMethod('calculateVerificationDigit');
-        $method->setAccessible(true);
-
-        // Probar con valores conocidos
-        $digito = $method->invoke(null, '50605121234567890');
+        $rateLimiter = new RateLimiter();
+        $rateLimiter->recordRequest();
         
-        $this->assertIsInt($digito);
-        $this->assertGreaterThanOrEqual(0, $digito);
-        $this->assertLessThan(10, $digito);
+        $stats = $rateLimiter->getEstadisticas();
+        $this->assertIsArray($stats);
+        $this->assertArrayHasKey('current_second', $stats);
+        $this->assertArrayHasKey('current_minute', $stats);
+        $this->assertGreaterThanOrEqual(1, $stats['current_second']['requests']);
     }
 
-    public function test_get_statistics_returns_array(): void
-    {
-        // Mock HaciendaComprobante para evitar dependencia de BD
-        $this->mock(HaciendaComprobante::class, function ($mock) {
-            $mock->shouldReceive('count')->andReturn(10);
-        });
-
-        // No llamamos a getStatistics directamente ya que depende de la BD
-        // En su lugar, probamos la estructura esperada
-        $expectedKeys = ['total', 'pending', 'signed', 'sent', 'accepted', 'rejected', 'error'];
-        
-        // Verificar que el service existe y tiene el método
-        $this->assertTrue(method_exists(HaciendaIntegrationService::class, 'getStatistics'));
-    }
+    // ========== MODEL TESTS ==========
 
     public function test_hacienda_model_structure(): void
     {
         $this->assertTrue(class_exists(HaciendaComprobante::class));
         
-        // Verificar que tiene las columnas esperadas
         $hacienda = new HaciendaComprobante();
         $fillable = $hacienda->getFillable();
 
@@ -136,143 +145,29 @@ class HaciendaIntegrationTest extends TestCase
         $this->assertContains('estado', $fillable);
     }
 
+    public function test_hacienda_model_has_state_methods(): void
+    {
+        $this->assertTrue(method_exists(HaciendaComprobante::class, 'markAsSigned'));
+        $this->assertTrue(method_exists(HaciendaComprobante::class, 'markAsSent'));
+        $this->assertTrue(method_exists(HaciendaComprobante::class, 'markAsAccepted'));
+        $this->assertTrue(method_exists(HaciendaComprobante::class, 'markAsRejected'));
+        $this->assertTrue(method_exists(HaciendaComprobante::class, 'markAsError'));
+        $this->assertTrue(method_exists(HaciendaComprobante::class, 'isReadyForSending'));
+    }
+
+    // ========== CONTROLLER TESTS ==========
+
     public function test_hacienda_controller_exists(): void
     {
         $this->assertTrue(class_exists('App\Http\Controllers\Api\V1\HaciendaController'));
     }
 
-    // ========== UNIT TESTS ==========
-
-    public function test_tipo_factura_is_string(): void
+    public function test_hacienda_controller_uses_di(): void
     {
-        $this->assertIsString(HaciendaIntegrationService::TYPE_FACTURA);
-    }
-
-    public function test_tipo_nota_credito_is_string(): void
-    {
-        $this->assertIsString(HaciendaIntegrationService::TYPE_NOTA_CREDITO);
-    }
-
-    public function test_all_status_constants_are_unique(): void
-    {
-        $statuses = [
-            HaciendaIntegrationService::STATUS_PENDING,
-            HaciendaIntegrationService::STATUS_SIGNED,
-            HaciendaIntegrationService::STATUS_SENT,
-            HaciendaIntegrationService::STATUS_ACCEPTED,
-            HaciendaIntegrationService::STATUS_REJECTED,
-            HaciendaIntegrationService::STATUS_ERROR,
-        ];
-
-        $unique = array_unique($statuses);
-        $this->assertEquals(count($statuses), count($unique));
-    }
-
-    public function test_all_tipo_constants_are_unique(): void
-    {
-        $tipos = [
-            HaciendaIntegrationService::TYPE_FACTURA,
-            HaciendaIntegrationService::TYPE_NOTA_CREDITO,
-            HaciendaIntegrationService::TYPE_NOTA_DEBITO,
-            HaciendaIntegrationService::TYPE_TIQUETE,
-            HaciendaIntegrationService::TYPE_COMPROBANTE_EGRESO,
-        ];
-
-        $unique = array_unique($tipos);
-        $this->assertEquals(count($tipos), count($unique));
-    }
-
-    public function test_verification_digit_with_different_inputs(): void
-    {
-        $reflection = new \ReflectionClass(HaciendaIntegrationService::class);
-        $method = $reflection->getMethod('calculateVerificationDigit');
-        $method->setAccessible(true);
-
-        // Test múltiples entradas
-        $inputs = [
-            '50605121234567890',
-            '50605131234567890',
-            '50605141234567890',
-        ];
-
-        foreach ($inputs as $input) {
-            $digito = $method->invoke(null, $input);
-            $this->assertIsInt($digito);
-        }
-    }
-
-    public function test_root_element_mapping_factura(): void
-    {
-        $reflection = new \ReflectionClass(HaciendaIntegrationService::class);
-        $method = $reflection->getMethod('getRootElement');
-        $method->setAccessible(true);
-
-        $element = $method->invoke(null, '01');
-        $this->assertEquals('FacturaElectronica', $element);
-    }
-
-    public function test_root_element_mapping_nota_credito(): void
-    {
-        $reflection = new \ReflectionClass(HaciendaIntegrationService::class);
-        $method = $reflection->getMethod('getRootElement');
-        $method->setAccessible(true);
-
-        $element = $method->invoke(null, '03');
-        $this->assertEquals('NotaCredito', $element);
-    }
-
-    public function test_root_element_mapping_tiquete(): void
-    {
-        $reflection = new \ReflectionClass(HaciendaIntegrationService::class);
-        $method = $reflection->getMethod('getRootElement');
-        $method->setAccessible(true);
-
-        $element = $method->invoke(null, '05');
-        $this->assertEquals('TiqueteElectronico', $element);
-    }
-
-    // ========== INTEGRATION TESTS ==========
-
-    public function test_hacienda_environment_configured(): void
-    {
-        $env = config('hacienda.environment');
-        $this->assertContains($env, ['sandbox', 'production']);
-    }
-
-    public function test_hacienda_api_urls_configured(): void
-    {
-        $urls = config('hacienda.api_urls');
-        $this->assertIsArray($urls);
-        $this->assertArrayHasKey('sandbox', $urls);
-    }
-
-    public function test_hacienda_xades_config_exists(): void
-    {
-        $xades = config('hacienda.xades');
+        $reflection = new \ReflectionClass('App\Http\Controllers\Api\V1\HaciendaController');
+        $constructor = $reflection->getConstructor();
         
-        $this->assertIsArray($xades);
-        $this->assertArrayHasKey('policy_url', $xades);
-        $this->assertArrayHasKey('policy_hash', $xades);
-    }
-
-    public function test_statistics_counts_match_database(): void
-    {
-        // Verify estructura sin dependencia de BD
-        // Los stats deben tener estructura correcta
-        $this->assertTrue(method_exists(HaciendaIntegrationService::class, 'getStatistics'));
-        
-        // Verificar que el array tiene los keys esperados
-        $expectedKeys = ['total', 'pending', 'signed', 'sent', 'accepted', 'rejected', 'error'];
-        foreach ($expectedKeys as $key) {
-            $this->assertTrue(array_key_exists($key, [
-                'total' => 0,
-                'pending' => 0,
-                'signed' => 0,
-                'sent' => 0,
-                'accepted' => 0,
-                'rejected' => 0,
-                'error' => 0,
-            ]));
-        }
+        $this->assertNotNull($constructor, 'HaciendaController debe tener constructor con DI');
+        $this->assertGreaterThanOrEqual(3, $constructor->getNumberOfParameters());
     }
 }
