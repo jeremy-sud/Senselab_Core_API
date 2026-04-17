@@ -171,7 +171,7 @@ return [
     */
     'cache' => [
         'enabled' => env('HACIENDA_CACHE_ENABLED', true),
-        'token_ttl' => env('HACIENDA_CACHE_TOKEN_TTL', 3600), // 1 hora
+        'token_ttl' => env('HACIENDA_CACHE_TOKEN_TTL', 300), // 5 minutos (token real Hacienda expira en ~300s)
         'response_ttl' => env('HACIENDA_CACHE_RESPONSE_TTL', 300), // 5 minutos
     ],
 

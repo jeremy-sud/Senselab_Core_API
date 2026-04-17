@@ -1,9 +1,9 @@
 # 🔐 Guía de Seguridad - Ursol CAST API
 
-> **Última actualización:** 24 de Marzo de 2026  
-> **Versión:** 3.3.0  
+> **Última actualización:** 17 de Abril de 2026  
+> **Versión:** 5.0.1  
 > **Clasificación:** Documento Interno de Seguridad  
-> **Auditor:** Verificación de Código Actual + Mejoras Implementadas (FASE 1-16)
+> **Auditor:** Verificación de Código Actual + Mejoras Implementadas (FASE 1-22)
 
 ---
 
@@ -62,8 +62,8 @@ Payment:          3 transacciones/hora
 
 ### FASE 2.1 - Hacienda Integration ✅
 - **HaciendaComprobante Model** con 13 scopes
-- **HaciendaIntegrationService** (410 líneas, DGT-R-000-2024 v4.4 compliant)
-- **Generador de clave** de 29 dígitos (Algoritmo Mod-9)
+- **Servicios refactorizados**: `HaciendaApiClient` (HTTP + rate limiting), `FirmaDigitalService` (XAdES-EPES), `OAuthTokenManager` (OAuth 2.0), `XmlComprobanteBuilder` (XML v4.4)
+- **Generador de clave** de 50 dígitos (Algoritmo Mod-9)
 - **Firma digital XAdES-EPES** implementada
 - **8 endpoints REST** para gestión completa
 - **Estados:** pending, signed, sent, accepted, rejected, error
@@ -79,11 +79,20 @@ Payment:          3 transacciones/hora
 | **15** | **11 excepciones de dominio** con handler centralizado | Ya NO se expone `$e->getMessage()` al cliente |
 | **15** | **ApiResponse trait** — envelope unificado | Respuestas consistentes: `{success, code, message, data, errors, meta}` |
 | **16** | **BaseService abstracto** con hooks tipados | Lógica de negocio aislada de controladores |
-| **16** | **43 DTOs** con `readonly` y `fromRequest()` | Validación de tipos en capa de transferencia |
+| **16** | **63 DTOs** con `readonly` y `fromRequest()` | Validación de tipos en capa de transferencia (~65% cobertura) |
 | **17** | Rate limiting normalizado + SecurityHeaders middleware | Headers OWASP aplicados globalmente |
+| **18** | API Versionado `/api/v1/` y `/api/v2/` | Middleware Sunset para deprecación controlada |
 | **18.5** | Seeders MasterData/DemoData separados | Datos de producción aislados de datos demo |
+| **19.2** | Contract Testing con Pact PHP | Verificación de contratos entre consumidor/proveedor |
+| **19.3** | Mutation Testing con Infection PHP | MSI ≥50%, cobertura mutaciones ≥70% |
+| **19.4** | CI Pipeline Mejorado (Codecov, PHPStan L8) | 9 workflows CI/CD con umbrales de calidad |
+| **19.6** | Hacienda v4.4 — 38/38 brechas cerradas | Compliance normativo 100% |
+| **19.7** | PHPStan 0 errores + DTO 65% + DT limpia | Type safety real + factories verificadas |
+| **20** | Webhooks + Event-Driven | HMAC-SHA256, SSRF validation, backoff exponencial |
+| **21** | Reporting Engine (P&L, Balance, KPIs) | Reportes financieros + exportación PDF/Excel/CSV |
+| **22** | Escalabilidad (Read Replicas, Horizon, ETag, Tracing) | OpenTelemetry, ETags 304, distributed tracing |
 
-**Resultado acumulado:** 1261 tests passing, PHPStan L8 0 errors, 9 workflows CI/CD, 80 policies RBAC.
+**Resultado acumulado:** 1270+ tests passing, PHPStan L8 0 errors, 9 workflows CI/CD, 80 policies RBAC.
 
 ---
 
@@ -148,7 +157,7 @@ HACIENDA_P12_PASSWORD=... # Certificado digital
 **Medidas aplicadas:**
 - **SQL Injection:** Eloquent ORM con bindings
 - **XSS:** Blade escaping automático
-- **Command Injection:** No uso de shell_exec() (excepto HealthCheckController con input hardcoded — DT-7)
+- **Command Injection:** `shell_exec()` presente SOLO en `FirmaDigitalService::convertirP12Legacy()` con `escapeshellarg()` estricto (conversión de certificados .p12 legacy). `HealthCheckController` ya NO usa `shell_exec()` (resuelto DT-7).
 - **LDAP Injection:** No aplica
 
 ```php
@@ -179,7 +188,7 @@ public function rules(): array
 **Medidas aplicadas:**
 - **Arquitectura:** Separación de capas (Controllers → Services → DTOs → Models)
 - **BaseService abstracto:** Hooks tipados (beforeCreate, afterCreate, applyFilters) — FASE 16
-- **43 DTOs** con propiedades `readonly` y factory `fromRequest()` — FASE 16
+- **63 DTOs** con propiedades `readonly` y factory `fromRequest()` — FASES 16-19.7 (~65% cobertura)
 - **11 excepciones de dominio** con handler centralizado — FASE 15
 - **ApiResponse trait:** Envelope unificado, sin exposición de errores internos — FASE 15
 - **170+ FormRequests** con validación comprehensiva

@@ -30,7 +30,7 @@
 
 1. **~~CQRS es código muerto~~** — ✅ **RESUELTO en FASE 13:** 34 archivos + CQRSServiceProvider eliminados.
 2. **~~Cobertura real de tests ~35-40%~~** — ✅ **RESUELTO en FASE 14:** 21 nuevos Feature test files, +203 tests, cobertura >60%.
-3. **Solo 1 excepción custom** — `InventarioException`. Los demás módulos usan excepciones genéricas.
+3. **~~Solo 1 excepción custom~~** — ✅ **RESUELTO en FASE 15:** 11 excepciones de dominio tipadas (DomainException base + 10 por módulo).
 4. **~~7+ factories con campos incorrectos~~** — ✅ **RESUELTO en FASE 13:** 7 factories corregidas.
 5. **~~Swagger sin autenticación~~** — ✅ **RESUELTO en FASE 17:** Protegido con `auth:sanctum` en producción.
 6. ~~**35 seeders no autoejecutados**~~ — ✅ **RESUELTO en FASE 18.5:** Separados en `MasterDataSeeder` (14 catálogos de producción) y `DemoDataSeeder` (empresa + usuarios demo). Todos idempotentes con `updateOrInsert()`.
@@ -42,7 +42,7 @@
 9. ~~🔴 **N+1 queries pendientes**~~ — ✅ **RESUELTO en FASE 14.5:** Eager loading agregado en `ComprobanteElectronicoController::anular()`, `SalidaInventarioService::porCliente/porAlmacen/entreFechas()`.
 10. ~~🟠 **Validación de contraseña débil**~~ — ✅ **RESUELTO en FASE 14.5:** Ya implementado `Password::min(8)->mixedCase()->numbers()->symbols()`.
 11. ~~🟠 **`SESSION_ENCRYPT=false`**~~ — ✅ **RESUELTO en FASE 14.5:** `SESSION_ENCRYPT` default `true` en `config/session.php`.
-12. 🟠 **Respuestas API inconsistentes** — 3 formatos distintos de respuesta, sin envelope estandarizado.
+12. ✅ ~~🟠 **Respuestas API inconsistentes**~~ — **RESUELTO en FASE 15:** `ApiResponse` trait con envelope unificado `{success, code, message, data, errors, meta}` heredado por todos los controladores.
 13. ~~🟠 **Campos financieros `float` en lugar de `decimal`**~~ — ✅ **VERIFICADO en FASE 18.5:** Todas las migraciones ya usan `decimal()` para campos monetarios. 0 campos `float`/`double` en columnas financieras.
 14. ~~🟠 **Cache sin prefijo de tenant**~~ — ✅ **RESUELTO en FASE 14.5:** Tags de cache incluyen `empresa_{id}` en `HasCacheableQueries` y `ProductoObserver`.
 15. ~~🟠 **`$e->getMessage()` expuesto en respuestas**~~ — ✅ **RESUELTO en FASE 14.5:** Protegido con `config('app.debug')` en controladores y servicios AI.
