@@ -74,7 +74,7 @@ class FirmaDigitalService
         $this->cargarCertificado($certificadoId);
 
         // Obtener URL de política desde configuración
-        $policyUrl = config('hacienda.policy_url', 'https://www.hacienda.go.cr/ATV/ComprobanteElectronico/docs/esquemas/2016/v4.4/ResolucionComprobantesElectronicosDGT-R-48-2016_v4.4.pdf');
+        $policyUrl = config('hacienda.xades.policy_url', 'https://atv.hacienda.go.cr/ATV/ComprobanteElectronico/docs/esquemas/2016/v4.4/ResolucionComprobantesElectronicosDGT-R-000-2024.pdf');
 
         // Inicializar firmador XAdES-EPES
         $this->xadesSigner = new XadesEpesSigner();

@@ -92,6 +92,17 @@ class TiposComprobantesFESeeder extends Seeder
             ],
             [
                 'codigo_dgt' => '08',
+                'nombre' => 'Factura Electrónica de Compras',
+                'descripcion' => 'Factura electrónica de compras a personas físicas sin factura',
+                'requiere_referencia' => false,
+                'permite_exportacion' => false,
+                'activo' => true,
+                'eliminado' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'codigo_dgt' => '09',
                 'nombre' => 'Factura Electrónica de Exportación',
                 'descripcion' => 'Factura electrónica para exportaciones',
                 'requiere_referencia' => false,
@@ -102,10 +113,10 @@ class TiposComprobantesFESeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'codigo_dgt' => '09',
-                'nombre' => 'Factura Electrónica de Compra',
-                'descripcion' => 'Factura electrónica de compra',
-                'requiere_referencia' => false,
+                'codigo_dgt' => '10',
+                'nombre' => 'Recibo Electrónico de Pago',
+                'descripcion' => 'Recibo electrónico de pago',
+                'requiere_referencia' => true,
                 'permite_exportacion' => false,
                 'activo' => true,
                 'eliminado' => false,
@@ -121,6 +132,6 @@ class TiposComprobantesFESeeder extends Seeder
             );
         }
 
-        $this->command->info('✓ 9 tipos de comprobantes FE cargados exitosamente.');
+        $this->command->info('✓ 10 tipos de comprobantes FE cargados exitosamente.');
     }
 }

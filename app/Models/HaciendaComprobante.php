@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $clave Clave de la factura electrónica (hasta 50 dígitos, v4.4)
  * @property string $tipo_comprobante Tipo: 01=Factura, 03=NotaCredito, 04=NotaDebito, 05=Tiquete, 07=ComprobanteEgreso
  * @property string $estado Estado actual del comprobante (pending, signed, sent, accepted, rejected, error)
- * @property string|null $xml_contedido XML con firma digital
+ * @property string|null $xml_contenido XML con firma digital
  * @property string|null $respuesta_hacienda Respuesta JSON de Hacienda
  * @property string|null $numero_secuencia Número de secuencia asignado por Hacienda
  * @property string|null $fecha_respuesta Fecha y hora de respuesta de Hacienda
@@ -78,7 +78,7 @@ class HaciendaComprobante extends Model
      */
     public function comprobante(): BelongsTo
     {
-        return $this->belongsTo(Venta::class, 'comprobante_id');
+        return $this->belongsTo(ComprobanteElectronicoFe::class, 'comprobante_id');
     }
 
     /**

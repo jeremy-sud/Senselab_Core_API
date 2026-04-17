@@ -112,7 +112,8 @@ class OAuthTokenManager
                 $formParams['scope'] = $this->credentials['scope'];
             }
 
-            $response = Http::timeout(30)
+            $response = Http::timeout(config('hacienda.http.timeout', 30))
+                ->connectTimeout(config('hacienda.http.connect_timeout', 10))
                 ->asForm()
                 ->accept('application/json')
                 ->post($this->tokenUrl, $formParams);
@@ -219,7 +220,8 @@ class OAuthTokenManager
 
         if ($tokenActual && !empty($tokenActual->refresh_token)) {
             try {
-                $response = Http::timeout(30)
+                $response = Http::timeout(config('hacienda.http.timeout', 30))
+                    ->connectTimeout(config('hacienda.http.connect_timeout', 10))
                     ->asForm()
                     ->accept('application/json')
                     ->post($this->tokenUrl, [
@@ -296,7 +298,8 @@ class OAuthTokenManager
         }
 
         try {
-            $response = Http::timeout(30)
+            $response = Http::timeout(config('hacienda.http.timeout', 30))
+                ->connectTimeout(config('hacienda.http.connect_timeout', 10))
                 ->asForm()
                 ->post($this->logoutUrl, [
                     'client_id' => $this->credentials['client_id'],

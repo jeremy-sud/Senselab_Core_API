@@ -183,7 +183,7 @@ return [
     | URL donde Hacienda enviará las respuestas de aceptación/rechazo
     |
     */
-    'callback_url' => env('HACIENDA_CALLBACK_URL', config('app.url') . '/api/hacienda/callback'),
+    'callback_url' => env('HACIENDA_CALLBACK_URL', env('APP_URL', 'http://localhost') . '/api/hacienda/callback'),
 
     /*
     |--------------------------------------------------------------------------
@@ -231,11 +231,12 @@ return [
         '02' => 'Nota de Débito Electrónica',
         '03' => 'Nota de Crédito Electrónica',
         '04' => 'Tiquete Electrónico',
-        '05' => 'Nota de Despacho',
-        '06' => 'Contrato',
-        '07' => 'Procedimiento',
-        '08' => 'Comprobante de Compra',
-        '09' => 'Factura de Exportación',
+        '05' => 'Confirmación de Aceptación del Comprobante Electrónico',
+        '06' => 'Confirmación de Aceptación Parcial del Comprobante Electrónico',
+        '07' => 'Confirmación de Rechazo del Comprobante Electrónico',
+        '08' => 'Factura Electrónica de Compras',
+        '09' => 'Factura Electrónica de Exportación',
+        '10' => 'Recibo Electrónico de Pago',
     ],
 
     /*

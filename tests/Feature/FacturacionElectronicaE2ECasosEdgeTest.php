@@ -202,6 +202,7 @@ class FacturacionElectronicaE2ECasosEdgeTest extends TestCase
                     'monto_total' => 20000,
                     'subtotal' => 18000, // 20000 - 10% descuento
                     'monto_descuento' => 2000,
+                    'codigo_descuento' => '01',
                     'naturaleza_descuento' => 'Descuento por volumen',
                     'impuestos' => [
                         [

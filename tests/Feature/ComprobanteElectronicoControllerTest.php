@@ -199,7 +199,6 @@ class ComprobanteElectronicoControllerTest extends TestCase
                 'tipo_documento',
                 'consecutivo',
                 'condicion_venta',
-                'medio_pago',
                 'lineas',
                 'certificado_id',
             ]);
