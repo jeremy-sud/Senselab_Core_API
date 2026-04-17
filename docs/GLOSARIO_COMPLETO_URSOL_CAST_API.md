@@ -1,7 +1,7 @@
 # Glosario Completo — Ursol CAST API
 
 **Fecha de creación:** 1 de abril de 2026  
-**Proyecto:** Ursol CAST API v4.1.0  
+**Proyecto:** Ursol CAST API v5.0.1  
 **Desarrollado por:** Sistemas Ursol S.A.
 
 > Este glosario recopila y define **toda** la terminología utilizada en el sistema ERP Ursol CAST API: conceptos de dominio, nombres de clases, patrones de arquitectura, convenciones de base de datos, abreviaturas técnicas, y vocabulario específico de Costa Rica y facturación electrónica. Está pensado como referencia rápida y material de onboarding para cualquier persona que trabaje con el codebase.
@@ -364,7 +364,7 @@ Servicio HTTP para comunicarse con el API de Hacienda. Implementa OAuth 2.0, rat
 Modelo para almacenar la relación entre comprobantes locales y su estado en Hacienda.
 
 ### HaciendaIntegrationService
-Servicio de orquestación de alto nivel para el flujo completo de facturación electrónica: crear comprobante → firmar XML → enviar a Hacienda → consultar estado → procesar respuesta.
+**@deprecated** — Servicio de orquestación legacy (~510 líneas). Su funcionalidad fue descentralizada en servicios individuales: `HaciendaApiClient` (envío HTTP), `FirmaDigitalService` (firma XAdES-EPES), `XmlComprobanteBuilder` (generación XML), `OAuthTokenManager` (tokens OAuth 2.0). Pendiente de eliminación.
 
 ### HasActiveScope (Trait)
 Trait que provee query scopes para filtrar por campo `activo`:

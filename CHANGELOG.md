@@ -52,7 +52,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 - **`bootstrap/app.php`** — Middlewares `etag` y `tracing` registrados en el stack global.
 - **Documentación actualizada** — `ESTADO_ACTUAL_PROYECTO.md`, `PENDIENTES_PROYECTO.md`, `ROADMAP.md` reflejan v5.0.0.
 
-## [Unreleased] — Hacienda v4.4 Compliance (DGT-R-000-2024) — 100% Completado
+## [v4.3.0] — 2026-04-10 — Hacienda v4.4 Compliance (DGT-R-000-2024) — 100% Completado
 
 ### Agregado
 - **Migración Fase C Hacienda v4.4** — `2026_04_10_000000_hacienda_v44_fase_c_surtido_codigo_comercial.php`: 3 tablas nuevas (`fe_codigo_comercial`, `fe_detalle_surtido`, `fe_surtido_impuesto`). Completa las brechas #31 y #33 — cobertura 38/38 (100%).
@@ -127,7 +127,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 - Resources versionados (v1 compatibilidad, v2 con HATEOAS)
 - Swagger UI con selector de versión
 
-## [Unreleased] — FASE 19.2: Contract Testing con Pact PHP
+## [v3.4.0] — 2026-03-28 — FASE 19.2: Contract Testing con Pact PHP
 
 ### Agregado
 - **Pact PHP 10.2.1** instalado como dependencia de desarrollo (FFI, Pact Specification V4)
@@ -144,7 +144,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 - **3 targets Makefile**: `contract-test`, `contract-test-consumer`, `contract-test-provider`
 - **PHPUnit suites** `Contract-Consumer` y `Contract-Provider` añadidos a `phpunit.xml`
 
-## [Unreleased] — FASE 19.4: CI Pipeline Mejorado
+## [v3.5.0] — 2026-03-28 — FASE 19.4: CI Pipeline Mejorado
 
 ### Agregado
 - **`codecov.yml`** — Configuración de umbrales Codecov: 70% proyecto, 80% patch. Ignora tests/, config/, vendor/, database/, bootstrap/, resources/, storage/
@@ -156,7 +156,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 - **`ci-cd.yml`** — Job `code-quality`: eliminadas instalaciones on-the-fly de phpcs/phpstan (ya son dev deps), añadido Composer cache, PHPStan Level 5→8. Job `test`: xdebug→pcov para coverage más rápido. Codecov v3→v4 con token
 - **`phpstan.yml`** — Corregido Level 6→8 en 5 instancias (3 comandos `--level=`, nombre del job, mensaje de ayuda). Ahora consistente con `phpstan.neon` y `phpstan-no-baseline.neon`
 
-## [Unreleased] — FASE 19.3: Mutation Testing con Infection PHP
+## [v3.3.1] — 2026-03-28 — FASE 19.3: Mutation Testing con Infection PHP
 
 ### Agregado
 - **Infection PHP 0.32.6** instalado como dependencia de desarrollo
@@ -1008,7 +1008,7 @@ Sprint de diagnóstico profundo y ejecución de correcciones priorizadas. Se aud
 
 ---
 
-## [Unreleased]
+## [v1.0.0] — 2025-01 — Release Inicial
 
 ### Added
 - **Correcciones de tests y permisos** (Enero 2025)

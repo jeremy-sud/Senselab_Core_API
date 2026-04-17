@@ -3,7 +3,7 @@
 **Última actualización:** Abril 2026 — v5.0.1
 
 ![PHPStan Level 8](images/badges/phpstan-level8.svg)
-![Tests 959+ Passing](images/badges/tests-959-passing.svg)
+![Tests 1270+ Passing](images/badges/tests-1270-passing.svg)
 ![Audit Score 9.2/10](images/badges/audit-score-9.2.svg)
 ![Hacienda v4.4 Compliance](images/badges/hacienda-v44-compliance.svg)
 ![AI Services](images/badges/ai-services-10.svg)
