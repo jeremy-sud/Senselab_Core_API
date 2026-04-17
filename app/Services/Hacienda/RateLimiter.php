@@ -150,7 +150,7 @@ class RateLimiter
     }
 
     /**
-     * Incrementar contador de requests
+     * Incrementar contador de requests (atómico, seguro con Horizon)
      *
      * @param string $period 'second' o 'minute'
      * @param string $key Clave del período
@@ -160,8 +160,11 @@ class RateLimiter
     {
         $cacheKey = "{$this->cachePrefix}:{$period}:{$key}";
         
-        $current = (int) Cache::get($cacheKey, 0);
-        Cache::put($cacheKey, $current + 1, $ttl);
+        if (!Cache::has($cacheKey)) {
+            Cache::put($cacheKey, 1, $ttl);
+        } else {
+            Cache::increment($cacheKey);
+        }
     }
 
     /**

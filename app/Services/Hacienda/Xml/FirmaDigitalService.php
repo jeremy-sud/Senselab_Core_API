@@ -8,6 +8,7 @@ use RobRichards\XMLSecLibs\XMLSecurityDSig;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
 use DOMDocument;
 use DOMXPath;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
@@ -45,9 +46,9 @@ class FirmaDigitalService
     protected ?array $certData = null;
 
     /**
-     * Clave privada extraída
+     * Clave privada extraída (PEM string)
      */
-    protected \OpenSSLAsymmetricKey|false|null $privateKey = null;
+    protected ?string $privateKey = null;
 
     /**
      * Instancia del firmador XAdES-EPES
@@ -233,9 +234,23 @@ class FirmaDigitalService
         $certs = [];
         $success = openssl_pkcs12_read($p12Content, $certs, $password);
 
+        // Si falla, intentar conversión legacy (OpenSSL 3.x no soporta RC2-40-CBC)
+        if (!$success) {
+            Log::warning('openssl_pkcs12_read falló, intentando conversión legacy→modern', [
+                'certificado_id' => $this->certificado->id,
+                'openssl_error' => openssl_error_string(),
+            ]);
+
+            $p12Content = $this->convertirP12Legacy($rutaCompleta, $password);
+            if ($p12Content !== null) {
+                $success = openssl_pkcs12_read($p12Content, $certs, $password);
+            }
+        }
+
         if (!$success) {
             throw HaciendaException::certificadoPasswordError(
                 'Error al leer el certificado .p12. Verifica que la contraseña sea correcta. ' .
+                'Si usas OpenSSL 3.x, el certificado puede requerir conversión legacy. ' .
                 'Error OpenSSL: ' . openssl_error_string()
             );
         }
@@ -333,7 +348,80 @@ class FirmaDigitalService
     }
 
     /**
+     * Convertir certificado .p12 legacy a formato moderno (OpenSSL 3.x compatible)
+     *
+     * Los certificados de Hacienda CR usan RC2-40-CBC (legacy), que OpenSSL 3.x
+     * no soporta por defecto. Se convierte usando el flag -legacy de openssl CLI.
+     *
+     * @param string $rutaP12 Ruta absoluta al archivo .p12 original
+     * @param string $password Contraseña del certificado
+     * @return string|null Contenido del .p12 convertido, o null si falla
+     */
+    protected function convertirP12Legacy(string $rutaP12, string $password): ?string
+    {
+        // Verificar que openssl CLI está disponible con soporte legacy
+        $opensslPath = trim((string) shell_exec('which openssl 2>/dev/null'));
+        if (empty($opensslPath)) {
+            Log::error('openssl CLI no encontrado, no se puede convertir certificado legacy');
+            return null;
+        }
+
+        $tempPem = tempnam(sys_get_temp_dir(), 'p12_pem_');
+        $tempP12 = tempnam(sys_get_temp_dir(), 'p12_mod_');
+
+        try {
+            $escapedPass = escapeshellarg($password);
+            $escapedSrc = escapeshellarg($rutaP12);
+            $escapedPem = escapeshellarg($tempPem);
+            $escapedP12 = escapeshellarg($tempP12);
+
+            // Paso 1: Exportar .p12 legacy → PEM (usando -legacy)
+            $cmd1 = "openssl pkcs12 -in {$escapedSrc} -out {$escapedPem} -nodes -passin pass:{$escapedPass} -legacy 2>&1";
+            $output1 = shell_exec($cmd1);
+
+            if (!file_exists($tempPem) || filesize($tempPem) === 0) {
+                Log::error('Conversión legacy→PEM falló', ['output' => $output1]);
+                return null;
+            }
+
+            // Paso 2: Re-empaquetar PEM → .p12 moderno (AES-256-CBC)
+            $cmd2 = "openssl pkcs12 -export -in {$escapedPem} -out {$escapedP12} -passout pass:{$escapedPass} 2>&1";
+            $output2 = shell_exec($cmd2);
+
+            if (!file_exists($tempP12) || filesize($tempP12) === 0) {
+                Log::error('Re-empaquetado PEM→P12 falló', ['output' => $output2]);
+                return null;
+            }
+
+            $modernContent = file_get_contents($tempP12);
+
+            if ($modernContent === false) {
+                return null;
+            }
+
+            // Guardar versión moderna junto al original para futuras lecturas
+            $modernPath = preg_replace('/\.p12$/i', '_modern.p12', $rutaP12);
+            if ($modernPath && $modernPath !== $rutaP12) {
+                file_put_contents($modernPath, $modernContent);
+                Log::info('Certificado .p12 convertido a formato moderno', [
+                    'certificado_id' => $this->certificado->id,
+                    'modern_path' => $modernPath,
+                ]);
+            }
+
+            return $modernContent;
+        } finally {
+            // Limpiar archivos temporales
+            @unlink($tempPem);
+            @unlink($tempP12);
+        }
+    }
+
+    /**
      * Desencriptar password del certificado
+     *
+     * Intenta primero con Laravel Crypt (encriptación real).
+     * Si falla, intenta con base64 (formato legacy) y lo migra a Crypt automáticamente.
      *
      * @return string Password desencriptado
      * @throws \Exception
@@ -346,17 +434,30 @@ class FirmaDigitalService
             );
         }
 
-        // Por ahora usamos base64, pero deberías usar encriptación real (Laravel Crypt)
-        // $password = Crypt::decryptString($this->certificado->password_encrypted);
-        
-        // Temporal: asumimos que está en base64
-        $password = base64_decode($this->certificado->password_encrypted);
+        // Intentar primero con Crypt (formato correcto)
+        try {
+            return Crypt::decryptString($this->certificado->password_encrypted);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            // No es un valor encriptado con Crypt, intentar base64 legacy
+        }
 
-        if ($password === false) {
+        // Fallback: base64 legacy — migrar automáticamente a Crypt
+        $password = base64_decode($this->certificado->password_encrypted, true);
+
+        if ($password === false || $password === '') {
             throw HaciendaException::certificadoPasswordError(
                 'Error al desencriptar la contraseña del certificado'
             );
         }
+
+        // Migrar a Crypt para futuras lecturas
+        $this->certificado->update([
+            'password_encrypted' => Crypt::encryptString($password),
+        ]);
+
+        Log::info('Password de certificado migrado de base64 a Crypt', [
+            'certificado_id' => $this->certificado->id,
+        ]);
 
         return $password;
     }

@@ -11,9 +11,18 @@ use Exception;
 /**
  * Servicio de Integración con API Hacienda Costa Rica
  *
- * Maneja toda la integración con el sistema de facturación electrónica
- * del Ministerio de Hacienda de Costa Rica (DGT-R-000-2024 v4.4).
+ * @deprecated Este servicio contiene código placeholder que nunca fue completado.
+ *             Usar los servicios dedicados en su lugar:
+ *             - XmlComprobanteBuilder para generar XML v4.4
+ *             - FirmaDigitalService + XadesEpesSigner para firma XAdES-EPES
+ *             - HaciendaApiClient para comunicación HTTP con Hacienda
+ *             - ClaveNumericaGenerator para claves de 50 dígitos
+ *             - OAuthTokenManager para tokens OAuth 2.0
  *
+ * @see \App\Services\Hacienda\Xml\XmlComprobanteBuilder
+ * @see \App\Services\Hacienda\Xml\FirmaDigitalService
+ * @see \App\Services\Hacienda\HaciendaApiClient
+ * @see \App\Services\Hacienda\ClaveNumericaGenerator
  * @package App\Services\Hacienda
  * @version 1.0.0
  */

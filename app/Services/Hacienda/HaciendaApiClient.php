@@ -3,10 +3,11 @@
 namespace App\Services\Hacienda;
 
 use App\Exceptions\HaciendaException;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Client\Response;
 
 /**
  * Cliente HTTP para comunicación con el API de Hacienda Costa Rica
@@ -15,11 +16,6 @@ use Illuminate\Support\Facades\Log;
  */
 class HaciendaApiClient
 {
-    /**
-     * Cliente HTTP Guzzle
-     */
-    protected Client $client;
-
     /**
      * Ambiente actual (sandbox o production)
      */
@@ -45,20 +41,16 @@ class HaciendaApiClient
     /**
      * Constructor
      */
-    public function __construct(?string $ambiente = null)
-    {
+    public function __construct(
+        ?string $ambiente = null,
+        ?OAuthTokenManager $tokenManager = null,
+        ?RateLimiter $rateLimiter = null
+    ) {
         $this->ambiente = $ambiente ?? config('hacienda.environment', 'sandbox');
         $this->config = config("hacienda.api_urls.{$this->ambiente}");
         
-        $this->client = new Client([
-            'timeout' => config('hacienda.http.timeout', 30),
-            'connect_timeout' => config('hacienda.http.connect_timeout', 10),
-            'verify' => true,
-            'http_errors' => false,
-        ]);
-
-        $this->tokenManager = new OAuthTokenManager($this->ambiente);
-        $this->rateLimiter = new RateLimiter();
+        $this->tokenManager = $tokenManager ?? new OAuthTokenManager($this->ambiente);
+        $this->rateLimiter = $rateLimiter ?? new RateLimiter();
     }
 
     /**
@@ -183,34 +175,37 @@ class HaciendaApiClient
                 // Obtener token OAuth válido
                 $token = $this->tokenManager->getValidToken();
 
-                // Agregar headers de autenticación
-                $options['headers'] = array_merge($options['headers'] ?? [], [
-                    'Authorization' => "Bearer {$token}",
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json',
-                ]);
-
                 // Log de request
                 $this->logRequest($method, $url, $options);
 
-                // Ejecutar request
+                // Ejecutar request con Laravel Http facade
                 $startTime = microtime(true);
-                $response = $this->client->request($method, $url, $options);
+
+                $pendingRequest = Http::timeout(config('hacienda.http.timeout', 30))
+                    ->connectTimeout(config('hacienda.http.connect_timeout', 10))
+                    ->withToken($token)
+                    ->accept('application/json');
+
+                if (strtoupper($method) === 'GET') {
+                    $response = $pendingRequest->get($url, $options['query'] ?? []);
+                } else {
+                    $response = $pendingRequest->asJson()->post($url, $options['json'] ?? []);
+                }
+
                 $duration = (microtime(true) - $startTime) * 1000;
 
                 // Registrar en rate limiter
                 $this->rateLimiter->recordRequest();
 
                 // Procesar respuesta
-                $statusCode = $response->getStatusCode();
-                $body = (string) $response->getBody();
-                $data = json_decode($body, true) ?? [];
+                $statusCode = $response->status();
+                $data = $response->json() ?? [];
 
                 // Log de response
                 $this->logResponse($statusCode, $data, $duration);
 
                 // Manejar códigos de estado
-                if ($statusCode >= 200 && $statusCode < 300) {
+                if ($response->successful()) {
                     return [
                         'success' => true,
                         'status_code' => $statusCode,
@@ -221,7 +216,7 @@ class HaciendaApiClient
 
                 // Rate limit excedido
                 if ($statusCode === 429) {
-                    $retryAfter = $response->getHeader('Retry-After')[0] ?? 60;
+                    $retryAfter = $response->header('Retry-After') ?: '60';
                     
                     Log::warning('Rate limit excedido en API Hacienda', [
                         'retry_after' => $retryAfter,
@@ -258,8 +253,8 @@ class HaciendaApiClient
                     'data' => $data,
                 ];
 
-            } catch (RequestException $e) {
-                Log::error('Error en petición HTTP a Hacienda', [
+            } catch (ConnectionException $e) {
+                Log::error('Error de conexión HTTP a Hacienda', [
                     'method' => $method,
                     'url' => $url,
                     'attempt' => $attempts + 1,
@@ -276,8 +271,8 @@ class HaciendaApiClient
 
                 throw HaciendaException::apiCommunicationError($e->getMessage(), $maxAttempts, $e);
 
-            } catch (GuzzleException $e) {
-                Log::error('Error de Guzzle en API Hacienda', [
+            } catch (RequestException $e) {
+                Log::error('Error en petición HTTP a Hacienda', [
                     'method' => $method,
                     'url' => $url,
                     'error' => $e->getMessage(),
@@ -296,13 +291,13 @@ class HaciendaApiClient
      *
      * @return array<string, mixed>
      */
-    protected function extractHeaders(\Psr\Http\Message\ResponseInterface $response): array
+    protected function extractHeaders(Response $response): array
     {
         return [
-            'x_ratelimit_limit' => $response->getHeader('X-Ratelimit-Limit')[0] ?? null,
-            'x_ratelimit_remaining' => $response->getHeader('X-Ratelimit-Remaining')[0] ?? null,
-            'x_ratelimit_reset' => $response->getHeader('X-Ratelimit-Reset')[0] ?? null,
-            'location' => $response->getHeader('Location')[0] ?? null,
+            'x_ratelimit_limit' => $response->header('X-Ratelimit-Limit'),
+            'x_ratelimit_remaining' => $response->header('X-Ratelimit-Remaining'),
+            'x_ratelimit_reset' => $response->header('X-Ratelimit-Reset'),
+            'location' => $response->header('Location'),
         ];
     }
 
