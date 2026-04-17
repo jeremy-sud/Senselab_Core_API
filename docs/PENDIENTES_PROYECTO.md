@@ -1,8 +1,8 @@
 # PENDIENTES DEL PROYECTO — Ursol CAST API
 
-**Última actualización:** 13 de abril de 2026  
+**Última actualización:** 17 de abril de 2026  
 **Versión:** v5.0.1 (Post-auditoría 13 abr 2026)  
-**Referencia:** [ROADMAP.md](../ROADMAP.md) | [release_checklist.md](release_checklist.md)
+**Referencia:** [ROADMAP.md](../ROADMAP.md) | [release_checklist.md](release_checklist.md) | [Auditoría Hacienda 17 abr](hacienda/AUDITORIA_FIRMA_DIGITAL_2026-04-17.md)
 
 ---
 
@@ -10,24 +10,55 @@
 
 | Categoría | Pendientes | Prioridad |
 |-----------|-----------|-----------|
-| Bloqueante producción | 0 | ✅ Resuelto |
-| Deuda técnica | 2 items menores | 🟡 Baja |
+| Bloqueante producción | 2 (Hacienda firma digital) | 🔴 Crítico |
+| Deuda técnica | 8 items (2 altos + 6 medios/bajos) | 🟠 Medio |
 | Fases futuras ROADMAP | 0 (100% completado) | ✅ Completado |
 
-> **Estado general:** Roadmap 100% completado (22 fases). Auditoría técnica 9.2/10. La post-auditoría v5.0.1 resolvió: SSRF en webhooks, Swagger reporting (3 controllers), test UseReadReplica, DT-7/DT-8/DT-9, e imports no válidos.
+> **Estado general:** Roadmap 100% completado (22 fases). Auditoría técnica 9.2/10. **Auditoría Hacienda 17 abr:** 10 hallazgos (2 críticos, 2 altos). La firma digital NO funciona con OpenSSL 3.x por certificado .p12 legacy. `HaciendaIntegrationService` es código muerto placeholder.
 
 ---
 
-## ~~🔴 BLOQUEANTE PARA PRODUCCIÓN~~ ✅ RESUELTO
+## 🔴 BLOQUEANTE PARA PRODUCCIÓN — Hacienda Firma Digital
 
-### ~~1. FASE 19.6 — Validación E2E Hacienda Sandbox~~ ✅
+> **Referencia completa:** [docs/hacienda/AUDITORIA_FIRMA_DIGITAL_2026-04-17.md](hacienda/AUDITORIA_FIRMA_DIGITAL_2026-04-17.md)
+
+### H-1. Certificado .p12 incompatible con OpenSSL 3.x 🔴
+- **Estado:** Pendiente
+- **Problema:** Los certificados `.p12` de Hacienda CR usan `RC2-40-CBC` (legacy). OpenSSL 3.x (PHP 8.4) NO los soporta por defecto → `openssl_pkcs12_read()` falla con `error:0308010C:digital envelope routines::unsupported`.
+- **Impacto:** `FirmaDigitalService` no puede cargar el certificado → ningún comprobante puede ser firmado ni enviado.
+- **Validado:** OAuth funciona ✅, certificado convertido a formato moderno firma correctamente ✅.
+- **Solución:** Implementar auto-conversión legacy→modern en `FirmaDigitalService::leerCertificadoP12()` usando `openssl` CLI con flag `-legacy`, o documentar conversión manual previa.
+- **Archivos:** `app/Services/Hacienda/Xml/FirmaDigitalService.php`
+
+### H-2. HaciendaIntegrationService es código muerto 🔴
+- **Estado:** Pendiente
+- **Problema:** Servicio con firma placeholder (`return $xmlContent`), XML concatenado con strings sin escape, URLs de API inexistentes (`send`, `get-status`), generador de clave con formato incorrecto (no 50 dígitos), y `openssl_x509_read()` en archivo .p12.
+- **Impacto:** Todo método de este servicio falla o produce resultados inválidos. Ya existen servicios correctos: `XmlComprobanteBuilder`, `XadesEpesSigner`, `HaciendaApiClient`, `ClaveNumericaGenerator`.
+- **Solución:** Eliminar `HaciendaIntegrationService` y migrar cualquier referencia a los servicios dedicados.
+- **Archivos:** `app/Services/Hacienda/HaciendaIntegrationService.php`
+
+### ~~FASE 19.6 — Validación E2E Hacienda Sandbox~~ ✅
 - **Estado:** Completado. Test suite E2E contra sandbox real implementado.
 - **Tests:** `HaciendaSandboxE2ETest.php` con 8 tests (OAuth, XML v4.4, firma XAdES-EPES, envío, consulta estado).
 - **Hacienda v4.4:** 38/38 brechas resueltas (100%). Fase A, B y C completadas.
 
 ---
 
-## 🟡 DEUDA TÉCNICA (No Bloqueante)
+## 🟠 DEUDA TÉCNICA — Hacienda (Auditoría 17 abr 2026)
+
+| ID | Descripción | Ubicación | Severidad |
+|----|-------------|-----------|-----------|
+| H-3 | Password de certificado en base64 (sin encriptar) | `FirmaDigitalService::desencriptarPassword()` | 🟠 Alto |
+| H-4 | Tipo declarado `OpenSSLAsymmetricKey` pero valor real es `string` PEM | `FirmaDigitalService::$privateKey` | 🟠 Alto |
+| H-6 | OAuthTokenManager usa Guzzle directo en vez de `Http::` facade | `OAuthTokenManager.php` | 🟡 Medio |
+| H-7 | HaciendaApiClient instancia dependencias sin DI | `HaciendaApiClient::__construct()` | 🟡 Medio |
+| H-8 | RateLimiter usa get+put no atómico (race condition con Horizon) | `RateLimiter::incrementRequestCount()` | 🟢 Bajo |
+| H-9 | Token TTL default 3600s confuso (real es 300s) | `config/hacienda.php` | 🟢 Bajo |
+| H-10 | UUID generado sin guiones (no RFC 4122) | `XadesEpesSigner::generateUuid()` | 🟢 Bajo |
+
+---
+
+## 🟡 DEUDA TÉCNICA — General (No Bloqueante)
 
 | ID | Descripción | Ubicación | Severidad |
 |----|-------------|-----------|-----------|
