@@ -10,32 +10,28 @@
 
 | Categoría | Pendientes | Prioridad |
 |-----------|-----------|-----------|
-| Bloqueante producción | 2 (Hacienda firma digital) | 🔴 Crítico |
-| Deuda técnica | 8 items (2 altos + 6 medios/bajos) | 🟠 Medio |
+| Bloqueante producción | 0 | ✅ Resuelto |
+| Deuda técnica Hacienda | 0 (10/10 resueltos) | ✅ Resuelto |
+| Deuda técnica general | 4 items menores | 🟡 Bajo |
 | Fases futuras ROADMAP | 0 (100% completado) | ✅ Completado |
 
-> **Estado general:** Roadmap 100% completado (22 fases). Auditoría técnica 9.2/10. **Auditoría Hacienda 17 abr:** 10 hallazgos (2 críticos, 2 altos). La firma digital NO funciona con OpenSSL 3.x por certificado .p12 legacy. `HaciendaIntegrationService` es código muerto placeholder.
+> **Estado general:** Roadmap 100% completado (22 fases). Auditoría técnica 9.2/10. **Auditoría Hacienda 17 abr:** 10 hallazgos — **todos resueltos** (17 abr 2026). Firma digital funcional con auto-conversión .p12 legacy. `HaciendaIntegrationService` eliminado. Servicios refactorizados a Http facade con DI.
 
 ---
 
-## 🔴 BLOQUEANTE PARA PRODUCCIÓN — Hacienda Firma Digital
+## ✅ RESUELTO — Hacienda Firma Digital (17 abr 2026)
 
 > **Referencia completa:** [docs/hacienda/AUDITORIA_FIRMA_DIGITAL_2026-04-17.md](hacienda/AUDITORIA_FIRMA_DIGITAL_2026-04-17.md)
 
-### H-1. Certificado .p12 incompatible con OpenSSL 3.x 🔴
-- **Estado:** Pendiente
-- **Problema:** Los certificados `.p12` de Hacienda CR usan `RC2-40-CBC` (legacy). OpenSSL 3.x (PHP 8.4) NO los soporta por defecto → `openssl_pkcs12_read()` falla con `error:0308010C:digital envelope routines::unsupported`.
-- **Impacto:** `FirmaDigitalService` no puede cargar el certificado → ningún comprobante puede ser firmado ni enviado.
-- **Validado:** OAuth funciona ✅, certificado convertido a formato moderno firma correctamente ✅.
-- **Solución:** Implementar auto-conversión legacy→modern en `FirmaDigitalService::leerCertificadoP12()` usando `openssl` CLI con flag `-legacy`, o documentar conversión manual previa.
+### ~~H-1. Certificado .p12 incompatible con OpenSSL 3.x~~ ✅
+- **Estado:** Resuelto (17 abr 2026)
+- **Solución:** `FirmaDigitalService::convertirP12Legacy()` auto-convierte certificados RC2-40-CBC a formato moderno usando `openssl` CLI con flag `-legacy` y `escapeshellarg()` estricto.
 - **Archivos:** `app/Services/Hacienda/Xml/FirmaDigitalService.php`
 
-### H-2. HaciendaIntegrationService es código muerto 🔴
-- **Estado:** Pendiente
-- **Problema:** Servicio con firma placeholder (`return $xmlContent`), XML concatenado con strings sin escape, URLs de API inexistentes (`send`, `get-status`), generador de clave con formato incorrecto (no 50 dígitos), y `openssl_x509_read()` en archivo .p12.
-- **Impacto:** Todo método de este servicio falla o produce resultados inválidos. Ya existen servicios correctos: `XmlComprobanteBuilder`, `XadesEpesSigner`, `HaciendaApiClient`, `ClaveNumericaGenerator`.
-- **Solución:** Eliminar `HaciendaIntegrationService` y migrar cualquier referencia a los servicios dedicados.
-- **Archivos:** `app/Services/Hacienda/HaciendaIntegrationService.php`
+### ~~H-2. HaciendaIntegrationService es código muerto~~ ✅
+- **Estado:** Resuelto (17 abr 2026)
+- **Solución:** Archivo eliminado completamente (~510 líneas). Flujo delegado a servicios dedicados: `HaciendaApiClient`, `FirmaDigitalService`, `XmlComprobanteBuilder`, `OAuthTokenManager`. `HaciendaController` reescrito con DI.
+- **Archivos:** ~~`app/Services/Hacienda/HaciendaIntegrationService.php`~~ (eliminado)
 
 ### ~~FASE 19.6 — Validación E2E Hacienda Sandbox~~ ✅
 - **Estado:** Completado. Test suite E2E contra sandbox real implementado.
@@ -44,17 +40,17 @@
 
 ---
 
-## 🟠 DEUDA TÉCNICA — Hacienda (Auditoría 17 abr 2026)
+## ✅ RESUELTO — Deuda Técnica Hacienda (17 abr 2026)
 
-| ID | Descripción | Ubicación | Severidad |
-|----|-------------|-----------|-----------|
-| H-3 | Password de certificado en base64 (sin encriptar) | `FirmaDigitalService::desencriptarPassword()` | 🟠 Alto |
-| H-4 | Tipo declarado `OpenSSLAsymmetricKey` pero valor real es `string` PEM | `FirmaDigitalService::$privateKey` | 🟠 Alto |
-| H-6 | OAuthTokenManager usa Guzzle directo en vez de `Http::` facade | `OAuthTokenManager.php` | 🟡 Medio |
-| H-7 | HaciendaApiClient instancia dependencias sin DI | `HaciendaApiClient::__construct()` | 🟡 Medio |
-| H-8 | RateLimiter usa get+put no atómico (race condition con Horizon) | `RateLimiter::incrementRequestCount()` | 🟢 Bajo |
-| H-9 | Token TTL default 3600s confuso (real es 300s) | `config/hacienda.php` | 🟢 Bajo |
-| H-10 | UUID generado sin guiones (no RFC 4122) | `XadesEpesSigner::generateUuid()` | 🟢 Bajo |
+| ID | Descripción | Solución | Estado |
+|----|-------------|---------|--------|
+| ~~H-3~~ | Password de certificado en base64 (sin encriptar) | `Crypt::decryptString()` con fallback base64 + auto-migración | ✅ Resuelto |
+| ~~H-4~~ | Tipo `OpenSSLAsymmetricKey` pero valor real es string PEM | Tipo cambiado a `?string` | ✅ Resuelto |
+| ~~H-6~~ | OAuthTokenManager usa Guzzle directo | Refactorizado a `Http::` facade de Laravel | ✅ Resuelto |
+| ~~H-7~~ | HaciendaApiClient sin DI | Constructor con DI opcional: `?OAuthTokenManager`, `?RateLimiter` | ✅ Resuelto |
+| ~~H-8~~ | RateLimiter get+put no atómico | `Cache::increment()` atómico | ✅ Resuelto |
+| ~~H-9~~ | Token TTL default 3600s | Corregido a 300s en `config/hacienda.php` | ✅ Resuelto |
+| ~~H-10~~ | UUID sin guiones (no RFC 4122) | Documentado como intencional (XAdES-EPES SignatureId) | ✅ Aceptado |
 
 ---
 
