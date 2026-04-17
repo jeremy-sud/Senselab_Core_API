@@ -92,12 +92,12 @@ La API Ursol-CAST cuenta con una implementación **sólida** de facturación ele
 | Código | Tipo | Abreviatura |
 |:------:|------|:-----------:|
 | 01 | Factura Electrónica | FE |
-| 02 | Factura Electrónica de Exportación | FEE |
-| 03 | Factura Electrónica de Compra | FEC |
+| 02 | Nota de Débito Electrónica | ND |
+| 03 | Nota de Crédito Electrónica | NC |
 | 04 | Tiquete Electrónico | TE |
-| 05 | Nota de Crédito Electrónica | NC |
-| 06 | Nota de Débito Electrónica | ND |
-| 07 | Recibo Electrónico de Pago | REP |
+| 08 | Factura Electrónica de Compras | FEC |
+| 09 | Factura Electrónica de Exportación | FEE |
+| 10 | Recibo Electrónico de Pago | REP |
 
 ### Condiciones de campo (según Hacienda):
 | Código | Significado |

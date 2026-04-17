@@ -52,7 +52,7 @@ class SeederIntegrityTest extends BaseTestCase
             'cargos' => 13,
             'permisos' => 72,
             'roles' => 8,
-            'tipos_comprobantes_fe' => 9,
+            'tipos_comprobantes_fe' => 10,
             'tipos_impuesto' => 6,
             'tasas_impuesto' => 5,
             'deducciones_legales' => 6,

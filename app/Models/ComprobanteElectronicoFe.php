@@ -53,6 +53,7 @@ class ComprobanteElectronicoFe extends Model
         'codigo_actividad_receptor',
         'moneda',
         'tipo_cambio',
+        'observaciones',
         'total_servicios_gravados',
         'total_servicios_exentos',
         'total_servicios_exonerados',

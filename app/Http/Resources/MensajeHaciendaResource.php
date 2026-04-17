@@ -40,7 +40,7 @@ class MensajeHaciendaResource extends JsonResource
             ]),
             'comprobante' => $this->whenLoaded('comprobante', fn() => [
                 'id' => $this->comprobante->id,
-                'numero_consecutivo' => $this->comprobante->numero_consecutivo,
+                'consecutivo' => $this->comprobante->consecutivo,
             ]),
         ];
     }

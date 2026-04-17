@@ -325,13 +325,6 @@ class ComprobanteElectronicoController extends Controller
                 // Observaciones
                 'observaciones' => $request->observaciones,
                 
-                // Referencia
-                'tipo_documento_referencia' => $request->tipo_documento_referencia,
-                'numero_documento_referencia' => $request->numero_documento_referencia,
-                'fecha_emision_referencia' => $request->fecha_emision_referencia,
-                'codigo_referencia' => $request->codigo_referencia,
-                'razon_referencia' => $request->razon_referencia,
-                
                 // Estado inicial
                 'estado' => 'pendiente',
                 'intentos_envio' => 0,
@@ -384,7 +377,7 @@ class ComprobanteElectronicoController extends Controller
                     'registro_medicamento' => $linea['registro_medicamento'] ?? null,
                     'forma_farmaceutica' => $linea['forma_farmaceutica'] ?? null,
                     'iva_cobrado_fabrica' => $linea['iva_cobrado_fabrica'] ?? null,
-                    'impuesto_asumido_emisor_fabrica' => $linea['impuesto_asumido_emisor_fabrica'] ?? null,
+                    'impuesto_asumido_emisor_fabrica' => $linea['impuesto_asumido_emisor_fabrica'] ?? 0,
                     'monto_exportacion' => $linea['monto_exportacion'] ?? null,
                     // Campos legacy de impuesto (primer impuesto)
                     'impuesto_codigo' => $impuestoCodigo,
@@ -507,8 +500,8 @@ class ComprobanteElectronicoController extends Controller
                     FeOtroCargo::create([
                         'comprobante_id' => $comprobante->id,
                         'tipo_documento_oc' => $cargo['tipo_documento_oc'],
-                        'tipo_identidad_tercero' => $cargo['tipo_identidad_tercero'] ?? null,
-                        'numero_identidad_tercero' => $cargo['numero_identidad_tercero'] ?? null,
+                        'tercero_tipo_identificacion' => $cargo['tercero_tipo_identificacion'] ?? $cargo['tipo_identidad_tercero'] ?? null,
+                        'tercero_numero_identificacion' => $cargo['tercero_numero_identificacion'] ?? $cargo['numero_identidad_tercero'] ?? null,
                         'nombre_tercero' => $cargo['nombre_tercero'] ?? null,
                         'detalle' => $cargo['detalle'],
                         'porcentaje_oc' => $cargo['porcentaje_oc'] ?? null,
