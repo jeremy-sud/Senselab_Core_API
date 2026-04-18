@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use OpenApi\Annotations as OA;
 
 /**
  * Controller: GdprController - Solicitudes de Derecho al Olvido GDPR
@@ -19,14 +20,48 @@ use Carbon\Carbon;
  * - Ver estado de solicitudes
  * - Aprobar/rechazar (admin)
  *
+ * @OA\Tag(
+ *     name="GDPR",
+ *     description="Gestión de solicitudes de derecho al olvido y eliminación de datos conforme GDPR"
+ * )
+ *
  * @package App\Http\Controllers
  * @version 1.0.0 - FASE 3
  */
 class GdprController extends Controller
 {
     /**
-     * POST /api/gdpr/requests
-     * Crear nueva solicitud de eliminación GDPR
+     * @OA\Post(
+     *     path="/api/gdpr/requests",
+     *     summary="Crear solicitud de eliminación GDPR",
+     *     description="Crea una nueva solicitud de eliminación de datos personales. Envía un código de verificación por email",
+     *     operationId="createGdprRequest",
+     *     tags={"GDPR"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"request_type"},
+     *             @OA\Property(property="request_type", type="string", enum={"account", "data", "all"}, example="data"),
+     *             @OA\Property(property="reason", type="string", maxLength=1000, example="Deseo eliminar mis datos personales"),
+     *             @OA\Property(property="scope", type="array", @OA\Items(type="string"), example={"personal_data", "invoices"})
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Solicitud creada exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="request_id", type="string"),
+     *             @OA\Property(property="status", type="string", example="pending"),
+     *             @OA\Property(property="next_step", type="string", example="verify_identity")
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=422, description="Datos de validación inválidos"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function createRequest(Request $request): JsonResponse
     {
@@ -106,8 +141,38 @@ class GdprController extends Controller
     }
 
     /**
-     * GET /api/gdpr/requests/{id}
-     * Ver estado de solicitud GDPR
+     * @OA\Get(
+     *     path="/api/gdpr/requests/{id}",
+     *     summary="Ver estado de solicitud GDPR",
+     *     description="Obtiene el estado y detalles de una solicitud de eliminación GDPR",
+     *     operationId="getGdprRequest",
+     *     tags={"GDPR"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la solicitud GDPR (o gdpr_request_id)",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Solicitud encontrada",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="request", type="object"),
+     *             @OA\Property(property="details", type="object",
+     *                 @OA\Property(property="created_at", type="string", format="date-time"),
+     *                 @OA\Property(property="updated_at", type="string", format="date-time"),
+     *                 @OA\Property(property="deadline", type="string", format="date-time", nullable=true),
+     *                 @OA\Property(property="action_log", type="array", @OA\Items(type="object"))
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=403, description="No autorizado"),
+     *     @OA\Response(response=404, description="Solicitud no encontrada")
+     * )
      */
     public function getRequest(string $id): JsonResponse
     {
@@ -137,8 +202,43 @@ class GdprController extends Controller
     }
 
     /**
-     * POST /api/gdpr/requests/{id}/verify
-     * Verificar identidad del usuario
+     * @OA\Post(
+     *     path="/api/gdpr/requests/{id}/verify",
+     *     summary="Verificar identidad del usuario",
+     *     description="Verifica la identidad del solicitante mediante código enviado por email. Requerido antes de aprobación",
+     *     operationId="verifyGdprIdentity",
+     *     tags={"GDPR"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la solicitud GDPR",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"verification_code", "method"},
+     *             @OA\Property(property="verification_code", type="string", example="123456"),
+     *             @OA\Property(property="method", type="string", enum={"email", "2fa", "security_questions"}, example="email")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Identidad verificada",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="status", type="string", example="verified"),
+     *             @OA\Property(property="next_step", type="string", example="wait_approval")
+     *         )
+     *     ),
+     *     @OA\Response(response=400, description="Código expirado, incorrecto o ya verificado"),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=403, description="No autorizado"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function verifyIdentity(string $id, Request $request): JsonResponse
     {
@@ -203,8 +303,36 @@ class GdprController extends Controller
     }
 
     /**
-     * POST /api/gdpr/requests/{id}/approve
-     * Admin: Aprobar solicitud de eliminación
+     * @OA\Post(
+     *     path="/api/gdpr/requests/{id}/approve",
+     *     summary="Aprobar solicitud GDPR (Admin)",
+     *     description="Aprueba una solicitud de eliminación GDPR. Solo administradores. Requiere identidad verificada",
+     *     operationId="approveGdprRequest",
+     *     tags={"GDPR"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la solicitud GDPR",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Solicitud aprobada",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="status", type="string", example="approved"),
+     *             @OA\Property(property="deadline", type="string", format="date-time", nullable=true)
+     *         )
+     *     ),
+     *     @OA\Response(response=400, description="Identidad no verificada"),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=403, description="Solo administradores"),
+     *     @OA\Response(response=404, description="Solicitud no encontrada"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function approveRequest(string $id, Request $request): JsonResponse
     {
@@ -259,8 +387,42 @@ class GdprController extends Controller
     }
 
     /**
-     * POST /api/gdpr/requests/{id}/reject
-     * Admin: Rechazar solicitud
+     * @OA\Post(
+     *     path="/api/gdpr/requests/{id}/reject",
+     *     summary="Rechazar solicitud GDPR (Admin)",
+     *     description="Rechaza una solicitud de eliminación GDPR con razón obligatoria. Solo administradores",
+     *     operationId="rejectGdprRequest",
+     *     tags={"GDPR"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la solicitud GDPR",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"reason"},
+     *             @OA\Property(property="reason", type="string", maxLength=500, example="Datos requeridos por regulación tributaria")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Solicitud rechazada",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="status", type="string", example="rejected")
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=403, description="Solo administradores"),
+     *     @OA\Response(response=404, description="Solicitud no encontrada"),
+     *     @OA\Response(response=422, description="Razón requerida"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function rejectRequest(string $id, Request $request): JsonResponse
     {
@@ -309,8 +471,30 @@ class GdprController extends Controller
     }
 
     /**
-     * GET /api/gdpr/requests
-     * Listar solicitudes del usuario actual
+     * @OA\Get(
+     *     path="/api/gdpr/requests",
+     *     summary="Listar solicitudes GDPR del usuario",
+     *     description="Lista las solicitudes de eliminación GDPR del usuario autenticado",
+     *     operationId="listGdprRequests",
+     *     tags={"GDPR"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Solicitudes listadas",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="array", @OA\Items(type="object")),
+     *             @OA\Property(property="pagination", type="object",
+     *                 @OA\Property(property="total", type="integer"),
+     *                 @OA\Property(property="per_page", type="integer"),
+     *                 @OA\Property(property="current_page", type="integer"),
+     *                 @OA\Property(property="last_page", type="integer")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function listRequests(Request $request): JsonResponse
     {
@@ -340,8 +524,35 @@ class GdprController extends Controller
     }
 
     /**
-     * GET /api/gdpr/stats
-     * Admin: Estadísticas de solicitudes GDPR
+     * @OA\Get(
+     *     path="/api/gdpr/stats",
+     *     summary="Estadísticas GDPR (Admin)",
+     *     description="Obtiene estadísticas globales de solicitudes GDPR. Solo administradores",
+     *     operationId="getGdprStats",
+     *     tags={"GDPR"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Estadísticas obtenidas",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="stats", type="object",
+     *                 @OA\Property(property="total_requests", type="integer"),
+     *                 @OA\Property(property="pending_requests", type="integer"),
+     *                 @OA\Property(property="approved_requests", type="integer"),
+     *                 @OA\Property(property="completed_requests", type="integer"),
+     *                 @OA\Property(property="failed_requests", type="integer"),
+     *                 @OA\Property(property="rejected_requests", type="integer"),
+     *                 @OA\Property(property="requests_last_30_days", type="integer"),
+     *                 @OA\Property(property="due_today", type="integer"),
+     *                 @OA\Property(property="no_identity_verified", type="integer")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=403, description="Solo administradores"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function getStats(Request $request): JsonResponse
     {

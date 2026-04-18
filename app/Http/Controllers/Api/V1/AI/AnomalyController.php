@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Annotations as OA;
 
 /**
  * Controller para detección de anomalías financieras mediante IA
@@ -17,7 +18,10 @@ use Illuminate\Support\Facades\Validator;
  * Proporciona endpoints para detectar transacciones sospechosas,
  * anomalías en ventas, flujo de caja y errores contables.
  *
- * @group AI - Detección de Anomalías
+ * @OA\Tag(
+ *     name="AI - Detección de Anomalías",
+ *     description="Endpoints para detección de anomalías financieras mediante IA"
+ * )
  */
 class AnomalyController extends Controller
 {
@@ -26,7 +30,42 @@ class AnomalyController extends Controller
     ) {}
 
     /**
-     * Detectar anomalías en ventas
+     * @OA\Post(
+     *     path="/api/v1/ai/anomalies/sales",
+     *     summary="Detectar anomalías en ventas",
+     *     description="Analiza transacciones de ventas para detectar patrones anómalos usando IA",
+     *     operationId="detectSalesAnomalies",
+     *     tags={"AI - Detección de Anomalías"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"start_date", "end_date"},
+     *             @OA\Property(property="start_date", type="string", format="date", example="2026-01-01"),
+     *             @OA\Property(property="end_date", type="string", format="date", example="2026-03-31"),
+     *             @OA\Property(property="sensitivity", type="string", enum={"low", "medium", "high"}, example="medium")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Anomalías detectadas exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object"),
+     *             @OA\Property(property="meta", type="object",
+     *                 @OA\Property(property="period", type="object",
+     *                     @OA\Property(property="start", type="string", format="date"),
+     *                     @OA\Property(property="end", type="string", format="date")
+     *                 ),
+     *                 @OA\Property(property="sensitivity", type="string"),
+     *                 @OA\Property(property="analyzed_at", type="string", format="date-time")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=422, description="Datos de validación inválidos"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function detectSalesAnomalies(Request $request): JsonResponse
     {
@@ -73,7 +112,33 @@ class AnomalyController extends Controller
     }
 
     /**
-     * Detectar anomalías en flujo de caja
+     * @OA\Post(
+     *     path="/api/v1/ai/anomalies/cash-flow",
+     *     summary="Detectar anomalías en flujo de caja",
+     *     description="Analiza el flujo de caja para identificar movimientos inusuales",
+     *     operationId="detectCashFlowAnomalies",
+     *     tags={"AI - Detección de Anomalías"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"start_date", "end_date"},
+     *             @OA\Property(property="start_date", type="string", format="date", example="2026-01-01"),
+     *             @OA\Property(property="end_date", type="string", format="date", example="2026-03-31")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Anomalías de flujo de caja detectadas",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=422, description="Datos de validación inválidos"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function detectCashFlowAnomalies(Request $request): JsonResponse
     {
@@ -111,7 +176,33 @@ class AnomalyController extends Controller
     }
 
     /**
-     * Detectar anomalías contables (descuentos excesivos)
+     * @OA\Post(
+     *     path="/api/v1/ai/anomalies/accounting",
+     *     summary="Detectar anomalías contables",
+     *     description="Detecta descuentos excesivos y patrones contables irregulares",
+     *     operationId="detectAccountingAnomalies",
+     *     tags={"AI - Detección de Anomalías"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"start_date", "end_date"},
+     *             @OA\Property(property="start_date", type="string", format="date", example="2026-01-01"),
+     *             @OA\Property(property="end_date", type="string", format="date", example="2026-03-31")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Anomalías contables detectadas",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=422, description="Datos de validación inválidos"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function detectAccountingAnomalies(Request $request): JsonResponse
     {
@@ -149,7 +240,41 @@ class AnomalyController extends Controller
     }
 
     /**
-     * Ejecutar auditoría completa
+     * @OA\Post(
+     *     path="/api/v1/ai/anomalies/full-audit",
+     *     summary="Ejecutar auditoría completa",
+     *     description="Ejecuta un análisis integral de anomalías: ventas, flujo de caja, contabilidad y descuentos",
+     *     operationId="runFullAudit",
+     *     tags={"AI - Detección de Anomalías"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"start_date", "end_date"},
+     *             @OA\Property(property="start_date", type="string", format="date", example="2026-01-01"),
+     *             @OA\Property(property="end_date", type="string", format="date", example="2026-03-31"),
+     *             @OA\Property(property="include_ai_analysis", type="boolean", example=true)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Auditoría completa ejecutada",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object"),
+     *             @OA\Property(property="meta", type="object",
+     *                 @OA\Property(property="audit_date", type="string", format="date-time"),
+     *                 @OA\Property(property="period", type="object",
+     *                     @OA\Property(property="start", type="string", format="date"),
+     *                     @OA\Property(property="end", type="string", format="date")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=422, description="Datos de validación inválidos"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function runFullAudit(Request $request): JsonResponse
     {

@@ -6,6 +6,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use OpenApi\Annotations as OA;
 
 /**
  * Controller: MetricsController - Métricas de la aplicación en formato Prometheus
@@ -13,15 +14,33 @@ use Illuminate\Support\Facades\Log;
  * Proporciona endpoints de métricas y health check para monitoreo.
  * Genera output compatible con Prometheus sin dependencias externas.
  *
+ * @OA\Tag(
+ *     name="Metrics",
+ *     description="Endpoints de métricas en formato Prometheus para monitoreo y alertas"
+ * )
+ *
  * @package App\Http\Controllers
  * @version 2.3.0
  */
 class MetricsController extends Controller
 {
     /**
-     * Render métricas en formato Prometheus
-     *
-     * GET /metrics
+     * @OA\Get(
+     *     path="/metrics",
+     *     summary="Métricas Prometheus",
+     *     description="Expone métricas del sistema en formato Prometheus text/plain 0.0.4",
+     *     operationId="getPrometheusMetrics",
+     *     tags={"Metrics"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Métricas en formato Prometheus",
+     *         @OA\MediaType(
+     *             mediaType="text/plain",
+     *             @OA\Schema(type="string", example="# HELP app_health_check Sistema está saludable\n# TYPE app_health_check gauge\napp_health_check{instance=\"server1\"} 1")
+     *         )
+     *     ),
+     *     @OA\Response(response=500, description="Error generando métricas")
+     * )
      */
     public function index(): Response
     {
@@ -39,9 +58,29 @@ class MetricsController extends Controller
     }
 
     /**
-     * Health check simplificado para monitoreo
-     *
-     * GET /metrics/health
+     * @OA\Get(
+     *     path="/metrics/health",
+     *     summary="Health check simplificado",
+     *     description="Endpoint de health check rápido para monitoreo externo",
+     *     operationId="getMetricsHealth",
+     *     tags={"Metrics"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Sistema saludable",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="healthy", type="boolean", example=true),
+     *             @OA\Property(property="timestamp", type="string", format="date-time")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=503,
+     *         description="Sistema no saludable",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="healthy", type="boolean", example=false),
+     *             @OA\Property(property="timestamp", type="string", format="date-time")
+     *         )
+     *     )
+     * )
      */
     public function health(): Response
     {
