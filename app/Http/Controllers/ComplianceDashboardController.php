@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use OpenApi\Annotations as OA;
 
 /**
  * Controller: ComplianceDashboardController - Dashboard de Compliance GDPR
@@ -19,6 +20,11 @@ use Carbon\Carbon;
  * - Auditoría de cambios
  * - Retención de datos
  * - Solicitudes de derecho al olvido
+ *
+ * @OA\Tag(
+ *     name="Compliance",
+ *     description="Dashboard de cumplimiento GDPR, auditoría, retención de datos y reportes de compliance"
+ * )
  *
  * @package App\Http\Controllers
  * @version 1.0.0 - FASE 3
@@ -35,8 +41,32 @@ class ComplianceDashboardController extends Controller
     }
 
     /**
-     * GET /api/compliance/dashboard
-     * Panel principal de compliance
+     * @OA\Get(
+     *     path="/api/compliance/dashboard",
+     *     summary="Panel principal de compliance",
+     *     description="Obtiene un resumen del estado de compliance: auditoría, GDPR, retención de datos y protección",
+     *     operationId="getComplianceDashboard",
+     *     tags={"Compliance"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Dashboard obtenido exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="dashboard", type="object",
+     *                 @OA\Property(property="audit_logs", type="object"),
+     *                 @OA\Property(property="gdpr_requests", type="object"),
+     *                 @OA\Property(property="retention_policies", type="object"),
+     *                 @OA\Property(property="data_protection", type="object"),
+     *                 @OA\Property(property="recent_sensitive_changes", type="array", @OA\Items(type="object"))
+     *             ),
+     *             @OA\Property(property="timestamp", type="string", format="date-time")
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=403, description="Sin permisos de compliance"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function getDashboard(Request $request): JsonResponse
     {
@@ -63,8 +93,41 @@ class ComplianceDashboardController extends Controller
     }
 
     /**
-     * GET /api/compliance/audit-logs
-     * Audit logs con filtros complejos
+     * @OA\Get(
+     *     path="/api/compliance/audit-logs",
+     *     summary="Listar audit logs",
+     *     description="Obtiene logs de auditoría con filtros complejos: acción, usuario, modelo, datos sensibles, rango de fechas",
+     *     operationId="getComplianceAuditLogs",
+     *     tags={"Compliance"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(name="action", in="query", required=false, description="Filtrar por acción",
+     *         @OA\Schema(type="string", enum={"created", "updated", "deleted"})
+     *     ),
+     *     @OA\Parameter(name="user_id", in="query", required=false, @OA\Schema(type="integer")),
+     *     @OA\Parameter(name="model_type", in="query", required=false, @OA\Schema(type="string")),
+     *     @OA\Parameter(name="sensitive_only", in="query", required=false, @OA\Schema(type="boolean")),
+     *     @OA\Parameter(name="date_from", in="query", required=false, @OA\Schema(type="string", format="date")),
+     *     @OA\Parameter(name="date_to", in="query", required=false, @OA\Schema(type="string", format="date")),
+     *     @OA\Parameter(name="ip", in="query", required=false, @OA\Schema(type="string")),
+     *     @OA\Parameter(name="per_page", in="query", required=false, @OA\Schema(type="integer", default=20)),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Logs obtenidos",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="array", @OA\Items(type="object")),
+     *             @OA\Property(property="pagination", type="object",
+     *                 @OA\Property(property="total", type="integer"),
+     *                 @OA\Property(property="per_page", type="integer"),
+     *                 @OA\Property(property="current_page", type="integer"),
+     *                 @OA\Property(property="last_page", type="integer")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=403, description="Sin permisos"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function getAuditLogs(Request $request): JsonResponse
     {
@@ -120,8 +183,40 @@ class ComplianceDashboardController extends Controller
     }
 
     /**
-     * GET /api/compliance/audit-logs/:id
-     * Detalle de un audit log específico
+     * @OA\Get(
+     *     path="/api/compliance/audit-logs/{id}",
+     *     summary="Detalle de audit log",
+     *     description="Obtiene el detalle completo de un registro de auditoría específico",
+     *     operationId="getComplianceAuditLogDetail",
+     *     tags={"Compliance"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del audit log",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Detalle del log",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="id", type="string"),
+     *                 @OA\Property(property="summary", type="string"),
+     *                 @OA\Property(property="changes", type="object"),
+     *                 @OA\Property(property="user", type="object"),
+     *                 @OA\Property(property="context", type="object"),
+     *                 @OA\Property(property="sensitive_data", type="boolean"),
+     *                 @OA\Property(property="created_at", type="string", format="date-time")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=404, description="Log no encontrado"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function getAuditLogDetail(string $id): JsonResponse
     {
@@ -158,8 +253,30 @@ class ComplianceDashboardController extends Controller
     }
 
     /**
-     * GET /api/compliance/retention-policies
-     * Listar políticas de retención
+     * @OA\Get(
+     *     path="/api/compliance/retention-policies",
+     *     summary="Listar políticas de retención",
+     *     description="Obtiene las políticas de retención de datos configuradas",
+     *     operationId="getRetentionPolicies",
+     *     tags={"Compliance"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(name="per_page", in="query", required=false, @OA\Schema(type="integer", default=10)),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Políticas listadas",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="array", @OA\Items(type="object")),
+     *             @OA\Property(property="pagination", type="object",
+     *                 @OA\Property(property="total", type="integer"),
+     *                 @OA\Property(property="per_page", type="integer")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=403, description="Sin permisos"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function getRetentionPolicies(Request $request): JsonResponse
     {
@@ -184,8 +301,39 @@ class ComplianceDashboardController extends Controller
     }
 
     /**
-     * GET /api/compliance/retention-policies/:id
-     * Detalle de política de retención
+     * @OA\Get(
+     *     path="/api/compliance/retention-policies/{id}",
+     *     summary="Detalle de política de retención",
+     *     description="Obtiene detalles completos de una política de retención de datos incluyendo estadísticas de ejecución",
+     *     operationId="getRetentionPolicyDetail",
+     *     tags={"Compliance"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la política",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Detalle de política",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="id", type="string"),
+     *                 @OA\Property(property="name", type="string"),
+     *                 @OA\Property(property="description", type="string"),
+     *                 @OA\Property(property="configuration", type="object"),
+     *                 @OA\Property(property="statistics", type="object"),
+     *                 @OA\Property(property="creator", type="object", nullable=true)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=404, description="Política no encontrada"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function getRetentionPolicyDetail(string $id): JsonResponse
     {
@@ -215,8 +363,37 @@ class ComplianceDashboardController extends Controller
     }
 
     /**
-     * POST /api/compliance/retention-policies/:id/execute
-     * Ejecutar política de retención manualmente
+     * @OA\Post(
+     *     path="/api/compliance/retention-policies/{id}/execute",
+     *     summary="Ejecutar política de retención",
+     *     description="Ejecuta manualmente una política de retención de datos. Requiere que la política esté habilitada",
+     *     operationId="executeRetentionPolicy",
+     *     tags={"Compliance"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la política",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Política ejecutada",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="details", type="object",
+     *                 @OA\Property(property="action", type="string"),
+     *                 @OA\Property(property="affected_rows", type="integer")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=400, description="Política deshabilitada"),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=404, description="Política no encontrada"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function executeRetentionPolicy(string $id, Request $request): JsonResponse
     {
@@ -264,8 +441,37 @@ class ComplianceDashboardController extends Controller
     }
 
     /**
-     * GET /api/compliance/report/gdpr
-     * Reporte de cumplimiento GDPR
+     * @OA\Get(
+     *     path="/api/compliance/report/gdpr",
+     *     summary="Reporte de cumplimiento GDPR",
+     *     description="Genera un reporte detallado de cumplimiento GDPR para el período especificado",
+     *     operationId="getGdprComplianceReport",
+     *     tags={"Compliance"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(name="date_from", in="query", required=false, description="Fecha inicio (default: 3 meses atrás)",
+     *         @OA\Schema(type="string", format="date")
+     *     ),
+     *     @OA\Parameter(name="date_to", in="query", required=false, description="Fecha fin (default: hoy)",
+     *         @OA\Schema(type="string", format="date")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Reporte generado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="report", type="object",
+     *                 @OA\Property(property="period", type="object"),
+     *                 @OA\Property(property="deletion_requests", type="object"),
+     *                 @OA\Property(property="sensitive_data_access", type="object"),
+     *                 @OA\Property(property="data_retention_compliance", type="object"),
+     *                 @OA\Property(property="user_activity", type="object")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=403, description="Sin permisos"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function getGdprComplianceReport(Request $request): JsonResponse
     {

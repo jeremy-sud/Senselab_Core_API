@@ -10,11 +10,15 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Annotations as OA;
 
 /**
  * Controller para clasificación automática de códigos CABYS mediante IA
  *
- * @group AI - Clasificación CABYS
+ * @OA\Tag(
+ *     name="AI - Clasificación CABYS",
+ *     description="Endpoints para clasificación automática de códigos CABYS (Catálogo de Bienes y Servicios de Costa Rica) mediante IA"
+ * )
  */
 class CabysController extends Controller
 {
@@ -23,7 +27,38 @@ class CabysController extends Controller
     ) {}
 
     /**
-     * Clasificar producto
+     * @OA\Post(
+     *     path="/api/v1/ai/cabys/classify",
+     *     summary="Clasificar producto en CABYS",
+     *     description="Clasifica un producto según la descripción y sugiere códigos CABYS usando IA",
+     *     operationId="classifyProduct",
+     *     tags={"AI - Clasificación CABYS"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"description"},
+     *             @OA\Property(property="description", type="string", minLength=3, maxLength=500, example="Arroz blanco grano largo"),
+     *             @OA\Property(property="category_hint", type="string", maxLength=100, example="Alimentos"),
+     *             @OA\Property(property="max_suggestions", type="integer", minimum=1, maximum=10, example=5)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Producto clasificado exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="codigo", type="string", example="1010101000100"),
+     *                 @OA\Property(property="descripcion", type="string"),
+     *                 @OA\Property(property="confianza", type="number", format="float", example=0.95)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=422, description="Datos de validación inválidos"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function classifyProduct(Request $request): JsonResponse
     {
@@ -64,7 +99,37 @@ class CabysController extends Controller
     }
 
     /**
-     * Clasificar múltiples productos
+     * @OA\Post(
+     *     path="/api/v1/ai/cabys/batch",
+     *     summary="Clasificar múltiples productos",
+     *     description="Clasifica un lote de hasta 50 productos en códigos CABYS",
+     *     operationId="batchClassifyCabys",
+     *     tags={"AI - Clasificación CABYS"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"products"},
+     *             @OA\Property(property="products", type="array", minItems=1, maxItems=50,
+     *                 @OA\Items(type="object",
+     *                     @OA\Property(property="description", type="string", minLength=3, maxLength=500),
+     *                     @OA\Property(property="id", type="string", maxLength=50)
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Productos clasificados exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="array", @OA\Items(type="object"))
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=422, description="Datos de validación inválidos"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function batchClassify(Request $request): JsonResponse
     {
@@ -108,7 +173,39 @@ class CabysController extends Controller
     }
 
     /**
-     * Buscar códigos CABYS
+     * @OA\Get(
+     *     path="/api/v1/ai/cabys/search",
+     *     summary="Buscar códigos CABYS",
+     *     description="Busca códigos CABYS por descripción textual",
+     *     operationId="searchCabys",
+     *     tags={"AI - Clasificación CABYS"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="query",
+     *         in="query",
+     *         required=true,
+     *         description="Término de búsqueda",
+     *         @OA\Schema(type="string", minLength=2, maxLength=200)
+     *     ),
+     *     @OA\Parameter(
+     *         name="limit",
+     *         in="query",
+     *         required=false,
+     *         description="Número máximo de resultados",
+     *         @OA\Schema(type="integer", minimum=1, maximum=50, default=10)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Resultados de búsqueda CABYS",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="array", @OA\Items(type="object"))
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=422, description="Datos de validación inválidos"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function searchByDescription(Request $request): JsonResponse
     {
@@ -145,7 +242,36 @@ class CabysController extends Controller
     }
 
     /**
-     * Validar código CABYS
+     * @OA\Get(
+     *     path="/api/v1/ai/cabys/validate/{code}",
+     *     summary="Validar código CABYS",
+     *     description="Verifica si un código CABYS es válido y retorna su información",
+     *     operationId="validateCabysCode",
+     *     tags={"AI - Clasificación CABYS"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="code",
+     *         in="path",
+     *         required=true,
+     *         description="Código CABYS a validar (8-13 dígitos)",
+     *         @OA\Schema(type="string", example="1010101000100")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Código validado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="valid", type="boolean"),
+     *                 @OA\Property(property="code", type="string"),
+     *                 @OA\Property(property="description", type="string")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=422, description="Formato de código CABYS inválido"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function validateCode(string $code): JsonResponse
     {
@@ -177,7 +303,34 @@ class CabysController extends Controller
     }
 
     /**
-     * Obtener sugerencias para producto existente
+     * @OA\Get(
+     *     path="/api/v1/ai/cabys/suggest/{productoId}",
+     *     summary="Sugerencias CABYS para producto existente",
+     *     description="Obtiene sugerencias de códigos CABYS para un producto registrado en el sistema",
+     *     operationId="suggestCabysForProduct",
+     *     tags={"AI - Clasificación CABYS"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="productoId",
+     *         in="path",
+     *         required=true,
+     *         description="ID del producto",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Sugerencias generadas exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="current_code", type="string", nullable=true)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=404, description="Producto no encontrado"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function suggestForProduct(Request $request, int $productoId): JsonResponse
     {
@@ -219,7 +372,24 @@ class CabysController extends Controller
     }
 
     /**
-     * Obtener categorías principales CABYS
+     * @OA\Get(
+     *     path="/api/v1/ai/cabys/categories",
+     *     summary="Categorías principales CABYS",
+     *     description="Obtiene las categorías principales del catálogo CABYS",
+     *     operationId="getCabysCategories",
+     *     tags={"AI - Clasificación CABYS"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Categorías obtenidas exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="array", @OA\Items(type="object"))
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function getCategories(): JsonResponse
     {

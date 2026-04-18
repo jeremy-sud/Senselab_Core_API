@@ -6,14 +6,34 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Tag(
+ *     name="Health Check",
+ *     description="Endpoints de monitoreo de salud del servicio para liveness/readiness probes y diagnóstico"
+ * )
+ */
 class HealthCheckController extends Controller
 {
     /**
-     * Liveness probe - ¿Está el servicio vivo?
-     * Responde rápidamente si el proceso está corriendo.
-     *
-     * @return JsonResponse
+     * @OA\Get(
+     *     path="/health/liveness",
+     *     summary="Liveness probe",
+     *     description="Verifica si el servicio está vivo. Responde rápidamente si el proceso está corriendo",
+     *     operationId="healthLiveness",
+     *     tags={"Health Check"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Servicio activo",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="alive"),
+     *             @OA\Property(property="timestamp", type="string", format="date-time"),
+     *             @OA\Property(property="version", type="string", example="5.0.1"),
+     *             @OA\Property(property="environment", type="string", example="production")
+     *         )
+     *     )
+     * )
      */
     public function liveness(): JsonResponse
     {
@@ -26,10 +46,36 @@ class HealthCheckController extends Controller
     }
 
     /**
-     * Readiness probe - ¿Está listo para recibir traffic?
-     * Verifica que todos los servicios dependientes estén disponibles.
-     *
-     * @return JsonResponse
+     * @OA\Get(
+     *     path="/health/readiness",
+     *     summary="Readiness probe",
+     *     description="Verifica que todos los servicios dependientes (BD, cache, storage) estén disponibles",
+     *     operationId="healthReadiness",
+     *     tags={"Health Check"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Servicio listo",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="ready"),
+     *             @OA\Property(property="checks", type="object",
+     *                 @OA\Property(property="database", type="string", example="ok"),
+     *                 @OA\Property(property="cache", type="string", example="ok"),
+     *                 @OA\Property(property="storage", type="string", example="ok")
+     *             ),
+     *             @OA\Property(property="timestamp", type="string", format="date-time"),
+     *             @OA\Property(property="uptime_seconds", type="integer")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=503,
+     *         description="Servicio no disponible",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="not_ready"),
+     *             @OA\Property(property="error", type="string"),
+     *             @OA\Property(property="checks", type="object")
+     *         )
+     *     )
+     * )
      */
     public function readiness(): JsonResponse
     {
@@ -84,11 +130,35 @@ class HealthCheckController extends Controller
     }
 
     /**
-     * Detalles de salud del sistema (requiere autenticación)
-     * Información sensible sobre el estado del servidor.
-     *
-     * @param Request $request
-     * @return JsonResponse
+     * @OA\Get(
+     *     path="/health/details",
+     *     summary="Detalles de salud del sistema",
+     *     description="Información detallada del estado del servidor, BD, cache, PHP y recursos. Solo administradores",
+     *     operationId="healthDetails",
+     *     tags={"Health Check"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Detalles de salud",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="ok"),
+     *             @OA\Property(property="application", type="object",
+     *                 @OA\Property(property="name", type="string"),
+     *                 @OA\Property(property="version", type="string"),
+     *                 @OA\Property(property="environment", type="string")
+     *             ),
+     *             @OA\Property(property="php", type="object",
+     *                 @OA\Property(property="version", type="string"),
+     *                 @OA\Property(property="memory_used_mb", type="number", format="float")
+     *             ),
+     *             @OA\Property(property="database", type="object"),
+     *             @OA\Property(property="cache", type="object"),
+     *             @OA\Property(property="server", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(response=403, description="Solo administradores"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function details(Request $request): JsonResponse
     {
@@ -153,10 +223,28 @@ class HealthCheckController extends Controller
     }
 
     /**
-     * Métricas rápidas de monitoreo
-     * Información simplificada para dashboards.
-     *
-     * @return JsonResponse
+     * @OA\Get(
+     *     path="/health/metrics",
+     *     summary="Métricas rápidas de monitoreo",
+     *     description="Información simplificada de métricas del sistema para dashboards",
+     *     operationId="healthMetrics",
+     *     tags={"Health Check"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Métricas obtenidas",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="metrics", type="object",
+     *                 @OA\Property(property="uptime_seconds", type="integer"),
+     *                 @OA\Property(property="memory_used_mb", type="number", format="float"),
+     *                 @OA\Property(property="database_ok", type="boolean"),
+     *                 @OA\Property(property="cache_ok", type="boolean"),
+     *                 @OA\Property(property="storage_writable", type="boolean")
+     *             ),
+     *             @OA\Property(property="timestamp", type="string", format="date-time")
+     *         )
+     *     ),
+     *     @OA\Response(response=500, description="Error al recopilar métricas")
+     * )
      */
     public function metrics(): JsonResponse
     {

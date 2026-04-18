@@ -9,12 +9,18 @@ use App\Services\Hacienda\Xml\FirmaDigitalService;
 use App\Services\Hacienda\Xml\XmlComprobanteBuilder;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use OpenApi\Annotations as OA;
 
 /**
  * API Controller - Integración con Hacienda Costa Rica
  *
  * Endpoints para envío, validación y seguimiento de comprobantes electrónicos
  * hacia el sistema del Ministerio de Hacienda.
+ *
+ * @OA\Tag(
+ *     name="Hacienda - Facturación Electrónica",
+ *     description="Integración con el sistema de Hacienda Costa Rica para comprobantes electrónicos v4.4"
+ * )
  *
  * @package App\Http\Controllers\Api\V1
  */
@@ -27,11 +33,40 @@ class HaciendaController extends ApiController
     ) {}
 
     /**
-     * POST /api/v1/hacienda/generar
-     * Generar comprobante electrónico para envío a Hacienda
-     *
-     * @param Request $request
-     * @return JsonResponse
+     * @OA\Post(
+     *     path="/api/v1/hacienda/generar",
+     *     summary="Generar comprobante electrónico",
+     *     description="Genera un comprobante electrónico para envío a Hacienda a partir de un comprobante existente",
+     *     operationId="generarComprobanteHacienda",
+     *     tags={"Hacienda - Facturación Electrónica"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"comprobante_id"},
+     *             @OA\Property(property="comprobante_id", type="integer", example=1, description="ID del comprobante electrónico FE"),
+     *             @OA\Property(property="tipo", type="string", enum={"01","03","04","05","07"}, example="01", description="Tipo de comprobante: 01=FE, 03=NC, 04=ND, 05=Tiquete, 07=MR")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Comprobante generado exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="clave", type="string", example="50601042600310123456700100001010000000001199999999"),
+     *                 @OA\Property(property="estado", type="string", example="pending"),
+     *                 @OA\Property(property="tipo", type="string")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Comprobante ya existe previamente"),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=422, description="Datos de validación inválidos"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function generar(Request $request): JsonResponse
     {
@@ -75,11 +110,36 @@ class HaciendaController extends ApiController
     }
 
     /**
-     * POST /api/v1/hacienda/{id}/generar-xml
-     * Generar XML del comprobante
-     *
-     * @param int $id
-     * @return JsonResponse
+     * @OA\Post(
+     *     path="/api/v1/hacienda/{id}/generar-xml",
+     *     summary="Generar XML del comprobante",
+     *     description="Genera el XML conforme a la especificación DGT v4.4 para un comprobante de Hacienda",
+     *     operationId="generarXmlHacienda",
+     *     tags={"Hacienda - Facturación Electrónica"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del comprobante Hacienda",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="XML generado exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="xml_preview", type="string")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=404, description="Comprobante no encontrado"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function generarXml(int $id): JsonResponse
     {
@@ -101,12 +161,44 @@ class HaciendaController extends ApiController
     }
 
     /**
-     * POST /api/v1/hacienda/{id}/firmar
-     * Firmar comprobante con certificado digital XAdES-EPES
-     *
-     * @param int $id
-     * @param Request $request
-     * @return JsonResponse
+     * @OA\Post(
+     *     path="/api/v1/hacienda/{id}/firmar",
+     *     summary="Firmar comprobante con certificado digital",
+     *     description="Firma el XML del comprobante con certificado digital XAdES-EPES según norma DGT-R-000-2024",
+     *     operationId="firmarComprobanteHacienda",
+     *     tags={"Hacienda - Facturación Electrónica"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del comprobante Hacienda",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"certificado_id"},
+     *             @OA\Property(property="certificado_id", type="integer", example=1, description="ID del certificado digital .p12")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Comprobante firmado exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="estado", type="string", example="signed")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=404, description="Comprobante no encontrado"),
+     *     @OA\Response(response=422, description="XML no generado aún"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function firmar(int $id, Request $request): JsonResponse
     {
@@ -139,11 +231,39 @@ class HaciendaController extends ApiController
     }
 
     /**
-     * POST /api/v1/hacienda/{id}/enviar
-     * Enviar comprobante a la API de Hacienda
-     *
-     * @param int $id
-     * @return JsonResponse
+     * @OA\Post(
+     *     path="/api/v1/hacienda/{id}/enviar",
+     *     summary="Enviar comprobante a Hacienda",
+     *     description="Envía el comprobante firmado a la API de recepción del Ministerio de Hacienda CR",
+     *     operationId="enviarComprobanteHacienda",
+     *     tags={"Hacienda - Facturación Electrónica"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del comprobante Hacienda",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Comprobante enviado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="clave", type="string"),
+     *                 @OA\Property(property="estado", type="string", example="sent"),
+     *                 @OA\Property(property="respuesta", type="object")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=404, description="Comprobante no encontrado"),
+     *     @OA\Response(response=422, description="Comprobante no está firmado"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function enviar(int $id): JsonResponse
     {
@@ -188,11 +308,37 @@ class HaciendaController extends ApiController
     }
 
     /**
-     * GET /api/v1/hacienda/{id}/estado
-     * Consultar estado de comprobante en Hacienda
-     *
-     * @param int $id
-     * @return JsonResponse
+     * @OA\Get(
+     *     path="/api/v1/hacienda/{id}/estado",
+     *     summary="Consultar estado en Hacienda",
+     *     description="Consulta el estado actual del comprobante en la API de Hacienda y sincroniza el estado local",
+     *     operationId="getEstadoHacienda",
+     *     tags={"Hacienda - Facturación Electrónica"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del comprobante Hacienda",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Estado obtenido exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="ind-estado", type="string", example="aceptado"),
+     *                 @OA\Property(property="clave", type="string")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=404, description="Comprobante no encontrado"),
+     *     @OA\Response(response=422, description="No se pudo obtener el estado"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function getEstado(int $id): JsonResponse
     {
@@ -226,10 +372,32 @@ class HaciendaController extends ApiController
     }
 
     /**
-     * GET /api/v1/hacienda/estadisticas
-     * Obtener estadísticas de comprobantes
-     *
-     * @return JsonResponse
+     * @OA\Get(
+     *     path="/api/v1/hacienda/estadisticas",
+     *     summary="Estadísticas de comprobantes",
+     *     description="Obtiene estadísticas de comprobantes enviados a Hacienda agrupados por estado",
+     *     operationId="estadisticasHacienda",
+     *     tags={"Hacienda - Facturación Electrónica"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Estadísticas obtenidas",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="total", type="integer", example=150),
+     *                 @OA\Property(property="pending", type="integer", example=5),
+     *                 @OA\Property(property="signed", type="integer", example=3),
+     *                 @OA\Property(property="sent", type="integer", example=10),
+     *                 @OA\Property(property="accepted", type="integer", example=120),
+     *                 @OA\Property(property="rejected", type="integer", example=12)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function estadisticas(): JsonResponse
     {
@@ -250,11 +418,35 @@ class HaciendaController extends ApiController
     }
 
     /**
-     * GET /api/v1/hacienda
-     * Listar comprobantes enviados a Hacienda
-     *
-     * @param Request $request
-     * @return JsonResponse
+     * @OA\Get(
+     *     path="/api/v1/hacienda",
+     *     summary="Listar comprobantes Hacienda",
+     *     description="Lista comprobantes enviados a Hacienda con filtros por estado, tipo, empresa y clave",
+     *     operationId="indexHacienda",
+     *     tags={"Hacienda - Facturación Electrónica"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(name="estado", in="query", required=false, description="Filtrar por estado",
+     *         @OA\Schema(type="string", enum={"pending","signed","sent","accepted","rejected","error"})
+     *     ),
+     *     @OA\Parameter(name="tipo", in="query", required=false, description="Filtrar por tipo de comprobante",
+     *         @OA\Schema(type="string", enum={"01","03","04","05","07"})
+     *     ),
+     *     @OA\Parameter(name="empresa_id", in="query", required=false, @OA\Schema(type="integer")),
+     *     @OA\Parameter(name="clave", in="query", required=false, description="Buscar por clave numérica de 50 dígitos",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(name="per_page", in="query", required=false, @OA\Schema(type="integer", default=15)),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Listado paginado de comprobantes",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function index(Request $request): JsonResponse
     {
@@ -290,8 +482,41 @@ class HaciendaController extends ApiController
     }
 
     /**
-     * GET /api/v1/hacienda/{id}
-     * Obtener detalles de un comprobante
+     * @OA\Get(
+     *     path="/api/v1/hacienda/{id}",
+     *     summary="Detalle de comprobante Hacienda",
+     *     description="Obtiene los detalles completos de un comprobante, incluyendo la respuesta de Hacienda",
+     *     operationId="showHacienda",
+     *     tags={"Hacienda - Facturación Electrónica"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del comprobante Hacienda",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Detalle del comprobante",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="comprobante_id", type="integer"),
+     *                 @OA\Property(property="empresa_id", type="integer"),
+     *                 @OA\Property(property="clave", type="string"),
+     *                 @OA\Property(property="tipo_comprobante", type="string"),
+     *                 @OA\Property(property="estado", type="string"),
+     *                 @OA\Property(property="created_at", type="string", format="date-time"),
+     *                 @OA\Property(property="respuesta_hacienda", type="object", nullable=true)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=404, description="Comprobante no encontrado"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      *
      * @param HaciendaComprobante $haciendaComprobante
      * @return JsonResponse

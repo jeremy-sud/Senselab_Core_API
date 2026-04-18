@@ -10,11 +10,15 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Annotations as OA;
 
 /**
  * Controller para generación automática de contenido mediante IA
  *
- * @group AI - Generación de Contenido
+ * @OA\Tag(
+ *     name="AI - Generación de Contenido",
+ *     description="Endpoints para generación automática de emails, recordatorios, descripciones y reportes usando IA"
+ * )
  */
 class ContentController extends Controller
 {
@@ -23,7 +27,39 @@ class ContentController extends Controller
     ) {}
 
     /**
-     * Generar recordatorio de pago
+     * @OA\Post(
+     *     path="/api/v1/ai/content/payment-reminder",
+     *     summary="Generar recordatorio de pago",
+     *     description="Genera un recordatorio de pago personalizado para un cliente con facturas pendientes",
+     *     operationId="generatePaymentReminder",
+     *     tags={"AI - Generación de Contenido"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"cliente_id"},
+     *             @OA\Property(property="cliente_id", type="integer", example=1),
+     *             @OA\Property(property="factura_ids", type="array", @OA\Items(type="integer")),
+     *             @OA\Property(property="tone", type="string", enum={"friendly", "formal", "urgent"}, example="friendly")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Recordatorio generado exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="subject", type="string"),
+     *                 @OA\Property(property="body", type="string"),
+     *                 @OA\Property(property="type", type="string")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=404, description="No se encontraron facturas pendientes"),
+     *     @OA\Response(response=422, description="Datos de validación inválidos"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function generatePaymentReminder(Request $request): JsonResponse
     {
@@ -110,7 +146,36 @@ class ContentController extends Controller
     }
 
     /**
-     * Generar mensaje de WhatsApp
+     * @OA\Post(
+     *     path="/api/v1/ai/content/thank-you",
+     *     summary="Generar mensaje de agradecimiento",
+     *     description="Genera un mensaje de agradecimiento personalizado (WhatsApp/email) para un cliente",
+     *     operationId="generateThankYouEmail",
+     *     tags={"AI - Generación de Contenido"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"cliente_id"},
+     *             @OA\Property(property="cliente_id", type="integer", example=1),
+     *             @OA\Property(property="context", type="string", enum={"payment", "purchase", "loyalty", "referral"}, example="purchase")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Mensaje generado exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="message", type="string"),
+     *                 @OA\Property(property="type", type="string")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=422, description="Datos de validación inválidos"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function generateThankYouEmail(Request $request): JsonResponse
     {
@@ -163,7 +228,37 @@ class ContentController extends Controller
     }
 
     /**
-     * Generar email de factura
+     * @OA\Post(
+     *     path="/api/v1/ai/content/invoice-email",
+     *     summary="Generar email de factura",
+     *     description="Genera un email formal con carta de cobro para acompañar el envío de una factura",
+     *     operationId="generateInvoiceEmail",
+     *     tags={"AI - Generación de Contenido"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"factura_id"},
+     *             @OA\Property(property="factura_id", type="integer", example=1),
+     *             @OA\Property(property="include_details", type="boolean", example=true)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Email generado exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="subject", type="string"),
+     *                 @OA\Property(property="body", type="string")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=404, description="Factura no encontrada"),
+     *     @OA\Response(response=422, description="Datos de validación inválidos"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function generateInvoiceEmail(Request $request): JsonResponse
     {
@@ -234,7 +329,38 @@ class ContentController extends Controller
     }
 
     /**
-     * Generar reporte/notificación
+     * @OA\Post(
+     *     path="/api/v1/ai/content/report",
+     *     summary="Generar reporte con IA",
+     *     description="Genera un reporte narrativo sobre un período específico usando IA",
+     *     operationId="generateAIReport",
+     *     tags={"AI - Generación de Contenido"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"start_date", "end_date"},
+     *             @OA\Property(property="start_date", type="string", format="date", example="2026-01-01"),
+     *             @OA\Property(property="end_date", type="string", format="date", example="2026-03-31"),
+     *             @OA\Property(property="report_type", type="string", enum={"sales", "financial", "inventory", "general"}, example="general")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Reporte generado exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object"),
+     *             @OA\Property(property="meta", type="object",
+     *                 @OA\Property(property="generated_at", type="string", format="date-time"),
+     *                 @OA\Property(property="period", type="object")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=422, description="Datos de validación inválidos"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function generateReport(Request $request): JsonResponse
     {
@@ -292,7 +418,34 @@ class ContentController extends Controller
     }
 
     /**
-     * Generar descripción de producto
+     * @OA\Post(
+     *     path="/api/v1/ai/content/custom",
+     *     summary="Generar contenido personalizado",
+     *     description="Genera contenido personalizado a partir de un prompt libre, opcionalmente vinculado a un producto",
+     *     operationId="generateCustomContent",
+     *     tags={"AI - Generación de Contenido"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"prompt"},
+     *             @OA\Property(property="prompt", type="string", maxLength=1000, example="Genera descripción de producto"),
+     *             @OA\Property(property="producto_id", type="integer", example=1),
+     *             @OA\Property(property="type", type="string", enum={"email", "sms", "social", "notification", "product"}, example="product")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Contenido generado exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=422, description="Datos de validación inválidos"),
+     *     @OA\Response(response=500, description="Error interno del servidor")
+     * )
      */
     public function generateCustomContent(Request $request): JsonResponse
     {
