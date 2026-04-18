@@ -27,8 +27,8 @@ class PlanillaCcss extends Model
     protected $table = 'planillas_ccss';
     public $timestamps = true;
 
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
+    const CREATED_AT = 'creado_en';
+    const UPDATED_AT = 'actualizado_en';
 
     protected $fillable = [
         'empresa_id',
@@ -60,8 +60,8 @@ class PlanillaCcss extends Model
         'total_cuota_patronal' => 'decimal:2',
         'total_a_pagar' => 'decimal:2',
         'eliminado' => 'boolean',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        'creado_en' => 'datetime',
+        'actualizado_en' => 'datetime',
     ];
 
     /* --------------------- Relaciones --------------------- */

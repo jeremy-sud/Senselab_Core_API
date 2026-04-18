@@ -26,8 +26,8 @@ class ZonaGeografica extends Model
     protected $table = 'zonas_geograficas';
     public $timestamps = true;
 
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
+    const CREATED_AT = 'creado_en';
+    const UPDATED_AT = 'actualizado_en';
 
     protected $fillable = [
         'empresa_id',
@@ -45,8 +45,8 @@ class ZonaGeografica extends Model
         'provincias_incluidas' => 'array',
         'activa' => 'boolean',
         'eliminado' => 'boolean',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        'creado_en' => 'datetime',
+        'actualizado_en' => 'datetime',
     ];
 
     /* --------------------- Relaciones --------------------- */

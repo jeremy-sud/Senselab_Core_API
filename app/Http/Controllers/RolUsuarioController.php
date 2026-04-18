@@ -9,15 +9,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\RolUsuario;
-use App\Models\Usuario;
 use App\Http\Requests\StoreRolUsuarioRequest;
 use App\Http\Requests\UpdateRolUsuarioRequest;
 use App\Http\Resources\RolUsuarioResource;
+use App\Services\RolUsuarioService;
 use App\Traits\HasEmpresaContext;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\AsignarRolesUsuarioRequest;
-use Illuminate\Support\Facades\DB;
 use OpenApi\Attributes as OA;
 
 
@@ -28,6 +27,11 @@ use OpenApi\Attributes as OA;
 class RolUsuarioController extends Controller
 {
     use HasEmpresaContext;
+
+    public function __construct(
+        private readonly RolUsuarioService $service,
+    ) {}
+
         #[OA\Get(
         path: '/api/rol-usuario',
         summary: 'Listar roles de usuarios',
@@ -42,22 +46,11 @@ class RolUsuarioController extends Controller
     {
         $this->authorize('viewAny', RolUsuario::class);
 
-        $empresaId = $this->getEmpresaId();
-
-        $query = RolUsuario::where('activo', 1)->where('eliminado', 0)
-            ->whereHas('usuario', function ($q) use ($empresaId) {
-                $q->where('empresa_id', $empresaId);
-            });
-
-        if ($request->filled('usuario_id')) {
-            $query->where('usuario_id', $request->usuario_id);
-        }
-
-        if ($request->filled('rol_id')) {
-            $query->where('rol_id', $request->rol_id);
-        }
-
-        $rolesUsuarios = $query->paginate($request->get('per_page', 15));
+        $rolesUsuarios = $this->service->listar(
+            $this->getEmpresaId(),
+            $request->only(['usuario_id', 'rol_id']),
+            (int) $request->get('per_page', 15)
+        );
 
         return response()->json([
             'success' => true,
@@ -85,7 +78,7 @@ class RolUsuarioController extends Controller
 
     public function store(StoreRolUsuarioRequest $request): JsonResponse
     {
-        $rolUsuario = RolUsuario::create($request->validated());
+        $rolUsuario = $this->service->asignar($request->validated());
 
         return response()->json([
             'success' => true,
@@ -104,7 +97,7 @@ class RolUsuarioController extends Controller
 
     public function update(UpdateRolUsuarioRequest $request, RolUsuario $rolUsuario): JsonResponse
     {
-        $rolUsuario->update($request->validated());
+        $this->service->actualizar($rolUsuario, $request->validated());
 
         return response()->json([
             'success' => true,
@@ -130,7 +123,7 @@ class RolUsuarioController extends Controller
 
     public function destroy(RolUsuario $rolUsuario): JsonResponse
     {
-        $rolUsuario->update(['eliminado' => 1, 'activo' => 0]);
+        $this->service->eliminar($rolUsuario);
 
         return response()->json([
             'success' => true,
@@ -142,15 +135,7 @@ class RolUsuarioController extends Controller
     {
         $this->authorize('viewAny', RolUsuario::class);
 
-        $empresaId = $this->getEmpresaId();
-
-        // Validar que el usuario pertenece a la empresa actual
-        Usuario::where('empresa_id', $empresaId)->findOrFail($usuarioId);
-
-        $roles = RolUsuario::where('usuario_id', $usuarioId)
-            ->where('activo', 1)
-            ->where('eliminado', 0)
-            ->get();
+        $roles = $this->service->rolesPorUsuario($this->getEmpresaId(), $usuarioId);
 
         return response()->json([
             'success' => true,
@@ -162,15 +147,7 @@ class RolUsuarioController extends Controller
     {
         $this->authorize('viewAny', RolUsuario::class);
 
-        $empresaId = $this->getEmpresaId();
-
-        $usuarios = RolUsuario::where('rol_id', $rolId)
-            ->where('activo', 1)
-            ->where('eliminado', 0)
-            ->whereHas('usuario', function ($q) use ($empresaId) {
-                $q->where('empresa_id', $empresaId);
-            })
-            ->get();
+        $usuarios = $this->service->usuariosPorRol($this->getEmpresaId(), $rolId);
 
         return response()->json([
             'success' => true,
@@ -182,33 +159,11 @@ class RolUsuarioController extends Controller
     {
         $this->authorize('create', RolUsuario::class);
 
-        $empresaId = $this->getEmpresaId();
-
-        // Validar que el usuario pertenece a la empresa actual
-        Usuario::where('empresa_id', $empresaId)->findOrFail($request->usuario_id);
-
-        $rolesAsignados = [];
-
-        DB::transaction(function () use ($request, &$rolesAsignados) {
-            // Desactivar roles actuales
-            RolUsuario::where('usuario_id', $request->usuario_id)
-                ->update(['activo' => 0]);
-
-            // Asignar nuevos roles
-            foreach ($request->roles as $rolId) {
-                $rolUsuario = RolUsuario::updateOrCreate(
-                    [
-                        'usuario_id' => $request->usuario_id,
-                        'rol_id' => $rolId,
-                    ],
-                    [
-                        'activo' => 1,
-                        'eliminado' => 0,
-                    ]
-                );
-                $rolesAsignados[] = $rolUsuario;
-            }
-        });
+        $rolesAsignados = $this->service->asignarRoles(
+            $this->getEmpresaId(),
+            $request->usuario_id,
+            $request->roles
+        );
 
         return response()->json([
             'success' => true,
