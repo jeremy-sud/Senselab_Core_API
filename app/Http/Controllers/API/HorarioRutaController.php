@@ -31,7 +31,12 @@ class HorarioRutaController extends Controller
         summary: 'Listar horarios de ruta',
         description: 'Listado paginado de viajes programados con filtros por ruta, bus, estado y fechas',
         security: [['sanctum' => []]],
-        tags: ['Transporte']
+        tags: ['Transporte'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
@@ -54,7 +59,12 @@ class HorarioRutaController extends Controller
         summary: 'Crear horario de ruta',
         description: 'Programa un nuevo viaje con bus y ruta. Asientos se establecen según capacidad del bus',
         security: [['sanctum' => []]],
-        tags: ['Transporte']
+        tags: ['Transporte'],
+        responses: [
+            new OA\Response(response: 201, description: 'Recurso creado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
     )]
     public function store(StoreHorarioRutaRequest $request): JsonResponse
     {
@@ -73,7 +83,12 @@ class HorarioRutaController extends Controller
         summary: 'Obtener horario de ruta',
         description: 'Detalle de un horario con ruta, bus y tiquetes asociados',
         security: [['sanctum' => []]],
-        tags: ['Transporte']
+        tags: ['Transporte'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function show(int $id): HorarioRutaResource
     {
@@ -89,7 +104,13 @@ class HorarioRutaController extends Controller
         summary: 'Actualizar horario de ruta',
         description: 'Actualiza horario. No permite modificar horarios En Viaje o Finalizados',
         security: [['sanctum' => []]],
-        tags: ['Transporte']
+        tags: ['Transporte'],
+        responses: [
+            new OA\Response(response: 200, description: 'Recurso actualizado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 404, description: 'Recurso no encontrado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
     )]
     public function update(UpdateHorarioRutaRequest $request, int $id): JsonResponse
     {
@@ -109,7 +130,12 @@ class HorarioRutaController extends Controller
         summary: 'Eliminar horario de ruta',
         description: 'Eliminación lógica. No permite eliminar horarios con tiquetes vendidos',
         security: [['sanctum' => []]],
-        tags: ['Transporte']
+        tags: ['Transporte'],
+        responses: [
+            new OA\Response(response: 200, description: 'Recurso eliminado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 404, description: 'Recurso no encontrado')
+        ]
     )]
     public function destroy(int $id): JsonResponse
     {
@@ -126,7 +152,12 @@ class HorarioRutaController extends Controller
         summary: 'Iniciar viaje',
         description: 'Cambia estado de Programado a En Viaje',
         security: [['sanctum' => []]],
-        tags: ['Transporte']
+        tags: ['Transporte'],
+        responses: [
+            new OA\Response(response: 201, description: 'Recurso creado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
     )]
     public function iniciarViaje(int $id): JsonResponse
     {
@@ -145,7 +176,12 @@ class HorarioRutaController extends Controller
         summary: 'Finalizar viaje',
         description: 'Cambia estado de En Viaje a Finalizado',
         security: [['sanctum' => []]],
-        tags: ['Transporte']
+        tags: ['Transporte'],
+        responses: [
+            new OA\Response(response: 201, description: 'Recurso creado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
     )]
     public function finalizarViaje(int $id): JsonResponse
     {
@@ -164,7 +200,12 @@ class HorarioRutaController extends Controller
         summary: 'Cancelar horario',
         description: 'Cambia estado a Cancelado. No permite cancelar viajes finalizados',
         security: [['sanctum' => []]],
-        tags: ['Transporte']
+        tags: ['Transporte'],
+        responses: [
+            new OA\Response(response: 201, description: 'Recurso creado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
     )]
     public function cancelar(int $id): JsonResponse
     {
@@ -183,7 +224,12 @@ class HorarioRutaController extends Controller
         summary: 'Asientos disponibles',
         description: 'Consulta disponibilidad de asientos basado en tiquetes vendidos',
         security: [['sanctum' => []]],
-        tags: ['Transporte']
+        tags: ['Transporte'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function asientosDisponibles(int $id): JsonResponse
     {
@@ -199,7 +245,12 @@ class HorarioRutaController extends Controller
         summary: 'Próximos horarios disponibles',
         description: 'Los próximos 10 horarios programados con asientos disponibles',
         security: [['sanctum' => []]],
-        tags: ['Transporte']
+        tags: ['Transporte'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function proximosDisponibles(Request $request): AnonymousResourceCollection
     {

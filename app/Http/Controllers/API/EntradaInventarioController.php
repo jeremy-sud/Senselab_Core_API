@@ -37,7 +37,12 @@ class EntradaInventarioController extends Controller
         summary: 'Listar entradas de inventario',
         description: 'Obtiene listado paginado de entradas con filtros opcionales por proveedor, bodega y fechas',
         security: [['sanctum' => []]],
-        tags: ['Inventario - Entradas']
+        tags: ['Inventario - Entradas'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
@@ -75,7 +80,12 @@ class EntradaInventarioController extends Controller
         summary: 'Crear entrada de inventario',
         description: 'Registra una nueva entrada de inventario en estado Pendiente',
         security: [['sanctum' => []]],
-        tags: ['Inventario - Entradas']
+        tags: ['Inventario - Entradas'],
+        responses: [
+            new OA\Response(response: 201, description: 'Recurso creado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
     )]
     public function store(StoreEntradaInventarioRequest $request): JsonResponse
     {
@@ -98,7 +108,12 @@ class EntradaInventarioController extends Controller
         summary: 'Obtener entrada de inventario',
         description: 'Retorna los datos de una entrada específica con sus relaciones',
         security: [['sanctum' => []]],
-        tags: ['Inventario - Entradas']
+        tags: ['Inventario - Entradas'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function show(int $id): JsonResponse
     {
@@ -123,7 +138,13 @@ class EntradaInventarioController extends Controller
         summary: 'Actualizar entrada de inventario',
         description: 'Modifica una entrada existente. Solo permitido si estado es Pendiente',
         security: [['sanctum' => []]],
-        tags: ['Inventario - Entradas']
+        tags: ['Inventario - Entradas'],
+        responses: [
+            new OA\Response(response: 200, description: 'Recurso actualizado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 404, description: 'Recurso no encontrado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
     )]
     public function update(UpdateEntradaInventarioRequest $request, int $id): JsonResponse
     {
@@ -157,7 +178,12 @@ class EntradaInventarioController extends Controller
         summary: 'Eliminar entrada de inventario',
         description: 'Elimina una entrada. Solo permitido si estado es Pendiente',
         security: [['sanctum' => []]],
-        tags: ['Inventario - Entradas']
+        tags: ['Inventario - Entradas'],
+        responses: [
+            new OA\Response(response: 200, description: 'Recurso eliminado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 404, description: 'Recurso no encontrado')
+        ]
     )]
     public function destroy(int $id): JsonResponse
     {
@@ -188,7 +214,13 @@ class EntradaInventarioController extends Controller
         summary: 'Procesar entrada de inventario',
         description: 'Procesa la entrada y actualiza el stock. Acción irreversible',
         security: [['sanctum' => []]],
-        tags: ['Inventario - Entradas']
+        tags: ['Inventario - Entradas'],
+        responses: [
+            new OA\Response(response: 200, description: 'Recurso actualizado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 404, description: 'Recurso no encontrado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
     )]
     public function procesar(int $id): JsonResponse
     {
@@ -218,7 +250,12 @@ class EntradaInventarioController extends Controller
         summary: 'Cancelar entrada de inventario',
         description: 'Cambia el estado a Cancelada. Solo para entradas Pendientes',
         security: [['sanctum' => []]],
-        tags: ['Inventario - Entradas']
+        tags: ['Inventario - Entradas'],
+        responses: [
+            new OA\Response(response: 201, description: 'Recurso creado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
     )]
     public function cancelar(int $id): JsonResponse
     {

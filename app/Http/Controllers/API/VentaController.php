@@ -42,7 +42,12 @@ class VentaController extends Controller
         summary: 'Listar ventas',
         description: 'Obtiene un listado paginado de ventas con filtros opcionales',
         security: [['sanctum' => []]],
-        tags: ['Ventas']
+        tags: ['Ventas'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
@@ -77,7 +82,12 @@ class VentaController extends Controller
         summary: 'Crear una nueva venta',
         description: 'Registra una nueva venta con detalles y calcula totales automáticamente',
         security: [['sanctum' => []]],
-        tags: ['Ventas']
+        tags: ['Ventas'],
+        responses: [
+            new OA\Response(response: 201, description: 'Recurso creado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
     )]
     public function store(StoreVentaRequest $request): JsonResponse
     {
@@ -107,7 +117,12 @@ class VentaController extends Controller
         summary: 'Obtener una venta específica',
         description: 'Obtiene los detalles completos de una venta incluyendo detalles de línea',
         security: [['sanctum' => []]],
-        tags: ['Ventas']
+        tags: ['Ventas'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function show(int $id): JsonResponse
     {
@@ -132,7 +147,13 @@ class VentaController extends Controller
         summary: 'Actualizar una venta',
         description: 'Actualiza observaciones y estado de venta',
         security: [['sanctum' => []]],
-        tags: ['Ventas']
+        tags: ['Ventas'],
+        responses: [
+            new OA\Response(response: 200, description: 'Recurso actualizado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 404, description: 'Recurso no encontrado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
     )]
     public function update(UpdateVentaRequest $request, int $id): JsonResponse
     {
@@ -175,7 +196,12 @@ class VentaController extends Controller
         summary: 'Anular una venta',
         description: 'Marca la venta como anulada y no eliminable',
         security: [['sanctum' => []]],
-        tags: ['Ventas']
+        tags: ['Ventas'],
+        responses: [
+            new OA\Response(response: 200, description: 'Recurso eliminado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 404, description: 'Recurso no encontrado')
+        ]
     )]
     public function destroy(int $id): JsonResponse
     {
@@ -209,7 +235,12 @@ class VentaController extends Controller
         summary: 'Obtener total de ventas en período',
         description: 'Calcula el monto total de ventas en un rango de fechas',
         security: [['sanctum' => []]],
-        tags: ['Ventas', 'Reportes']
+        tags: ['Ventas', 'Reportes'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function totalPeriodo(Request $request): JsonResponse
     {
