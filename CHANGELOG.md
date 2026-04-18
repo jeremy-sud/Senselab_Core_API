@@ -5,6 +5,28 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [v5.0.2] — 2026-04-17 — Auditoría Firma Digital Hacienda: 10 hallazgos resueltos
+
+### Seguridad
+- **H-1: Auto-conversión .p12 legacy** — `FirmaDigitalService::convertirP12Legacy()` detecta certificados con algoritmo RC2-40-CBC (incompatible con OpenSSL 3.x) y los convierte automáticamente a formato moderno via CLI con `escapeshellarg()` estricto.
+- **H-3: Password de certificado encriptado** — `Crypt::decryptString()` reemplaza base64 plano para el password del certificado .p12. Incluye fallback + auto-migración transparente.
+
+### Eliminado
+- **H-2: HaciendaIntegrationService eliminado** — ~510 líneas de código muerto (placeholder de firma, XML concatenado sin escape, `openssl_x509_read()` sobre .p12). Flujo delegado a servicios dedicados: `HaciendaApiClient`, `FirmaDigitalService`, `XmlComprobanteBuilder`, `OAuthTokenManager`.
+
+### Corregido
+- **H-4: Tipo de propiedad `$privateKey`** — Cambiado de `OpenSSLAsymmetricKey` a `?string` (valor real es PEM string).
+- **H-6: OAuthTokenManager refactorizado** — Guzzle directo reemplazado por `Http::` facade de Laravel (testeable, retry integrado).
+- **H-7: HaciendaApiClient con DI** — Constructor acepta inyección opcional de `OAuthTokenManager` y `RateLimiter`.
+- **H-8: RateLimiter atómico** — `Cache::get()` + `Cache::put()` reemplazado por `Cache::increment()` atómico (elimina race condition).
+- **H-9: Token OAuth TTL** — Corregido de 3600s a 300s en `config/hacienda.php` (alineado con TTL real de Hacienda).
+- **H-10: UUID sin guiones** — Documentado como intencional: formato requerido por XAdES-EPES `SignatureId`.
+
+### Documentación
+- **Auditoría completa:** `docs/hacienda/AUDITORIA_FIRMA_DIGITAL_2026-04-17.md` — 10 hallazgos (2 críticos, 2 altos, 3 medios, 3 bajos), todos resueltos.
+- **`docs/PENDIENTES_PROYECTO.md`** — 10 hallazgos Hacienda marcados como resueltos, sección dedicada añadida.
+- **Documentación Hacienda actualizada** — `FACTURACION_ELECTRONICA_API.md`, `FACTURACION_ELECTRONICA_SETUP.md`, `PLAN_IMPLEMENTACION_V44_HACIENDA.md`, `ANALISIS_HACIENDA_CR_V44_COMPLETO.md` alineados con v4.4 y estado post-auditoría.
+
 ## [v5.0.1] — 2026-04-13 — Post-auditoría: Seguridad, Swagger, Tests, Deuda Técnica
 
 ### Seguridad

@@ -6,6 +6,7 @@ use App\Models\RolPermiso;
 use App\Http\Requests\StoreRolPermisoRequest;
 use App\Http\Requests\UpdateRolPermisoRequest;
 use App\Http\Resources\RolPermisoResource;
+use App\Services\RolPermisoService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\AsignarPermisosRequest;
@@ -20,6 +21,10 @@ use OpenApi\Attributes as OA;
 )]
 class RolPermisoController extends Controller
 {
+    public function __construct(
+        private readonly RolPermisoService $service,
+    ) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -35,23 +40,10 @@ class RolPermisoController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $query = RolPermiso::query();
-
-        // Filtros
-        if ($request->filled('rol_id')) {
-            $query->where('rol_id', $request->rol_id);
-        }
-
-        if ($request->filled('permiso_id')) {
-            $query->where('permiso_id', $request->permiso_id);
-        }
-
-        if ($request->filled('activo')) {
-            $query->where('activo', $request->activo);
-        }
-
-        // Usar paginate() normal aquí: tabla pivot pequeña, necesita total count
-        $rolesPermisos = $query->paginate($request->get('per_page', 15));
+        $rolesPermisos = $this->service->listar(
+            $request->only(['rol_id', 'permiso_id', 'activo']),
+            (int) $request->get('per_page', 15)
+        );
 
         return response()->json([
             'success' => true,
@@ -81,22 +73,14 @@ class RolPermisoController extends Controller
 
     public function store(StoreRolPermisoRequest $request): JsonResponse
     {
-        // Verificar que no exista ya la relación
-        $existente = RolPermiso::where('rol_id', $request->rol_id)
-            ->where('permiso_id', $request->permiso_id)
-            ->first();
-
-        if ($existente) {
+        try {
+            $rolPermiso = $this->service->asignar($request->validated());
+        } catch (\App\Exceptions\BusinessException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Este permiso ya está asignado al rol'
+                'message' => $e->getMessage()
             ], 422);
         }
-
-        $rolPermiso = RolPermiso::create([
-            'rol_id' => $request->rol_id,
-            'permiso_id' => $request->permiso_id,
-        ]);
 
         return response()->json([
             'success' => true,
@@ -121,7 +105,7 @@ class RolPermisoController extends Controller
      */
     public function update(UpdateRolPermisoRequest $request, RolPermiso $rolPermiso): JsonResponse
     {
-        $rolPermiso->update($request->validated());
+        $this->service->actualizar($rolPermiso, $request->validated());
 
         return response()->json([
             'success' => true,
@@ -150,18 +134,14 @@ class RolPermisoController extends Controller
 
     public function destroy(int $rol, int $permiso): JsonResponse
     {
-        $rolPermiso = RolPermiso::where('rol_id', $rol)
-            ->where('permiso_id', $permiso)
-            ->first();
-
-        if (!$rolPermiso) {
+        try {
+            $this->service->remover($rol, $permiso);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
             return response()->json([
                 'success' => false,
                 'message' => 'La relación rol-permiso no existe'
             ], 404);
         }
-
-        $rolPermiso->delete();
 
         return response()->json([
             'success' => true,
@@ -174,32 +154,14 @@ class RolPermisoController extends Controller
      */
     public function asignarPermisos(AsignarPermisosRequest $request): JsonResponse
     {
-
-        $asignados = [];
-        $yaExistentes = [];
-
-        foreach ($request->permiso_ids as $permisoId) {
-            $existente = RolPermiso::where('rol_id', $request->rol_id)
-                ->where('permiso_id', $permisoId)
-                ->first();
-
-            if ($existente) {
-                $yaExistentes[] = $permisoId;
-            } else {
-                $rolPermiso = RolPermiso::create([
-                    'rol_id' => $request->rol_id,
-                    'permiso_id' => $permisoId,
-                ]);
-                $asignados[] = new RolPermisoResource($rolPermiso);
-            }
-        }
+        $resultado = $this->service->asignarMultiples($request->rol_id, $request->permiso_ids);
 
         return response()->json([
             'success' => true,
-            'message' => count($asignados) . ' permiso(s) asignado(s) exitosamente',
+            'message' => count($resultado['asignados']) . ' permiso(s) asignado(s) exitosamente',
             'data' => [
-                'asignados' => $asignados,
-                'ya_existentes' => $yaExistentes,
+                'asignados' => RolPermisoResource::collection($resultado['asignados']),
+                'ya_existentes' => $resultado['ya_existentes'],
             ]
         ], 201);
     }
@@ -209,10 +171,7 @@ class RolPermisoController extends Controller
      */
     public function removerPermisos(RemoverPermisosRequest $request): JsonResponse
     {
-
-        $removidos = RolPermiso::where('rol_id', $request->rol_id)
-            ->whereIn('permiso_id', $request->permiso_ids)
-            ->delete();
+        $removidos = $this->service->removerMultiples($request->rol_id, $request->permiso_ids);
 
         return response()->json([
             'success' => true,
@@ -225,13 +184,9 @@ class RolPermisoController extends Controller
      */
     public function permisosPorRol(int $rolId): JsonResponse
     {
-        $permisos = RolPermiso::where('rol_id', $rolId)
-            ->where('activo', 1)
-            ->get();
-
         return response()->json([
             'success' => true,
-            'data' => RolPermisoResource::collection($permisos)
+            'data' => RolPermisoResource::collection($this->service->permisosPorRol($rolId))
         ]);
     }
 
@@ -240,13 +195,9 @@ class RolPermisoController extends Controller
      */
     public function rolesPorPermiso(int $permisoId): JsonResponse
     {
-        $roles = RolPermiso::where('permiso_id', $permisoId)
-            ->where('activo', 1)
-            ->get();
-
         return response()->json([
             'success' => true,
-            'data' => RolPermisoResource::collection($roles)
+            'data' => RolPermisoResource::collection($this->service->rolesPorPermiso($permisoId))
         ]);
     }
 
@@ -255,24 +206,12 @@ class RolPermisoController extends Controller
      */
     public function sincronizarPermisos(SincronizarPermisosRequest $request): JsonResponse
     {
-
-        // Remover todos los permisos actuales del rol
-        RolPermiso::where('rol_id', $request->rol_id)->delete();
-
-        // Asignar los nuevos permisos
-        $nuevosPermisos = [];
-        foreach ($request->permiso_ids as $permisoId) {
-            $rolPermiso = RolPermiso::create([
-                'rol_id' => $request->rol_id,
-                'permiso_id' => $permisoId,
-            ]);
-            $nuevosPermisos[] = new RolPermisoResource($rolPermiso);
-        }
+        $nuevos = $this->service->sincronizar($request->rol_id, $request->permiso_ids);
 
         return response()->json([
             'success' => true,
             'message' => 'Permisos sincronizados exitosamente',
-            'data' => $nuevosPermisos
+            'data' => RolPermisoResource::collection($nuevos)
         ]);
     }
 }
