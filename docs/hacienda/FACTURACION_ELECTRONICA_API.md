@@ -1,5 +1,10 @@
 # API de Facturación Electrónica - Documentación
 
+**Versión API:** v5.0.1  
+**Esquema Hacienda:** v4.4 (DGT-R-000-2024)  
+**Última actualización:** 18 de abril de 2026  
+**Compliance Hacienda v4.4:** 38/38 brechas resueltas (100%) ✅
+
 ## Tabla de Contenidos
 1. [Autenticación](#autenticación)
 2. [Endpoints](#endpoints)
@@ -7,6 +12,7 @@
 4. [Códigos de Respuesta](#códigos-de-respuesta)
 5. [Ejemplos de Uso](#ejemplos-de-uso)
 6. [Webhooks](#webhooks)
+7. [Arquitectura Hacienda v4.4](#arquitectura-hacienda-v44)
 
 ---
 
@@ -59,7 +65,7 @@ GET /api/comprobantes
 **Query Parameters**:
 | Parámetro | Tipo | Descripción | Ejemplo |
 |-----------|------|-------------|---------|
-| `tipo_documento` | string | Filtrar por tipo (01-04) | `01` |
+| `tipo_documento` | string | Filtrar por tipo (01-04, 08-10) | `01` |
 | `estado` | string | Filtrar por estado | `aceptado` |
 | `fecha_desde` | date | Fecha inicio (Y-m-d) | `2025-01-01` |
 | `fecha_hasta` | date | Fecha fin (Y-m-d) | `2025-01-31` |
@@ -127,7 +133,6 @@ Content-Type: application/json
   "fecha_emision": "2025-11-26T10:30:00",
   "condicion_venta": "01",
   "plazo_credito": null,
-  "medio_pago": "01",
   "situacion": "1",
   
   "receptor_nombre": "Cliente de Prueba S.A.",
@@ -148,11 +153,20 @@ Content-Type: application/json
   
   "certificado_id": 1,
   
+  "medios_pago": [
+    {
+      "tipo_medio_pago": "01",
+      "total_medio_pago": 333350.00000
+    }
+  ],
+  
   "lineas": [
     {
       "numero_linea": 1,
-      "codigo_tipo": "01",
-      "codigo": "8523102100000",
+      "codigo_cabys": "8523102100000",
+      "codigos_comerciales": [
+        {"tipo": "01", "codigo": "PROD-001"}
+      ],
       "cantidad": 2.00000,
       "unidad_medida": "Sp",
       "detalle": "Servicio de Consultoría Técnica",
@@ -213,12 +227,16 @@ Content-Type: application/json
 ```
 
 **Validaciones**:
-- `tipo_documento`: Requerido. Valores: 01, 02, 03, 04
+- `tipo_documento`: Requerido. Valores: 01, 02, 03, 04, 08, 09, 10
 - `consecutivo`: Requerido. Máximo 20 dígitos
-- `condicion_venta`: Requerido. Valores: 01 (Contado), 02 (Crédito), 03 (Consignación), 04 (Apartado), 99 (Otro)
-- `medio_pago`: Requerido. Valores: 01 (Efectivo), 02 (Tarjeta), 03 (Cheque), 04 (Transferencia), 05 (Recaudado por terceros), 99 (Otros)
-- `lineas`: Requerido. Mínimo 1 línea
+- `condicion_venta`: Requerido. Valores: 01-15, 99 (ver tabla completa en Modelos de Datos)
+- `medios_pago`: Requerido. Array de 1-4 medios de pago, cada uno con `tipo_medio_pago` (01-07, 99) y `total_medio_pago`
+- `lineas`: Requerido. Mínimo 1, máximo 1000 líneas
+- `lineas.*.impuestos`: Array de 1-1000 impuestos por línea
+- `lineas.*.codigos_comerciales`: Array opcional de hasta 5 códigos comerciales por línea
+- `lineas.*.detalle_surtido`: Array opcional de hasta 20 ítems de surtido por línea
 - `certificado_id`: Requerido. Debe existir y estar activo
+- `receptor_tipo_identificacion`: Valores: 01-06 (incluye 05=Extranjero No Domiciliado, 06=No Contribuyente)
 
 ---
 
@@ -323,9 +341,10 @@ GET /api/comprobantes/{id}/xml?tipo=firmado
 **XML Retornado**:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<FacturaElectronica xmlns="https://cdn.comprobanteselectronicos.go.cr/xml-schemas/v4.3/facturaElectronica" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+<FacturaElectronica xmlns="https://cdn.comprobanteselectronicos.go.cr/xml-schemas/v4.4/facturaElectronica" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
   <Clave>52611202531011234567800000000000000000001154489877</Clave>
-  <CodigoActividad>620100</CodigoActividad>
+  <ProveedorSistemas>106470958</ProveedorSistemas>
+  <CodigoActividadEmisor>620100</CodigoActividadEmisor>
   <NumeroConsecutivo>00000000000000000001</NumeroConsecutivo>
   <FechaEmision>2025-11-26T10:30:00-06:00</FechaEmision>
   ...
@@ -411,9 +430,16 @@ Content-Type: application/json
 **Códigos de Referencia**:
 - `01`: Anula documento de referencia
 - `02`: Corrige monto
-- `03`: Devuelución de mercadería
+- `03`: Devolución de mercancía
 - `04`: Sustitución de comprobante
 - `05`: Referencia a otro documento
+- `06`: Devolución de mercancía
+- `07`: Sustituye comprobante electrónico
+- `08`: Factura Endosada
+- `09`: Nota de crédito financiera
+- `10`: Nota de débito financiera
+- `11`: Proveedor No Domiciliado
+- `12`: Crédito por exoneración posterior
 - `99`: Otros
 
 ---
@@ -456,12 +482,15 @@ GET /api/comprobantes/estadisticas/resumen
 ## Modelos de Datos
 
 ### Tipo de Documento
-| Código | Descripción |
-|--------|-------------|
-| `01` | Factura Electrónica |
-| `02` | Nota de Débito Electrónica |
-| `03` | Nota de Crédito Electrónica |
-| `04` | Tiquete Electrónico |
+| Código | Descripción | Abreviatura |
+|--------|-------------|:-----------:|
+| `01` | Factura Electrónica | FE |
+| `02` | Nota de Débito Electrónica | ND |
+| `03` | Nota de Crédito Electrónica | NC |
+| `04` | Tiquete Electrónico | TE |
+| `08` | Factura Electrónica de Compras | FEC |
+| `09` | Factura Electrónica de Exportación | FEE |
+| `10` | Recibo Electrónico de Pago | REP |
 
 ### Condición de Venta
 | Código | Descripción |
@@ -472,6 +501,15 @@ GET /api/comprobantes/estadisticas/resumen
 | `04` | Apartado |
 | `05` | Arrendamiento con opción de compra |
 | `06` | Arrendamiento en función financiera |
+| `07` | Cobro a favor de un tercero |
+| `08` | Servicios prestados al Estado |
+| `09` | Pago del servicios del Estado |
+| `10` | Pagos a plazo |
+| `11` | Crédito con abono en cuenta cliente |
+| `12` | Venta Mercancía No Nacionalizada |
+| `13` | Venta Bienes Usados No Contribuyente |
+| `14` | Arrendamiento Operativo |
+| `15` | Arrendamiento Financiero |
 | `99` | Otros |
 
 ### Medio de Pago
@@ -482,6 +520,8 @@ GET /api/comprobantes/estadisticas/resumen
 | `03` | Cheque |
 | `04` | Transferencia - depósito bancario |
 | `05` | Recaudado por terceros |
+| `06` | Otros sistemas de pago |
+| `07` | Compensación |
 | `99` | Otros |
 
 ### Unidades de Medida
@@ -628,12 +668,16 @@ curl -X POST http://localhost:8000/api/comprobantes \
 
 ## Webhooks
 
-### Configurar Webhook (Próximamente)
+El sistema de webhooks fue implementado en FASE 20 (v4.2.0) con soporte event-driven.
 
-Permitirá recibir notificaciones cuando cambie el estado de un comprobante.
+### Configurar Webhook
+
+```http
+POST /api/webhooks
+Content-Type: application/json
+```
 
 ```json
-POST /api/webhooks
 {
   "url": "https://tu-sistema.com/api/hacienda/webhook",
   "events": ["comprobante.aceptado", "comprobante.rechazado"],
@@ -641,23 +685,91 @@ POST /api/webhooks
 }
 ```
 
+**Características:**
+- Firma HMAC-SHA256 en cada payload
+- Retry exponencial automático en caso de fallo
+- Validación SSRF de URLs destino
+- 5 eventos soportados: `comprobante.creado`, `comprobante.enviado`, `comprobante.aceptado`, `comprobante.rechazado`, `comprobante.error`
+
 **Payload del Webhook**:
 ```json
 {
   "event": "comprobante.aceptado",
-  "timestamp": "2025-11-26T10:31:15Z",
+  "timestamp": "2026-04-18T10:31:15Z",
   "data": {
     "comprobante_id": 1,
     "clave": "52611202531011234567800000000000000000001154489877",
     "estado": "aceptado",
     "mensaje_hacienda": "Comprobante aceptado"
   },
-  "signature": "sha256_hash_del_payload"
+  "signature": "sha256=hmac_hash_del_payload"
+}
+```
+
+**Verificar firma (ejemplo PHP):**
+```php
+$payload = file_get_contents('php://input');
+$signature = $_SERVER['HTTP_X_WEBHOOK_SIGNATURE'];
+$expected = 'sha256=' . hash_hmac('sha256', $payload, $secret);
+if (!hash_equals($expected, $signature)) {
+    abort(401);
 }
 ```
 
 ---
 
-**Última actualización**: 26 de noviembre de 2025  
-**Versión de la API**: 1.0.0  
+## Arquitectura Hacienda v4.4
+
+### Modelos de Datos (v4.4 Compliance)
+
+| Modelo | Tabla | Propósito |
+|--------|-------|----------|
+| `ComprobanteElectronicoFe` | `comprobantes_electronicos_fe` | Comprobante principal |
+| `FeLineaDetalle` | `fe_lineas_detalle` | Líneas de detalle |
+| `FeLineaImpuesto` | `fe_linea_impuestos` | Múltiples impuestos por línea (1:N) |
+| `FeMedioPago` | `fe_medios_pago` | Múltiples medios de pago (1-4) |
+| `FeInformacionReferencia` | `fe_informacion_referencia` | Referencias normalizadas (0-10) |
+| `FeOtroCargo` | `fe_otros_cargos` | Otros cargos (0-15) |
+| `FeLineaDescuento` | `fe_linea_descuentos` | Descuentos múltiples por línea (0-5) |
+| `FeCodigoComercial` | `fe_codigo_comercial` | Códigos comerciales por línea (0-5) |
+| `FeDetalleSurtido` | `fe_detalle_surtido` | Detalle surtidos/combos (0-20) |
+| `FeSurtidoImpuesto` | `fe_surtido_impuesto` | Impuestos de surtido |
+| `HaciendaComprobante` | `hacienda_comprobantes` | Tracking envíos a Hacienda |
+| `MensajeHacienda` | `mensajes_hacienda` | Respuestas de Hacienda |
+| `FeCertificadoDigital` | `fe_certificados_digitales` | Certificados .p12 |
+| `FeOAuthToken` | `fe_oauth_tokens` | Tokens OAuth 2.0 |
+
+### Servicios de Integración
+
+| Servicio | Función |
+|----------|----------|
+| `HaciendaApiClient` | Cliente HTTP para API Hacienda |
+| `OAuthTokenManager` | Gestión de tokens OAuth 2.0 |
+| `RateLimiter` | Rate limiting (8 req/s, 480 req/min) |
+| `XmlComprobanteBuilder` | Constructor XML v4.4 completo |
+| `FirmaDigitalService` | Firma XAdES-EPES |
+| `XadesEpesSigner` | Implementación XAdES-EPES con política v4.4 |
+| `ClaveNumericaGenerator` | Clave numérica de 50 dígitos |
+| `ComprobanteElectronicoService` | Lógica de negocio comprobantes |
+| `ConsecutivoFeService` | Gestión de consecutivos |
+| `MensajeHaciendaService` | Gestión mensajes Hacienda |
+
+### Tipos de Identificación
+
+| Código | Descripción |
+|--------|-------------|
+| `01` | Cédula Física (9 dígitos) |
+| `02` | Cédula Jurídica (10 dígitos, inicia con 3) |
+| `03` | DIMEX (11-12 dígitos) |
+| `04` | NITE (10 dígitos) |
+| `05` | Extranjero No Domiciliado (alfanumérico 1-20) |
+| `06` | No Contribuyente (alfanumérico 1-20) |
+```
+
+---
+
+**Última actualización**: 18 de abril de 2026  
+**Versión de la API**: v5.0.1  
+**Esquema Hacienda**: v4.4 (DGT-R-000-2024)  
+**Análisis detallado**: `docs/hacienda/ANALISIS_COMPARATIVO_HACIENDA_V44.md`  
 **Contacto**: soporte@ursol-cast-api.com

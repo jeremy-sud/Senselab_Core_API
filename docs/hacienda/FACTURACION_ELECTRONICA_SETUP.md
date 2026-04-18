@@ -1,5 +1,9 @@
 # Guía de Configuración - Facturación Electrónica Costa Rica
 
+**Versión API:** v5.0.1  
+**Esquema Hacienda:** v4.4 (DGT-R-000-2024)  
+**Última actualización:** 18 de abril de 2026
+
 ## Índice
 1. [Requisitos Previos](#requisitos-previos)
 2. [Configuración Inicial](#configuración-inicial)
@@ -32,6 +36,13 @@
 - Vigencia: 1-2 años
 
 > **Nota**: Para el ambiente Sandbox (pruebas), Hacienda proporciona una llave criptográfica de pruebas que se genera desde el portal. Ver sección [Llave Criptográfica de Pruebas](#llave-criptográfica-de-pruebas).
+
+> **⚠️ Compatibilidad OpenSSL 3.x**: Los certificados .p12 generados por Hacienda utilizan cifrado legacy (pbeWithSHA1And40BitRC2-CBC) que no es compatible con OpenSSL 3.x. El sistema incluye auto-conversión automática via `FirmaDigitalService::convertirP12Legacy()`. Si experimenta errores al leer el certificado, convierta manualmente:
+> ```bash
+> openssl pkcs12 -in llave_pruebas.p12 -out temp.pem -nodes -legacy
+> openssl pkcs12 -in temp.pem -export -out llave_pruebas_v3.p12
+> rm temp.pem
+> ```
 
 ### 3. Código de Actividad Económica
 - Debe estar registrado en Hacienda
@@ -366,12 +377,32 @@ php artisan migrate:status
 ```
 
 ### 2. Ejecutar Migraciones de Facturación Electrónica
+
+**Migraciones base:**
 ```bash
 php artisan migrate --path=database/migrations/2025_11_26_184030_create_comprobantes_electronicos_fe_table.php
 php artisan migrate --path=database/migrations/2025_11_26_184109_create_fe_lineas_detalle_table.php
 php artisan migrate --path=database/migrations/2025_11_26_184143_create_fe_certificados_digitales_table.php
 php artisan migrate --path=database/migrations/2025_11_26_184216_create_fe_oauth_tokens_table.php
 ```
+
+**Migraciones v4.4 Compliance (8 tablas nuevas):**
+```bash
+php artisan migrate --path=database/migrations/2026_04_07_000000_hacienda_v44_compliance_full.php
+php artisan migrate --path=database/migrations/2026_04_10_000000_hacienda_v44_fase_c_surtido_codigo_comercial.php
+```
+
+Estas migraciones crean las siguientes tablas adicionales:
+- `fe_linea_impuestos` — Múltiples impuestos por línea (1:N, hasta 1000)
+- `fe_medios_pago` — Múltiples medios de pago (1-4)
+- `fe_informacion_referencia` — Referencias normalizadas (0-10)
+- `fe_otros_cargos` — Otros cargos (0-15)
+- `fe_linea_descuentos` — Descuentos múltiples por línea (0-5)
+- `fe_codigo_comercial` — Códigos comerciales por línea (0-5)
+- `fe_detalle_surtido` — Detalle surtidos/combos (0-20)
+- `fe_surtido_impuesto` — Impuestos de ítems de surtido
+
+Además agrega 20+ columnas nuevas a tablas existentes (receptor ubicación, códigos de descuento, campos de exportación, etc.).
 
 ### 3. Verificar Tablas Creadas
 ```bash
@@ -381,6 +412,8 @@ php artisan tinker
 ```php
 DB::table('comprobantes_electronicos_fe')->count(); // Debe retornar 0
 DB::table('fe_certificados_digitales')->count(); // Debe retornar 0
+DB::table('fe_linea_impuestos')->count(); // Debe retornar 0 (v4.4)
+DB::table('fe_medios_pago')->count(); // Debe retornar 0 (v4.4)
 ```
 
 ---
