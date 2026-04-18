@@ -34,7 +34,12 @@ class PagoController extends Controller
         summary: 'Listar todos los pagos',
         description: 'Listado paginado con filtros por estado, forma de pago, proveedor, cliente y fechas',
         security: [['sanctum' => []]],
-        tags: ['Pagos']
+        tags: ['Pagos'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
@@ -55,7 +60,12 @@ class PagoController extends Controller
         summary: 'Crear un nuevo pago',
         description: 'Registra un pago y actualiza automáticamente saldos de cuentas relacionadas',
         security: [['sanctum' => []]],
-        tags: ['Pagos']
+        tags: ['Pagos'],
+        responses: [
+            new OA\Response(response: 201, description: 'Recurso creado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
     )]
     public function store(StorePagoRequest $request): JsonResponse
     {
@@ -77,7 +87,12 @@ class PagoController extends Controller
         summary: 'Obtener un pago específico',
         description: 'Detalle completo de un pago con todas sus relaciones',
         security: [['sanctum' => []]],
-        tags: ['Pagos']
+        tags: ['Pagos'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function show(int $id): PagoResource
     {
@@ -92,7 +107,13 @@ class PagoController extends Controller
         summary: 'Actualizar un pago existente',
         description: 'Actualiza pago y ajusta saldos si cambia el monto. No permite modificar pagos procesados',
         security: [['sanctum' => []]],
-        tags: ['Pagos']
+        tags: ['Pagos'],
+        responses: [
+            new OA\Response(response: 200, description: 'Recurso actualizado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 404, description: 'Recurso no encontrado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
     )]
     public function update(UpdatePagoRequest $request, int $id): JsonResponse
     {
@@ -113,7 +134,12 @@ class PagoController extends Controller
         summary: 'Eliminar un pago',
         description: 'Soft delete del pago. Revierte saldos de cuentas. No permite eliminar pagos procesados',
         security: [['sanctum' => []]],
-        tags: ['Pagos']
+        tags: ['Pagos'],
+        responses: [
+            new OA\Response(response: 200, description: 'Recurso eliminado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 404, description: 'Recurso no encontrado')
+        ]
     )]
     public function destroy(int $id): JsonResponse
     {
@@ -131,7 +157,12 @@ class PagoController extends Controller
         summary: 'Resumen de pagos por forma de pago',
         description: 'Estadísticas de pagos agrupados por forma de pago (solo pagos procesados)',
         security: [['sanctum' => []]],
-        tags: ['Pagos']
+        tags: ['Pagos'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function resumenPorFormaPago(): JsonResponse
     {

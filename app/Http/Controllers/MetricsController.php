@@ -33,10 +33,10 @@ class MetricsController extends Controller
      *     tags={"Metrics"},
      *     @OA\Response(
      *         response=200,
-     *         description="Métricas en formato Prometheus",
+     *         description="Métricas en formato Prometheus (text/plain 0.0.4)",
      *         @OA\MediaType(
      *             mediaType="text/plain",
-     *             @OA\Schema(type="string", example="# HELP app_health_check Sistema está saludable\n# TYPE app_health_check gauge\napp_health_check{instance=\"server1\"} 1")
+     *             @OA\Schema(type="string", example="# HELP app_health_check gauge\n# TYPE app_health_check gauge\napp_health_check 1")
      *         )
      *     ),
      *     @OA\Response(response=500, description="Error generando métricas")

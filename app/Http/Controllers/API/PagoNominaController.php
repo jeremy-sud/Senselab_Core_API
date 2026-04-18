@@ -29,7 +29,12 @@ class PagoNominaController extends Controller
         summary: 'Listar pagos de nómina',
         description: 'Obtiene listado paginado con filtros por empleado, período, estado y fechas',
         security: [['sanctum' => []]],
-        tags: ['Nómina']
+        tags: ['Nómina'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
@@ -62,7 +67,12 @@ class PagoNominaController extends Controller
         summary: 'Crear pago de nómina',
         description: 'Registra un nuevo pago con cálculo de monto bruto, deducciones y neto',
         security: [['sanctum' => []]],
-        tags: ['Nómina']
+        tags: ['Nómina'],
+        responses: [
+            new OA\Response(response: 201, description: 'Recurso creado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
     )]
     public function store(StorePagoNominaRequest $request): JsonResponse
     {
@@ -88,7 +98,12 @@ class PagoNominaController extends Controller
         summary: 'Obtener pago de nómina',
         description: 'Detalle completo de un pago incluyendo empleado, período y método de pago',
         security: [['sanctum' => []]],
-        tags: ['Nómina']
+        tags: ['Nómina'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function show(int $id): PagoNominaResource
     {
@@ -106,7 +121,13 @@ class PagoNominaController extends Controller
         summary: 'Actualizar pago de nómina',
         description: 'Actualiza pago de nómina. No permite modificar pagos ya pagados',
         security: [['sanctum' => []]],
-        tags: ['Nómina']
+        tags: ['Nómina'],
+        responses: [
+            new OA\Response(response: 200, description: 'Recurso actualizado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 404, description: 'Recurso no encontrado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
     )]
     public function update(UpdatePagoNominaRequest $request, int $id): JsonResponse
     {
@@ -134,7 +155,12 @@ class PagoNominaController extends Controller
         summary: 'Eliminar pago de nómina',
         description: 'Soft delete de un pago. No permite eliminar pagos ya pagados',
         security: [['sanctum' => []]],
-        tags: ['Nómina']
+        tags: ['Nómina'],
+        responses: [
+            new OA\Response(response: 200, description: 'Recurso eliminado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 404, description: 'Recurso no encontrado')
+        ]
     )]
     public function destroy(int $id): JsonResponse
     {
@@ -156,7 +182,12 @@ class PagoNominaController extends Controller
         summary: 'Marcar pago como pagado',
         description: 'Cambia el estado a pagado y registra la fecha',
         security: [['sanctum' => []]],
-        tags: ['Nómina']
+        tags: ['Nómina'],
+        responses: [
+            new OA\Response(response: 201, description: 'Recurso creado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
     )]
     public function marcarPagado(int $id, Request $request): JsonResponse
     {
@@ -180,7 +211,12 @@ class PagoNominaController extends Controller
         summary: 'Pagos por empleado',
         description: 'Historial de pagos de nómina de un empleado específico',
         security: [['sanctum' => []]],
-        tags: ['Nómina']
+        tags: ['Nómina'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function porEmpleado(int $empleadoId): AnonymousResourceCollection
     {
@@ -199,7 +235,12 @@ class PagoNominaController extends Controller
         summary: 'Resumen por método de pago',
         description: 'Estadísticas agregadas por método de pago',
         security: [['sanctum' => []]],
-        tags: ['Nómina']
+        tags: ['Nómina'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function resumenPorMetodoPago(Request $request): JsonResponse
     {
@@ -222,7 +263,12 @@ class PagoNominaController extends Controller
         summary: 'Totales por período',
         description: 'Totales agregados de nómina por período',
         security: [['sanctum' => []]],
-        tags: ['Nómina']
+        tags: ['Nómina'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function totalesPorPeriodo(Request $request): JsonResponse
     {

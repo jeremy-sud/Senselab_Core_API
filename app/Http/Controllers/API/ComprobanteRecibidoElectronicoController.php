@@ -34,7 +34,12 @@ class ComprobanteRecibidoElectronicoController extends Controller
         summary: 'Listar comprobantes electrónicos recibidos',
         description: 'Listado paginado de comprobantes electrónicos recibidos de proveedores',
         security: [['sanctum' => []]],
-        tags: ['Facturación Electrónica']
+        tags: ['Facturación Electrónica'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function index(): AnonymousResourceCollection
     {
@@ -51,7 +56,12 @@ class ComprobanteRecibidoElectronicoController extends Controller
         summary: 'Registrar comprobante electrónico recibido',
         description: 'Registra un nuevo comprobante de proveedor con XML y datos estructurados',
         security: [['sanctum' => []]],
-        tags: ['Facturación Electrónica']
+        tags: ['Facturación Electrónica'],
+        responses: [
+            new OA\Response(response: 201, description: 'Recurso creado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
     )]
     public function store(StoreComprobanteRecibidoElectronicoRequest $request): JsonResponse
     {
@@ -76,7 +86,12 @@ class ComprobanteRecibidoElectronicoController extends Controller
         summary: 'Obtener comprobante electrónico',
         description: 'Detalle completo de un comprobante con proveedor e inventario',
         security: [['sanctum' => []]],
-        tags: ['Facturación Electrónica']
+        tags: ['Facturación Electrónica'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function show(int $id): JsonResponse
     {
@@ -95,7 +110,13 @@ class ComprobanteRecibidoElectronicoController extends Controller
         summary: 'Actualizar comprobante electrónico',
         description: 'Actualiza datos del comprobante. No permite modificar comprobantes confirmados',
         security: [['sanctum' => []]],
-        tags: ['Facturación Electrónica']
+        tags: ['Facturación Electrónica'],
+        responses: [
+            new OA\Response(response: 200, description: 'Recurso actualizado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 404, description: 'Recurso no encontrado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
     )]
     public function update(UpdateComprobanteRecibidoElectronicoRequest $request, int $id): JsonResponse
     {
@@ -120,7 +141,12 @@ class ComprobanteRecibidoElectronicoController extends Controller
         summary: 'Eliminar comprobante electrónico',
         description: 'Elimina comprobante. No permite eliminar comprobantes confirmados',
         security: [['sanctum' => []]],
-        tags: ['Facturación Electrónica']
+        tags: ['Facturación Electrónica'],
+        responses: [
+            new OA\Response(response: 200, description: 'Recurso eliminado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 404, description: 'Recurso no encontrado')
+        ]
     )]
     public function destroy(int $id): JsonResponse
     {
@@ -141,7 +167,12 @@ class ComprobanteRecibidoElectronicoController extends Controller
         summary: 'Confirmar comprobante',
         description: 'Marca el comprobante como confirmado/aceptado por el usuario',
         security: [['sanctum' => []]],
-        tags: ['Facturación Electrónica']
+        tags: ['Facturación Electrónica'],
+        responses: [
+            new OA\Response(response: 201, description: 'Recurso creado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
     )]
     public function confirmar(Request $request, int $id): JsonResponse
     {
@@ -165,7 +196,12 @@ class ComprobanteRecibidoElectronicoController extends Controller
         summary: 'Rechazar comprobante',
         description: 'Marca el comprobante como rechazado por el usuario',
         security: [['sanctum' => []]],
-        tags: ['Facturación Electrónica']
+        tags: ['Facturación Electrónica'],
+        responses: [
+            new OA\Response(response: 201, description: 'Recurso creado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
     )]
     public function rechazar(Request $request, int $id): JsonResponse
     {
@@ -185,7 +221,12 @@ class ComprobanteRecibidoElectronicoController extends Controller
         summary: 'Comprobantes por proveedor',
         description: 'Listado de comprobantes de un proveedor específico',
         security: [['sanctum' => []]],
-        tags: ['Facturación Electrónica']
+        tags: ['Facturación Electrónica'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function porProveedor(int $proveedorId): AnonymousResourceCollection
     {
@@ -200,7 +241,12 @@ class ComprobanteRecibidoElectronicoController extends Controller
         summary: 'Comprobantes pendientes',
         description: 'Comprobantes que no han sido confirmados ni rechazados',
         security: [['sanctum' => []]],
-        tags: ['Facturación Electrónica']
+        tags: ['Facturación Electrónica'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function pendientes(): AnonymousResourceCollection
     {
@@ -215,7 +261,12 @@ class ComprobanteRecibidoElectronicoController extends Controller
         summary: 'Resumen por estado de Hacienda',
         description: 'Estadísticas agrupadas por estado de respuesta de Hacienda',
         security: [['sanctum' => []]],
-        tags: ['Facturación Electrónica']
+        tags: ['Facturación Electrónica'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function resumenPorProveedor(): JsonResponse
     {
@@ -229,7 +280,13 @@ class ComprobanteRecibidoElectronicoController extends Controller
         summary: 'Actualizar respuesta de Hacienda',
         description: 'Actualiza con la respuesta XML recibida de Hacienda (DGT)',
         security: [['sanctum' => []]],
-        tags: ['Facturación Electrónica']
+        tags: ['Facturación Electrónica'],
+        responses: [
+            new OA\Response(response: 200, description: 'Recurso actualizado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 404, description: 'Recurso no encontrado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
     )]
     public function actualizarRespuestaHacienda(ActualizarRespuestaHaciendaRequest $request, int $id): JsonResponse
     {

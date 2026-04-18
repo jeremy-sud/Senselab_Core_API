@@ -29,7 +29,18 @@ class TasaImpuestoController extends Controller
         private readonly TasaImpuestoService $service
     ) {}
 
-    #[OA\Get(path: '/api/tasas-impuesto', summary: 'Listar tasas de impuesto', description: 'Listado paginado con filtros por tipo, activo, vigentes', security: [['sanctum' => []]], tags: ['Catálogos Fiscales'])]
+    #[OA\Get(
+        path: '/api/tasas-impuesto',
+        summary: 'Listar tasas de impuesto',
+        description: 'Listado paginado con filtros por tipo, activo, vigentes',
+        security: [['sanctum' => []]],
+        tags: ['Catálogos Fiscales'],
+        responses: [
+            new OA\Response(response: 200, description: 'Listado obtenido exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
+    )]
     public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', TasaImpuesto::class);
@@ -47,7 +58,18 @@ class TasaImpuestoController extends Controller
         return TasaImpuestoResource::collection($this->service->listar($filtros, $perPage));
     }
 
-    #[OA\Post(path: '/api/tasas-impuesto', summary: 'Crear tasa de impuesto', description: 'Crea nueva tasa con vigencia temporal', security: [['sanctum' => []]], tags: ['Catálogos Fiscales'])]
+    #[OA\Post(
+        path: '/api/tasas-impuesto',
+        summary: 'Crear tasa de impuesto',
+        description: 'Crea nueva tasa con vigencia temporal',
+        security: [['sanctum' => []]],
+        tags: ['Catálogos Fiscales'],
+        responses: [
+            new OA\Response(response: 201, description: 'Tasa creada exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
+    )]
     public function store(StoreTasaImpuestoRequest $request): JsonResponse
     {
         $this->authorize('create', TasaImpuesto::class);
@@ -61,7 +83,18 @@ class TasaImpuestoController extends Controller
         ], 201);
     }
 
-    #[OA\Get(path: '/api/tasas-impuesto/{id}', summary: 'Obtener tasa de impuesto', description: 'Detalles de una tasa específica', security: [['sanctum' => []]], tags: ['Catálogos Fiscales'])]
+    #[OA\Get(
+        path: '/api/tasas-impuesto/{id}',
+        summary: 'Obtener tasa de impuesto',
+        description: 'Detalles de una tasa específica',
+        security: [['sanctum' => []]],
+        tags: ['Catálogos Fiscales'],
+        responses: [
+            new OA\Response(response: 200, description: 'Tasa obtenida exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 404, description: 'Tasa no encontrada')
+        ]
+    )]
     public function show(int $id): JsonResponse
     {
         $tasa = $this->service->obtener($id);
@@ -70,7 +103,19 @@ class TasaImpuestoController extends Controller
         return response()->json(['success' => true, 'data' => new TasaImpuestoResource($tasa)]);
     }
 
-    #[OA\Put(path: '/api/tasas-impuesto/{id}', summary: 'Actualizar tasa de impuesto', description: 'Actualiza datos de tasa existente', security: [['sanctum' => []]], tags: ['Catálogos Fiscales'])]
+    #[OA\Put(
+        path: '/api/tasas-impuesto/{id}',
+        summary: 'Actualizar tasa de impuesto',
+        description: 'Actualiza datos de tasa existente',
+        security: [['sanctum' => []]],
+        tags: ['Catálogos Fiscales'],
+        responses: [
+            new OA\Response(response: 200, description: 'Tasa actualizada exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 404, description: 'Tasa no encontrada'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
+    )]
     public function update(UpdateTasaImpuestoRequest $request, int $id): JsonResponse
     {
         $tasa = $this->service->obtener($id);
@@ -85,7 +130,18 @@ class TasaImpuestoController extends Controller
         ]);
     }
 
-    #[OA\Delete(path: '/api/tasas-impuesto/{id}', summary: 'Eliminar tasa de impuesto', description: 'Eliminación lógica de tasa', security: [['sanctum' => []]], tags: ['Catálogos Fiscales'])]
+    #[OA\Delete(
+        path: '/api/tasas-impuesto/{id}',
+        summary: 'Eliminar tasa de impuesto',
+        description: 'Eliminación lógica de tasa',
+        security: [['sanctum' => []]],
+        tags: ['Catálogos Fiscales'],
+        responses: [
+            new OA\Response(response: 200, description: 'Tasa eliminada exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 404, description: 'Tasa no encontrada')
+        ]
+    )]
     public function destroy(int $id): JsonResponse
     {
         $tasa = $this->service->obtener($id);
@@ -96,7 +152,18 @@ class TasaImpuestoController extends Controller
         return response()->json(['success' => true, 'message' => 'Tasa de impuesto eliminada exitosamente']);
     }
 
-    #[OA\Get(path: '/api/tasas-impuesto/vigente', summary: 'Obtener tasa vigente', description: 'Tasa vigente para un tipo de impuesto en fecha específica', security: [['sanctum' => []]], tags: ['Catálogos Fiscales'])]
+    #[OA\Get(
+        path: '/api/tasas-impuesto/vigente',
+        summary: 'Obtener tasa vigente',
+        description: 'Tasa vigente para un tipo de impuesto en fecha específica',
+        security: [['sanctum' => []]],
+        tags: ['Catálogos Fiscales'],
+        responses: [
+            new OA\Response(response: 200, description: 'Tasa vigente encontrada'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 404, description: 'No se encontró tasa vigente')
+        ]
+    )]
     public function vigente(TasaImpuestoVigenteRequest $request): JsonResponse
     {
         $fecha = $request->filled('fecha') ? Carbon::parse($request->fecha) : null;
@@ -110,7 +177,17 @@ class TasaImpuestoController extends Controller
         return response()->json(['success' => true, 'data' => new TasaImpuestoResource($tasa)]);
     }
 
-    #[OA\Get(path: '/api/tasas-impuesto/vigentes-actuales', summary: 'Tasas vigentes actuales', description: 'Todas las tasas vigentes a fecha actual', security: [['sanctum' => []]], tags: ['Catálogos Fiscales'])]
+    #[OA\Get(
+        path: '/api/tasas-impuesto/vigentes-actuales',
+        summary: 'Tasas vigentes actuales',
+        description: 'Todas las tasas vigentes a fecha actual',
+        security: [['sanctum' => []]],
+        tags: ['Catálogos Fiscales'],
+        responses: [
+            new OA\Response(response: 200, description: 'Tasas vigentes obtenidas'),
+            new OA\Response(response: 401, description: 'No autenticado')
+        ]
+    )]
     public function vigentesActuales(): JsonResponse
     {
         $tasas = $this->service->vigentesActuales();
@@ -118,7 +195,17 @@ class TasaImpuestoController extends Controller
         return response()->json(['success' => true, 'data' => TasaImpuestoResource::collection($tasas)]);
     }
 
-    #[OA\Get(path: '/api/tasas-impuesto/historico/{tipoImpuestoId}', summary: 'Histórico de tasas', description: 'Histórico completo de tasas por tipo de impuesto', security: [['sanctum' => []]], tags: ['Catálogos Fiscales'])]
+    #[OA\Get(
+        path: '/api/tasas-impuesto/historico/{tipoImpuestoId}',
+        summary: 'Histórico de tasas',
+        description: 'Histórico completo de tasas por tipo de impuesto',
+        security: [['sanctum' => []]],
+        tags: ['Catálogos Fiscales'],
+        responses: [
+            new OA\Response(response: 200, description: 'Histórico obtenido exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado')
+        ]
+    )]
     public function historico(int $tipoImpuestoId): JsonResponse
     {
         $tasas = $this->service->historico($tipoImpuestoId);

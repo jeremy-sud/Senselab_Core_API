@@ -37,7 +37,12 @@ class AsientoContableController extends Controller
         summary: 'Listar asientos contables',
         description: 'Obtiene listado paginado de asientos con filtros por estado, fechas y cuenta contable',
         security: [['sanctum' => []]],
-        tags: ['Contabilidad']
+        tags: ['Contabilidad'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function index(Request $request): AnonymousResourceCollection
     {
@@ -75,7 +80,12 @@ class AsientoContableController extends Controller
         summary: 'Crear asiento contable',
         description: 'Registra un nuevo asiento contable con detalles. El debe debe ser igual al haber',
         security: [['sanctum' => []]],
-        tags: ['Contabilidad']
+        tags: ['Contabilidad'],
+        responses: [
+            new OA\Response(response: 201, description: 'Recurso creado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
     )]
     public function store(StoreAsientoContableRequest $request): JsonResponse
     {
@@ -105,7 +115,12 @@ class AsientoContableController extends Controller
         summary: 'Obtener asiento contable',
         description: 'Retorna los datos completos de un asiento con sus detalles y cuentas',
         security: [['sanctum' => []]],
-        tags: ['Contabilidad']
+        tags: ['Contabilidad'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 403, description: 'No autorizado')
+        ]
     )]
     public function show(int $id): JsonResponse
     {
@@ -130,7 +145,13 @@ class AsientoContableController extends Controller
         summary: 'Actualizar asiento contable',
         description: 'Modifica un asiento existente. No permite modificar asientos mayorizados',
         security: [['sanctum' => []]],
-        tags: ['Contabilidad']
+        tags: ['Contabilidad'],
+        responses: [
+            new OA\Response(response: 200, description: 'Recurso actualizado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 404, description: 'Recurso no encontrado'),
+            new OA\Response(response: 422, description: 'Error de validación')
+        ]
     )]
     public function update(UpdateAsientoContableRequest $request, int $id): JsonResponse
     {
@@ -171,7 +192,12 @@ class AsientoContableController extends Controller
         summary: 'Eliminar asiento contable',
         description: 'Realiza soft delete del asiento. No permite eliminar asientos mayorizados',
         security: [['sanctum' => []]],
-        tags: ['Contabilidad']
+        tags: ['Contabilidad'],
+        responses: [
+            new OA\Response(response: 200, description: 'Recurso eliminado exitosamente'),
+            new OA\Response(response: 401, description: 'No autenticado'),
+            new OA\Response(response: 404, description: 'Recurso no encontrado')
+        ]
     )]
     public function destroy(int $id): JsonResponse
     {
