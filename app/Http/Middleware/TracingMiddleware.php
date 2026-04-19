@@ -65,11 +65,12 @@ class TracingMiddleware
         $request->attributes->set('span_id', $spanId);
         $request->attributes->set('parent_span_id', $parentSpanId);
 
-        // Agregar al contexto de logging
+        // Agregar al contexto de logging (DT-11: incluye tenant_id)
         Log::shareContext([
             'trace_id' => $traceId,
             'span_id' => $spanId,
             'parent_span_id' => $parentSpanId,
+            'tenant_id' => $request->header('X-Empresa-Id') ?? $request->header('X-Tenant-Id'),
         ]);
 
         // Log inicio del request (si tracing está habilitado)

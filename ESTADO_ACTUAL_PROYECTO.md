@@ -31,7 +31,7 @@
 - **Observers:** 4 (3 vacíos eliminados en FASE 19.7)
 - **Services:** 69 (10 AI + 8 Hacienda + 44 core + 7 nuevos: Webhook, Dispatcher, Reporting, Dashboard, Export, RolPermiso, RolUsuario)
 - **Tests (archivos):** 154 (68 Unit + 79 Feature + 7 Contract) + 5 Load k6
-- **Tests (total):** ~1,622 passing, 0 failing ✅
+- **Tests (total):** ~1,622 passing, 0 failing ✅ (1 Pact verification skipped — requiere contratos consumidor)
 - **Providers:** 3 (AppServiceProvider, AuthServiceProvider, ObserverServiceProvider)
 - **Factories:** 96
 - **Seeders:** 73
@@ -40,7 +40,7 @@
 - **Exceptions:** 11 (tipadas por dominio)
 - **PHPStan:** Level 8, 0 errores ✅
 - **Rutas API:** Configuradas en routes/api.php con 16 archivos en routes/api/
-- **Swagger/OpenAPI:** 88 controllers con anotaciones PHP 8 Attributes (~91% cobertura)
+- **Swagger/OpenAPI:** 94 controllers con anotaciones PHP 8 Attributes (~97% cobertura, 94/97 funcionales)
 - **CI/CD Workflows:** 9
 - **LOC (app/):** ~93,180 | **LOC (tests/):** ~33,872
 - **CQRS:** ❌ Eliminado en v3.0.0 (era dead code — 34 archivos, 0 dispatches)
