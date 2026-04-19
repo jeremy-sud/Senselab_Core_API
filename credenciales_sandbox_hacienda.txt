@@ -1,0 +1,8 @@
+Usuario: cpf-01-0647-0958@stag.comprobanteselectronicos.go.cr                                                                    
+Pass: C|2|:$N7fIJ%?+kv+NnL                                                                                                    
+Pin: 4959
+
+Consecutivo: Facturas Electrónicas: 20000010
+Tiquetes: 20000000
+NC 20000000
+ND 20000000

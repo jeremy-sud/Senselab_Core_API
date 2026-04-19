@@ -115,3 +115,14 @@ parameters:
 
         # Unused traits (reserved for future use / optional installation)
         - identifier: trait.unused
+
+        # DeliverWebhookJob false positives: ShouldQueue private methods called from handle()
+        # PHPStan can't trace that handle() is invoked by Laravel's queue system
+        -
+            message: '#Method App\\Jobs\\DeliverWebhookJob::\w+\(\) is unused\.#'
+            identifier: method.unused
+            path: app/Jobs/DeliverWebhookJob.php
+        -
+            message: '#Unreachable statement - code above always terminates\.#'
+            identifier: deadCode.unreachable
+            path: app/Jobs/DeliverWebhookJob.php

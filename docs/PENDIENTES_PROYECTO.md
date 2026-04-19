@@ -1,7 +1,7 @@
 # PENDIENTES DEL PROYECTO — Ursol CAST API
 
-**Última actualización:** 17 de abril de 2026  
-**Versión:** v5.0.1 (Post-auditoría 13 abr 2026)  
+**Última actualización:** 18 de abril de 2026  
+**Versión:** v5.0.2 (Deuda técnica resuelta 18 abr 2026)  
 **Referencia:** [ROADMAP.md](../ROADMAP.md) | [release_checklist.md](release_checklist.md) | [Auditoría Hacienda 17 abr](hacienda/AUDITORIA_FIRMA_DIGITAL_2026-04-17.md)
 
 ---
@@ -12,10 +12,10 @@
 |-----------|-----------|-----------|
 | Bloqueante producción | 0 | ✅ Resuelto |
 | Deuda técnica Hacienda | 0 (10/10 resueltos) | ✅ Resuelto |
-| Deuda técnica general | 4 items menores | 🟡 Bajo |
+| Deuda técnica general | 2 items menores | 🟢 Bajo |
 | Fases futuras ROADMAP | 0 (100% completado) | ✅ Completado |
 
-> **Estado general:** Roadmap 100% completado (22 fases). Auditoría técnica 9.2/10. **Auditoría Hacienda 17 abr:** 10 hallazgos — **todos resueltos** (17 abr 2026). Firma digital funcional con auto-conversión .p12 legacy. `HaciendaIntegrationService` eliminado. Servicios refactorizados a Http facade con DI.
+> **Estado general:** Roadmap 100% completado (22 fases). Auditoría técnica 9.2/10. **v5.0.2 (18 abr):** 4 controllers refactorizados a service layer, 10 DTOs nuevos (73 total, ~75%), timestamps corregidos en 4 modelos, cifras ESTADO_ACTUAL sincronizadas.
 
 ---
 
@@ -58,9 +58,11 @@
 
 | ID | Descripción | Ubicación | Severidad |
 |----|-------------|-----------|-----------|
-| DT-1 | 4 modelos con timestamps `created_at/updated_at` en vez de `creado_en/actualizado_en` | ZonaGeografica, CuentaBancaria, PlanillaCcss, MovimientoBancario | 🟡 Baja |
+| ~~DT-1~~ | ~~4 modelos con timestamps `created_at/updated_at`~~ | ~~Migración + constantes CREATED_AT/UPDATED_AT añadidas~~ | ✅ Resuelto (v5.0.2) |
 | ~~DT-2~~ | ~~3 observers declarados pero vacíos~~ | ~~Eliminados en FASE 19.7~~ | ✅ Resuelto |
-| DT-3 | Dualidad naming ConsecutivoFE / ConsecutivoFe | Controllers + Resources duplicados con contratos distintos | 🟡 Baja |
+| ~~DT-3~~ | ~~Dualidad naming ConsecutivoFE / ConsecutivoFe~~ | ~~Ya resuelto en código~~ | ✅ Resuelto (v5.0.2) |
+| ~~DT-CTRL~~ | ~~4 controllers bypasean service layer~~ | ~~RolPermiso, RolUsuario, ComplianceDashboard, ComprobanteElectronico refactorizados~~ | ✅ Resuelto (v5.0.2) |
+| ~~DT-DTO~~ | ~~Cobertura DTO 65%~~ | ~~+10 DTOs (63→73, ~75%): Empresa, NominaEmpleado, PlanillaCcss, ConsecutivoFe, MensajeHacienda, ComprobanteRecibido, RolPermiso, RolUsuario, Departamento, Caja~~ | ✅ Resuelto (v5.0.2) |
 | ~~DT-7~~ | ~~`shell_exec()` en HealthCheckController~~ | Ya usa `file_get_contents('/proc/uptime')` — sin `shell_exec()` en código | ✅ Resuelto (v5.0.1) |
 | ~~DT-8~~ | ~~Placeholders en MetricsController~~ | Cache hit rate ahora usa Redis INFO stats reales | ✅ Resuelto (v5.0.1) |
 | ~~DT-9~~ | ~~Imports a modelos inexistentes~~ | Import `App\Models\Comprobante` eliminado de HaciendaIntegrationTest | ✅ Resuelto (v5.0.1) |

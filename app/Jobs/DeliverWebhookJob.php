@@ -59,6 +59,7 @@ class DeliverWebhookJob implements ShouldQueue
 
     public function handle(): void
     {
+        /** @var Webhook|null $webhook */
         $webhook = Webhook::withoutGlobalScopes()->find($this->webhookId);
 
         if (!$webhook || !$webhook->activo || $webhook->eliminado) {
