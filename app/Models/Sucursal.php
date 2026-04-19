@@ -37,6 +37,7 @@ class Sucursal extends Model
         'direccion',
         'telefono',
         'email',
+        'es_principal',
         'activo',
         'eliminado',
     ];
@@ -47,6 +48,7 @@ class Sucursal extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'es_principal' => 'boolean',
         'activo' => 'boolean',
         'eliminado' => 'boolean',
         'creado_en' => 'datetime',

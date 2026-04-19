@@ -3,27 +3,27 @@
 **Fecha de creación:** 6 de marzo 2026  
 **Basado en:** Auditoría profunda del código fuente (no solo documentación)  
 **Última auditoría técnica:** 13 de abril 2026 (puntuación global: 9.2/10)  
-**Versión actual:** v5.0.1 (Post-auditoría — Roadmap 100% completado)
+**Versión actual:** v5.0.2 (Deuda técnica + Service Layer — 18 abr 2026)
 **Última FASE completada:** FASE 22 — Escalabilidad (Read Replicas, Horizon, ETags, OpenTelemetry)
 ---
 
-## Estado Verificado del Proyecto (conteos reales del código — 13 abr 2026)
+## Estado Verificado del Proyecto (conteos reales del código — 19 abr 2026)
 
 | Métrica | Valor Anterior | **Valor Actual** | Nota |
 |---|---|---|---|
-| Controllers | 91 | **95** | Excluye `Controller.php` base |
+| Controllers | 91 | **97** | Excluye `Controller.php` base |
 | Modelos Eloquent | 95 | **98** | 87 base + 8 Hacienda v4.4 + 3 nuevos |
-| Servicios | 40 → 62 | **67** | 10 AI + 8 Hacienda + 44 core + 5 nuevos |
+| Servicios | 40 → 62 | **69** | 10 AI + 8 Hacienda + 44 core + 7 nuevos |
 | CQRS archivos | 34 | **0** | ✅ Eliminados en FASE 13 (dead code) |
 | Test files | 141 | **154** | 68 Unit + 79 Feature + 7 Contract + 5 k6 |
-| Tests totales | 1261 | **~1,270+** | passing, 0 failing |
-| Migraciones | 100 | **103** | +2 Hacienda v4.4 + 1 escalabilidad |
+| Tests totales | 1261 | **~1,622** | passing, 0 failing |
+| Migraciones | 100 | **106** | +2 Hacienda v4.4 + 1 escalabilidad + 2 DT + 1 sucursales |
 | Factories | 93 | **96** | +3 nuevos (Webhook, WebhookLog, ReporteProgramado) |
-| DTOs | 60 | **63** | Cobertura ~65% |
+| DTOs | 60 | **73** | Cobertura ~75% |
 | FormRequests | 170 | **175** | Validación completa |
 | Resources | 79 | **81** | Transformación JSON |
 | PHPStan | Level 8, 0 errores | ✅ | Baseline vacío |
-| Swagger/OA | 81 (87%) | **86 (~90.5%)** | +3 reporting + 2 dashboard |
+| Swagger/OA | 81 (87%) | **94 (~97%)** | +3 reporting + 2 dashboard + 3 controllers |
 | Providers | 3 | **3** | CQRSServiceProvider eliminado en FASE 13 |
 
 ### Discrepancias Críticas Detectadas
@@ -46,7 +46,7 @@
 13. ~~🟠 **Campos financieros `float` en lugar de `decimal`**~~ — ✅ **VERIFICADO en FASE 18.5:** Todas las migraciones ya usan `decimal()` para campos monetarios. 0 campos `float`/`double` en columnas financieras.
 14. ~~🟠 **Cache sin prefijo de tenant**~~ — ✅ **RESUELTO en FASE 14.5:** Tags de cache incluyen `empresa_{id}` en `HasCacheableQueries` y `ProductoObserver`.
 15. ~~🟠 **`$e->getMessage()` expuesto en respuestas**~~ — ✅ **RESUELTO en FASE 14.5:** Protegido con `config('app.debug')` en controladores y servicios AI.
-16. 🟡 **4 modelos con timestamps inconsistentes** — `ZonaGeografica`, `CuentaBancaria`, `PlanillaCcss`, `MovimientoBancario` usan `created_at`/`updated_at` en lugar de `creado_en`/`actualizado_en` (alineados con sus migraciones, funcional pero inconsistente con convención del proyecto).
+16. ~~🟡 **4 modelos con timestamps inconsistentes**~~ — ✅ **RESUELTO en v5.0.2:** Migración `2026_04_18_000000_rename_timestamps_to_spanish_in_four_tables.php` renombra columnas a `creado_en`/`actualizado_en` en `ZonaGeografica`, `CuentaBancaria`, `PlanillaCcss`, `MovimientoBancario`.
 17. ~~🟡 **3 Observers vacíos**~~ — ✅ **RESUELTO en FASE 19.7:** `AsientoContableObserver`, `ClienteObserver`, `VentaObserver` eliminados y desregistrados del `ObserverServiceProvider`.
 18. ~~🟡 **Factories faltantes**~~ — ✅ **RESUELTO en FASE 19.7:** `DataRetentionPolicyFactory` y `GdprDeletionRequestFactory` creadas.
 19. ~~🟡 **Sin regex para formatos específicos**~~ — ✅ **RESUELTO en FASE 15:** `CrTelefono`, `CrIdentificacion` Rules.
