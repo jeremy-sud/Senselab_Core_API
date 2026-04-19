@@ -43,7 +43,6 @@ class TracingMiddleware
     private const string HEADER_SPAN_ID = 'X-Span-Id';
     private const string HEADER_PARENT_SPAN_ID = 'X-Parent-Span-Id';
     private const string HEADER_RESPONSE_TIME = 'X-Response-Time';
-    private const string HEADER_SAMPLED = 'X-Trace-Sampled';
 
     /**
      * Handle an incoming request.
