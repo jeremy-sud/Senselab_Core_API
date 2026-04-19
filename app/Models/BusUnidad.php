@@ -127,6 +127,6 @@ class BusUnidad extends Model
      */
     public function horariosRuta(): HasMany
     {
-        return $this->hasMany(HorarioRuta::class, 'bus_unidad_id');
+        return $this->hasMany(HorarioRuta::class, 'bus_id');
     }
 }

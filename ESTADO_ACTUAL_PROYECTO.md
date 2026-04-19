@@ -22,7 +22,7 @@
 - **Controladores implementados:** 97 (excluyendo Controller.php base)
 - **Policies RBAC:** 81 ✅ (registradas en AuthServiceProvider dedicado)
 - **Modelos Eloquent:** 98 (87 base + 8 Hacienda v4.4 + 3 nuevos: Webhook, WebhookLog, ReporteProgramado)
-- **Migraciones:** 105
+- **Migraciones:** 106
 - **FormRequests:** 175 (validación completa)
 - **API Resources:** 81 (transformación JSON)
 - **DTOs:** 73 (~75% cobertura)

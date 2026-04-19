@@ -15,33 +15,19 @@ class BusUnidadFactory extends Factory
     {
         return [
             'empresa_id' => Empresa::factory(),
-            'modelo_bus_id' => ModeloBus::factory(),
             'placa' => strtoupper($this->faker->unique()->bothify('???-####')),
-            'numero_unidad' => $this->faker->unique()->numberBetween(1, 500),
-            'capacidad_pasajeros' => $this->faker->numberBetween(20, 60),
-            'year_fabricacion' => $this->faker->numberBetween(2010, 2024),
-            'color' => $this->faker->safeColorName(),
-            'numero_chasis' => strtoupper($this->faker->unique()->bothify('??########')),
-            'numero_motor' => strtoupper($this->faker->unique()->bothify('??########')),
-            'estado' => $this->faker->randomElement(['disponible', 'en_ruta', 'mantenimiento', 'fuera_servicio']),
-            'kilometraje' => $this->faker->numberBetween(10000, 500000),
-            'ultima_revision' => $this->faker->optional()->dateTimeBetween('-6 months', 'now'),
-            'proxima_revision' => $this->faker->optional()->dateTimeBetween('now', '+6 months'),
-            'observaciones' => $this->faker->optional()->sentence(),
+            'modelo_id' => ModeloBus::factory(),
+            'capacidad_asientos' => $this->faker->numberBetween(20, 60),
+            'identificador_interno' => $this->faker->optional()->numerify('FL-###'),
+            'activo' => true,
+            'eliminado' => false,
         ];
     }
 
-    public function disponible(): static
+    public function inactivo(): static
     {
         return $this->state(fn (array $attributes) => [
-            'estado' => 'disponible',
-        ]);
-    }
-
-    public function enRuta(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'estado' => 'en_ruta',
+            'activo' => false,
         ]);
     }
 }

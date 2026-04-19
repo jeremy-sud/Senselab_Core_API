@@ -15,7 +15,6 @@ class SucursalFactory extends Factory
         return [
             'empresa_id' => Empresa::factory(),
             'nombre' => 'Sucursal ' . $this->faker->city(),
-            'codigo' => $this->faker->unique()->numerify('SUC-###'),
             'direccion' => $this->faker->address(),
             'telefono' => $this->faker->phoneNumber(),
             'email' => $this->faker->companyEmail(),
