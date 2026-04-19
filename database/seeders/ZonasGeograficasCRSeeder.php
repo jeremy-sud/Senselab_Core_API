@@ -23,8 +23,8 @@ class ZonasGeograficasCRSeeder extends Seeder
                 'vendedor_asignado_id' => null,
                 'activa' => true,
                 'eliminado' => false,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'creado_en' => now(),
+                'actualizado_en' => now(),
             ],
             [
                 'empresa_id' => null,
@@ -36,8 +36,8 @@ class ZonasGeograficasCRSeeder extends Seeder
                 'vendedor_asignado_id' => null,
                 'activa' => true,
                 'eliminado' => false,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'creado_en' => now(),
+                'actualizado_en' => now(),
             ],
             [
                 'empresa_id' => null,
@@ -49,8 +49,8 @@ class ZonasGeograficasCRSeeder extends Seeder
                 'vendedor_asignado_id' => null,
                 'activa' => true,
                 'eliminado' => false,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'creado_en' => now(),
+                'actualizado_en' => now(),
             ],
             [
                 'empresa_id' => null,
@@ -62,8 +62,8 @@ class ZonasGeograficasCRSeeder extends Seeder
                 'vendedor_asignado_id' => null,
                 'activa' => true,
                 'eliminado' => false,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'creado_en' => now(),
+                'actualizado_en' => now(),
             ],
             [
                 'empresa_id' => null,
@@ -75,8 +75,8 @@ class ZonasGeograficasCRSeeder extends Seeder
                 'vendedor_asignado_id' => null,
                 'activa' => true,
                 'eliminado' => false,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'creado_en' => now(),
+                'actualizado_en' => now(),
             ],
             [
                 'empresa_id' => null,
@@ -88,8 +88,8 @@ class ZonasGeograficasCRSeeder extends Seeder
                 'vendedor_asignado_id' => null,
                 'activa' => true,
                 'eliminado' => false,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'creado_en' => now(),
+                'actualizado_en' => now(),
             ],
             [
                 'empresa_id' => null,
@@ -101,8 +101,8 @@ class ZonasGeograficasCRSeeder extends Seeder
                 'vendedor_asignado_id' => null,
                 'activa' => true,
                 'eliminado' => false,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'creado_en' => now(),
+                'actualizado_en' => now(),
             ],
         ];
 

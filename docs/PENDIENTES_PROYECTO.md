@@ -12,10 +12,10 @@
 |-----------|-----------|-----------|
 | Bloqueante producción | 0 | ✅ Resuelto |
 | Deuda técnica Hacienda | 0 (10/10 resueltos) | ✅ Resuelto |
-| Deuda técnica general | 2 items menores | 🟢 Bajo |
+| Deuda técnica general | 0 | ✅ Completado |
 | Fases futuras ROADMAP | 0 (100% completado) | ✅ Completado |
 
-> **Estado general:** Roadmap 100% completado (22 fases). Auditoría técnica 9.2/10. **v5.0.2 (18 abr):** 4 controllers refactorizados a service layer, 10 DTOs nuevos (73 total, ~75%), timestamps corregidos en 4 modelos, cifras ESTADO_ACTUAL sincronizadas.
+> **Estado general:** Roadmap 100% completado (22 fases). Auditoría técnica 9.2/10. Deuda técnica 100% resuelta. **v5.0.2 (18 abr):** 4 controllers refactorizados a service layer, 10 DTOs nuevos (73 total, ~75%), timestamps corregidos, N+1 prevention, tenant_id en logs, cifras sincronizadas.
 
 ---
 
@@ -66,8 +66,8 @@
 | ~~DT-7~~ | ~~`shell_exec()` en HealthCheckController~~ | Ya usa `file_get_contents('/proc/uptime')` — sin `shell_exec()` en código | ✅ Resuelto (v5.0.1) |
 | ~~DT-8~~ | ~~Placeholders en MetricsController~~ | Cache hit rate ahora usa Redis INFO stats reales | ✅ Resuelto (v5.0.1) |
 | ~~DT-9~~ | ~~Imports a modelos inexistentes~~ | Import `App\Models\Comprobante` eliminado de HaciendaIntegrationTest | ✅ Resuelto (v5.0.1) |
-| DT-10 | Tests detección N+1 automáticos | Futuro | 🟢 Baja |
-| DT-11 | `tenant_id` automático en logs | Futuro | 🟢 Baja |
+| ~~DT-10~~ | ~~Tests detección N+1 automáticos~~ | ~~`Model::preventLazyLoading()` + handler a canal `performance`~~ | ✅ Resuelto (v5.0.2) |
+| ~~DT-11~~ | ~~`tenant_id` automático en logs~~ | ~~`Log::shareContext()` con `tenant_id` desde header en TracingMiddleware~~ | ✅ Resuelto (v5.0.2) |
 
 ---
 

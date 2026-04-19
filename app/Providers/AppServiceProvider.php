@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
@@ -37,6 +39,24 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureRateLimiting();
         $this->registerWebhookEvents();
+        $this->configureStrictness();
+    }
+
+    /**
+     * Configure model strictness (N+1 detection).
+     * DT-10: Previene lazy loading en entornos no productivos.
+     */
+    protected function configureStrictness(): void
+    {
+        Model::preventLazyLoading(! $this->app->isProduction());
+
+        Model::handleLazyLoadingViolationUsing(function (Model $model, string $relation): void {
+            Log::channel('performance')->warning('N+1 lazy loading detected', [
+                'model' => $model::class,
+                'relation' => $relation,
+                'trace' => debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 5),
+            ]);
+        });
     }
 
     /**
