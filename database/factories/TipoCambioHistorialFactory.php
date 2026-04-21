@@ -12,11 +12,12 @@ class TipoCambioHistorialFactory extends Factory
     public function definition(): array
     {
         return [
-            'moneda' => $this->faker->randomElement(['USD', 'EUR']),
-            'fecha' => $this->faker->dateTimeThisMonth(),
-            'compra' => $this->faker->randomFloat(2, 500, 600),
-            'venta' => $this->faker->randomFloat(2, 510, 610),
-            'fuente' => $this->faker->randomElement(['BCCR', 'Manual']),
+            'fecha' => $this->faker->dateTimeBetween('-1 year', 'now'),
+            'moneda_origen' => 'USD',
+            'moneda_destino' => 'CRC',
+            'tasa_compra' => $this->faker->randomFloat(5, 500, 600),
+            'tasa_venta' => $this->faker->randomFloat(5, 510, 620),
+            'fuente' => $this->faker->randomElement(['BCCR', 'manual']),
         ];
     }
 }

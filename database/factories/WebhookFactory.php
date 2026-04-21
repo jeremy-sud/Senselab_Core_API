@@ -15,7 +15,7 @@ class WebhookFactory extends Factory
     {
         return [
             'empresa_id' => Empresa::factory(),
-            'nombre' => $this->faker->words(3, true) . ' webhook',
+            'nombre' => implode(' ', $this->faker->words(3)) . ' webhook',
             'url' => 'https://' . $this->faker->domainName() . '/webhook',
             'eventos' => $this->faker->randomElements(
                 Webhook::EVENTOS_DISPONIBLES,

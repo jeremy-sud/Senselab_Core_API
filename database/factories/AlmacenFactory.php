@@ -17,7 +17,7 @@ class AlmacenFactory extends Factory
             'empresa_id' => Empresa::factory(),
             'sucursal_id' => Sucursal::factory(),
             'codigo' => strtoupper($this->faker->unique()->lexify('ALM-???')),
-            'nombre' => $this->faker->words(3, true) . ' Almacén',
+            'nombre' => implode(' ', $this->faker->words(3)) . ' Almacén',
             'descripcion' => $this->faker->optional()->sentence(),
             'ubicacion' => $this->faker->optional()->address(),
             'es_principal' => $this->faker->boolean(20),

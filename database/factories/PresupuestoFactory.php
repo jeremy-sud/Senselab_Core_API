@@ -15,7 +15,7 @@ class PresupuestoFactory extends Factory
 
         return [
             'empresa_id' => \App\Models\Empresa::factory(),
-            'nombre' => 'Presupuesto ' . $this->faker->words(2, true),
+            'nombre' => 'Presupuesto ' . implode(' ', $this->faker->words(2)),
             'periodo_inicio' => $inicio,
             'periodo_fin' => $this->faker->dateTimeBetween($inicio, '+6 months'),
             'estado' => $this->faker->randomElement(['Borrador', 'Activo', 'Finalizado']),

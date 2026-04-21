@@ -12,16 +12,13 @@ class SesionUsuarioFactory extends Factory
 
     public function definition(): array
     {
-        $inicio = $this->faker->dateTimeThisMonth();
-        
         return [
             'usuario_id' => Usuario::factory(),
-            'token' => $this->faker->sha256(),
-            'ip' => $this->faker->ipv4(),
+            'token_hash' => hash('sha256', $this->faker->uuid()),
+            'ip_address' => $this->faker->ipv4(),
             'user_agent' => $this->faker->userAgent(),
-            'fecha_inicio' => $inicio,
-            'fecha_fin' => $this->faker->optional()->dateTimeBetween($inicio, '+8 hours'),
-            'activa' => $this->faker->boolean(70),
+            'ultimo_acceso' => now(),
+            'activo' => true,
         ];
     }
 }

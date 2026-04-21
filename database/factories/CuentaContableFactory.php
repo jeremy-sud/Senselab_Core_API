@@ -15,30 +15,15 @@ class CuentaContableFactory extends Factory
     {
         return [
             'empresa_id' => Empresa::factory(),
+            'nombre' => $this->faker->unique()->words(3, true),
+            'descripcion' => $this->faker->optional()->sentence(),
+            'codigo' => $this->faker->unique()->numerify('#.##.##.###'),
             'tipo_cuenta_id' => TipoCuenta::factory(),
             'cuenta_padre_id' => null,
-            'codigo' => $this->faker->unique()->numerify('####-##-##'),
-            'nombre' => $this->faker->words(3, true),
-            'descripcion' => $this->faker->optional()->sentence(),
-            'nivel' => $this->faker->numberBetween(1, 5),
-            'naturaleza' => $this->faker->randomElement(['deudora', 'acreedora']),
-            'acepta_movimientos' => $this->faker->boolean(80),
-            'saldo_actual' => $this->faker->randomFloat(2, -100000, 100000),
-            'activo' => $this->faker->boolean(95),
+            'permite_movimientos' => true,
+            'saldo_actual' => 0,
+            'activo' => true,
+            'eliminado' => false,
         ];
-    }
-
-    public function deudora(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'naturaleza' => 'deudora',
-        ]);
-    }
-
-    public function acreedora(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'naturaleza' => 'acreedora',
-        ]);
     }
 }

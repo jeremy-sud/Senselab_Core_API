@@ -123,6 +123,19 @@ class InventarioProductoController extends Controller
         );
     }
 
+    #[OA\Delete(
+        path: '/api/inventario-producto/{id}',
+        summary: 'Eliminar inventario de producto',
+        security: [['sanctum' => []]],
+        tags: ['Inventario de Productos'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Eliminado exitosamente'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
     public function destroy(InventarioProducto $inventarioProducto): JsonResponse
     {
         $inventarioProducto->update(['eliminado' => 1, 'activo' => 0]);
@@ -130,6 +143,19 @@ class InventarioProductoController extends Controller
         return $this->deletedResponse('Inventario de producto eliminado exitosamente');
     }
 
+    #[OA\Get(
+        path: '/api/inventario-producto/almacen/{almacenId}',
+        summary: 'Inventario por almacén',
+        security: [['sanctum' => []]],
+        tags: ['Inventario de Productos'],
+        parameters: [
+            new OA\Parameter(name: 'almacenId', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 404, description: 'Almacén no encontrado'),
+        ]
+    )]
     public function porAlmacen(int $almacenId): JsonResponse
     {
         $empresaId = $this->getEmpresaId();
@@ -144,6 +170,15 @@ class InventarioProductoController extends Controller
         return $this->successResponse(InventarioProductoResource::collection($inventarios));
     }
 
+    #[OA\Get(
+        path: '/api/inventario-producto/bajo-stock-minimo',
+        summary: 'Productos bajo stock mínimo',
+        security: [['sanctum' => []]],
+        tags: ['Inventario de Productos'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+        ]
+    )]
     public function bajoStockMinimo(): JsonResponse
     {
         $empresaId = $this->getEmpresaId();
@@ -158,6 +193,15 @@ class InventarioProductoController extends Controller
         return $this->successResponse(InventarioProductoResource::collection($inventarios));
     }
 
+    #[OA\Get(
+        path: '/api/inventario-producto/sobre-stock-maximo',
+        summary: 'Productos sobre stock máximo',
+        security: [['sanctum' => []]],
+        tags: ['Inventario de Productos'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+        ]
+    )]
     public function sobreStockMaximo(): JsonResponse
     {
         $empresaId = $this->getEmpresaId();
@@ -172,6 +216,15 @@ class InventarioProductoController extends Controller
         return $this->successResponse(InventarioProductoResource::collection($inventarios));
     }
 
+    #[OA\Get(
+        path: '/api/inventario-producto/resumen-por-almacen',
+        summary: 'Resumen de inventario agrupado por almacén',
+        security: [['sanctum' => []]],
+        tags: ['Inventario de Productos'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+        ]
+    )]
     public function resumenPorAlmacen(): JsonResponse
     {
         $empresaId = $this->getEmpresaId();

@@ -12,11 +12,11 @@ class TipoCuentaFactory extends Factory
     public function definition(): array
     {
         return [
-            'codigo' => $this->faker->unique()->numerify('##'),
-            'nombre' => $this->faker->randomElement(['Activo', 'Pasivo', 'Patrimonio', 'Ingreso', 'Gasto']),
+            'nombre' => $this->faker->unique()->randomElement(['Activo', 'Pasivo', 'Capital', 'Ingreso', 'Gasto']),
             'descripcion' => $this->faker->optional()->sentence(),
-            'naturaleza' => $this->faker->randomElement(['deudora', 'acreedora']),
-            'activo' => $this->faker->boolean(90),
+            'naturaleza' => $this->faker->randomElement(['Deudora', 'Acreedora']),
+            'activo' => true,
+            'eliminado' => false,
         ];
     }
 }

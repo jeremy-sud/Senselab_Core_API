@@ -3,8 +3,10 @@
 namespace Database\Factories;
 
 use App\Models\PagoNomina;
-use App\Models\NominaEmpleado;
-use App\Models\Pago;
+use App\Models\Empresa;
+use App\Models\Empleado;
+use App\Models\PeriodoNomina;
+use App\Models\FormaPago;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PagoNominaFactory extends Factory
@@ -13,12 +15,23 @@ class PagoNominaFactory extends Factory
 
     public function definition(): array
     {
+        $bruto = $this->faker->randomFloat(2, 350000, 3000000);
+        $deducciones = $bruto * 0.15;
+
         return [
-            'nomina_empleado_id' => NominaEmpleado::factory(),
-            'pago_id' => Pago::factory(),
-            'monto_pagado' => $this->faker->randomFloat(2, 100000, 1500000),
-            'fecha_pago' => $this->faker->dateTimeThisMonth(),
+            'empresa_id' => Empresa::factory(),
+            'empleado_id' => Empleado::factory(),
+            'periodo_nomina_id' => PeriodoNomina::factory(),
+            'fecha_pago' => $this->faker->dateTimeBetween('-1 month', 'now'),
+            'monto_bruto' => $bruto,
+            'total_deducciones' => round($deducciones, 2),
+            'monto_neto_pagado' => round($bruto - $deducciones, 2),
+            'metodo_pago_id' => FormaPago::factory(),
+            'referencia_pago' => $this->faker->optional()->numerify('TRF-########'),
+            'estado' => 'pagado',
             'observaciones' => $this->faker->optional()->sentence(),
+            'activo' => true,
+            'eliminado' => false,
         ];
     }
 }

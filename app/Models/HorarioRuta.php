@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class HorarioRuta extends Model
 {
+    /** @use HasFactory<\Database\Factories\HorarioRutaFactory> */
+    use HasFactory;
     const CREATED_AT = 'creado_en';
     const UPDATED_AT = 'actualizado_en';
 

@@ -26464,6 +26464,68 @@
             }
         },
         "/api/entidad-etiqueta/{id}": {
+            "get": {
+                "tags": [
+                    "Entidad-Etiqueta"
+                ],
+                "summary": "Obtener relación entidad-etiqueta",
+                "description": "Display the specified resource.",
+                "operationId": "6a11c6266c2befd45de1e29ef1acce3d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Entidad-Etiqueta"
+                ],
+                "summary": "Actualizar relación entidad-etiqueta",
+                "description": "Update the specified resource in storage.",
+                "operationId": "eb92b1cd106519721ae920a25a8511db",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
             "delete": {
                 "tags": [
                     "Entidad-Etiqueta"
@@ -26487,6 +26549,125 @@
                     },
                     "404": {
                         "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/entidad-etiqueta/asignar-multiples": {
+            "post": {
+                "tags": [
+                    "Entidad-Etiqueta"
+                ],
+                "summary": "Asignar múltiples etiquetas a una entidad",
+                "description": "Asignar múltiples etiquetas a una entidad.",
+                "operationId": "9c30d19651ebda6476c3abf7dad8da78",
+                "responses": {
+                    "201": {
+                        "description": "Etiquetas asignadas"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/entidad-etiqueta/remover-multiples": {
+            "post": {
+                "tags": [
+                    "Entidad-Etiqueta"
+                ],
+                "summary": "Remover múltiples etiquetas de una entidad",
+                "description": "Remover múltiples etiquetas de una entidad.",
+                "operationId": "8de6a99f0f0ffd0191c264a188e0ac72",
+                "responses": {
+                    "200": {
+                        "description": "Etiquetas removidas"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/entidad-etiqueta/por-entidad": {
+            "get": {
+                "tags": [
+                    "Entidad-Etiqueta"
+                ],
+                "summary": "Obtener etiquetas de una entidad por tipo",
+                "description": "Obtener todas las etiquetas de una entidad.",
+                "operationId": "fe1d31397965e1fb84a771a3cd9b2ad1",
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/entidad-etiqueta/por-etiqueta/{etiquetaId}": {
+            "get": {
+                "tags": [
+                    "Entidad-Etiqueta"
+                ],
+                "summary": "Obtener entidades de una etiqueta",
+                "description": "Obtener todas las entidades de una etiqueta.",
+                "operationId": "7ff1e2469fd371570a53d9174a92e8fd",
+                "parameters": [
+                    {
+                        "name": "etiquetaId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/entidad-etiqueta/sincronizar": {
+            "post": {
+                "tags": [
+                    "Entidad-Etiqueta"
+                ],
+                "summary": "Sincronizar etiquetas de una entidad",
+                "description": "Sincronizar etiquetas de una entidad (reemplaza todas las existentes).",
+                "operationId": "16765a6d6cea4a3b1b23d5a78f2ea521",
+                "responses": {
+                    "200": {
+                        "description": "Etiquetas sincronizadas"
+                    },
+                    "422": {
+                        "description": "Error de validación"
                     }
                 },
                 "security": [
@@ -27397,6 +27578,125 @@
                         "sanctum": []
                     }
                 ]
+            },
+            "delete": {
+                "tags": [
+                    "Inventario de Productos"
+                ],
+                "summary": "Eliminar inventario de producto",
+                "operationId": "962b060ed5905da20f8b8a9b12663393",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Eliminado exitosamente"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/inventario-producto/almacen/{almacenId}": {
+            "get": {
+                "tags": [
+                    "Inventario de Productos"
+                ],
+                "summary": "Inventario por almacén",
+                "operationId": "763081400ab338e56a131ba129092959",
+                "parameters": [
+                    {
+                        "name": "almacenId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    },
+                    "404": {
+                        "description": "Almacén no encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/inventario-producto/bajo-stock-minimo": {
+            "get": {
+                "tags": [
+                    "Inventario de Productos"
+                ],
+                "summary": "Productos bajo stock mínimo",
+                "operationId": "967d083319abe17c569121920a6906dd",
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/inventario-producto/sobre-stock-maximo": {
+            "get": {
+                "tags": [
+                    "Inventario de Productos"
+                ],
+                "summary": "Productos sobre stock máximo",
+                "operationId": "f739c3949a56e08cea13f403061860f0",
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/inventario-producto/resumen-por-almacen": {
+            "get": {
+                "tags": [
+                    "Inventario de Productos"
+                ],
+                "summary": "Resumen de inventario agrupado por almacén",
+                "operationId": "0bce155949a0bda7bdc7372e90b907a8",
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/metrics": {
@@ -27519,6 +27819,68 @@
             }
         },
         "/api/rol-permiso/{id}": {
+            "get": {
+                "tags": [
+                    "Rol-Permiso"
+                ],
+                "summary": "Obtener relación rol-permiso",
+                "description": "Display the specified resource.",
+                "operationId": "d94f47b3a79f18ed5d2a40874c7571c2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Rol-Permiso"
+                ],
+                "summary": "Actualizar relación rol-permiso",
+                "description": "Update the specified resource in storage.",
+                "operationId": "b9f3e06df428fd42188651ad2d38fc76",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
             "delete": {
                 "tags": [
                     "Rol-Permiso"
@@ -27542,6 +27904,135 @@
                     },
                     "404": {
                         "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/rol-permiso/asignar-permisos": {
+            "post": {
+                "tags": [
+                    "Rol-Permiso"
+                ],
+                "summary": "Asignar múltiples permisos a un rol",
+                "description": "Asignar múltiples permisos a un rol.",
+                "operationId": "5a7933b04aa53b555c556537a97ebd39",
+                "responses": {
+                    "201": {
+                        "description": "Permisos asignados"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/rol-permiso/remover-permisos": {
+            "post": {
+                "tags": [
+                    "Rol-Permiso"
+                ],
+                "summary": "Remover múltiples permisos de un rol",
+                "description": "Remover múltiples permisos de un rol.",
+                "operationId": "3411c968b3640b69a22eb64d5c69123e",
+                "responses": {
+                    "200": {
+                        "description": "Permisos removidos"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/rol-permiso/permisos-por-rol/{rolId}": {
+            "get": {
+                "tags": [
+                    "Rol-Permiso"
+                ],
+                "summary": "Obtener todos los permisos de un rol",
+                "description": "Obtener todos los permisos de un rol.",
+                "operationId": "41b87a5c34a33f3a80152d078fd549ee",
+                "parameters": [
+                    {
+                        "name": "rolId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/rol-permiso/roles-por-permiso/{permisoId}": {
+            "get": {
+                "tags": [
+                    "Rol-Permiso"
+                ],
+                "summary": "Obtener todos los roles que tienen un permiso",
+                "description": "Obtener todos los roles que tienen un permiso específico.",
+                "operationId": "ae10d4c2599541b760db80600b3d011c",
+                "parameters": [
+                    {
+                        "name": "permisoId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/rol-permiso/sincronizar-permisos": {
+            "post": {
+                "tags": [
+                    "Rol-Permiso"
+                ],
+                "summary": "Sincronizar permisos de un rol",
+                "description": "Sincronizar permisos de un rol (reemplaza todos los existentes).",
+                "operationId": "c65cd1a4fe45b918bb5675056c8f1bcd",
+                "responses": {
+                    "200": {
+                        "description": "Permisos sincronizados"
+                    },
+                    "422": {
+                        "description": "Error de validación"
                     }
                 },
                 "security": [

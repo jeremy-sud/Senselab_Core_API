@@ -92,6 +92,19 @@ class RolPermisoController extends Controller
     /**
      * Display the specified resource.
      */
+    #[OA\Get(
+        path: '/api/rol-permiso/{id}',
+        summary: 'Obtener relación rol-permiso',
+        security: [['sanctum' => []]],
+        tags: ['Rol-Permiso'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
     public function show(RolPermiso $rolPermiso): JsonResponse
     {
         return response()->json([
@@ -103,6 +116,19 @@ class RolPermisoController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    #[OA\Put(
+        path: '/api/rol-permiso/{id}',
+        summary: 'Actualizar relación rol-permiso',
+        security: [['sanctum' => []]],
+        tags: ['Rol-Permiso'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
     public function update(UpdateRolPermisoRequest $request, RolPermiso $rolPermiso): JsonResponse
     {
         $this->service->actualizar($rolPermiso, $request->validated());
@@ -152,6 +178,16 @@ class RolPermisoController extends Controller
     /**
      * Asignar múltiples permisos a un rol.
      */
+    #[OA\Post(
+        path: '/api/rol-permiso/asignar-permisos',
+        summary: 'Asignar múltiples permisos a un rol',
+        security: [['sanctum' => []]],
+        tags: ['Rol-Permiso'],
+        responses: [
+            new OA\Response(response: 201, description: 'Permisos asignados'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
     public function asignarPermisos(AsignarPermisosRequest $request): JsonResponse
     {
         $resultado = $this->service->asignarMultiples($request->rol_id, $request->permiso_ids);
@@ -169,6 +205,16 @@ class RolPermisoController extends Controller
     /**
      * Remover múltiples permisos de un rol.
      */
+    #[OA\Post(
+        path: '/api/rol-permiso/remover-permisos',
+        summary: 'Remover múltiples permisos de un rol',
+        security: [['sanctum' => []]],
+        tags: ['Rol-Permiso'],
+        responses: [
+            new OA\Response(response: 200, description: 'Permisos removidos'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
     public function removerPermisos(RemoverPermisosRequest $request): JsonResponse
     {
         $removidos = $this->service->removerMultiples($request->rol_id, $request->permiso_ids);
@@ -182,6 +228,18 @@ class RolPermisoController extends Controller
     /**
      * Obtener todos los permisos de un rol.
      */
+    #[OA\Get(
+        path: '/api/rol-permiso/permisos-por-rol/{rolId}',
+        summary: 'Obtener todos los permisos de un rol',
+        security: [['sanctum' => []]],
+        tags: ['Rol-Permiso'],
+        parameters: [
+            new OA\Parameter(name: 'rolId', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+        ]
+    )]
     public function permisosPorRol(int $rolId): JsonResponse
     {
         return response()->json([
@@ -193,6 +251,18 @@ class RolPermisoController extends Controller
     /**
      * Obtener todos los roles que tienen un permiso específico.
      */
+    #[OA\Get(
+        path: '/api/rol-permiso/roles-por-permiso/{permisoId}',
+        summary: 'Obtener todos los roles que tienen un permiso',
+        security: [['sanctum' => []]],
+        tags: ['Rol-Permiso'],
+        parameters: [
+            new OA\Parameter(name: 'permisoId', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+        ]
+    )]
     public function rolesPorPermiso(int $permisoId): JsonResponse
     {
         return response()->json([
@@ -204,6 +274,16 @@ class RolPermisoController extends Controller
     /**
      * Sincronizar permisos de un rol (reemplaza todos los existentes).
      */
+    #[OA\Post(
+        path: '/api/rol-permiso/sincronizar-permisos',
+        summary: 'Sincronizar permisos de un rol',
+        security: [['sanctum' => []]],
+        tags: ['Rol-Permiso'],
+        responses: [
+            new OA\Response(response: 200, description: 'Permisos sincronizados'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
     public function sincronizarPermisos(SincronizarPermisosRequest $request): JsonResponse
     {
         $nuevos = $this->service->sincronizar($request->rol_id, $request->permiso_ids);

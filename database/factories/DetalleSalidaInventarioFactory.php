@@ -14,15 +14,19 @@ class DetalleSalidaInventarioFactory extends Factory
     public function definition(): array
     {
         $cantidad = $this->faker->numberBetween(1, 50);
-        $precioUnitario = $this->faker->randomFloat(2, 100, 10000);
-        
+        $costo = $this->faker->randomFloat(2, 100, 10000);
+
         return [
             'salida_inventario_id' => SalidaInventario::factory(),
             'producto_id' => Producto::factory(),
+            'numero_linea' => $this->faker->numberBetween(1, 20),
             'cantidad' => $cantidad,
-            'precio_unitario' => $precioUnitario,
-            'subtotal' => $cantidad * $precioUnitario,
+            'costo_unitario' => $costo,
+            'total_linea' => $cantidad * $costo,
+            'lote' => $this->faker->optional()->numerify('LOT-####'),
             'observaciones' => $this->faker->optional()->sentence(),
+            'activo' => true,
+            'eliminado' => false,
         ];
     }
 }

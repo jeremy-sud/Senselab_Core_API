@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\MensajeHacienda;
-use App\Models\ComprobanteElectronicoFe;
+use App\Models\Empresa;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class MensajeHaciendaFactory extends Factory
@@ -13,15 +13,19 @@ class MensajeHaciendaFactory extends Factory
     public function definition(): array
     {
         return [
-            'comprobante_electronico_id' => ComprobanteElectronicoFe::factory(),
-            'tipo_mensaje' => $this->faker->randomElement(['aceptacion', 'rechazo', 'confirmacion']),
-            'clave' => $this->faker->numerify('##################################################'),
-            'fecha_emision' => $this->faker->dateTimeThisMonth(),
-            'mensaje' => $this->faker->randomElement(['Aceptado', 'Rechazado', 'Confirmado']),
+            'empresa_id' => Empresa::factory(),
+            'comprobante_id' => null,
+            'clave_numerica' => $this->faker->numerify(str_repeat('#', 50)),
+            'tipo_mensaje' => $this->faker->randomElement(['confirmacion', 'rechazo', 'aceptacion_parcial']),
+            'codigo_respuesta' => $this->faker->randomElement(['1', '2', '3']),
             'detalle_mensaje' => $this->faker->optional()->sentence(),
-            'codigo_actividad' => $this->faker->optional()->numerify('######'),
-            'xml_mensaje' => $this->faker->optional()->text(200),
-            'estado' => $this->faker->randomElement(['enviado', 'procesado', 'error']),
+            'xml_respuesta' => '<xml>respuesta</xml>',
+            'fecha_emision' => now(),
+            'fecha_procesamiento' => now(),
+            'estado' => $this->faker->randomElement(['pendiente', 'procesado', 'error']),
+            'intentos_envio' => 0,
+            'ultimo_error' => null,
+            'eliminado' => false,
         ];
     }
 }

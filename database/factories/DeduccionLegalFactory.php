@@ -12,14 +12,16 @@ class DeduccionLegalFactory extends Factory
     public function definition(): array
     {
         return [
-            'codigo' => strtoupper($this->faker->unique()->lexify('DED-???')),
-            'nombre' => $this->faker->words(3, true),
+            'codigo' => $this->faker->unique()->numerify('DED-###'),
+            'nombre' => $this->faker->unique()->words(3, true),
             'descripcion' => $this->faker->optional()->sentence(),
-            'tipo' => $this->faker->randomElement(['porcentaje', 'monto_fijo']),
-            'valor' => $this->faker->randomFloat(2, 0, 10),
-            'aplica_empleador' => $this->faker->boolean(50),
-            'aplica_empleado' => $this->faker->boolean(80),
-            'activo' => $this->faker->boolean(90),
+            'tipo' => $this->faker->randomElement(['patronal', 'obrera']),
+            'porcentaje_base' => $this->faker->randomFloat(2, 0.5, 15),
+            'monto_fijo' => 0,
+            'aplica_sobre' => $this->faker->randomElement(['salario_bruto', 'salario_neto']),
+            'es_obligatoria' => true,
+            'activa' => true,
+            'eliminado' => false,
         ];
     }
 }

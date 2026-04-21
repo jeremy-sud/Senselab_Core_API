@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\Etiqueta;
+use App\Models\Empresa;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 class EtiquetaFactory extends Factory
 {
@@ -13,11 +13,11 @@ class EtiquetaFactory extends Factory
     public function definition(): array
     {
         return [
+            'empresa_id' => Empresa::factory(),
             'nombre' => $this->faker->unique()->word(),
-            'slug' => fn (array $attributes) => Str::slug($attributes['nombre']),
-            'color' => $this->faker->hexColor(),
-            'descripcion' => $this->faker->optional()->sentence(),
-            'icono' => $this->faker->optional()->randomElement(['tag', 'star', 'flag', 'bookmark']),
+            'color_hex' => $this->faker->hexColor(),
+            'activo' => true,
+            'eliminado' => false,
         ];
     }
 }

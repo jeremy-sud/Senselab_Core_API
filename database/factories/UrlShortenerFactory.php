@@ -3,9 +3,9 @@
 namespace Database\Factories;
 
 use App\Models\UrlShortener;
+use App\Models\Empresa;
 use App\Models\Usuario;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 class UrlShortenerFactory extends Factory
 {
@@ -14,14 +14,16 @@ class UrlShortenerFactory extends Factory
     public function definition(): array
     {
         return [
+            'empresa_id' => Empresa::factory(),
+            'usuario_id' => Usuario::factory(),
             'url_original' => $this->faker->url(),
-            'codigo_corto' => Str::random(6),
-            'usuario_id' => Usuario::factory()->optional(),
-            'titulo' => $this->faker->optional()->sentence(3),
+            'url_corta' => config('app.url') . '/' . $this->faker->unique()->regexify('[a-zA-Z0-9]{6}'),
+            'slug' => $this->faker->unique()->regexify('[a-zA-Z0-9]{6}'),
+            'clicks' => 0,
             'descripcion' => $this->faker->optional()->sentence(),
-            'clicks' => $this->faker->numberBetween(0, 1000),
-            'fecha_expiracion' => $this->faker->optional()->dateTimeBetween('now', '+1 year'),
-            'activo' => $this->faker->boolean(90),
+            'expira_en' => $this->faker->optional()->dateTimeBetween('+1 month', '+1 year'),
+            'activo' => true,
+            'eliminado' => false,
         ];
     }
 }

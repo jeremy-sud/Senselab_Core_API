@@ -12,10 +12,12 @@ class TipoImpuestoFactory extends Factory
     public function definition(): array
     {
         return [
-            'codigo' => $this->faker->unique()->numerify('##'),
-            'nombre' => $this->faker->randomElement(['IVA', 'Exento', 'Reducido', 'Especial']),
+            'codigo_hacienda' => $this->faker->unique()->numerify('##'),
+            'nombre' => $this->faker->unique()->words(2, true),
             'descripcion' => $this->faker->optional()->sentence(),
-            'activo' => $this->faker->boolean(90),
+            'comentario' => $this->faker->optional()->sentence(),
+            'activo' => true,
+            'eliminado' => false,
         ];
     }
 }

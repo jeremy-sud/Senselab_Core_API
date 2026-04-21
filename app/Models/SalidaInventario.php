@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
@@ -14,7 +15,8 @@ use App\Traits\HasActiveScope;
  */
 class SalidaInventario extends Model
 {
-    use BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
+    /** @use HasFactory<\Database\Factories\SalidaInventarioFactory> */
+    use HasFactory, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
     /**
      * Tabla asociada al modelo.
      *

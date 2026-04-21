@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Archivo;
+use App\Models\Empresa;
 use App\Models\Usuario;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -12,20 +13,21 @@ class ArchivoFactory extends Factory
 
     public function definition(): array
     {
-        $extension = $this->faker->randomElement(['pdf', 'jpg', 'png', 'docx', 'xlsx']);
-        $tamano = $this->faker->numberBetween(1024, 10485760); // 1KB - 10MB
-        
         return [
-            'nombre_original' => $this->faker->word() . '.' . $extension,
-            'nombre_almacenado' => $this->faker->uuid() . '.' . $extension,
-            'ruta' => 'uploads/' . date('Y/m/'),
-            'extension' => $extension,
-            'mime_type' => $this->faker->mimeType(),
-            'tamano' => $tamano,
-            'entidad_tipo' => $this->faker->randomElement(['App\\Models\\Cliente', 'App\\Models\\Producto', 'App\\Models\\Venta']),
-            'entidad_id' => $this->faker->numberBetween(1, 100),
+            'empresa_id' => Empresa::factory(),
             'usuario_id' => Usuario::factory(),
-            'descripcion' => $this->faker->optional()->sentence(),
+            'entidad_tipo' => $this->faker->randomElement(['venta', 'compra', 'gasto']),
+            'entidad_id' => $this->faker->randomNumber(5),
+            'nombre_original' => $this->faker->word() . '.pdf',
+            'nombre_almacenado' => $this->faker->uuid() . '.pdf',
+            'ruta' => 'archivos/' . $this->faker->uuid() . '.pdf',
+            'tipo_mime' => 'application/pdf',
+            'extension' => 'pdf',
+            'tamano_bytes' => $this->faker->numberBetween(1024, 10485760),
+            'categoria' => $this->faker->randomElement(['factura', 'contrato', 'reporte']),
+            'hash_sha256' => hash('sha256', $this->faker->uuid()),
+            'activo' => true,
+            'eliminado' => false,
         ];
     }
 }

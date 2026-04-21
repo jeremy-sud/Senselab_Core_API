@@ -12,11 +12,7 @@ class ModeloBusFactory extends Factory
     public function definition(): array
     {
         return [
-            'marca' => $this->faker->randomElement(['Mercedes-Benz', 'Volvo', 'Scania', 'MAN', 'Hyundai']),
-            'modelo' => $this->faker->bothify('??-####'),
-            'capacidad' => $this->faker->numberBetween(20, 60),
-            'tipo' => $this->faker->randomElement(['urbano', 'interurbano', 'escolar']),
-            'descripcion' => $this->faker->optional()->sentence(),
+            'nombre' => $this->faker->unique()->words(2, true),
         ];
     }
 }

@@ -12,10 +12,13 @@ class TipoComprobanteFeFactory extends Factory
     public function definition(): array
     {
         return [
-            'codigo' => $this->faker->unique()->numerify('##'),
-            'nombre' => $this->faker->randomElement(['Factura Electrónica', 'Nota de Crédito', 'Nota de Débito', 'Tiquete Electrónico']),
+            'codigo_dgt' => $this->faker->unique()->numerify('##'),
+            'nombre' => $this->faker->unique()->words(3, true),
             'descripcion' => $this->faker->optional()->sentence(),
-            'activo' => $this->faker->boolean(90),
+            'requiere_referencia' => false,
+            'permite_exportacion' => false,
+            'activo' => true,
+            'eliminado' => false,
         ];
     }
 }
