@@ -12,11 +12,11 @@ class FormaPagoFactory extends Factory
     public function definition(): array
     {
         return [
-            'codigo' => $this->faker->unique()->numerify('##'),
-            'nombre' => $this->faker->randomElement(['Efectivo', 'Tarjeta', 'Transferencia', 'Cheque', 'Crédito']),
+            'codigo_dgt' => $this->faker->unique()->numerify('##'),
+            'nombre' => $this->faker->unique()->words(2, true),
             'descripcion' => $this->faker->optional()->sentence(),
-            'requiere_referencia' => $this->faker->boolean(50),
-            'activo' => $this->faker->boolean(90),
+            'activo' => true,
+            'eliminado' => false,
         ];
     }
 }

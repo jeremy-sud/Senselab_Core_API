@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\RolUsuario;
-use App\Models\Rol;
 use App\Models\Usuario;
+use App\Models\Rol;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class RolUsuarioFactory extends Factory
@@ -14,11 +14,10 @@ class RolUsuarioFactory extends Factory
     public function definition(): array
     {
         return [
-            'rol_id' => Rol::factory(),
             'usuario_id' => Usuario::factory(),
-            'asignado_por' => Usuario::factory(),
-            'fecha_asignacion' => $this->faker->dateTimeThisYear(),
-            'observaciones' => $this->faker->optional()->sentence(),
+            'rol_id' => Rol::factory(),
+            'activo' => true,
+            'eliminado' => false,
         ];
     }
 }

@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\NominaEmpleado;
-use App\Models\Empleado;
 use App\Models\PeriodoNomina;
+use App\Models\Empleado;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class NominaEmpleadoFactory extends Factory
@@ -13,20 +13,31 @@ class NominaEmpleadoFactory extends Factory
 
     public function definition(): array
     {
-        $salarioBruto = $this->faker->randomFloat(2, 300000, 2000000);
-        $deducciones = $salarioBruto * 0.1067; // ~10.67% CCSS
-        
+        $salario = $this->faker->randomFloat(2, 350000, 3000000);
+        $horas = $this->faker->randomFloat(2, 0, 20);
+        $montoHoras = $horas * ($salario / 240) * 1.5;
+        $bonif = $this->faker->randomFloat(2, 0, 50000);
+        $devengado = $salario + $montoHoras + $bonif;
+        $ccss = $devengado * 0.1067;
+        $renta = $devengado > 929000 ? ($devengado - 929000) * 0.10 : 0;
+        $otras = $this->faker->randomFloat(2, 0, 10000);
+
         return [
-            'empleado_id' => Empleado::factory(),
             'periodo_nomina_id' => PeriodoNomina::factory(),
-            'salario_bruto' => $salarioBruto,
-            'horas_extra' => $this->faker->randomFloat(2, 0, 40),
-            'total_devengado' => $salarioBruto,
-            'total_deducciones' => $deducciones,
-            'salario_neto' => $salarioBruto - $deducciones,
-            'dias_laborados' => $this->faker->numberBetween(20, 30),
-            'estado' => $this->faker->randomElement(['pendiente', 'procesada', 'pagada']),
+            'empleado_id' => Empleado::factory(),
+            'salario_bruto' => $salario,
+            'horas_extras' => $horas,
+            'monto_horas_extras' => round($montoHoras, 2),
+            'bonificaciones' => $bonif,
+            'total_devengado' => round($devengado, 2),
+            'deducciones_ccss' => round($ccss, 2),
+            'deducciones_impuesto_renta' => round($renta, 2),
+            'otras_deducciones' => $otras,
+            'total_deducciones' => round($ccss + $renta + $otras, 2),
+            'salario_neto' => round($devengado - $ccss - $renta - $otras, 2),
             'observaciones' => $this->faker->optional()->sentence(),
+            'activo' => true,
+            'eliminado' => false,
         ];
     }
 }

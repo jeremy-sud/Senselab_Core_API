@@ -18,7 +18,7 @@ class CajaChicaFactory extends Factory
 
         return [
             'empresa_id' => Empresa::factory(),
-            'nombre' => 'Caja Chica ' . $this->faker->words(2, true),
+            'nombre' => 'Caja Chica ' . implode(' ', $this->faker->words(2)),
             'monto_inicial' => $montoInicial = $this->faker->randomFloat(2, 5000, 50000),
             'saldo_actual' => $this->faker->randomFloat(2, 0, $montoInicial),
             'responsable_id' => Usuario::factory(),

@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Empleado;
-use App\Models\Cargo;
 use App\Models\Empresa;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -15,27 +14,22 @@ class EmpleadoFactory extends Factory
     {
         return [
             'empresa_id' => Empresa::factory(),
-            'cargo_id' => Cargo::factory(),
+            'usuario_id' => null,
             'nombre' => $this->faker->firstName(),
-            'apellido1' => $this->faker->lastName(),
-            'apellido2' => $this->faker->lastName(),
-            'identificacion' => $this->faker->unique()->numerify('#########'),
-            'tipo_identificacion' => 'cedula_fisica',
-            'email' => $this->faker->unique()->safeEmail(),
-            'telefono' => $this->faker->numerify('####-####'),
-            'direccion' => $this->faker->address(),
-            'fecha_nacimiento' => $this->faker->date('Y-m-d', '-25 years'),
+            'primer_apellido' => $this->faker->lastName(),
+            'segundo_apellido' => $this->faker->lastName(),
+            'tipo_documento' => $this->faker->randomElement(['01', '02', '03']),
+            'numero_documento' => $this->faker->unique()->numerify('#########'),
+            'fecha_nacimiento' => $this->faker->dateTimeBetween('-60 years', '-18 years'),
             'fecha_ingreso' => $this->faker->dateTimeBetween('-5 years', 'now'),
-            'salario' => $this->faker->randomFloat(2, 300000, 2000000),
-            'estado' => $this->faker->randomElement(['activo', 'inactivo', 'vacaciones', 'incapacitado']),
-            'observaciones' => $this->faker->optional()->sentence(),
+            'cargo_id' => null,
+            'departamento_id' => null,
+            'salario' => $this->faker->randomFloat(2, 350000, 3000000),
+            'direccion' => $this->faker->address(),
+            'telefono' => $this->faker->numerify('########'),
+            'email' => $this->faker->unique()->safeEmail(),
+            'activo' => true,
+            'eliminado' => false,
         ];
-    }
-
-    public function activo(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'estado' => 'activo',
-        ]);
     }
 }

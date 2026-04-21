@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasCustomSoftDeletes;
 use App\Traits\HasAuditFields;
@@ -10,7 +11,8 @@ use App\Traits\HasActiveScope;
 
 class DetalleVenta extends Model
 {
-    use HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
+    /** @use HasFactory<\Database\Factories\DetalleVentaFactory> */
+    use HasFactory, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
     /**
      * La tabla asociada al modelo.
      *

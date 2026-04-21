@@ -13,14 +13,14 @@ class DetalleAsientoFactory extends Factory
 
     public function definition(): array
     {
-        $monto = $this->faker->randomFloat(2, 1000, 100000);
-        
         return [
             'asiento_contable_id' => AsientoContable::factory(),
             'cuenta_contable_id' => CuentaContable::factory(),
-            'tipo_movimiento' => $this->faker->randomElement(['debe', 'haber']),
-            'monto' => $monto,
-            'descripcion' => $this->faker->optional()->sentence(),
+            'debe' => $this->faker->randomFloat(2, 0, 50000),
+            'haber' => 0,
+            'descripcion' => $this->faker->sentence(),
+            'activo' => true,
+            'eliminado' => false,
         ];
     }
 }

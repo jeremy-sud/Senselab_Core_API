@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\AuditoriaActividad;
 use App\Models\Usuario;
+use App\Models\Empresa;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AuditoriaActividadFactory extends Factory
@@ -14,14 +15,14 @@ class AuditoriaActividadFactory extends Factory
     {
         return [
             'usuario_id' => Usuario::factory(),
-            'accion' => $this->faker->randomElement(['crear', 'actualizar', 'eliminar', 'ver']),
-            'entidad_tipo' => $this->faker->randomElement(['App\\Models\\Cliente', 'App\\Models\\Producto', 'App\\Models\\Venta']),
-            'entidad_id' => $this->faker->numberBetween(1, 100),
-            'datos_anteriores' => $this->faker->optional()->json(),
-            'datos_nuevos' => $this->faker->optional()->json(),
-            'ip' => $this->faker->ipv4(),
+            'empresa_id' => Empresa::factory(),
+            'accion' => $this->faker->randomElement(['crear', 'actualizar', 'eliminar']),
+            'tabla' => $this->faker->randomElement(['ventas', 'productos', 'clientes']),
+            'registro_id' => $this->faker->randomNumber(5),
+            'datos_anteriores' => ['campo' => 'valor_anterior'],
+            'datos_nuevos' => ['campo' => 'valor_nuevo'],
+            'ip_address' => $this->faker->ipv4(),
             'user_agent' => $this->faker->userAgent(),
-            'fecha' => $this->faker->dateTimeThisMonth(),
         ];
     }
 }

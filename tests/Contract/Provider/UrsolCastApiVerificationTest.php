@@ -56,6 +56,16 @@ class UrsolCastApiVerificationTest extends TestCase
             );
         }
 
+        // Check that the provider server is reachable before attempting verification
+        $providerPort = (int) ($_ENV['PACT_PROVIDER_PORT'] ?? 8080);
+        $connection = @fsockopen('127.0.0.1', $providerPort, $errno, $errstr, 2);
+        if (!$connection) {
+            $this->markTestSkipped(
+                "Provider server not running on port {$providerPort}. Start with: php artisan serve --port={$providerPort}"
+            );
+        }
+        fclose($connection);
+
         $this->assertTrue($verifier->verify(), 'Pact verification failed. Check provider implementation matches consumer expectations.');
     }
 }

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\OrdenCompra;
+use App\Models\Empresa;
 use App\Models\Proveedor;
 use App\Models\Usuario;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -13,18 +14,24 @@ class OrdenCompraFactory extends Factory
 
     public function definition(): array
     {
+        $subtotal = $this->faker->randomFloat(2, 10000, 500000);
+        $impuesto = $subtotal * 0.13;
+
         return [
-            'numero_orden' => $this->faker->unique()->numerify('OC-####'),
+            'empresa_id' => Empresa::factory(),
             'proveedor_id' => Proveedor::factory(),
             'usuario_id' => Usuario::factory(),
-            'fecha_orden' => $this->faker->dateTimeThisMonth(),
-            'fecha_entrega_estimada' => $this->faker->dateTimeBetween('now', '+1 month'),
-            'fecha_entrega_real' => null,
-            'subtotal' => $this->faker->randomFloat(2, 10000, 500000),
-            'impuesto' => $this->faker->randomFloat(2, 1300, 65000),
-            'total' => $this->faker->randomFloat(2, 11300, 565000),
-            'estado' => $this->faker->randomElement(['borrador', 'enviada', 'recibida', 'cancelada']),
+            'numero_orden' => $this->faker->unique()->numerify('OC-######'),
+            'fecha_orden' => $this->faker->dateTimeBetween('-3 months', 'now'),
+            'fecha_entrega_esperada' => $this->faker->dateTimeBetween('now', '+3 months'),
+            'moneda' => 'CRC',
+            'subtotal' => $subtotal,
+            'impuesto_total' => round($impuesto, 2),
+            'total_orden' => round($subtotal + $impuesto, 2),
+            'estado' => $this->faker->randomElement(['borrador', 'enviada', 'aprobada', 'recibida']),
             'observaciones' => $this->faker->optional()->sentence(),
+            'activo' => true,
+            'eliminado' => false,
         ];
     }
 }

@@ -12,10 +12,11 @@ class CategoriaProductoFactory extends Factory
     public function definition(): array
     {
         return [
-            'nombre' => $this->faker->unique()->words(2, true),
+            'nombre' => $this->faker->unique()->word(),
             'descripcion' => $this->faker->optional()->sentence(),
-            'codigo' => strtoupper($this->faker->unique()->lexify('CAT-???')),
-            'activo' => $this->faker->boolean(90),
+            'categoria_padre_id' => null,
+            'activo' => true,
+            'eliminado' => false,
         ];
     }
 }

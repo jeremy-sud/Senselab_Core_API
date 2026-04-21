@@ -12,11 +12,10 @@ class RolFactory extends Factory
     public function definition(): array
     {
         return [
-            'nombre' => $this->faker->unique()->word(),
-            'slug' => $this->faker->unique()->slug(),
+            'nombre' => $this->faker->unique()->jobTitle(),
             'descripcion' => $this->faker->optional()->sentence(),
-            'nivel' => $this->faker->numberBetween(1, 10),
-            'activo' => $this->faker->boolean(90),
+            'activo' => true,
+            'eliminado' => false,
         ];
     }
 }

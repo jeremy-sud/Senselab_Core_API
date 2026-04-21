@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\BelongsToTenant;
 use App\Traits\HasCustomSoftDeletes;
@@ -11,7 +12,8 @@ use App\Traits\HasActiveScope;
 
 class CuentaPorPagar extends Model
 {
-    use BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
+    /** @use HasFactory<\Database\Factories\CuentaPorPagarFactory> */
+    use HasFactory, BelongsToTenant, HasCustomSoftDeletes, HasAuditFields, HasActiveScope;
 
     /**
      * La tabla asociada al modelo.

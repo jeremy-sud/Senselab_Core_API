@@ -121,6 +121,19 @@ class EntidadEtiquetaController extends Controller
     /**
      * Display the specified resource.
      */
+    #[OA\Get(
+        path: '/api/entidad-etiqueta/{id}',
+        summary: 'Obtener relación entidad-etiqueta',
+        security: [['sanctum' => []]],
+        tags: ['Entidad-Etiqueta'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
     public function show(EntidadEtiqueta $entidadEtiqueta): JsonResponse
     {
         return response()->json([
@@ -132,6 +145,19 @@ class EntidadEtiquetaController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    #[OA\Put(
+        path: '/api/entidad-etiqueta/{id}',
+        summary: 'Actualizar relación entidad-etiqueta',
+        security: [['sanctum' => []]],
+        tags: ['Entidad-Etiqueta'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+            new OA\Response(response: 404, description: 'No encontrado'),
+        ]
+    )]
     public function update(UpdateEntidadEtiquetaRequest $request, EntidadEtiqueta $entidadEtiqueta): JsonResponse
     {
         $entidadEtiqueta->update($request->validated());
@@ -174,6 +200,16 @@ class EntidadEtiquetaController extends Controller
     /**
      * Asignar múltiples etiquetas a una entidad.
      */
+    #[OA\Post(
+        path: '/api/entidad-etiqueta/asignar-multiples',
+        summary: 'Asignar múltiples etiquetas a una entidad',
+        security: [['sanctum' => []]],
+        tags: ['Entidad-Etiqueta'],
+        responses: [
+            new OA\Response(response: 201, description: 'Etiquetas asignadas'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
     public function asignarMultiples(AsignarEtiquetasMultiplesRequest $request): JsonResponse
     {
 
@@ -212,6 +248,16 @@ class EntidadEtiquetaController extends Controller
     /**
      * Remover múltiples etiquetas de una entidad.
      */
+    #[OA\Post(
+        path: '/api/entidad-etiqueta/remover-multiples',
+        summary: 'Remover múltiples etiquetas de una entidad',
+        security: [['sanctum' => []]],
+        tags: ['Entidad-Etiqueta'],
+        responses: [
+            new OA\Response(response: 200, description: 'Etiquetas removidas'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
     public function removerMultiples(RemoverEtiquetasMultiplesRequest $request): JsonResponse
     {
 
@@ -230,6 +276,15 @@ class EntidadEtiquetaController extends Controller
     /**
      * Obtener todas las etiquetas de una entidad.
      */
+    #[OA\Get(
+        path: '/api/entidad-etiqueta/por-entidad',
+        summary: 'Obtener etiquetas de una entidad por tipo',
+        security: [['sanctum' => []]],
+        tags: ['Entidad-Etiqueta'],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+        ]
+    )]
     public function porEntidad(BuscarEntidadPorTipoRequest $request): JsonResponse
     {
 
@@ -248,6 +303,18 @@ class EntidadEtiquetaController extends Controller
     /**
      * Obtener todas las entidades de una etiqueta.
      */
+    #[OA\Get(
+        path: '/api/entidad-etiqueta/por-etiqueta/{etiquetaId}',
+        summary: 'Obtener entidades de una etiqueta',
+        security: [['sanctum' => []]],
+        tags: ['Entidad-Etiqueta'],
+        parameters: [
+            new OA\Parameter(name: 'etiquetaId', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Operación exitosa'),
+        ]
+    )]
     public function porEtiqueta(PorEtiquetaRequest $request, int $etiquetaId): JsonResponse
     {
 
@@ -269,6 +336,16 @@ class EntidadEtiquetaController extends Controller
     /**
      * Sincronizar etiquetas de una entidad (reemplaza todas las existentes).
      */
+    #[OA\Post(
+        path: '/api/entidad-etiqueta/sincronizar',
+        summary: 'Sincronizar etiquetas de una entidad',
+        security: [['sanctum' => []]],
+        tags: ['Entidad-Etiqueta'],
+        responses: [
+            new OA\Response(response: 200, description: 'Etiquetas sincronizadas'),
+            new OA\Response(response: 422, description: 'Error de validación'),
+        ]
+    )]
     public function sincronizar(SincronizarEtiquetasRequest $request): JsonResponse
     {
         // Remover todas las etiquetas actuales

@@ -24,7 +24,7 @@ class ProductoFactory extends Factory
             'descripcion' => $this->faker->sentence(),
             'marca_id' => Marca::inRandomOrder()->first()?->id,
             'categoria_id' => CategoriaProducto::inRandomOrder()->first()?->id,
-            'unidad_medida_id' => UnidadMedida::inRandomOrder()->first()?->id ?? 1,
+            'unidad_medida_id' => UnidadMedida::inRandomOrder()->first()?->id,
             'cabys_id' => Cabys::inRandomOrder()->first()?->id,
             'precio_compra' => $this->faker->randomFloat(2, 100, 10000),
             'precio_venta' => $this->faker->randomFloat(2, 150, 15000),

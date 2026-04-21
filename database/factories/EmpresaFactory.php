@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Empresa;
-use App\Models\RegimenTributario;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class EmpresaFactory extends Factory
@@ -14,25 +13,27 @@ class EmpresaFactory extends Factory
     {
         return [
             'nombre' => $this->faker->company(),
-            'nombre_comercial' => $this->faker->companySuffix() . ' ' . $this->faker->word(),
+            'nombre_comercial' => $this->faker->optional()->company(),
             'razon_social' => $this->faker->company() . ' S.A.',
-            'num_identificacion_dgt' => $this->faker->unique()->numerify('##########'),
-            'tipo_identificacion' => '02', // Cédula Jurídica
+            'num_identificacion_dgt' => $this->faker->unique()->numerify('3101######'),
+            'tipo_identificacion' => '02',
             'actividad_economica_principal' => $this->faker->numerify('######'),
-            'proveedor_sistemas' => 'SISTEMA ERP', // Nuevo en v4.4 - Identificación del proveedor del sistema
+            'proveedor_sistemas' => $this->faker->optional()->company(),
             'direccion' => $this->faker->address(),
-            'provincia' => (string) $this->faker->numberBetween(1, 7),
-            'canton' => (string) $this->faker->numberBetween(1, 20),
-            'distrito' => (string) $this->faker->numberBetween(1, 50),
-            'telefono' => $this->faker->numerify('####-####'),
+            'provincia' => $this->faker->randomElement(['San José', 'Alajuela', 'Cartago']),
+            'canton' => $this->faker->city(),
+            'distrito' => $this->faker->citySuffix(),
+            'barrio' => $this->faker->optional()->streetName(),
+            'registro_fiscal_8707' => $this->faker->optional()->numerify('####'),
+            'telefono' => $this->faker->numerify('########'),
             'email' => $this->faker->unique()->companyEmail(),
+            'subdominio' => $this->faker->unique()->slug(2),
             'certificado_llave_fe' => null,
             'pin_llave_fe_hash' => null,
-            'prefijo_orden_compra' => strtoupper($this->faker->lexify('??')),
+            'prefijo_orden_compra' => $this->faker->optional()->numerify('OC-###'),
             'moneda_defecto' => 'CRC',
-            'regimen_tributario_id' => RegimenTributario::inRandomOrder()->first()?->id ?? 1,
+            'regimen_tributario_id' => null,
             'activo' => true,
-            'eliminado' => false,
         ];
     }
 }

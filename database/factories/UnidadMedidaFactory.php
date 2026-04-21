@@ -12,11 +12,11 @@ class UnidadMedidaFactory extends Factory
     public function definition(): array
     {
         return [
-            'codigo' => $this->faker->unique()->bothify('??##'),
-            'nombre' => $this->faker->randomElement(['Unidad', 'Kilo', 'Litro', 'Metro', 'Caja', 'Docena']),
+            'codigo_dgt' => $this->faker->unique()->numerify('Ud##'),
+            'nombre' => $this->faker->unique()->randomElement(['Unidad', 'Kilogramo', 'Litro', 'Metro', 'Servicio']),
             'descripcion' => $this->faker->optional()->sentence(),
-            'simbolo' => $this->faker->randomElement(['Und', 'Kg', 'L', 'm', 'Cj', 'Dz']),
-            'activo' => $this->faker->boolean(90),
+            'activo' => true,
+            'eliminado' => false,
         ];
     }
 }

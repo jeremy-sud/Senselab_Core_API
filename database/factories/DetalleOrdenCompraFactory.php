@@ -13,19 +13,25 @@ class DetalleOrdenCompraFactory extends Factory
 
     public function definition(): array
     {
-        $cantidad = $this->faker->numberBetween(1, 100);
-        $precioUnitario = $this->faker->randomFloat(2, 100, 10000);
-        $subtotal = $cantidad * $precioUnitario;
-        $impuesto = $subtotal * 0.13;
-        
+        $cantidad = $this->faker->numberBetween(1, 50);
+        $precio = $this->faker->randomFloat(2, 100, 10000);
+        $subtotal = $cantidad * $precio;
+        $impPct = $this->faker->randomElement([0, 1, 2, 4, 13]);
+        $impMonto = $subtotal * $impPct / 100;
+
         return [
             'orden_compra_id' => OrdenCompra::factory(),
             'producto_id' => Producto::factory(),
+            'numero_linea' => $this->faker->numberBetween(1, 20),
             'cantidad' => $cantidad,
-            'precio_unitario' => $precioUnitario,
-            'subtotal' => $subtotal,
-            'impuesto' => $impuesto,
-            'total' => $subtotal + $impuesto,
+            'precio_unitario' => $precio,
+            'subtotal_linea' => $subtotal,
+            'porcentaje_impuesto' => $impPct,
+            'monto_impuesto' => $impMonto,
+            'total_linea' => $subtotal + $impMonto,
+            'detalle_adicional' => $this->faker->optional()->sentence(),
+            'activo' => true,
+            'eliminado' => false,
         ];
     }
 }

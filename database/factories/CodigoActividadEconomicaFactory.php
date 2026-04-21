@@ -13,9 +13,10 @@ class CodigoActividadEconomicaFactory extends Factory
     {
         return [
             'codigo' => $this->faker->unique()->numerify('######'),
-            'descripcion' => $this->faker->sentence(5),
-            'tipo' => $this->faker->randomElement(['servicios', 'comercio', 'industria', 'agricultura']),
-            'activo' => $this->faker->boolean(95),
+            'descripcion' => $this->faker->sentence(),
+            'categoria_principal' => $this->faker->randomElement(['Comercio', 'Servicios', 'Industria']),
+            'activo' => true,
+            'eliminado' => false,
         ];
     }
 }
