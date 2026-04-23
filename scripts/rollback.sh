@@ -16,6 +16,16 @@ NC='\033[0m'
 ENVIRONMENT=${1:-production}
 VERSION=${2:-}
 
+# Cargar variables de entorno desde .env
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+if [[ -f "${PROJECT_ROOT}/.env" ]]; then
+    set -a
+    # shellcheck source=/dev/null
+    source "${PROJECT_ROOT}/.env"
+    set +a
+fi
+
 echo -e "${RED}========================================${NC}"
 echo -e "${RED}Ursol CAST API - ROLLBACK Script${NC}"
 echo -e "${RED}Environment: $ENVIRONMENT${NC}"
@@ -29,8 +39,8 @@ fi
 
 # Confirmación
 echo -e "${YELLOW}⚠️  WARNING: This will ROLLBACK the application!${NC}"
-read -p "Are you sure? (type 'yes' to continue): " -r
-if [[ ! $REPLY =~ ^yes$ ]]; then
+read -r -p "Are you sure? (type 'yes' to continue): " ROLLBACK_CONFIRM
+if [[ ! $ROLLBACK_CONFIRM =~ ^yes$ ]]; then
     echo -e "${GREEN}Rollback cancelled${NC}"
     exit 0
 fi
@@ -68,8 +78,8 @@ echo -e "${GREEN}Using backup: $BACKUP_PATH${NC}"
 echo -e "\n${YELLOW}[3/6] Rolling back code...${NC}"
 if [[ -n "$VERSION" ]]; then
     git reset --hard "$VERSION"
-    git clean -fd
 else
+    echo -e "${YELLOW}Warning: Reverting to HEAD~1. Consider specifying a version.${NC}"
     git reset --hard HEAD~1
 fi
 
@@ -109,7 +119,7 @@ docker-compose exec -T php php artisan up
 
 # Verificar
 echo -e "\n${GREEN}Verifying rollback...${NC}"
-HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost/api/health")
+HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:8000/health" 2>/dev/null || echo "000")
 if [ "$HTTP_STATUS" -eq 200 ]; then
     echo -e "${GREEN}✓ Rollback successful!${NC}"
 else

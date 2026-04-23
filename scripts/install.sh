@@ -137,6 +137,9 @@ update_env() {
 }
 
 # Actualizar .env de forma segura
+update_env "DB_CONNECTION" "mysql"
+update_env "DB_HOST" "$DB_HOST"
+update_env "DB_PORT" "$DB_PORT"
 update_env "DB_USERNAME" "$DB_USER"
 update_env "DB_PASSWORD" "$DB_PASS"
 update_env "DB_DATABASE" "$DB_NAME"
@@ -223,7 +226,7 @@ echo ""
 
 # 10. Ejecutar tests (opcional)
 echo "Paso 10: Tests (opcional)"
-read -p "¿Deseas ejecutar los tests ahora? (s/N): " RUN_TESTS
+read -r -p "¿Deseas ejecutar los tests ahora? (s/N): " RUN_TESTS
 RUN_TESTS=${RUN_TESTS:-N}
 
 if [[ "$RUN_TESTS" =~ ^[Ss]$ ]]; then
