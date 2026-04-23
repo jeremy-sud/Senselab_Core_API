@@ -27,7 +27,7 @@
         "@conditional_boundary": true,
 
         // Negación condicional — == vs != en comparaciones
-        "@conditional_negotiation": true,
+        "@conditional_negation": true,
 
         // Retornos — detecta return values incorrectos
         "@return_value": true,

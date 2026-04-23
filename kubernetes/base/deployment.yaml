@@ -20,6 +20,8 @@ spec:
     spec:
       containers:
         - name: php-fpm
+          # NOTA: Reemplazar con la imagen del registry real antes de desplegar,
+          # p.ej: ghcr.io/sistemaursol/ursol-cast-api:latest
           image: ursol-cast-api:latest
           imagePullPolicy: Always
           ports:
@@ -38,17 +40,15 @@ spec:
               memory: "512Mi"
               cpu: "500m"
           livenessProbe:
-            exec:
-              command:
-                - php-fpm-healthcheck
+            tcpSocket:
+              port: 9000
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
           readinessProbe:
-            exec:
-              command:
-                - php-fpm-healthcheck
+            tcpSocket:
+              port: 9000
             initialDelaySeconds: 5
             periodSeconds: 5
             timeoutSeconds: 3

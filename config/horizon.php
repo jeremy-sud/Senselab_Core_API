@@ -7,13 +7,15 @@ declare(strict_types=1);
  *
  * FASE 22 - Escalabilidad
  *
+ * ⚠️  DEPENDENCIA NO INSTALADA:
+ *     composer require laravel/horizon
+ *     php artisan horizon:install
+ *
+ * Este archivo de configuración está preparado para cuando se instale Horizon.
+ * Hasta entonces no tiene efecto ya que el paquete no está en composer.json.
+ *
  * Horizon proporciona un dashboard visual para monitoreo de queues Redis.
  * Incluye métricas de jobs procesados, fallidos, tiempos de espera y throughput.
- *
- * Instalación:
- *   composer require laravel/horizon
- *   php artisan horizon:install
- *   php artisan horizon
  *
  * Dashboard: /horizon (protegido por HorizonServiceProvider)
  *

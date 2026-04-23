@@ -22,10 +22,15 @@ jobs:
         with:
           php-version: '8.4'
           extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, json, zip
-          coverage: xdebug
+          coverage: pcov
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate --ansi
 
       - name: Run tests with coverage
         run: vendor/bin/phpunit --coverage-clover coverage.xml
@@ -34,13 +39,13 @@ jobs:
         run: sed -i 's@'$GITHUB_WORKSPACE'@/github/workspace/@g' coverage.xml
 
       - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@master
+        uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       - name: SonarQube Quality Gate check
-        uses: SonarSource/sonarqube-quality-gate-action@master
+        uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
         timeout-minutes: 5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -80,9 +85,9 @@ jobs:
         run: phpcpd app --min-lines=3 --min-tokens=30
 
   phpcs:
-    name: PHP CodeSniffer
+    name: Laravel Pint (Code Style)
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -91,10 +96,10 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          tools: cs2pr
+          coverage: none
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
 
-      - name: Run PHPCS
-        run: vendor/bin/phpcs --report=checkstyle | cs2pr
+      - name: Run Laravel Pint (dry-run)
+        run: vendor/bin/pint --test

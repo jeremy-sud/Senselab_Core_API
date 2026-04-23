@@ -23,6 +23,8 @@
 | - observabilidad.php→ Health checks y métricas
 | - compliance.php    → GDPR y auditoría
 | - ai.php            → Inteligencia artificial
+| - reporting.php     → Reportes y dashboard
+| - webhooks.php      → Webhooks entrantes y salientes
 |
 | NOTA: Sistema RBAC implementado. Cada ruta está protegida según permisos.
 | Estructura de permisos: {modulo}.{accion}
