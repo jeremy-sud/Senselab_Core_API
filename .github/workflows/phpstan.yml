@@ -59,7 +59,7 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install Composer dependencies
-        run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-dev
+        run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
       - name: Prepare Laravel Application
         run: |
@@ -140,7 +140,7 @@ jobs:
           tools: composer:v2
 
       - name: Install Composer dependencies
-        run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-dev
+        run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
       - name: Prepare Laravel Application
         run: |
@@ -149,16 +149,16 @@ jobs:
 
       - name: Verify Baseline File Exists
         run: |
-          if [ ! -f phpstan-baseline-reduced.neon ]; then
-            echo "❌ phpstan-baseline-reduced.neon not found!"
+          if [ ! -f phpstan-baseline.neon ]; then
+            echo "❌ phpstan-baseline.neon not found!"
             exit 1
           fi
           echo "✅ Baseline file found"
-          echo "📊 Baseline errors: $(grep -c 'message:' phpstan-baseline-reduced.neon || echo '0')"
+          echo "📊 Baseline errors: $(grep -c 'message:' phpstan-baseline.neon || echo '0')"
 
       - name: Check for Baseline Bloat
         run: |
-          BASELINE_ERRORS=$(grep -c 'message:' phpstan-baseline-reduced.neon || echo '0')
+          BASELINE_ERRORS=$(grep -c 'message:' phpstan-baseline.neon || echo '0')
           echo "Current baseline errors: $BASELINE_ERRORS"
           
           if [ "$BASELINE_ERRORS" -gt 20 ]; then
@@ -188,7 +188,7 @@ jobs:
           tools: composer:v2
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-dev
+        run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
       - name: Prepare Application
         run: |
@@ -205,7 +205,7 @@ jobs:
           TOTAL_ERRORS=$(vendor/bin/phpstan analyse app --level=8 --memory-limit=1G --no-progress --configuration=phpstan-no-baseline.neon 2>&1 | grep -oP 'Found \K[0-9]+' || echo "0")
           
           # Baseline errors
-          BASELINE_ERRORS=$(grep -c 'message:' phpstan-baseline-reduced.neon || echo '0')
+          BASELINE_ERRORS=$(grep -c 'message:' phpstan-baseline.neon || echo '0')
           
           # Calculate metrics
           if [ "$TOTAL_ERRORS" -gt 0 ]; then

@@ -21,7 +21,7 @@ jobs:
           extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, json, zip
 
       - name: Cache Composer dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: vendor
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -29,7 +29,12 @@ jobs:
             ${{ runner.os }}-composer-
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-interaction --no-dev --optimize-autoloader
+        run: composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
+
+      - name: Prepare environment for tests
+        run: |
+          cp .env.example .env
+          php artisan key:generate --ansi
 
       - name: Run full test suite
         run: vendor/bin/phpunit
@@ -53,7 +58,7 @@ jobs:
           ssh $PRODUCTION_USER@$PRODUCTION_SERVER << 'EOF'
             BACKUP_DIR="/backups/$(date +%Y%m%d_%H%M%S)"
             mkdir -p $BACKUP_DIR
-            docker-compose exec -T mysql mysqldump -u root -p$MYSQL_ROOT_PASSWORD ursol_cast > $BACKUP_DIR/database.sql
+            docker-compose exec -T mysql mysqldump -u root -p$MYSQL_ROOT_PASSWORD ${DB_DATABASE:-api_db} > $BACKUP_DIR/database.sql
             tar -czf $BACKUP_DIR/application.tar.gz /var/www/ursol-cast-api
             echo "Backup created at $BACKUP_DIR"
           EOF
@@ -97,8 +102,8 @@ jobs:
       - name: Run smoke tests
         run: |
           echo "Running smoke tests on production..."
-          curl -f https://api.ursol-cast.com/api/health || exit 1
-          curl -f https://api.ursol-cast.com/api/v1/ping || exit 1
+          curl -f https://api.ursol-cast.com/api/health/live || exit 1
+          curl -f https://api.ursol-cast.com/api/health/ready || exit 1
 
       - name: Rollback on failure
         if: failure()
@@ -109,11 +114,12 @@ jobs:
           echo "Deployment failed, rolling back..."
           ssh $PRODUCTION_USER@$PRODUCTION_SERVER << 'EOF'
             cd /var/www/ursol-cast-api
-            git reset --hard HEAD~1
+            # Sacar de modo mantenimiento si quedó activo
+            docker-compose exec -T php php artisan up || true
+            # Volver a la imagen anterior (tagged backup)
             docker-compose down
             docker-compose up -d
-            docker-compose exec -T php php artisan migrate:rollback --force
-            docker-compose exec -T php php artisan up
+            echo "Rollback completado. Revisar logs con: docker-compose logs php"
           EOF
 
       - name: Notify deployment

@@ -21,7 +21,7 @@ jobs:
           extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, json, zip
 
       - name: Cache Composer dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: vendor
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -29,7 +29,12 @@ jobs:
             ${{ runner.os }}-composer-
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-interaction --no-dev --optimize-autoloader
+        run: composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
+
+      - name: Prepare environment for tests
+        run: |
+          cp .env.example .env
+          php artisan key:generate --ansi
 
       - name: Run tests
         run: vendor/bin/phpunit --stop-on-failure
@@ -75,7 +80,7 @@ jobs:
       - name: Run smoke tests
         run: |
           echo "Running smoke tests on staging..."
-          curl -f https://staging.ursol-cast.com/api/health || exit 1
+          curl -f https://staging.ursol-cast.com/api/health/live || exit 1
 
       - name: Notify deployment
         if: always()
