@@ -63,6 +63,15 @@ try {
     Print-Info "Para instalar: npm install -g pnpm"
 }
 
+# Verificar MySQL
+try {
+    $null = Get-Command mysql -ErrorAction Stop
+    Print-Success "MySQL client disponible"
+} catch {
+    Print-Error "MySQL client no está instalado o no está en el PATH"
+    exit 1
+}
+
 Write-Host ""
 
 # 2. Instalar dependencias de Composer
@@ -113,9 +122,12 @@ if ([string]::IsNullOrWhiteSpace($dbPort)) { $dbPort = "3306" }
 $envPath = Join-Path -Path (Get-Location) -ChildPath '.env'
 $lines = Get-Content $envPath -ErrorAction Stop
 for ($i = 0; $i -lt $lines.Length; $i++) {
-    if ($lines[$i] -match '^DB_USERNAME=') { $lines[$i] = "DB_USERNAME=$dbUser" }
-    if ($lines[$i] -match '^DB_PASSWORD=') { $lines[$i] = "DB_PASSWORD=$dbPass" }
-    if ($lines[$i] -match '^DB_DATABASE=') { $lines[$i] = "DB_DATABASE=$dbName" }
+    if ($lines[$i] -match '^DB_CONNECTION=') { $lines[$i] = "DB_CONNECTION=mysql" }
+    if ($lines[$i] -match '^DB_HOST=')       { $lines[$i] = "DB_HOST=$dbHost" }
+    if ($lines[$i] -match '^DB_PORT=')       { $lines[$i] = "DB_PORT=$dbPort" }
+    if ($lines[$i] -match '^DB_USERNAME=')   { $lines[$i] = "DB_USERNAME=$dbUser" }
+    if ($lines[$i] -match '^DB_PASSWORD=')   { $lines[$i] = "DB_PASSWORD=$dbPass" }
+    if ($lines[$i] -match '^DB_DATABASE=')   { $lines[$i] = "DB_DATABASE=$dbName" }
 }
 # Asegurar que exista DB_DATABASE_TEST
 if ($lines -notmatch '^DB_DATABASE_TEST=') { $lines += "DB_DATABASE_TEST=$dbTestName" }
@@ -141,8 +153,8 @@ port=$dbPort
 Set-Content -Path $tmpFile -Value $cnfContent -Encoding ASCII
 
 try {
-    $createDbQuery = "CREATE DATABASE IF NOT EXISTS `$dbName` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-    mysql --defaults-extra-file="$tmpFile" -e $createDbQuery 2>$null
+    $createDbQuery = 'CREATE DATABASE IF NOT EXISTS `' + $dbName + '` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;'
+    mysql --defaults-extra-file="$tmpFile" -e "$createDbQuery" 2>$null
     Print-Success "Base de datos '$dbName' creada"
 } catch {
     Print-Error "Error al crear base de datos '$dbName'"
@@ -152,8 +164,8 @@ try {
 }
 
 try {
-    $createTestDbQuery = "CREATE DATABASE IF NOT EXISTS `$dbTestName` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-    mysql --defaults-extra-file="$tmpFile" -e $createTestDbQuery 2>$null
+    $createTestDbQuery = 'CREATE DATABASE IF NOT EXISTS `' + $dbTestName + '` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;'
+    mysql --defaults-extra-file="$tmpFile" -e "$createTestDbQuery" 2>$null
     Print-Success "Base de datos '$dbTestName' creada"
 } catch {
     Print-Error "Error al crear base de datos de testing '$dbTestName'"

@@ -1,7 +1,14 @@
 # Makefile para Ursol CAST API
 # Comandos útiles para gestionar contenedores Docker
 
-.PHONY: help build up down restart logs shell composer artisan test migrate fresh seed
+.PHONY: help build up down restart logs logs-php logs-nginx logs-mysql ps shell shell-mysql shell-redis \
+        composer-install composer-update composer-dump artisan migrate migrate-fresh seed fresh \
+        test test-local test-filter test-coverage ci-test ci-quality ci-security \
+        mutation-test mutation-test-quick mutation-test-filter mutation-test-services mutation-test-rules \
+        contract-test contract-test-consumer contract-test-provider \
+        e2e-hacienda e2e-hacienda-verbose e2e-hacienda-filter \
+        cache-clear optimize swagger dev dev-down install clean \
+        prod-up prod-down backup-db status deploy-staging deploy-prod rollback
 
 # Colores para output
 GREEN  := \033[0;32m
@@ -52,7 +59,7 @@ up: ## Iniciar contenedores
 	docker-compose up -d
 	@echo "$(GREEN)✓ API disponible en: http://localhost:8000$(NC)"
 	@echo "$(GREEN)✓ Swagger: http://localhost:8000/api/documentation$(NC)"
-	@echo "$(GREEN)✓ PHPMyAdmin: http://localhost:8080$(NC)"
+	@echo "$(YELLOW)ℹ PHPMyAdmin: docker-compose --profile tools up -d (puerto 8080)$(NC)"
 
 down: ## Detener contenedores
 	@echo "$(YELLOW)Deteniendo contenedores...$(NC)"
@@ -83,7 +90,7 @@ shell: ## Acceder a shell de PHP
 	docker-compose exec php sh
 
 shell-mysql: ## Acceder a shell de MySQL
-	docker-compose exec mysql mysql -u ursol_user -pursol_password api_db
+	docker-compose exec mysql mysql -u ursol_user -p api_db
 
 shell-redis: ## Acceder a shell de Redis
 	docker-compose exec redis redis-cli
@@ -97,7 +104,7 @@ composer-update: ## Actualizar dependencias de Composer
 	docker-compose exec php composer update
 
 composer-dump: ## Generar autoload
-	docker-compose exec php composer dump-autoload
+	docker-compose exec php composer dump-autoload -o
 
 # === ARTISAN ===
 
@@ -213,14 +220,14 @@ swagger: ## Regenerar documentación Swagger
 
 dev: ## Iniciar entorno completo de desarrollo
 	@echo "$(GREEN)Iniciando entorno de desarrollo...$(NC)"
-	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml --profile tools --profile development up -d
 	@echo "$(GREEN)✓ API: http://localhost:8000$(NC)"
 	@echo "$(GREEN)✓ Swagger: http://localhost:8000/api/documentation$(NC)"
 	@echo "$(GREEN)✓ PHPMyAdmin: http://localhost:8080$(NC)"
 	@echo "$(GREEN)✓ Mailhog: http://localhost:8025$(NC)"
 
 dev-down: ## Detener entorno de desarrollo
-	docker-compose -f docker-compose.yml -f docker-compose.dev.yml down
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml --profile tools --profile development down
 
 # === INSTALACIÓN INICIAL ===
 
@@ -229,7 +236,11 @@ install: ## Instalación inicial completa
 	@make build
 	@make up
 	@echo "$(YELLOW)Esperando que MySQL esté listo...$(NC)"
-	@sleep 10
+	@for i in $$(seq 1 20); do \
+	    docker-compose exec -T mysql mysqladmin ping -h localhost -u root -p$$(grep DB_ROOT_PASSWORD .env | cut -d= -f2) --silent 2>/dev/null && break; \
+	    echo "MySQL no listo ($${i}/20), esperando..."; \
+	    sleep 3; \
+	 done
 	@make composer-install
 	@echo "$(GREEN)Generando APP_KEY...$(NC)"
 	@docker-compose exec php php artisan key:generate
@@ -263,7 +274,7 @@ prod-down: ## Detener modo producción
 
 backup-db: ## Backup de base de datos
 	@echo "$(GREEN)Creando backup de base de datos...$(NC)"
-	docker-compose exec mysql mysqldump -u ursol_user -pursol_password api_db > backup_$(shell date +%Y%m%d_%H%M%S).sql
+	docker-compose exec mysql sh -c 'exec mysqldump -u ursol_user -p"$$MYSQL_PASSWORD" api_db' > backup_$(shell date +%Y%m%d_%H%M%S).sql
 	@echo "$(GREEN)✓ Backup creado$(NC)"
 
 # === INFO ===

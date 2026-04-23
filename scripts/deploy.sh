@@ -19,6 +19,14 @@ ENVIRONMENT=${1:-staging}
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
+# Cargar variables de entorno desde .env
+if [[ -f "${PROJECT_ROOT}/.env" ]]; then
+    set -a
+    # shellcheck source=/dev/null
+    source "${PROJECT_ROOT}/.env"
+    set +a
+fi
+
 echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}Ursol CAST API - Deploy Script${NC}"
 echo -e "${GREEN}Environment: $ENVIRONMENT${NC}"
@@ -33,8 +41,8 @@ fi
 # Confirmación para producción
 if [[ "$ENVIRONMENT" == "production" ]]; then
     echo -e "${YELLOW}⚠️  WARNING: Deploying to PRODUCTION!${NC}"
-    read -p "Are you sure? (type 'yes' to continue): " -r
-    if [[ ! $REPLY =~ ^yes$ ]]; then
+    read -r -p "Are you sure? (type 'yes' to continue): " DEPLOY_CONFIRM
+    if [[ ! $DEPLOY_CONFIRM =~ ^yes$ ]]; then
         echo -e "${RED}Deployment cancelled${NC}"
         exit 1
     fi
@@ -56,8 +64,8 @@ fi
 if [[ "$ENVIRONMENT" == "staging" && "$CURRENT_BRANCH" != "develop" ]]; then
     echo -e "${YELLOW}Warning: Staging deploys are typically from 'develop' branch${NC}"
     echo -e "Current branch: $CURRENT_BRANCH"
-    read -p "Continue anyway? (y/n): " -r
-    [[ ! $REPLY =~ ^[Yy]$ ]] && exit 1
+    read -r -p "Continue anyway? (y/n): " BRANCH_CONFIRM
+    [[ ! $BRANCH_CONFIRM =~ ^[Yy]$ ]] && exit 1
 fi
 
 # Step 3: Pull latest changes
@@ -66,10 +74,10 @@ git pull origin "$CURRENT_BRANCH"
 
 # Step 4: Run tests
 echo -e "\n${GREEN}[4/8] Running test suite...${NC}"
-docker-compose exec -T php php artisan test --stop-on-failure
-if [ $? -ne 0 ]; then
-    echo -e "${RED}Tests failed! Aborting deployment.${NC}"
-    exit 1
+if [[ "$ENVIRONMENT" == "production" ]]; then
+    docker-compose exec -T php php artisan test --stop-on-failure
+else
+    docker-compose -f docker-compose.staging.yml exec -T php php artisan test --stop-on-failure
 fi
 
 # Step 5: Backup (only production)
@@ -124,24 +132,33 @@ fi
 
 # Wait for containers
 echo "Waiting for containers to be ready..."
-sleep 10
+COMPOSE_CMD="docker-compose"
+[[ "$ENVIRONMENT" == "staging" ]] && COMPOSE_CMD="docker-compose -f docker-compose.staging.yml"
+for i in $(seq 1 30); do
+    if $COMPOSE_CMD exec -T php php-fpm -t > /dev/null 2>&1; then
+        echo -e "${GREEN}✓ PHP-FPM ready${NC}"
+        break
+    fi
+    echo "Waiting for PHP-FPM... (${i}/30)"
+    sleep 3
+done
 
 # Run migrations
 echo "Running database migrations..."
-docker-compose exec -T php php artisan migrate --force
+$COMPOSE_CMD exec -T php php artisan migrate --force
 
 # Clear caches
 echo "Clearing caches..."
-docker-compose exec -T php php artisan cache:clear
-docker-compose exec -T php php artisan config:clear
-docker-compose exec -T php php artisan route:clear
-docker-compose exec -T php php artisan view:clear
+$COMPOSE_CMD exec -T php php artisan cache:clear
+$COMPOSE_CMD exec -T php php artisan config:clear
+$COMPOSE_CMD exec -T php php artisan route:clear
+$COMPOSE_CMD exec -T php php artisan view:clear
 
 # Optimize
 echo "Optimizing application..."
-docker-compose exec -T php php artisan config:cache
-docker-compose exec -T php php artisan route:cache
-docker-compose exec -T php php artisan view:cache
+$COMPOSE_CMD exec -T php php artisan config:cache
+$COMPOSE_CMD exec -T php php artisan route:cache
+$COMPOSE_CMD exec -T php php artisan view:cache
 
 # Salir de mantenimiento (solo producción)
 if [[ "$ENVIRONMENT" == "production" ]]; then
@@ -153,21 +170,26 @@ echo -e "\n${GREEN}[8/8] Running smoke tests...${NC}"
 
 # Health check
 if [[ "$ENVIRONMENT" == "production" ]]; then
-    HEALTH_URL="https://api.ursol-cast.com/api/health"
+    HEALTH_URL="https://api.ursol-cast.com/health"
 else
-    HEALTH_URL="http://localhost:8080/api/health"
+    HEALTH_URL="http://localhost:8080/health"
 fi
 
-sleep 5
-HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$HEALTH_URL")
-if [ "$HTTP_STATUS" -eq 200 ]; then
-    echo -e "${GREEN}✓ Health check passed${NC}"
-else
+for i in $(seq 1 10); do
+    HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$HEALTH_URL" 2>/dev/null || echo "000")
+    if [ "$HTTP_STATUS" -eq 200 ]; then
+        echo -e "${GREEN}✓ Health check passed${NC}"
+        break
+    fi
+    echo "Health check attempt ${i}/10 (HTTP $HTTP_STATUS), retrying..."
+    sleep 3
+done
+
+if [ "$HTTP_STATUS" -ne 200 ]; then
     echo -e "${RED}✗ Health check failed (HTTP $HTTP_STATUS)${NC}"
-    
     if [[ "$ENVIRONMENT" == "production" ]]; then
         echo -e "${RED}Rolling back...${NC}"
-        # Rollback logic aquí
+        "${SCRIPT_DIR}/rollback.sh" production
         exit 1
     fi
 fi
