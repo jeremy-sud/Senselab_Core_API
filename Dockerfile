@@ -2,7 +2,6 @@
 # Multi-stage build para optimización
 
 # Etapa 1: Dependencias de Composer
-# Etapa 1: Dependencias de Composer
 FROM php:8.4-alpine AS composer
 
 # Install Composer
@@ -87,11 +86,13 @@ RUN if [ "$INSTALL_XDEBUG" = "true" ]; then \
 # Configuración de PHP personalizada
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/custom.ini
 COPY docker/php/php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
+COPY docker/php/xdebug.ini /tmp/xdebug.ini
 
 # XDebug config solo si se instaló
-RUN if [ "$INSTALL_XDEBUG" = "true" ] && [ -f docker/php/xdebug.ini ]; then \
-    cp docker/php/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini; \
-    fi
+RUN if [ "$INSTALL_XDEBUG" = "true" ]; then \
+    cp /tmp/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini; \
+    fi \
+    && rm -f /tmp/xdebug.ini
 
 # Crear usuario para Laravel
 RUN addgroup -g 1000 laravel && \

@@ -16,7 +16,8 @@ services:
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
       - nginx_logs:/var/log/nginx
     depends_on:
-      - php
+      php:
+        condition: service_healthy
     networks:
       - ursol_network
     healthcheck:
@@ -155,8 +156,10 @@ services:
       - REDIS_HOST=redis
     command: php artisan queue:work --tries=3 --timeout=90 --sleep=3
     depends_on:
-      - mysql
-      - redis
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - ursol_network
     profiles:
@@ -175,9 +178,18 @@ services:
     environment:
       - APP_ENV=${APP_ENV:-local}
       - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=${DB_DATABASE:-api_db}
+      - DB_USERNAME=${DB_USERNAME:-ursol_user}
+      - DB_PASSWORD=${DB_PASSWORD:-ursol_password}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     command: sh -c "while true; do php artisan schedule:run --verbose --no-interaction & sleep 60; done"
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - ursol_network
     profiles:
