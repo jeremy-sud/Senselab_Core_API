@@ -35,7 +35,8 @@ class UsuarioAdminSeeder extends Seeder
             'apellidos' => 'Sistema',
             'cargo_id' => $cargo->id,
             'email' => 'admin@ursol.com',
-            'password_hash' => Hash::make('admin123'),
+            // Usar variable de entorno o valor aleatorio si no está definida
+            'password_hash' => Hash::make(env('ADMIN_PASSWORD', Str::random(32))),
             'empresa_id' => $empresa->id,
             'telefono' => '+506 8868-7765',
             'direccion' => 'San José, Costa Rica',
