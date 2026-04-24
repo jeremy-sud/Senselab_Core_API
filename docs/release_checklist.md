@@ -1,9 +1,101 @@
 # Checklist Pre-Release — URSOL‑CAST API
 
-**Última actualización:** 13 de abril de 2026  
-**Versión actual:** v5.0.1 (Post-auditoría — Roadmap 100%)  
-**Versión objetivo producción:** v5.0.1+  
+**Última actualización:** 23 de abril de 2026  
+**Versión actual:** v5.0.2 (Post-auditoría — Roadmap 100%)  
+**Versión objetivo producción:** v5.0.2 → api.ursol.com  
 **Referencia:** Ver [ROADMAP.md](../ROADMAP.md) para detalle de cada FASE  
+
+---
+
+## ⛔ ANÁLISIS DE INFRAESTRUCTURA — ursol.com (23 abr 2026)
+
+> Análisis realizado vía FTP (65.181.111.240) el 23 de abril de 2026.
+> **RESULTADO: Deploy de la API en este servidor NO es viable en el estado actual.** Ver detalles abajo.
+
+### 🔴 CRÍTICO — Servidor comprometido con malware activo
+
+Se detectaron los siguientes archivos maliciosos en `public_html/`:
+
+| Archivo | Tipo | Descripción |
+|---|---|---|
+| `m.php` | **Dropper** | Descarga payload de un C2 remoto, sobreescribe `index.php`, lo marca `chmod 0444` (inmutable), luego se autodestruye con `unlink(__FILE__)` |
+| `hgfr9612.php` | **Payload** (31 KB) | Archivo descargado por `m.php` desde servidor C2 externo |
+| `s.php` | **Backdoor disfrazada** | Se camufla como plugin WP "Advanced Custom Shortcodes v4.2.1". Contiene código ofuscado que conecta a `z60402_2.lstark.shop` (servidor C2) para exfiltrar datos |
+| `index.php` | **Modificado** | Reemplazado por el dropper, marcado de solo lectura (`0444`) |
+
+**Evidencia en `error_log`:**
+```
+[24-Apr-2026 01:01:41 UTC] PHP Fatal error: Call to undefined function
+register_activation_hook() in /home/ursolcr/public_html/s.php on line 72
+```
+El malware estuvo activo el 24 de abril a las 01:01 UTC.
+
+**Acciones inmediatas requeridas antes de cualquier deploy:**
+- [ ] **Cambiar TODAS las contraseñas** desde cPanel (FTP, WordPress, DB) — las actuales deben considerarse comprometidas.
+- [ ] Eliminar los archivos maliciosos: `m.php`, `hgfr9612.php`, `s.php`
+- [ ] Restaurar `index.php` desde un backup limpio (permisos actuales: `0444`, bloqueado por malware)
+- [ ] Revisar `wp-content/plugins/` y `wp-content/themes/` por backdoors adicionales
+- [ ] Revisar `.htaccess` (modificado el 23 abr 18:35 UTC, posibles redirects maliciosos)
+- [ ] Notificar al proveedor de hosting (Hostinger/cPanel) del compromiso
+- [ ] Verificar si otros sitios en la misma cuenta `ursolcr` fueron afectados
+- [ ] Después de limpiar, hacer escaneo completo con Wordfence o similar
+
+---
+
+### 🔴 BLOQUEANTE — Tipo de hosting incompatible con Laravel 12 + Docker
+
+El servidor `ursol.com` es **hosting compartido cPanel**, lo cual es **incompatible** con los requisitos de esta API:
+
+| Requisito de la API | Hosting compartido ursol.com | Estado |
+|---|---|---|
+| Docker + Docker Compose | ❌ No disponible en shared hosting | BLOQUEANTE |
+| Redis 7 (colas Horizon, caché) | ❌ No disponible | BLOQUEANTE |
+| MySQL 8.0 con réplicas | ⚠️ MySQL disponible pero sin réplicas ni root | LIMITANTE |
+| PHP 8.4-FPM con extensiones | ⚠️ Versión PHP no confirmada en cPanel | LIMITANTE |
+| SSH / `php artisan migrate` | ⚠️ SSH puede estar restringido en shared hosting | LIMITANTE |
+| Laravel Horizon (supervisor) | ❌ Requiere proceso supervisor permanente | BLOQUEANTE |
+| Configuración Nginx personalizada | ❌ Nginx/Apache gestionado por cPanel, sin control total | BLOQUEANTE |
+
+**Estructura actual del servidor:**
+```
+/home/ursolcr/public_html/     ← WordPress (ursol.com)
+  ├── wp-config.php             ← DB host: 159.89.191.229 (externo)
+  ├── wp-admin/                 ← WordPress admin
+  ├── wp-content/               ← Plugins, temas
+  └── [archivos malware]        ← m.php, s.php, hgfr9612.php
+```
+
+---
+
+### ✅ SOLUCIÓN RECOMENDADA — Separar WordPress de la API
+
+La arquitectura correcta es mantener los dos servicios en servidores separados:
+
+```
+┌──────────────────────────────────┐     ┌─────────────────────────────────────┐
+│  ursol.com (hosting actual)      │     │  api.ursol.com (VPS nuevo)           │
+│  Shared hosting cPanel           │     │  Ubuntu 22.04 + Docker               │
+│  ─────────────────────────────   │     │  ───────────────────────────────────  │
+│  WordPress (sitio web)           │────▶│  Laravel 12 API (esta API)            │
+│  PHP (versión cPanel)            │     │  PHP 8.4-FPM + Nginx + MySQL + Redis  │
+│  BD WordPress: db_hiafqqfmjm     │     │  Laravel Horizon + Docker Compose     │
+└──────────────────────────────────┘     └─────────────────────────────────────┘
+```
+
+**Opciones de VPS recomendadas:**
+
+| Proveedor | Plan mínimo | Precio aprox. | URL |
+|---|---|---|---|
+| DigitalOcean | 2 GB RAM Droplet | ~$12/mes | digitalocean.com |
+| Linode (Akamai) | 2 GB Nanode | ~$12/mes | linode.com |
+| Vultr | 2 GB Cloud Compute | ~$12/mes | vultr.com |
+| Hostinger VPS | 2 GB VPS | ~$8/mes | hostinger.com |
+
+**Pasos para el subdominio:**
+1. Crear VPS con Ubuntu 22.04
+2. Agregar registro DNS: `api.ursol.com` → IP del nuevo VPS  
+   _(esto se hace en el panel DNS del hosting actual de ursol.com, en cPanel > Zone Editor)_
+3. Seguir la Sección 0 de este checklist para el deploy
 
 ---
 
@@ -39,6 +131,123 @@
 
 ---
 
+## 0. Infraestructura — Deploy en api.ursol.com
+
+> Esta sección cubre los pasos **únicos del primer deploy** en el servidor de ursol.com.
+> Los deploys posteriores se gestionan automáticamente vía GitHub Actions (ver sección 12).
+
+### 0.1 Servidor (VPS / Cloud)
+
+- [ ] Contratar servidor con mínimo **2 GB RAM** (recomendado 4 GB), Ubuntu 22.04 LTS.
+- [ ] Instalar Docker + Docker Compose en el servidor:
+  ```bash
+  curl -fsSL https://get.docker.com | sh
+  sudo usermod -aG docker $USER
+  ```
+- [ ] Crear directorio de trabajo y clonar el repositorio:
+  ```bash
+  mkdir -p /var/www/ursol-cast-api
+  git clone git@github.com:jeremy-sud/Ursol-CAST-API.git /var/www/ursol-cast-api
+  ```
+- [ ] Crear directorio de backups con permisos adecuados:
+  ```bash
+  mkdir -p /backups && chmod 700 /backups
+  ```
+
+### 0.2 DNS y SSL
+
+- [ ] Crear registro DNS tipo **A**: `api.ursol.com` → IP del servidor.
+- [ ] Esperar propagación DNS (puede tardar hasta 24h — verificar con `dig api.ursol.com`).
+- [ ] Instalar Certbot y obtener certificado Let's Encrypt:
+  ```bash
+  sudo apt install certbot python3-certbot-nginx
+  sudo certbot --nginx -d api.ursol.com
+  # Configura renovación automática:
+  sudo systemctl enable certbot.timer
+  ```
+- [ ] Verificar que el certificado SSL renueva automáticamente:
+  ```bash
+  sudo certbot renew --dry-run
+  ```
+
+### 0.3 Variables de entorno de producción
+
+- [ ] Copiar `.env.example` y completar con valores reales de producción:
+  ```bash
+  cd /var/www/ursol-cast-api
+  cp .env.example .env
+  ```
+- [ ] Valores críticos que **deben** cambiarse del ejemplo:
+  ```env
+  APP_ENV=production
+  APP_DEBUG=false
+  APP_URL=https://api.ursol.com
+
+  # Base de datos (contenedor Docker interno)
+  DB_HOST=mysql
+  DB_DATABASE=ursol_cast_prod
+  DB_USERNAME=ursol_user
+  DB_PASSWORD=<contraseña_segura_nueva>
+  DB_ROOT_PASSWORD=<root_password_seguro>
+
+  # Redis (contenedor Docker interno)
+  REDIS_HOST=redis
+
+  # CORS — solo permitir el frontend de ursol.com
+  FRONTEND_URL=https://www.ursol.com
+
+  # Sanctum — dominios estáticos de producción
+  SANCTUM_STATEFUL_DOMAINS=www.ursol.com,api.ursol.com
+
+  # Hacienda (credenciales de producción, NO sandbox)
+  HACIENDA_ENVIRONMENT=production
+  HACIENDA_CERT_PATH=/var/www/ursol-cast-api/storage/certs/prod.p12
+  HACIENDA_CERT_PASSWORD=<pin_certificado>
+  HACIENDA_OAUTH_CLIENT_ID=api-prod
+
+  # Logs
+  LOG_LEVEL=error
+  LOG_CHANNEL=stack
+
+  # Sentry (opcional pero recomendado)
+  SENTRY_LARAVEL_DSN=<dsn_de_sentry>
+  ```
+- [ ] Generar `APP_KEY` de producción:
+  ```bash
+  php artisan key:generate
+  ```
+
+### 0.4 GitHub Secrets para CI/CD automático
+
+> Configurar en GitHub → Settings → Secrets and variables → Actions
+
+- [ ] `PRODUCTION_SERVER` — IP pública del servidor
+- [ ] `PRODUCTION_USER` — usuario SSH (ej: `deploy`)
+- [ ] `SSH_PRIVATE_KEY` — llave privada SSH (la pública debe estar en `~/.ssh/authorized_keys` del servidor)
+- [ ] `DB_ROOT_PASSWORD` — contraseña root MySQL de producción
+- [ ] `SENTRY_LARAVEL_DSN` — DSN de Sentry (si aplica)
+
+### 0.5 Primer deploy manual
+
+- [ ] Ejecutar el deploy inicial desde el servidor (solo la primera vez):
+  ```bash
+  cd /var/www/ursol-cast-api
+  docker-compose -f docker-compose.yml up -d
+  docker-compose exec php php artisan migrate --force
+  docker-compose exec php php artisan db:seed --class=MasterDataSeeder --force
+  docker-compose exec php php artisan config:cache
+  docker-compose exec php php artisan route:cache
+  docker-compose exec php php artisan l5-swagger:generate
+  ```
+- [ ] Verificar que el health check responde correctamente:
+  ```bash
+  curl https://api.ursol.com/up
+  # Esperado: HTTP 200
+  ```
+- [ ] A partir de aquí, todos los deploys futuros son automáticos via GitHub Actions al publicar un release.
+
+---
+
 ## 1. Secrets y configuración
 
 > **Relacionado:** FASE 17 (✅), auditoría técnica 9 Mar 2026
@@ -68,7 +277,7 @@ git grep -nE "password|passwd|secret|token|apikey|api_key|pwd|admin123" -- ':!*.
 - [x] **FASE 14.5:** `$hidden = ['password_hash']` en modelo Usuario.
 - [x] **FASE 14.5:** `$e->getMessage()` protegido con `config('app.debug')` en 5 servicios AI.
 - [ ] Asegurar `APP_ENV=production` y `APP_DEBUG=false` en `.env` de producción.
-- [ ] Revisar `config/sanctum.php` — configurar `SANCTUM_STATEFUL_DOMAINS` para dominios de producción.
+- [ ] Confirmar `SANCTUM_STATEFUL_DOMAINS=www.ursol.com,api.ursol.com` en `.env` de producción.
 - [ ] Confirmar política de tokens: `login()` revoca tokens previos (`$usuario->tokens()->delete()`).
 - [ ] Verificar que logs no registren tokens ni contraseñas (revisar canales `daily` y `sentry`).
 - [ ] Confirmar `SESSION_ENCRYPT=true` (default `true` desde FASE 14.5).
@@ -115,11 +324,11 @@ git grep -nE "password|passwd|secret|token|apikey|api_key|pwd|admin123" -- ':!*.
 - [ ] Forzar HTTPS / HSTS en reverse proxy (nginx/Kubernetes ingress).
 - [ ] Ajustar `config/cors.php` — reemplazar `*` por orígenes de producción permitidos:
   ```php
-  'allowed_origins' => [env('FRONTEND_URL'), env('ADMIN_URL')],
+  'allowed_origins' => [env('FRONTEND_URL')],  // https://www.ursol.com
   ```
 - [ ] Verificar que los headers de seguridad se aplican correctamente en producción:
   ```bash
-  curl -I https://api.tu-dominio/api/health
+  curl -I https://api.ursol.com/up
   # Verificar: X-Content-Type-Options, X-Frame-Options, Strict-Transport-Security, Content-Security-Policy
   ```
 
@@ -278,7 +487,9 @@ Módulo de Hacienda completamente implementado (v4.4, DGT-R-000-2024). Validaci�
   ```
 - [ ] Verificar healthcheck endpoint responde correctamente:
   ```bash
-  curl https://api.tu-dominio/api/health
+  curl https://api.ursol.com/up
+  # Esperado: HTTP 200
+  curl https://api.ursol.com/api/health
   # Esperado: {"status":"ok",...}
   ```
 
@@ -335,7 +546,7 @@ Módulo de Hacienda completamente implementado (v4.4, DGT-R-000-2024). Validaci�
 
 Login:
 ```bash
-curl -X POST https://api.tu-dominio/api/login \
+curl -X POST https://api.ursol.com/api/login \
   -H "Content-Type: application/json" \
   -d '{"email":"<ADMIN_EMAIL>","password":"<PASSWORD>"}'
 ```
@@ -344,19 +555,20 @@ Request con tenant header y token:
 ```bash
 curl -H "Authorization: Bearer <TOKEN>" \
      -H "X-Empresa-Id: <EMPRESA_ID>" \
-     https://api.tu-dominio/api/productos
+     https://api.ursol.com/api/productos
 ```
 
 Logout:
 ```bash
-curl -X POST https://api.tu-dominio/api/logout \
+curl -X POST https://api.ursol.com/api/logout \
   -H "Authorization: Bearer <TOKEN>" \
   -H "X-Empresa-Id: <EMPRESA_ID>"
 ```
 
 Health check:
 ```bash
-curl https://api.tu-dominio/api/health
+curl https://api.ursol.com/up
+curl https://api.ursol.com/api/health
 ```
 
 Manejo de `429 Too Many Requests`:
@@ -385,7 +597,8 @@ php artisan l5-swagger:generate
 php artisan tinker --execute="App::make(\App\Services\PermissionService::class)->warmupPermissionCache();"
 
 # 6. Verificar health
-curl https://api.tu-dominio/api/health
+curl https://api.ursol.com/up
+curl https://api.ursol.com/api/health
 ```
 
 ---
@@ -460,4 +673,6 @@ php artisan test --parallel
 - Este checklist está vinculado al [ROADMAP.md](../ROADMAP.md) — mantener ambos documentos sincronizados.
 - Agregar un paso en CI que ejecute el grep de secrets y falle si encuentra coincidencias.
 - Documentar cualquier cambio de última hora en el CHANGELOG.md.
-- **Próxima acción recomendada:** Completar FASE 19.6 (E2E Hacienda sandbox) antes de considerar producción.
+- **URL de producción:** `https://api.ursol.com` — configurada en sección 0 de este checklist.
+- **Deploys posteriores:** automáticos al publicar un release en GitHub (ver `.github/workflows/deploy-production.yml`).
+- **Rollback de emergencia:** `bash scripts/rollback.sh` desde el servidor o desde GitHub Actions (`workflow_dispatch` en `deploy-production.yml`).
