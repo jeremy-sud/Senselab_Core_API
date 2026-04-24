@@ -1,8 +1,27 @@
 # 📋 Warnings Conocidos y Aceptados
 
-**Última actualización:** 24 de marzo de 2026  
-**Versión del proyecto:** 3.3.0  
-**Tests pasando:** ✅ 997/997 (5 skipped) — ~3,500 assertions  
+
+---
+
+## 🚨 Incidente de Seguridad — 23 abril 2026
+
+**Clave API de Gemini expuesta en historial git**
+
+- La clave `AIzaSyBM9rUx56gUotGN8V9sRK5uhWyXTr1ELA0` fue encontrada en 3 commits del historial git.
+- Acción tomada: **Revocada y reemplazada** por una nueva clave (`AIzaSyAoZGMJ48TXcvbSFHPjUQJ6w8XRPH_jnlg`).
+- Recomendación: Si el repo fue público, considerar la clave anterior como comprometida y monitorear uso indebido.
+
+**Contraseñas hardcodeadas en seeders**
+
+- Los seeders `FoundersSeeder` y `UsuarioAdminSeeder` contienen contraseñas en texto plano (`Ursol2024!`, `admin123`).
+- Acción sugerida: Usar variables de entorno para las contraseñas en seeders y regenerar en producción.
+- Riesgo: Si los seeders se ejecutan en producción sin cambio, cualquier persona con acceso al código conoce las credenciales iniciales.
+
+---
+
+**Última actualización:** 23 de abril de 2026  
+**Versión del proyecto:** 5.0.2  
+**Tests pasando:** ✅ 1261/1261 (5 skipped) — ~3,500 assertions  
 **PHPStan:** ✅ Level 8 — 0 errores en 687 archivos  
 **Impacto en funcionalidad:** ❌ Ninguno
 
