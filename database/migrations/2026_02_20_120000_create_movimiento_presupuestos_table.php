@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('movimiento_presupuestos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('empresa_id')->constrained('empresas')->onDelete('cascade');
-            $table->foreignId('sucursal_id')->nullable()->constrained('sucursales')->onDelete('set null');
+            $table->unsignedInteger('empresa_id');
+            $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
+            $table->unsignedInteger('sucursal_id')->nullable();
+            $table->foreign('sucursal_id')->references('id')->on('sucursales')->onDelete('set null');
             
-            $table->foreignId('detalle_presupuesto_id')->constrained('detalle_presupuestos')->onDelete('cascade');
+            $table->unsignedInteger('detalle_presupuesto_id');
+            $table->foreign('detalle_presupuesto_id')->references('id')->on('detalle_presupuestos')->onDelete('cascade');
             
             $table->decimal('monto', 15, 2);
             $table->date('fecha');
@@ -29,9 +32,12 @@ return new class extends Migration
             $table->boolean('activo')->default(true);
             $table->boolean('eliminado')->default(false);
             
-            $table->foreignId('usuario_creacion_id')->nullable()->constrained('usuarios')->onDelete('set null');
-            $table->foreignId('usuario_modificacion_id')->nullable()->constrained('usuarios')->onDelete('set null');
-            $table->foreignId('usuario_eliminacion_id')->nullable()->constrained('usuarios')->onDelete('set null');
+            $table->unsignedInteger('usuario_creacion_id')->nullable();
+            $table->foreign('usuario_creacion_id')->references('id')->on('usuarios')->onDelete('set null');
+            $table->unsignedInteger('usuario_modificacion_id')->nullable();
+            $table->foreign('usuario_modificacion_id')->references('id')->on('usuarios')->onDelete('set null');
+            $table->unsignedInteger('usuario_eliminacion_id')->nullable();
+            $table->foreign('usuario_eliminacion_id')->references('id')->on('usuarios')->onDelete('set null');
             
             $table->timestamp('creado_en')->useCurrent();
             $table->timestamp('actualizado_en')->useCurrent()->useCurrentOnUpdate();

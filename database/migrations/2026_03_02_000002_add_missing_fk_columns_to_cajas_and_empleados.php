@@ -18,25 +18,31 @@ return new class extends Migration
     {
         // Agregar usuario_id a cajas (relación con el usuario asignado a la caja)
         Schema::table('cajas', function (Blueprint $table) {
-            $table->foreignId('usuario_id')
+            $table->unsignedInteger('usuario_id')
                   ->nullable()
-                  ->after('sucursal_id')
-                  ->constrained('usuarios')
+                  ->after('sucursal_id');
+            $table->foreign('usuario_id')
+                  ->references('id')
+                  ->on('usuarios')
                   ->nullOnDelete();
         });
 
         // Agregar usuario_id y departamento_id a empleados
         Schema::table('empleados', function (Blueprint $table) {
-            $table->foreignId('usuario_id')
+            $table->unsignedInteger('usuario_id')
                   ->nullable()
-                  ->after('empresa_id')
-                  ->constrained('usuarios')
+                  ->after('empresa_id');
+            $table->foreign('usuario_id')
+                  ->references('id')
+                  ->on('usuarios')
                   ->nullOnDelete();
 
-            $table->foreignId('departamento_id')
+            $table->unsignedBigInteger('departamento_id')
                   ->nullable()
-                  ->after('cargo_id')
-                  ->constrained('departamentos')
+                  ->after('cargo_id');
+            $table->foreign('departamento_id')
+                  ->references('id')
+                  ->on('departamentos')
                   ->nullOnDelete();
         });
     }
