@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             
             // Usuario que realizó la acción
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
+            $table->unsignedInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('usuarios')->onDelete('set null');
             $table->string('user_email')->nullable();
             $table->string('user_name')->nullable();
             

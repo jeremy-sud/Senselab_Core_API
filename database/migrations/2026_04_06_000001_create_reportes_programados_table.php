@@ -10,8 +10,10 @@ return new class extends Migration
     {
         Schema::create('reportes_programados', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('empresa_id')->constrained('empresas')->onDelete('cascade');
-            $table->foreignId('usuario_id')->constrained('usuarios')->onDelete('cascade');
+            $table->unsignedInteger('empresa_id');
+            $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
+            $table->unsignedInteger('usuario_id');
+            $table->foreign('usuario_id')->references('id')->on('usuarios')->onDelete('cascade');
             $table->string('nombre', 100);
             $table->string('tipo_reporte', 50);
             $table->string('frecuencia', 20); // diario, semanal, mensual

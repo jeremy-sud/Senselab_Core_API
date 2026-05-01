@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             
             // Usuario que solicita eliminación
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
+            $table->unsignedInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('usuarios')->onDelete('cascade');
             $table->string('email')->nullable(); // Por si el user está deletedo
             $table->string('request_type')->nullable(); // 'account', 'data', 'all'
             
@@ -23,7 +24,8 @@ return new class extends Migration
             $table->enum('status', ['pending', 'approved', 'rejected', 'processing', 'completed', 'failed']);
             $table->dateTime('approved_at')->nullable();
             $table->dateTime('completed_at')->nullable();
-            $table->foreignId('approved_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->unsignedInteger('approved_by')->nullable();
+            $table->foreign('approved_by')->references('id')->on('usuarios')->onDelete('set null');
             
             // Datos de la solicitud
             $table->text('reason')->nullable();
