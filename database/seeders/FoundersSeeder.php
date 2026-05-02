@@ -49,13 +49,21 @@ class FoundersSeeder extends Seeder
         // =============================================================
         // FUNDADOR: Eduardo Ureña Solano
         // =============================================================
+        
+        // Obtener contraseña de variable de entorno o usar default
+        $eduardoPassword = env('FOUNDER1_PASSWORD', 'Ursol2024!');
+        
+        if ($eduardoPassword === 'Ursol2024!') {
+            $this->command->warn('⚠️  ADVERTENCIA: Usando contraseña de desarrollo para Eduardo');
+            $this->command->warn('⚠️  Cambiar FOUNDER1_PASSWORD en .env para producción');
+        }
+        
         $eduardo = [
             'nombre' => 'Eduardo',
             'apellidos' => 'Ureña Solano',
             'cargo_id' => $cargoFundador->id,
             'email' => 'eduardo@ursol.com',
-            // Usar variable de entorno o valor aleatorio si no está definida
-            'password_hash' => Hash::make(env('FOUNDER1_PASSWORD', Str::random(32))),
+            'password_hash' => Hash::make($eduardoPassword),
             'empresa_id' => $empresa->id,
             'telefono' => '+506 8868-7765',
             'direccion' => 'San José, Costa Rica',
@@ -109,12 +117,21 @@ class FoundersSeeder extends Seeder
         // =============================================================
         // CO-FUNDADOR: Jeremy Arias Solano
         // =============================================================
+        
+        // Obtener contraseña de variable de entorno o usar default
+        $jeremyPassword = env('FOUNDER2_PASSWORD', 'Ursol2024!');
+        
+        if ($jeremyPassword === 'Ursol2024!') {
+            $this->command->warn('⚠️  ADVERTENCIA: Usando contraseña de desarrollo para Jeremy');
+            $this->command->warn('⚠️  Cambiar FOUNDER2_PASSWORD en .env para producción');
+        }
+        
         $jeremy = [
             'nombre' => 'Jeremy',
             'apellidos' => 'Arias Solano',
             'cargo_id' => $cargoCoFundador->id,
             'email' => 'jeremy@ursol.com',
-            'password_hash' => Hash::make('Ursol2024!'), // Cambiar en producción
+            'password_hash' => Hash::make($jeremyPassword),
             'empresa_id' => $empresa->id,
             'telefono' => '+506 8765-4321',
             'direccion' => 'San José, Costa Rica',
