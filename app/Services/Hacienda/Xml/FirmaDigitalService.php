@@ -421,20 +421,6 @@ class FirmaDigitalService
                 'trace' => $e->getTraceAsString(),
             ]);
             return null;
-        }
-    }
-
-            // Guardar versión moderna junto al original para futuras lecturas
-            $modernPath = preg_replace('/\.p12$/i', '_modern.p12', $rutaP12);
-            if ($modernPath && $modernPath !== $rutaP12) {
-                file_put_contents($modernPath, $modernContent);
-                Log::info('Certificado .p12 convertido a formato moderno', [
-                    'certificado_id' => $this->certificado->id,
-                    'modern_path' => $modernPath,
-                ]);
-            }
-
-            return $modernContent;
         } finally {
             // Limpiar archivos temporales
             @unlink($tempPem);
