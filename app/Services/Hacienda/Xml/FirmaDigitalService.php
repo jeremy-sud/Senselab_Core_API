@@ -351,7 +351,7 @@ class FirmaDigitalService
      * Convertir certificado .p12 legacy a formato moderno (OpenSSL 3.x compatible)
      *
      * Los certificados de Hacienda CR usan RC2-40-CBC (legacy), que OpenSSL 3.x
-     * no soporta por defecto. Se convierte usando el flag -legacy de openssl CLI.
+     * no soporta por defecto. Se convierte usando la extensión openssl de PHP.
      *
      * @param string $rutaP12 Ruta absoluta al archivo .p12 original
      * @param string $password Contraseña del certificado
@@ -359,45 +359,70 @@ class FirmaDigitalService
      */
     protected function convertirP12Legacy(string $rutaP12, string $password): ?string
     {
-        // Verificar que openssl CLI está disponible con soporte legacy
-        $opensslPath = trim((string) shell_exec('which openssl 2>/dev/null'));
-        if (empty($opensslPath)) {
-            Log::error('openssl CLI no encontrado, no se puede convertir certificado legacy');
+        // Verificar que el archivo existe
+        if (!file_exists($rutaP12) || !is_readable($rutaP12)) {
+            Log::error('Archivo .p12 no encontrado o no es legible', ['ruta' => $rutaP12]);
             return null;
         }
 
-        $tempPem = tempnam(sys_get_temp_dir(), 'p12_pem_');
-        $tempP12 = tempnam(sys_get_temp_dir(), 'p12_mod_');
-
         try {
-            $escapedPass = escapeshellarg($password);
-            $escapedSrc = escapeshellarg($rutaP12);
-            $escapedPem = escapeshellarg($tempPem);
-            $escapedP12 = escapeshellarg($tempP12);
-
-            // Paso 1: Exportar .p12 legacy → PEM (usando -legacy)
-            $cmd1 = "openssl pkcs12 -in {$escapedSrc} -out {$escapedPem} -nodes -passin pass:{$escapedPass} -legacy 2>&1";
-            $output1 = shell_exec($cmd1);
-
-            if (!file_exists($tempPem) || filesize($tempPem) === 0) {
-                Log::error('Conversión legacy→PEM falló', ['output' => $output1]);
+            // Leer contenido del certificado
+            $p12Content = file_get_contents($rutaP12);
+            if ($p12Content === false) {
+                Log::error('No se pudo leer archivo .p12', ['ruta' => $rutaP12]);
                 return null;
             }
 
-            // Paso 2: Re-empaquetar PEM → .p12 moderno (AES-256-CBC)
-            $cmd2 = "openssl pkcs12 -export -in {$escapedPem} -out {$escapedP12} -passout pass:{$escapedPass} 2>&1";
-            $output2 = shell_exec($cmd2);
+            // Paso 1: Leer certificado PKCS#12
+            $certs = [];
+            $success = openssl_pkcs12_read($p12Content, $certs, $password);
 
-            if (!file_exists($tempP12) || filesize($tempP12) === 0) {
-                Log::error('Re-empaquetado PEM→P12 falló', ['output' => $output2]);
+            if (!$success) {
+                Log::error('No se pudo leer certificado PKCS#12', [
+                    'error' => openssl_error_string(),
+                ]);
                 return null;
             }
 
-            $modernContent = file_get_contents($tempP12);
-
-            if ($modernContent === false) {
+            // Verificar que tenemos los componentes necesarios
+            if (!isset($certs['cert']) || !isset($certs['key'])) {
+                Log::error('Certificado PKCS#12 no contiene cert o key', [
+                    'has_cert' => isset($certs['cert']),
+                    'has_key' => isset($certs['key']),
+                ]);
                 return null;
             }
+
+            // Paso 2: Re-empaquetar con encriptación moderna (AES-256)
+            // Usamos openssl_pkcs12_export que es más compatible que shell_exec
+            $newP12 = '';
+            $exportSuccess = openssl_pkcs12_export(
+                $certs['cert'],
+                $newP12,
+                $certs['key'],
+                $password,
+                [
+                    'friendly_name' => 'Certificado Digital Hacienda',
+                    'encrypting_algorithm' => OPENSSL_CIPHER_AES_256_CBC,
+                ]
+            );
+
+            if (!$exportSuccess) {
+                Log::error('No se pudo exportar certificado moderno', [
+                    'error' => openssl_error_string(),
+                ]);
+                return null;
+            }
+
+            return $newP12;
+        } catch (\Throwable $e) {
+            Log::error('Error durante conversión de certificado', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return null;
+        }
+    }
 
             // Guardar versión moderna junto al original para futuras lecturas
             $modernPath = preg_replace('/\.p12$/i', '_modern.p12', $rutaP12);
