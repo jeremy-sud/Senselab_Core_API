@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Webhook;
+use App\Rules\ValidateWebhookUrlRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -10,7 +11,7 @@ class StoreWebhookRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return $this->user()?->can('create-webhooks') ?? true;
     }
 
     /**
@@ -20,7 +21,7 @@ class StoreWebhookRequest extends FormRequest
     {
         return [
             'nombre' => ['required', 'string', 'max:100'],
-            'url' => ['required', 'url:https', 'max:2048'],
+            'url' => ['required', 'string', 'max:2048', new ValidateWebhookUrlRule()],
             'eventos' => ['required', 'array', 'min:1'],
             'eventos.*' => ['required', 'string', Rule::in(Webhook::EVENTOS_DISPONIBLES)],
             'descripcion' => ['nullable', 'string', 'max:500'],
@@ -38,7 +39,6 @@ class StoreWebhookRequest extends FormRequest
         return [
             'nombre.required' => 'El nombre del webhook es obligatorio',
             'url.required' => 'La URL del webhook es obligatoria',
-            'url.url' => 'La URL debe ser válida y usar HTTPS',
             'eventos.required' => 'Debe seleccionar al menos un evento',
             'eventos.min' => 'Debe seleccionar al menos un evento',
             'eventos.*.in' => 'El evento seleccionado no es válido. Eventos disponibles: ' . implode(', ', Webhook::EVENTOS_DISPONIBLES),
