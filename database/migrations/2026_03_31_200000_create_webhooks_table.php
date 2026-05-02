@@ -10,7 +10,8 @@ return new class extends Migration
     {
         Schema::create('webhooks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('empresa_id')->constrained('empresas')->onDelete('cascade');
+            $table->unsignedInteger('empresa_id');
+            $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
             $table->string('nombre', 100);
             $table->string('url', 2048);
             $table->json('eventos');

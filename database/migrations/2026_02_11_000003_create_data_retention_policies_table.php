@@ -47,7 +47,8 @@ return new class extends Migration
             
             // Metadata
             $table->json('metadata')->nullable();
-            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->unsignedInteger('created_by')->nullable();
+            $table->foreign('created_by')->references('id')->on('usuarios')->onDelete('set null');
             
             $table->timestamps();
             

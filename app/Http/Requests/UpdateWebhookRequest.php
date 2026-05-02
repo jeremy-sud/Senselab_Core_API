@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Webhook;
+use App\Rules\ValidateWebhookUrlRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -10,7 +11,7 @@ class UpdateWebhookRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return $this->user()?->can('update-webhooks') ?? true;
     }
 
     /**
@@ -20,7 +21,7 @@ class UpdateWebhookRequest extends FormRequest
     {
         return [
             'nombre' => ['sometimes', 'string', 'max:100'],
-            'url' => ['sometimes', 'url:https', 'max:2048'],
+            'url' => ['sometimes', 'string', 'max:2048', new ValidateWebhookUrlRule()],
             'eventos' => ['sometimes', 'array', 'min:1'],
             'eventos.*' => ['required_with:eventos', 'string', Rule::in(Webhook::EVENTOS_DISPONIBLES)],
             'descripcion' => ['nullable', 'string', 'max:500'],
@@ -36,7 +37,6 @@ class UpdateWebhookRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'url.url' => 'La URL debe ser válida y usar HTTPS',
             'eventos.min' => 'Debe seleccionar al menos un evento',
             'eventos.*.in' => 'El evento seleccionado no es válido. Eventos disponibles: ' . implode(', ', Webhook::EVENTOS_DISPONIBLES),
             'timeout_segundos.min' => 'El timeout mínimo es 5 segundos',

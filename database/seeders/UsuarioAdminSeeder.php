@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UsuarioAdminSeeder extends Seeder
 {
@@ -30,13 +31,19 @@ class UsuarioAdminSeeder extends Seeder
         }
 
         // Crear usuario administrador
+        $adminPassword = env('ADMIN_SEEDER_PASSWORD', 'admin123');
+        
+        if ($adminPassword === 'admin123') {
+            $this->command->warn('⚠️  ADVERTENCIA: Usando contraseña de desarrollo para admin');
+            $this->command->warn('⚠️  Cambiar ADMIN_SEEDER_PASSWORD en .env para producción');
+        }
+
         $usuario = [
             'nombre' => 'Admin',
             'apellidos' => 'Sistema',
             'cargo_id' => $cargo->id,
             'email' => 'admin@ursol.com',
-            // Usar variable de entorno o valor aleatorio si no está definida
-            'password_hash' => Hash::make(env('ADMIN_PASSWORD', Str::random(32))),
+            'password_hash' => Hash::make($adminPassword),
             'empresa_id' => $empresa->id,
             'telefono' => '+506 8868-7765',
             'direccion' => 'San José, Costa Rica',

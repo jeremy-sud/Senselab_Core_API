@@ -11,7 +11,8 @@ return new class extends Migration
         Schema::create('webhook_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('webhook_id')->constrained('webhooks')->onDelete('cascade');
-            $table->foreignId('empresa_id')->constrained('empresas')->onDelete('cascade');
+            $table->unsignedInteger('empresa_id');
+            $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
             $table->string('evento', 100);
             $table->string('estado', 20)->default('pendiente'); // pendiente, exitoso, fallido
             $table->unsignedSmallInteger('codigo_respuesta')->nullable();
