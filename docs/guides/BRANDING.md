@@ -301,6 +301,6 @@ Los logos y marcas son propiedad de **Senselab** El código fuente del proyecto 
 ---
 
 <p align="center">
-  <strong>Desarrollado con ❤️ y el "Toque Humano" por Senselab</strong><br>
+  <strong>"No hacemos cualquier cosa. Hacemos cosas con sentido."</strong><br>
   <em>San José, Costa Rica 🇨🇷 | Desde 1995</em>
 </p>

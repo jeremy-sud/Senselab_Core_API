@@ -8,7 +8,10 @@
 
 ## 🏢 Sobre Senselab
 
-Somos una empresa familiar costarricense con **casi 30 años de experiencia** en el sector tecnológico. Nos caracterizamos por nuestra **ética inquebrantable**, **atención personalizada** y el **"Toque Humano"** en cada proyecto.
+En SenseLab no vendemos software a la fuerza. Escuchamos, exploramos y luego construimos con sentido. Si busca un aliado tecnológico que entienda tanto de servidores como de píxeles, de bases de datos como de narrativa interactiva, hablemos.
+
+**"No hacemos cualquier cosa. Hacemos cosas con sentido."**
+— *SenseLab, tecnología versátil con alma costarricense.*
 
 - **Fundador**: Senselab Team
 - **Desarrollador Principal**: Jeremy Arias Solano
@@ -413,7 +416,7 @@ Agradecemos a todos los contribuidores que ayudan a mejorar este proyecto.
 
 ---
 
-**Desarrollado con ❤️ y el "Toque Humano" por Senselab**  
-*Costa Rica | 30 años de experiencia tecnológica*
+**"No hacemos cualquier cosa. Hacemos cosas con sentido."**  
+*Costa Rica | Build with Sense*
 
 © 2025 Senselab - Todos los derechos reservados

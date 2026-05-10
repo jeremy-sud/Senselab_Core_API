@@ -518,4 +518,4 @@ Marca cada paso cuando lo completes:
 ---
 
 **Desarrollado con ❤️ por Senselab**  
-**30 años de experiencia en soluciones tecnológicas**
+**Build with Sense**

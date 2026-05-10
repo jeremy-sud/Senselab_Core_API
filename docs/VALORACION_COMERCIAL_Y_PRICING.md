@@ -574,6 +574,6 @@ $1,500+/mes   │  SAP, Softland, Exactus  │  Enterprise legacy
 ---
 
 **Desarrollado con ❤️ por Senselab**  
-**"Toque Humano en la Transformación Digital"**
+**"No hacemos cualquier cosa. Hacemos cosas con sentido."**
 
 *Última actualización: 14 de Abril 2026*

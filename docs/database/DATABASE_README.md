@@ -1,7 +1,7 @@
 # Base de Datos - Senselab Core API
 
 **Desarrollado por:** Senselab  
-**País:** Costa Rica | 30 años de experiencia tecnológica  
+**País:** Costa Rica | Build with Sense  
 **Desarrollador:** Jeremy Arias Solano  
 **Contacto:** deadmooncr@gmail.com | WhatsApp +(506)8973-5665
 

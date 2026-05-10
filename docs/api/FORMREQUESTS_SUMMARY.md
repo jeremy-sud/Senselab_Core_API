@@ -358,7 +358,7 @@ php artisan tinker
 
 **Desarrollado por:**
 - **Jeremy Arias Solano** - Lead Developer
-- **Senselab** - 30 años de experiencia
+- **Senselab** - Build with Sense
 
 ---
 

@@ -239,7 +239,7 @@
 ### Equipo
 - **Jeremy Arias Solano** - Lead Developer
 - **Senselab Admin** - Founder & Visionary
-- **Senselab** - 30 años de experiencia
+- **Senselab** - Build with Sense
 
 ---
 

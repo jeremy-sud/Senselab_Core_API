@@ -438,4 +438,4 @@ Se ha completado exitosamente la implementación de **10 controladores API** com
 ---
 
 *Documento actualizado: 20 de noviembre de 2025*  
-*Desarrollado con ❤️ y el "Toque Humano" por Senselab*
+*Hacemos cosas con sentido — Senselab*

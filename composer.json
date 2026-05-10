@@ -3,7 +3,7 @@
     "name": "sistemassenselab/senselab-core-api",
     "version": "1.0.0",
     "type": "project",
-    "description": "Sistema ERP Multi-Tenant con Facturación Electrónica para Costa Rica. Desarrollado por Senselab con casi 30 años de experiencia.",
+    "description": "Sistema ERP Multi-Tenant con Facturación Electrónica para Costa Rica. Desarrollado por Senselab | Build with Sense.",
     "keywords": [
         "laravel",
         "erp",

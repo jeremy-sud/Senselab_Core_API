@@ -506,6 +506,6 @@ public function attributes(): array
 
 ---
 
-**Desarrollado por Senselab - 30 años de experiencia**
+**Desarrollado por Senselab - Build with Sense**
 
 *Última actualización: 19 de Noviembre de 2025*

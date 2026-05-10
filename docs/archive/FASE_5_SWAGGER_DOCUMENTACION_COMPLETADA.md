@@ -339,5 +339,5 @@ El proyecto ahora cuenta con:
 ---
 
 **Desarrollado por Senselab**  
-*30 años de experiencia en soluciones tecnológicas*  
+*Build with Sense*  
 *Costa Rica - 2024*

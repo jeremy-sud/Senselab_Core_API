@@ -139,5 +139,5 @@ El código del proyecto está bajo **MIT License**, pero los assets gráficos ma
 <p align="center">
   <img src="./logos/senselab-icon.png" width="60" alt="Senselab Icon"><br>
   <strong>Senselab</strong><br>
-  <em>El "Toque Humano" en Tecnología</em>
+  <em>Hacemos cosas con sentido.</em>
 </p>

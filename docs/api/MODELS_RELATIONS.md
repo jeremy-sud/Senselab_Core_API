@@ -1,7 +1,7 @@
 # Relaciones de Modelos Eloquent - Senselab Core API
 
 **Desarrollado por:** Senselab  
-**Empresa:** Costa Rica | 30 años de experiencia  
+**Empresa:** Costa Rica | Build with Sense  
 **Proyecto:** Sistema ERP Multi-Tenant con Facturación Electrónica  
 **Framework:** Laravel 11  
 **Fecha:** 19 de noviembre de 2025
@@ -551,4 +551,4 @@ Para consultas sobre modelos, relaciones o estructura de base de datos:
 ---
 
 *© 2025 Senselab - Todos los derechos reservados*  
-*Desarrollado con el "Toque Humano" que nos caracteriza*
+*Hacemos cosas con sentido — Senselab*

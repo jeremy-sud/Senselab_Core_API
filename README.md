@@ -10,8 +10,8 @@
 
 <p align="center">
   <strong>Desarrollado por Senselab</strong><br>
-  <em>Soluciones Tecnológicas, "Build with Sense"</em><br>
-  <em>"Toque Humano en la Transformación Digital" 💙</em>
+  <em>"No hacemos cualquier cosa. Hacemos cosas con sentido."</em><br>
+  <em>SenseLab, tecnología versátil con alma costarricense 🇨🇷</em>
 </p>
 
 <p align="center">
@@ -447,7 +447,10 @@ Este usuario tiene acceso completo con **68 permisos** (todos los módulos del s
 
 ### 🏢 Sobre Senselab
 
-Con **más de 30 años de experiencia** en el mercado costarricense, Senselab es una empresa familiar que se distingue por su **ética inquebrantable**, **atención personalizada** y el **"Toque Humano"** en cada proyecto. Liderada por un equipo con más de 35 años de experiencia acumulada en el sector tecnológico.
+En SenseLab no vendemos software a la fuerza. Escuchamos, exploramos y luego construimos con sentido. Si busca un aliado tecnológico que entienda tanto de servidores como de píxeles, de bases de datos como de narrativa interactiva, hablemos.
+
+**"No hacemos cualquier cosa. Hacemos cosas con sentido."**
+— *SenseLab, tecnología versátil con alma costarricense.*
 
 **Nuestros Servicios:**
 
@@ -2927,7 +2930,7 @@ Incluye:
 ### Organizaciones
 
 -   [**Senselab**](https://senselab.com) - Patrono principal del proyecto
--   Empresa familiar costarricense con 30+ años de experiencia
+-   Empresa familiar costarricense | Build with Sense
 
 ---
 
@@ -2958,11 +2961,11 @@ Estamos siempre buscando:
 ---
 
 <p align="center">
-  <strong>Desarrollado con ❤️ y el "Toque Humano"</strong><br><br>
+  <strong>"No hacemos cualquier cosa. Hacemos cosas con sentido."</strong><br><br>
   <a href="https://senselab.com"><img src="./public/assets/logos/senselab-icon.png" width="60" alt="Senselab"></a><br><br>
   <strong>Senselab</strong><br>
   <em>Soluciones Tecnológicas Completas</em><br>
-  <em>Costa Rica | Build with Sense</em><br><br>
+  <em>SenseLab | Tecnología versátil con alma costarricense</em><br><br>
   📞 <a href="https://wa.me/50689735665">+(506)8973-5665</a> | 
   📧 <a href="mailto:deadmooncr@gmail.com">deadmooncr@gmail.com</a><br><br>
   <sub>© 2026 Senselab - Todos los derechos reservados</sub><br>

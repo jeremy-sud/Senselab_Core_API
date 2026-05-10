@@ -34,7 +34,7 @@
 
 **Senselab Core API** es un sistema ERP (Enterprise Resource Planning) empresarial completo construido sobre **Laravel 12** y **PHP 8.4**, diseñado específicamente para empresas costarricenses. El acrónimo CAST hace referencia a las áreas principales: **Contabilidad, Administración, Servicios y Tecnología**.
 
-El proyecto es desarrollado por **Senselab**, empresa con más de 30 años de experiencia en soluciones tecnológicas en Costa Rica. Representa más de 5 años de evolución continua en sistemas empresariales.
+El proyecto es desarrollado por **Senselab** | **Build with Sense**. Representa más de 5 años de evolución continua en sistemas empresariales.
 
 ## 1.2. Misión del proyecto
 

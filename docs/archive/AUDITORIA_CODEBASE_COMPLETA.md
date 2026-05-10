@@ -842,7 +842,7 @@ Estimated Fix Time: 40-60 horas
 ## 📞 CONTACTO Y SOPORTE
 
 **Proyecto:** Senselab Core API  
-**Empresa:** Senselab (30 años de experiencia)  
+**Empresa:** Senselab (Build with Sense)  
 **Lead Developer:** Jeremy Arias Solano  
 **Email:** deadmooncr@gmail.com  
 **Corporativo:** deadmooncr@gmail.com  
@@ -950,7 +950,7 @@ El proyecto está en **buenas condiciones técnicas** pero requiere **atención 
 
 *© 2025 Senselab - Todos los derechos reservados*  
 *Auditoría realizada con GitHub Copilot (Claude Sonnet 4.5)*  
-*"Toque Humano" - 30 años de experiencia en Costa Rica*
+*"No hacemos cualquier cosa. Hacemos cosas con sentido." — SenseLab*
 
 ---
 

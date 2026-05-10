@@ -1,7 +1,7 @@
 # API REST - Senselab Core API
 
 **Desarrollado por Senselab**  
-*Soluciones Tecnológicas | Costa Rica | 30 años de experiencia*
+*Soluciones Tecnológicas | Costa Rica | Build with Sense*
 
 ---
 
