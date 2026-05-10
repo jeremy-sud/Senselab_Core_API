@@ -3,7 +3,6 @@
 **Desarrollado por:** Senselab  
 **País:** Costa Rica | Build with Sense  
 **Desarrollador:** Jeremy Arias Solano  
-**Contacto:** deadmooncr@gmail.com | WhatsApp +(506)8973-5665
 
 ---
 

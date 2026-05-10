@@ -18,7 +18,6 @@
   <a href="https://github.com/SenseLab-dev/Senselab_Core_API"><img src="https://img.shields.io/badge/GitHub-SenseLab-dev-blue" alt="GitHub"></a>
   <a href="https://senselab.com"><img src="https://img.shields.io/badge/Web-senselab.com-green" alt="Web"></a>
   <a href="https://senselab.com"><img src="https://img.shields.io/badge/Web-senselab.com-green" alt="Web Alt"></a>
-  <a href="https://wa.me/50689735665"><img src="https://img.shields.io/badge/WhatsApp-Soporte-25D366" alt="WhatsApp"></a>
   <a href="mailto:deadmooncr@gmail.com"><img src="https://img.shields.io/badge/Email-sistemas%40senselab.com-red" alt="Email"></a>
 </p>
 
@@ -2232,14 +2231,13 @@ php artisan queue:failed
 
 ### ¿Cuál es el costo del ERP?
 
-Senselab Core API es **software propietario de Senselab** Su uso requiere un acuerdo de licencia. Contactá a [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com) para más información.
+Senselab Core API es **Open Source** bajo la licencia **AGPLv3**. Esto significa que puedes usarlo, modificarlo y distribuirlo libremente, siempre que mantengas la misma licencia y compartas tus mejoras. Para usos comerciales sin las restricciones de la AGPLv3, contacta a [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com).
 
 ### ¿Necesito soporte técnico?
 
 Sí, ofrecemos:
 
 -   ✅ Soporte por email: [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com)
--   ✅ WhatsApp: [+(506)8973-5665](https://wa.me/50689735665)
 -   ✅ Issues en GitHub: [Reportar problema](https://github.com/SenseLab-dev/Senselab_Core_API/issues)
 -   ✅ Documentación completa: Está en `/docs`
 
@@ -2834,7 +2832,6 @@ Ofrecemos planes comerciales para empresas que requieran:
 | Canal             | Respuesta | Mejor Para                              |
 | ----------------- | --------- | --------------------------------------- |
 | **Email**         | 24-48h    | Consultas serias, reportes de seguridad |
-| **WhatsApp**      | 2-4h      | Soporte urgente                         |
 | **GitHub Issues** | 24-72h    | Bugs, features, preguntas               |
 | **Discussions**   | 1-2 días  | Conversaciones, ideas                   |
 
@@ -2849,7 +2846,6 @@ Ofrecemos planes comerciales para empresas que requieran:
 **Técnico/Desarrollo:**
 
 -   **📧 Email Dev**: [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com)
--   **💬 WhatsApp**: [+(506)8973-5665](https://wa.me/50689735665)
 -   **🐙 GitHub Org**: [SenseLab-dev](https://github.com/orgs/SenseLab-dev)
 
 **Comunidad:**
@@ -2966,7 +2962,6 @@ Estamos siempre buscando:
   <strong>Senselab</strong><br>
   <em>Soluciones Tecnológicas Completas</em><br>
   <em>SenseLab | Tecnología versátil con alma costarricense</em><br><br>
-  📞 <a href="https://wa.me/50689735665">+(506)8973-5665</a> | 
   📧 <a href="mailto:deadmooncr@gmail.com">deadmooncr@gmail.com</a><br><br>
   <sub>© 2026 Senselab - Todos los derechos reservados</sub><br>
   <sub>Licencia AGPLv3 — Opciones comerciales disponibles</sub>

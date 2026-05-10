@@ -41,7 +41,6 @@ assignees: jeremy-sud
 
 **Contacto:**
 - Email: deadmooncr@gmail.com
-- WhatsApp: +(506)8973-5665
 
 ---
 **Desarrollado por Senselab**  

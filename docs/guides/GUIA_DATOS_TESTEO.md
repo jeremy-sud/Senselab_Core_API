@@ -153,7 +153,6 @@ Nombre: Empresa ABC Distribuidora
 Tipo: Jurídica
 Identificación: 3101234567
 Email: contacto@abcdist.com
-Teléfono: +506 2234-5678
 
 Límite de Crédito: ₡2,000,000
 Plazo de Crédito: 60 días

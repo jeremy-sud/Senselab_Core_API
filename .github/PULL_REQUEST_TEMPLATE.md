@@ -63,7 +63,7 @@ php artisan test --filter NombreDelTest
 **Email:** [tu@email.com]
 
 **Revisado por:** Senselab  
-**Contacto:** deadmooncr@gmail.com | +(506)8973-5665
+**Contacto:** deadmooncr@gmail.com 
 
 ---
 **Desarrollado por Senselab**  

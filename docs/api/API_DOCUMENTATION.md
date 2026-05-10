@@ -1104,7 +1104,6 @@ Eliminar orden (solo en estado `borrador`)
 **Senselab**
 - **Email Corporativo**: deadmooncr@gmail.com
 - **Email Técnico**: deadmooncr@gmail.com
-- **WhatsApp**: +(506)8973-5665
 - **Web**: [senselab.com](https://senselab.com) | [senselab.com](https://senselab.com)
 - **Repositorio**: [Senselab Reposit for Developers](https://sites.google.com/view/repdevsenselab/home/repositorio)
 - **GitHub**: [github.com/SenseLab-dev](https://github.com/orgs/SenseLab-dev)
@@ -1117,7 +1116,6 @@ Eliminar orden (solo en estado `borrador`)
 Para reportar errores o solicitar nuevas funcionalidades:
 1. Accede a [GitHub Issues](https://github.com/SenseLab-dev/Senselab_Core_API/issues)
 2. Envía un correo a deadmooncr@gmail.com
-3. Contacta por WhatsApp al +(506)8973-5665
 
 ---
 

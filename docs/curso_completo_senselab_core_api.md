@@ -1695,7 +1695,6 @@ make ci-test                # Pipeline CI
 | Concepto | Valor |
 |----------|-------|
 | Email soporte | deadmooncr@gmail.com |
-| WhatsApp | +506 8868 7765 |
 | Sitio web | senselab.com / senselab.com |
 | GitHub | github.com/SenseLab-dev/Senselab_Core_API |
 | Login demo | admin@senselab.com / admin123 |

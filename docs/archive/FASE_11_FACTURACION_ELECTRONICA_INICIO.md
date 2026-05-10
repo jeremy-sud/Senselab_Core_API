@@ -35,7 +35,6 @@ Después de alcanzar el **100% de cobertura de tests** (218/218 tests pasando), 
    - Repositorio: https://github.com/CRLibre/fe-hacienda-cr-docs
    - Documentación comunitaria open source
    - Diagramas de flujo de integración
-   - Grupos de soporte: WhatsApp y Facebook
 
 ### Especificaciones Técnicas del API de Hacienda
 

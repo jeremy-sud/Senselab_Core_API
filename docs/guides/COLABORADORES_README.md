@@ -147,7 +147,6 @@ php artisan migrate
 ### ¿Y si tengo problemas?
 1. Revisa la sección de **Troubleshooting** en [INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)
 2. Crea un Issue en GitHub con los detalles
-3. Contacta al equipo por WhatsApp: +(506)8973-5665
 
 ---
 
@@ -177,7 +176,6 @@ Después de instalar:
 
 **Senselab**  
 📧 Email: soporte@senselab.com  
-💬 WhatsApp: +(506)8973-5665  
 🌐 Web: https://senselab.com
 
 ---

@@ -487,7 +487,6 @@ Si tienes problemas que no están cubiertos en esta guía:
 
 3. **Contactar al equipo:**
    - 📧 Email: soporte@senselab.com
-   - 💬 WhatsApp: +(506)8973-5665
    - 🌐 Web: https://senselab.com
 
 ---

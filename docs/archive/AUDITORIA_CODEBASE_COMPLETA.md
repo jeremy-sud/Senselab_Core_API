@@ -846,7 +846,6 @@ Estimated Fix Time: 40-60 horas
 **Lead Developer:** Jeremy Arias Solano  
 **Email:** deadmooncr@gmail.com  
 **Corporativo:** deadmooncr@gmail.com  
-**WhatsApp:** +(506)8973-5665  
 **GitHub:** [jeremy-sud](https://github.com/jeremy-sud)  
 **Documentación:** [Senselab Reposit for Developers](https://sites.google.com/view/repdevsenselab/home/repositorio)
 

@@ -232,7 +232,6 @@
 
 ### Contacto
 - **Email**: deadmooncr@gmail.com
-- **WhatsApp**: +(506)8973-5665
 - **GitHub**: github.com/SenseLab-dev
 - **Documentación**: https://sites.google.com/view/repdevsenselab/home/repositorio
 

@@ -65,7 +65,7 @@ class FoundersSeeder extends Seeder
             'email' => 'admin@senselab.com',
             'password_hash' => Hash::make($adminPassword),
             'empresa_id' => $empresa->id,
-            'telefono' => '+(506)8973-5665',
+            'telefono' => '+(506)0000-0000',
             'direccion' => 'San José, Costa Rica',
             'activo' => true,
             'eliminado' => false,
@@ -101,7 +101,7 @@ class FoundersSeeder extends Seeder
             'tipo_documento' => 'Cédula Nacional',
             'numero_documento' => '1-0000-0000', // Ficticio
             'email' => 'admin@senselab.com',
-            'telefono' => '+(506)8973-5665',
+            'telefono' => '+(506)0000-0000',
             'direccion' => 'San José, Costa Rica',
             'fecha_ingreso' => '2020-01-15',
             'cargo_id' => $cargoFundador->id,

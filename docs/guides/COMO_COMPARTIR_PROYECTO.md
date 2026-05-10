@@ -45,7 +45,6 @@ Saludos,
 
 ---
 
-### Opción 2: Mensaje de WhatsApp/Slack
 
 ```
 👋 Hola! Bienvenido al equipo.

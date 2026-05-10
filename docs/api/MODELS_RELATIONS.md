@@ -544,7 +544,6 @@ Para consultas sobre modelos, relaciones o estructura de base de datos:
 **Senselab**
 - **Email Técnico**: deadmooncr@gmail.com
 - **Email Corporativo**: deadmooncr@gmail.com
-- **WhatsApp**: +(506)8973-5665
 - **Desarrollador**: [Jeremy Arias Solano](https://github.com/jeremy-sud)
 - **Documentación**: [Senselab Reposit for Developers](https://sites.google.com/view/repdevsenselab/home/repositorio)
 

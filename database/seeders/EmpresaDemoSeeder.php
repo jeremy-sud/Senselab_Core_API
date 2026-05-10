@@ -25,7 +25,7 @@ class EmpresaDemoSeeder extends Seeder
             'actividad_economica_principal' => '620100', // Actividades de programación informática
             'proveedor_sistemas' => 'Senselab',
             'email' => 'info@senselab.com',
-            'telefono' => '+(506)8973-5665',
+            'telefono' => '+(506)0000-0000',
             'direccion' => 'Tibás, San José, Costa Rica. Del Más x Menos 300m Norte, 50m Este.',
             'provincia' => '1', // San José
             'canton' => '07', // Tibás
@@ -43,7 +43,7 @@ class EmpresaDemoSeeder extends Seeder
             'empresa_id' => $empresaId,
             'nombre' => 'Oficina Central - Casa Matriz',
             'direccion' => 'Tibás, San José, Costa Rica. Del Más x Menos 300m Norte, 50m Este.',
-            'telefono' => '+(506)8973-5665',
+            'telefono' => '+(506)0000-0000',
             'email' => 'central@senselab.com',
             'activo' => true,
             'eliminado' => false,

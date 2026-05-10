@@ -359,7 +359,6 @@
    - [ ] Chatbot de soporte
 
 2. **Integrations**
-   - [ ] WhatsApp Business API (notificaciones)
    - [ ] Email marketing (Mailchimp, SendGrid)
    - [ ] Pasarelas de pago (Stripe, PayPal, SINPE Móvil)
    - [ ] Plataformas de eCommerce (WooCommerce, Shopify)
@@ -558,7 +557,6 @@ git push origin feature/nombre-feature
 **Empresa:**
 - Senselab
 - Email: deadmooncr@gmail.com
-- WhatsApp: +(506)8973-5665
 
 ---
 

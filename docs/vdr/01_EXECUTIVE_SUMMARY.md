@@ -10,7 +10,7 @@
 |----------|---------|
 | **Producto** | Senselab Core API — Backend ERP completo (API REST) |
 | **Versión** | 5.0.1 (Abril 2026) |
-| **Propietario** | Senselab (Costa Rica) |
+| **Open Source (AGPLv3)** | Senselab (Costa Rica) |
 | **Desarrollador Principal** | Jeremy Arias Solano |
 | **Valoración** | **$120,000 — $150,000 USD** (costo de replicación) |
 | **Auditoría Independiente** | **9.2 / 10** (13 Abril 2026) |
@@ -155,7 +155,6 @@ $1,500+/mes     │ SAP, Softland         │ Enterprise legacy
 | **Empresa** | Senselab |
 | **Web** | https://senselab.com |
 | **Email** | deadmooncr@gmail.com |
-| **WhatsApp** | +(506)8973-5665 |
 | **GitHub** | https://github.com/SenseLab-dev |
 
 ---

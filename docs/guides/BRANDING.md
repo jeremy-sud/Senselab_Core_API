@@ -286,7 +286,6 @@ Para consultas sobre el uso de la marca **Senselab** o **Senselab Core API**:
 - **Empresa:** Senselab
 - **Fundador:** Senselab Team
 - **Equipo de Desarrollo:** Jeremy Arias Solano
-- **WhatsApp:** [+(506)8973-5665](https://wa.me/50689735665)
 - **Web:** [senselab.com](https://senselab.com) | [senselab.com](https://senselab.com)
 - **GitHub:** [SenseLab-dev](https://github.com/SenseLab-dev)
 

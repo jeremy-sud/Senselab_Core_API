@@ -550,7 +550,6 @@ Log::channel('security')->info('Login exitoso', [
 
 ```
 Email: seguridad@senselab.com
-Urgencias: +(506)8973-5665
 ```
 
 ### Checklist de Incidente

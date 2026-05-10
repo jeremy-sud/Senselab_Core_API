@@ -448,7 +448,6 @@ DB_PASSWORD=
 **Empresa:**
 - Senselab
 - Email: deadmooncr@gmail.com
-- WhatsApp: +(506)8973-5665
 
 ---
 

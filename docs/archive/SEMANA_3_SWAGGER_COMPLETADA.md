@@ -349,8 +349,6 @@ Implementar uno de estos módulos desde cero con TDD:
    - Reportes contables automáticos
    - Exportación Excel/PDF
 
-2. **Integración WhatsApp Business**
-   - Envío de comprobantes por WhatsApp
    - Notificaciones automáticas
    - Bot de consultas
 

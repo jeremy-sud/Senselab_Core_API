@@ -10,7 +10,7 @@ USE api_db;
 
 -- 1. EMPRESAS (Landlord - No es tenant)
 INSERT INTO empresas (id, nombre, ruc, email, telefono, direccion, ciudad, pais, moneda, porcentaje_iva, estado_activo, creado_en, actualizado_en) VALUES
-(1, 'Senselab', '3101234567-8', 'info@senselab.com', '+(506)8973-5665', 'San José, Costa Rica', 'San José', 'CR', 'CRC', 13.00, true, NOW(), NOW()),
+(1, 'Senselab', '3101234567-8', 'info@senselab.com', '+(506)0000-0000', 'San José, Costa Rica', 'San José', 'CR', 'CRC', 13.00, true, NOW(), NOW()),
 (2, 'Empresa Demo S.A.', '3107654321-9', 'demo@example.com', '+506 2234-5678', 'Cartago, Costa Rica', 'Cartago', 'CR', 'CRC', 13.00, true, NOW(), NOW()),
 (3, 'Comercios Globales Ltd', '3102468135-0', 'info@comercios.com', '+506 2111-2222', 'Heredia, Costa Rica', 'Heredia', 'CR', 'CRC', 13.00, true, NOW(), NOW());
 
@@ -159,7 +159,7 @@ INSERT INTO tipos_impuesto (id, nombre, tasa, descripcion, empresa_id, creado_en
 -- 17. USUARIOS (Personas)
 -- Hashear: admin123 = $2y$12$V2GJpvLvKloepHM7ZLLBe.K5JfhW0GZXR5AkU5W5Z5Z5Z5Z5Z5Z5
 INSERT INTO usuarios (id, empresa_id, nombre, email, password, telefono, estado_activo, ultimo_acceso, creado_en, actualizado_en) VALUES
-(1, 1, 'Administrador', 'admin@senselab.com', '$2y$12$V2GJpvLvKloepHM7ZLLBe.K5JfhW0GZXR5AkU5W5Z5Z5Z5Z5Z5Z', '+(506)8973-5665', true, NOW(), NOW(), NOW()),
+(1, 1, 'Administrador', 'admin@senselab.com', '$2y$12$V2GJpvLvKloepHM7ZLLBe.K5JfhW0GZXR5AkU5W5Z5Z5Z5Z5Z5Z', '+(506)0000-0000', true, NOW(), NOW(), NOW()),
 (2, 1, 'Carlos Gerente', 'carlos.gerente@senselab.com', '$2y$12$V2GJpvLvKloepHM7ZLLBe.K5JfhW0GZXR5AkU5W5Z5Z5Z5Z5Z5Z', '+506 8234-5678', true, NOW(), NOW(), NOW()),
 (3, 1, 'María Contador', 'maria.contador@senselab.com', '$2y$12$V2GJpvLvKloepHM7ZLLBe.K5JfhW0GZXR5AkU5W5Z5Z5Z5Z5Z5Z', '+506 8111-2222', true, NOW(), NOW(), NOW()),
 (4, 1, 'Juan Vendedor', 'juan.vendedor@senselab.com', '$2y$12$V2GJpvLvKloepHM7ZLLBe.K5JfhW0GZXR5AkU5W5Z5Z5Z5Z5Z5Z', '+506 8777-8888', true, NOW(), NOW(), NOW()),
@@ -257,7 +257,7 @@ INSERT INTO proveedores (id, empresa_id, nombre, identificacion, contacto_princi
 
 -- 25. EMPLEADOS
 INSERT INTO empleados (id, empresa_id, usuario_id, cargo_id, nombre, identificacion, email, telefono, fecha_nacimiento, genero, direccion, ciudad, provincia, fecha_ingreso, fecha_salida, estado_activo, salario_base, creado_en, actualizado_en) VALUES
-(1, 1, 1, 1, 'Administrador', '112233445', 'admin@senselab.com', '+(506)8973-5665', '1975-05-20', 'M', 'San José', 'San José', 'San José', '2020-01-15', NULL, true, 1500000, NOW(), NOW()),
+(1, 1, 1, 1, 'Administrador', '112233445', 'admin@senselab.com', '+(506)0000-0000', '1975-05-20', 'M', 'San José', 'San José', 'San José', '2020-01-15', NULL, true, 1500000, NOW(), NOW()),
 (2, 1, 2, 2, 'Carlos Gerente', '223344556', 'carlos.gerente@senselab.com', '+506 8234-5678', '1985-07-10', 'M', 'Cartago', 'Cartago', 'Cartago', '2021-02-20', NULL, true, 1200000, NOW(), NOW()),
 (3, 1, 3, 3, 'María Contador', '334455667', 'maria.contador@senselab.com', '+506 8111-2222', '1990-03-15', 'F', 'Heredia', 'Heredia', 'Heredia', '2021-06-01', NULL, true, 900000, NOW(), NOW()),
 (4, 1, 4, 4, 'Juan Vendedor', '445566778', 'juan.vendedor@senselab.com', '+506 8777-8888', '1988-11-22', 'M', 'San José', 'San José', 'San José', '2022-01-10', NULL, true, 700000, NOW(), NOW()),
@@ -439,7 +439,7 @@ INSERT INTO configuraciones (id, empresa_id, clave, valor, descripcion, creado_e
 (1, 1, 'nombre_empresa', 'Senselab', 'Nombre oficial de la empresa', NOW(), NOW()),
 (2, 1, 'ruc_empresa', '3101234567-8', 'RUC de la empresa', NOW(), NOW()),
 (3, 1, 'email_empresa', 'info@senselab.com', 'Email de la empresa', NOW(), NOW()),
-(4, 1, 'telefono_empresa', '+(506)8973-5665', 'Teléfono de la empresa', NOW(), NOW()),
+(4, 1, 'telefono_empresa', '+(506)0000-0000', 'Teléfono de la empresa', NOW(), NOW()),
 (5, 1, 'porcentaje_iva_defecto', '13', 'Porcentaje IVA por defecto', NOW(), NOW()),
 (6, 1, 'moneda_defecto', 'CRC', 'Moneda por defecto', NOW(), NOW()),
 (7, 1, 'idioma_defecto', 'es', 'Idioma por defecto', NOW(), NOW()),

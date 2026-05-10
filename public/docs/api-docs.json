@@ -28669,7 +28669,7 @@
                         "description": "Teléfono principal",
                         "type": "string",
                         "maxLength": 50,
-                        "example": "+(506)8973-5665",
+                        "example": "+(506)0000-0000",
                         "nullable": true
                     },
                     "email": {
@@ -29836,7 +29836,7 @@
                         "description": "Teléfono de la sucursal",
                         "type": "string",
                         "maxLength": 50,
-                        "example": "+(506)8973-5665",
+                        "example": "+(506)0000-0000",
                         "nullable": true
                     },
                     "email": {

@@ -15,7 +15,7 @@ En SenseLab no vendemos software a la fuerza. Escuchamos, exploramos y luego con
 
 - **Fundador**: Senselab Team
 - **Desarrollador Principal**: Jeremy Arias Solano
-- **Contacto**: deadmooncr@gmail.com | +(506)8973-5665
+- **Contacto**: deadmooncr@gmail.com 
 
 ## 🤝 Cómo Contribuir
 
@@ -331,7 +331,6 @@ Para reportar bugs:
 
 1. **GitHub Issues**: [Crear issue](https://github.com/SenseLab-dev/Senselab_Core_API/issues)
 2. **Email**: deadmooncr@gmail.com
-3. **WhatsApp**: +(506)8973-5665
 
 **Template de Bug Report:**
 
@@ -398,14 +397,12 @@ Si encuentras una vulnerabilidad de seguridad:
 Contactar directamente a:
 - Email: deadmooncr@gmail.com
 - Email corporativo: deadmooncr@gmail.com
-- WhatsApp: +(506)8973-5665
 
 ## 📞 Contacto
 
 **Senselab**
 - **Email**: deadmooncr@gmail.com
 - **Email Técnico**: deadmooncr@gmail.com
-- **WhatsApp**: +(506)8973-5665
 - **Web**: [senselab.com](https://senselab.com) | [senselab.com](https://senselab.com)
 - **Repositorio**: [Senselab Reposit for Developers](https://sites.google.com/view/repdevsenselab/home/repositorio)
 - **GitHub**: [github.com/SenseLab-dev](https://github.com/orgs/SenseLab-dev)

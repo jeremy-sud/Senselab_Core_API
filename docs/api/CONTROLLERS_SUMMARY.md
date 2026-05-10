@@ -431,7 +431,6 @@ Se ha completado exitosamente la implementación de **10 controladores API** com
 
 **Senselab**
 - Email: deadmooncr@gmail.com
-- WhatsApp: +(506)8973-5665
 - Web: [senselab.com](https://senselab.com)
 - GitHub: [github.com/SenseLab-dev](https://github.com/orgs/SenseLab-dev)
 

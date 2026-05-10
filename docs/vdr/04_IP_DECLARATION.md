@@ -14,8 +14,8 @@
 | **Fecha de inicio del desarrollo** | Noviembre 2024 |
 | **Fecha de esta declaración** | 15 de Abril 2026 |
 | **Repositorio de origen** | https://github.com/SenseLab-dev/Senselab_Core_API (privado) |
-| **Líneas de código propietario (app/)** | ~93,180 |
-| **Líneas de tests propietarios** | ~33,872 |
+| **Líneas de código (app/)** | ~93,180 |
+| **Líneas de tests** | ~33,872 |
 
 ---
 
@@ -27,7 +27,6 @@ El software Senselab Core API es **propiedad exclusiva** de:
 Cédula Jurídica: [A completar por Senselab]  
 Domicilio: Costa Rica  
 Correo: deadmooncr@gmail.com  
-Teléfono: +(506)8973-5665  
 Sitio Web: https://senselab.com
 
 ---
@@ -61,15 +60,15 @@ Se certifica que:
 
 | Componente | Tipo | Licencia |
 |------------|------|----------|
-| Lógica de negocio ERP (95 controllers, 98 modelos, 67 servicios) | **Propietario** | Exclusiva Senselab |
-| Módulo Facturación Electrónica DGT v4.4 | **Propietario** | Exclusiva Senselab |
-| Firma XAdES-EPES (implementación) | **Propietario** | Exclusiva Senselab |
-| 10 Servicios de IA (prompts, orquestación, fallback) | **Propietario** | Exclusiva Senselab |
-| Algoritmo de Credit Scoring | **Propietario** | Exclusiva Senselab |
-| Módulo Multi-tenancy (configuración y customización) | **Propietario** | Exclusiva Senselab |
-| Sistema RBAC (80 policies, configuración) | **Propietario** | Exclusiva Senselab |
-| Suite de Tests (1,261+ tests) | **Propietario** | Exclusiva Senselab |
-| Documentación (200+ archivos) | **Propietario** | Exclusiva Senselab |
+| Lógica de negocio ERP (95 controllers, 98 modelos, 67 servicios) | **Propietario** | Senselab (Bajo AGPLv3) |
+| Módulo Facturación Electrónica DGT v4.4 | **Propietario** | Senselab (Bajo AGPLv3) |
+| Firma XAdES-EPES (implementación) | **Propietario** | Senselab (Bajo AGPLv3) |
+| 10 Servicios de IA (prompts, orquestación, fallback) | **Propietario** | Senselab (Bajo AGPLv3) |
+| Algoritmo de Credit Scoring | **Propietario** | Senselab (Bajo AGPLv3) |
+| Módulo Multi-tenancy (configuración y customización) | **Propietario** | Senselab (Bajo AGPLv3) |
+| Sistema RBAC (80 policies, configuración) | **Propietario** | Senselab (Bajo AGPLv3) |
+| Suite de Tests (1,261+ tests) | **Propietario** | Senselab (Bajo AGPLv3) |
+| Documentación (200+ archivos) | **Propietario** | Senselab (Bajo AGPLv3) |
 | Laravel Framework | Open Source | MIT |
 | Spatie Multitenancy | Open Source | MIT |
 | Paquetes Composer (110 dependencias) | Open Source | MIT/BSD/Apache (ver auditoría) |
@@ -126,7 +125,7 @@ En caso de venta, se transfiere:
 
 Senselab garantiza que al momento de la firma:
 
-1. Es el **único y legítimo propietario** de la propiedad intelectual de Senselab Core API.
+1. Es el **único y titular legítimo de los derechos** de la propiedad intelectual de Senselab Core API.
 2. El software **no tiene gravámenes, litigios pendientes ni reclamaciones** de terceros.
 3. El software **pasa todas las pruebas automatizadas** (1,261+ tests).
 4. El análisis estático **no presenta errores** (PHPStan Level 8, 0 errores).

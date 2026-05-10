@@ -19,7 +19,7 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: 'provincia', type: 'string', description: 'Código de provincia', maxLength: 2, example: '1', nullable: true),
         new OA\Property(property: 'canton', type: 'string', description: 'Código de cantón', maxLength: 2, example: '01', nullable: true),
         new OA\Property(property: 'distrito', type: 'string', description: 'Código de distrito', maxLength: 2, example: '01', nullable: true),
-        new OA\Property(property: 'telefono', type: 'string', description: 'Teléfono principal', maxLength: 50, example: '+(506)8973-5665', nullable: true),
+        new OA\Property(property: 'telefono', type: 'string', description: 'Teléfono principal', maxLength: 50, example: '+(506)0000-0000', nullable: true),
         new OA\Property(property: 'email', type: 'string', format: 'email', description: 'Email de contacto', maxLength: 255, example: 'deadmooncr@gmail.com', nullable: true),
         new OA\Property(property: 'prefijo_orden_compra', type: 'string', description: 'Prefijo para órdenes de compra', maxLength: 20, example: 'OC-', nullable: true),
         new OA\Property(property: 'moneda_defecto', type: 'string', description: 'Moneda por defecto', maxLength: 3, example: 'CRC'),
