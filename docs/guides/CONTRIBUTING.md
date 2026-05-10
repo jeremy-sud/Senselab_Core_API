@@ -1,21 +1,16 @@
 # Guía de Contribución - Senselab Core API
 
-<p align="center">
-  <img src="./public/assets/logos/senselab-icon.png" width="100" alt="Senselab Icon">
-</p>
-
 ¡Gracias por tu interés en contribuir al proyecto Senselab Core API desarrollado por **Senselab**!
 
 ## 🏢 Sobre Senselab
 
 En SenseLab no vendemos software a la fuerza. Escuchamos, exploramos y luego construimos con sentido. Si busca un aliado tecnológico que entienda tanto de servidores como de píxeles, de bases de datos como de narrativa interactiva, hablemos.
 
-**"No hacemos cualquier cosa. Hacemos cosas con sentido."**
-— *SenseLab, tecnología versátil con alma costarricense.*
+**"No hacemos cualquier cosa. Hacemos cosas con sentido."** — _SenseLab, tecnología versátil con alma costarricense._
 
-- **Fundador**: Senselab Team
-- **Desarrollador Principal**: Jeremy Arias Solano
-- **Contacto**: deadmooncr@gmail.com 
+* **Fundador**: Senselab Team
+* **Desarrollador Principal**: Jeremy Arias Solano
+* **Contacto**: deadmooncr@gmail.com
 
 ## 🤝 Cómo Contribuir
 
@@ -77,10 +72,10 @@ Asegúrate de seguir nuestros estándares:
 
 #### Estándares de Código
 
-- **PSR-12**: Seguir estándar PSR-12 para código PHP
-- **Nombres en Español**: Variables, métodos y clases en español
-- **Comentarios**: Documentar funciones con PHPDoc
-- **Testing**: Escribir tests para nuevas funcionalidades
+* **PSR-12**: Seguir estándar PSR-12 para código PHP
+* **Nombres en Español**: Variables, métodos y clases en español
+* **Comentarios**: Documentar funciones con PHPDoc
+* **Testing**: Escribir tests para nuevas funcionalidades
 
 #### Ejemplo de Código
 
@@ -125,13 +120,14 @@ git commit -m "docs: Actualizar documentación de API"
 ```
 
 **Prefijos de Commit:**
-- `feat:` - Nueva funcionalidad
-- `fix:` - Corrección de bug
-- `docs:` - Cambios en documentación
-- `style:` - Formato, espacios, etc.
-- `refactor:` - Refactorización de código
-- `test:` - Agregar o modificar tests
-- `chore:` - Mantenimiento, dependencias
+
+* `feat:` - Nueva funcionalidad
+* `fix:` - Corrección de bug
+* `docs:` - Cambios en documentación
+* `style:` - Formato, espacios, etc.
+* `refactor:` - Refactorización de código
+* `test:` - Agregar o modificar tests
+* `chore:` - Mantenimiento, dependencias
 
 ### 5. Ejecutar Tests
 
@@ -156,11 +152,13 @@ git push origin feature/nombre-descriptivo
 Luego crea un Pull Request en GitHub con:
 
 **Título descriptivo:**
+
 ```
 feat: Implementar módulo de facturación electrónica para DGT
 ```
 
 **Descripción completa:**
+
 ```markdown
 ## Descripción
 Implementa la integración completa con la API de DGT de Costa Rica para
@@ -184,13 +182,13 @@ emisión y recepción de comprobantes electrónicos.
 
 ## 📋 Checklist antes de PR
 
-- [ ] El código sigue PSR-12
-- [ ] Variables y métodos en español
-- [ ] PHPDoc en funciones públicas
-- [ ] Tests escritos y pasando
-- [ ] Documentación actualizada
-- [ ] Sin conflictos con main
-- [ ] Commits descriptivos
+* [ ] El código sigue PSR-12
+* [ ] Variables y métodos en español
+* [ ] PHPDoc en funciones públicas
+* [ ] Tests escritos y pasando
+* [ ] Documentación actualizada
+* [ ] Sin conflictos con main
+* [ ] Commits descriptivos
 
 ## 🧪 Testing
 
@@ -320,9 +318,9 @@ class FacturacionElectronicaTest extends TestCase
 
 Si tu cambio afecta la API, actualiza:
 
-1. **API_DOCUMENTATION.md** - Documentación de endpoints
+1. **API\_DOCUMENTATION.md** - Documentación de endpoints
 2. **README.md** - Si cambia instalación o configuración
-3. **MODELS_RELATIONS.md** - Si agregas nuevos modelos
+3. **MODELS\_RELATIONS.md** - Si agregas nuevos modelos
 4. **Inline docs** - Comentarios PHPDoc
 
 ## 🐛 Reportar Bugs
@@ -371,22 +369,22 @@ Para nuevas funcionalidades:
 
 ### Base de Datos
 
-- **Tablas**: plural, snake_case (ej: `ordenes_compra`)
-- **Timestamps**: `creado_en`, `actualizado_en`
-- **Soft Deletes**: `eliminado` (boolean)
-- **Estado**: `activo` (boolean)
+* **Tablas**: plural, snake\_case (ej: `ordenes_compra`)
+* **Timestamps**: `creado_en`, `actualizado_en`
+* **Soft Deletes**: `eliminado` (boolean)
+* **Estado**: `activo` (boolean)
 
 ### API
 
-- **Rutas**: plural, kebab-case (ej: `/api/ordenes-compra`)
-- **Responses**: JSON estructurado
-- **Errores**: HTTP status codes apropiados
+* **Rutas**: plural, kebab-case (ej: `/api/ordenes-compra`)
+* **Responses**: JSON estructurado
+* **Errores**: HTTP status codes apropiados
 
 ### Código
 
-- **Clases**: PascalCase (ej: `FacturaElectronica`)
-- **Métodos**: camelCase (ej: `generarComprobante()`)
-- **Variables**: camelCase (ej: `$numeroFactura`)
+* **Clases**: PascalCase (ej: `FacturaElectronica`)
+* **Métodos**: camelCase (ej: `generarComprobante()`)
+* **Variables**: camelCase (ej: `$numeroFactura`)
 
 ## 🔒 Seguridad
 
@@ -395,25 +393,27 @@ Si encuentras una vulnerabilidad de seguridad:
 **NO CREAR ISSUE PÚBLICO**
 
 Contactar directamente a:
-- Email: deadmooncr@gmail.com
-- Email corporativo: deadmooncr@gmail.com
+
+* Email: deadmooncr@gmail.com
+* Email corporativo: deadmooncr@gmail.com
 
 ## 📞 Contacto
 
 **Senselab**
-- **Email**: deadmooncr@gmail.com
-- **Email Técnico**: deadmooncr@gmail.com
-- **Web**: [senselab.com](https://senselab.com) | [senselab.com](https://senselab.com)
-- **Repositorio**: [Senselab Reposit for Developers](https://sites.google.com/view/repdevsenselab/home/repositorio)
-- **GitHub**: [github.com/SenseLab-dev](https://github.com/orgs/SenseLab-dev)
+
+* **Email**: deadmooncr@gmail.com
+* **Email Técnico**: deadmooncr@gmail.com
+* **Web**: [senselab.com](https://senselab.com) | [senselab.com](https://senselab.com)
+* **Repositorio**: [Senselab Reposit for Developers](https://sites.google.com/view/repdevsenselab/home/repositorio)
+* **GitHub**: [github.com/SenseLab-dev](https://github.com/orgs/SenseLab-dev)
 
 ## 🙏 Agradecimientos
 
 Agradecemos a todos los contribuidores que ayudan a mejorar este proyecto.
 
----
+***
 
-**"No hacemos cualquier cosa. Hacemos cosas con sentido."**  
-*Costa Rica | Build with Sense*
+**"No hacemos cualquier cosa. Hacemos cosas con sentido."**\
+&#xNAN;_&#x43;osta Rica | Build with Sense_
 
 © 2025 Senselab - Todos los derechos reservados

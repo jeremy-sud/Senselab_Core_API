@@ -1,32 +1,32 @@
 # Guía de Testing - Senselab Core API
 
-**Desarrollado por Senselab**  
-*Suite de 1261+ tests automatizados con 4 capas de verificación*  
+**Desarrollado por Senselab**\
+&#xNAN;_&#x53;uite de 1261+ tests automatizados con 4 capas de verificación_\
 **Última actualización:** 10 de abril de 2026 — v4.2.0
 
----
+***
 
 ## 📊 Resumen
 
 **Estado Actual:** ✅ **1261/1261 tests passing (100%)** — 0 failures, 5 skipped (requieren certificado Hacienda)
 
-| Capa de Testing | Archivos | Tests | Herramienta |
-|-----------------|----------|-------|-------------|
-| **Feature (integración)** | 75 | ~600 | PHPUnit 11.5 |
-| **Unit (unitarios)** | 58 | ~350 | PHPUnit 11.5 |
-| **Contract (contratos)** | 9 | ~47 | Pact PHP |
-| **Load (carga)** | 6 | N/A | k6 |
-| **Mutation (mutación)** | — | — | Infection PHP |
-| **Total** | **148+ archivos** | **1261 tests** | — |
+| Capa de Testing           | Archivos          | Tests          | Herramienta   |
+| ------------------------- | ----------------- | -------------- | ------------- |
+| **Feature (integración)** | 75                | \~600          | PHPUnit 11.5  |
+| **Unit (unitarios)**      | 58                | \~350          | PHPUnit 11.5  |
+| **Contract (contratos)**  | 9                 | \~47           | Pact PHP      |
+| **Load (carga)**          | 6                 | N/A            | k6            |
+| **Mutation (mutación)**   | —                 | —              | Infection PHP |
+| **Total**                 | **148+ archivos** | **1261 tests** | —             |
 
-| Métrica | Valor |
-|---------|-------|
-| PHPStan | Level 8, **0 errores** |
-| Assertions | ~3,500+ |
-| Ratio tests/controller | ~10.8 |
-| Tiempo ejecución (SQLite) | < 30s |
+| Métrica                   | Valor                  |
+| ------------------------- | ---------------------- |
+| PHPStan                   | Level 8, **0 errores** |
+| Assertions                | \~3,500+               |
+| Ratio tests/controller    | \~10.8                 |
+| Tiempo ejecución (SQLite) | < 30s                  |
 
----
+***
 
 ## 🚀 Inicio Rápido
 
@@ -37,6 +37,7 @@ php artisan test
 ```
 
 **Salida esperada:**
+
 ```
 Tests:    1261 passed (5 skipped)
 Duration: ~25s
@@ -81,7 +82,7 @@ php artisan test --filter "MultiTenant|Encryption|RateLimit|SecurityHeader|Cors"
 php artisan test tests/Unit/Services/
 ```
 
----
+***
 
 ## 📁 Estructura de Tests
 
@@ -155,7 +156,7 @@ tests/
     └── README.md
 ```
 
----
+***
 
 ## 🧪 Capas de Testing
 
@@ -165,20 +166,20 @@ Tests de integración (Feature) y unitarios (Unit) con PHPUnit 11.5.
 
 **Cobertura por dominio:**
 
-| Dominio | Feature | Unit | Total |
-|---------|---------|------|-------|
-| Auth y RBAC | 4+ archivos | 2+ archivos | 25+ tests |
-| Core CRUD (empresa, usuario, sucursal) | 8 archivos | — | 60+ tests |
-| Multi-tenancy (aislamiento) | 1 archivo dedicado | — | 7+ tests |
-| Facturación electrónica | E2E + edge cases | 3 Hacienda | 55+ tests |
-| Seguridad (CORS, headers, rate limit, encryption) | 6 archivos | — | 40+ tests |
-| Inventario/Almacén | 6 archivos | 2+ servicios | 50+ tests |
-| Contabilidad/Finanzas | 15 archivos | 5+ servicios | 80+ tests |
-| Nómina/RRHH | 8 archivos | 3+ servicios | 50+ tests |
-| Jobs y queue | — | 5 archivos | 25+ tests |
-| Traits | — | 3 archivos | 36+ tests |
-| Validation | — | 4 archivos | 20+ tests |
-| Exceptions | — | 2 archivos | 15+ tests |
+| Dominio                                           | Feature            | Unit         | Total     |
+| ------------------------------------------------- | ------------------ | ------------ | --------- |
+| Auth y RBAC                                       | 4+ archivos        | 2+ archivos  | 25+ tests |
+| Core CRUD (empresa, usuario, sucursal)            | 8 archivos         | —            | 60+ tests |
+| Multi-tenancy (aislamiento)                       | 1 archivo dedicado | —            | 7+ tests  |
+| Facturación electrónica                           | E2E + edge cases   | 3 Hacienda   | 55+ tests |
+| Seguridad (CORS, headers, rate limit, encryption) | 6 archivos         | —            | 40+ tests |
+| Inventario/Almacén                                | 6 archivos         | 2+ servicios | 50+ tests |
+| Contabilidad/Finanzas                             | 15 archivos        | 5+ servicios | 80+ tests |
+| Nómina/RRHH                                       | 8 archivos         | 3+ servicios | 50+ tests |
+| Jobs y queue                                      | —                  | 5 archivos   | 25+ tests |
+| Traits                                            | —                  | 3 archivos   | 36+ tests |
+| Validation                                        | —                  | 4 archivos   | 20+ tests |
+| Exceptions                                        | —                  | 2 archivos   | 15+ tests |
 
 ### 2. Pact — Contract Testing (6 consumers)
 
@@ -203,10 +204,11 @@ vendor/bin/infection --threads=4
 ```
 
 **Configuración:** `infection.json5`
-- **Directorios:** `app/Services/`, `app/Rules/`, `app/Exceptions/`
-- **Excluidos:** `app/Services/AI/`
-- **Quality gates:** MSI ≥ 50%, Covered MSI ≥ 70%
-- **Mutadores:** arithmetic, boolean, conditional, return value, regex, removal, loop, sort, unwrap, cast, function signature
+
+* **Directorios:** `app/Services/`, `app/Rules/`, `app/Exceptions/`
+* **Excluidos:** `app/Services/AI/`
+* **Quality gates:** MSI ≥ 50%, Covered MSI ≥ 70%
+* **Mutadores:** arithmetic, boolean, conditional, return value, regex, removal, loop, sort, unwrap, cast, function signature
 
 ### 4. k6 — Load Testing
 
@@ -221,7 +223,7 @@ k6 run tests/Load/load-ventas-facturacion.js
 k6 run tests/Load/load-n1-detection.js
 ```
 
----
+***
 
 ## ⚙️ Configuración
 
@@ -300,7 +302,7 @@ public function test_puede_crear_producto_con_service_layer(): void
 }
 ```
 
----
+***
 
 ## 🐛 Troubleshooting
 
@@ -334,7 +336,7 @@ dd(DB::getQueryLog());
 
 Los 5 tests skipped en `FacturacionElectronicaE2ETest` requieren certificado real de Hacienda Costa Rica. Se resolverán con FASE 19.6 (E2E sandbox).
 
----
+***
 
 ## 📈 Comandos Útiles
 
@@ -364,16 +366,15 @@ vendor/bin/infection --threads=4 --show-mutations
 k6 run tests/Load/smoke-test.js
 ```
 
----
+***
 
 ## 📅 Historial
 
-| Fecha | Tests | Estado | Hito |
-|-------|-------|--------|------|
-| Nov 2025 | 218 (186 passing) | ⚠️ 85% | Sprint 5 — suite inicial |
-| Ene 2026 | 405 (100%) | ✅ | Post-Phase 10 |
-| Feb 2026 | 762 (100%) | ✅ | FASE 4 — PHPStan resuelto |
-| Mar 9, 2026 | 959 (100%) | ✅ | FASE 14 — Contract + Mutation |
-| Mar 24, 2026 | **997 (100%)** | ✅ | **FASE 16 — Service Layer** |
-| Abr 10, 2026 | **1261 (100%)** | ✅ | **FASE 20 + Hacienda v4.4 100%** |
-
+| Fecha        | Tests             | Estado | Hito                             |
+| ------------ | ----------------- | ------ | -------------------------------- |
+| Nov 2025     | 218 (186 passing) | ⚠️ 85% | Sprint 5 — suite inicial         |
+| Ene 2026     | 405 (100%)        | ✅      | Post-Phase 10                    |
+| Feb 2026     | 762 (100%)        | ✅      | FASE 4 — PHPStan resuelto        |
+| Mar 9, 2026  | 959 (100%)        | ✅      | FASE 14 — Contract + Mutation    |
+| Mar 24, 2026 | **997 (100%)**    | ✅      | **FASE 16 — Service Layer**      |
+| Abr 10, 2026 | **1261 (100%)**   | ✅      | **FASE 20 + Hacienda v4.4 100%** |

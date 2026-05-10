@@ -2,77 +2,78 @@
 
 ## De "Comprar los Archivos" a "Sistema en Producción" en 48 Horas
 
-**Documento Confidencial — Senselab**  
-**Fecha:** 15 de Abril 2026  
-**Dirigido a:** Equipo técnico del comprador  
+**Documento Confidencial — Senselab**\
+**Fecha:** 15 de Abril 2026\
+**Dirigido a:** Equipo técnico del comprador\
 **Pre-requisito:** Firma del contrato de transferencia de IP
 
----
+***
 
 ## Tabla de Contenidos
 
-- [Fase 0: Pre-Entrega (Hora 0)](#fase-0-pre-entrega-hora-0)
-- [Fase 1: Recepción del Activo (Horas 0-2)](#fase-1-recepción-del-activo-horas-0-2)
-- [Fase 2: Entorno Local (Horas 2-6)](#fase-2-entorno-local-horas-2-6)
-- [Fase 3: Verificación de Calidad (Horas 6-12)](#fase-3-verificación-de-calidad-horas-6-12)
-- [Fase 4: Infraestructura Cloud (Horas 12-24)](#fase-4-infraestructura-cloud-horas-12-24)
-- [Fase 5: Deployment a Producción (Horas 24-36)](#fase-5-deployment-a-producción-horas-24-36)
-- [Fase 6: Validación y Go-Live (Horas 36-48)](#fase-6-validación-y-go-live-horas-36-48)
-- [Post-Transición: Soporte 30 Días](#post-transición-soporte-30-días)
-- [Checklist de Transición](#checklist-de-transición)
+* [Fase 0: Pre-Entrega (Hora 0)](03_TECHNOLOGY_TRANSITION_GUIDE.md#fase-0-pre-entrega-hora-0)
+* [Fase 1: Recepción del Activo (Horas 0-2)](03_TECHNOLOGY_TRANSITION_GUIDE.md#fase-1-recepción-del-activo-horas-0-2)
+* [Fase 2: Entorno Local (Horas 2-6)](03_TECHNOLOGY_TRANSITION_GUIDE.md#fase-2-entorno-local-horas-2-6)
+* [Fase 3: Verificación de Calidad (Horas 6-12)](03_TECHNOLOGY_TRANSITION_GUIDE.md#fase-3-verificación-de-calidad-horas-6-12)
+* [Fase 4: Infraestructura Cloud (Horas 12-24)](03_TECHNOLOGY_TRANSITION_GUIDE.md#fase-4-infraestructura-cloud-horas-12-24)
+* [Fase 5: Deployment a Producción (Horas 24-36)](03_TECHNOLOGY_TRANSITION_GUIDE.md#fase-5-deployment-a-producción-horas-24-36)
+* [Fase 6: Validación y Go-Live (Horas 36-48)](03_TECHNOLOGY_TRANSITION_GUIDE.md#fase-6-validación-y-go-live-horas-36-48)
+* [Post-Transición: Soporte 30 Días](03_TECHNOLOGY_TRANSITION_GUIDE.md#post-transición-soporte-30-días)
+* [Checklist de Transición](03_TECHNOLOGY_TRANSITION_GUIDE.md#checklist-de-transición)
 
----
+***
 
 ## Fase 0: Pre-Entrega (Hora 0)
 
 ### Lo que recibe el comprador
 
-| Entregable | Formato | Tamaño aprox. |
-|------------|---------|---------------|
-| Repositorio Git completo | Clone o ZIP | ~150 MB (sin vendor/) |
-| Documentación (200+ archivos) | Markdown + JSON | ~15 MB |
-| OpenAPI Specification | JSON | ~1 MB |
-| Manifiestos Kubernetes | YAML | ~50 KB |
-| Docker configs | Dockerfile + Compose | ~20 KB |
-| CI/CD Workflows (9) | YAML (GitHub Actions) | ~30 KB |
-| Script de setup automatizado | Bash | ~5 KB |
+| Entregable                    | Formato               | Tamaño aprox.          |
+| ----------------------------- | --------------------- | ---------------------- |
+| Repositorio Git completo      | Clone o ZIP           | \~150 MB (sin vendor/) |
+| Documentación (200+ archivos) | Markdown + JSON       | \~15 MB                |
+| OpenAPI Specification         | JSON                  | \~1 MB                 |
+| Manifiestos Kubernetes        | YAML                  | \~50 KB                |
+| Docker configs                | Dockerfile + Compose  | \~20 KB                |
+| CI/CD Workflows (9)           | YAML (GitHub Actions) | \~30 KB                |
+| Script de setup automatizado  | Bash                  | \~5 KB                 |
 
 ### Requisitos del equipo del comprador
 
-| Rol | Cantidad | Habilidades |
-|-----|:--------:|-------------|
-| **DevOps / SRE** | 1 | Docker, Kubernetes, AWS/GCP/Azure |
-| **Backend Developer** | 1 | PHP 8.4, Laravel 12, MySQL |
-| **DBA** (opcional) | 1 | MySQL 8.0, replicación |
+| Rol                   | Cantidad | Habilidades                       |
+| --------------------- | :------: | --------------------------------- |
+| **DevOps / SRE**      |     1    | Docker, Kubernetes, AWS/GCP/Azure |
+| **Backend Developer** |     1    | PHP 8.4, Laravel 12, MySQL        |
+| **DBA** (opcional)    |     1    | MySQL 8.0, replicación            |
 
 ### Requisitos de infraestructura mínima
 
-| Componente | Especificación mínima | Recomendado |
-|------------|----------------------|-------------|
-| Servidor/VM | 2 vCPU, 4 GB RAM | 4 vCPU, 8 GB RAM |
-| MySQL | 8.0+ | 8.0+ con read replica |
-| Redis | 7.0+ | 7.0+ cluster |
-| PHP | 8.4.x | 8.4.x con OPcache |
-| Almacenamiento | 20 GB SSD | 50 GB SSD |
-| SSL | Certificado válido | Let's Encrypt o ACM |
+| Componente     | Especificación mínima | Recomendado           |
+| -------------- | --------------------- | --------------------- |
+| Servidor/VM    | 2 vCPU, 4 GB RAM      | 4 vCPU, 8 GB RAM      |
+| MySQL          | 8.0+                  | 8.0+ con read replica |
+| Redis          | 7.0+                  | 7.0+ cluster          |
+| PHP            | 8.4.x                 | 8.4.x con OPcache     |
+| Almacenamiento | 20 GB SSD             | 50 GB SSD             |
+| SSL            | Certificado válido    | Let's Encrypt o ACM   |
 
 ### Servicios externos necesarios
 
-| Servicio | Propósito | Costo estimado |
-|----------|----------|---------------|
-| Gemini API (Google) | Servicios IA (OCR, CABYS, chat) | ~$50-200/mes |
-| OpenAI API (fallback) | Fallback IA | ~$20-50/mes |
-| Sentry | Error tracking | Free tier o $26/mes |
-| Hacienda CR (DGT) | Facturación electrónica | Gratis (credenciales DGT) |
-| SMTP (Mailgun/SES) | Email transaccional | ~$10-35/mes |
+| Servicio              | Propósito                       | Costo estimado            |
+| --------------------- | ------------------------------- | ------------------------- |
+| Gemini API (Google)   | Servicios IA (OCR, CABYS, chat) | \~$50-200/mes             |
+| OpenAI API (fallback) | Fallback IA                     | \~$20-50/mes              |
+| Sentry                | Error tracking                  | Free tier o $26/mes       |
+| Hacienda CR (DGT)     | Facturación electrónica         | Gratis (credenciales DGT) |
+| SMTP (Mailgun/SES)    | Email transaccional             | \~$10-35/mes              |
 
----
+***
 
 ## Fase 1: Recepción del Activo (Horas 0-2)
 
 ### 1.1 Transferencia del repositorio
 
 **Opción A — GitHub Transfer (recomendado):**
+
 ```bash
 # El repositorio se transfiere directamente a la organización del comprador
 # Preserva: issues, PRs, historial Git completo, Actions
@@ -80,6 +81,7 @@
 ```
 
 **Opción B — Clone + Push a nuevo remoto:**
+
 ```bash
 git clone --mirror <url-repositorio-senselab>
 cd Senselab_Core_API.git
@@ -109,7 +111,7 @@ Orden de lectura recomendado (2 horas):
 6. **`SECURITY.md`** — Seguridad OWASP (15 min)
 7. **`docs/GLOSARIO_COMPLETO_SENSELAB_CORE_API.md`** — Referencia rápida (15 min)
 
----
+***
 
 ## Fase 2: Entorno Local (Horas 2-6)
 
@@ -175,7 +177,7 @@ php artisan about    # Info completa de Laravel
 php artisan route:list --count  # ~400+ rutas registradas
 ```
 
----
+***
 
 ## Fase 3: Verificación de Calidad (Horas 6-12)
 
@@ -238,23 +240,23 @@ php artisan test --filter=AI
 php artisan test --filter=Gemini
 ```
 
----
+***
 
 ## Fase 4: Infraestructura Cloud (Horas 12-24)
 
 ### 4.1 Opción A: AWS (Recomendado)
 
-| Servicio AWS | Uso | Costo mensual estimado |
-|-------------|-----|:----------------------:|
-| ECS Fargate o EC2 | Contenedores PHP | $50-150 |
-| RDS MySQL 8.0 | Base de datos principal | $30-100 |
-| RDS Read Replica | Lecturas escaladas | $30-100 |
-| ElastiCache Redis | Cache + colas | $25-75 |
-| ALB | Load balancer | $20-30 |
-| S3 | Almacenamiento de archivos | $5-15 |
-| ACM | Certificados SSL | Gratis |
-| CloudWatch | Logs + métricas | $10-30 |
-| **Total estimado** | | **$170-500/mes** |
+| Servicio AWS       | Uso                        | Costo mensual estimado |
+| ------------------ | -------------------------- | :--------------------: |
+| ECS Fargate o EC2  | Contenedores PHP           |         $50-150        |
+| RDS MySQL 8.0      | Base de datos principal    |         $30-100        |
+| RDS Read Replica   | Lecturas escaladas         |         $30-100        |
+| ElastiCache Redis  | Cache + colas              |         $25-75         |
+| ALB                | Load balancer              |         $20-30         |
+| S3                 | Almacenamiento de archivos |          $5-15         |
+| ACM                | Certificados SSL           |         Gratis         |
+| CloudWatch         | Logs + métricas            |         $10-30         |
+| **Total estimado** |                            |    **$170-500/mes**    |
 
 ```bash
 # Ejemplo con ECS Fargate:
@@ -273,12 +275,12 @@ docker push <account>.dkr.ecr.<region>.amazonaws.com/senselab-core-api:latest
 
 ### 4.2 Opción B: DigitalOcean / Hetzner (Económico)
 
-| Componente | Servicio | Costo mensual |
-|------------|---------|:-------------:|
-| App Server | Droplet 4GB | $24 |
-| Database | Managed MySQL | $15 |
-| Redis | Managed Redis | $15 |
-| **Total** | | **$54/mes** |
+| Componente | Servicio      | Costo mensual |
+| ---------- | ------------- | :-----------: |
+| App Server | Droplet 4GB   |      $24      |
+| Database   | Managed MySQL |      $15      |
+| Redis      | Managed Redis |      $15      |
+| **Total**  |               |  **$54/mes**  |
 
 ### 4.3 Opción C: Kubernetes (Escala enterprise)
 
@@ -340,7 +342,7 @@ SANCTUM_STATEFUL_DOMAINS=sudominio.com
 SESSION_DOMAIN=.sudominio.com
 ```
 
----
+***
 
 ## Fase 5: Deployment a Producción (Horas 24-36)
 
@@ -408,7 +410,7 @@ certbot --nginx -d api.sudominio.com
 * * * * * cd /path/to/senselab-core-api && php artisan schedule:run >> /dev/null 2>&1
 ```
 
----
+***
 
 ## Fase 6: Validación y Go-Live (Horas 36-48)
 
@@ -465,86 +467,93 @@ ab -n 100 -c 10 -H "Authorization: Bearer <token>" \
 2. **Horizon**: Acceder a `/horizon` para monitorear colas
 3. **Logs**: `storage/logs/laravel.log` o CloudWatch
 
----
+***
 
 ## Post-Transición: Soporte 30 Días
 
 ### Incluido en la venta
 
-| Servicio | Detalle |
-|----------|---------|
-| Soporte técnico por email/chat | Respuesta en < 24h (L-V) |
-| Sesiones de screen-sharing | Hasta 4 sesiones de 1 hora |
-| Resolución de bugs de transición | Bugs encontrados durante setup |
-| Explicación de arquitectura | Sesiones técnicas con el desarrollador |
-| Acceso al desarrollador principal | Canal directo con Jeremy Arias |
+| Servicio                          | Detalle                                |
+| --------------------------------- | -------------------------------------- |
+| Soporte técnico por email/chat    | Respuesta en < 24h (L-V)               |
+| Sesiones de screen-sharing        | Hasta 4 sesiones de 1 hora             |
+| Resolución de bugs de transición  | Bugs encontrados durante setup         |
+| Explicación de arquitectura       | Sesiones técnicas con el desarrollador |
+| Acceso al desarrollador principal | Canal directo con Jeremy Arias         |
 
 ### No incluido (servicios adicionales)
 
-| Servicio | Tarifa |
-|----------|--------|
-| Desarrollo de nuevas features | $70/hora |
-| Consultoría arquitectónica | $100/hora |
+| Servicio                         | Tarifa     |
+| -------------------------------- | ---------- |
+| Desarrollo de nuevas features    | $70/hora   |
+| Consultoría arquitectónica       | $100/hora  |
 | Training extensivo (>4 sesiones) | $1,500/día |
 | Soporte extendido (post 30 días) | $2,000/mes |
 
----
+***
 
 ## Checklist de Transición
 
 ### Hora 0-2: Recepción
-- [ ] Repositorio transferido/clonado
-- [ ] Verificación de integridad (commits, archivos)
-- [ ] Documentación prioritaria leída
-- [ ] Accesos a servicios externos configurados
+
+* [ ] Repositorio transferido/clonado
+* [ ] Verificación de integridad (commits, archivos)
+* [ ] Documentación prioritaria leída
+* [ ] Accesos a servicios externos configurados
 
 ### Hora 2-6: Entorno Local
-- [ ] Docker Compose levantado exitosamente
-- [ ] `.env` configurado
-- [ ] Migraciones ejecutadas
-- [ ] Seeds ejecutados
-- [ ] `curl localhost:8000/api/health` → OK
-- [ ] Swagger UI accesible en `/api/documentation`
+
+* [ ] Docker Compose levantado exitosamente
+* [ ] `.env` configurado
+* [ ] Migraciones ejecutadas
+* [ ] Seeds ejecutados
+* [ ] `curl localhost:8000/api/health` → OK
+* [ ] Swagger UI accesible en `/api/documentation`
 
 ### Hora 6-12: Verificación
-- [ ] `php artisan test` → 1,261+ passing, 0 failed
-- [ ] `vendor/bin/phpstan analyse` → 0 errores
-- [ ] Facturación electrónica probada (sandbox)
-- [ ] Servicios IA probados (OCR, clasificación)
-- [ ] Multi-tenancy verificado (crear tenant de prueba)
+
+* [ ] `php artisan test` → 1,261+ passing, 0 failed
+* [ ] `vendor/bin/phpstan analyse` → 0 errores
+* [ ] Facturación electrónica probada (sandbox)
+* [ ] Servicios IA probados (OCR, clasificación)
+* [ ] Multi-tenancy verificado (crear tenant de prueba)
 
 ### Hora 12-24: Infraestructura Cloud
-- [ ] Servidor/cluster provisionado
-- [ ] MySQL producción configurado
-- [ ] Redis configurado
-- [ ] SSL certificado instalado
-- [ ] Variables de entorno de producción configuradas
-- [ ] Docker image construida y subida al registry
+
+* [ ] Servidor/cluster provisionado
+* [ ] MySQL producción configurado
+* [ ] Redis configurado
+* [ ] SSL certificado instalado
+* [ ] Variables de entorno de producción configuradas
+* [ ] Docker image construida y subida al registry
 
 ### Hora 24-36: Deployment
-- [ ] Primera migración en producción ejecutada
-- [ ] Seeds de datos maestros ejecutados
-- [ ] Laravel caches optimizados
-- [ ] Horizon (workers) corriendo
-- [ ] Cron job configurado
-- [ ] CI/CD secrets configurados
+
+* [ ] Primera migración en producción ejecutada
+* [ ] Seeds de datos maestros ejecutados
+* [ ] Laravel caches optimizados
+* [ ] Horizon (workers) corriendo
+* [ ] Cron job configurado
+* [ ] CI/CD secrets configurados
 
 ### Hora 36-48: Validación
-- [ ] Health check en producción → OK
-- [ ] Login y autenticación → OK
-- [ ] Swagger UI en producción → OK
-- [ ] Test de facturación electrónica (sandbox) → OK
-- [ ] Test de rendimiento básico → < 200ms promedio
-- [ ] Monitoreo (Sentry) recibiendo datos
-- [ ] Horizon dashboard accesible
+
+* [ ] Health check en producción → OK
+* [ ] Login y autenticación → OK
+* [ ] Swagger UI en producción → OK
+* [ ] Test de facturación electrónica (sandbox) → OK
+* [ ] Test de rendimiento básico → < 200ms promedio
+* [ ] Monitoreo (Sentry) recibiendo datos
+* [ ] Horizon dashboard accesible
 
 ### Post Go-Live
-- [ ] Sesión de handover con desarrollador completada
-- [ ] Equipo del comprador autónomo para operaciones diarias
-- [ ] Runbook de operaciones documentado
-- [ ] Credenciales de producción Hacienda configuradas (cuando estén listas)
 
----
+* [ ] Sesión de handover con desarrollador completada
+* [ ] Equipo del comprador autónomo para operaciones diarias
+* [ ] Runbook de operaciones documentado
+* [ ] Credenciales de producción Hacienda configuradas (cuando estén listas)
+
+***
 
 ## Diagrama de Transición
 
@@ -560,29 +569,35 @@ Hora 0          Hora 2          Hora 6          Hora 12         Hora 24         
    2h            4h             6h             12h            12h            12h
 ```
 
----
+***
 
 ## FAQ Técnico para el Comprador
 
 ### ¿Necesito un desarrollador Laravel para mantener esto?
+
 **Sí.** Se recomienda al menos 1 desarrollador con experiencia en Laravel 10+ y PHP 8.x. El código está documentado a nivel enterprise, pero la persona debe entender inyección de dependencias, Eloquent ORM, y el patrón Service-Repository.
 
 ### ¿Puedo usar un front-end diferente?
+
 **Sí.** Senselab Core es un API puro (headless). Puede conectarse con React, Vue, Angular, Flutter, React Native, o cualquier cliente HTTP. La especificación OpenAPI/Swagger facilita la generación de SDKs cliente.
 
 ### ¿Puedo hostear en mi propio servidor?
+
 **Sí.** El sistema funciona en cualquier infraestructura que soporte PHP 8.4, MySQL 8.0 y Redis. Docker opcional pero recomendado.
 
 ### ¿Los servicios de IA son propios o de terceros?
+
 Los servicios de IA utilizan **APIs de Gemini (Google) y OpenAI** como motores, pero toda la lógica de integración, prompts, fallbacks, parsing de respuestas y orquestación es código propio de Senselab Core. No dependes de un servicio IA específico — el patrón de fallback permite cambiar de proveedor.
 
 ### ¿Qué pasa si Hacienda cambia la versión de FE?
+
 El módulo de facturación electrónica está diseñado modular. Las 38 brechas de la v4.4 están mapeadas en `docs/hacienda/`. Actualizar a una futura v4.5 o v5.0 requeriría ajustes en los servicios de Hacienda, pero la arquitectura está preparada para ello.
 
 ### ¿Los datos de un tenant pueden ver los de otro?
+
 **No.** El sistema usa Spatie Multi-tenancy con **bases de datos aisladas** por tenant. Cada empresa tiene su propia BD MySQL. Es aislamiento físico, no lógico.
 
----
+***
 
-*Documento confidencial — Senselab © 2026*  
-*Versión: 15 de Abril 2026*
+_Documento confidencial — Senselab © 2026_\
+&#xNAN;_&#x56;ersión: 15 de Abril 2026_

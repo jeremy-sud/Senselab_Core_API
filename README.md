@@ -1,77 +1,49 @@
 # Senselab Core API 🚀
 
-<p align="center">
-  <img src="./public/assets/logos/senselab-core-api-logo.png" width="600" alt="Senselab Core API Logo">
-</p>
+<div align="center"><img src=".gitbook/assets/senselab-core-api-logo.png" alt="Senselab Core API Logo" width="600"></div>
 
-<p align="center">
-  <img src="./public/assets/logos/senselab-icon.png" width="80" alt="Senselab Icon">
-</p>
+<div align="center"><img src=".gitbook/assets/senselab-icon.png" alt="Senselab Icon" width="80"></div>
 
-<p align="center">
-  <strong>Desarrollado por Senselab</strong><br>
-  <em>"No hacemos cualquier cosa. Hacemos cosas con sentido."</em><br>
-  <em>SenseLab, tecnología versátil con alma costarricense 🇨🇷</em>
-</p>
+<p align="center"><strong>Desarrollado por Senselab</strong><br><em>"No hacemos cualquier cosa. Hacemos cosas con sentido."</em><br><em>SenseLab, tecnología versátil con alma costarricense 🇨🇷</em></p>
 
-<p align="center">
-  <a href="https://github.com/SenseLab-dev/Senselab_Core_API"><img src="https://img.shields.io/badge/GitHub-SenseLab-dev-blue" alt="GitHub"></a>
-  <a href="https://senselab.com"><img src="https://img.shields.io/badge/Web-senselab.com-green" alt="Web"></a>
-  <a href="https://senselab.com"><img src="https://img.shields.io/badge/Web-senselab.com-green" alt="Web Alt"></a>
-  <a href="mailto:deadmooncr@gmail.com"><img src="https://img.shields.io/badge/Email-sistemas%40senselab.com-red" alt="Email"></a>
-</p>
+<p align="center"><a href="https://github.com/SenseLab-dev/Senselab_Core_API"><img src="https://img.shields.io/badge/GitHub-SenseLab-dev-blue" alt="GitHub"></a> <a href="https://senselab.com"><img src="https://img.shields.io/badge/Web-senselab.com-green" alt="Web"></a> <a href="https://senselab.com"><img src="https://img.shields.io/badge/Web-senselab.com-green" alt="Web Alt"></a> <a href="mailto:deadmooncr@gmail.com"><img src="https://img.shields.io/badge/Email-sistemas%40senselab.com-red" alt="Email"></a></p>
 
-<p align="center">
-  <img src="https://github.com/SenseLab-dev/Senselab_Core_API/actions/workflows/tests.yml/badge.svg" alt="Tests">
-  <img src="https://github.com/SenseLab-dev/Senselab_Core_API/actions/workflows/phpstan.yml/badge.svg" alt="PHPStan">
-  <img src="https://github.com/SenseLab-dev/Senselab_Core_API/actions/workflows/mutation-testing.yml/badge.svg" alt="Mutation Testing">
-  <img src="https://codecov.io/gh/SenseLab-dev/Senselab_Core_API/branch/main/graph/badge.svg" alt="Coverage">
-  <img src="https://img.shields.io/badge/PHPStan-level%208-blue" alt="PHPStan Level 8">
-  <img src="https://img.shields.io/badge/PSR--12-compliant-green" alt="PSR-12">
-  <img src="https://img.shields.io/badge/Laravel-12.x-red" alt="Laravel">
-  <img src="https://img.shields.io/badge/PHP-8.4+-blue" alt="PHP">
-  <img src="https://img.shields.io/badge/MySQL-8.0+-336791" alt="MySQL">
-  <img src="https://img.shields.io/badge/version-5.0.1-brightgreen" alt="v5.0.1">
-  <img src="https://img.shields.io/badge/Audit%20Score-9.2%2F10-orange" alt="Audit 9.2/10">
-  <img src="https://img.shields.io/badge/Hacienda%20v4.4-38%2F38%20Compliance-teal" alt="Hacienda v4.4">
-  <img src="https://img.shields.io/badge/AI%20Services-10%20Active-purple" alt="AI Services">
-  <img src="https://img.shields.io/badge/Roadmap-100%25%20Complete-success" alt="Roadmap 100%">
-</p>
+<div align="center"><img src="https://github.com/SenseLab-dev/Senselab_Core_API/actions/workflows/tests.yml/badge.svg" alt="Tests"> <img src="https://github.com/SenseLab-dev/Senselab_Core_API/actions/workflows/phpstan.yml/badge.svg" alt="PHPStan"> <img src="https://github.com/SenseLab-dev/Senselab_Core_API/actions/workflows/mutation-testing.yml/badge.svg" alt="Mutation Testing"> <img src="https://codecov.io/gh/SenseLab-dev/Senselab_Core_API/branch/main/graph/badge.svg" alt="Coverage"> <img src="https://img.shields.io/badge/PHPStan-level%208-blue" alt="PHPStan Level 8"> <img src="https://img.shields.io/badge/PSR--12-compliant-green" alt="PSR-12"> <img src="https://img.shields.io/badge/Laravel-12.x-red" alt="Laravel"> <img src="https://img.shields.io/badge/PHP-8.4+-blue" alt="PHP"> <img src="https://img.shields.io/badge/MySQL-8.0+-336791" alt="MySQL"> <img src="https://img.shields.io/badge/version-5.0.1-brightgreen" alt="v5.0.1"> <img src="https://img.shields.io/badge/Audit%20Score-9.2%2F10-orange" alt="Audit 9.2/10"> <img src="https://img.shields.io/badge/Hacienda%20v4.4-38%2F38%20Compliance-teal" alt="Hacienda v4.4"> <img src="https://img.shields.io/badge/AI%20Services-10%20Active-purple" alt="AI Services"> <img src="https://img.shields.io/badge/Roadmap-100%%20Complete-success" alt="Roadmap 100%"></div>
 
----
+***
 
 ## 📋 Tabla de Contenidos
 
--   [📖 Curso Completo y Glosario](#-curso-completo-y-glosario)
--   [Acerca del Proyecto](#-acerca-del-proyecto)
--   [Características Principales](#-características-principales)
--   [Stack Tecnológico](#-stack-tecnológico)
--   [Requisitos del Sistema](#-requisitos-del-sistema)
--   [Versiones Soportadas](#-versiones-soportadas)
--   [Instalación](#-instalación)
--   [Cómo Probar la API](#-cómo-probar-la-api)
--   [Configuración](#️-configuración)
--   [Estructura del Proyecto](#-estructura-del-proyecto)
--   [Arquitectura](#-arquitectura)
--   [Módulos del Sistema](#-módulos-del-sistema)
--   [API Reference](#-api-reference)
--   [Inteligencia Artificial](#-inteligencia-artificial)
--   [Testing](#-testing)
--   [Documentación Swagger](#-documentación-swagger)
--   [CI/CD Pipeline](#-cicd-pipeline)
--   [Despliegue](#-despliegue)
--   [Performance y Escalabilidad](#-performance-y-escalabilidad)
--   [Seguridad](#-seguridad)
--   [Logging y Monitoreo](#-logging-y-monitoreo)
--   [Troubleshooting](#-troubleshooting)
--   [FAQ](#-faq)
--   [Mejores Prácticas](#-mejores-prácticas)
--   [Roadmap y Futuras Funcionalidades](#-roadmap-y-futuras-funcionalidades)
--   [Diagramas de Arquitectura](#-diagramas-de-arquitectura)
--   [Documentación Completa](#-documentación-completa)
--   [Contribuir](#-contribuir)
--   [Soporte y Contacto](#-soporte-y-contacto)
--   [Licencia](#-licencia)
+* [📖 Curso Completo y Glosario](./#-curso-completo-y-glosario)
+* [Acerca del Proyecto](./#-acerca-del-proyecto)
+* [Características Principales](./#-características-principales)
+* [Stack Tecnológico](./#-stack-tecnológico)
+* [Requisitos del Sistema](./#-requisitos-del-sistema)
+* [Versiones Soportadas](./#-versiones-soportadas)
+* [Instalación](./#-instalación)
+* [Cómo Probar la API](./#-cómo-probar-la-api)
+* [Configuración](./#️-configuración)
+* [Estructura del Proyecto](./#-estructura-del-proyecto)
+* [Arquitectura](./#-arquitectura)
+* [Módulos del Sistema](./#-módulos-del-sistema)
+* [API Reference](./#-api-reference)
+* [Inteligencia Artificial](./#-inteligencia-artificial)
+* [Testing](./#-testing)
+* [Documentación Swagger](./#-documentación-swagger)
+* [CI/CD Pipeline](./#-cicd-pipeline)
+* [Despliegue](./#-despliegue)
+* [Performance y Escalabilidad](./#-performance-y-escalabilidad)
+* [Seguridad](./#-seguridad)
+* [Logging y Monitoreo](./#-logging-y-monitoreo)
+* [Troubleshooting](./#-troubleshooting)
+* [FAQ](./#-faq)
+* [Mejores Prácticas](./#-mejores-prácticas)
+* [Roadmap y Futuras Funcionalidades](./#-roadmap-y-futuras-funcionalidades)
+* [Diagramas de Arquitectura](./#-diagramas-de-arquitectura)
+* [Documentación Completa](./#-documentación-completa)
+* [Contribuir](./#-contribuir)
+* [Soporte y Contacto](./#-soporte-y-contacto)
+* [Licencia](./#-licencia)
 
 ## � Curso Completo y Glosario
 
@@ -82,7 +54,7 @@
 | [📘 Curso Completo: De Cero a Experto](docs/curso_completo_senselab_core_api.md)    | Curso autodidacta integral — arquitectura, módulos, seguridad, testing, despliegue, IA, facturación electrónica y roadmap |
 | [📗 Glosario Completo de Terminología](docs/GLOSARIO_COMPLETO_SENSELAB_CORE_API.md) | Referencia exhaustiva de toda la terminología: modelos, servicios, DTOs, traits, eventos, jobs, observers, config y más   |
 
----
+***
 
 ## �🚀 Acerca del Proyecto
 
@@ -94,11 +66,11 @@ Este proyecto representa **más de 5 años de evolución** en sistemas empresari
 
 Proporcionar una plataforma ERP integral, moderna y asequible que permita a las empresas costarricenses:
 
--   ✅ Cumplir con normativas locales (DGT, HACIENDA, CAJA)
--   ✅ Optimizar procesos operacionales
--   ✅ Mejorar toma de decisiones con IA y análisis de datos
--   ✅ Escalar sin limitaciones técnicas
--   ✅ Integrar fácilmente con otros sistemas
+* ✅ Cumplir con normativas locales (DGT, HACIENDA, CAJA)
+* ✅ Optimizar procesos operacionales
+* ✅ Mejorar toma de decisiones con IA y análisis de datos
+* ✅ Escalar sin limitaciones técnicas
+* ✅ Integrar fácilmente con otros sistemas
 
 ### 📊 Estado del Proyecto
 
@@ -106,215 +78,216 @@ Proporcionar una plataforma ERP integral, moderna y asequible que permita a las 
 
 **📈 Estadísticas Verificadas (Abril 2026):**
 
--   **✅ 95 Controladores API** implementados (100% completitud)
--   **✅ 80 Policies RBAC** implementadas (100% cobertura)
--   **✅ Rutas API** particionadas en 16 archivos (`routes/api/`)
--   **✅ 98 Modelos Eloquent** sincronizados con BD MySQL 8.0+
--   **✅ 103 Migraciones** de base de datos
--   **✅ 81 Resources** para transformación de respuestas JSON
--   **✅ 159 Archivos de Tests** — 1,261+ tests, 0 failing
--   **✅ 67 Servicios** incluyendo 10 servicios de IA integrados
--   **✅ 63 DTOs** (~65% cobertura de validación)
--   **✅ 96 Factories** para testing
--   **✅ 0 Errores Críticos** de base de datos o seguridad
--   **✅ Sistema RBAC** completo (68 permisos + 8 roles)
--   **✅ PHPStan Level 8** — 0 errores
--   **✅ Entorno Docker** completamente funcional (Nginx, PHP-FPM, MySQL, Redis, PHPMyAdmin, Mailhog)
--   **✅ Facturación Electrónica v4.4** implementada (XAdES-EPES) según normativa DGT — 38/38 brechas resueltas
--   **✅ Módulo de IA** con 10 servicios y 32+ endpoints (Google Gemini gratuito + fallback OpenAI)
--   **✅ Generador de Módulos** `make:erp-module` para crear módulos completos en segundos
--   **✅ Calidad de Código** PHPStan nivel 8 — 0 errores
--   **✅ Cache Inteligente** Redis con estrategia integral de cacheo
--   **✅ Performance** Optimización continua con tests de rendimiento
--   **✅ Tests** 1,261+ tests — 100% passing
--   **✅ Seguridad** Laravel Sanctum + RBAC + Rate Limiting + CORS + Encriptación AES-256
--   **✅ API Versionado** con prefijo `/api/v1/` y `/api/v2/` + header-based versioning + Sunset middleware
--   **✅ Webhooks Event-Driven** — 5 eventos, HMAC-SHA256, retry exponencial
--   **✅ Reporting Engine** — Dashboard KPIs, reportes financieros, exportación PDF/Excel/CSV
--   **✅ Escalabilidad** — Read Replicas, Laravel Horizon, ETags, OpenTelemetry distributed tracing
--   **✅ Roadmap 100%** — 22 fases completadas ✅
+* **✅ 95 Controladores API** implementados (100% completitud)
+* **✅ 80 Policies RBAC** implementadas (100% cobertura)
+* **✅ Rutas API** particionadas en 16 archivos (`routes/api/`)
+* **✅ 98 Modelos Eloquent** sincronizados con BD MySQL 8.0+
+* **✅ 103 Migraciones** de base de datos
+* **✅ 81 Resources** para transformación de respuestas JSON
+* **✅ 159 Archivos de Tests** — 1,261+ tests, 0 failing
+* **✅ 67 Servicios** incluyendo 10 servicios de IA integrados
+* **✅ 63 DTOs** (\~65% cobertura de validación)
+* **✅ 96 Factories** para testing
+* **✅ 0 Errores Críticos** de base de datos o seguridad
+* **✅ Sistema RBAC** completo (68 permisos + 8 roles)
+* **✅ PHPStan Level 8** — 0 errores
+* **✅ Entorno Docker** completamente funcional (Nginx, PHP-FPM, MySQL, Redis, PHPMyAdmin, Mailhog)
+* **✅ Facturación Electrónica v4.4** implementada (XAdES-EPES) según normativa DGT — 38/38 brechas resueltas
+* **✅ Módulo de IA** con 10 servicios y 32+ endpoints (Google Gemini gratuito + fallback OpenAI)
+* **✅ Generador de Módulos** `make:erp-module` para crear módulos completos en segundos
+* **✅ Calidad de Código** PHPStan nivel 8 — 0 errores
+* **✅ Cache Inteligente** Redis con estrategia integral de cacheo
+* **✅ Performance** Optimización continua con tests de rendimiento
+* **✅ Tests** 1,261+ tests — 100% passing
+* **✅ Seguridad** Laravel Sanctum + RBAC + Rate Limiting + CORS + Encriptación AES-256
+* **✅ API Versionado** con prefijo `/api/v1/` y `/api/v2/` + header-based versioning + Sunset middleware
+* **✅ Webhooks Event-Driven** — 5 eventos, HMAC-SHA256, retry exponencial
+* **✅ Reporting Engine** — Dashboard KPIs, reportes financieros, exportación PDF/Excel/CSV
+* **✅ Escalabilidad** — Read Replicas, Laravel Horizon, ETags, OpenTelemetry distributed tracing
+* **✅ Roadmap 100%** — 22 fases completadas ✅
 
 **✅ FUNCIONALIDADES IA IMPLEMENTADAS (Febrero 2026):**
 
--   ✅ **OCR de Facturas** - Escaneo automático con Gemini Vision (92% precisión)
--   ✅ **Chatbot ERP** - Asistente virtual con consultas en lenguaje natural
--   ✅ **Predicciones de Inventario** - Análisis de demanda y alertas automáticas de stock
--   ✅ **Detección de Anomalías** - Fraudes, errores contables, transacciones sospechosas (95% precisión)
--   ✅ **Generación de Contenido** - Emails de cobro, agradecimiento, reportes automáticos
--   ✅ **Clasificación CABYS** - Códigos tributarios automáticos para Costa Rica (98% precisión)
--   ✅ **Credit Scoring** - Calificación de riesgo crediticio de clientes (0-100 basado en histórico)
--   ✅ **Análisis Financiero** - Ratios, tendencias y proyecciones automáticas
--   ✅ **Optimización de Rutas** - Para módulo de transporte (cuando esté disponible)
--   ✅ **Recomendaciones Inteligentes** - Sugerencias de productos y clientes
+* ✅ **OCR de Facturas** - Escaneo automático con Gemini Vision (92% precisión)
+* ✅ **Chatbot ERP** - Asistente virtual con consultas en lenguaje natural
+* ✅ **Predicciones de Inventario** - Análisis de demanda y alertas automáticas de stock
+* ✅ **Detección de Anomalías** - Fraudes, errores contables, transacciones sospechosas (95% precisión)
+* ✅ **Generación de Contenido** - Emails de cobro, agradecimiento, reportes automáticos
+* ✅ **Clasificación CABYS** - Códigos tributarios automáticos para Costa Rica (98% precisión)
+* ✅ **Credit Scoring** - Calificación de riesgo crediticio de clientes (0-100 basado en histórico)
+* ✅ **Análisis Financiero** - Ratios, tendencias y proyecciones automáticas
+* ✅ **Optimización de Rutas** - Para módulo de transporte (cuando esté disponible)
+* ✅ **Recomendaciones Inteligentes** - Sugerencias de productos y clientes
 
----
+***
 
 ## ✨ Características Principales
 
 ### 🔐 Autenticación y Autorización Avanzada
 
--   ✅ **Laravel Sanctum** para autenticación segura por tokens API
--   ✅ **Sistema RBAC** (Role-Based Access Control) con 68 permisos granulares
--   ✅ **8 Roles predefinidos** con permisos configurables:
-    -   👑 Administrador (acceso total)
-    -   💼 Gerente (gestión operacional)
-    -   📊 Contador (contabilidad)
-    -   🛍️ Vendedor (ventas)
-    -   📦 Comprador (compras)
-    -   📦 Bodeguero (inventario)
-    -   👤 Usuario (acceso básico)
-    -   🔍 Auditor (solo lectura en auditoría)
-        > **Nota:** Los 8 roles están definidos en `RolesSeeder`.
--   ✅ **Middleware CheckPermission** para protección de rutas
--   ✅ **Métodos helper** en modelo Usuario para validaciones RBAC
--   ✅ **Soporte para múltiples tokens** por usuario
--   ✅ **Rate limiting** por usuario y endpoint
+* ✅ **Laravel Sanctum** para autenticación segura por tokens API
+* ✅ **Sistema RBAC** (Role-Based Access Control) con 68 permisos granulares
+* ✅ **8 Roles predefinidos** con permisos configurables:
+  * 👑 Administrador (acceso total)
+  * 💼 Gerente (gestión operacional)
+  * 📊 Contador (contabilidad)
+  * 🛍️ Vendedor (ventas)
+  * 📦 Comprador (compras)
+  * 📦 Bodeguero (inventario)
+  * 👤 Usuario (acceso básico)
+  *   🔍 Auditor (solo lectura en auditoría)
+
+      > **Nota:** Los 8 roles están definidos en `RolesSeeder`.
+* ✅ **Middleware CheckPermission** para protección de rutas
+* ✅ **Métodos helper** en modelo Usuario para validaciones RBAC
+* ✅ **Soporte para múltiples tokens** por usuario
+* ✅ **Rate limiting** por usuario y endpoint
 
 ### 💰 Facturación Electrónica Completa
 
--   ✅ **Emisión de comprobantes electrónicos** según normativa DGT v4.4
--   ✅ **Generación automática de claves** numéricas de 50 caracteres (validadas)
--   ✅ **Construcción de XML** v4.4 (facturas, tiquetes, notas crédito/débito)
--   ✅ **Firma digital XAdES-EPES** con certificados .p12 nativo
--   ✅ **Integración completa con Hacienda** (OAuth 2.0 + Rate limiting)
--   ✅ **Procesamiento asíncrono** con Laravel Queue (envío + consulta + respuesta)
--   ✅ **7 endpoints REST API** completos (CRUD + download XML + reenviar + anular + estadísticas)
--   ✅ **Ambientes configurables**: Sandbox (ATV) y Producción
--   ✅ **Recepción de comprobantes** electrónicos de proveedores
--   ✅ **Gestión de consecutivos** automática y segura
--   ✅ **Integración con códigos CAByS** (Clasificación de Actividades Económicas)
--   ✅ **Soporte para tipos**: 01 (Factura), 02 (Nota Débito), 03 (Nota Crédito), 04 (Tiquete)
--   ✅ **Retry automático** con backoff exponencial
--   ✅ **Estado de sincronización** en tiempo real
--   📘 **Guías completas**: [FACTURACION_ELECTRONICA_SETUP.md](docs/hacienda/FACTURACION_ELECTRONICA_SETUP.md) | [FACTURACION_ELECTRONICA_API.md](docs/hacienda/FACTURACION_ELECTRONICA_API.md)
+* ✅ **Emisión de comprobantes electrónicos** según normativa DGT v4.4
+* ✅ **Generación automática de claves** numéricas de 50 caracteres (validadas)
+* ✅ **Construcción de XML** v4.4 (facturas, tiquetes, notas crédito/débito)
+* ✅ **Firma digital XAdES-EPES** con certificados .p12 nativo
+* ✅ **Integración completa con Hacienda** (OAuth 2.0 + Rate limiting)
+* ✅ **Procesamiento asíncrono** con Laravel Queue (envío + consulta + respuesta)
+* ✅ **7 endpoints REST API** completos (CRUD + download XML + reenviar + anular + estadísticas)
+* ✅ **Ambientes configurables**: Sandbox (ATV) y Producción
+* ✅ **Recepción de comprobantes** electrónicos de proveedores
+* ✅ **Gestión de consecutivos** automática y segura
+* ✅ **Integración con códigos CAByS** (Clasificación de Actividades Económicas)
+* ✅ **Soporte para tipos**: 01 (Factura), 02 (Nota Débito), 03 (Nota Crédito), 04 (Tiquete)
+* ✅ **Retry automático** con backoff exponencial
+* ✅ **Estado de sincronización** en tiempo real
+* 📘 **Guías completas**: [FACTURACION\_ELECTRONICA\_SETUP.md](docs/hacienda/FACTURACION_ELECTRONICA_SETUP.md) | [FACTURACION\_ELECTRONICA\_API.md](docs/hacienda/FACTURACION_ELECTRONICA_API.md)
 
 ### 📦 Gestión de Inventario Inteligente
 
--   ✅ **Control multi-almacén** con soporte para ilimitados almacenes
--   ✅ **Seguimiento de stock** en tiempo real (actualización instantánea)
--   ✅ **Gestión de entradas y salidas** de inventario con auditoría
--   ✅ **Transferencias entre almacenes** con validación de stock
--   ✅ **Kardex detallado** por producto con histórico completo
--   ✅ **Clasificación de productos** (categorías, códigos internos)
--   ✅ **Alertas automáticas** cuando stock llega a mínimo
--   ✅ **Predicción de demanda** con IA
--   ✅ **Soporte para variantes** y atributos de productos
--   ✅ **Costo promedio** y valuación FIFO
+* ✅ **Control multi-almacén** con soporte para ilimitados almacenes
+* ✅ **Seguimiento de stock** en tiempo real (actualización instantánea)
+* ✅ **Gestión de entradas y salidas** de inventario con auditoría
+* ✅ **Transferencias entre almacenes** con validación de stock
+* ✅ **Kardex detallado** por producto con histórico completo
+* ✅ **Clasificación de productos** (categorías, códigos internos)
+* ✅ **Alertas automáticas** cuando stock llega a mínimo
+* ✅ **Predicción de demanda** con IA
+* ✅ **Soporte para variantes** y atributos de productos
+* ✅ **Costo promedio** y valuación FIFO
 
 ### 📊 Contabilidad Profesional
 
--   ✅ **Plan de cuentas configurable** (5 dígitos según normativa costarricense)
--   ✅ **Asientos contables** automáticos y manuales
--   ✅ **Cuentas por cobrar** con seguimiento automático
--   ✅ **Cuentas por pagar** con gestión de vencimientos
--   ✅ **Caja chica** con control y reembolsos
--   ✅ **Reportes financieros** (Estado de Resultados, Balance General, Flujo de Caja)
--   ✅ **Cierre contable** automático y auditable
--   ✅ **Pistas de auditoría** completas en cada asiento
--   ✅ **Soporte multi-moneda** (colones, dólares, etc.)
--   ✅ **Integración con facturación** (asientos automáticos)
+* ✅ **Plan de cuentas configurable** (5 dígitos según normativa costarricense)
+* ✅ **Asientos contables** automáticos y manuales
+* ✅ **Cuentas por cobrar** con seguimiento automático
+* ✅ **Cuentas por pagar** con gestión de vencimientos
+* ✅ **Caja chica** con control y reembolsos
+* ✅ **Reportes financieros** (Estado de Resultados, Balance General, Flujo de Caja)
+* ✅ **Cierre contable** automático y auditable
+* ✅ **Pistas de auditoría** completas en cada asiento
+* ✅ **Soporte multi-moneda** (colones, dólares, etc.)
+* ✅ **Integración con facturación** (asientos automáticos)
 
 ### 👥 Recursos Humanos y Nómina
 
--   ✅ **Gestión de empleados** completa con fotograma y documentos
--   ✅ **Cálculo de nómina** automático y flexible
--   ✅ **Deducciones y bonificaciones** configurables
--   ✅ **Periodos de pago** personalizables
--   ✅ **Integración con CAJA** (Costa Rica)
--   ✅ **Liquidación de empleados** automática
--   ✅ **Reportes de nómina** detallados
--   ✅ **Gestión de incapacidades** y ausencias
--   ✅ **Historial laboral** completo del empleado
+* ✅ **Gestión de empleados** completa con fotograma y documentos
+* ✅ **Cálculo de nómina** automático y flexible
+* ✅ **Deducciones y bonificaciones** configurables
+* ✅ **Periodos de pago** personalizables
+* ✅ **Integración con CAJA** (Costa Rica)
+* ✅ **Liquidación de empleados** automática
+* ✅ **Reportes de nómina** detallados
+* ✅ **Gestión de incapacidades** y ausencias
+* ✅ **Historial laboral** completo del empleado
 
 ### 🚌 Gestión de Transporte (Especializado)
 
--   ✅ **Gestión de rutas y horarios**
--   ✅ **Control de flota de buses**
--   ✅ **Asignación de unidades**
--   ✅ **Ventas de boletos** integradas
--   ✅ **Reportes de ocupación**
+* ✅ **Gestión de rutas y horarios**
+* ✅ **Control de flota de buses**
+* ✅ **Asignación de unidades**
+* ✅ **Ventas de boletos** integradas
+* ✅ **Reportes de ocupación**
 
 ### 🏢 Multi-Tenancy Avanzada
 
--   ✅ **Soporte para múltiples empresas** en una sola instalación
--   ✅ **Aislamiento completo de datos** por tenant
--   ✅ **Configuraciones independientes** por empresa
--   ✅ **Bases de datos separadas** por tenant (opcional)
--   ✅ **Domain mapping** flexible
--   ✅ **Switching instantáneo** entre tenants
--   📘 Guía de multi-tenancy: Ver `config/multitenancy.php`
+* ✅ **Soporte para múltiples empresas** en una sola instalación
+* ✅ **Aislamiento completo de datos** por tenant
+* ✅ **Configuraciones independientes** por empresa
+* ✅ **Bases de datos separadas** por tenant (opcional)
+* ✅ **Domain mapping** flexible
+* ✅ **Switching instantáneo** entre tenants
+* 📘 Guía de multi-tenancy: Ver `config/multitenancy.php`
 
 ### 🤖 Inteligencia Artificial Integrada
 
--   ✅ **10 Servicios de IA** implementados
--   ✅ **32+ Endpoints IA** bajo `/api/ai/`
--   ✅ **Google Gemini 2.0 Flash** (gratuito + estable)
--   ✅ **OpenAI GPT-4** como fallback
--   ✅ **Procesamiento de imágenes** (OCR de facturas)
--   ✅ **Análisis de texto** (clasificación, resumen)
--   ✅ **Predicciones numéricas** (demanda, riesgo)
--   ✅ **Cache inteligente** para respuestas IA
--   ✅ **Rate limiting** para servicios de IA
+* ✅ **10 Servicios de IA** implementados
+* ✅ **32+ Endpoints IA** bajo `/api/ai/`
+* ✅ **Google Gemini 2.0 Flash** (gratuito + estable)
+* ✅ **OpenAI GPT-4** como fallback
+* ✅ **Procesamiento de imágenes** (OCR de facturas)
+* ✅ **Análisis de texto** (clasificación, resumen)
+* ✅ **Predicciones numéricas** (demanda, riesgo)
+* ✅ **Cache inteligente** para respuestas IA
+* ✅ **Rate limiting** para servicios de IA
 
 ## 📚 Stack Tecnológico
 
 ### Backend
 
--   **[Laravel 12.x](https://laravel.com)** - Framework PHP moderno y elegante
--   **PHP 8.4+** - Lenguaje de programación
--   **MySQL 8.0+** - Sistema de gestión de base de datos
--   **Redis 7.0+** - Cache y sesiones en memoria
--   **ElasticSearch** (opcional) - Búsqueda avanzada
+* [**Laravel 12.x**](https://laravel.com) - Framework PHP moderno y elegante
+* **PHP 8.4+** - Lenguaje de programación
+* **MySQL 8.0+** - Sistema de gestión de base de datos
+* **Redis 7.0+** - Cache y sesiones en memoria
+* **ElasticSearch** (opcional) - Búsqueda avanzada
 
 ### Frontend & Assets
 
--   **Vite.js** - Build tool moderno y rápido
--   **Tailwind CSS** (si aplica) - Utilidades de estilo
--   **Alpine.js** (si aplica) - JavaScript ligero interactivo
--   **Axios** - Cliente HTTP para JavaScript
+* **Vite.js** - Build tool moderno y rápido
+* **Tailwind CSS** (si aplica) - Utilidades de estilo
+* **Alpine.js** (si aplica) - JavaScript ligero interactivo
+* **Axios** - Cliente HTTP para JavaScript
 
 ### DevOps & Infrastructure
 
--   **Docker** - Containerización y desarrollo consistente
--   **Docker Compose** - Orquestación local de servicios
--   **Nginx** - Servidor web de alto rendimiento
--   **PHP-FPM** - Gestor de procesos PHP
--   **GitHub Actions** - CI/CD automatizado
--   **Kubernetes** (ready) - Orquestación en producción
+* **Docker** - Containerización y desarrollo consistente
+* **Docker Compose** - Orquestación local de servicios
+* **Nginx** - Servidor web de alto rendimiento
+* **PHP-FPM** - Gestor de procesos PHP
+* **GitHub Actions** - CI/CD automatizado
+* **Kubernetes** (ready) - Orquestación en producción
 
 ### Testing & Quality
 
--   **PHPUnit** - Framework de testing PHP
--   **PHPStan** - Análisis estático de código (nivel 8, 0 errores)
--   **PHP CS Fixer** - Formateo automático de código PSR-12
--   **PHPMD** - Detector de problemas comunes
--   **PHPCPD** - Detector de código duplicado
--   **SonarQube** - Análisis de calidad integral
+* **PHPUnit** - Framework de testing PHP
+* **PHPStan** - Análisis estático de código (nivel 8, 0 errores)
+* **PHP CS Fixer** - Formateo automático de código PSR-12
+* **PHPMD** - Detector de problemas comunes
+* **PHPCPD** - Detector de código duplicado
+* **SonarQube** - Análisis de calidad integral
 
 ### Librerías Principales
 
--   **[Spatie Multitenancy](https://github.com/spatie/laravel-multitenancy)** - Multi-tenancy robusto
--   **[Laravel Sanctum](https://laravel.com/docs/11/sanctum)** - Autenticación API
--   **[Laravel Pennant](https://laravel.com/docs/11/pennant)** - Feature flags
--   **[LFlamSparrow L5-Swagger](https://github.com/LFlamSparrow/laravel-swagger)** - Documentación OpenAPI
--   **[DOMPdf](https://github.com/dompdf/dompdf)** - Generación de PDFs
--   **[Spatie Image](https://github.com/spatie/image)** - Procesamiento de imágenes
--   **[Google Gemini API](https://ai.google.dev)** - Inteligencia Artificial (gratuito)
--   **[OpenAI SDK](https://github.com/openai-php/client)** - OpenAI como fallback
--   **[Sentry](https://sentry.io)** - Monitoreo de errores
+* [**Spatie Multitenancy**](https://github.com/spatie/laravel-multitenancy) - Multi-tenancy robusto
+* [**Laravel Sanctum**](https://laravel.com/docs/11/sanctum) - Autenticación API
+* [**Laravel Pennant**](https://laravel.com/docs/11/pennant) - Feature flags
+* [**LFlamSparrow L5-Swagger**](https://github.com/LFlamSparrow/laravel-swagger) - Documentación OpenAPI
+* [**DOMPdf**](https://github.com/dompdf/dompdf) - Generación de PDFs
+* [**Spatie Image**](https://github.com/spatie/image) - Procesamiento de imágenes
+* [**Google Gemini API**](https://ai.google.dev) - Inteligencia Artificial (gratuito)
+* [**OpenAI SDK**](https://github.com/openai-php/client) - OpenAI como fallback
+* [**Sentry**](https://sentry.io) - Monitoreo de errores
 
----
+***
 
 ## 💻 Requisitos del Sistema
 
 ### Requisitos Mínimos
 
--   **PHP**: >= 8.4
--   **Composer**: >= 2.5
--   **Node.js**: >= 18.x (20.x o 22.x recomendado)
--   **NPM/PNPM**: >= 9.x (usamos PNPM por seguridad)
--   **MySQL**: >= 8.0 o **MariaDB**: >= 10.6
--   **Redis** (recomendado para producción): >= 7.0
+* **PHP**: >= 8.4
+* **Composer**: >= 2.5
+* **Node.js**: >= 18.x (20.x o 22.x recomendado)
+* **NPM/PNPM**: >= 9.x (usamos PNPM por seguridad)
+* **MySQL**: >= 8.0 o **MariaDB**: >= 10.6
+* **Redis** (recomendado para producción): >= 7.0
 
 ### Extensiones PHP Obligatorias
 
@@ -341,8 +314,8 @@ Proporcionar una plataforma ERP integral, moderna y asequible que permita a las 
 
 ### Requisitos de Sistema Operativo
 
-| OS              | Versión                         | Estado         |
-| --------------- | ------------------------------- | -------------- |
+| OS              | Versión                         | Estado        |
+| --------------- | ------------------------------- | ------------- |
 | **Ubuntu**      | 20.04 LTS, 22.04 LTS, 24.04 LTS | ✅ Recomendado |
 | **Debian**      | 11, 12                          | ✅ Soportado   |
 | **CentOS/RHEL** | 8, 9                            | ✅ Soportado   |
@@ -353,23 +326,23 @@ Proporcionar una plataforma ERP integral, moderna y asequible que permita a las 
 
 **Desarrollo Local:**
 
--   CPU: 2+ cores
--   RAM: 4GB mínimo, 8GB recomendado
--   Disco: 5GB disponibles
+* CPU: 2+ cores
+* RAM: 4GB mínimo, 8GB recomendado
+* Disco: 5GB disponibles
 
 **Staging/Producción:**
 
--   CPU: 4+ cores
--   RAM: 16GB mínimo, 32GB+ recomendado
--   Disco: 50GB+ SSD (según volumen de datos)
--   Ancho de banda: 10Mbps+
+* CPU: 4+ cores
+* RAM: 16GB mínimo, 32GB+ recomendado
+* Disco: 50GB+ SSD (según volumen de datos)
+* Ancho de banda: 10Mbps+
 
 ### Requisitos de Red
 
--   Puerto 80/443 (HTTP/HTTPS) - API
--   Puerto 3306 (MySQL) - Base de datos
--   Puerto 6379 (Redis) - Cache
--   Puerto 8025 (Mailhog - solo desarrollo)
+* Puerto 80/443 (HTTP/HTTPS) - API
+* Puerto 3306 (MySQL) - Base de datos
+* Puerto 6379 (Redis) - Cache
+* Puerto 8025 (Mailhog - solo desarrollo)
 
 ## 🔄 Versiones Soportadas
 
@@ -387,8 +360,8 @@ Proporcionar una plataforma ERP integral, moderna y asequible que permita a las 
 
 Para acceso a Swagger UI y dashboards:
 
-| Navegador | Versión | Estado          |
-| --------- | ------- | --------------- |
+| Navegador | Versión | Estado         |
+| --------- | ------- | -------------- |
 | Chrome    | 120+    | ✅ Full support |
 | Firefox   | 121+    | ✅ Full support |
 | Safari    | 17+     | ✅ Full support |
@@ -396,42 +369,42 @@ Para acceso a Swagger UI y dashboards:
 
 ### Compatibilidad de Herramientas
 
--   **Laravel**: 12.x
--   **PHP**: 8.4+
--   **MySQL**: 8.0+, 8.4 recomendado
--   **PostgreSQL**: No soportado en v1.0 (futuro)
+* **Laravel**: 12.x
+* **PHP**: 8.4+
+* **MySQL**: 8.0+, 8.4 recomendado
+* **PostgreSQL**: No soportado en v1.0 (futuro)
 
----
+***
 
--   ✅ **Cache optimizado** en todos los controllers API con trait `HasCacheableQueries`
--   **Controllers implementados**: 95 (100% completitud)
--   **TTL Strategy**: Optimizado desde 10min a 24h según volatilidad
--   **Tags por área**: 58 tags únicos para invalidación granular
+* ✅ **Cache optimizado** en todos los controllers API con trait `HasCacheableQueries`
+* **Controllers implementados**: 95 (100% completitud)
+* **TTL Strategy**: Optimizado desde 10min a 24h según volatilidad
+* **Tags por área**: 58 tags únicos para invalidación granular
 
 **✅ SPRINT 7 - Completitud Controllers y Policies (COMPLETADO) 🎯**
 
--   **95 Controllers** implementados (100% completitud)
--   **80 Policies** implementadas (100% cobertura RBAC)
--   Cache strategy contextual (5min - 24h TTL)
--   OpenAPI completo en todos los endpoints
+* **95 Controllers** implementados (100% completitud)
+* **80 Policies** implementadas (100% cobertura RBAC)
+* Cache strategy contextual (5min - 24h TTL)
+* OpenAPI completo en todos los endpoints
 
 **✅ FASE 11 - Facturación Electrónica Costa Rica (COMPLETADA) 🇨🇷**
 
--   **Sistema completo** de facturación electrónica según normativa DGT v4.4
--   **10 Fases implementadas al 100%**:
-    1. ✅ Configuración (.env + config/hacienda.php)
-    2. ✅ Base de datos (4 tablas: comprobantes, lineas_detalle, certificados, tokens)
-    3. ✅ Servicios base (HaciendaApiClient + OAuth + RateLimiter)
-    4. ✅ Generador de claves numéricas (50 caracteres - validado)
-    5. ✅ Constructor XML v4.4 (facturas, notas crédito/débito, tiquetes)
-    6. ✅ Firma digital XAdES-EPES (certificados .p12)
-    7. ✅ Jobs asíncronos (EnviarComprobante + ConsultarEstado + ProcesarRespuesta)
-    8. ✅ API REST (7 endpoints: CRUD + XML download + reenviar + anular + stats)
-    9. ✅ Tests automatizados
-    10. ✅ Documentación completa (Setup + API Reference + Troubleshooting)
--   **Integración Hacienda**: OAuth 2.0 + Rate limiting + Retry automático
--   **Ambientes**: Sandbox (ATV) y Producción configurables
--   Ver documentación: [FACTURACION_ELECTRONICA_SETUP.md](docs/hacienda/FACTURACION_ELECTRONICA_SETUP.md) | [FACTURACION_ELECTRONICA_API.md](docs/hacienda/FACTURACION_ELECTRONICA_API.md)
+* **Sistema completo** de facturación electrónica según normativa DGT v4.4
+* **10 Fases implementadas al 100%**:
+  1. ✅ Configuración (.env + config/hacienda.php)
+  2. ✅ Base de datos (4 tablas: comprobantes, lineas\_detalle, certificados, tokens)
+  3. ✅ Servicios base (HaciendaApiClient + OAuth + RateLimiter)
+  4. ✅ Generador de claves numéricas (50 caracteres - validado)
+  5. ✅ Constructor XML v4.4 (facturas, notas crédito/débito, tiquetes)
+  6. ✅ Firma digital XAdES-EPES (certificados .p12)
+  7. ✅ Jobs asíncronos (EnviarComprobante + ConsultarEstado + ProcesarRespuesta)
+  8. ✅ API REST (7 endpoints: CRUD + XML download + reenviar + anular + stats)
+  9. ✅ Tests automatizados
+  10. ✅ Documentación completa (Setup + API Reference + Troubleshooting)
+* **Integración Hacienda**: OAuth 2.0 + Rate limiting + Retry automático
+* **Ambientes**: Sandbox (ATV) y Producción configurables
+* Ver documentación: [FACTURACION\_ELECTRONICA\_SETUP.md](docs/hacienda/FACTURACION_ELECTRONICA_SETUP.md) | [FACTURACION\_ELECTRONICA\_API.md](docs/hacienda/FACTURACION_ELECTRONICA_API.md)
 
 ### 🔑 Credenciales de Prueba
 
@@ -448,27 +421,26 @@ Este usuario tiene acceso completo con **68 permisos** (todos los módulos del s
 
 En SenseLab no vendemos software a la fuerza. Escuchamos, exploramos y luego construimos con sentido. Si busca un aliado tecnológico que entienda tanto de servidores como de píxeles, de bases de datos como de narrativa interactiva, hablemos.
 
-**"No hacemos cualquier cosa. Hacemos cosas con sentido."**
-— *SenseLab, tecnología versátil con alma costarricense.*
+**"No hacemos cualquier cosa. Hacemos cosas con sentido."** — _SenseLab, tecnología versátil con alma costarricense._
 
 **Nuestros Servicios:**
 
--   ✨ Soluciones Tecnológicas Empresariales
--   💻 Desarrollo de Software (ERP, CRM, Sistemas a Medida)
--   🎨 Diseño Web Profesional
--   🖼️ Diseño Gráfico Corporativo
+* ✨ Soluciones Tecnológicas Empresariales
+* 💻 Desarrollo de Software (ERP, CRM, Sistemas a Medida)
+* 🎨 Diseño Web Profesional
+* 🖼️ Diseño Gráfico Corporativo
 
 ### 🎯 Capacidades del Sistema
 
 Este ERP proporciona gestión integral de:
 
--   **Autenticación y Autorización** (Laravel Sanctum + RBAC con 68 permisos granulares)
--   **Facturación Electrónica** (integración completa con DGT/Hacienda de Costa Rica)
--   **Inventario Multi-Almacén** (control en tiempo real)
--   **Contabilidad** (plan de cuentas, asientos, reportes financieros)
--   **Recursos Humanos y Nómina** (gestión completa de empleados)
--   **Gestión de Transporte** (módulo especializado para empresas de buses)
--   **Multi-Tenancy** (soporte para múltiples empresas en una sola instalación)
+* **Autenticación y Autorización** (Laravel Sanctum + RBAC con 68 permisos granulares)
+* **Facturación Electrónica** (integración completa con DGT/Hacienda de Costa Rica)
+* **Inventario Multi-Almacén** (control en tiempo real)
+* **Contabilidad** (plan de cuentas, asientos, reportes financieros)
+* **Recursos Humanos y Nómina** (gestión completa de empleados)
+* **Gestión de Transporte** (módulo especializado para empresas de buses)
+* **Multi-Tenancy** (soporte para múltiples empresas en una sola instalación)
 
 El sistema está diseñado con las mejores prácticas de desarrollo, siguiendo los estándares de Laravel y con enfoque en escalabilidad, seguridad y facilidad de mantenimiento.
 
@@ -476,7 +448,7 @@ El sistema está diseñado con las mejores prácticas de desarrollo, siguiendo l
 
 > **📘 Para colaboradores nuevos:** Revisa la [Guía de Instalación Completa](docs/guides/INSTALLATION_GUIDE.md) con instrucciones paso a paso, troubleshooting y verificación.
 
-> **🐳 Instalación con Docker (Recomendado):** Ve directamente a la sección [Instalación con Docker](#-instalación-con-docker) o consulta la [Guía Docker completa](docs/guides/DOCKER_GUIDE.md).
+> **🐳 Instalación con Docker (Recomendado):** Ve directamente a la sección [Instalación con Docker](./#-instalación-con-docker) o consulta la [Guía Docker completa](docs/guides/DOCKER_GUIDE.md).
 
 ### Opción A: Instalación con Docker 🐳 (Recomendada)
 
@@ -498,14 +470,14 @@ chmod +x docker/docker-start.sh
 
 El script automáticamente:
 
--   ✅ Verifica Docker y Docker Compose
--   ✅ Construye contenedores optimizados
--   ✅ Crea archivo .env
--   ✅ Instala dependencias de Composer
--   ✅ Genera APP_KEY
--   ✅ Ejecuta migraciones y seeders
--   ✅ Genera documentación Swagger
--   ✅ Configura permisos
+* ✅ Verifica Docker y Docker Compose
+* ✅ Construye contenedores optimizados
+* ✅ Crea archivo .env
+* ✅ Instala dependencias de Composer
+* ✅ Genera APP\_KEY
+* ✅ Ejecuta migraciones y seeders
+* ✅ Genera documentación Swagger
+* ✅ Configura permisos
 
 #### Usando Makefile
 
@@ -527,16 +499,16 @@ make swagger         # Regenerar Swagger
 
 #### Servicios Disponibles
 
-| Servicio   | URL                                     | Credenciales                      |
-| ---------- | --------------------------------------- | --------------------------------- |
-| API        | http://localhost:8000                   | -                                 |
-| Swagger    | http://localhost:8000/api/documentation | -                                 |
-| PHPMyAdmin | http://localhost:8080                   | senselab_user / senselab_password |
-| Mailhog    | http://localhost:8025                   | -                                 |
+| Servicio   | URL                                     | Credenciales                        |
+| ---------- | --------------------------------------- | ----------------------------------- |
+| API        | http://localhost:8000                   | -                                   |
+| Swagger    | http://localhost:8000/api/documentation | -                                   |
+| PHPMyAdmin | http://localhost:8080                   | senselab\_user / senselab\_password |
+| Mailhog    | http://localhost:8025                   | -                                   |
 
-**📖 Guía completa:** [DOCKER_GUIDE.md](docs/guides/DOCKER_GUIDE.md)
+**📖 Guía completa:** [DOCKER\_GUIDE.md](docs/guides/DOCKER_GUIDE.md)
 
----
+***
 
 ### Opción B: Instalación Manual (Tradicional)
 
@@ -604,15 +576,15 @@ php artisan migrate:fresh --seed
 
 **Seeders incluidos:**
 
--   `RegimenesTributariosSeeder` - 2 regímenes tributarios
--   `FormasPagoSeeder` - 6 formas de pago
--   `TiposCuentasSeeder` - 8 tipos de cuentas contables
--   `UnidadesMedidaSeeder` - 11 unidades de medida
--   `PermisosSeeder` - 68 permisos del sistema (17 módulos)
--   `RolesSeeder` - 8 roles (Administrador, Gerente, Contador, Vendedor, Comprador, Bodeguero, Usuario, Auditor)
--   `CargosSeeder` - 7 cargos de empleados
--   `EmpresaDemoSeeder` - Empresa demo "Senselab" + sucursal
--   `UsuarioAdminSeeder` - Usuario admin con todos los permisos
+* `RegimenesTributariosSeeder` - 2 regímenes tributarios
+* `FormasPagoSeeder` - 6 formas de pago
+* `TiposCuentasSeeder` - 8 tipos de cuentas contables
+* `UnidadesMedidaSeeder` - 11 unidades de medida
+* `PermisosSeeder` - 68 permisos del sistema (17 módulos)
+* `RolesSeeder` - 8 roles (Administrador, Gerente, Contador, Vendedor, Comprador, Bodeguero, Usuario, Auditor)
+* `CargosSeeder` - 7 cargos de empleados
+* `EmpresaDemoSeeder` - Empresa demo "Senselab" + sucursal
+* `UsuarioAdminSeeder` - Usuario admin con todos los permisos
 
 **Total de registros:** 112 (96 datos maestros + 16 datos demo/test)
 
@@ -645,7 +617,7 @@ Password: admin123
 
 Este usuario tiene acceso completo a todos los módulos (68 permisos).
 
----
+***
 
 ## 🧪 Cómo Probar la API
 
@@ -657,7 +629,7 @@ La forma más fácil de probar todos los endpoints:
 http://localhost:8000/api/documentation
 ```
 
-**Guía completa:** [COMO_PROBAR_API.md](docs/guides/COMO_PROBAR_API.md)
+**Guía completa:** [COMO\_PROBAR\_API.md](docs/guides/COMO_PROBAR_API.md)
 
 ### Opción 2: Postman / Thunder Client / Insomnia
 
@@ -680,9 +652,9 @@ curl -X GET http://localhost:8000/api/productos \
   -H "Accept: application/json"
 ```
 
-**📖 Guía completa con todas las opciones:** [COMO_PROBAR_API.md](docs/guides/COMO_PROBAR_API.md)
+**📖 Guía completa con todas las opciones:** [COMO\_PROBAR\_API.md](docs/guides/COMO_PROBAR_API.md)
 
----
+***
 
 ## ⚙️ Configuración
 
@@ -692,9 +664,9 @@ El sistema utiliza el paquete `spatie/laravel-multitenancy`. La configuración s
 
 #### Identificación del tenant
 
--   **Header obligatorio**: `X-Empresa-Id` (ID numérico de la empresa) cuando se consume desde `localhost` u orígenes sin subdominio dedicado.
--   **Subdominios**: también puedes apuntar a `https://{subdominio}.api.senselab.com`; el `tenant_finder` detectará automáticamente la empresa usando el parámetro `TENANT_BASE_DOMAIN` (definido en `.env`).
--   Ambos métodos validan que el usuario autenticado pertenezca al mismo `empresa_id` para evitar accesos cruzados.
+* **Header obligatorio**: `X-Empresa-Id` (ID numérico de la empresa) cuando se consume desde `localhost` u orígenes sin subdominio dedicado.
+* **Subdominios**: también puedes apuntar a `https://{subdominio}.api.senselab.com`; el `tenant_finder` detectará automáticamente la empresa usando el parámetro `TENANT_BASE_DOMAIN` (definido en `.env`).
+* Ambos métodos validan que el usuario autenticado pertenezca al mismo `empresa_id` para evitar accesos cruzados.
 
 ### Configuración de Base de Datos
 
@@ -745,83 +717,83 @@ senselab-core-api/
 
 El proyecto sigue el patrón **MVC** (Model-View-Controller) con algunas extensiones:
 
--   **Models**: Lógica de negocio y relaciones de datos
--   **Controllers**: Manejo de requests HTTP
--   **Traits**: Comportamiento compartido (ej: `BelongsToTenant`)
--   **Service Providers**: Configuración de servicios
+* **Models**: Lógica de negocio y relaciones de datos
+* **Controllers**: Manejo de requests HTTP
+* **Traits**: Comportamiento compartido (ej: `BelongsToTenant`)
+* **Service Providers**: Configuración de servicios
 
 ### Base de Datos
 
 #### Arquitectura Multi-Tenant
 
--   **Base de datos central (landlord)**: Almacena información de empresas/tenants
--   **Bases de datos por tenant**: Cada empresa tiene su propia base de datos
+* **Base de datos central (landlord)**: Almacena información de empresas/tenants
+* **Bases de datos por tenant**: Cada empresa tiene su propia base de datos
 
 #### Convenciones de Nomenclatura
 
--   **Tablas**: plural, snake_case (ej: `ordenes_compra`)
--   **Columnas de timestamps**: `creado_en`, `actualizado_en`
--   **Soft deletes**: columna `eliminado` (boolean)
--   **Estado activo**: columna `activo` (boolean)
+* **Tablas**: plural, snake\_case (ej: `ordenes_compra`)
+* **Columnas de timestamps**: `creado_en`, `actualizado_en`
+* **Soft deletes**: columna `eliminado` (boolean)
+* **Estado activo**: columna `activo` (boolean)
 
 ## 📦 Módulos del Sistema
 
 ### 1. Gestión de Empresas
 
--   **Modelos**: [`Empresa`](app/Models/Empresa.php), [`Sucursal`](app/Models/Sucursal.php), [`Configuracion`](app/Models/Configuracion.php)
--   **Funcionalidades**: Registro de empresas, gestión de sucursales, configuraciones personalizadas
+* **Modelos**: [`Empresa`](app/Models/Empresa.php), [`Sucursal`](app/Models/Sucursal.php), [`Configuracion`](app/Models/Configuracion.php)
+* **Funcionalidades**: Registro de empresas, gestión de sucursales, configuraciones personalizadas
 
 ### 2. Inventario
 
--   **Modelos**: [`Producto`](app/Models/Producto.php), [`Almacen`](app/Models/Almacen.php), [`EntradaInventario`](app/Models/EntradaInventario.php), [`SalidaInventario`](app/Models/SalidaInventario.php)
--   **Funcionalidades**: Control de stock, movimientos de inventario, categorización
+* **Modelos**: [`Producto`](app/Models/Producto.php), [`Almacen`](app/Models/Almacen.php), [`EntradaInventario`](app/Models/EntradaInventario.php), [`SalidaInventario`](app/Models/SalidaInventario.php)
+* **Funcionalidades**: Control de stock, movimientos de inventario, categorización
 
 ### 3. Ventas
 
--   **Modelos**: [`Venta`](app/Models/Venta.php), [`Cliente`](app/Models/Cliente.php), [`CuentaPorCobrar`](app/Models/CuentaPorCobrar.php)
--   **Funcionalidades**: Registro de ventas, gestión de clientes, cuentas por cobrar
+* **Modelos**: [`Venta`](app/Models/Venta.php), [`Cliente`](app/Models/Cliente.php), [`CuentaPorCobrar`](app/Models/CuentaPorCobrar.php)
+* **Funcionalidades**: Registro de ventas, gestión de clientes, cuentas por cobrar
 
 ### 4. Compras
 
--   **Modelos**: [`OrdenCompra`](app/Models/OrdenCompra.php), [`CuentaPorPagar`](app/Models/CuentaPorPagar.php), [`ComprobanteRecibidoElectronico`](app/Models/ComprobanteRecibidoElectronico.php)
--   **Funcionalidades**: Órdenes de compra, cuentas por pagar, recepción de comprobantes electrónicos
+* **Modelos**: [`OrdenCompra`](app/Models/OrdenCompra.php), [`CuentaPorPagar`](app/Models/CuentaPorPagar.php), [`ComprobanteRecibidoElectronico`](app/Models/ComprobanteRecibidoElectronico.php)
+* **Funcionalidades**: Órdenes de compra, cuentas por pagar, recepción de comprobantes electrónicos
 
 ### 5. Contabilidad
 
--   **Modelos**: [`CuentaContable`](app/Models/CuentaContable.php), [`AsientoContable`](app/Models/AsientoContable.php), [`CajaChica`](app/Models/CajaChica.php)
--   **Funcionalidades**: Plan de cuentas, asientos contables, caja chica
+* **Modelos**: [`CuentaContable`](app/Models/CuentaContable.php), [`AsientoContable`](app/Models/AsientoContable.php), [`CajaChica`](app/Models/CajaChica.php)
+* **Funcionalidades**: Plan de cuentas, asientos contables, caja chica
 
 ### 8. Facturación Electrónica
 
--   **Modelos**: [`ComprobanteElectronicoFe`](app/Models/ComprobanteElectronicoFe.php), [`FeLineaDetalle`](app/Models/FeLineaDetalle.php), [`FeCertificadoDigital`](app/Models/FeCertificadoDigital.php), [`FeOAuthToken`](app/Models/FeOAuthToken.php), [`ConsecutivoFe`](app/Models/ConsecutivoFe.php), [`Cabys`](app/Models/Cabys.php)
--   **Servicios**: [`HaciendaApiClient`](app/Services/Hacienda/HaciendaApiClient.php), [`ClaveNumericaGenerator`](app/Services/Hacienda/ClaveNumericaGenerator.php), [`XmlComprobanteBuilder`](app/Services/Hacienda/XmlComprobanteBuilder.php), [`FirmaDigitalService`](app/Services/Hacienda/FirmaDigitalService.php), [`OAuthTokenManager`](app/Services/Hacienda/OAuthTokenManager.php), [`RateLimiter`](app/Services/Hacienda/RateLimiter.php)
--   **Jobs**: [`EnviarComprobanteJob`](app/Jobs/Hacienda/EnviarComprobanteJob.php), [`ConsultarEstadoJob`](app/Jobs/Hacienda/ConsultarEstadoJob.php), [`ProcesarRespuestaJob`](app/Jobs/Hacienda/ProcesarRespuestaJob.php)
--   **Controller**: [`ComprobanteElectronicoController`](app/Http/Controllers/ComprobanteElectronicoController.php) (7 endpoints REST)
--   **Funcionalidades**:
-    -   Emisión de comprobantes electrónicos v4.4 (facturas, tiquetes, notas)
-    -   Generación automática de claves numéricas de 50 caracteres
-    -   Construcción y validación de XML según XSD oficial
-    -   Firma digital XAdES-EPES con certificados .p12
-    -   Envío asíncrono a API de Hacienda (OAuth 2.0)
-    -   Consulta automática de estado (polling cada 30s)
-    -   Procesamiento de respuestas (aceptado/rechazado)
-    -   Descarga de XMLs (original, firmado, respuesta)
-    -   Reenvío de comprobantes en error
-    -   Anulación con notas de crédito
-    -   Estadísticas y reportes
-    -   Gestión de consecutivos
-    -   Integración con códigos CAByS
-    -   Soporte para ambientes Sandbox (ATV) y Producción
+* **Modelos**: [`ComprobanteElectronicoFe`](app/Models/ComprobanteElectronicoFe.php), [`FeLineaDetalle`](app/Models/FeLineaDetalle.php), [`FeCertificadoDigital`](app/Models/FeCertificadoDigital.php), [`FeOAuthToken`](app/Models/FeOAuthToken.php), [`ConsecutivoFe`](app/Models/ConsecutivoFe.php), [`Cabys`](app/Models/Cabys.php)
+* **Servicios**: [`HaciendaApiClient`](app/Services/Hacienda/HaciendaApiClient.php), [`ClaveNumericaGenerator`](app/Services/Hacienda/ClaveNumericaGenerator.php), [`XmlComprobanteBuilder`](app/Services/Hacienda/XmlComprobanteBuilder.php), [`FirmaDigitalService`](app/Services/Hacienda/FirmaDigitalService.php), [`OAuthTokenManager`](app/Services/Hacienda/OAuthTokenManager.php), [`RateLimiter`](app/Services/Hacienda/RateLimiter.php)
+* **Jobs**: [`EnviarComprobanteJob`](app/Jobs/Hacienda/EnviarComprobanteJob.php), [`ConsultarEstadoJob`](app/Jobs/Hacienda/ConsultarEstadoJob.php), [`ProcesarRespuestaJob`](app/Jobs/Hacienda/ProcesarRespuestaJob.php)
+* **Controller**: [`ComprobanteElectronicoController`](app/Http/Controllers/ComprobanteElectronicoController.php) (7 endpoints REST)
+* **Funcionalidades**:
+  * Emisión de comprobantes electrónicos v4.4 (facturas, tiquetes, notas)
+  * Generación automática de claves numéricas de 50 caracteres
+  * Construcción y validación de XML según XSD oficial
+  * Firma digital XAdES-EPES con certificados .p12
+  * Envío asíncrono a API de Hacienda (OAuth 2.0)
+  * Consulta automática de estado (polling cada 30s)
+  * Procesamiento de respuestas (aceptado/rechazado)
+  * Descarga de XMLs (original, firmado, respuesta)
+  * Reenvío de comprobantes en error
+  * Anulación con notas de crédito
+  * Estadísticas y reportes
+  * Gestión de consecutivos
+  * Integración con códigos CAByS
+  * Soporte para ambientes Sandbox (ATV) y Producción
 
 ### 7. Transporte
 
--   **Modelos**: [`BusUnidad`](app/Models/BusUnidad.php), [`HorarioRuta`](app/Models/HorarioRuta.php)
--   **Funcionalidades**: Gestión de flota, rutas y horarios
+* **Modelos**: [`BusUnidad`](app/Models/BusUnidad.php), [`HorarioRuta`](app/Models/HorarioRuta.php)
+* **Funcionalidades**: Gestión de flota, rutas y horarios
 
 ### 8. Facturación Electrónica
 
--   **Modelos**: [`ConsecutivoFe`](app/Models/ConsecutivoFe.php), [`Cabys`](app/Models/Cabys.php)
--   **Funcionalidades**: Emisión de facturas electrónicas, gestión de consecutivos, códigos CAByS
+* **Modelos**: [`ConsecutivoFe`](app/Models/ConsecutivoFe.php), [`Cabys`](app/Models/Cabys.php)
+* **Funcionalidades**: Emisión de facturas electrónicas, gestión de consecutivos, códigos CAByS
 
 ## 🔌 API Reference
 
@@ -908,12 +880,12 @@ Route::post('/ventas', [VentaController::class, 'store'])
 
 **Permisos disponibles (68 total):**
 
--   `{módulo}.crear` - Crear registros
--   `{módulo}.leer` - Ver/listar registros
--   `{módulo}.actualizar` - Modificar registros
--   `{módulo}.eliminar` - Eliminar registros
+* `{módulo}.crear` - Crear registros
+* `{módulo}.leer` - Ver/listar registros
+* `{módulo}.actualizar` - Modificar registros
+* `{módulo}.eliminar` - Eliminar registros
 
-**Módulos:** empresas, sucursales, almacenes, productos, categorias_producto, clientes, proveedores, ventas, compras, inventario, cuentas_contables, asientos_contables, empleados, nomina, rutas, buses, facturacion_electronica
+**Módulos:** empresas, sucursales, almacenes, productos, categorias\_producto, clientes, proveedores, ventas, compras, inventario, cuentas\_contables, asientos\_contables, empleados, nomina, rutas, buses, facturacion\_electronica
 
 ### Registro (Deshabilitado)
 
@@ -921,7 +893,7 @@ Por seguridad, el endpoint `/register` está **comentado**. Los usuarios se crea
 
 ### Endpoints Principales
 
-Ver documentación completa en [API_DOCUMENTATION.md](docs/api/API_DOCUMENTATION.md)
+Ver documentación completa en [API\_DOCUMENTATION.md](docs/api/API_DOCUMENTATION.md)
 
 #### Almacenes
 
@@ -971,7 +943,7 @@ Content-Type: application/json
 Accept: application/json
 ```
 
----
+***
 
 ## 🎨 Estructura del Proyecto
 
@@ -1063,7 +1035,7 @@ Senselab_Core_API/
 └── README.md                        # Este archivo
 ```
 
----
+***
 
 ## 🧪 Testing
 
@@ -1126,11 +1098,11 @@ El proyecto utiliza **GitHub Actions** para integración y despliegue continuo.
 
 Ejecuta en cada commit:
 
--   ✅ Suite completa de PHPUnit (1,261+ tests)
--   ✅ PHPStan nivel 8 (análisis estático)
--   ✅ PHP CS Fixer (PSR-12)
--   ✅ Security check (vulnerabilidades)
--   ✅ Coverage mínimo 70%
+* ✅ Suite completa de PHPUnit (1,261+ tests)
+* ✅ PHPStan nivel 8 (análisis estático)
+* ✅ PHP CS Fixer (PSR-12)
+* ✅ Security check (vulnerabilidades)
+* ✅ Coverage mínimo 70%
 
 **Estado:** ![Tests](https://github.com/SenseLab-dev/Senselab_Core_API/actions/workflows/tests.yml/badge.svg)
 
@@ -1140,10 +1112,10 @@ Ejecuta en cada commit:
 
 Quality gates:
 
--   ✅ SonarQube analysis
--   ✅ PHPMD (mess detector)
--   ✅ PHPCPD (copy/paste detector)
--   ✅ PHPCS (code sniffer)
+* ✅ SonarQube analysis
+* ✅ PHPMD (mess detector)
+* ✅ PHPCPD (copy/paste detector)
+* ✅ PHPCS (code sniffer)
 
 #### 3. Deploy Staging (`deploy-staging.yml`)
 
@@ -1174,8 +1146,8 @@ Pipeline:
 
 ### Quality Gates
 
-| Métrica          | Umbral  | Actual                 |
-| ---------------- | ------- | ---------------------- |
+| Métrica          | Umbral  | Actual                |
+| ---------------- | ------- | --------------------- |
 | Tests Passing    | 100%    | ✅ 100%                |
 | Coverage         | ≥70%    | ✅ 90%                 |
 | PHPStan          | Nivel 8 | ✅ Nivel 8 (0 errores) |
@@ -1201,10 +1173,10 @@ make rollback          # Rollback de producción
 
 ### Documentación Completa
 
--   ✅ **1,261+ tests passing (100%)**
--   ✅ **0 failures**
+* ✅ **1,261+ tests passing (100%)**
+* ✅ **0 failures**
 
----
+***
 
 ## 🤖 Inteligencia Artificial
 
@@ -1218,15 +1190,15 @@ Escanea y extrae datos automáticamente de facturas (imágenes o PDFs).
 
 **Características:**
 
--   ✅ Reconocimiento óptico de caracteres con **92%+ precisión**
--   ✅ Extracción inteligente de campos:
-    -   Datos del proveedor (RUC, nombre, dirección)
-    -   Detalles de factura (número, fecha, monto)
-    -   Líneas de detalle (descripción, cantidad, precio)
-    -   Impuestos y totales
--   ✅ Validación automática de estructura
--   ✅ Almacenamiento en BD para auditoría
--   ✅ Soporte para múltiples formatos: JPG, PNG, PDF
+* ✅ Reconocimiento óptico de caracteres con **92%+ precisión**
+* ✅ Extracción inteligente de campos:
+  * Datos del proveedor (RUC, nombre, dirección)
+  * Detalles de factura (número, fecha, monto)
+  * Líneas de detalle (descripción, cantidad, precio)
+  * Impuestos y totales
+* ✅ Validación automática de estructura
+* ✅ Almacenamiento en BD para auditoría
+* ✅ Soporte para múltiples formatos: JPG, PNG, PDF
 
 **Endpoint:**
 
@@ -1239,8 +1211,7 @@ Body:
   empresa_id: 1
 ```
 
-**Caso de Uso:**
-Importar automáticamente comprobantes de proveedores sin digitación manual.
+**Caso de Uso:** Importar automáticamente comprobantes de proveedores sin digitación manual.
 
 #### 2. 💬 Chatbot ERP (Asistente Virtual)
 
@@ -1248,16 +1219,16 @@ Consulta el sistema en lenguaje natural, sin conocer APIs ni SQL.
 
 **Características:**
 
--   ✅ Entiende preguntas en español
--   ✅ Responde sobre:
-    -   Inventario (¿Cuánto stock de X?)
-    -   Ventas (¿Cuánto vendí este mes?)
-    -   Clientes (¿Quién debe más?)
-    -   Finanzas (¿Cuál es mi utilidad?)
-    -   RH (¿Cuántos empleados tengo?)
--   ✅ Genera reportes automáticos
--   ✅ Detecta intención del usuario
--   ✅ Historial de conversación
+* ✅ Entiende preguntas en español
+* ✅ Responde sobre:
+  * Inventario (¿Cuánto stock de X?)
+  * Ventas (¿Cuánto vendí este mes?)
+  * Clientes (¿Quién debe más?)
+  * Finanzas (¿Cuál es mi utilidad?)
+  * RH (¿Cuántos empleados tengo?)
+* ✅ Genera reportes automáticos
+* ✅ Detecta intención del usuario
+* ✅ Historial de conversación
 
 **Endpoint:**
 
@@ -1291,12 +1262,12 @@ Predice qué productos se venderán más y alerta de faltantes.
 
 **Características:**
 
--   ✅ Análisis de histórico de ventas
--   ✅ Detección de patrones estacionales
--   ✅ Predicción de demanda (próximo mes)
--   ✅ Alertas automáticas de stock bajo
--   ✅ Recomendaciones de compra
--   ✅ Análisis ABC (Pareto)
+* ✅ Análisis de histórico de ventas
+* ✅ Detección de patrones estacionales
+* ✅ Predicción de demanda (próximo mes)
+* ✅ Alertas automáticas de stock bajo
+* ✅ Recomendaciones de compra
+* ✅ Análisis ABC (Pareto)
 
 **Endpoint:**
 
@@ -1304,8 +1275,7 @@ Predice qué productos se venderán más y alerta de faltantes.
 GET /api/ai/inventory/predicciones?producto_id=5&meses=3
 ```
 
-**Caso de Uso:**
-Evitar rupturas de stock y sobre-inventario.
+**Caso de Uso:** Evitar rupturas de stock y sobre-inventario.
 
 #### 4. 🚨 Detección de Anomalías
 
@@ -1313,15 +1283,15 @@ Identifica fraudes, errores contables y transacciones sospechosas.
 
 **Características:**
 
--   ✅ Detección de anomalías con **95%+ precisión**
--   ✅ Identifica:
-    -   Transacciones fuera de patrón (monto inusual)
-    -   Comportamiento anómalo de usuarios
-    -   Errores de digitación (descuentos incorrectos)
-    -   Posibles fraudes (devoluciones sospechosas)
-    -   Discrepancias contables
--   ✅ Scoring de riesgo (0-100)
--   ✅ Notificaciones en tiempo real
+* ✅ Detección de anomalías con **95%+ precisión**
+* ✅ Identifica:
+  * Transacciones fuera de patrón (monto inusual)
+  * Comportamiento anómalo de usuarios
+  * Errores de digitación (descuentos incorrectos)
+  * Posibles fraudes (devoluciones sospechosas)
+  * Discrepancias contables
+* ✅ Scoring de riesgo (0-100)
+* ✅ Notificaciones en tiempo real
 
 **Endpoint:**
 
@@ -1351,15 +1321,15 @@ Crea emails, reportes y cartas profesionales.
 
 **Características:**
 
--   ✅ Plantillas inteligentes
--   ✅ Genera:
-    -   Cartas de cobro personalizadas
-    -   Emails de agradecimiento
-    -   Reportes ejecutivos
-    -   Resúmenes de ventas
-    -   Análisis de gestión
--   ✅ Tonos adaptables (formal, amigable, urgente)
--   ✅ Multi-idioma (español, inglés, etc.)
+* ✅ Plantillas inteligentes
+* ✅ Genera:
+  * Cartas de cobro personalizadas
+  * Emails de agradecimiento
+  * Reportes ejecutivos
+  * Resúmenes de ventas
+  * Análisis de gestión
+* ✅ Tonos adaptables (formal, amigable, urgente)
+* ✅ Multi-idioma (español, inglés, etc.)
 
 **Endpoint:**
 
@@ -1381,11 +1351,11 @@ Asigna códigos tributarios automáticamente (Costa Rica).
 
 **Características:**
 
--   ✅ Clasifica productos según normas DGT
--   ✅ Precisión **98%**
--   ✅ Soporta 5,000+ categorías CABYS
--   ✅ Validación contra base de DGT
--   ✅ Sugerencias al usuario (no automático)
+* ✅ Clasifica productos según normas DGT
+* ✅ Precisión **98%**
+* ✅ Soporta 5,000+ categorías CABYS
+* ✅ Validación contra base de DGT
+* ✅ Sugerencias al usuario (no automático)
 
 **Endpoint:**
 
@@ -1419,15 +1389,15 @@ Califica el riesgo crediticio de clientes automáticamente.
 
 **Características:**
 
--   ✅ Score de 0-100 (0=alto riesgo, 100=bajo riesgo)
--   ✅ Analiza:
-    -   Histórico de pagos
-    -   Monto de deuda actual
-    -   Plazo promedio pago
-    -   Devoluciones y reclamos
-    -   Antigüedad relación comercial
--   ✅ Recomendaciones de crédito
--   ✅ Alertas de clientes riesgosos
+* ✅ Score de 0-100 (0=alto riesgo, 100=bajo riesgo)
+* ✅ Analiza:
+  * Histórico de pagos
+  * Monto de deuda actual
+  * Plazo promedio pago
+  * Devoluciones y reclamos
+  * Antigüedad relación comercial
+* ✅ Recomendaciones de crédito
+* ✅ Alertas de clientes riesgosos
 
 **Endpoint:**
 
@@ -1458,11 +1428,11 @@ Genera análisis financiero y ratios automáticamente.
 
 **Características:**
 
--   ✅ Calcula ratios (liquidez, rentabilidad, solvencia)
--   ✅ Comparativas período a período
--   ✅ Análisis de tendencias
--   ✅ Proyecciones simples
--   ✅ Benchmarks de industria
+* ✅ Calcula ratios (liquidez, rentabilidad, solvencia)
+* ✅ Comparativas período a período
+* ✅ Análisis de tendencias
+* ✅ Proyecciones simples
+* ✅ Benchmarks de industria
 
 #### 9. 🗺️ Optimización de Rutas
 
@@ -1470,9 +1440,9 @@ Optimiza rutas de transporte (función futura).
 
 **Características:**
 
--   ⏳ Próximamente en v1.2
--   Minimiza distancia y tiempo
--   Calcula costo de combustible
+* ⏳ Próximamente en v1.2
+* Minimiza distancia y tiempo
+* Calcula costo de combustible
 
 #### 10. 🔍 Recomendaciones Inteligentes
 
@@ -1480,9 +1450,9 @@ Sugiere acciones basadas en datos históricos.
 
 **Características:**
 
--   ⏳ Próximamente
--   Recomendaciones de productos
--   Cross-selling automático
+* ⏳ Próximamente
+* Recomendaciones de productos
+* Cross-selling automático
 
 ### Configuración de IA
 
@@ -1511,7 +1481,7 @@ OPENAI_API_KEY=sk-...
 1. Crea cuenta en https://openai.com
 2. Ve a API Keys
 3. Copia key en `.env`
-4. **Costo**: ~$0.0005 por request (muy económico)
+4. **Costo**: \~$0.0005 por request (muy económico)
 
 ### Ejemplos de Uso
 
@@ -1564,9 +1534,9 @@ $carta = $service->generarCartaCobro(
 
 ### Documentación Completa
 
-📘 Ver guía detallada: [IA_FUNCIONALIDADES.md](docs/IA_FUNCIONALIDADES.md)
+📘 Ver guía detallada: [IA\_FUNCIONALIDADES.md](docs/IA_FUNCIONALIDADES.md)
 
----
+***
 
 ## 📚 Documentación Swagger
 
@@ -1582,27 +1552,27 @@ http://localhost:8000/api/documentation
 
 ### Características
 
--   ✅ **Documentación interactiva**: Prueba endpoints directamente desde el navegador
--   ✅ **Autenticación Bearer**: Configura tu token una vez y úsalo en todas las peticiones
--   ✅ **Schemas completos**: Modelos de datos documentados (Usuario, Producto, Rol, Permiso, etc.)
--   ✅ **Ejemplos de request/response**: Ve datos de ejemplo para cada endpoint
--   ✅ **Filtros y parámetros**: Documenta todos los query params disponibles
+* ✅ **Documentación interactiva**: Prueba endpoints directamente desde el navegador
+* ✅ **Autenticación Bearer**: Configura tu token una vez y úsalo en todas las peticiones
+* ✅ **Schemas completos**: Modelos de datos documentados (Usuario, Producto, Rol, Permiso, etc.)
+* ✅ **Ejemplos de request/response**: Ve datos de ejemplo para cada endpoint
+* ✅ **Filtros y parámetros**: Documenta todos los query params disponibles
 
 ### Endpoints Documentados
 
 #### Autenticación
 
--   `POST /api/login` - Iniciar sesión y obtener token
--   `POST /api/logout` - Cerrar sesión
--   `GET /api/user` - Obtener usuario autenticado con permisos
+* `POST /api/login` - Iniciar sesión y obtener token
+* `POST /api/logout` - Cerrar sesión
+* `GET /api/user` - Obtener usuario autenticado con permisos
 
 #### Productos
 
--   `GET /api/productos` - Listar productos (filtros, búsqueda, paginación)
--   `POST /api/productos` - Crear producto
--   `GET /api/productos/{id}` - Obtener producto
--   `PUT /api/productos/{id}` - Actualizar producto
--   `DELETE /api/productos/{id}` - Eliminar producto (soft delete)
+* `GET /api/productos` - Listar productos (filtros, búsqueda, paginación)
+* `POST /api/productos` - Crear producto
+* `GET /api/productos/{id}` - Obtener producto
+* `PUT /api/productos/{id}` - Actualizar producto
+* `DELETE /api/productos/{id}` - Eliminar producto (soft delete)
 
 ### Usar Autenticación en Swagger
 
@@ -1640,7 +1610,7 @@ docker-compose --profile production up -d
 make optimize
 ```
 
-**Ver guía completa:** [DOCKER_GUIDE.md](docs/guides/DOCKER_GUIDE.md#-producción)
+**Ver guía completa:** [DOCKER\_GUIDE.md](docs/guides/DOCKER_GUIDE.md#-producción)
 
 ### Opción B: Despliegue Tradicional
 
@@ -1740,7 +1710,7 @@ redirect_stderr=true
 stdout_logfile=/ruta/al/proyecto/storage/logs/worker.log
 ```
 
----
+***
 
 ## ⚡ Performance y Escalabilidad
 
@@ -1748,11 +1718,11 @@ stdout_logfile=/ruta/al/proyecto/storage/logs/worker.log
 
 #### 1. Cache Inteligente con Redis
 
--   **56 Controllers** con cache automático (100% cobertura)
--   **90%+ hit rate** en endpoints de catálogos
--   **60-95% mejora** en velocidad de respuesta
--   **TTL configurable**: 5 minutos a 24 horas según volatilidad de datos
--   **Invalidación por tags** para control granular
+* **56 Controllers** con cache automático (100% cobertura)
+* **90%+ hit rate** en endpoints de catálogos
+* **60-95% mejora** en velocidad de respuesta
+* **TTL configurable**: 5 minutos a 24 horas según volatilidad de datos
+* **Invalidación por tags** para control granular
 
 **Ejemplo de cache en acción:**
 
@@ -1764,24 +1734,24 @@ stdout_logfile=/ruta/al/proyecto/storage/logs/worker.log
 
 #### 2. Paginación Automática
 
--   Límite por defecto: 15 items
--   Máximo configurable: 100 items
--   Cursor-based pagination para grandes datasets
--   Meta información: total, página, por página
+* Límite por defecto: 15 items
+* Máximo configurable: 100 items
+* Cursor-based pagination para grandes datasets
+* Meta información: total, página, por página
 
 #### 3. Índices de Base de Datos
 
--   **Índices primarios** en todas las tablas
--   **Índices compuestos** en queries frecuentes
--   **Índices de texto completo** para búsqueda
--   **Foreign keys** con índices automáticos
+* **Índices primarios** en todas las tablas
+* **Índices compuestos** en queries frecuentes
+* **Índices de texto completo** para búsqueda
+* **Foreign keys** con índices automáticos
 
 #### 4. Consultas Optimizadas
 
--   **Eager loading** por defecto (evita N+1)
--   **Select específicas** de columnas necesarias
--   **Índices de ordenamiento**
--   **Uso de raw queries** solo cuando es crítico
+* **Eager loading** por defecto (evita N+1)
+* **Select específicas** de columnas necesarias
+* **Índices de ordenamiento**
+* **Uso de raw queries** solo cuando es crítico
 
 #### 5. Compresión de Respuestas
 
@@ -1794,7 +1764,7 @@ gzip_vary on;
 
 **Compresión típica:**
 
--   JSON response: 50KB → 5KB (90% compresión)
+* JSON response: 50KB → 5KB (90% compresión)
 
 ### Benchmarks Actuales
 
@@ -1807,23 +1777,23 @@ gzip_vary on;
 
 ### Escalabilidad Horizontal
 
--   ✅ **Stateless API** (sin sesiones locales)
--   ✅ **Redis compartido** para cache distribuido
--   ✅ **Database connection pooling**
--   ✅ **Load balancing** ready
--   ✅ **Kubernetes ready** (deployment files disponibles)
+* ✅ **Stateless API** (sin sesiones locales)
+* ✅ **Redis compartido** para cache distribuido
+* ✅ **Database connection pooling**
+* ✅ **Load balancing** ready
+* ✅ **Kubernetes ready** (deployment files disponibles)
 
 ### Límites y Capacidad
 
 | Métrica               | Límite       | Estado          |
 | --------------------- | ------------ | --------------- |
-| Usuarios concurrentes | 10,000+      | ✅ Testeado     |
-| Registros base datos  | 10M+         | ✅ Soportado    |
+| Usuarios concurrentes | 10,000+      | ✅ Testeado      |
+| Registros base datos  | 10M+         | ✅ Soportado     |
 | Query timeout         | 60s          | ⚙️ Configurable |
 | Upload máximo         | 100MB        | ⚙️ Configurable |
 | API rate limit        | 1000 req/min | ⚙️ Por usuario  |
 
----
+***
 
 ## 🔒 Seguridad
 
@@ -1831,12 +1801,12 @@ gzip_vary on;
 
 #### 1. Autenticación y Autorización
 
--   ✅ **Laravel Sanctum** para tokens seguros
--   ✅ **RBAC granular** (68 permisos)
--   ✅ **Middleware CheckPermission** en todas las rutas
--   ✅ **Token expiration** configurable
--   ✅ **Revocación de tokens**
--   ✅ **Rate limiting** por usuario
+* ✅ **Laravel Sanctum** para tokens seguros
+* ✅ **RBAC granular** (68 permisos)
+* ✅ **Middleware CheckPermission** en todas las rutas
+* ✅ **Token expiration** configurable
+* ✅ **Revocación de tokens**
+* ✅ **Rate limiting** por usuario
 
 **Ejemplo protección:**
 
@@ -1847,19 +1817,19 @@ Route::post('/facturas', [FacturaController::class, 'store'])
 
 #### 2. Validación de Datos
 
--   ✅ **Form Requests** validación en servidor
--   ✅ **Reglas custom** para casos específicos
--   ✅ **Sanitización** automática de inputs
--   ✅ **Type casting** en modelos
--   ✅ **Validación de enum** para campos específicos
+* ✅ **Form Requests** validación en servidor
+* ✅ **Reglas custom** para casos específicos
+* ✅ **Sanitización** automática de inputs
+* ✅ **Type casting** en modelos
+* ✅ **Validación de enum** para campos específicos
 
 #### 3. Encriptación
 
--   ✅ **APP_KEY** para encriptación general
--   ✅ **Campos sensibles** encriptados (certificados, tokens)
--   ✅ **Certificados digitales .p12** protegidos
--   ✅ **Passwords** hasheados con Bcrypt
--   ✅ **HTTPS obligatorio** en producción
+* ✅ **APP\_KEY** para encriptación general
+* ✅ **Campos sensibles** encriptados (certificados, tokens)
+* ✅ **Certificados digitales .p12** protegidos
+* ✅ **Passwords** hasheados con Bcrypt
+* ✅ **HTTPS obligatorio** en producción
 
 #### 4. Protección CORS
 
@@ -1873,9 +1843,9 @@ Route::post('/facturas', [FacturaController::class, 'store'])
 
 #### 5. Protección CSRF
 
--   ✅ Habilitado en rutas web (no aplica a API)
--   ✅ Token validation automático
--   ✅ Double submit cookie pattern
+* ✅ Habilitado en rutas web (no aplica a API)
+* ✅ Token validation automático
+* ✅ Double submit cookie pattern
 
 #### 6. Headers de Seguridad
 
@@ -1890,11 +1860,11 @@ add_header Content-Security-Policy "default-src 'self'";
 
 #### 7. Backup y Recuperación
 
--   ✅ **Backups automáticos** diarios
--   ✅ **Copias de BD** encriptadas
--   ✅ **Versionado de archivos**
--   ✅ **Timestamp en backups**
--   ✅ **Verificazione de integridad**
+* ✅ **Backups automáticos** diarios
+* ✅ **Copias de BD** encriptadas
+* ✅ **Versionado de archivos**
+* ✅ **Timestamp en backups**
+* ✅ **Verificazione de integridad**
 
 **Localización:** `storage/backups/`
 
@@ -1902,30 +1872,30 @@ add_header Content-Security-Policy "default-src 'self'";
 
 Todos los cambios son registrados:
 
--   **Quién** cambió (usuario)
--   **Qué** cambió (campo/valor)
--   **Cuándo** cambió (timestamp)
--   **Dónde** cambió (IP, navegador)
--   **Por qué** cambió (referencia)
+* **Quién** cambió (usuario)
+* **Qué** cambió (campo/valor)
+* **Cuándo** cambió (timestamp)
+* **Dónde** cambió (IP, navegador)
+* **Por qué** cambió (referencia)
 
 **Tabla:** `audits` (multi-tenant)
 
 #### 9. Prevención de SQL Injection
 
--   ✅ **Eloquent ORM** (no strings concatenados)
--   ✅ **Parameterized queries** automáticas
--   ✅ **Validación de entrada**
--   ✅ **Escape automático**
+* ✅ **Eloquent ORM** (no strings concatenados)
+* ✅ **Parameterized queries** automáticas
+* ✅ **Validación de entrada**
+* ✅ **Escape automático**
 
 #### 10. Certificados Digitales Seguros
 
 Para facturación electrónica:
 
--   ✅ **Almacenamiento seguro** de .p12
--   ✅ **Encriptación** en base de datos
--   ✅ **Validación de expiración**
--   ✅ **Renovación automática** (notificación)
--   ✅ **Auditoría de uso**
+* ✅ **Almacenamiento seguro** de .p12
+* ✅ **Encriptación** en base de datos
+* ✅ **Validación de expiración**
+* ✅ **Renovación automática** (notificación)
+* ✅ **Auditoría de uso**
 
 ### Scanning de Seguridad
 
@@ -1942,15 +1912,15 @@ make security-check
 
 ### Reportar Vulnerabilidades
 
-Por favor, **NO publiques** vulnerabilidades en GitHub Issues.  
+Por favor, **NO publiques** vulnerabilidades en GitHub Issues.\
 Envía un email a: [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com) con:
 
--   Descripción del problema
--   Pasos para reproducir
--   Impacto potencial
--   Sistema operativo y versiones
+* Descripción del problema
+* Pasos para reproducir
+* Impacto potencial
+* Sistema operativo y versiones
 
----
+***
 
 ## 📊 Logging y Monitoreo
 
@@ -1962,10 +1932,10 @@ Envía un email a: [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com) con:
 
 **Niveles:**
 
--   🔴 **ERROR** - Errores no controlados
--   🟡 **WARNING** - Advertencias importantes
--   🟢 **INFO** - Información general
--   ⚪ **DEBUG** - Detalles de depuración
+* 🔴 **ERROR** - Errores no controlados
+* 🟡 **WARNING** - Advertencias importantes
+* 🟢 **INFO** - Información general
+* ⚪ **DEBUG** - Detalles de depuración
 
 **Configuración:**
 
@@ -1981,10 +1951,10 @@ LOG_LEVEL=info
 
 Registra:
 
--   Envíos a Hacienda
--   Respuestas recibidas
--   Errores de transmisión
--   Cambios de estado
+* Envíos a Hacienda
+* Respuestas recibidas
+* Errores de transmisión
+* Cambios de estado
 
 #### 3. Logs de Acceso API
 
@@ -1992,13 +1962,13 @@ Registra:
 
 Información por request:
 
--   IP del cliente
--   Usuario autenticado
--   Endpoint accedido
--   Método HTTP
--   Código de respuesta
--   Tiempo de ejecución
--   Parámetros (no sensibles)
+* IP del cliente
+* Usuario autenticado
+* Endpoint accedido
+* Método HTTP
+* Código de respuesta
+* Tiempo de ejecución
+* Parámetros (no sensibles)
 
 #### 4. Logs de Auditoría
 
@@ -2006,11 +1976,11 @@ Información por request:
 
 Registra:
 
--   Creación de registros
--   Actualización de campos
--   Eliminación (soft delete)
--   Cambios RBAC
--   Accesos sensibles
+* Creación de registros
+* Actualización de campos
+* Eliminación (soft delete)
+* Cambios RBAC
+* Accesos sensibles
 
 ### Monitoreo Proactivo
 
@@ -2022,11 +1992,11 @@ SENTRY_LARAVEL_DSN=https://key@sentry.io/project-id
 
 **Características:**
 
--   Detección automática de errores
--   Alertas en tiempo real
--   Agrupación de errores
--   Análisis de rendimiento
--   Source maps para depuración
+* Detección automática de errores
+* Alertas en tiempo real
+* Agrupación de errores
+* Análisis de rendimiento
+* Source maps para depuración
 
 #### Métricas y KPIs
 
@@ -2034,12 +2004,12 @@ Dashboard recomendado: [Grafana](https://grafana.com)
 
 **Métricas clave:**
 
--   Tasa de error (< 0.1%)
--   P95 latencia (< 500ms)
--   Cache hit rate (> 85%)
--   DB connection pool
--   Queue backlog
--   API rate limit hits
+* Tasa de error (< 0.1%)
+* P95 latencia (< 500ms)
+* Cache hit rate (> 85%)
+* DB connection pool
+* Queue backlog
+* API rate limit hits
 
 #### Health Check
 
@@ -2059,13 +2029,13 @@ curl http://localhost:8000/api/health
 }
 ```
 
----
+***
 
 ## 🔧 Troubleshooting
 
 ### Problemas Comunes
 
-#### 1. Error "SQLSTATE[HY000]"
+#### 1. Error "SQLSTATE\[HY000]"
 
 **Síntoma:** No puede conectar a base de datos
 
@@ -2141,12 +2111,12 @@ php artisan db:seed --class=PermisosSeeder
 
 **Verificar:**
 
--   ✅ Certificado digital válido y no expirado
--   ✅ Empresa habilitada en Hacienda
--   ✅ Ambiente correcto (ATV vs Producción)
--   ✅ Consecutivo sin duplicados
--   ✅ Campos obligatorios completos
--   ✅ XML válido según XSD
+* ✅ Certificado digital válido y no expirado
+* ✅ Empresa habilitada en Hacienda
+* ✅ Ambiente correcto (ATV vs Producción)
+* ✅ Consecutivo sin duplicados
+* ✅ Campos obligatorios completos
+* ✅ XML válido según XSD
 
 **Ver logs:**
 
@@ -2156,7 +2126,7 @@ tail -f storage/logs/hacienda.log
 
 #### 6. Tests Fallando
 
-**Síntoma:** "SQLSTATE[42S02] Table doesn't exist"
+**Síntoma:** "SQLSTATE\[42S02] Table doesn't exist"
 
 **Soluciones:**
 
@@ -2225,7 +2195,7 @@ php artisan cache:clear
 php artisan queue:failed
 ```
 
----
+***
 
 ## ❓ FAQ (Preguntas Frecuentes)
 
@@ -2237,81 +2207,80 @@ Senselab Core API es **Open Source** bajo la licencia **AGPLv3**. Esto significa
 
 Sí, ofrecemos:
 
--   ✅ Soporte por email: [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com)
--   ✅ Issues en GitHub: [Reportar problema](https://github.com/SenseLab-dev/Senselab_Core_API/issues)
--   ✅ Documentación completa: Está en `/docs`
+* ✅ Soporte por email: [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com)
+* ✅ Issues en GitHub: [Reportar problema](https://github.com/SenseLab-dev/Senselab_Core_API/issues)
+* ✅ Documentación completa: Está en `/docs`
 
 ### ¿Soporta multi-empresa?
 
 Sí, con **arquitectura multi-tenant completa**. Cada empresa:
 
--   Tiene su propia base de datos
--   Usuarios independientes
--   Configuraciones propias
--   Datos completamente aislados
+* Tiene su propia base de datos
+* Usuarios independientes
+* Configuraciones propias
+* Datos completamente aislados
 
 ### ¿Puedo usar PostgreSQL?
 
-En v1.0: **No, solo MySQL 8.0+**
-PostgreSQL estará soportado en v1.2 (Q3 2026)
+En v1.0: **No, solo MySQL 8.0+** PostgreSQL estará soportado en v1.2 (Q3 2026)
 
 ### ¿Qué tan madura es la IA?
 
 Muy madura:
 
--   ✅ 7+ meses de desarrollo
--   ✅ 405+ tests pasando
--   ✅ 92-98% precisión en OCR/clasificación
--   ✅ Fallback automático si falla
+* ✅ 7+ meses de desarrollo
+* ✅ 405+ tests pasando
+* ✅ 92-98% precisión en OCR/clasificación
+* ✅ Fallback automático si falla
 
 ### ¿Es seguro para producción?
 
 **Sí, totalmente.** Implementa:
 
--   ✅ Encriptación de datos sensibles
--   ✅ Auditoría completa
--   ✅ Backups automáticos
--   ✅ Rate limiting
--   ✅ RBAC granular
--   ✅ Validaciones en servidor
+* ✅ Encriptación de datos sensibles
+* ✅ Auditoría completa
+* ✅ Backups automáticos
+* ✅ Rate limiting
+* ✅ RBAC granular
+* ✅ Validaciones en servidor
 
 ### ¿Cuánto tiempo toma instalar?
 
--   **Docker**: 3-5 minutos
--   Manual: 15-30 minutos (según experiencia)
+* **Docker**: 3-5 minutos
+* Manual: 15-30 minutos (según experiencia)
 
 ### ¿Debo pagar a proveedores de IA?
 
 **Optativo:**
 
--   Google Gemini: Gratuito (capa free es suficiente)
--   OpenAI: Pago (fallback, ~$0.002/request)
+* Google Gemini: Gratuito (capa free es suficiente)
+* OpenAI: Pago (fallback, \~$0.002/request)
 
 ### ¿Cuál es el ciclo de versiones?
 
--   **Versión menor**: Cada mes (+features)
--   **Patch**: Según sea necesario (bugs)
--   **Mayor**: Anual (arquitectura/framework)
+* **Versión menor**: Cada mes (+features)
+* **Patch**: Según sea necesario (bugs)
+* **Mayor**: Anual (arquitectura/framework)
 
 ### ¿Hay plan de migración de otros ERPs?
 
 Ofrecemos:
 
--   📘 Guías de migración
--   🔧 Scripts de importación
--   📊 Mapeo de datos
--   Email: [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com)
+* 📘 Guías de migración
+* 🔧 Scripts de importación
+* 📊 Mapeo de datos
+* Email: [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com)
 
 ### ¿Puedo usar esto como template?
 
 **Sí**, es perfecto para:
 
--   ✅ Template base para nuevos proyectos
--   ✅ Aprender arquitectura Laravel
--   ✅ Boilerplate personalizable
--   ✅ Referencia de buenas prácticas
+* ✅ Template base para nuevos proyectos
+* ✅ Aprender arquitectura Laravel
+* ✅ Boilerplate personalizable
+* ✅ Referencia de buenas prácticas
 
----
+***
 
 ## 📖 Mejores Prácticas
 
@@ -2413,14 +2382,14 @@ public function test_crear_producto() {
 
 #### Pre-Deploy Checklist
 
--   [ ] Todos los tests pasando (`make test`)
--   [ ] PHPStan sin errores (`make phpstan`)
--   [ ] Code style válido (`make pint`)
--   [ ] Migrations listas (`php artisan migrate:status`)
--   [ ] Cache limpio (`php artisan cache:clear`)
--   [ ] Documentación actualizada
--   [ ] Versión actualizada (tags Git)
--   [ ] Changelog actualizado
+* [ ] Todos los tests pasando (`make test`)
+* [ ] PHPStan sin errores (`make phpstan`)
+* [ ] Code style válido (`make pint`)
+* [ ] Migrations listas (`php artisan migrate:status`)
+* [ ] Cache limpio (`php artisan cache:clear`)
+* [ ] Documentación actualizada
+* [ ] Versión actualizada (tags Git)
+* [ ] Changelog actualizado
 
 #### Rollback Rápido
 
@@ -2434,7 +2403,7 @@ php artisan migrate:rollback
 redis-cli FLUSHDB
 ```
 
----
+***
 
 ## 🚀 Roadmap y Futuras Funcionalidades
 
@@ -2442,75 +2411,74 @@ redis-cli FLUSHDB
 
 ### ✅ Completado en v5.0 (FASES 18–22)
 
--   [x] **API Versionado** — Prefijo v1/v2, header-based versioning, Sunset middleware (FASE 18)
--   [x] **PHPStan 0 Errores** — Level 8 estricto, +17 DTOs (FASE 19.7)
--   [x] **Webhooks Event-Driven** — 5 eventos, HMAC-SHA256, retry exponencial (FASE 20)
--   [x] **Reporting Engine** — Dashboard KPIs, reportes financieros, exportación PDF/Excel/CSV (FASE 21)
--   [x] **Escalabilidad** — Read Replicas, Laravel Horizon, ETags, OpenTelemetry (FASE 22)
--   [x] **Hacienda v4.4 Compliance** — 38/38 brechas resueltas (100%)
+* [x] **API Versionado** — Prefijo v1/v2, header-based versioning, Sunset middleware (FASE 18)
+* [x] **PHPStan 0 Errores** — Level 8 estricto, +17 DTOs (FASE 19.7)
+* [x] **Webhooks Event-Driven** — 5 eventos, HMAC-SHA256, retry exponencial (FASE 20)
+* [x] **Reporting Engine** — Dashboard KPIs, reportes financieros, exportación PDF/Excel/CSV (FASE 21)
+* [x] **Escalabilidad** — Read Replicas, Laravel Horizon, ETags, OpenTelemetry (FASE 22)
+* [x] **Hacienda v4.4 Compliance** — 38/38 brechas resueltas (100%)
 
 ### Corto Plazo (Q1-Q2 2026)
 
--   [ ] **PostgreSQL Support** - Soporte para Postgres
--   [ ] **GraphQL API** - Alternativa a REST
--   [ ] **Mobile App** - Aplicación iOS/Android nativa
--   [ ] **SMS Integration** - Notificaciones por SMS
--   [ ] **Integraciones Bancarias** - Conciliación automática
+* [ ] **PostgreSQL Support** - Soporte para Postgres
+* [ ] **GraphQL API** - Alternativa a REST
+* [ ] **Mobile App** - Aplicación iOS/Android nativa
+* [ ] **SMS Integration** - Notificaciones por SMS
+* [ ] **Integraciones Bancarias** - Conciliación automática
 
 ### Mediano Plazo (Q3-Q4 2026)
 
--   [ ] **Machine Learning** - Predicciones más precisas
--   [ ] **Blockchain** - Trazabilidad de transacciones
--   [ ] **Marketplace** - Integración B2B
--   [ ] **POS System** - Sistema punto de venta integrado
--   [ ] **E-Commerce** - Tienda en línea integrada
+* [ ] **Machine Learning** - Predicciones más precisas
+* [ ] **Blockchain** - Trazabilidad de transacciones
+* [ ] **Marketplace** - Integración B2B
+* [ ] **POS System** - Sistema punto de venta integrado
+* [ ] **E-Commerce** - Tienda en línea integrada
 
 ### Largo Plazo (2027+)
 
--   [ ] **AI Co-pilot** - Asistente IA conversacional
--   [ ] **Predicción Fiscal** - Planificación tributaria
--   [ ] **Automatización RPA** - Procesos sin código
--   [ ] **Análisis Predictivo** - Forecasting avanzado
--   [ ] **Soluciones Verticales** - Apps para industrias específicas
+* [ ] **AI Co-pilot** - Asistente IA conversacional
+* [ ] **Predicción Fiscal** - Planificación tributaria
+* [ ] **Automatización RPA** - Procesos sin código
+* [ ] **Análisis Predictivo** - Forecasting avanzado
+* [ ] **Soluciones Verticales** - Apps para industrias específicas
 
 ### Votación Comunitaria
 
-¿Qué feature quieres que sea prioridad?
-Vota aquí: [GitHub Discussions](https://github.com/SenseLab-dev/Senselab_Core_API/discussions)
+¿Qué feature quieres que sea prioridad? Vota aquí: [GitHub Discussions](https://github.com/SenseLab-dev/Senselab_Core_API/discussions)
 
----
+***
 
 ## 📐 Diagramas de Arquitectura
 
 El proyecto incluye **8 diagramas Mermaid** que documentan visualmente la arquitectura, flujos y métricas del sistema.
 
-| #   | Diagrama                                                                           | Descripción                                                       |
-| --- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| 01  | [Arquitectura Multi-Tenant](docs/diagrams/01-arquitectura-multi-tenant.md)         | Topología completa: Nginx → Laravel → Landlord/Tenant DBs → Redis |
-| 02  | [Flujo Facturación Electrónica](docs/diagrams/02-flujo-facturacion-electronica.md) | Secuencia XAdES-EPES completa con Hacienda                        |
-| 03  | [Ciclo de Vida Dato IA](docs/diagrams/03-ciclo-vida-dato-ia.md)                    | Pipeline de 5 etapas de datos para IA                             |
-| 04  | [Precisión Servicios IA](docs/diagrams/04-precision-servicios-ia.md)               | Métricas de precisión por servicio                                |
-| 05  | [ERD Módulo Contable](docs/diagrams/05-erd-modulo-contable.md)                     | Entidades: Empresa → CuentaContable → AsientoContable             |
-| 06  | [ERD Módulo Logística](docs/diagrams/06-erd-modulo-logistica.md)                   | Entidades: Ruta → HorarioRuta → BusUnidad → Venta                 |
-| 07  | [Matriz RBAC Seguridad](docs/diagrams/07-matriz-rbac-seguridad.md)                 | 8 roles × 17 módulos + enforcement dual                           |
-| 08  | [Benchmarks Redis](docs/diagrams/08-benchmarks-rendimiento-redis.md)               | Comparativas de rendimiento + arquitectura cache                  |
+| #  | Diagrama                                                                           | Descripción                                                       |
+| -- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| 01 | [Arquitectura Multi-Tenant](docs/diagrams/01-arquitectura-multi-tenant.md)         | Topología completa: Nginx → Laravel → Landlord/Tenant DBs → Redis |
+| 02 | [Flujo Facturación Electrónica](docs/diagrams/02-flujo-facturacion-electronica.md) | Secuencia XAdES-EPES completa con Hacienda                        |
+| 03 | [Ciclo de Vida Dato IA](docs/diagrams/03-ciclo-vida-dato-ia.md)                    | Pipeline de 5 etapas de datos para IA                             |
+| 04 | [Precisión Servicios IA](docs/diagrams/04-precision-servicios-ia.md)               | Métricas de precisión por servicio                                |
+| 05 | [ERD Módulo Contable](docs/diagrams/05-erd-modulo-contable.md)                     | Entidades: Empresa → CuentaContable → AsientoContable             |
+| 06 | [ERD Módulo Logística](docs/diagrams/06-erd-modulo-logistica.md)                   | Entidades: Ruta → HorarioRuta → BusUnidad → Venta                 |
+| 07 | [Matriz RBAC Seguridad](docs/diagrams/07-matriz-rbac-seguridad.md)                 | 8 roles × 17 módulos + enforcement dual                           |
+| 08 | [Benchmarks Redis](docs/diagrams/08-benchmarks-rendimiento-redis.md)               | Comparativas de rendimiento + arquitectura cache                  |
 
-> 📁 Ver todos: [`docs/diagrams/README.md`](docs/diagrams/README.md)
+> 📁 Ver todos: [`docs/diagrams/README.md`](docs/diagrams/)
 
----
+***
 
 ## 📚 Documentación Completa
 
-Toda la documentación del proyecto vive en [`docs/`](docs/README.md). A continuación los documentos más relevantes organizados por categoría.
+Toda la documentación del proyecto vive en [`docs/`](docs/). A continuación los documentos más relevantes organizados por categoría.
 
 ### Archivos Raíz del Proyecto
 
-| Archivo                                                | Descripción                                            |
-| ------------------------------------------------------ | ------------------------------------------------------ |
-| [CHANGELOG.md](CHANGELOG.md)                           | Historial de cambios por versión                       |
-| [ROADMAP.md](ROADMAP.md)                               | Roadmap completo — 22/22 fases (100%)                  |
-| [ESTADO_ACTUAL_PROYECTO.md](ESTADO_ACTUAL_PROYECTO.md) | Estado actual del proyecto, comandos útiles y métricas |
-| [SECURITY.md](SECURITY.md)                             | Política de seguridad y reporte de vulnerabilidades    |
+| Archivo                                                  | Descripción                                            |
+| -------------------------------------------------------- | ------------------------------------------------------ |
+| [CHANGELOG.md](CHANGELOG.md)                             | Historial de cambios por versión                       |
+| [ROADMAP.md](ROADMAP.md)                                 | Roadmap completo — 22/22 fases (100%)                  |
+| [ESTADO\_ACTUAL\_PROYECTO.md](ESTADO_ACTUAL_PROYECTO.md) | Estado actual del proyecto, comandos útiles y métricas |
+| [SECURITY.md](SECURITY.md)                               | Política de seguridad y reporte de vulnerabilidades    |
 
 ### Guías y Tutoriales
 
@@ -2558,8 +2526,8 @@ Toda la documentación del proyecto vive en [`docs/`](docs/README.md). A continu
 | Auditoría                                                          | Puntuación | Fecha       |
 | ------------------------------------------------------------------ | :--------: | ----------- |
 | [Auditoría Técnica (última)](docs/AUDITORIA_TECNICA_2026-04-13.md) | **9.2/10** | 13 abr 2026 |
-| [Auditoría Técnica](docs/AUDITORIA_TECNICA_2026-03-24.md)          |     —      | 24 mar 2026 |
-| [Auditoría Técnica](docs/AUDITORIA_TECNICA_2026-03-09.md)          |     —      | 9 mar 2026  |
+| [Auditoría Técnica](docs/AUDITORIA_TECNICA_2026-03-24.md)          |      —     | 24 mar 2026 |
+| [Auditoría Técnica](docs/AUDITORIA_TECNICA_2026-03-09.md)          |      —     | 9 mar 2026  |
 
 ### Otros Recursos
 
@@ -2568,11 +2536,11 @@ Toda la documentación del proyecto vive en [`docs/`](docs/README.md). A continu
 | [Release Checklist](docs/release_checklist.md)         | Checklist para publicar nuevas versiones  |
 | [Known Warnings](docs/KNOWN_WARNINGS.md)               | Warnings conocidos y su justificación     |
 | [Pendientes del Proyecto](docs/PENDIENTES_PROYECTO.md) | Tareas pendientes y mejoras futuras       |
-| [Índice de Documentación](docs/README.md)              | Índice maestro de toda la documentación   |
+| [Índice de Documentación](docs/)                       | Índice maestro de toda la documentación   |
 | [Sprints Históricos](docs/sprints/)                    | 18 documentos de sprints completados      |
 | [Archivo Histórico](docs/archive/)                     | 75+ documentos del historial del proyecto |
 
----
+***
 
 ## 🤝 Contribuir
 
@@ -2580,21 +2548,19 @@ Toda la documentación del proyecto vive en [`docs/`](docs/README.md). A continu
 
 ### Procedimiento de Contribución
 
-1. **Fork el proyecto** en GitHub
+1.  **Fork el proyecto** en GitHub
 
     ```bash
     # En GitHub UI: botón "Fork"
     ```
-
-2. **Clona tu fork** localmente
+2.  **Clona tu fork** localmente
 
     ```bash
     git clone https://github.com/TU_USUARIO/Senselab_Core_API.git
     cd Senselab_Core_API
     git remote add upstream https://github.com/SenseLab-dev/Senselab_Core_API.git
     ```
-
-3. **Crea una rama** para tu feature
+3.  **Crea una rama** para tu feature
 
     ```bash
     # Siempre partir de develop
@@ -2608,8 +2574,7 @@ Toda la documentación del proyecto vive en [`docs/`](docs/README.md). A continu
     # o
     git checkout -b docs/mejorar-readme
     ```
-
-4. **Haz cambios** y **commit**
+4.  **Haz cambios** y **commit**
 
     ```bash
     # Editar archivos...
@@ -2620,23 +2585,19 @@ Toda la documentación del proyecto vive en [`docs/`](docs/README.md). A continu
     - Agregar tests para nueva funcionalidad
     - Actualizar documentación"
     ```
-
-5. **Sube tu rama**
+5.  **Sube tu rama**
 
     ```bash
     git push origin feature/agregar-facturacion-pdf
     ```
-
 6. **Abre Pull Request** en GitHub
-
-    - Describe qué problema resuelves
-    - Incluye screenshots si aplica
-    - Referencia issues relacionados (#123)
-
+   * Describe qué problema resuelves
+   * Incluye screenshots si aplica
+   * Referencia issues relacionados (#123)
 7. **Espera revisión** y feedback
-    - El equipo revisará tu código
-    - Puede pedir cambios
-    - Una vez aprobado, será mergeado
+   * El equipo revisará tu código
+   * Puede pedir cambios
+   * Una vez aprobado, será mergeado
 
 ### Guía de Estándares de Código
 
@@ -2686,10 +2647,10 @@ public function index(){} // Sin espacios
 
 #### Convenciones Locales
 
--   **Variables y métodos**: español descriptivo (`obtenerProductosPorCategoria`)
--   **Clases y namespaces**: PascalCase en inglés (`ProductoController`)
--   **Constantes**: UPPER_SNAKE_CASE (`MAX_DESCRIPCION_LENGTH = 255`)
--   **Booleanos**: prefijo `es` o `tiene` (`esActivo`, `tienePermiso`)
+* **Variables y métodos**: español descriptivo (`obtenerProductosPorCategoria`)
+* **Clases y namespaces**: PascalCase en inglés (`ProductoController`)
+* **Constantes**: UPPER\_SNAKE\_CASE (`MAX_DESCRIPCION_LENGTH = 255`)
+* **Booleanos**: prefijo `es` o `tiene` (`esActivo`, `tienePermiso`)
 
 #### Documentación (PHPDoc)
 
@@ -2739,14 +2700,14 @@ public function crear_producto_valido(): void
 
 ### Checklist Antes de Enviar PR
 
--   [ ] Código sigue PSR-12
--   [ ] Todo está documentado (PHPDoc + comentarios en lógica compleja)
--   [ ] Tests nuevos/actualizados y todos pasan
--   [ ] No hay breaking changes (documentarlos si los hay)
--   [ ] Commits tienen mensajes descriptivos (convención Conventional Commits)
--   [ ] Rama actualizada con latest `develop`
--   [ ] README actualizado (si aplica)
--   [ ] Changelog actualizado (si aplica)
+* [ ] Código sigue PSR-12
+* [ ] Todo está documentado (PHPDoc + comentarios en lógica compleja)
+* [ ] Tests nuevos/actualizados y todos pasan
+* [ ] No hay breaking changes (documentarlos si los hay)
+* [ ] Commits tienen mensajes descriptivos (convención Conventional Commits)
+* [ ] Rama actualizada con latest `develop`
+* [ ] README actualizado (si aplica)
+* [ ] Changelog actualizado (si aplica)
 
 ### Conventional Commits
 
@@ -2762,15 +2723,15 @@ Fixes #123
 
 **Tipos:**
 
--   `feat:` Nueva funcionalidad
--   `fix:` Corrección de bug
--   `docs:` Cambios en documentación
--   `style:` Formateo de código (PSR-12)
--   `refactor:` Reorganización sin cambiar comportamiento
--   `perf:` Mejora de performance
--   `test:` Agregar o actualizar tests
--   `security:` Correcciones de seguridad
--   `chore:` Cambios en build, deps, etc.
+* `feat:` Nueva funcionalidad
+* `fix:` Corrección de bug
+* `docs:` Cambios en documentación
+* `style:` Formateo de código (PSR-12)
+* `refactor:` Reorganización sin cambiar comportamiento
+* `perf:` Mejora de performance
+* `test:` Agregar o actualizar tests
+* `security:` Correcciones de seguridad
+* `chore:` Cambios en build, deps, etc.
 
 **Ejemplos:**
 
@@ -2783,12 +2744,12 @@ git commit -m "test(facturacion): agregar 5 casos de prueba nuevos"
 
 ### Áreas de Contribución
 
-| Área           | Dificultad    | Ayuda Necesaria         |
-| -------------- | ------------- | ----------------------- |
-| 📚 Docs        | Fácil         | Siempre                 |
-| 🐛 Bug Fixes   | Fácil-Media   | Issue labels: `bug`     |
+| Área          | Dificultad    | Ayuda Necesaria         |
+| ------------- | ------------- | ----------------------- |
+| 📚 Docs       | Fácil         | Siempre                 |
+| 🐛 Bug Fixes  | Fácil-Media   | Issue labels: `bug`     |
 | ✨ Features    | Media-Difícil | Issues abiertos         |
-| 🧪 Tests       | Fácil-Media   | Coverage < 100%         |
+| 🧪 Tests      | Fácil-Media   | Coverage < 100%         |
 | ⚡ Performance | Difícil       | Benchmarks establecidos |
 
 ### Código de Conducta
@@ -2797,18 +2758,18 @@ Esperamos que todos los contribuyentes sean respetuosos y constructivos.
 
 **No toleramos:**
 
--   Lenguaje ofensivo o discriminatorio
--   Abuso o acoso
--   Spam o auto-promoción inapropiada
+* Lenguaje ofensivo o discriminatorio
+* Abuso o acoso
+* Spam o auto-promoción inapropiada
 
 **Sí valoramos:**
 
--   Feedback constructivo
--   Ayuda a otros contribuyentes
--   Documentación clara
--   Tests de calidad
+* Feedback constructivo
+* Ayuda a otros contribuyentes
+* Documentación clara
+* Tests de calidad
 
----
+***
 
 ## 📄 Licencia
 
@@ -2817,13 +2778,14 @@ Este proyecto se lanza bajo la licencia **GNU Affero General Public License v3 (
 ### 💼 Planes Comerciales
 
 Ofrecemos planes comerciales para empresas que requieran:
-- 🚀 **Alta disponibilidad** (High Availability).
-- 🧩 **Módulos adicionales** exclusivos.
-- 🛠️ **Soporte prioritario** y SLAs personalizados.
 
-**[Ver licencia completa](LICENSE)**
+* 🚀 **Alta disponibilidad** (High Availability).
+* 🧩 **Módulos adicionales** exclusivos.
+* 🛠️ **Soporte prioritario** y SLAs personalizados.
 
----
+[**Ver licencia completa**](LICENSE/)
+
+***
 
 ## 📞 Soporte y Contacto
 
@@ -2839,20 +2801,20 @@ Ofrecemos planes comerciales para empresas que requieran:
 
 **Corporativo:**
 
--   **📧 Email**: [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com)
--   **🌐 Web**: [senselab.com](https://senselab.com)
--   **🌐 Web Alt**: [senselab.com](https://senselab.com)
+* **📧 Email**: [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com)
+* **🌐 Web**: [senselab.com](https://senselab.com)
+* **🌐 Web Alt**: [senselab.com](https://senselab.com)
 
 **Técnico/Desarrollo:**
 
--   **📧 Email Dev**: [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com)
--   **🐙 GitHub Org**: [SenseLab-dev](https://github.com/orgs/SenseLab-dev)
+* **📧 Email Dev**: [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com)
+* **🐙 GitHub Org**: [SenseLab-dev](https://github.com/orgs/SenseLab-dev)
 
 **Comunidad:**
 
--   **📚 Repo Dev**: [Senselab Repositorio para Developers](https://sites.google.com/view/repdevsenselab/home/repositorio)
--   **🐛 Issues**: [GitHub Issues](https://github.com/SenseLab-dev/Senselab_Core_API/issues)
--   **💬 Discussions**: [GitHub Discussions](https://github.com/SenseLab-dev/Senselab_Core_API/discussions)
+* **📚 Repo Dev**: [Senselab Repositorio para Developers](https://sites.google.com/view/repdevsenselab/home/repositorio)
+* **🐛 Issues**: [GitHub Issues](https://github.com/SenseLab-dev/Senselab_Core_API/issues)
+* **💬 Discussions**: [GitHub Discussions](https://github.com/SenseLab-dev/Senselab_Core_API/discussions)
 
 ### Reportar Problemas
 
@@ -2897,38 +2859,38 @@ Envía email privado a: [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com)
 
 Incluye:
 
--   Descripción clara del problema
--   Pasos detallados para reproducir
--   Impacto potencial
--   Tu información de contacto
--   Versión afectada
+* Descripción clara del problema
+* Pasos detallados para reproducir
+* Impacto potencial
+* Tu información de contacto
+* Versión afectada
 
----
+***
 
 ## 🙏 Agradecimientos
 
 ### Frameworks y Librerías
 
--   [**Laravel Framework**](https://laravel.com) - El framework PHP más elegante y moderno
--   [**Spatie Multitenancy**](https://github.com/spatie/laravel-multitenancy) - Solución robusta de multi-tenancy
--   [**Laravel Sanctum**](https://laravel.com/docs/sanctum) - Autenticación API segura
--   [**DOMPdf**](https://dompdf.github.io) - Generación de PDFs
--   [**Google Gemini AI**](https://ai.google.dev) - Servicios de IA
--   [**PhpUnit**](https://phpunit.de) - Framework de testing
+* [**Laravel Framework**](https://laravel.com) - El framework PHP más elegante y moderno
+* [**Spatie Multitenancy**](https://github.com/spatie/laravel-multitenancy) - Solución robusta de multi-tenancy
+* [**Laravel Sanctum**](https://laravel.com/docs/sanctum) - Autenticación API segura
+* [**DOMPdf**](https://dompdf.github.io) - Generación de PDFs
+* [**Google Gemini AI**](https://ai.google.dev) - Servicios de IA
+* [**PhpUnit**](https://phpunit.de) - Framework de testing
 
 ### Comunidad
 
--   Comunidad Laravel Costa Rica
--   Comunidad PHP española
--   Stack Overflow y Laravel Forum
--   Todos nuestros contribuidores y usuarios
+* Comunidad Laravel Costa Rica
+* Comunidad PHP española
+* Stack Overflow y Laravel Forum
+* Todos nuestros contribuidores y usuarios
 
 ### Organizaciones
 
--   [**Senselab**](https://senselab.com) - Patrono principal del proyecto
--   Empresa familiar costarricense | Build with Sense
+* [**Senselab**](https://senselab.com) - Patrono principal del proyecto
+* Empresa familiar costarricense | Build with Sense
 
----
+***
 
 ## 👥 Equipo
 
@@ -2936,38 +2898,29 @@ Incluye:
 
 **Jeremy Arias Solano**
 
--   Co-fundador de Senselab
--   Arquitecto de software y desarrollador completo de Senselab Core API
--   Especialista en Laravel, PHP y sistemas ERP
--   Diseño, desarrollo, testing y mantenimiento integral
--   GitHub: [@jeremy-sud](https://github.com/jeremy-sud)
+* Co-fundador de Senselab
+* Arquitecto de software y desarrollador completo de Senselab Core API
+* Especialista en Laravel, PHP y sistemas ERP
+* Diseño, desarrollo, testing y mantenimiento integral
+* GitHub: [@jeremy-sud](https://github.com/jeremy-sud)
 
 ### En Desarrollo
 
 Estamos siempre buscando:
 
--   ✨ **Backend Developers** - Laravel, PHP, MySQL
--   🎨 **Frontend Developers** - Vue/React (futuro)
--   📱 **Mobile Developers** - React Native (futuro)
--   📊 **DevOps Engineers** - Docker, K8s
--   📖 **Technical Writers** - Documentación
+* ✨ **Backend Developers** - Laravel, PHP, MySQL
+* 🎨 **Frontend Developers** - Vue/React (futuro)
+* 📱 **Mobile Developers** - React Native (futuro)
+* 📊 **DevOps Engineers** - Docker, K8s
+* 📖 **Technical Writers** - Documentación
 
 ¿Interesado? Contáctanos: [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com)
 
----
+***
 
-<p align="center">
-  <strong>"No hacemos cualquier cosa. Hacemos cosas con sentido."</strong><br><br>
-  <a href="https://senselab.com"><img src="./public/assets/logos/senselab-icon.png" width="60" alt="Senselab"></a><br><br>
-  <strong>Senselab</strong><br>
-  <em>Soluciones Tecnológicas Completas</em><br>
-  <em>SenseLab | Tecnología versátil con alma costarricense</em><br><br>
-  📧 <a href="mailto:deadmooncr@gmail.com">deadmooncr@gmail.com</a><br><br>
-  <sub>© 2026 Senselab - Todos los derechos reservados</sub><br>
-  <sub>Licencia AGPLv3 — Opciones comerciales disponibles</sub>
-</p>
+<p align="center"><strong>"No hacemos cualquier cosa. Hacemos cosas con sentido."</strong><br><br><br><br><strong>Senselab</strong><br><em>Soluciones Tecnológicas Completas</em><br><em>SenseLab | Tecnología versátil con alma costarricense</em><br><br>📧 <a href="mailto:deadmooncr@gmail.com">deadmooncr@gmail.com</a><br><br><sub>© 2026 Senselab - Todos los derechos reservados</sub><br><sub>Licencia AGPLv3 — Opciones comerciales disponibles</sub></p>
 
----
+***
 
 **Última actualización:** 14 de Abril 2026
 

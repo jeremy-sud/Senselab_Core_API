@@ -1,12 +1,12 @@
 # Relaciones de Modelos Eloquent - Senselab Core API
 
-**Desarrollado por:** Senselab  
-**Empresa:** Costa Rica | Build with Sense  
-**Proyecto:** Sistema ERP Multi-Tenant con Facturación Electrónica  
-**Framework:** Laravel 11  
+**Desarrollado por:** Senselab\
+**Empresa:** Costa Rica | Build with Sense\
+**Proyecto:** Sistema ERP Multi-Tenant con Facturación Electrónica\
+**Framework:** Laravel 11\
 **Fecha:** 19 de noviembre de 2025
 
----
+***
 
 ## ✅ Estado Actual
 
@@ -26,21 +26,25 @@ const UPDATED_AT = 'actualizado_en';
 ### Traits Implementados
 
 #### CustomTimestamps
+
 Trait para manejar timestamps personalizados de forma automática.
 
 #### CustomSoftDeletes
+
 Trait para soft deletes personalizados usando los campos:
-- `activo` (boolean)
-- `eliminado` (boolean)
+
+* `activo` (boolean)
+* `eliminado` (boolean)
 
 **Métodos disponibles:**
-- `delete()` - Marca como eliminado
-- `restore()` - Restaura registro eliminado
-- `forceDelete()` - Eliminación permanente
-- `scopeWithDeleted()` - Incluir eliminados
-- `scopeOnlyDeleted()` - Solo eliminados
-- `scopeActivos()` - Solo activos
-- `isDeleted()` - Verificar si está eliminado
+
+* `delete()` - Marca como eliminado
+* `restore()` - Restaura registro eliminado
+* `forceDelete()` - Eliminación permanente
+* `scopeWithDeleted()` - Incluir eliminados
+* `scopeOnlyDeleted()` - Solo eliminados
+* `scopeActivos()` - Solo activos
+* `isDeleted()` - Verificar si está eliminado
 
 ## 📊 Modelos Principales y sus Relaciones
 
@@ -49,46 +53,49 @@ Trait para soft deletes personalizados usando los campos:
 **Tabla:** `empresas`
 
 **Relaciones Uno a Muchos (hasMany):**
-- `sucursales()` → Sucursal
-- `usuarios()` → Usuario
-- `empleados()` → Empleado
-- `productos()` → Producto
-- `clientes()` → Cliente
-- `proveedores()` → Proveedor
-- `almacenes()` → Almacen
-- `ventas()` → Venta
-- `ordenesCompra()` → OrdenCompra
-- `categoriasProductos()` → CategoriaProducto
-- `cuentasContables()` → CuentaContable
-- `asientosContables()` → AsientoContable
-- `presupuestos()` → Presupuesto
-- `cajaChica()` → CajaChica
-- `cuentasPorCobrar()` → CuentaPorCobrar
-- `cuentasPorPagar()` → CuentaPorPagar
-- `periodosNomina()` → PeriodoNomina
-- `etiquetas()` → Etiqueta
-- `rutas()` → Ruta
-- `consecutivosFe()` → ConsecutivoFe
-- `comprobantesRecibidos()` → ComprobanteRecibidoElectronico
-- `configuraciones()` → Configuracion
+
+* `sucursales()` → Sucursal
+* `usuarios()` → Usuario
+* `empleados()` → Empleado
+* `productos()` → Producto
+* `clientes()` → Cliente
+* `proveedores()` → Proveedor
+* `almacenes()` → Almacen
+* `ventas()` → Venta
+* `ordenesCompra()` → OrdenCompra
+* `categoriasProductos()` → CategoriaProducto
+* `cuentasContables()` → CuentaContable
+* `asientosContables()` → AsientoContable
+* `presupuestos()` → Presupuesto
+* `cajaChica()` → CajaChica
+* `cuentasPorCobrar()` → CuentaPorCobrar
+* `cuentasPorPagar()` → CuentaPorPagar
+* `periodosNomina()` → PeriodoNomina
+* `etiquetas()` → Etiqueta
+* `rutas()` → Ruta
+* `consecutivosFe()` → ConsecutivoFe
+* `comprobantesRecibidos()` → ComprobanteRecibidoElectronico
+* `configuraciones()` → Configuracion
 
 **Relaciones Muchos a Uno (belongsTo):**
-- `regimenTributario()` → RegimenTributario
 
----
+* `regimenTributario()` → RegimenTributario
+
+***
 
 ### 🏪 Sucursal
 
 **Tabla:** `sucursales`
 
 **Relaciones:**
-- `empresa()` → Empresa (belongsTo)
-- `almacenes()` → Almacen (hasMany)
-- `ventas()` → Venta (hasMany)
-- `cajas()` → Caja (hasMany)
-- `consecutivosFe()` → ConsecutivoFe (hasMany)
 
----
+* `empresa()` → Empresa (belongsTo)
+* `almacenes()` → Almacen (hasMany)
+* `ventas()` → Venta (hasMany)
+* `cajas()` → Caja (hasMany)
+* `consecutivosFe()` → ConsecutivoFe (hasMany)
+
+***
 
 ### 👤 Usuario
 
@@ -97,6 +104,7 @@ Trait para soft deletes personalizados usando los campos:
 **Nota:** Este modelo fue modificado en **FASE 3** para implementar autenticación y RBAC.
 
 **Herencia:**
+
 ```php
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
@@ -109,12 +117,13 @@ class Usuario extends Authenticatable
 ```
 
 **Relaciones:**
-- `empresa()` → Empresa (belongsTo)
-- `cargo()` → Cargo (belongsTo)
-- `roles()` → Rol (belongsToMany, tabla pivote: `rol_usuario`)
-- `ventas()` → Venta (hasMany)
-- `ordenesCompra()` → OrdenCompra (hasMany)
-- `asientosContables()` → AsientoContable (hasMany)
+
+* `empresa()` → Empresa (belongsTo)
+* `cargo()` → Cargo (belongsTo)
+* `roles()` → Rol (belongsToMany, tabla pivote: `rol_usuario`)
+* `ventas()` → Venta (hasMany)
+* `ordenesCompra()` → OrdenCompra (hasMany)
+* `asientosContables()` → AsientoContable (hasMany)
 
 **Métodos RBAC (nuevos en FASE 3):**
 
@@ -137,6 +146,7 @@ $usuario->assignRoles(['Vendedor', 'Cajero']);
 ```
 
 **Autenticación:**
+
 ```php
 // Obtener contraseña para autenticación
 $usuario->getAuthPassword(); // Retorna $this->password_hash
@@ -146,12 +156,13 @@ protected $hidden = ['password_hash'];
 ```
 
 **Notas:**
-- Campo de contraseña: `password_hash` (no `password`)
-- Soporta tokens Sanctum para API
-- Implementa todos los métodos de `Authenticatable`
-- Compatible con middleware `auth:sanctum`
 
----
+* Campo de contraseña: `password_hash` (no `password`)
+* Soporta tokens Sanctum para API
+* Implementa todos los métodos de `Authenticatable`
+* Compatible con middleware `auth:sanctum`
+
+***
 
 ### 🔐 Rol
 
@@ -160,16 +171,19 @@ protected $hidden = ['password_hash'];
 **Nota:** Modelo mejorado en **FASE 3** para sistema RBAC.
 
 **Relaciones:**
-- `usuarios()` → Usuario (belongsToMany, tabla pivote: `rol_usuario`)
-- `permisos()` → Permiso (belongsToMany, tabla pivote: `rol_permiso`)
+
+* `usuarios()` → Usuario (belongsToMany, tabla pivote: `rol_usuario`)
+* `permisos()` → Permiso (belongsToMany, tabla pivote: `rol_permiso`)
 
 **Métodos:**
+
 ```php
 // Asignar permisos a un rol
 $rol->assignPermissions(['empresas.crear', 'empresas.leer', ...]);
 ```
 
 **Roles Predefinidos (7):**
+
 1. **Administrador** - Todos los permisos (68)
 2. **Gerente** - Gestión completa excepto configuraciones críticas
 3. **Contador** - Módulos contables y financieros
@@ -179,6 +193,7 @@ $rol->assignPermissions(['empresas.crear', 'empresas.leer', ...]);
 7. **Usuario** - Permisos básicos de lectura
 
 **Uso:**
+
 ```php
 // Obtener usuarios de un rol
 $administradores = Rol::where('nombre', 'Administrador')
@@ -189,7 +204,7 @@ $administradores = Rol::where('nombre', 'Administrador')
 $permisos = Rol::find(1)->permisos;
 ```
 
----
+***
 
 ### 🔑 Permiso
 
@@ -198,15 +213,18 @@ $permisos = Rol::find(1)->permisos;
 **Nota:** Modelo mejorado en **FASE 3** para sistema RBAC.
 
 **Campos clave:**
-- `slug` - Identificador único del permiso (ej: `empresas.crear`)
-- `nombre` - Nombre descriptivo (ej: "Crear Empresas")
-- `modulo` - Módulo al que pertenece (ej: "empresas")
-- `accion` - Acción permitida (ej: "crear", "leer", "actualizar", "eliminar")
+
+* `slug` - Identificador único del permiso (ej: `empresas.crear`)
+* `nombre` - Nombre descriptivo (ej: "Crear Empresas")
+* `modulo` - Módulo al que pertenece (ej: "empresas")
+* `accion` - Acción permitida (ej: "crear", "leer", "actualizar", "eliminar")
 
 **Relaciones:**
-- `roles()` → Rol (belongsToMany, tabla pivote: `rol_permiso`)
+
+* `roles()` → Rol (belongsToMany, tabla pivote: `rol_permiso`)
 
 **Estructura de Permisos (68 total):**
+
 ```
 {modulo}.{accion}
 
@@ -222,12 +240,14 @@ Total: 17 × 4 = 68 permisos
 ```
 
 **Ejemplos:**
-- `empresas.crear` - Crear empresas
-- `ventas.leer` - Ver/listar ventas
-- `productos.actualizar` - Modificar productos
-- `empleados.eliminar` - Eliminar empleados
+
+* `empresas.crear` - Crear empresas
+* `ventas.leer` - Ver/listar ventas
+* `productos.actualizar` - Modificar productos
+* `empleados.eliminar` - Eliminar empleados
 
 **Uso:**
+
 ```php
 // Obtener todos los permisos de un módulo
 $permisosEmpresas = Permiso::where('modulo', 'empresas')->get();
@@ -238,118 +258,130 @@ $roles = Permiso::where('slug', 'empresas.crear')
     ->roles;
 ```
 
----
+***
 
 ### 👥 Cliente
 
 **Tabla:** `clientes`
 
 **Relaciones:**
-- `empresa()` → Empresa (belongsTo)
-- `ventas()` → Venta (hasMany)
-- `cuentasPorCobrar()` → CuentaPorCobrar (hasMany)
-- `salidasInventario()` → SalidaInventario (hasMany)
+
+* `empresa()` → Empresa (belongsTo)
+* `ventas()` → Venta (hasMany)
+* `cuentasPorCobrar()` → CuentaPorCobrar (hasMany)
+* `salidasInventario()` → SalidaInventario (hasMany)
 
 **Scopes:**
-- `activos()`
-- `porNombre($nombre)`
-- `porIdentificacion($identificacion)`
-- `porTipoIdentificacion($tipo)`
-- `porEmail($email)`
+
+* `activos()`
+* `porNombre($nombre)`
+* `porIdentificacion($identificacion)`
+* `porTipoIdentificacion($tipo)`
+* `porEmail($email)`
 
 **Métodos auxiliares:**
-- `getNombreCompletoAttribute()` - Nombre completo
-- `getTipoIdentificacionDescripcionAttribute()` - Descripción del tipo de ID
-- `tieneIdentificacionValida()` - Validar para facturación electrónica
 
----
+* `getNombreCompletoAttribute()` - Nombre completo
+* `getTipoIdentificacionDescripcionAttribute()` - Descripción del tipo de ID
+* `tieneIdentificacionValida()` - Validar para facturación electrónica
+
+***
 
 ### 🏭 Proveedor
 
 **Tabla:** `proveedores`
 
 **Relaciones:**
-- `empresa()` → Empresa (belongsTo)
-- `productos()` → Producto (hasMany - como proveedor predeterminado)
-- `ordenesCompra()` → OrdenCompra (hasMany)
-- `cuentasPorPagar()` → CuentaPorPagar (hasMany)
-- `entradasInventario()` → EntradaInventario (hasMany)
-- `comprobantesRecibidos()` → ComprobanteRecibidoElectronico (hasMany)
 
----
+* `empresa()` → Empresa (belongsTo)
+* `productos()` → Producto (hasMany - como proveedor predeterminado)
+* `ordenesCompra()` → OrdenCompra (hasMany)
+* `cuentasPorPagar()` → CuentaPorPagar (hasMany)
+* `entradasInventario()` → EntradaInventario (hasMany)
+* `comprobantesRecibidos()` → ComprobanteRecibidoElectronico (hasMany)
+
+***
 
 ### 📦 Producto
 
 **Tabla:** `productos`
 
 **Relaciones:**
-- `empresa()` → Empresa (belongsTo)
-- `categoria()` → CategoriaProducto (belongsTo)
-- `unidadMedida()` → UnidadMedida (belongsTo)
-- `marca()` → Marca (belongsTo)
-- `proveedorPredeterminado()` → Proveedor (belongsTo)
-- `impuesto()` → TipoImpuesto (belongsTo)
-- `cabys()` → Cabys (belongsTo)
+
+* `empresa()` → Empresa (belongsTo)
+* `categoria()` → CategoriaProducto (belongsTo)
+* `unidadMedida()` → UnidadMedida (belongsTo)
+* `marca()` → Marca (belongsTo)
+* `proveedorPredeterminado()` → Proveedor (belongsTo)
+* `impuesto()` → TipoImpuesto (belongsTo)
+* `cabys()` → Cabys (belongsTo)
 
 **Scopes:**
-- `activos()`
-- `porEmpresa($empresaId)`
-- `porCategoria($categoriaId)`
-- `porTipo($tipo)`
 
----
+* `activos()`
+* `porEmpresa($empresaId)`
+* `porCategoria($categoriaId)`
+* `porTipo($tipo)`
+
+***
 
 ### 🛒 Venta
 
 **Tabla:** `ventas`
 
 **Relaciones:**
-- `empresa()` → Empresa (belongsTo)
-- `sucursal()` → Sucursal (belongsTo)
-- `cliente()` → Cliente (belongsTo)
-- `usuario()` → Usuario (belongsTo)
-- `formaPago()` → FormaPago (belongsTo)
-- `detalles()` → DetalleVenta (hasMany)
-- `cuentasPorCobrar()` → CuentaPorCobrar (hasMany)
-- `salidasInventario()` → SalidaInventario (hasMany)
 
----
+* `empresa()` → Empresa (belongsTo)
+* `sucursal()` → Sucursal (belongsTo)
+* `cliente()` → Cliente (belongsTo)
+* `usuario()` → Usuario (belongsTo)
+* `formaPago()` → FormaPago (belongsTo)
+* `detalles()` → DetalleVenta (hasMany)
+* `cuentasPorCobrar()` → CuentaPorCobrar (hasMany)
+* `salidasInventario()` → SalidaInventario (hasMany)
+
+***
 
 ### 📝 OrdenCompra
 
 **Tabla:** `ordenes_compra`
 
 **Relaciones:**
-- `empresa()` → Empresa (belongsTo)
-- `proveedor()` → Proveedor (belongsTo)
-- `usuario()` → Usuario (belongsTo)
-- `detalles()` → DetalleOrdenCompra (hasMany)
-- `pagos()` → Pago (hasMany)
-- `cuentasPorPagar()` → CuentaPorPagar (hasMany)
-- `entradasInventario()` → EntradaInventario (hasMany)
+
+* `empresa()` → Empresa (belongsTo)
+* `proveedor()` → Proveedor (belongsTo)
+* `usuario()` → Usuario (belongsTo)
+* `detalles()` → DetalleOrdenCompra (hasMany)
+* `pagos()` → Pago (hasMany)
+* `cuentasPorPagar()` → CuentaPorPagar (hasMany)
+* `entradasInventario()` → EntradaInventario (hasMany)
 
 **Métodos auxiliares:**
-- `calcularSaldoPendiente()` - Calcula monto pendiente de pagar
+
+* `calcularSaldoPendiente()` - Calcula monto pendiente de pagar
 
 **Scopes:**
-- `activas()`
-- `porProveedor($proveedorId)`
-- `porEmpresa($empresaId)`
-- `pendientes()`
 
----
+* `activas()`
+* `porProveedor($proveedorId)`
+* `porEmpresa($empresaId)`
+* `pendientes()`
+
+***
 
 ## 🔗 Relaciones por Tipo
 
 ### Relaciones Polimórficas
 
 #### EntidadEtiqueta
+
 Sistema de etiquetado polimórfico que permite etiquetar diferentes entidades:
-- Clientes
-- Productos
-- Ventas
-- Empleados
-- etc.
+
+* Clientes
+* Productos
+* Ventas
+* Empleados
+* etc.
 
 ```php
 // Campos polimórficos
@@ -357,26 +389,28 @@ Sistema de etiquetado polimórfico que permite etiquetar diferentes entidades:
 'entidad_id' => 123             // ID del registro
 ```
 
----
+***
 
 ## 📋 Catálogos y Configuración
 
 ### Catálogos Base
-- **RegimenTributario** - Regímenes tributarios
-- **Cargo** - Cargos de empleados
-- **TipoCuenta** - Tipos de cuentas contables
-- **Rol** - Roles de usuario
-- **FormaPago** - Formas de pago
-- **UnidadMedida** - Unidades de medida
-- **TipoImpuesto** - Tipos de impuestos
-- **Marca** - Marcas de productos
-- **CategoriaProducto** - Categorías de productos
-- **Cabys** - Códigos CABYS (Costa Rica)
+
+* **RegimenTributario** - Regímenes tributarios
+* **Cargo** - Cargos de empleados
+* **TipoCuenta** - Tipos de cuentas contables
+* **Rol** - Roles de usuario
+* **FormaPago** - Formas de pago
+* **UnidadMedida** - Unidades de medida
+* **TipoImpuesto** - Tipos de impuestos
+* **Marca** - Marcas de productos
+* **CategoriaProducto** - Categorías de productos
+* **Cabys** - Códigos CABYS (Costa Rica)
 
 ### Configuración Multi-tenant
+
 Todos los modelos operacionales incluyen `empresa_id` para multi-tenancy.
 
----
+***
 
 ## 🎯 Uso de Relaciones
 
@@ -467,7 +501,7 @@ $ordenes = OrdenCompra::pendientes()
     ->get();
 ```
 
----
+***
 
 ## 🧪 Testing con Relaciones
 
@@ -493,17 +527,17 @@ $venta = Venta::factory()
     ->create();
 ```
 
----
+***
 
 ## 📚 Documentación Adicional
 
-- Todos los modelos incluyen validación básica en `$rules`
-- Los modelos con multi-tenancy usan el trait `BelongsToTenant`
-- Las relaciones están optimizadas para eager loading
-- Se recomienda usar scopes para consultas complejas
-- Los timestamps personalizados se manejan automáticamente
+* Todos los modelos incluyen validación básica en `$rules`
+* Los modelos con multi-tenancy usan el trait `BelongsToTenant`
+* Las relaciones están optimizadas para eager loading
+* Se recomienda usar scopes para consultas complejas
+* Los timestamps personalizados se manejan automáticamente
 
----
+***
 
 ## ⚠️ Notas Importantes
 
@@ -513,41 +547,43 @@ $venta = Venta::factory()
 4. **Eager Loading:** Siempre usar `with()` para evitar problemas N+1
 5. **Scopes:** Usar los scopes definidos para mantener consistencia
 6. **Autenticación (FASE 3):**
-   - Usuario extiende `Authenticatable` (no `Model`)
-   - Usa `HasApiTokens` trait de Laravel Sanctum
-   - Campo de contraseña: `password_hash` (no `password`)
-   - Métodos RBAC disponibles: `hasPermission()`, `hasRole()`, etc.
+   * Usuario extiende `Authenticatable` (no `Model`)
+   * Usa `HasApiTokens` trait de Laravel Sanctum
+   * Campo de contraseña: `password_hash` (no `password`)
+   * Métodos RBAC disponibles: `hasPermission()`, `hasRole()`, etc.
 7. **RBAC (FASE 3):**
-   - 68 permisos granulares: 17 módulos × 4 acciones
-   - 7 roles predefinidos con permisos configurables
-   - Middleware `CheckPermission` para protección de rutas
-   - Rol Administrador tiene todos los permisos automáticamente
-8. **Middleware de permisos:**
-   ```php
-   // En rutas
-   ->middleware('permission:empresas.crear')
-   
-   // En controladores
-   if (!auth()->user()->hasPermission('ventas.crear')) {
-       abort(403, 'No tienes permiso para realizar esta acción');
-   }
-   ```
+   * 68 permisos granulares: 17 módulos × 4 acciones
+   * 7 roles predefinidos con permisos configurables
+   * Middleware `CheckPermission` para protección de rutas
+   * Rol Administrador tiene todos los permisos automáticamente
+8.  **Middleware de permisos:**
 
----
+    ```php
+    // En rutas
+    ->middleware('permission:empresas.crear')
 
----
+    // En controladores
+    if (!auth()->user()->hasPermission('ventas.crear')) {
+        abort(403, 'No tienes permiso para realizar esta acción');
+    }
+    ```
+
+***
+
+***
 
 ## 📞 Soporte Técnico
 
 Para consultas sobre modelos, relaciones o estructura de base de datos:
 
 **Senselab**
-- **Email Técnico**: deadmooncr@gmail.com
-- **Email Corporativo**: deadmooncr@gmail.com
-- **Desarrollador**: [Jeremy Arias Solano](https://github.com/jeremy-sud)
-- **Documentación**: [Senselab Reposit for Developers](https://sites.google.com/view/repdevsenselab/home/repositorio)
 
----
+* **Email Técnico**: deadmooncr@gmail.com
+* **Email Corporativo**: deadmooncr@gmail.com
+* **Desarrollador**: [Jeremy Arias Solano](https://github.com/jeremy-sud)
+* **Documentación**: [Senselab Reposit for Developers](https://sites.google.com/view/repdevsenselab/home/repositorio)
 
-*© 2025 Senselab - Todos los derechos reservados*  
-*Hacemos cosas con sentido — Senselab*
+***
+
+_© 2025 Senselab - Todos los derechos reservados_\
+&#xNAN;_&#x48;acemos cosas con sentido — Senselab_

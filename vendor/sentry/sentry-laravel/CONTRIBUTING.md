@@ -1,10 +1,8 @@
-<p align="center">
-  <a href="https://sentry.io/?utm_source=github&utm_medium=logo" target="_blank">
-    <img src="https://sentry-brand.storage.googleapis.com/sentry-wordmark-dark-280x84.png" alt="Sentry" width="280" height="84">
-  </a>
-</p>
+# CONTRIBUTING
 
-# Contributing to the Sentry SDK for Laravel
+<p align="center"></p>
+
+## Contributing to the Sentry SDK for Laravel
 
 We welcome contributions to `sentry-laravel` by the community.
 
@@ -12,33 +10,32 @@ Please search the [issue tracker](https://github.com/getsentry/sentry-laravel/is
 
 If you feel that you can fix or implement it yourself, please read on to learn how to submit your changes.
 
-## Submitting changes
+### Submitting changes
 
-- Setup the development environment.
-- Clone the `sentry-laravel` repository and prepare necessary changes.
-- Add tests for your changes to `tests/`.
-- Run tests and make sure all of them pass.
-- Submit a pull request, referencing any issues it addresses.
-- Make sure to update the `CHANGELOG.md` file below the `Unreleased` heading.
+* Setup the development environment.
+* Clone the `sentry-laravel` repository and prepare necessary changes.
+* Add tests for your changes to `tests/`.
+* Run tests and make sure all of them pass.
+* Submit a pull request, referencing any issues it addresses.
+* Make sure to update the `CHANGELOG.md` file below the `Unreleased` heading.
 
-We will review your pull request as soon as possible.
-Thank you for contributing!
+We will review your pull request as soon as possible. Thank you for contributing!
 
-## Development environment
+### Development environment
 
-### Requirements
+#### Requirements
 
 Make sure that you have PHP 7.2+ installed. Version 7.4 or higher is required to run style checkers. On macOS, we recommend using brew to install PHP. For Windows, we recommend an official PHP.net release.
 
-You may use [make](https://www.gnu.org/software/make) to take advantage of the provided [Makefile](Makefile).
+You may use [make](https://www.gnu.org/software/make) to take advantage of the provided [Makefile](Makefile/).
 
-### Clone the repository
+#### Clone the repository
 
 ```bash
 git clone git@github.com:getsentry/sentry-laravel.git
 ```
 
-### Install the dependencies
+#### Install the dependencies
 
 Dependencies are managed through [Composer](https://getcomposer.org).
 
@@ -46,7 +43,7 @@ Dependencies are managed through [Composer](https://getcomposer.org).
 composer install
 ```
 
-### Running tests
+#### Running tests
 
 Tests can be run via [PHPUnit](https://phpunit.de).
 
@@ -54,7 +51,7 @@ Tests can be run via [PHPUnit](https://phpunit.de).
 composer tests
 ```
 
-### Static analysis
+#### Static analysis
 
 Static analysis can be run via [PHPStan](https://phpstan.org).
 
@@ -62,7 +59,7 @@ Static analysis can be run via [PHPStan](https://phpstan.org).
 composer phpstan
 ```
 
-### Code style
+#### Code style
 
 The code is automatically formatted through [php-cs-fixer](https://cs.symfony.com).
 
@@ -70,22 +67,22 @@ The code is automatically formatted through [php-cs-fixer](https://cs.symfony.co
 composer cs-fix
 ```
 
-## Releasing a new version
+### Releasing a new version
 
 (only relevant for Sentry employees)
 
 Prerequisites:
 
-- All changes that should be released must be in the `master` branch.
-- Every commit should follow the [Commit Message Format](https://develop.sentry.dev/commit-messages#commit-message-format) convention.
+* All changes that should be released must be in the `master` branch.
+* Every commit should follow the [Commit Message Format](https://develop.sentry.dev/commit-messages#commit-message-format) convention.
 
 Manual Process:
 
-- Update CHANGELOG.md with the version to be released. Example commit: https://github.com/getsentry/sentry-laravel/commit/0c0aabd4976905e279c9e49193265dd51856c219.
-- On GitHub in the `sentry-laravel` repository go to "Actions" select the "Release" workflow.
-- Click on "Run workflow" on the right side and make sure the `master` branch is selected.
-- Set "Version to release" input field. Here you decide if it is a major, minor or patch release. (See "Versioning Policy" below)
-- Click "Run Workflow"
+* Update CHANGELOG.md with the version to be released. Example commit: https://github.com/getsentry/sentry-laravel/commit/0c0aabd4976905e279c9e49193265dd51856c219.
+* On GitHub in the `sentry-laravel` repository go to "Actions" select the "Release" workflow.
+* Click on "Run workflow" on the right side and make sure the `master` branch is selected.
+* Set "Version to release" input field. Here you decide if it is a major, minor or patch release. (See "Versioning Policy" below)
+* Click "Run Workflow"
 
 This will trigger [Craft](https://github.com/getsentry/craft) to prepare everything needed for a release. (For more information see [craft prepare](https://github.com/getsentry/craft#craft-prepare-preparing-a-new-release)) At the end of this process, a release issue is created in the [Publish](https://github.com/getsentry/publish) repository. (Example release issue: https://github.com/getsentry/publish/issues/815)
 
@@ -99,18 +96,15 @@ When the release issue is labeled `accepted` [Craft](https://github.com/getsentr
 
 There is a sequence diagram visualizing all this in the [README.md](https://github.com/getsentry/publish) of the `Publish` repository.
 
-### Versioning Policy
+#### Versioning Policy
 
 This project follows [semver](https://semver.org), with three additions:
 
-- Semver says that major version `0` can include breaking changes at any time. Still, it is common practice to assume that only `0.x` releases (minor versions) can contain breaking changes while `0.x.y` releases (patch versions) are used for backwards-compatible changes (bugfixes and features). This project also follows that practice.
+* Semver says that major version `0` can include breaking changes at any time. Still, it is common practice to assume that only `0.x` releases (minor versions) can contain breaking changes while `0.x.y` releases (patch versions) are used for backwards-compatible changes (bugfixes and features). This project also follows that practice.
+* All undocumented APIs are considered internal. They are not part of this contract.
+* Certain features (e.g. integrations) may be explicitly called out as "experimental" or "unstable" in the documentation. They come with their own versioning policy described in the documentation.
 
-- All undocumented APIs are considered internal. They are not part of this contract.
-
-- Certain features (e.g. integrations) may be explicitly called out as "experimental" or "unstable" in the documentation. They come with their own versioning policy described in the documentation.
-
-We recommend pinning your version requirements against `1.x.*` or `1.x.y`.
-Either one of the following is fine:
+We recommend pinning your version requirements against `1.x.*` or `1.x.y`. Either one of the following is fine:
 
 ```json
 "sentry/sentry": "^1.0",
@@ -119,7 +113,7 @@ Either one of the following is fine:
 
 A major release `N` implies the previous release `N-1` will no longer receive updates. We generally do not backport bugfixes to older versions unless they are security relevant. However, feel free to ask for backports of specific commits on the bug tracker.
 
-## Commit message format guidelines
+### Commit message format guidelines
 
 See the documentation on commit messages here:
 

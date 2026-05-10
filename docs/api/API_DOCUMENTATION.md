@@ -1,9 +1,9 @@
 # API REST - Senselab Core API
 
-**Desarrollado por Senselab**  
-*Soluciones Tecnológicas | Costa Rica | Build with Sense*
+**Desarrollado por Senselab**\
+&#xNAN;_&#x53;oluciones Tecnológicas | Costa Rica | Build with Sense_
 
----
+***
 
 ## 📖 Acceso Rápido
 
@@ -16,21 +16,23 @@ http://localhost:8000/api/documentation
 ```
 
 **Características de Swagger UI:**
-- ✅ Prueba endpoints directamente desde el navegador
-- ✅ Autenticación Bearer integrada
-- ✅ Ejemplos de request/response
-- ✅ Documentación actualizada automáticamente
-- ✅ Schemas de datos completos
+
+* ✅ Prueba endpoints directamente desde el navegador
+* ✅ Autenticación Bearer integrada
+* ✅ Ejemplos de request/response
+* ✅ Documentación actualizada automáticamente
+* ✅ Schemas de datos completos
 
 ### Esta Documentación
 
 Este documento proporciona información detallada sobre todos los endpoints, incluyendo:
-- Ejemplos de uso con curl
-- Estructura de datos
-- Códigos de error
-- Casos de uso
 
----
+* Ejemplos de uso con curl
+* Estructura de datos
+* Códigos de error
+* Casos de uso
+
+***
 
 ## 🧪 Testing
 
@@ -38,21 +40,22 @@ El proyecto incluye **218 tests automatizados** que validan el funcionamiento de
 
 **Estado Actual:** ⚠️ **186/218 passing (85.3%)** - 32 tests en corrección
 
-- **AuthTest**: Login, logout, tokens, permisos (6/11 passing)
-- **EmpresaTest**: CRUD empresas, multi-tenancy (4/8 passing)
-- **TipoClienteTest**: Catálogo clientes (10/11 passing)
-- **PermissionTest**: Sistema RBAC completo
-- **RoleTest**: Modelo Rol y relaciones
-- **UsuarioTest**: Modelo Usuario y autenticación
+* **AuthTest**: Login, logout, tokens, permisos (6/11 passing)
+* **EmpresaTest**: CRUD empresas, multi-tenancy (4/8 passing)
+* **TipoClienteTest**: Catálogo clientes (10/11 passing)
+* **PermissionTest**: Sistema RBAC completo
+* **RoleTest**: Modelo Rol y relaciones
+* **UsuarioTest**: Modelo Usuario y autenticación
 
 Ejecutar tests:
+
 ```bash
 php artisan test
 ```
 
-Ver documentación completa de testing: [INFORME_TESTS_POST_OPTIMIZACION.md](INFORME_TESTS_POST_OPTIMIZACION.md)
+Ver documentación completa de testing: [INFORME\_TESTS\_POST\_OPTIMIZACION.md](INFORME_TESTS_POST_OPTIMIZACION.md)
 
----
+***
 
 ## 📚 Documentación de Endpoints
 
@@ -63,6 +66,7 @@ Ver documentación completa de testing: [INFORME_TESTS_POST_OPTIMIZACION.md](INF
 **Autenticación:** Laravel Sanctum (Bearer Token)
 
 **Headers requeridos:**
+
 ```json
 {
   "Accept": "application/json",
@@ -71,7 +75,7 @@ Ver documentación completa de testing: [INFORME_TESTS_POST_OPTIMIZACION.md](INF
 }
 ```
 
----
+***
 
 ## 🔐 Autenticación
 
@@ -80,18 +84,21 @@ Ver documentación completa de testing: [INFORME_TESTS_POST_OPTIMIZACION.md](INF
 El sistema utiliza **Laravel Sanctum** para autenticación basada en tokens API.
 
 **Características:**
-- ✅ Autenticación stateless por tokens
-- ✅ Tokens personales por usuario
-- ✅ Revocación de tokens (logout)
-- ✅ Múltiples tokens por usuario (diferentes dispositivos)
-- ✅ Expiración configurable de tokens
+
+* ✅ Autenticación stateless por tokens
+* ✅ Tokens personales por usuario
+* ✅ Revocación de tokens (logout)
+* ✅ Múltiples tokens por usuario (diferentes dispositivos)
+* ✅ Expiración configurable de tokens
 
 ### POST /login
+
 Iniciar sesión y obtener token de acceso
 
 **Endpoint en Swagger:** `POST /api/login`
 
 **Request:**
+
 ```json
 {
   "email": "admin@senselab.com",
@@ -100,6 +107,7 @@ Iniciar sesión y obtener token de acceso
 ```
 
 **Ejemplo con curl:**
+
 ```bash
 curl -X POST http://localhost:8000/api/login \
   -H "Accept: application/json" \
@@ -111,6 +119,7 @@ curl -X POST http://localhost:8000/api/login \
 ```
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -151,6 +160,7 @@ curl -X POST http://localhost:8000/api/login \
 ```
 
 **Errores:**
+
 ```json
 // Credenciales incorrectas (422)
 {
@@ -164,6 +174,7 @@ curl -X POST http://localhost:8000/api/login \
 ```
 
 **Testing:**
+
 ```php
 // Ver AuthTest::test_usuario_puede_hacer_login()
 $response = $this->postJson('/api/login', [
@@ -176,17 +187,20 @@ $response->assertStatus(200)
 ```
 
 ### POST /logout
+
 Cerrar sesión y revocar token actual
 
 **Endpoint en Swagger:** `POST /api/logout`
 
 **Headers:**
+
 ```http
 Authorization: Bearer {token}
 Accept: application/json
 ```
 
 **Ejemplo con curl:**
+
 ```bash
 curl -X POST http://localhost:8000/api/logout \
   -H "Accept: application/json" \
@@ -194,6 +208,7 @@ curl -X POST http://localhost:8000/api/logout \
 ```
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -202,6 +217,7 @@ curl -X POST http://localhost:8000/api/logout \
 ```
 
 **Testing:**
+
 ```php
 // Ver AuthTest::test_usuario_puede_hacer_logout()
 $usuario = Usuario::factory()->create();
@@ -213,20 +229,23 @@ $response = $this->withHeader('Authorization', 'Bearer ' . $token)
 $response->assertStatus(200);
 ```
 
----
+***
 
 ### GET /user
+
 Obtener información del usuario autenticado
 
 **Endpoint en Swagger:** `GET /api/user`
 
 **Headers:**
+
 ```http
 Authorization: Bearer {token}
 Accept: application/json
 ```
 
 **Ejemplo con curl:**
+
 ```bash
 curl -X GET http://localhost:8000/api/user \
   -H "Accept: application/json" \
@@ -234,6 +253,7 @@ curl -X GET http://localhost:8000/api/user \
 ```
 
 **Response (200):**
+
 ```json
 {
   "message": "Sesión cerrada exitosamente"
@@ -243,15 +263,18 @@ curl -X GET http://localhost:8000/api/user \
 **Nota:** Solo revoca el token usado en la request. Otros tokens del mismo usuario permanecen activos.
 
 ### GET /me
+
 Obtener información del usuario autenticado
 
 **Headers:**
+
 ```http
 Authorization: Bearer {token}
 Accept: application/json
 ```
 
 **Response (200):**
+
 ```json
 {
   "id": 1,
@@ -285,11 +308,12 @@ Accept: application/json
 ### ~~POST /register~~ (DESHABILITADO)
 
 Por razones de seguridad, el registro público está **deshabilitado**. Los usuarios se crean mediante:
+
 1. **Seeders** - Para datos de prueba/desarrollo
 2. **Panel de administración** - Administradores pueden crear usuarios
 3. **Comandos Artisan** - Para usuarios iniciales
 
----
+***
 
 ## 🔒 Autorización (RBAC)
 
@@ -298,17 +322,20 @@ Por razones de seguridad, el registro público está **deshabilitado**. Los usua
 El sistema implementa **RBAC (Role-Based Access Control)** con 68 permisos granulares.
 
 **Estructura de permisos:**
+
 ```
 {modulo}.{accion}
 ```
 
 **Acciones:**
-- `crear` - Crear nuevos registros
-- `leer` - Ver/listar registros
-- `actualizar` - Modificar registros existentes
-- `eliminar` - Eliminar registros (soft delete)
+
+* `crear` - Crear nuevos registros
+* `leer` - Ver/listar registros
+* `actualizar` - Modificar registros existentes
+* `eliminar` - Eliminar registros (soft delete)
 
 **Módulos (17 total):**
+
 1. `empresas` - Gestión de empresas
 2. `sucursales` - Sucursales
 3. `almacenes` - Almacenes
@@ -354,6 +381,7 @@ Route::post('/ventas', [VentaController::class, 'store'])
 ```
 
 **Respuesta sin permiso (403):**
+
 ```json
 {
   "message": "No tienes permiso para realizar esta acción"
@@ -390,7 +418,7 @@ $permisos = $usuario->getAllPermissions();
 $usuario->assignRoles(['Vendedor', 'Cajero']);
 ```
 
----
+***
 
 ## 📝 Headers Requeridos
 
@@ -431,21 +459,24 @@ curl -X POST http://localhost:8000/api/logout \
   -H "Accept: application/json"
 ```
 
----
+***
 
 ## 🏢 Empresas
 
 ### GET /empresas
+
 Listar empresas con paginación
 
 **Requiere permiso:** `empresas.leer`
 
 **Query Parameters:**
-- `per_page` (int) - Registros por página (default: 15)
-- `search` (string) - Buscar por nombre, razón social, NIT/RUC, email
-- `activos` (boolean) - Filtrar solo activos
+
+* `per_page` (int) - Registros por página (default: 15)
+* `search` (string) - Buscar por nombre, razón social, NIT/RUC, email
+* `activos` (boolean) - Filtrar solo activos
 
 **Response (200):**
+
 ```json
 {
   "data": [
@@ -471,11 +502,13 @@ Listar empresas con paginación
 ```
 
 ### POST /empresas
+
 Crear nueva empresa
 
 **Requiere permiso:** `empresas.crear`
 
 **Request:**
+
 ```json
 {
   "nombre": "Mi Empresa S.A.",
@@ -495,6 +528,7 @@ Crear nueva empresa
 ```
 
 **Response (201):**
+
 ```json
 {
   "message": "Empresa creada exitosamente",
@@ -507,11 +541,13 @@ Crear nueva empresa
 ```
 
 ### GET /empresas/{id}
+
 Obtener empresa específica con relaciones
 
 **Requiere permiso:** `empresas.leer`
 
 **Response (200):**
+
 ```json
 {
   "id": 1,
@@ -524,34 +560,40 @@ Obtener empresa específica con relaciones
 ```
 
 ### PUT/PATCH /empresas/{id}
+
 Actualizar empresa
 
 **Requiere permiso:** `empresas.actualizar`
 
 ### DELETE /empresas/{id}
+
 Eliminar empresa (soft delete)
 
 **Requiere permiso:** `empresas.eliminar`
 
----
+***
 
 ## 🏪 Sucursales
 
 ### GET /sucursales
+
 Listar sucursales
 
 **Requiere permiso:** `sucursales.leer`
 
 **Query Parameters:**
-- `empresa_id` (int) - Filtrar por empresa
-- `activos` (boolean) - Solo activos
+
+* `empresa_id` (int) - Filtrar por empresa
+* `activos` (boolean) - Solo activos
 
 ### POST /sucursales
+
 Crear sucursal
 
 **Requiere permiso:** `sucursales.crear`
 
 **Request:**
+
 ```json
 {
   "empresa_id": 1,
@@ -570,38 +612,46 @@ Crear sucursal
 ```
 
 **Validaciones:**
-- Si `es_principal` es `true`, se desmarca automáticamente otras sucursales principales
-- No se puede eliminar una sucursal principal
+
+* Si `es_principal` es `true`, se desmarca automáticamente otras sucursales principales
+* No se puede eliminar una sucursal principal
 
 ### GET /sucursales/{id}
+
 Obtener sucursal con almacenes y cajas
 
 ### PUT/PATCH /sucursales/{id}
+
 Actualizar sucursal
 
 ### DELETE /sucursales/{id}
+
 Eliminar sucursal (no permite eliminar sucursal principal)
 
----
+***
 
 ## 📦 Almacenes
 
 ### GET /almacenes
+
 Listar almacenes
 
 **Requiere permiso:** `almacenes.leer`
 
 **Query Parameters:**
-- `empresa_id` (int)
-- `sucursal_id` (int)
-- `activos` (boolean)
+
+* `empresa_id` (int)
+* `sucursal_id` (int)
+* `activos` (boolean)
 
 ### POST /almacenes
+
 Crear almacén
 
 **Requiere permiso:** `almacenes.crear`
 
 **Request:**
+
 ```json
 {
   "empresa_id": 1,
@@ -616,27 +666,32 @@ Crear almacén
 ```
 
 ### GET /almacenes/{id}
+
 ### PUT/PATCH /almacenes/{id}
+
 ### DELETE /almacenes/{id}
 
----
+***
 
 ## 📦 Productos
 
 ### GET /productos
+
 Listar productos con filtros avanzados
 
 **Requiere permiso:** `productos.leer`
 
 **Query Parameters:**
-- `per_page` (int)
-- `search` (string) - Buscar por nombre, código, código de barras, descripción
-- `empresa_id` (int)
-- `categoria_id` (int)
-- `tipo` (string) - "producto" o "servicio"
-- `activos` (boolean)
+
+* `per_page` (int)
+* `search` (string) - Buscar por nombre, código, código de barras, descripción
+* `empresa_id` (int)
+* `categoria_id` (int)
+* `tipo` (string) - "producto" o "servicio"
+* `activos` (boolean)
 
 **Response (200):**
+
 ```json
 {
   "data": [
@@ -670,11 +725,13 @@ Listar productos con filtros avanzados
 ```
 
 ### POST /productos
+
 Crear producto
 
 **Requiere permiso:** `productos.crear`
 
 **Request:**
+
 ```json
 {
   "empresa_id": 1,
@@ -699,6 +756,7 @@ Crear producto
 ```
 
 **Response (201):**
+
 ```json
 {
   "message": "Producto creado exitosamente",
@@ -711,35 +769,42 @@ Crear producto
 ```
 
 ### GET /productos/{id}
+
 Obtener producto con todas sus relaciones
 
 ### PUT/PATCH /productos/{id}
+
 Actualizar producto
 
 ### DELETE /productos/{id}
+
 Eliminar producto (soft delete)
 
----
+***
 
 ## 👥 Clientes
 
 ### GET /clientes
+
 Listar clientes
 
 **Requiere permiso:** `clientes.leer`
 
 **Query Parameters:**
-- `search` (string) - Buscar por nombre, apellidos, razón social, identificación, email
-- `empresa_id` (int)
-- `tipo_identificacion` (string) - "fisica", "juridica", "dimex", "nite", "extranjero"
-- `activos` (boolean)
+
+* `search` (string) - Buscar por nombre, apellidos, razón social, identificación, email
+* `empresa_id` (int)
+* `tipo_identificacion` (string) - "fisica", "juridica", "dimex", "nite", "extranjero"
+* `activos` (boolean)
 
 ### POST /clientes
+
 Crear cliente
 
 **Requiere permiso:** `clientes.crear`
 
 **Request:**
+
 ```json
 {
   "empresa_id": 1,
@@ -764,10 +829,12 @@ Crear cliente
 ```
 
 **Validaciones:**
-- La `identificacion` debe ser única por empresa
-- El modelo incluye método `tieneIdentificacionValida()` para validar según tipo
+
+* La `identificacion` debe ser única por empresa
+* El modelo incluye método `tieneIdentificacionValida()` para validar según tipo
 
 **Response (201):**
+
 ```json
 {
   "message": "Cliente creado exitosamente",
@@ -781,34 +848,41 @@ Crear cliente
 ```
 
 ### GET /clientes/{id}
+
 Obtener cliente con últimas 10 ventas y cuentas por cobrar pendientes
 
 ### PUT/PATCH /clientes/{id}
+
 Actualizar cliente
 
 ### DELETE /clientes/{id}
+
 Eliminar cliente (soft delete)
 
----
+***
 
 ## 🏭 Proveedores
 
 ### GET /proveedores
+
 Listar proveedores
 
 **Requiere permiso:** `proveedores.leer`
 
 **Query Parameters:**
-- `search` (string)
-- `empresa_id` (int)
-- `activos` (boolean)
+
+* `search` (string)
+* `empresa_id` (int)
+* `activos` (boolean)
 
 ### POST /proveedores
+
 Crear proveedor
 
 **Requiere permiso:** `proveedores.crear`
 
 **Request:**
+
 ```json
 {
   "empresa_id": 1,
@@ -835,33 +909,39 @@ Crear proveedor
 **Nota:** El modelo Proveedor normaliza automáticamente campos (nombre, email, etc.) al guardar
 
 ### GET /proveedores/{id}
+
 Obtener proveedor con últimas 10 órdenes de compra y cuentas por pagar pendientes
 
 ### PUT/PATCH /proveedores/{id}
+
 ### DELETE /proveedores/{id}
 
----
+***
 
 ## 🛒 Ventas
 
 ### GET /ventas
+
 Listar ventas
 
 **Requiere permiso:** `ventas.leer`
 
 **Query Parameters:**
-- `empresa_id` (int)
-- `sucursal_id` (int)
-- `cliente_id` (int)
-- `fecha_inicio` (date) - Formato: YYYY-MM-DD
-- `fecha_fin` (date)
+
+* `empresa_id` (int)
+* `sucursal_id` (int)
+* `cliente_id` (int)
+* `fecha_inicio` (date) - Formato: YYYY-MM-DD
+* `fecha_fin` (date)
 
 ### POST /ventas
+
 Crear venta con detalles
 
 **Requiere permiso:** `ventas.crear`
 
 **Request:**
+
 ```json
 {
   "empresa_id": 1,
@@ -894,18 +974,21 @@ Crear venta con detalles
 ```
 
 **Tipos de comprobante:**
-- `factura`
-- `tiquete`
-- `nota_credito`
-- `nota_debito`
+
+* `factura`
+* `tiquete`
+* `nota_credito`
+* `nota_debito`
 
 **Proceso automático:**
+
 1. Genera número de comprobante único: `FAC-00000001`, `TIQ-00000001`, etc.
 2. Crea detalles de venta
 3. Calcula subtotales, impuestos y total automáticamente
 4. Actualiza totales de la venta
 
 **Response (201):**
+
 ```json
 {
   "message": "Venta creada exitosamente",
@@ -923,48 +1006,57 @@ Crear venta con detalles
 ```
 
 ### GET /ventas/{id}
+
 Obtener venta completa con detalles, cliente, usuario, etc.
 
 ### PUT/PATCH /ventas/{id}
+
 Actualizar venta (solo observaciones y estado)
 
 **Estados permitidos:**
-- `pendiente`
-- `pagada`
-- `anulada`
+
+* `pendiente`
+* `pagada`
+* `anulada`
 
 ### DELETE /ventas/{id}
+
 Anular venta (marca estado como "anulada" y soft delete)
 
----
+***
 
 ## 📝 Órdenes de Compra
 
 ### GET /ordenes-compra
+
 Listar órdenes de compra
 
 **Requiere permiso:** `compras.leer`
 
 **Query Parameters:**
-- `empresa_id` (int)
-- `proveedor_id` (int)
-- `estado` (string)
-- `pendientes` (boolean)
-- `activas` (boolean)
+
+* `empresa_id` (int)
+* `proveedor_id` (int)
+* `estado` (string)
+* `pendientes` (boolean)
+* `activas` (boolean)
 
 **Estados:**
-- `borrador`
-- `pendiente`
-- `aprobada`
-- `recibida`
-- `cancelada`
+
+* `borrador`
+* `pendiente`
+* `aprobada`
+* `recibida`
+* `cancelada`
 
 ### POST /ordenes-compra
+
 Crear orden de compra
 
 **Requiere permiso:** `compras.crear`
 
 **Request:**
+
 ```json
 {
   "empresa_id": 1,
@@ -993,12 +1085,14 @@ Crear orden de compra
 ```
 
 **Proceso automático:**
+
 1. Genera número de orden: `OC-000001`
 2. Crea detalles
 3. Calcula subtotal, impuestos y total
 4. Soporta transacciones (rollback en caso de error)
 
 **Response (201):**
+
 ```json
 {
   "message": "Orden de compra creada exitosamente",
@@ -1015,9 +1109,11 @@ Crear orden de compra
 ```
 
 ### GET /ordenes-compra/{id}
+
 Obtener orden con detalles, pagos, entradas de inventario y saldo pendiente
 
 **Response incluye:**
+
 ```json
 {
   "id": 1,
@@ -1031,16 +1127,19 @@ Obtener orden con detalles, pagos, entradas de inventario y saldo pendiente
 ```
 
 ### PUT/PATCH /ordenes-compra/{id}
+
 Actualizar orden (solo en estado `borrador` o `pendiente`)
 
 ### DELETE /ordenes-compra/{id}
+
 Eliminar orden (solo en estado `borrador`)
 
----
+***
 
 ## 📊 Respuestas Estándar
 
 ### Éxito (200/201)
+
 ```json
 {
   "message": "Operación exitosa",
@@ -1049,6 +1148,7 @@ Eliminar orden (solo en estado `borrador`)
 ```
 
 ### Error de Validación (422)
+
 ```json
 {
   "message": "Error de validación",
@@ -1059,6 +1159,7 @@ Eliminar orden (solo en estado `borrador`)
 ```
 
 ### No Encontrado (404)
+
 ```json
 {
   "message": "Recurso no encontrado"
@@ -1066,6 +1167,7 @@ Eliminar orden (solo en estado `borrador`)
 ```
 
 ### Error del Servidor (500)
+
 ```json
 {
   "message": "Error al procesar solicitud",
@@ -1073,7 +1175,7 @@ Eliminar orden (solo en estado `borrador`)
 }
 ```
 
----
+***
 
 ## 🔒 Características de Seguridad
 
@@ -1085,39 +1187,41 @@ Eliminar orden (solo en estado `borrador`)
 6. **Búsquedas**: Búsqueda por múltiples campos
 7. **Filtros**: Filtros avanzados por empresa, sucursal, estado, etc.
 
----
+***
 
 ## 🚀 Próximos Endpoints
 
-- [ ] Inventario (entradas/salidas)
-- [ ] Cuentas por cobrar/pagar
-- [ ] Reportes
-- [ ] Dashboard/Estadísticas
-- [ ] Facturación Electrónica
-- [ ] Nómina
-- [ ] Contabilidad
+* [ ] Inventario (entradas/salidas)
+* [ ] Cuentas por cobrar/pagar
+* [ ] Reportes
+* [ ] Dashboard/Estadísticas
+* [ ] Facturación Electrónica
+* [ ] Nómina
+* [ ] Contabilidad
 
----
+***
 
 ## 📞 Soporte y Contacto
 
 **Senselab**
-- **Email Corporativo**: deadmooncr@gmail.com
-- **Email Técnico**: deadmooncr@gmail.com
-- **Web**: [senselab.com](https://senselab.com) | [senselab.com](https://senselab.com)
-- **Repositorio**: [Senselab Reposit for Developers](https://sites.google.com/view/repdevsenselab/home/repositorio)
-- **GitHub**: [github.com/SenseLab-dev](https://github.com/orgs/SenseLab-dev)
-- **Desarrollador**: [Jeremy Arias Solano](https://github.com/jeremy-sud)
 
----
+* **Email Corporativo**: deadmooncr@gmail.com
+* **Email Técnico**: deadmooncr@gmail.com
+* **Web**: [senselab.com](https://senselab.com) | [senselab.com](https://senselab.com)
+* **Repositorio**: [Senselab Reposit for Developers](https://sites.google.com/view/repdevsenselab/home/repositorio)
+* **GitHub**: [github.com/SenseLab-dev](https://github.com/orgs/SenseLab-dev)
+* **Desarrollador**: [Jeremy Arias Solano](https://github.com/jeremy-sud)
+
+***
 
 ## 🐛 Reportar Issues
 
 Para reportar errores o solicitar nuevas funcionalidades:
+
 1. Accede a [GitHub Issues](https://github.com/SenseLab-dev/Senselab_Core_API/issues)
 2. Envía un correo a deadmooncr@gmail.com
 
----
+***
 
 ## 📝 Notas Importantes
 
