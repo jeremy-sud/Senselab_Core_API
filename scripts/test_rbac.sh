@@ -8,14 +8,14 @@ echo ""
 BASE_URL="http://localhost:8000/api"
 
 echo "1. LOGIN como Administrador..."
-echo "   Email: admin@ursol.com"
+echo "   Email: admin@senselab.com"
 echo "   Password: admin123"
 echo ""
 
 LOGIN_RESPONSE=$(curl -s -X POST "${BASE_URL}/login" \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "admin@ursol.com",
+    "email": "admin@senselab.com",
     "password": "admin123"
   }')
 

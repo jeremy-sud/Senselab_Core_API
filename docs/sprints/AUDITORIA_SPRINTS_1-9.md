@@ -253,10 +253,10 @@ El proyecto ha **superado ampliamente** los objetivos documentados en los Sprint
 
 ```
 NAME            STATUS                   SERVICE
-ursol_nginx     Up (healthy)             nginx
-ursol_php       Up (healthy)             php
-ursol_mysql     Up (healthy)             mysql
-ursol_redis     Up (healthy)             redis
+senselab_nginx     Up (healthy)             nginx
+senselab_php       Up (healthy)             php
+senselab_mysql     Up (healthy)             mysql
+senselab_redis     Up (healthy)             redis
 ```
 
 ---

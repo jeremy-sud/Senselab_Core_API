@@ -122,14 +122,14 @@ class SeederIntegrityTest extends BaseTestCase
         $this->assertEquals(0, $exitCode, 'DemoDataSeeder falló: ' . Artisan::output());
 
         // Verificar empresa demo
-        $empresa = DB::table('empresas')->where('nombre', 'like', '%Ursol%')->first();
-        $this->assertNotNull($empresa, 'Empresa demo Ursol no fue creada');
+        $empresa = DB::table('empresas')->where('nombre', 'like', '%Senselab%')->first();
+        $this->assertNotNull($empresa, 'Empresa demo Senselab no fue creada');
 
         // Verificar usuarios demo
         $usuarios = DB::table('usuarios')->whereIn('email', [
-            'eduardo@ursol.com',
-            'jeremy@ursol.com',
-            'admin@ursol.com',
+            'eduardo@senselab.com',
+            'jeremy@senselab.com',
+            'admin@senselab.com',
         ])->count();
 
         $this->assertGreaterThanOrEqual(2, $usuarios,

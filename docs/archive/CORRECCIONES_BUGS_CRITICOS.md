@@ -1,4 +1,4 @@
-# ✅ CORRECCIONES DE BUGS CRÍTICOS - Ursol CAST API
+# ✅ CORRECCIONES DE BUGS CRÍTICOS - Senselab Core API
 
 **Fecha:** 22 de noviembre de 2025  
 **Proyecto:** Sistema ERP Multi-Tenant con Facturación Electrónica  

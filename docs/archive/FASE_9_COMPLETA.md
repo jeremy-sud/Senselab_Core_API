@@ -624,7 +624,7 @@ Trait `HasActiveScope` provee scope `activos()` y método `esActivo()`.
 ---
 
 **Desarrollado por:** GitHub Copilot  
-**Proyecto:** Ursol CAST API  
+**Proyecto:** Senselab Core API  
 **Framework:** Laravel 12.37.0  
 **PHP:** 8.2+  
 **Base de Datos:** MySQL 8.0+

@@ -71,7 +71,7 @@ Schedule::job(new CleanCacheJob('all'))->monthlyOn(1, '04:00');
 
 ✅ **Supervisor Configuration** (Producción)
 ```ini
-[program:ursol-cast-api-worker]
+[program:senselab-core-api-worker]
 command=php artisan queue:work redis --queue=hacienda,reports,emails,imports,maintenance
 numprocs=4
 user=www-data

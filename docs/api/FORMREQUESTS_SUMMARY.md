@@ -305,7 +305,7 @@ Todos los FormRequests incluyen:
  * Request de validación para [acción] [entidad]
  * 
  * @author Jeremy Arias Solano <deadmooncr@gmail.com>
- * @copyright 2025 Sistemas Ursol S.A.
+ * @copyright 2025 Senselab
  */
 ```
 
@@ -358,7 +358,7 @@ php artisan tinker
 
 **Desarrollado por:**
 - **Jeremy Arias Solano** - Lead Developer
-- **Sistemas Ursol S.A.** - 30 años de experiencia
+- **Senselab** - 30 años de experiencia
 
 ---
 

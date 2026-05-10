@@ -318,7 +318,7 @@ docker/php/
 ### **XDebug no conecta**
 ```bash
 # Verificar que container tiene XDebug
-docker exec ursol-php php -m | grep xdebug
+docker exec senselab-php php -m | grep xdebug
 
 # Si no aparece, rebuild:
 docker-compose build --no-cache php

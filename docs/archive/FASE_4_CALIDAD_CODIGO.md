@@ -1,5 +1,5 @@
 # 📊 FASE 4: CALIDAD DE CÓDIGO
-## Ursol CAST API - Refactorización y Mejora de Arquitectura
+## Senselab Core API - Refactorización y Mejora de Arquitectura
 
 **Fecha de Inicio:** 12 de febrero de 2026  
 **Fecha de Actualización:** 13 de febrero de 2026  

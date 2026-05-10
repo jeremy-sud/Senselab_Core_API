@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: ursol-cast
+  name: senselab-core
   labels:
-    app.kubernetes.io/name: ursol-cast-api
-    app.kubernetes.io/part-of: ursol-cast
+    app.kubernetes.io/name: senselab-core-api
+    app.kubernetes.io/part-of: senselab-core

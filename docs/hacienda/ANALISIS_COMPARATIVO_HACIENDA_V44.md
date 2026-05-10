@@ -1,4 +1,4 @@
-# Análisis Comparativo: Ursol-CAST-API vs Especificación Hacienda CR (DGT-R-000-2024 v4.4)
+# Análisis Comparativo: Senselab_Core_API vs Especificación Hacienda CR (DGT-R-000-2024 v4.4)
 
 **Fecha del análisis:** 7 de abril de 2026  
 **Última actualización:** 10 de abril de 2026  
@@ -57,7 +57,7 @@
 
 ## 1. Resumen Ejecutivo
 
-La API Ursol-CAST cuenta con una implementación **sólida** de facturación electrónica para Costa Rica, incluyendo soporte para la versión 4.4 del esquema de Hacienda. Sin embargo, tras un análisis exhaustivo comparando campo por campo con la especificación oficial, se identificaron **38 brechas** distribuidas así:
+La API Senselab-CAST cuenta con una implementación **sólida** de facturación electrónica para Costa Rica, incluyendo soporte para la versión 4.4 del esquema de Hacienda. Sin embargo, tras un análisis exhaustivo comparando campo por campo con la especificación oficial, se identificaron **38 brechas** distribuidas así:
 
 | Criticidad | Cantidad | Descripción |
 |:----------:|:--------:|-------------|

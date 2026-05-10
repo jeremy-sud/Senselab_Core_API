@@ -16,7 +16,7 @@ use OpenApi\Attributes as OA;
  * Controlador API para gestión de categorías de productos
  *
  * @package App\Http\Controllers\API
- * @author Sistemas Ursol S.A.
+ * @author Senselab
  */
 class CategoriaProductoController extends Controller
 {

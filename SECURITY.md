@@ -1,4 +1,4 @@
-# 🔐 Guía de Seguridad - Ursol CAST API
+# 🔐 Guía de Seguridad - Senselab Core API
 
 > **Última actualización:** 17 de Abril de 2026  
 > **Versión:** 5.0.1  
@@ -549,8 +549,8 @@ Log::channel('security')->info('Login exitoso', [
 ### Contactos de Seguridad
 
 ```
-Email: seguridad@ursol.com
-Urgencias: +506 8868-7765
+Email: seguridad@senselab.com
+Urgencias: +(506)8973-5665
 ```
 
 ### Checklist de Incidente
@@ -570,7 +570,7 @@ Urgencias: +506 8868-7765
 Si encuentras una vulnerabilidad de seguridad:
 
 1. **NO** publiques públicamente
-2. Envía email a: `seguridad@ursol.com`
+2. Envía email a: `seguridad@senselab.com`
 3. Incluye:
    - Descripción detallada
    - Pasos para reproducir
@@ -625,4 +625,4 @@ Respondemos en máximo 48 horas hábiles.
 
 ---
 
-*Documento mantenido por Sistemas Ursol S.A. — Actualizado v4.2.0, 10 de abril de 2026*
+*Documento mantenido por Senselab — Actualizado v4.2.0, 10 de abril de 2026*

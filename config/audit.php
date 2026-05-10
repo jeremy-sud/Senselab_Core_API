@@ -6,7 +6,7 @@
  * Define qué modelos auditar, qué eventos registrar y con qué nivel de detalle.
  * Soporta exclusión de campos sensibles y auditoría selectiva por roles.
  *
- * @package Ursol\Configuration
+ * @package Senselab\Configuration
  * @version 1.0.0
  */
 

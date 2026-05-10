@@ -1,5 +1,5 @@
 # 🔍 AUDITORÍA COMPLETA DEL PROYECTO - Noviembre 2025
-## Ursol CAST API - Análisis Exhaustivo de Problemas y Mejoras
+## Senselab Core API - Análisis Exhaustivo de Problemas y Mejoras
 
 **Fecha del Análisis:** 25 de noviembre de 2025  
 **Auditor:** GitHub Copilot (Claude Sonnet 4.5)  
@@ -602,7 +602,7 @@ Seguridad:
 
 ### Estado General: **MUY BUENO** ✅
 
-El proyecto Ursol CAST API está en excelente estado técnico:
+El proyecto Senselab Core API está en excelente estado técnico:
 
 **✅ Fortalezas Principales:**
 1. Base de datos muy bien diseñada (78 tablas, FK, índices)
@@ -649,6 +649,6 @@ REDIS_HOST=redis
 ---
 
 **Desarrollado por:** GitHub Copilot (Claude Sonnet 4.5)  
-**Para:** Sistemas Ursol S.A.  
-**Proyecto:** Ursol CAST API  
+**Para:** Senselab  
+**Proyecto:** Senselab Core API  
 **Versión de Auditoría:** 1.0 - Noviembre 2025

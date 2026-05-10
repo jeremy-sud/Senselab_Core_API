@@ -1,6 +1,6 @@
 # ✅ RESUMEN EJECUTIVO - Llenado de Bases de Datos Completado
 
-**Proyecto:** Ursol CAST API  
+**Proyecto:** Senselab Core API  
 **Fecha:** Febrero 2026  
 **Responsable:** Sistema de Automatización  
 **Estado:** ✅ **COMPLETADO EXITOSAMENTE**
@@ -191,8 +191,8 @@ Se ha completado exitosamente el **poblado integral de base de datos** con datos
 ### Ubicación
 - **Host:** 127.0.0.1
 - **Puerto:** 33061
-- **Usuario:** ursol_user
-- **Password:** ursol_password
+- **Usuario:** senselab_user
+- **Password:** senselab_password
 - **Bases:** api_db, api_db_testing
 
 ### Acceso Rápido
@@ -201,7 +201,7 @@ Se ha completado exitosamente el **poblado integral de base de datos** con datos
 bash scripts/verify_db_data.sh
 
 # Consultas manuales
-mysql -h 127.0.0.1 -P 33061 -u ursol_user -pursol_password api_db
+mysql -h 127.0.0.1 -P 33061 -u senselab_user -psenselab_password api_db
 ```
 
 ---
@@ -266,6 +266,6 @@ El sistema **está completamente listo** para:
 **Fecha de Completación:** Febrero 2026  
 **Versión:** 1.0 - Final  
 **Calidad:** Producción ✅  
-**Mantenedor:** Sistema Ursol  
+**Mantenedor:** Sistema Senselab  
 
 Para más información, consulte GUIA_DATOS_TESTEO.md

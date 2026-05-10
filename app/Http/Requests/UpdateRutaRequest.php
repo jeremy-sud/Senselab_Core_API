@@ -8,7 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * Request de validación para actualizar Ruta
  *
  * @package App\Http\Requests
- * @author Sistemas Ursol S.A. - Jeremy Arias Solano
+ * @author Senselab - Jeremy Arias Solano
  */
 class UpdateRutaRequest extends FormRequest
 {

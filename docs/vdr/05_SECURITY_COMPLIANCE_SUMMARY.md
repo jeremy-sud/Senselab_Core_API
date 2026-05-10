@@ -1,4 +1,4 @@
-# Resumen de Seguridad y Compliance — Ursol CAST API v5.0.1
+# Resumen de Seguridad y Compliance — Senselab Core API v5.0.1
 
 **Documento para Virtual Data Room — Inversores y Due Diligence**  
 **Fecha:** 15 de Abril 2026
@@ -138,7 +138,7 @@
 
 ### 4.3 Hacia GDPR/LGPD Compliance
 
-| Requisito GDPR | Estado en Ursol CAST |
+| Requisito GDPR | Estado en Senselab CAST |
 |-----------------|:--------------------:|
 | Consentimiento explícito | ⬜ Requiere capa de presentación |
 | Derecho de acceso | ✅ API de consulta por usuario |
@@ -222,4 +222,4 @@ Configuración restrictiva: solo dominios específicos permitidos, métodos y he
 ---
 
 *Documento preparado para due diligence — 15 de Abril 2026*  
-*Sistemas Ursol S.A.*
+*Senselab*

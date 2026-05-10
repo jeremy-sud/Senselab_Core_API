@@ -1,7 +1,7 @@
-# Estado Actual del Proyecto - Ursol CAST API
+# Estado Actual del Proyecto - Senselab Core API
 
 **Fecha de actualización:** 10 de mayo 2026  
-**Desarrollado por:** Sistemas Ursol S.A.  
+**Desarrollado por:** Senselab  
 **Desarrollador principal:** Jeremy Arias Solano  
 **Versión actual:** v5.1.0 (Validación Totales FE + Módulo Reservas)
 
@@ -159,8 +159,8 @@ php artisan route:cache
 
 ## Credenciales demo (segun seeders)
 
-- **Usuario administrador:** Email `admin@ursol.com`, Password `admin123`
-- **Empresa demo:** `Sistemas Ursol S.A.`, Cedula juridica `3-101-876543`
+- **Usuario administrador:** Email `admin@senselab.com`, Password `admin123`
+- **Empresa demo:** `Senselab`, Cedula juridica `3-101-876543`
 
 ---
 

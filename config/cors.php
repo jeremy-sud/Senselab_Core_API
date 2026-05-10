@@ -8,7 +8,7 @@ return [
     | Cross-Origin Resource Sharing (CORS) Configuration
     |--------------------------------------------------------------------------
     |
-    | Configuración robusta de CORS para la API Ursol CAST
+    | Configuración robusta de CORS para la API Senselab CAST
     | Basado en OWASP Top 10 - A01:2021 Broken Access Control
     |
     | Paths: Rutas donde se permite CORS

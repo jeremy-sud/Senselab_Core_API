@@ -41,8 +41,8 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ursol-cast-api:${{ github.ref_name }} .
-          docker tag ursol-cast-api:${{ github.ref_name }} ursol-cast-api:latest
+          docker build -t senselab-core-api:${{ github.ref_name }} .
+          docker tag senselab-core-api:${{ github.ref_name }} senselab-core-api:latest
 
       - name: Create backup
         env:
@@ -59,7 +59,7 @@ jobs:
             BACKUP_DIR="/backups/$(date +%Y%m%d_%H%M%S)"
             mkdir -p $BACKUP_DIR
             docker-compose exec -T mysql mysqldump -u root -p$MYSQL_ROOT_PASSWORD ${DB_DATABASE:-api_db} > $BACKUP_DIR/database.sql
-            tar -czf $BACKUP_DIR/application.tar.gz /var/www/ursol-cast-api
+            tar -czf $BACKUP_DIR/application.tar.gz /var/www/senselab-core-api
             echo "Backup created at $BACKUP_DIR"
           EOF
 
@@ -74,10 +74,10 @@ jobs:
             --exclude='node_modules' \
             --exclude='storage/logs/*' \
             --exclude='storage/framework/cache/*' \
-            ./ $PRODUCTION_USER@$PRODUCTION_SERVER:/var/www/ursol-cast-api/
+            ./ $PRODUCTION_USER@$PRODUCTION_SERVER:/var/www/senselab-core-api/
           
           ssh $PRODUCTION_USER@$PRODUCTION_SERVER << 'EOF'
-            cd /var/www/ursol-cast-api
+            cd /var/www/senselab-core-api
             
             # Poner aplicación en modo mantenimiento
             docker-compose exec -T php php artisan down --retry=60
@@ -102,8 +102,8 @@ jobs:
       - name: Run smoke tests
         run: |
           echo "Running smoke tests on production..."
-          curl -f https://api.ursol-cast.com/api/health/live || exit 1
-          curl -f https://api.ursol-cast.com/api/health/ready || exit 1
+          curl -f https://api.senselab-core.com/api/health/live || exit 1
+          curl -f https://api.senselab-core.com/api/health/ready || exit 1
 
       - name: Rollback on failure
         if: failure()
@@ -113,7 +113,7 @@ jobs:
         run: |
           echo "Deployment failed, rolling back..."
           ssh $PRODUCTION_USER@$PRODUCTION_SERVER << 'EOF'
-            cd /var/www/ursol-cast-api
+            cd /var/www/senselab-core-api
             # Sacar de modo mantenimiento si quedó activo
             docker-compose exec -T php php artisan up || true
             # Volver a la imagen anterior (tagged backup)

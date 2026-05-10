@@ -37,30 +37,30 @@ services:
 
   phpmyadmin:
     image: phpmyadmin:latest
-    container_name: ursol_phpmyadmin
+    container_name: senselab_phpmyadmin
     restart: unless-stopped
     ports:
       - "8080:80"
     environment:
       PMA_HOST: mysql
       PMA_PORT: 3306
-      PMA_USER: ursol_user
-      PMA_PASSWORD: ursol_password
+      PMA_USER: senselab_user
+      PMA_PASSWORD: senselab_password
     depends_on:
       - mysql
     networks:
-      - ursol_network
+      - senselab_network
 
   mailhog:
     image: mailhog/mailhog:latest
-    container_name: ursol_mailhog
+    container_name: senselab_mailhog
     restart: unless-stopped
     ports:
       - "1025:1025"
       - "8025:8025"
     networks:
-      - ursol_network
+      - senselab_network
 
 networks:
-  ursol_network:
+  senselab_network:
     driver: bridge

@@ -1,5 +1,5 @@
 # ANÁLISIS EXHAUSTIVO: Base de Datos vs Componentes Laravel - ✅ COMPLETADO
-## Proyecto: Ursol-CAST-API
+## Proyecto: Senselab_Core_API
 
 ---
 

@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\DB;
  *
  * Basado en historial de pagos, compras y comportamiento
  *
- * Desarrollado por Sistemas Ursol S.A.
+ * Desarrollado por Senselab
  */
 class CreditScoringService
 {

@@ -21,7 +21,7 @@ use OpenApi\Attributes as OA;
  * Tabla global sin empresa_id, utilizada para clasificación fiscal de productos.
  *
  * @package App\Http\Controllers\API
- * @author Sistemas Ursol S.A. - Jeremy Arias Solano
+ * @author Senselab - Jeremy Arias Solano
  */
 class CabyController extends Controller
 {

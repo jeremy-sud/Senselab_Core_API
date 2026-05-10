@@ -444,7 +444,7 @@ FASE_9_NUEVAS_TABLAS_CR_COMPLETADA.md
 Puedes verificar las tablas en: http://localhost:8080/phpmyadmin/
 
 **Base de datos:** api_db  
-**Servidor:** ursol_mysql  
+**Servidor:** senselab_mysql  
 **Puerto:** 33061
 
 **Buscar por nombre:**

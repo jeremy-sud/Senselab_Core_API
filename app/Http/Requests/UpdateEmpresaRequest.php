@@ -10,7 +10,7 @@ use Illuminate\Validation\Rule;
  * Request de validación para actualizar empresas
  * 
  * @author Jeremy Arias Solano <deadmooncr@gmail.com>
- * @copyright 2025 Sistemas Ursol S.A.
+ * @copyright 2025 Senselab
  */
 class UpdateEmpresaRequest extends FormRequest
 {

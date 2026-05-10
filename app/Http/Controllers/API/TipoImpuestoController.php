@@ -21,7 +21,7 @@ use OpenApi\Attributes as OA;
  * Tabla global sin empresa_id, incluye códigos de Hacienda Costa Rica.
  *
  * @package App\Http\Controllers\API
- * @author Sistemas Ursol S.A. - Jeremy Arias Solano
+ * @author Senselab - Jeremy Arias Solano
  */
 class TipoImpuestoController extends Controller
 {

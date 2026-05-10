@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
- * Seeder para crear los usuarios fundadores de Sistemas Ursol S.A.
+ * Seeder para crear los usuarios fundadores de Senselab
  *
  * Fundadores:
  * - Eduardo Ureña Solano (Fundador, CEO)
@@ -21,11 +21,11 @@ class FoundersSeeder extends Seeder
      */
     public function run(): void
     {
-        // Obtener empresa Sistemas Ursol S.A.
-        $empresa = DB::table('empresas')->where('nombre', 'Sistemas Ursol S.A.')->first();
+        // Obtener empresa Senselab
+        $empresa = DB::table('empresas')->where('nombre', 'Senselab')->first();
 
         if (!$empresa) {
-            $this->command->error('✗ Error: Empresa Sistemas Ursol S.A. no encontrada. Ejecuta EmpresaDemoSeeder primero.');
+            $this->command->error('✗ Error: Empresa Senselab no encontrada. Ejecuta EmpresaDemoSeeder primero.');
             return;
         }
 
@@ -51,9 +51,9 @@ class FoundersSeeder extends Seeder
         // =============================================================
         
         // Obtener contraseña de variable de entorno o usar default
-        $eduardoPassword = env('FOUNDER1_PASSWORD', 'Ursol2024!');
+        $eduardoPassword = env('FOUNDER1_PASSWORD', 'Senselab2024!');
         
-        if ($eduardoPassword === 'Ursol2024!') {
+        if ($eduardoPassword === 'Senselab2024!') {
             $this->command->warn('⚠️  ADVERTENCIA: Usando contraseña de desarrollo para Eduardo');
             $this->command->warn('⚠️  Cambiar FOUNDER1_PASSWORD en .env para producción');
         }
@@ -62,10 +62,10 @@ class FoundersSeeder extends Seeder
             'nombre' => 'Eduardo',
             'apellidos' => 'Ureña Solano',
             'cargo_id' => $cargoFundador->id,
-            'email' => 'eduardo@ursol.com',
+            'email' => 'eduardo@senselab.com',
             'password_hash' => Hash::make($eduardoPassword),
             'empresa_id' => $empresa->id,
-            'telefono' => '+506 8868-7765',
+            'telefono' => '+(506)8973-5665',
             'direccion' => 'San José, Costa Rica',
             'activo' => true,
             'eliminado' => false,
@@ -100,8 +100,8 @@ class FoundersSeeder extends Seeder
             'segundo_apellido' => 'Solano',
             'tipo_documento' => 'Cédula Nacional',
             'numero_documento' => '1-1234-5678', // Ficticio
-            'email' => 'eduardo@ursol.com',
-            'telefono' => '+506 8868-7765',
+            'email' => 'eduardo@senselab.com',
+            'telefono' => '+(506)8973-5665',
             'direccion' => 'San José, Costa Rica',
             'fecha_ingreso' => '2020-01-15',
             'cargo_id' => $cargoFundador->id,
@@ -111,17 +111,17 @@ class FoundersSeeder extends Seeder
         ]);
 
         $this->command->info('✓ Usuario Eduardo Ureña Solano (Fundador) creado exitosamente.');
-        $this->command->info('   Email: eduardo@ursol.com');
-        $this->command->info('   Password: Ursol2024!');
+        $this->command->info('   Email: eduardo@senselab.com');
+        $this->command->info('   Password: Senselab2024!');
 
         // =============================================================
         // CO-FUNDADOR: Jeremy Arias Solano
         // =============================================================
         
         // Obtener contraseña de variable de entorno o usar default
-        $jeremyPassword = env('FOUNDER2_PASSWORD', 'Ursol2024!');
+        $jeremyPassword = env('FOUNDER2_PASSWORD', 'Senselab2024!');
         
-        if ($jeremyPassword === 'Ursol2024!') {
+        if ($jeremyPassword === 'Senselab2024!') {
             $this->command->warn('⚠️  ADVERTENCIA: Usando contraseña de desarrollo para Jeremy');
             $this->command->warn('⚠️  Cambiar FOUNDER2_PASSWORD en .env para producción');
         }
@@ -130,7 +130,7 @@ class FoundersSeeder extends Seeder
             'nombre' => 'Jeremy',
             'apellidos' => 'Arias Solano',
             'cargo_id' => $cargoCoFundador->id,
-            'email' => 'jeremy@ursol.com',
+            'email' => 'jeremy@senselab.com',
             'password_hash' => Hash::make($jeremyPassword),
             'empresa_id' => $empresa->id,
             'telefono' => '+506 8765-4321',
@@ -167,7 +167,7 @@ class FoundersSeeder extends Seeder
             'segundo_apellido' => 'Solano',
             'tipo_documento' => 'Cédula Nacional',
             'numero_documento' => '1-8765-4321', // Ficticio
-            'email' => 'jeremy@ursol.com',
+            'email' => 'jeremy@senselab.com',
             'telefono' => '+506 8765-4321',
             'direccion' => 'San José, Costa Rica',
             'fecha_ingreso' => '2020-01-15',
@@ -178,8 +178,8 @@ class FoundersSeeder extends Seeder
         ]);
 
         $this->command->info('✓ Usuario Jeremy Arias Solano (Co-Fundador) creado exitosamente.');
-        $this->command->info('   Email: jeremy@ursol.com');
-        $this->command->info('   Password: Ursol2024!');
+        $this->command->info('   Email: jeremy@senselab.com');
+        $this->command->info('   Password: Senselab2024!');
 
         // =============================================================
         // Asignar TODOS los permisos al rol Super Administrador
@@ -200,16 +200,16 @@ class FoundersSeeder extends Seeder
         $this->command->info('🔐 Rol Super Administrador configurado con ' . count($permisos) . ' permisos totales.');
         $this->command->info('');
         $this->command->info('═══════════════════════════════════════════════════════════');
-        $this->command->info('    SISTEMAS URSOL S.A. - Usuarios Fundadores Creados');
+        $this->command->info('    SISTEMAS SENSELAB S.A. - Usuarios Fundadores Creados');
         $this->command->info('═══════════════════════════════════════════════════════════');
         $this->command->info('');
         $this->command->info('  👤 Eduardo Ureña Solano (Fundador)');
-        $this->command->info('     ✉️  eduardo@ursol.com');
-        $this->command->info('     🔑 Ursol2024!');
+        $this->command->info('     ✉️  eduardo@senselab.com');
+        $this->command->info('     🔑 Senselab2024!');
         $this->command->info('');
         $this->command->info('  👤 Jeremy Arias Solano (Co-Fundador)');
-        $this->command->info('     ✉️  jeremy@ursol.com');
-        $this->command->info('     🔑 Ursol2024!');
+        $this->command->info('     ✉️  jeremy@senselab.com');
+        $this->command->info('     🔑 Senselab2024!');
         $this->command->info('');
         $this->command->info('  🛡️  Ambos usuarios tienen rol: Super Administrador');
         $this->command->info('  ⚠️  Cambiar contraseñas antes de pasar a producción!');

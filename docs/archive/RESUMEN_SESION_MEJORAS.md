@@ -1,4 +1,4 @@
-# 🎯 RESUMEN SESIÓN DE MEJORAS - Ursol CAST API
+# 🎯 RESUMEN SESIÓN DE MEJORAS - Senselab Core API
 
 **Fecha**: $(date)  
 **Commits realizados**: 12  
@@ -341,4 +341,4 @@ $ git log --oneline --since="2 hours ago" | wc -l
 
 **Generado**: $(date)  
 **Autor**: GitHub Copilot  
-**Proyecto**: Ursol CAST API - Laravel 12
+**Proyecto**: Senselab Core API - Laravel 12

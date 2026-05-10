@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * Gestiona mensajes de respuesta de Hacienda (DGT) para facturación electrónica.
  *
  * @author Jeremy Arias Solano <deadmooncr@gmail.com>
- * @copyright 2025 Sistemas Ursol S.A.
+ * @copyright 2025 Senselab
  */
 class MensajeHacienda extends Model
 {

@@ -20,7 +20,7 @@ use OpenApi\Attributes as OA;
  * Provincias, cantones, distritos, zonas de ventas y rutas
  *
  * @author GitHub Copilot
- * @copyright 2025 Sistemas Ursol S.A.
+ * @copyright 2025 Senselab
  */
 
 #[OA\Tag(

@@ -49,7 +49,7 @@ return [
     |
     */
 
-    'service_name' => env('TRACING_SERVICE_NAME', env('APP_NAME', 'ursol-cast-api')),
+    'service_name' => env('TRACING_SERVICE_NAME', env('APP_NAME', 'senselab-core-api')),
 
     /*
     |--------------------------------------------------------------------------
@@ -163,7 +163,7 @@ return [
     */
 
     'default_attributes' => [
-        'service.namespace' => 'ursol',
+        'service.namespace' => 'senselab',
         'deployment.environment' => env('APP_ENV', 'production'),
         'host.name' => gethostname() ?: 'unknown',
     ],

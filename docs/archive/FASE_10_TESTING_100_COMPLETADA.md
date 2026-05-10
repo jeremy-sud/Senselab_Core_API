@@ -1,7 +1,7 @@
 # FASE 10: Testing 100% Completada ✅
 
 **Fecha de Completado:** 23 de noviembre de 2025  
-**Desarrollado por:** Sistemas Ursol S.A.  
+**Desarrollado por:** Senselab  
 **Estado Histórico:** ✅ **COMPLETADA** - 100% de tests pasando en ese momento
 
 ---
@@ -308,8 +308,8 @@ CREATE DATABASE IF NOT EXISTS `api_db_testing`
   CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- Otorgar permisos al usuario
-GRANT ALL PRIVILEGES ON `api_db`.* TO 'ursol_user'@'%';
-GRANT ALL PRIVILEGES ON `api_db_testing`.* TO 'ursol_user'@'%';
+GRANT ALL PRIVILEGES ON `api_db`.* TO 'senselab_user'@'%';
+GRANT ALL PRIVILEGES ON `api_db_testing`.* TO 'senselab_user'@'%';
 
 FLUSH PRIVILEGES;
 ```
@@ -446,9 +446,9 @@ DB_PASSWORD=
 - GitHub: [@jeremy-sud](https://github.com/jeremy-sud)
 
 **Empresa:**
-- Sistemas Ursol S.A.
-- Email: sistemas@ursol.com
-- WhatsApp: +506 8868-7765
+- Senselab
+- Email: deadmooncr@gmail.com
+- WhatsApp: +(506)8973-5665
 
 ---
 
@@ -464,11 +464,11 @@ La FASE 10 ha sido completada exitosamente con:
 - ✅ **0 problemas** detectados en init.sql
 - ✅ **Base sólida** para desarrollo continuo
 
-El proyecto Ursol CAST API cuenta ahora con una **suite de testing robusta y completa** que garantiza la calidad del código y facilita el desarrollo de nuevas features con confianza.
+El proyecto Senselab Core API cuenta ahora con una **suite de testing robusta y completa** que garantiza la calidad del código y facilita el desarrollo de nuevas features con confianza.
 
 ---
 
 **¡FASE 10 COMPLETADA CON ÉXITO! 🎉**
 
 *Fecha: 23 de noviembre de 2025*  
-*Desarrollado con ❤️ por Sistemas Ursol S.A.*
+*Desarrollado con ❤️ por Senselab*

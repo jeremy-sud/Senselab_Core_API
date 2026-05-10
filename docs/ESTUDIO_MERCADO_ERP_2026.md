@@ -1,7 +1,7 @@
 # 🔍 Estudio de Mercado — ERPs y Facturación Electrónica (Abril 2026)
 
 **Fecha de investigación:** 14 de Abril 2026  
-**Propósito:** Fundamentar la estrategia de pricing de Ursol CAST API v5.0.1  
+**Propósito:** Fundamentar la estrategia de pricing de Senselab Core API v5.0.1  
 **Documento principal:** [VALORACION_COMERCIAL_Y_PRICING.md](VALORACION_COMERCIAL_Y_PRICING.md)
 
 ---
@@ -29,10 +29,10 @@ Se investigaron los precios públicos de **8 competidores** directos e indirecto
 | Banda | Rango mensual | Productos | Alcance |
 |-------|:------------:|-----------|---------|
 | **Baja** | $0 - $120 | Alegra, Facturador.cr, Zoho Books | Contabilidad + FE básica. Sin ERP real. |
-| **Media (vacía)** | $120 - $500 | **Ninguno en CR** | Gap de mercado. Oportunidad para Ursol. |
+| **Media (vacía)** | $120 - $500 | **Ninguno en CR** | Gap de mercado. Oportunidad para Senselab. |
 | **Alta** | $500 - $3,000+ | Softland, Exactus, SAP B1 | ERP legacy enterprise. Caro, lento, sin IA. |
 
-> **Conclusión:** Ursol CAST se posiciona en la banda media ($149-$899), donde actualmente no hay competidores locales con oferta ERP + IA + FE.
+> **Conclusión:** Senselab CAST se posiciona en la banda media ($149-$899), donde actualmente no hay competidores locales con oferta ERP + IA + FE.
 
 ### 2. Alegra domina el segmento bajo en CR
 
@@ -73,7 +73,7 @@ Se investigaron los precios públicos de **8 competidores** directos e indirecto
 - Sin localización CR ni FE v4.4
 - Requiere partner para implementación ($5K-$30K)
 - Sin IA integrada, UX menos pulida
-- **Relevancia:** Valida que el modelo "open source + hosting pagado" funciona, pero no compite en features con Ursol CAST.
+- **Relevancia:** Valida que el modelo "open source + hosting pagado" funciona, pero no compite en features con Senselab CAST.
 
 ### 7. Ningún competidor ofrece IA + FE + Multi-tenancy + RBAC juntos
 
@@ -83,7 +83,7 @@ Se verificó que **ningún producto** en el rango $0-$500/mes ofrece simultánea
 - Multi-tenancy con BD aislada por empresa
 - RBAC granular con 68 permisos y 8 roles
 
-Esto es el **principal diferenciador** de Ursol CAST y justifica su posicionamiento premium sobre Alegra.
+Esto es el **principal diferenciador** de Senselab CAST y justifica su posicionamiento premium sobre Alegra.
 
 ### 8. Holded valida el modelo de add-ons modulares
 
@@ -109,7 +109,7 @@ Esto es el **principal diferenciador** de Ursol CAST y justifica su posicionamie
 
 ---
 
-## Implicaciones para Ursol CAST
+## Implicaciones para Senselab CAST
 
 1. **Pricing de $149/mes (Pro)** está justificado: ofrece 3x más features que Alegra Plus ($120) y es 4x más barato que Softland ($500+).
 
@@ -119,7 +119,7 @@ Esto es el **principal diferenciador** de Ursol CAST y justifica su posicionamie
 
 4. **El tier Starter gratuito** es necesario para competir con Odoo Free, Zoho Free y el trial de 15 días de Alegra. Genera pipeline de leads y reduce la barrera de entrada.
 
-5. **Cobrar por empresa (no por usuario)** es la estrategia correcta para CR: las PYMEs ticas son muy sensibles al costo incremental por usuario. Alegra cobra por empresa, SAP por usuario. Ursol debe seguir el modelo Alegra en este aspecto.
+5. **Cobrar por empresa (no por usuario)** es la estrategia correcta para CR: las PYMEs ticas son muy sensibles al costo incremental por usuario. Alegra cobra por empresa, SAP por usuario. Senselab debe seguir el modelo Alegra en este aspecto.
 
 ---
 

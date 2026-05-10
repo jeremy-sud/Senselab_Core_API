@@ -1,8 +1,8 @@
-# Curso Completo: Ursol CAST API — De Cero a Experto
+# Curso Completo: Senselab Core API — De Cero a Experto
 
 **Fecha de creación:** 1 de abril de 2026  
 **Versión de la API:** v4.1.0  
-**Desarrollado por:** Sistemas Ursol S.A.  
+**Desarrollado por:** Senselab  
 **Desarrollador principal:** Jeremy Arias Solano
 
 > Este documento es un curso integral y autodidacta diseñado para que cualquier desarrollador —desde junior hasta senior— comprenda la API en su totalidad: arquitectura, módulos, patrones, seguridad, testing, despliegue, y su evolución planificada (roadmap). Está basado enteramente en el código fuente real y documentación verificada del proyecto.
@@ -30,11 +30,11 @@
 
 # 1. Introducción y Visión General
 
-## 1.1. ¿Qué es Ursol CAST API?
+## 1.1. ¿Qué es Senselab Core API?
 
-**Ursol CAST API** es un sistema ERP (Enterprise Resource Planning) empresarial completo construido sobre **Laravel 12** y **PHP 8.4**, diseñado específicamente para empresas costarricenses. El acrónimo CAST hace referencia a las áreas principales: **Contabilidad, Administración, Servicios y Tecnología**.
+**Senselab Core API** es un sistema ERP (Enterprise Resource Planning) empresarial completo construido sobre **Laravel 12** y **PHP 8.4**, diseñado específicamente para empresas costarricenses. El acrónimo CAST hace referencia a las áreas principales: **Contabilidad, Administración, Servicios y Tecnología**.
 
-El proyecto es desarrollado por **Sistemas Ursol S.A.**, empresa con más de 30 años de experiencia en soluciones tecnológicas en Costa Rica. Representa más de 5 años de evolución continua en sistemas empresariales.
+El proyecto es desarrollado por **Senselab**, empresa con más de 30 años de experiencia en soluciones tecnológicas en Costa Rica. Representa más de 5 años de evolución continua en sistemas empresariales.
 
 ## 1.2. Misión del proyecto
 
@@ -142,8 +142,8 @@ Esta es la forma más rápida y consiste de iniciar todo el entorno:
 
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/jeremy-sud/Ursol-CAST-API.git
-cd Ursol-CAST-API
+git clone https://github.com/SenseLab-dev/Senselab_Core_API.git
+cd Senselab_Core_API
 
 # 2. Ejecutar script de instalación automática
 bash docker/docker-start.sh
@@ -165,14 +165,14 @@ El script `docker-start.sh` automatiza:
 
 | Servicio | Container | Puerto | Descripción |
 |----------|-----------|--------|-------------|
-| Nginx | `ursol_nginx` | 8000 | Servidor web |
-| PHP-FPM | `ursol_php` | 9000 (interno) | Aplicación Laravel |
-| MySQL | `ursol_mysql` | 3306 | Base de datos |
-| Redis | `ursol_redis` | 6379 | Cache, colas, sesiones |
-| PHPMyAdmin | `ursol_phpmyadmin` | 8080 | Admin BD (profile: tools) |
-| Mailhog | `ursol_mailhog` | 1025/8025 | Testing emails (profile: dev) |
-| Queue Worker | `ursol_queue` | — | Procesador de colas (profile: production) |
-| Scheduler | `ursol_scheduler` | — | Tareas programadas (profile: production) |
+| Nginx | `senselab_nginx` | 8000 | Servidor web |
+| PHP-FPM | `senselab_php` | 9000 (interno) | Aplicación Laravel |
+| MySQL | `senselab_mysql` | 3306 | Base de datos |
+| Redis | `senselab_redis` | 6379 | Cache, colas, sesiones |
+| PHPMyAdmin | `senselab_phpmyadmin` | 8080 | Admin BD (profile: tools) |
+| Mailhog | `senselab_mailhog` | 1025/8025 | Testing emails (profile: dev) |
+| Queue Worker | `senselab_queue` | — | Procesador de colas (profile: production) |
+| Scheduler | `senselab_scheduler` | — | Tareas programadas (profile: production) |
 
 ### Comandos Docker útiles (Makefile)
 ```bash
@@ -196,8 +196,8 @@ make ps            # Estado de contenedores
 
 ```bash
 # 1. Clonar
-git clone https://github.com/jeremy-sud/Ursol-CAST-API.git
-cd Ursol-CAST-API
+git clone https://github.com/SenseLab-dev/Senselab_Core_API.git
+cd Senselab_Core_API
 
 # 2. Instalar dependencias PHP
 composer install
@@ -235,7 +235,7 @@ curl http://localhost:8000/up
 curl -X POST http://localhost:8000/api/login \
   -H "Accept: application/json" \
   -H "Content-Type: application/json" \
-  -d '{"email": "admin@ursol.com", "password": "admin123"}'
+  -d '{"email": "admin@senselab.com", "password": "admin123"}'
 # → {"success":true,"data":{"usuario":{...},"token":"1|abc...","permisos":[...]}}
 
 # Tests pasan
@@ -247,7 +247,7 @@ php artisan test
 
 | Rol | Email | Contraseña |
 |-----|-------|------------|
-| Administrador | `admin@ursol.com` | `admin123` |
+| Administrador | `admin@senselab.com` | `admin123` |
 
 > **Importante**: Los seeders de demostración (`DemoDataSeeder`) crean estos usuarios. Los datos de producción se cargan con `MasterDataSeeder` (14 catálogos idempotentes).
 
@@ -299,7 +299,7 @@ php vendor/bin/phpstan analyse app/ --level 8  # Análisis estático
 ## 3.2. Estructura de carpetas detallada
 
 ```
-Ursol-CAST-API/
+Senselab_Core_API/
 ├── app/
 │   ├── Console/                    # Comandos Artisan custom (make:erp-module)
 │   ├── DTOs/                       # 60 Data Transfer Objects
@@ -459,7 +459,7 @@ Headers soportados: `X-Empresa-Id`, `X-Tenant-Id`, `X-Tenant`.
 
 ### Por subdominio
 ```bash
-curl -X GET https://mi-empresa.api.ursol.com/api/ventas \
+curl -X GET https://mi-empresa.api.senselab.com/api/ventas \
     -H "Authorization: Bearer $TOKEN"
 ```
 
@@ -557,7 +557,7 @@ La API usa **tokens personales** para autenticación stateless.
 curl -X POST http://localhost:8000/api/login \
   -H "Accept: application/json" \
   -H "Content-Type: application/json" \
-  -d '{"email": "admin@ursol.com", "password": "admin123"}'
+  -d '{"email": "admin@senselab.com", "password": "admin123"}'
 
 # Response (200)
 {
@@ -566,10 +566,10 @@ curl -X POST http://localhost:8000/api/login \
     "usuario": {
       "id": 1,
       "nombre": "Administrador Sistema",
-      "email": "admin@ursol.com",
+      "email": "admin@senselab.com",
       "empresa_id": 1,
       "roles": [{"id": 1, "nombre": "Administrador", "slug": "administrador"}],
-      "empresa": {"id": 1, "nombre": "Sistemas Ursol S.A."}
+      "empresa": {"id": 1, "nombre": "Senselab"}
     },
     "token": "1|dkjf9283hd9fh2938hf9823hf9823hf9823h",
     "permisos": [
@@ -1469,7 +1469,7 @@ Estructura de manifests con Kustomize:
 ```
 kubernetes/
 ├── base/                    # Configuración base
-│   ├── namespace.yaml       # Namespace: ursol-cast
+│   ├── namespace.yaml       # Namespace: senselab-core
 │   ├── configmap.yaml       # Variables de entorno
 │   ├── secret.yaml          # Credenciales
 │   ├── deployment.yaml      # API (PHP-FPM + Nginx sidecar)
@@ -1637,7 +1637,7 @@ BAJO (deuda técnica):
 | Guía de FormRequests | `docs/api/FORMREQUESTS_USAGE_GUIDE.md` | Validaciones |
 | Facturación electrónica | `docs/hacienda/FACTURACION_ELECTRONICA_API.md` | Hacienda integration |
 | Funcionalidades IA | `docs/IA_FUNCIONALIDADES.md` | 10 servicios de IA detallados |
-| Glosario completo | `docs/GLOSARIO_COMPLETO_URSOL_CAST_API.md` | Toda la terminología |
+| Glosario completo | `docs/GLOSARIO_COMPLETO_SENSELAB_CAST_API.md` | Toda la terminología |
 | Estado del proyecto | `ESTADO_ACTUAL_PROYECTO.md` | Estadísticas verificadas |
 | Roadmap | `ROADMAP.md` | Fases y planificación |
 | Changelog | `CHANGELOG.md` | Historial de cambios |
@@ -1694,14 +1694,14 @@ make ci-test                # Pipeline CI
 
 | Concepto | Valor |
 |----------|-------|
-| Email soporte | sistemas@ursol.com |
+| Email soporte | deadmooncr@gmail.com |
 | WhatsApp | +506 8868 7765 |
-| Sitio web | ursol.com / ursol.net |
-| GitHub | github.com/SistemasUrsol/Ursol-CAST-API |
-| Login demo | admin@ursol.com / admin123 |
+| Sitio web | senselab.com / senselab.com |
+| GitHub | github.com/SenseLab-dev/Senselab_Core_API |
+| Login demo | admin@senselab.com / admin123 |
 
 ---
 
 **Última actualización:** 1 de abril de 2026  
 **Versión del curso:** 1.0.0  
-**Basado en:** Código fuente Ursol CAST API v4.1.0 (auditoría marzo 2026)
+**Basado en:** Código fuente Senselab Core API v4.1.0 (auditoría marzo 2026)

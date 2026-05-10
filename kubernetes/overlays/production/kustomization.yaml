@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: ursol-cast-prod
+namespace: senselab-core-prod
 
 resources:
   - ../../base
@@ -15,14 +15,14 @@ patches:
         value: 3
     target:
       kind: Deployment
-      name: ursol-cast-api
+      name: senselab-core-api
   - patch: |-
       - op: replace
         path: /spec/replicas
         value: 3
     target:
       kind: Deployment
-      name: ursol-cast-queue-worker
+      name: senselab-core-queue-worker
   - patch: |-
       - op: replace
         path: /spec/minReplicas
@@ -32,7 +32,7 @@ patches:
         value: 20
     target:
       kind: HorizontalPodAutoscaler
-      name: ursol-cast-api-hpa
+      name: senselab-core-api-hpa
   - patch: |-
       - op: replace
         path: /spec/resources/requests/storage
@@ -42,10 +42,10 @@ patches:
       name: mysql-pvc
 
 configMapGenerator:
-  - name: ursol-cast-config
+  - name: senselab-core-config
     behavior: merge
     literals:
       - APP_ENV=production
       - APP_DEBUG=false
-      - APP_URL=https://api.ursol.com
+      - APP_URL=https://api.senselab.com
       - LOG_LEVEL=warning

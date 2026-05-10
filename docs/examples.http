@@ -1,4 +1,4 @@
-### REST Client Examples for Ursol CAST API
+### REST Client Examples for Senselab Core API
 ### Variables and Environment Setup
 
 @baseUrl = http://localhost:8000/api/v1

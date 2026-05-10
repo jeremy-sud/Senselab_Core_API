@@ -18,7 +18,7 @@
 
 ### Archivos Creados
 ```
-📦 Workspace: /home/dawnweaber/Workspace/Ursol-CAST-API
+📦 Workspace: /home/dawnweaber/Workspace/Senselab_Core_API
 
 ✅ FASE 1.5 (Rate Limiting)
    config/rate-limiting.php (159 líneas)

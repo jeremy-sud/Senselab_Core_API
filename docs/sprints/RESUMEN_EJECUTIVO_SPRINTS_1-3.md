@@ -1,6 +1,6 @@
 # Resumen Ejecutivo: Sprints 1-3 Completados
 
-**Proyecto**: Ursol CAST API  
+**Proyecto**: Senselab Core API  
 **Período**: 23 de noviembre de 2025  
 **Estado**: ✅ **3 SPRINTS COMPLETADOS AL 100%**
 

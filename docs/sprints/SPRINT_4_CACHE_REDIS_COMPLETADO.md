@@ -1,7 +1,7 @@
 # Sprint 4: Implementación de Cache con Redis - COMPLETADO ✅
 
 **Fecha:** 23 de noviembre de 2025  
-**Responsable:** Sistemas Ursol S.A.  
+**Responsable:** Senselab  
 **Estado:** 100% Completado
 
 ---
@@ -282,7 +282,7 @@ $cacheKey = 'permisos_list_' . md5(json_encode($request->all()));
 ```yaml
 redis:
   image: redis:7-alpine
-  container_name: ursol_redis
+  container_name: senselab_redis
   ports:
     - "6379:6379"
   volumes:
@@ -449,16 +449,16 @@ GET /api/cabys?search=computadora (cache hit)
 
 ```bash
 # Ver estadísticas de Redis
-docker exec -it ursol_redis redis-cli INFO stats
+docker exec -it senselab_redis redis-cli INFO stats
 
 # Ver claves en cache
-docker exec -it ursol_redis redis-cli KEYS "*"
+docker exec -it senselab_redis redis-cli KEYS "*"
 
 # Limpiar cache específico
-docker exec -it ursol_redis redis-cli FLUSHDB
+docker exec -it senselab_redis redis-cli FLUSHDB
 
 # Monitorear en tiempo real
-docker exec -it ursol_redis redis-cli MONITOR
+docker exec -it senselab_redis redis-cli MONITOR
 ```
 
 ---
@@ -491,7 +491,7 @@ docker exec -it ursol_redis redis-cli MONITOR
 ## 👥 Equipo
 
 **Desarrollador Principal:** GitHub Copilot  
-**Responsable Técnico:** Sistemas Ursol S.A.  
+**Responsable Técnico:** Senselab  
 **Framework:** Laravel 12 + PHP 8.2+ + Redis 7  
 **Fecha de Completitud:** 23 de noviembre de 2025
 

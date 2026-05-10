@@ -41,8 +41,8 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ursol-cast-api:staging-${{ github.sha }} .
-          docker tag ursol-cast-api:staging-${{ github.sha }} ursol-cast-api:staging-latest
+          docker build -t senselab-core-api:staging-${{ github.sha }} .
+          docker tag senselab-core-api:staging-${{ github.sha }} senselab-core-api:staging-latest
 
       - name: Deploy to staging server
         env:
@@ -63,11 +63,11 @@ jobs:
             --exclude='node_modules' \
             --exclude='storage/logs/*' \
             --exclude='storage/framework/cache/*' \
-            ./ $STAGING_USER@$STAGING_SERVER:/var/www/ursol-cast-api-staging/
+            ./ $STAGING_USER@$STAGING_SERVER:/var/www/senselab-core-api-staging/
           
           # Ejecutar comandos en el servidor
           ssh $STAGING_USER@$STAGING_SERVER << 'EOF'
-            cd /var/www/ursol-cast-api-staging
+            cd /var/www/senselab-core-api-staging
             docker-compose -f docker-compose.staging.yml down
             docker-compose -f docker-compose.staging.yml up -d --build
             docker-compose -f docker-compose.staging.yml exec -T php php artisan migrate --force
@@ -80,7 +80,7 @@ jobs:
       - name: Run smoke tests
         run: |
           echo "Running smoke tests on staging..."
-          curl -f https://staging.ursol-cast.com/api/health/live || exit 1
+          curl -f https://staging.senselab-core.com/api/health/live || exit 1
 
       - name: Notify deployment
         if: always()

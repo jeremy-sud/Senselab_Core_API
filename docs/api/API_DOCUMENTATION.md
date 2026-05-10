@@ -1,6 +1,6 @@
-# API REST - Ursol CAST API
+# API REST - Senselab Core API
 
-**Desarrollado por Sistemas Ursol S.A.**  
+**Desarrollado por Senselab**  
 *Soluciones Tecnológicas | Costa Rica | 30 años de experiencia*
 
 ---
@@ -94,7 +94,7 @@ Iniciar sesión y obtener token de acceso
 **Request:**
 ```json
 {
-  "email": "admin@ursol.com",
+  "email": "admin@senselab.com",
   "password": "admin123"
 }
 ```
@@ -105,7 +105,7 @@ curl -X POST http://localhost:8000/api/login \
   -H "Accept: application/json" \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "admin@ursol.com",
+    "email": "admin@senselab.com",
     "password": "admin123"
   }'
 ```
@@ -118,7 +118,7 @@ curl -X POST http://localhost:8000/api/login \
     "usuario": {
       "id": 1,
       "nombre": "Administrador Sistema",
-      "email": "admin@ursol.com",
+      "email": "admin@senselab.com",
       "empresa_id": 1,
       "cargo_id": 1,
       "activo": true,
@@ -131,7 +131,7 @@ curl -X POST http://localhost:8000/api/login \
       ],
       "empresa": {
         "id": 1,
-        "nombre": "Sistemas Ursol S.A.",
+        "nombre": "Senselab",
         "identificacion": "3-101-123456"
       }
     },
@@ -167,7 +167,7 @@ curl -X POST http://localhost:8000/api/login \
 ```php
 // Ver AuthTest::test_usuario_puede_hacer_login()
 $response = $this->postJson('/api/login', [
-    'email' => 'admin@ursol.com',
+    'email' => 'admin@senselab.com',
     'password' => 'admin123',
 ]);
 
@@ -257,11 +257,11 @@ Accept: application/json
   "id": 1,
   "nombre": "Administrador",
   "apellidos": "Sistema",
-  "email": "admin@ursol.com",
+  "email": "admin@senselab.com",
   "empresa": {
     "id": 1,
-    "nombre": "Sistemas Ursol S.A.",
-    "razon_social": "Sistemas Ursol Sociedad Anónima"
+    "nombre": "Senselab",
+    "razon_social": "Senselab Sociedad Anónima"
   },
   "cargo": {
     "id": 1,
@@ -402,7 +402,7 @@ Content-Type: application/json
 Accept: application/json
 X-Empresa-Id: {id}
 
-> Envía `X-Empresa-Id` cuando consumas la API desde `localhost` o dominios genéricos. Si usas un subdominio dedicado (`https://{subdominio}.api.ursol.com`), el identificador se infiere automáticamente.
+> Envía `X-Empresa-Id` cuando consumas la API desde `localhost` o dominios genéricos. Si usas un subdominio dedicado (`https://{subdominio}.api.senselab.com`), el identificador se infiere automáticamente.
 ```
 
 ### Ejemplo completo con cURL
@@ -413,7 +413,7 @@ curl -X POST http://localhost:8000/api/login \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -d '{
-    "email": "admin@ursol.com",
+    "email": "admin@senselab.com",
     "password": "admin123"
   }'
 
@@ -1101,13 +1101,13 @@ Eliminar orden (solo en estado `borrador`)
 
 ## 📞 Soporte y Contacto
 
-**Sistemas Ursol S.A.**
-- **Email Corporativo**: sistemas@ursol.com
+**Senselab**
+- **Email Corporativo**: deadmooncr@gmail.com
 - **Email Técnico**: deadmooncr@gmail.com
-- **WhatsApp**: +506 8868-7765
-- **Web**: [ursol.com](https://ursol.com) | [ursol.net](https://ursol.net)
-- **Repositorio**: [Ursol Reposit for Developers](https://sites.google.com/view/repdevursol/home/repositorio)
-- **GitHub**: [github.com/SistemasUrsol](https://github.com/orgs/SistemasUrsol)
+- **WhatsApp**: +(506)8973-5665
+- **Web**: [senselab.com](https://senselab.com) | [senselab.com](https://senselab.com)
+- **Repositorio**: [Senselab Reposit for Developers](https://sites.google.com/view/repdevsenselab/home/repositorio)
+- **GitHub**: [github.com/SenseLab-dev](https://github.com/orgs/SenseLab-dev)
 - **Desarrollador**: [Jeremy Arias Solano](https://github.com/jeremy-sud)
 
 ---
@@ -1115,9 +1115,9 @@ Eliminar orden (solo en estado `borrador`)
 ## 🐛 Reportar Issues
 
 Para reportar errores o solicitar nuevas funcionalidades:
-1. Accede a [GitHub Issues](https://github.com/SistemasUrsol/Ursol-CAST-API/issues)
-2. Envía un correo a sistemas@ursol.com
-3. Contacta por WhatsApp al +506 8868-7765
+1. Accede a [GitHub Issues](https://github.com/SenseLab-dev/Senselab_Core_API/issues)
+2. Envía un correo a deadmooncr@gmail.com
+3. Contacta por WhatsApp al +(506)8973-5665
 
 ---
 

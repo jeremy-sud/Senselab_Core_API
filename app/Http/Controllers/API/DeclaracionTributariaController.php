@@ -19,7 +19,7 @@ use OpenApi\Attributes as OA;
  * D104 (IVA), D101 (Renta), D103, D150, D151 ante Hacienda
  *
  * @author GitHub Copilot
- * @copyright 2025 Sistemas Ursol S.A.
+ * @copyright 2025 Senselab
  */
 
 #[OA\Tag(

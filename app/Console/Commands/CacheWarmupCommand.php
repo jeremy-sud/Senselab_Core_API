@@ -27,7 +27,7 @@ use App\Models\{
  * reduciendo consultas a base de datos en las primeras solicitudes.
  *
  * @package App\Console\Commands
- * @author Sistemas Ursol S.A.
+ * @author Senselab
  */
 class CacheWarmupCommand extends Command
 {

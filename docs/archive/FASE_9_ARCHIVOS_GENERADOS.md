@@ -1,8 +1,8 @@
 # 📁 Generación Completa de Archivos FASE 9 - Diciembre 2024
 
-**Proyecto:** Ursol CAST API  
+**Proyecto:** Senselab Core API  
 **Desarrollador:** Jeremy Arias Solano  
-**Empresa:** Sistemas Ursol S.A. - Costa Rica  
+**Empresa:** Senselab - Costa Rica  
 **Fecha:** 23 de noviembre de 2024  
 **Commits:** `7d629e2`, `83481a3`
 
@@ -338,7 +338,7 @@ Se han creado exitosamente **60 archivos nuevos** para las 12 tablas de FASE 9:
 ---
 
 **Autor:** Jeremy Arias Solano  
-**Empresa:** Sistemas Ursol S.A.  
+**Empresa:** Senselab  
 **País:** Costa Rica 🇨🇷  
 **Fecha:** 23 de Noviembre de 2024  
 **Commits:** 7d629e2, 83481a3

@@ -57,14 +57,14 @@ class FacturacionElectronicaE2ETest extends TestCase
 
         // Crear empresa y usuario
         $this->empresa = Empresa::factory()->create([
-            'razon_social' => 'Sistemas Ursol S.A.',
+            'razon_social' => 'Senselab',
             'num_identificacion_dgt' => '3101123456',
             'tipo_identificacion' => '02',
             'provincia' => '1',
             'canton' => '01',
             'distrito' => '01',
             'direccion' => 'San José, Costa Rica',
-            'email' => 'info@ursol.com',
+            'email' => 'info@senselab.com',
             'telefono' => '22223333',
         ]);
 

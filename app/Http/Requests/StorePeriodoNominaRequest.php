@@ -9,7 +9,7 @@ use Illuminate\Validation\Rule;
  * Request de validación para crear Período de Nómina
  *
  * @package App\Http\Requests
- * @author Sistemas Ursol S.A. - Jeremy Arias Solano
+ * @author Senselab - Jeremy Arias Solano
  */
 class StorePeriodoNominaRequest extends FormRequest
 {

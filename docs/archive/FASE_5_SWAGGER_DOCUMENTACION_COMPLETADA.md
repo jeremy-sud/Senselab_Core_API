@@ -1,7 +1,7 @@
 # FASE 5: Documentación y Swagger - COMPLETADA ✅
 
 **Fecha:** 2024  
-**Desarrollador:** Sistemas Ursol S.A.  
+**Desarrollador:** Senselab  
 **Estado:** COMPLETADA
 
 ---
@@ -27,10 +27,10 @@ La **FASE 5** se centró en la documentación completa del proyecto, implementan
 
 **Configuración:**
 - Archivo publicado: `config/l5-swagger.php`
-- Título: "Ursol CAST API - ERP System"
+- Título: "Senselab Core API - ERP System"
 - Autenticación: Bearer Token (Sanctum)
 - Servidor desarrollo: `http://localhost:8000`
-- Servidor producción: `https://api.ursol.com`
+- Servidor producción: `https://api.senselab.com`
 - Auto-regeneración activada en desarrollo
 
 **Acceso:**
@@ -219,7 +219,7 @@ http://localhost:8000/api/documentation
 1. Hacer login en `POST /api/login`:
    ```json
    {
-     "email": "admin@ursol.com",
+     "email": "admin@senselab.com",
      "password": "admin123"
    }
    ```
@@ -338,6 +338,6 @@ El proyecto ahora cuenta con:
 
 ---
 
-**Desarrollado por Sistemas Ursol S.A.**  
+**Desarrollado por Senselab**  
 *30 años de experiencia en soluciones tecnológicas*  
 *Costa Rica - 2024*

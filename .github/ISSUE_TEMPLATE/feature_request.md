@@ -37,12 +37,12 @@ assignees: jeremy-sud
 
 ---
 
-**Nota**: Sistemas Ursol S.A. revisará todas las solicitudes de features para evaluar su implementación.
+**Nota**: Senselab revisará todas las solicitudes de features para evaluar su implementación.
 
 **Contacto:**
-- Email: sistemas@ursol.com
-- WhatsApp: +506 8868-7765
+- Email: deadmooncr@gmail.com
+- WhatsApp: +(506)8973-5665
 
 ---
-**Desarrollado por Sistemas Ursol S.A.**  
+**Desarrollado por Senselab**  
 Costa Rica | 30 años de experiencia

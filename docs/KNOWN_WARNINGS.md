@@ -13,7 +13,7 @@
 
 **Contraseñas hardcodeadas en seeders**
 
-- Los seeders `FoundersSeeder` y `UsuarioAdminSeeder` contienen contraseñas en texto plano (`Ursol2024!`, `admin123`).
+- Los seeders `FoundersSeeder` y `UsuarioAdminSeeder` contienen contraseñas en texto plano (`Senselab2024!`, `admin123`).
 - Acción sugerida: Usar variables de entorno para las contraseñas en seeders y regenerar en producción.
 - Riesgo: Si los seeders se ejecutan en producción sin cambio, cualquier persona con acceso al código conoce las credenciales iniciales.
 

@@ -1,7 +1,7 @@
 # 📊 RESUMEN EJECUTIVO - Base de Datos y Propuesta de Expansión
 
 **Fecha**: 22 de noviembre de 2025  
-**Proyecto**: Ursol CAST API - Costa Rica  
+**Proyecto**: Senselab Core API - Costa Rica  
 
 ---
 

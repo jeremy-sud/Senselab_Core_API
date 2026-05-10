@@ -5,14 +5,14 @@
 set -e
 
 echo "════════════════════════════════════════════════════════"
-echo "🔍 VERIFICACIÓN DE DATOS - BASES DE DATOS URSOL"
+echo "🔍 VERIFICACIÓN DE DATOS - BASES DE DATOS SENSELAB"
 echo "════════════════════════════════════════════════════════"
 echo ""
 
 HOST="127.0.0.1"
 PORT="33061"
-USER="ursol_user"
-PASS="ursol_password"
+USER="senselab_user"
+PASS="senselab_password"
 
 # Colores
 GREEN='\033[0;32m'

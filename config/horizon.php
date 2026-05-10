@@ -187,7 +187,7 @@ return [
     | These settings determine how many workers each queue should have and
     | how long they should be allowed to work before timing out.
     |
-    | Colas configuradas para Ursol CAST API:
+    | Colas configuradas para Senselab Core API:
     | - default: Operaciones generales
     | - high: Operaciones prioritarias (pagos, facturación)
     | - webhooks: Entrega de webhooks con retry

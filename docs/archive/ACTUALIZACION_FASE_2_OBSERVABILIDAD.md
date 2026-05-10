@@ -194,7 +194,7 @@ curl -H "Authorization: Bearer TOKEN" \
 Para Prometheus, agregar a `prometheus.yml`:
 ```yaml
 scrape_configs:
-  - job_name: 'ursol-api'
+  - job_name: 'senselab-api'
     static_configs:
       - targets: ['localhost:8000']
     metrics_path: '/api/metrics'

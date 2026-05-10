@@ -411,4 +411,4 @@ El análisis reveló:
 
 **Última actualización:** 20 de noviembre de 2025  
 **Responsable:** Análisis automático + revisión manual  
-**Desarrollado por:** Sistemas Ursol S.A.
+**Desarrollado por:** Senselab

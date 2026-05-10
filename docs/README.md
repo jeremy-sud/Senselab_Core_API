@@ -1,4 +1,4 @@
-# 📚 Documentación del Proyecto Ursol CAST API
+# 📚 Documentación del Proyecto Senselab Core API
 
 **Última actualización:** Abril 2026 — v5.0.1
 
@@ -40,8 +40,8 @@ docs/
 
 | Archivo | Descripción |
 |---------|-------------|
-| [Curso Completo: De Cero a Experto](curso_completo_ursol_cast_api.md) | Curso autodidacta integral — arquitectura, módulos, seguridad, testing, despliegue, IA, facturación electrónica y roadmap |
-| [Glosario Completo de Terminología](GLOSARIO_COMPLETO_URSOL_CAST_API.md) | Referencia exhaustiva de toda la terminología: modelos, servicios, DTOs, traits, eventos, jobs, observers, config y más |
+| [Curso Completo: De Cero a Experto](curso_completo_senselab_core_api.md) | Curso autodidacta integral — arquitectura, módulos, seguridad, testing, despliegue, IA, facturación electrónica y roadmap |
+| [Glosario Completo de Terminología](GLOSARIO_COMPLETO_SENSELAB_CAST_API.md) | Referencia exhaustiva de toda la terminología: modelos, servicios, DTOs, traits, eventos, jobs, observers, config y más |
 
 ## � Diagramas de Arquitectura (NUEVO)
 

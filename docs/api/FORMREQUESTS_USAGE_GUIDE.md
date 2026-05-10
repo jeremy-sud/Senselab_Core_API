@@ -506,6 +506,6 @@ public function attributes(): array
 
 ---
 
-**Desarrollado por Sistemas Ursol S.A. - 30 años de experiencia**
+**Desarrollado por Senselab - 30 años de experiencia**
 
 *Última actualización: 19 de Noviembre de 2025*

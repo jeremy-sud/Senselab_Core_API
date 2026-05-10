@@ -6,7 +6,7 @@ namespace App\Services\AI;
  * Interface para servicios de IA
  *
  * Define el contrato base para implementaciones de servicios de inteligencia artificial.
- * Desarrollado por Sistemas Ursol S.A.
+ * Desarrollado por Senselab
  */
 interface AIServiceInterface
 {

@@ -421,7 +421,7 @@ app/
 
 ---
 
-**Desarrollado por:** Sistemas Ursol S.A.  
+**Desarrollado por:** Senselab  
 **Equipo:** Jeremy Arias Solano, Eduardo Alberto Ureña Solano  
 **Licencia:** MIT  
-**Repositorio:** https://github.com/jeremy-sud/Ursol-CAST-API
+**Repositorio:** https://github.com/SenseLab-dev/Senselab_Core_API

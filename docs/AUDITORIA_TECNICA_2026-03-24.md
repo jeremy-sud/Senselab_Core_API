@@ -1,4 +1,4 @@
-# AUDITORÍA TÉCNICA INTEGRAL — Ursol CAST API
+# AUDITORÍA TÉCNICA INTEGRAL — Senselab Core API
 
 **Fecha:** 24 de marzo de 2026  
 **Versión auditada:** v3.4.0 (FASE 19.6 completada)  
@@ -18,7 +18,7 @@
 
 ## RESUMEN EJECUTIVO
 
-Ursol CAST API es un sistema ERP multi-tenant desarrollado con Laravel 12 y PHP 8.4, orientado al mercado costarricense con integración de facturación electrónica (DGT v4.4). El proyecto ha alcanzado un grado de madurez **enterprise-grade** con una suite de testing multi-capa (unitarios, feature, contract, mutation, E2E, load), seguridad OWASP Top 10 completa, 9 pipelines CI/CD, y documentación excepcional. Las áreas de mejora restantes se concentran en deuda técnica menor (PHPStan con 98 errores no contemplados en baseline, timestamps inconsistentes, factories desalineadas) y la cobertura de DTOs al 47%.
+Senselab Core API es un sistema ERP multi-tenant desarrollado con Laravel 12 y PHP 8.4, orientado al mercado costarricense con integración de facturación electrónica (DGT v4.4). El proyecto ha alcanzado un grado de madurez **enterprise-grade** con una suite de testing multi-capa (unitarios, feature, contract, mutation, E2E, load), seguridad OWASP Top 10 completa, 9 pipelines CI/CD, y documentación excepcional. Las áreas de mejora restantes se concentran en deuda técnica menor (PHPStan con 98 errores no contemplados en baseline, timestamps inconsistentes, factories desalineadas) y la cobertura de DTOs al 47%.
 
 ---
 
@@ -672,7 +672,7 @@ Arquitectura dual-provider con fallback. Integración CABYS específica para Cos
 
 ## 15. COMPARATIVA CON ESTÁNDARES ENTERPRISE
 
-| Métrica | Ursol CAST | Estándar Enterprise | Evaluación |
+| Métrica | Senselab CAST | Estándar Enterprise | Evaluación |
 |---|---|---|---|
 | Test files | 141 | 80-150 | ✅ Rango superior |
 | Capas de testing | 6 (unit, feature, contract, mutation, E2E, load) | 3-4 | ✅ **Superior** |
@@ -755,7 +755,7 @@ Arquitectura dual-provider con fallback. Integración CABYS específica para Cos
 
 ## 18. CONCLUSIÓN
 
-Ursol CAST API ha alcanzado un nivel de madurez **enterprise-grade** con una puntuación de **8.9/10**. La progresión desde 7.5 (noviembre 2025) hasta 8.9 (marzo 2026) demuestra un proceso de mejora continua disciplinado y bien planificado.
+Senselab Core API ha alcanzado un nivel de madurez **enterprise-grade** con una puntuación de **8.9/10**. La progresión desde 7.5 (noviembre 2025) hasta 8.9 (marzo 2026) demuestra un proceso de mejora continua disciplinado y bien planificado.
 
 **Fortalezas destacadas:**
 - Pirámide de testing multi-capa completa (6 niveles) — excepcional para cualquier proyecto
@@ -773,4 +773,4 @@ Ursol CAST API ha alcanzado un nivel de madurez **enterprise-grade** con una pun
 
 ---
 
-*Documento generado el 24 de marzo de 2026 | Ursol CAST API v3.4.0 | Auditoría integral #4*
+*Documento generado el 24 de marzo de 2026 | Senselab Core API v3.4.0 | Auditoría integral #4*

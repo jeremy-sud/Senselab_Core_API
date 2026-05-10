@@ -1,8 +1,8 @@
-# Recomendaciones de Desarrollo - Ursol CAST API
+# Recomendaciones de Desarrollo - Senselab Core API
 
 **Fecha:** 20 de noviembre de 2025  
 **Estado Actual:** FASE 6 completada - Sistema base 100% funcional  
-**Desarrollado por:** Sistemas Ursol S.A.
+**Desarrollado por:** Senselab
 
 ---
 
@@ -556,15 +556,15 @@ git push origin feature/nombre-feature
 - GitHub: [@jeremy-sud](https://github.com/jeremy-sud)
 
 **Empresa:**
-- Sistemas Ursol S.A.
-- Email: sistemas@ursol.com
-- WhatsApp: +506 8868-7765
+- Senselab
+- Email: deadmooncr@gmail.com
+- WhatsApp: +(506)8973-5665
 
 ---
 
 ## 🎉 Conclusión
 
-El proyecto Ursol CAST API tiene una **base sólida** con:
+El proyecto Senselab Core API tiene una **base sólida** con:
 - ✅ Arquitectura bien diseñada
 - ✅ Autenticación y autorización robusta
 - ✅ Modelos sincronizados con BD
@@ -583,4 +583,4 @@ Con disciplina y siguiendo este roadmap, el sistema estará **listo para producc
 **¡Éxito en el desarrollo! 🚀**
 
 *Última actualización: 20 de noviembre de 2025*  
-*Desarrollado con ❤️ por Sistemas Ursol S.A.*
+*Desarrollado con ❤️ por Senselab*

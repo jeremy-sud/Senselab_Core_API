@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #############################################
-# Deploy Script para Ursol CAST API
+# Deploy Script para Senselab Core API
 # Uso: ./scripts/deploy.sh [staging|production]
 #############################################
 
@@ -28,7 +28,7 @@ if [[ -f "${PROJECT_ROOT}/.env" ]]; then
 fi
 
 echo -e "${GREEN}========================================${NC}"
-echo -e "${GREEN}Ursol CAST API - Deploy Script${NC}"
+echo -e "${GREEN}Senselab Core API - Deploy Script${NC}"
 echo -e "${GREEN}Environment: $ENVIRONMENT${NC}"
 echo -e "${GREEN}========================================${NC}"
 
@@ -170,7 +170,7 @@ echo -e "\n${GREEN}[8/8] Running smoke tests...${NC}"
 
 # Health check
 if [[ "$ENVIRONMENT" == "production" ]]; then
-    HEALTH_URL="https://api.ursol-cast.com/health"
+    HEALTH_URL="https://api.senselab-core.com/health"
 else
     HEALTH_URL="http://localhost:8080/health"
 fi
@@ -202,7 +202,7 @@ echo -e "${GREEN}========================================${NC}"
 # Next steps
 echo -e "\n${YELLOW}Next steps:${NC}"
 if [[ "$ENVIRONMENT" == "staging" ]]; then
-    echo "  1. Test at: http://staging.ursol-cast.com"
+    echo "  1. Test at: http://staging.senselab-core.com"
     echo "  2. Run E2E tests"
     echo "  3. Get QA approval"
 else

@@ -306,8 +306,8 @@ Temporary failure in name resolution
 DB_CONNECTION=mysql
 DB_HOST=mysql  # ← Apunta a servicio Docker
 DB_PORT=3306
-DB_DATABASE=ursol_cast_db
-DB_USERNAME=ursol_user
+DB_DATABASE=senselab_core_db
+DB_USERNAME=senselab_user
 DB_PASSWORD=***
 ```
 
@@ -325,7 +325,7 @@ php artisan test
 # Crear .env.testing con host local
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=ursol_cast_test
+DB_DATABASE=senselab_core_test
 
 # Ejecutar
 php artisan test
@@ -450,12 +450,12 @@ public function destroy(Model $model) {
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Ursol CAST API - ERP System",
+    "title": "Senselab Core API - ERP System",
     "version": "1.0.0"
   },
   "servers": [
     {"url": "http://localhost:8000"},
-    {"url": "https://api.ursol.com"}
+    {"url": "https://api.senselab.com"}
   ],
   "paths": { ... }
 }

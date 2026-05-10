@@ -1,7 +1,7 @@
 # Docker - Guía de Uso
-# Ursol CAST API
+# Senselab Core API
 
-Este documento explica cómo usar Docker para desarrollar y desplegar la Ursol CAST API.
+Este documento explica cómo usar Docker para desarrollar y desplegar la Senselab Core API.
 
 ## 📋 Tabla de Contenidos
 
@@ -163,7 +163,7 @@ docker-compose exec php sh
 # MySQL CLI
 make shell-mysql
 # O
-docker-compose exec mysql mysql -u ursol_user -pursol_password api_db
+docker-compose exec mysql mysql -u senselab_user -psenselab_password api_db
 
 # Redis CLI
 make shell-redis
@@ -343,10 +343,10 @@ docker-compose build --no-cache
 make backup-db
 
 # Manual
-docker-compose exec mysql mysqldump -u ursol_user -pursol_password api_db > backup.sql
+docker-compose exec mysql mysqldump -u senselab_user -psenselab_password api_db > backup.sql
 
 # Restaurar backup
-docker-compose exec -T mysql mysql -u ursol_user -pursol_password api_db < backup.sql
+docker-compose exec -T mysql mysql -u senselab_user -psenselab_password api_db < backup.sql
 ```
 
 ---
@@ -383,7 +383,7 @@ docker-compose ps
 
 # Resetear contenedor MySQL
 docker-compose down
-docker volume rm ursol-cast-api_mysql_data
+docker volume rm senselab-core-api_mysql_data
 docker-compose up -d
 ```
 
@@ -465,16 +465,16 @@ make logs-redis
 |----------|-----|--------------|
 | API | http://localhost:8000 | - |
 | Swagger | http://localhost:8000/api/documentation | - |
-| PHPMyAdmin | http://localhost:8080 | ursol_user / ursol_password |
+| PHPMyAdmin | http://localhost:8080 | senselab_user / senselab_password |
 | Mailhog | http://localhost:8025 | - |
-| Admin API | - | admin@ursol.com / admin123 |
+| Admin API | - | admin@senselab.com / admin123 |
 
 ---
 
 ## 📞 Soporte
 
-**Sistemas Ursol S.A.**  
-Email: sistemas@ursol.com
+**Senselab**  
+Email: deadmooncr@gmail.com
 
 Para más información, consulta:
 - `README.md` - Documentación general del proyecto

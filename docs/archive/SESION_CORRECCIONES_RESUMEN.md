@@ -1,7 +1,7 @@
 # 📝 RESUMEN DE SESIÓN - Corrección de Bugs Críticos
 
 **Fecha:** 22 de noviembre de 2025  
-**Proyecto:** Ursol CAST API - Sistema ERP Multi-Tenant  
+**Proyecto:** Senselab Core API - Sistema ERP Multi-Tenant  
 **Framework:** Laravel 12.37.0 + PHP 8.2  
 **Auditor:** GitHub Copilot (Claude Sonnet 4.5)  
 

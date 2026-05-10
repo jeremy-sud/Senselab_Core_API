@@ -21,7 +21,7 @@ use OpenApi\Attributes as OA;
  * Gestiona las cuentas contables específicas de cada presupuesto con sus montos.
  *
  * @package App\Http\Controllers\API
- * @author Sistemas Ursol S.A. - Jeremy Arias Solano
+ * @author Senselab - Jeremy Arias Solano
  */
 class DetallePresupuestoController extends Controller
 {

@@ -1,4 +1,4 @@
-# Arquitectura Multi-Tenant — Ursol CAST API
+# Arquitectura Multi-Tenant — Senselab Core API
 
 > Visualización de la separación de datos entre el Landlord (base de datos central) y los Tenants (base de datos por empresa).
 

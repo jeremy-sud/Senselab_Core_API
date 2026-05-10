@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Script de inicio rápido para Docker
-# Ursol CAST API
+# Senselab Core API
 
 set -e
 
-echo "🚀 Iniciando Ursol CAST API con Docker..."
+echo "🚀 Iniciando Senselab Core API con Docker..."
 echo ""
 
 # Verificar si Docker está instalado
@@ -108,7 +108,7 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "🔑 Credenciales por defecto:"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo "  Email:    admin@ursol.com"
+echo "  Email:    admin@senselab.com"
 echo "  Password: admin123"
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

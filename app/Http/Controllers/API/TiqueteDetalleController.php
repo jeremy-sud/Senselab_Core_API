@@ -21,7 +21,7 @@ use OpenApi\Attributes as OA;
  * Vinculado a detalle de venta y horario de ruta.
  *
  * @package App\Http\Controllers\API
- * @author Sistemas Ursol S.A. - Jeremy Arias Solano
+ * @author Senselab - Jeremy Arias Solano
  */
 class TiqueteDetalleController extends Controller
 {

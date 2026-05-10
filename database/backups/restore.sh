@@ -2,7 +2,7 @@
 
 ################################################################################
 # Script de Restauración de Base de Datos
-# Sistema Ursol CAST API
+# Sistema Senselab Core API
 # 
 # Este script restaura un backup de la base de datos MySQL.
 ################################################################################

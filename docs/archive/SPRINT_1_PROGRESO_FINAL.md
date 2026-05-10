@@ -275,5 +275,5 @@ Completar guía de uso y tests antes de escalar a más controllers. Enfoque de c
 ---
 
 **Autor:** GitHub Copilot  
-**Copyright:** 2025 Sistemas Ursol S.A.  
+**Copyright:** 2025 Senselab  
 **Última Actualización:** 2025-11-23 20:00

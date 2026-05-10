@@ -18,7 +18,7 @@ use Illuminate\Support\Str;
  * En desarrollo, expone información para debugging.
  *
  * @package App\Traits
- * @author Sistemas Ursol S.A.
+ * @author Senselab
  */
 trait HasSafeErrorHandling
 {

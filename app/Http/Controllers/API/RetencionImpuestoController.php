@@ -19,7 +19,7 @@ use OpenApi\Attributes as OA;
  * Retenciones de renta e IVA aplicadas a proveedores
  *
  * @author GitHub Copilot
- * @copyright 2025 Sistemas Ursol S.A.
+ * @copyright 2025 Senselab
  */
 
 #[OA\Tag(

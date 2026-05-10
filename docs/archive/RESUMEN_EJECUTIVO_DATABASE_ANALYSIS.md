@@ -1,7 +1,7 @@
 # 📊 Resumen Ejecutivo - Análisis de Base de Datos MySQL
 
 **Fecha**: 25 de noviembre, 2025  
-**Proyecto**: Ursol CAST API  
+**Proyecto**: Senselab Core API  
 **Base de Datos**: MySQL - api_db  
 **Análisis Solicitado**: Primary Keys, Foreign Keys e Índices mejorados
 

@@ -2,7 +2,7 @@
 
 ## ✅ Lo que se ha implementado
 
-Tu proyecto **Ursol CAST API** ahora está completamente dockerizado con:
+Tu proyecto **Senselab Core API** ahora está completamente dockerizado con:
 
 ### 🐳 Infraestructura Docker Profesional
 - **Dockerfile** multi-stage optimizado (imagen ~200MB)
@@ -116,11 +116,11 @@ Después de iniciar los contenedores:
 |----------|-----|--------------|
 | **API** | http://localhost:8000 | - |
 | **Swagger** | http://localhost:8000/api/documentation | - |
-| **PHPMyAdmin** | http://localhost:8080 | ursol_user / ursol_password |
+| **PHPMyAdmin** | http://localhost:8080 | senselab_user / senselab_password |
 | **Mailhog** | http://localhost:8025 | - |
 
 **Credenciales Admin API:**
-- Email: `admin@ursol.com`
+- Email: `admin@senselab.com`
 - Password: `admin123`
 
 ---
@@ -215,7 +215,7 @@ curl http://localhost:8000/health
 1. Abre: http://localhost:8000/api/documentation
 2. Deberías ver Swagger UI
 3. Prueba el endpoint `POST /api/login`
-4. Usa credenciales: admin@ursol.com / admin123
+4. Usa credenciales: admin@senselab.com / admin123
 
 ---
 
@@ -380,7 +380,7 @@ Si tienes problemas:
 1. **Revisa logs:** `make logs`
 2. **Health check:** `./docker-health.sh`
 3. **Consulta:** DOCKER_GUIDE.md sección Troubleshooting
-4. **Contacto:** sistemas@ursol.com
+4. **Contacto:** deadmooncr@gmail.com
 
 ---
 
@@ -415,6 +415,6 @@ Tu proyecto está completamente dockerizado y listo para:
 
 ---
 
-**Sistemas Ursol S.A.**  
+**Senselab**  
 Desarrollado por: Jeremy Arias Solano  
 Fecha: 22 de noviembre de 2025

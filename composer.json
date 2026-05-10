@@ -1,16 +1,16 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "sistemasursol/ursol-cast-api",
+    "name": "sistemassenselab/senselab-core-api",
     "version": "1.0.0",
     "type": "project",
-    "description": "Sistema ERP Multi-Tenant con Facturación Electrónica para Costa Rica. Desarrollado por Sistemas Ursol S.A. con casi 30 años de experiencia.",
+    "description": "Sistema ERP Multi-Tenant con Facturación Electrónica para Costa Rica. Desarrollado por Senselab con casi 30 años de experiencia.",
     "keywords": [
         "laravel",
         "erp",
         "facturacion-electronica",
         "costa-rica",
         "multi-tenant",
-        "sistemas-ursol",
+        "sistemas-senselab",
         "inventory-management",
         "accounting",
         "payroll"
@@ -18,9 +18,9 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Sistemas Ursol S.A.",
-            "email": "sistemas@ursol.com",
-            "homepage": "https://ursol.com",
+            "name": "Senselab",
+            "email": "deadmooncr@gmail.com",
+            "homepage": "https://senselab.com",
             "role": "Company"
         },
         {
@@ -35,10 +35,10 @@
         }
     ],
     "support": {
-        "email": "sistemas@ursol.com",
-        "issues": "https://github.com/SistemasUrsol/Ursol-CAST-API/issues",
-        "source": "https://github.com/SistemasUrsol/Ursol-CAST-API",
-        "docs": "https://sites.google.com/view/repdevursol/home/repositorio"
+        "email": "deadmooncr@gmail.com",
+        "issues": "https://github.com/SenseLab-dev/Senselab_Core_API/issues",
+        "source": "https://github.com/SenseLab-dev/Senselab_Core_API",
+        "docs": "https://sites.google.com/view/repdevsenselab/home/repositorio"
     },
     "require": {
         "php": "^8.4",

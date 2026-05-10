@@ -50,7 +50,7 @@
 ### 3. ✅ Proyecto Completo Subido a GitHub
 
 #### Configuración del Repositorio
-- **Repositorio:** jeremy-sud/Ursol-CAST-API (privado)
+- **Repositorio:** SenseLab-dev/Senselab_Core_API (privado)
 - **Branch:** main
 - **.gitignore editado:** Permite archivos sensibles (repositorio privado)
   - `.env` incluido
@@ -345,10 +345,10 @@ De **259 → 339 tests** (incremento de 30.9%)
 
 ## 📞 Contacto
 
-**Proyecto:** Ursol CAST API  
-**Repositorio:** jeremy-sud/Ursol-CAST-API (privado)  
+**Proyecto:** Senselab Core API  
+**Repositorio:** SenseLab-dev/Senselab_Core_API (privado)  
 **Desarrollador:** Jeremy Arias Solano  
-**Empresa:** Sistemas Ursol S.A.  
+**Empresa:** Senselab  
 **Fecha:** 26 de Noviembre, 2025
 
 ---

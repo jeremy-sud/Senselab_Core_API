@@ -1,4 +1,4 @@
-# 📚 Guía de Datos de Testeo - Base de Datos Ursol CAST API
+# 📚 Guía de Datos de Testeo - Base de Datos Senselab Core API
 
 > **Estado:** ✅ Completo y Verificado  
 > **Fecha:** Febrero 2026  
@@ -44,7 +44,7 @@ Proporcionar un conjunto completo de datos de prueba realistas para:
 
 ```bash
 # Entrar en el workspace
-cd /home/dawnweaber/Workspace/Ursol-CAST-API
+cd /home/dawnweaber/Workspace/Senselab_Core_API
 
 # Verificar datos
 bash scripts/verify_db_data.sh
@@ -61,7 +61,7 @@ api_db_testing: 49 registros ✓
 
 ```bash
 # Limpiar todo (DESTRUCTIVO)
-mysql -h 127.0.0.1 -P 33061 -u ursol_user -pursol_password api_db << EOF
+mysql -h 127.0.0.1 -P 33061 -u senselab_user -psenselab_password api_db << EOF
 TRUNCATE TABLE inventario_productos;
 TRUNCATE TABLE productos;
 TRUNCATE TABLE clientes;
@@ -72,11 +72,11 @@ TRUNCATE TABLE sucursales;
 EOF
 
 # Recargar datos
-mysql -h 127.0.0.1 -P 33061 -u ursol_user -pursol_password api_db < \
+mysql -h 127.0.0.1 -P 33061 -u senselab_user -psenselab_password api_db < \
   scripts/fill_tables_corrected.sql
 
 # Repetir para testing
-mysql -h 127.0.0.1 -P 33061 -u ursol_user -pursol_password api_db_testing < \
+mysql -h 127.0.0.1 -P 33061 -u senselab_user -psenselab_password api_db_testing < \
   scripts/fill_tables_corrected.sql
 ```
 
@@ -84,7 +84,7 @@ mysql -h 127.0.0.1 -P 33061 -u ursol_user -pursol_password api_db_testing < \
 
 ```bash
 # Abrir consola MySQL
-docker exec -it ursol_mysql mysql -u ursol_user -pursol_password api_db
+docker exec -it senselab_mysql mysql -u senselab_user -psenselab_password api_db
 
 # Dentro de MySQL
 SELECT COUNT(*) FROM productos;
@@ -278,7 +278,7 @@ GROUP BY cp.nombre;
 
 ### Problema #1: "Access Denied"
 ```
-ERROR 1045: Access denied for user 'ursol_user'
+ERROR 1045: Access denied for user 'senselab_user'
 ```
 **Solución:**
 ```bash
@@ -289,7 +289,7 @@ cat .env | grep DB_PASSWORD
 docker ps | grep mysql
 
 # Reconectar
-mysql -h 127.0.0.1 -P 33061 -u ursol_user -pursol_password api_db
+mysql -h 127.0.0.1 -P 33061 -u senselab_user -psenselab_password api_db
 ```
 
 ### Problema #2: "Unknown table"
@@ -302,7 +302,7 @@ ERROR 1146: Table 'api_db.tabla' doesn't exist
 php artisan migrate
 
 # O copiar estructura desde api_db
-mysqldump -h 127.0.0.1 -P 33061 -u ursol_user -pursol_password \
+mysqldump -h 127.0.0.1 -P 33061 -u senselab_user -psenselab_password \
   api_db --no-data | mysql ... api_db_testing
 ```
 
@@ -313,11 +313,11 @@ Script ejecuta pero no aparecen datos
 **Solución:**
 ```bash
 # Verificar
-mysql -h 127.0.0.1 -P 33061 -u ursol_user -pursol_password \
+mysql -h 127.0.0.1 -P 33061 -u senselab_user -psenselab_password \
   api_db -e "SELECT COUNT(*) FROM productos;"
 
 # Reejecutar con verbose
-mysql -h 127.0.0.1 -P 33061 -u ursol_user -pursol_password \
+mysql -h 127.0.0.1 -P 33061 -u senselab_user -psenselab_password \
   api_db < scripts/fill_tables_corrected.sql
 
 # Ver output completo
@@ -341,10 +341,10 @@ mysql ... -e "SHOW TABLES;" | while read t; do \
 done
 
 # Exportar datos (backup)
-mysqldump -h 127.0.0.1 -P 33061 -u ursol_user -pursol_password api_db > backup.sql
+mysqldump -h 127.0.0.1 -P 33061 -u senselab_user -psenselab_password api_db > backup.sql
 
 # Restablecer desde backup
-mysql -h 127.0.0.1 -P 33061 -u ursol_user -pursol_password api_db < backup.sql
+mysql -h 127.0.0.1 -P 33061 -u senselab_user -psenselab_password api_db < backup.sql
 
 # Limpiar una tabla
 mysql ... api_db -e "DELETE FROM productos; DELETE FROM clientes;"

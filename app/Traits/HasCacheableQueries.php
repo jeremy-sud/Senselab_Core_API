@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Cache;
  * - protected int $cacheTTL = 3600;
  *
  * @package App\Traits
- * @author Sistemas Ursol S.A.
+ * @author Senselab
  */
 trait HasCacheableQueries
 {

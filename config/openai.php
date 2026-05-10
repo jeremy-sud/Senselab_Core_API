@@ -8,7 +8,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Configuración para integración con OpenAI API (GPT-4, Vision, Embeddings)
-    | Desarrollado por Sistemas Ursol S.A.
+    | Desarrollado por Senselab
     |
     */
 

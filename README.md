@@ -1,32 +1,32 @@
-# Ursol CAST API 🚀
+# Senselab Core API 🚀
 
 <p align="center">
-  <img src="./public/assets/logos/ursol-cast-api-logo.png" width="600" alt="Ursol CAST API Logo">
+  <img src="./public/assets/logos/senselab-core-api-logo.png" width="600" alt="Senselab Core API Logo">
 </p>
 
 <p align="center">
-  <img src="./public/assets/logos/ursol-icon.webp" width="80" alt="Sistemas Ursol Icon">
+  <img src="./public/assets/logos/senselab-icon.png" width="80" alt="Senselab Icon">
 </p>
 
 <p align="center">
-  <strong>Desarrollado por Sistemas Ursol S.A.</strong><br>
+  <strong>Desarrollado por Senselab</strong><br>
   <em>Soluciones Tecnológicas con más de 30 años de experiencia</em><br>
   <em>"Toque Humano en la Transformación Digital" 💙</em>
 </p>
 
 <p align="center">
-  <a href="https://github.com/SistemasUrsol/Ursol-CAST-API"><img src="https://img.shields.io/badge/GitHub-SistemasUrsol-blue" alt="GitHub"></a>
-  <a href="https://ursol.com"><img src="https://img.shields.io/badge/Web-ursol.com-green" alt="Web"></a>
-  <a href="https://ursol.net"><img src="https://img.shields.io/badge/Web-ursol.net-green" alt="Web Alt"></a>
-  <a href="https://wa.me/50688687765"><img src="https://img.shields.io/badge/WhatsApp-Soporte-25D366" alt="WhatsApp"></a>
-  <a href="mailto:sistemas@ursol.com"><img src="https://img.shields.io/badge/Email-sistemas%40ursol.com-red" alt="Email"></a>
+  <a href="https://github.com/SenseLab-dev/Senselab_Core_API"><img src="https://img.shields.io/badge/GitHub-SenseLab-dev-blue" alt="GitHub"></a>
+  <a href="https://senselab.com"><img src="https://img.shields.io/badge/Web-senselab.com-green" alt="Web"></a>
+  <a href="https://senselab.com"><img src="https://img.shields.io/badge/Web-senselab.com-green" alt="Web Alt"></a>
+  <a href="https://wa.me/50689735665"><img src="https://img.shields.io/badge/WhatsApp-Soporte-25D366" alt="WhatsApp"></a>
+  <a href="mailto:deadmooncr@gmail.com"><img src="https://img.shields.io/badge/Email-sistemas%40senselab.com-red" alt="Email"></a>
 </p>
 
 <p align="center">
-  <img src="https://github.com/jeremy-sud/Ursol-CAST-API/actions/workflows/tests.yml/badge.svg" alt="Tests">
-  <img src="https://github.com/jeremy-sud/Ursol-CAST-API/actions/workflows/phpstan.yml/badge.svg" alt="PHPStan">
-  <img src="https://github.com/jeremy-sud/Ursol-CAST-API/actions/workflows/mutation-testing.yml/badge.svg" alt="Mutation Testing">
-  <img src="https://codecov.io/gh/jeremy-sud/Ursol-CAST-API/branch/main/graph/badge.svg" alt="Coverage">
+  <img src="https://github.com/SenseLab-dev/Senselab_Core_API/actions/workflows/tests.yml/badge.svg" alt="Tests">
+  <img src="https://github.com/SenseLab-dev/Senselab_Core_API/actions/workflows/phpstan.yml/badge.svg" alt="PHPStan">
+  <img src="https://github.com/SenseLab-dev/Senselab_Core_API/actions/workflows/mutation-testing.yml/badge.svg" alt="Mutation Testing">
+  <img src="https://codecov.io/gh/SenseLab-dev/Senselab_Core_API/branch/main/graph/badge.svg" alt="Coverage">
   <img src="https://img.shields.io/badge/PHPStan-level%208-blue" alt="PHPStan Level 8">
   <img src="https://img.shields.io/badge/PSR--12-compliant-green" alt="PSR-12">
   <img src="https://img.shields.io/badge/Laravel-12.x-red" alt="Laravel">
@@ -80,14 +80,14 @@
 
 | Documento | Descripción |
 |-----------|-------------|
-| [📘 Curso Completo: De Cero a Experto](docs/curso_completo_ursol_cast_api.md) | Curso autodidacta integral — arquitectura, módulos, seguridad, testing, despliegue, IA, facturación electrónica y roadmap |
-| [📗 Glosario Completo de Terminología](docs/GLOSARIO_COMPLETO_URSOL_CAST_API.md) | Referencia exhaustiva de toda la terminología: modelos, servicios, DTOs, traits, eventos, jobs, observers, config y más |
+| [📘 Curso Completo: De Cero a Experto](docs/curso_completo_senselab_core_api.md) | Curso autodidacta integral — arquitectura, módulos, seguridad, testing, despliegue, IA, facturación electrónica y roadmap |
+| [📗 Glosario Completo de Terminología](docs/GLOSARIO_COMPLETO_SENSELAB_CAST_API.md) | Referencia exhaustiva de toda la terminología: modelos, servicios, DTOs, traits, eventos, jobs, observers, config y más |
 
 ---
 
 ## �🚀 Acerca del Proyecto
 
-**Ursol CAST API** es un **sistema ERP empresarial completo** desarrollado por **Sistemas Ursol S.A.** con Laravel 12 y tecnologías modernas, diseñado específicamente para empresas costarricenses que requieren soluciones tecnológicas robustas, escalables y seguras.
+**Senselab Core API** es un **sistema ERP empresarial completo** desarrollado por **Senselab** con Laravel 12 y tecnologías modernas, diseñado específicamente para empresas costarricenses que requieren soluciones tecnológicas robustas, escalables y seguras.
 
 Este proyecto representa **más de 5 años de evolución** en sistemas empresariales, implementando las mejores prácticas de desarrollo, seguridad y escalabilidad. Es la base tecnológica para la transformación digital de empresas medianas y grandes en Costa Rica.
 
@@ -438,15 +438,15 @@ Para acceso a Swagger UI y dashboards:
 Después de ejecutar los seeders, puedes iniciar sesión con:
 
 ```
-Email: admin@ursol.com
+Email: admin@senselab.com
 Password: admin123
 ```
 
 Este usuario tiene acceso completo con **68 permisos** (todos los módulos del sistema).
 
-### 🏢 Sobre Sistemas Ursol S.A.
+### 🏢 Sobre Senselab
 
-Con **más de 30 años de experiencia** en el mercado costarricense, Sistemas Ursol S.A. es una empresa familiar que se distingue por su **ética inquebrantable**, **atención personalizada** y el **"Toque Humano"** en cada proyecto. Fundada y liderada por **Eduardo Alberto Ureña Solano**, quien aporta más de 35 años de experiencia en el sector tecnológico.
+Con **más de 30 años de experiencia** en el mercado costarricense, Senselab es una empresa familiar que se distingue por su **ética inquebrantable**, **atención personalizada** y el **"Toque Humano"** en cada proyecto. Fundada y liderada por **Eduardo Alberto Ureña Solano**, quien aporta más de 35 años de experiencia en el sector tecnológico.
 
 **Nuestros Servicios:**
 
@@ -483,8 +483,8 @@ La forma más rápida y confiable de iniciar el proyecto en cualquier sistema op
 
 ```bash
 # 1. Clonar repositorio
-git clone https://github.com/jeremy-sud/Ursol-CAST-API.git
-cd Ursol-CAST-API
+git clone https://github.com/SenseLab-dev/Senselab_Core_API.git
+cd Senselab_Core_API
 
 # 2. Dar permisos al script
 chmod +x docker/docker-start.sh
@@ -528,7 +528,7 @@ make swagger         # Regenerar Swagger
 | ---------- | --------------------------------------- | --------------------------- |
 | API        | http://localhost:8000                   | -                           |
 | Swagger    | http://localhost:8000/api/documentation | -                           |
-| PHPMyAdmin | http://localhost:8080                   | ursol_user / ursol_password |
+| PHPMyAdmin | http://localhost:8080                   | senselab_user / senselab_password |
 | Mailhog    | http://localhost:8025                   | -                           |
 
 **📖 Guía completa:** [DOCKER_GUIDE.md](docs/guides/DOCKER_GUIDE.md)
@@ -541,12 +541,12 @@ make swagger         # Regenerar Swagger
 
 ```bash
 # Desde GitHub
-git clone https://github.com/jeremy-sud/Ursol-CAST-API.git
-cd Ursol-CAST-API
+git clone https://github.com/SenseLab-dev/Senselab_Core_API.git
+cd Senselab_Core_API
 
 # O desde GitHub Organization oficial
-git clone https://github.com/SistemasUrsol/Ursol-CAST-API.git
-cd Ursol-CAST-API
+git clone https://github.com/SenseLab-dev/Senselab_Core_API.git
+cd Senselab_Core_API
 ```
 
 #### 2. Instalar Dependencias
@@ -578,8 +578,8 @@ DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=api_db
-DB_USERNAME=ursol_user
-DB_PASSWORD=ursol_password
+DB_USERNAME=senselab_user
+DB_PASSWORD=senselab_password
 ```
 
 #### 5. Ejecutar Migraciones y Seeders
@@ -608,7 +608,7 @@ php artisan migrate:fresh --seed
 -   `PermisosSeeder` - 68 permisos del sistema (17 módulos)
 -   `RolesSeeder` - 8 roles (Administrador, Gerente, Contador, Vendedor, Comprador, Bodeguero, Usuario, Auditor)
 -   `CargosSeeder` - 7 cargos de empleados
--   `EmpresaDemoSeeder` - Empresa demo "Sistemas Ursol S.A." + sucursal
+-   `EmpresaDemoSeeder` - Empresa demo "Senselab" + sucursal
 -   `UsuarioAdminSeeder` - Usuario admin con todos los permisos
 
 **Total de registros:** 112 (96 datos maestros + 16 datos demo/test)
@@ -636,7 +636,7 @@ El sistema estará disponible en `http://localhost:8000`
 Después de ejecutar los seeders, inicia sesión con:
 
 ```
-Email: admin@ursol.com
+Email: admin@senselab.com
 Password: admin123
 ```
 
@@ -667,7 +667,7 @@ Herramientas profesionales para desarrollo de APIs.
 curl -X POST http://localhost:8000/api/login \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "admin@ursol.com",
+    "email": "admin@senselab.com",
     "password": "admin123"
   }'
 
@@ -690,7 +690,7 @@ El sistema utiliza el paquete `spatie/laravel-multitenancy`. La configuración s
 #### Identificación del tenant
 
 -   **Header obligatorio**: `X-Empresa-Id` (ID numérico de la empresa) cuando se consume desde `localhost` u orígenes sin subdominio dedicado.
--   **Subdominios**: también puedes apuntar a `https://{subdominio}.api.ursol.com`; el `tenant_finder` detectará automáticamente la empresa usando el parámetro `TENANT_BASE_DOMAIN` (definido en `.env`).
+-   **Subdominios**: también puedes apuntar a `https://{subdominio}.api.senselab.com`; el `tenant_finder` detectará automáticamente la empresa usando el parámetro `TENANT_BASE_DOMAIN` (definido en `.env`).
 -   Ambos métodos validan que el usuario autenticado pertenezca al mismo `empresa_id` para evitar accesos cruzados.
 
 ### Configuración de Base de Datos
@@ -717,7 +717,7 @@ Cada empresa debe cargar su certificado de firma digital en el sistema.
 ### Estructura de Directorios
 
 ```
-ursol-cast-api/
+senselab-core-api/
 ├── app/
 │   ├── Http/
 │   │   └── Controllers/
@@ -835,7 +835,7 @@ POST /api/login
 Content-Type: application/json
 
 {
-  "email": "admin@ursol.com",
+  "email": "admin@senselab.com",
   "password": "admin123"
 }
 ```
@@ -847,7 +847,7 @@ Content-Type: application/json
   "user": {
     "id": 1,
     "nombre": "Administrador",
-    "email": "admin@ursol.com"
+    "email": "admin@senselab.com"
   },
   "token": "1|abc123def456...",
   "permisos": [
@@ -887,7 +887,7 @@ Accept: application/json
 X-Empresa-Id: {id}
 ```
 
-> Usa el header `X-Empresa-Id` (o un subdominio dedicado) para indicar a qué empresa pertenece la solicitud. Si consumes la API desde `https://{subdominio}.api.ursol.com`, el header es opcional.
+> Usa el header `X-Empresa-Id` (o un subdominio dedicado) para indicar a qué empresa pertenece la solicitud. Si consumes la API desde `https://{subdominio}.api.senselab.com`, el header es opcional.
 
 ### Protección por Permisos
 
@@ -973,7 +973,7 @@ Accept: application/json
 ## 🎨 Estructura del Proyecto
 
 ```
-Ursol-CAST-API/
+Senselab_Core_API/
 ├── app/
 │   ├── Console/                     # Comandos Artisan personalizados
 │   │   └── Commands/
@@ -1084,7 +1084,7 @@ Configurado automáticamente en `phpunit.xml`.
 # Todos los tests
 make test
 # o
-docker exec ursol_php php artisan test
+docker exec senselab_php php artisan test
 
 # Tests específicos
 php artisan test --filter=FacturacionElectronicaE2ETest
@@ -1094,7 +1094,7 @@ php artisan test --filter=AuthTest
 # Con cobertura
 make test-coverage
 # o
-docker exec ursol_php vendor/bin/phpunit --coverage-html coverage
+docker exec senselab_php vendor/bin/phpunit --coverage-html coverage
 
 # Tests en modo CI (como GitHub Actions)
 make ci-test
@@ -1127,7 +1127,7 @@ Ejecuta en cada commit:
 - ✅ Security check (vulnerabilidades)
 - ✅ Coverage mínimo 70%
 
-**Estado:** ![Tests](https://github.com/jeremy-sud/Ursol-CAST-API/actions/workflows/tests.yml/badge.svg)
+**Estado:** ![Tests](https://github.com/SenseLab-dev/Senselab_Core_API/actions/workflows/tests.yml/badge.svg)
 
 #### 2. Code Analysis (`code-analysis.yml`)
 **Trigger:** Push o PR a `main`/`develop`
@@ -1144,7 +1144,7 @@ Quality gates:
 Pipeline:
 1. Run tests
 2. Build Docker image
-3. Deploy a staging.ursol-cast.com
+3. Deploy a staging.senselab-core.com
 4. Run migrations
 5. Smoke tests
 6. Notificación Slack
@@ -1197,7 +1197,7 @@ make rollback          # Rollback de producción
 
 ## 🤖 Inteligencia Artificial
 
-Ursol CAST API integra **inteligencia artificial avanzada** con Google Gemini y OpenAI para automatizar y mejorar procesos empresariales.
+Senselab Core API integra **inteligencia artificial avanzada** con Google Gemini y OpenAI para automatizar y mejorar procesos empresariales.
 
 ### Servicios de IA Disponibles
 
@@ -1695,7 +1695,7 @@ Configurar cron para ejecutar el scheduler de Laravel:
 ### Supervisord para Queues
 
 ```ini
-[program:ursol-cast-worker]
+[program:senselab-core-worker]
 process_name=%(program_name)s_%(process_num)02d
 command=php /ruta/al/proyecto/artisan queue:work redis --sleep=3 --tries=3
 autostart=true
@@ -1829,8 +1829,8 @@ Route::post('/facturas', [FacturaController::class, 'store'])
 ```php
 // config/cors.php permite solicitudes desde dominios específicos
 'allowed_origins' => [
-    'https://app.ursol.com',
-    'https://*.ursol.com'
+    'https://app.senselab.com',
+    'https://*.senselab.com'
 ],
 ```
 
@@ -1906,7 +1906,7 @@ make security-check
 ### Reportar Vulnerabilidades
 
 Por favor, **NO publiques** vulnerabilidades en GitHub Issues.  
-Envía un email a: [sistemas@ursol.com](mailto:sistemas@ursol.com) con:
+Envía un email a: [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com) con:
 
 - Descripción del problema
 - Pasos para reproducir
@@ -2046,7 +2046,7 @@ php artisan db:seed --class=DatabaseSeeder
 ```bash
 # Generar nuevo token
 curl -X POST http://localhost:8000/api/login \
-  -d "email=admin@ursol.com&password=admin123"
+  -d "email=admin@senselab.com&password=admin123"
 
 # Verificar token
 curl -H "Authorization: Bearer TOKEN" \
@@ -2171,13 +2171,13 @@ php artisan queue:failed
 ## ❓ FAQ (Preguntas Frecuentes)
 
 ### ¿Cuál es el costo del ERP?
-Ursol CAST API es **software propietario de Sistemas Ursol S.A.** Su uso requiere un acuerdo de licencia. Contactá a [sistemas@ursol.com](mailto:sistemas@ursol.com) para más información.
+Senselab Core API es **software propietario de Senselab** Su uso requiere un acuerdo de licencia. Contactá a [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com) para más información.
 
 ### ¿Necesito soporte técnico?
 Sí, ofrecemos:
-- ✅ Soporte por email: [sistemas@ursol.com](mailto:sistemas@ursol.com)
-- ✅ WhatsApp: [+506 8868-7765](https://wa.me/50688687765)
-- ✅ Issues en GitHub: [Reportar problema](https://github.com/SistemasUrsol/Ursol-CAST-API/issues)
+- ✅ Soporte por email: [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com)
+- ✅ WhatsApp: [+(506)8973-5665](https://wa.me/50689735665)
+- ✅ Issues en GitHub: [Reportar problema](https://github.com/SenseLab-dev/Senselab_Core_API/issues)
 - ✅ Documentación completa: Está en `/docs`
 
 ### ¿Soporta multi-empresa?
@@ -2226,7 +2226,7 @@ Ofrecemos:
 - 📘 Guías de migración
 - 🔧 Scripts de importación
 - 📊 Mapeo de datos
-- Email: [sistemas@ursol.com](mailto:sistemas@ursol.com)
+- Email: [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com)
 
 ### ¿Puedo usar esto como template?
 **Sí**, es perfecto para:
@@ -2400,7 +2400,7 @@ redis-cli FLUSHDB
 ### Votación Comunitaria
 
 ¿Qué feature quieres que sea prioridad?
-Vota aquí: [GitHub Discussions](https://github.com/SistemasUrsol/Ursol-CAST-API/discussions)
+Vota aquí: [GitHub Discussions](https://github.com/SenseLab-dev/Senselab_Core_API/discussions)
 
 ---
 
@@ -2511,9 +2511,9 @@ Toda la documentación del proyecto vive en [`docs/`](docs/README.md). A continu
 
 2. **Clona tu fork** localmente
    ```bash
-   git clone https://github.com/TU_USUARIO/Ursol-CAST-API.git
-   cd Ursol-CAST-API
-   git remote add upstream https://github.com/SistemasUrsol/Ursol-CAST-API.git
+   git clone https://github.com/TU_USUARIO/Senselab_Core_API.git
+   cd Senselab_Core_API
+   git remote add upstream https://github.com/SenseLab-dev/Senselab_Core_API.git
    ```
 
 3. **Crea una rama** para tu feature
@@ -2726,14 +2726,14 @@ Esperamos que todos los contribuyentes sean respetuosos y constructivos.
 
 ## 📄 Licencia
 
-Este software es **propiedad exclusiva de Sistemas Ursol S.A.** Todos los derechos están reservados.
+Este software es **propiedad exclusiva de Senselab** Todos los derechos están reservados.
 
 - ❌ No se permite copiar, distribuir o transmitir este software sin autorización
 - ❌ No se permite modificar, descompilar o hacer ingeniería inversa
 - ❌ No se permite revender, sublicenciar o transferir derechos
-- ✅ Uso exclusivo bajo acuerdo de licencia con Sistemas Ursol S.A.
+- ✅ Uso exclusivo bajo acuerdo de licencia con Senselab
 
-**Desarrollado por:** Jeremy Arias Solano — Co-fundador de Sistemas Ursol S.A.
+**Desarrollado por:** Jeremy Arias Solano — Co-fundador de Senselab
 
 **[Ver licencia completa](LICENSE)**
 
@@ -2753,19 +2753,19 @@ Este software es **propiedad exclusiva de Sistemas Ursol S.A.** Todos los derech
 ### Contactos
 
 **Corporativo:**
--   **📧 Email**: [sistemas@ursol.com](mailto:sistemas@ursol.com)
--   **🌐 Web**: [ursol.com](https://ursol.com)
--   **🌐 Web Alt**: [ursol.net](https://ursol.net)
+-   **📧 Email**: [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com)
+-   **🌐 Web**: [senselab.com](https://senselab.com)
+-   **🌐 Web Alt**: [senselab.com](https://senselab.com)
 
 **Técnico/Desarrollo:**
 -   **📧 Email Dev**: [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com)
--   **💬 WhatsApp**: [+506 8868-7765](https://wa.me/50688687765)
--   **🐙 GitHub Org**: [SistemasUrsol](https://github.com/orgs/SistemasUrsol)
+-   **💬 WhatsApp**: [+(506)8973-5665](https://wa.me/50689735665)
+-   **🐙 GitHub Org**: [SenseLab-dev](https://github.com/orgs/SenseLab-dev)
 
 **Comunidad:**
--   **📚 Repo Dev**: [Ursol Repositorio para Developers](https://sites.google.com/view/repdevursol/home/repositorio)
--   **🐛 Issues**: [GitHub Issues](https://github.com/SistemasUrsol/Ursol-CAST-API/issues)
--   **💬 Discussions**: [GitHub Discussions](https://github.com/SistemasUrsol/Ursol-CAST-API/discussions)
+-   **📚 Repo Dev**: [Senselab Repositorio para Developers](https://sites.google.com/view/repdevsenselab/home/repositorio)
+-   **🐛 Issues**: [GitHub Issues](https://github.com/SenseLab-dev/Senselab_Core_API/issues)
+-   **💬 Discussions**: [GitHub Discussions](https://github.com/SenseLab-dev/Senselab_Core_API/discussions)
 
 ### Reportar Problemas
 
@@ -2799,7 +2799,7 @@ Abre un issue con:
 
 **NUNCA publiques vulnerabilidades en GitHub Issues.**
 
-Envía email privado a: [sistemas@ursol.com](mailto:sistemas@ursol.com)
+Envía email privado a: [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com)
 
 Incluye:
 - Descripción clara del problema
@@ -2830,7 +2830,7 @@ Incluye:
 
 ### Organizaciones
 
--   [**Sistemas Ursol S.A.**](https://ursol.com) - Patrono principal del proyecto
+-   [**Senselab**](https://senselab.com) - Patrono principal del proyecto
 -   Empresa familiar costarricense con 30+ años de experiencia
 
 ---
@@ -2840,16 +2840,16 @@ Incluye:
 ### Fundador y Visionario
 
 **Eduardo Alberto Ureña Solano**
-- Fundador de Sistemas Ursol S.A.
+- Fundador de Senselab
 - 35+ años de experiencia en tecnología
 - Líder estratégico del proyecto
-- GitHub: [@ursolcr](https://github.com/ursolcr)
+- GitHub: [@senselabcr](https://github.com/senselabcr)
 
 ### Desarrollador Principal y Arquitecto
 
 **Jeremy Arias Solano**  
-- Co-fundador de Sistemas Ursol S.A.
-- Arquitecto de software y desarrollador completo de Ursol CAST API
+- Co-fundador de Senselab
+- Arquitecto de software y desarrollador completo de Senselab Core API
 - Especialista en Laravel, PHP y sistemas ERP
 - Diseño, desarrollo, testing y mantenimiento integral
 - GitHub: [@jeremy-sud](https://github.com/jeremy-sud)
@@ -2863,19 +2863,19 @@ Estamos siempre buscando:
 - 📊 **DevOps Engineers** - Docker, K8s
 - 📖 **Technical Writers** - Documentación
 
-¿Interesado? Contáctanos: [sistemas@ursol.com](mailto:sistemas@ursol.com)
+¿Interesado? Contáctanos: [deadmooncr@gmail.com](mailto:deadmooncr@gmail.com)
 
 ---
 
 <p align="center">
   <strong>Desarrollado con ❤️ y el "Toque Humano"</strong><br><br>
-  <a href="https://ursol.com"><img src="./public/assets/logos/ursol-icon.webp" width="60" alt="Ursol"></a><br><br>
-  <strong>Sistemas Ursol S.A.</strong><br>
+  <a href="https://senselab.com"><img src="./public/assets/logos/senselab-icon.png" width="60" alt="Senselab"></a><br><br>
+  <strong>Senselab</strong><br>
   <em>Soluciones Tecnológicas Completas</em><br>
   <em>Costa Rica | 30+ años de experiencia</em><br><br>
-  📞 <a href="https://wa.me/50688687765">+506 8868-7765</a> | 
-  📧 <a href="mailto:sistemas@ursol.com">sistemas@ursol.com</a><br><br>
-  <sub>© 2026 Sistemas Ursol S.A. - Todos los derechos reservados</sub><br>
+  📞 <a href="https://wa.me/50689735665">+(506)8973-5665</a> | 
+  📧 <a href="mailto:deadmooncr@gmail.com">deadmooncr@gmail.com</a><br><br>
+  <sub>© 2026 Senselab - Todos los derechos reservados</sub><br>
   <sub>Software Propietario — Uso exclusivo bajo licencia</sub>
 </p>
 

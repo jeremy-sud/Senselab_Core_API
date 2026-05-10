@@ -22,7 +22,7 @@ use OpenApi\Attributes as OA;
  * permite consultas específicas sobre los movimientos.
  *
  * @package App\Http\Controllers\API
- * @author Sistemas Ursol S.A. - Jeremy Arias Solano
+ * @author Senselab - Jeremy Arias Solano
  */
 class DetalleAsientoController extends Controller
 {

@@ -8,7 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * Request de validación para crear Ruta
  *
  * @package App\Http\Requests
- * @author Sistemas Ursol S.A. - Jeremy Arias Solano
+ * @author Senselab - Jeremy Arias Solano
  */
 class StoreRutaRequest extends FormRequest
 {

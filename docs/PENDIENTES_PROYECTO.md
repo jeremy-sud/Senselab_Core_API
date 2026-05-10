@@ -1,4 +1,4 @@
-# PENDIENTES DEL PROYECTO — Ursol CAST API
+# PENDIENTES DEL PROYECTO — Senselab Core API
 
 **Última actualización:** 18 de abril de 2026  
 **Versión:** v5.0.2 (Deuda técnica resuelta 18 abr 2026)  

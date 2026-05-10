@@ -1,13 +1,13 @@
-# Kubernetes Deployment para Ursol CAST API
+# Kubernetes Deployment para Senselab Core API
 
-Este directorio contiene los manifests de Kubernetes para desplegar Ursol CAST API en un cluster.
+Este directorio contiene los manifests de Kubernetes para desplegar Senselab Core API en un cluster.
 
 ## Estructura
 
 ```
 kubernetes/
 ├── base/                    # Configuración base
-│   ├── namespace.yaml       # Namespace ursol-cast
+│   ├── namespace.yaml       # Namespace senselab-core
 │   ├── configmap.yaml       # Variables de entorno
 │   ├── secret.yaml          # Credenciales (editar antes de usar)
 │   ├── deployment.yaml      # API Deployment (PHP-FPM + Nginx)
@@ -54,7 +54,7 @@ nano kubernetes/base/secret.yaml
 kubectl apply -k kubernetes/overlays/development
 
 # Verificar despliegue
-kubectl get all -n ursol-cast-dev
+kubectl get all -n senselab-core-dev
 ```
 
 ### 3. Desplegar en Producción
@@ -64,7 +64,7 @@ kubectl get all -n ursol-cast-dev
 kubectl apply -k kubernetes/overlays/production
 
 # Verificar despliegue
-kubectl get all -n ursol-cast-prod
+kubectl get all -n senselab-core-prod
 ```
 
 ## Componentes
@@ -102,28 +102,28 @@ kubectl get all -n ursol-cast-prod
 
 ```bash
 # Ver pods
-kubectl get pods -n ursol-cast-prod
+kubectl get pods -n senselab-core-prod
 
 # Ver logs del API
-kubectl logs -f deployment/prod-ursol-cast-api -n ursol-cast-prod
+kubectl logs -f deployment/prod-senselab-core-api -n senselab-core-prod
 
 # Ver logs del queue worker
-kubectl logs -f deployment/prod-ursol-cast-queue-worker -n ursol-cast-prod
+kubectl logs -f deployment/prod-senselab-core-queue-worker -n senselab-core-prod
 
 # Ejecutar migraciones
-kubectl exec -it deployment/prod-ursol-cast-api -n ursol-cast-prod -- php artisan migrate
+kubectl exec -it deployment/prod-senselab-core-api -n senselab-core-prod -- php artisan migrate
 
 # Shell en el container
-kubectl exec -it deployment/prod-ursol-cast-api -n ursol-cast-prod -- /bin/sh
+kubectl exec -it deployment/prod-senselab-core-api -n senselab-core-prod -- /bin/sh
 
 # Escalar manualmente
-kubectl scale deployment/prod-ursol-cast-api --replicas=5 -n ursol-cast-prod
+kubectl scale deployment/prod-senselab-core-api --replicas=5 -n senselab-core-prod
 
 # Ver HPA
-kubectl get hpa -n ursol-cast-prod
+kubectl get hpa -n senselab-core-prod
 
 # Ver Ingress
-kubectl get ingress -n ursol-cast-prod
+kubectl get ingress -n senselab-core-prod
 ```
 
 ## Monitoreo
@@ -148,15 +148,15 @@ Recomendado: Fluentd/Fluent Bit hacia ElasticSearch o Loki.
 ### Pods en CrashLoopBackOff
 
 ```bash
-kubectl describe pod <pod-name> -n ursol-cast-prod
-kubectl logs <pod-name> -n ursol-cast-prod --previous
+kubectl describe pod <pod-name> -n senselab-core-prod
+kubectl logs <pod-name> -n senselab-core-prod --previous
 ```
 
 ### MySQL no inicia
 
 ```bash
-kubectl logs statefulset/prod-mysql -n ursol-cast-prod
-kubectl describe pvc prod-mysql-pvc -n ursol-cast-prod
+kubectl logs statefulset/prod-mysql -n senselab-core-prod
+kubectl describe pvc prod-mysql-pvc -n senselab-core-prod
 ```
 
 ### Redis connection refused
@@ -164,6 +164,6 @@ kubectl describe pvc prod-mysql-pvc -n ursol-cast-prod
 Verificar que el service esté correcto:
 
 ```bash
-kubectl get svc redis-service -n ursol-cast-prod
-kubectl get endpoints redis-service -n ursol-cast-prod
+kubectl get svc redis-service -n senselab-core-prod
+kubectl get endpoints redis-service -n senselab-core-prod
 ```

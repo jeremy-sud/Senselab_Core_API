@@ -25,7 +25,7 @@ use OpenApi\Attributes as OA;
  * Multi-tenant por empresa_id
  *
  * @package App\Http\Controllers\API
- * @author Sistemas Ursol S.A.
+ * @author Senselab
  */
 class UsuarioController extends Controller
 {

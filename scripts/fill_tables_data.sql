@@ -1,4 +1,4 @@
--- Ursol CAST API - Script de Llenado de Datos de Prueba
+-- Senselab Core API - Script de Llenado de Datos de Prueba
 -- Fecha: 11 de Febrero 2026
 -- Este script llena TODAS las tablas con datos realistas para testing
 
@@ -10,7 +10,7 @@ USE api_db;
 
 -- 1. EMPRESAS (Landlord - No es tenant)
 INSERT INTO empresas (id, nombre, ruc, email, telefono, direccion, ciudad, pais, moneda, porcentaje_iva, estado_activo, creado_en, actualizado_en) VALUES
-(1, 'Sistemas Ursol S.A.', '3101234567-8', 'info@ursol.com', '+506 8868-7765', 'San José, Costa Rica', 'San José', 'CR', 'CRC', 13.00, true, NOW(), NOW()),
+(1, 'Senselab', '3101234567-8', 'info@senselab.com', '+(506)8973-5665', 'San José, Costa Rica', 'San José', 'CR', 'CRC', 13.00, true, NOW(), NOW()),
 (2, 'Empresa Demo S.A.', '3107654321-9', 'demo@example.com', '+506 2234-5678', 'Cartago, Costa Rica', 'Cartago', 'CR', 'CRC', 13.00, true, NOW(), NOW()),
 (3, 'Comercios Globales Ltd', '3102468135-0', 'info@comercios.com', '+506 2111-2222', 'Heredia, Costa Rica', 'Heredia', 'CR', 'CRC', 13.00, true, NOW(), NOW());
 
@@ -130,9 +130,9 @@ INSERT INTO cabys (id, codigo, descripcion, empresa_id, creado_en, actualizado_e
 
 -- 13. SUCURSALES
 INSERT INTO sucursales (id, empresa_id, nombre, direccion, ciudad, provincia, telefono, email, es_principal, activo, creado_en, actualizado_en) VALUES
-(1, 1, 'Sucursal Principal - San José', 'Ave Central, San José', 'San José', 'San José', '22341111', 'principal@ursol.com', true, true, NOW(), NOW()),
-(2, 1, 'Sucursal Cartago', 'Centro de Cartago', 'Cartago', 'Cartago', '22551111', 'cartago@ursol.com', false, true, NOW(), NOW()),
-(3, 1, 'Sucursal Heredia', 'Centro de Heredia', 'Heredia', 'Heredia', '23701111', 'heredia@ursol.com', false, true, NOW(), NOW());
+(1, 1, 'Sucursal Principal - San José', 'Ave Central, San José', 'San José', 'San José', '22341111', 'principal@senselab.com', true, true, NOW(), NOW()),
+(2, 1, 'Sucursal Cartago', 'Centro de Cartago', 'Cartago', 'Cartago', '22551111', 'cartago@senselab.com', false, true, NOW(), NOW()),
+(3, 1, 'Sucursal Heredia', 'Centro de Heredia', 'Heredia', 'Heredia', '23701111', 'heredia@senselab.com', false, true, NOW(), NOW());
 
 -- 14. ALMACENES
 INSERT INTO almacenes (id, sucursal_id, nombre, codigo, descripcion, ubicacion, is_principal, activo, creado_en, actualizado_en) VALUES
@@ -159,11 +159,11 @@ INSERT INTO tipos_impuesto (id, nombre, tasa, descripcion, empresa_id, creado_en
 -- 17. USUARIOS (Personas)
 -- Hashear: admin123 = $2y$12$V2GJpvLvKloepHM7ZLLBe.K5JfhW0GZXR5AkU5W5Z5Z5Z5Z5Z5Z5
 INSERT INTO usuarios (id, empresa_id, nombre, email, password, telefono, estado_activo, ultimo_acceso, creado_en, actualizado_en) VALUES
-(1, 1, 'Administrador', 'admin@ursol.com', '$2y$12$V2GJpvLvKloepHM7ZLLBe.K5JfhW0GZXR5AkU5W5Z5Z5Z5Z5Z5Z', '+506 8868-7765', true, NOW(), NOW(), NOW()),
-(2, 1, 'Carlos Gerente', 'carlos.gerente@ursol.com', '$2y$12$V2GJpvLvKloepHM7ZLLBe.K5JfhW0GZXR5AkU5W5Z5Z5Z5Z5Z5Z', '+506 8234-5678', true, NOW(), NOW(), NOW()),
-(3, 1, 'María Contador', 'maria.contador@ursol.com', '$2y$12$V2GJpvLvKloepHM7ZLLBe.K5JfhW0GZXR5AkU5W5Z5Z5Z5Z5Z5Z', '+506 8111-2222', true, NOW(), NOW(), NOW()),
-(4, 1, 'Juan Vendedor', 'juan.vendedor@ursol.com', '$2y$12$V2GJpvLvKloepHM7ZLLBe.K5JfhW0GZXR5AkU5W5Z5Z5Z5Z5Z5Z', '+506 8777-8888', true, NOW(), NOW(), NOW()),
-(5, 1, 'Pedro Bodeguero', 'pedro.bodeguero@ursol.com', '$2y$12$V2GJpvLvKloepHM7ZLLBe.K5JfhW0GZXR5AkU5W5Z5Z5Z5Z5Z5Z', '+506 8999-0000', true, NOW(), NOW(), NOW());
+(1, 1, 'Administrador', 'admin@senselab.com', '$2y$12$V2GJpvLvKloepHM7ZLLBe.K5JfhW0GZXR5AkU5W5Z5Z5Z5Z5Z5Z', '+(506)8973-5665', true, NOW(), NOW(), NOW()),
+(2, 1, 'Carlos Gerente', 'carlos.gerente@senselab.com', '$2y$12$V2GJpvLvKloepHM7ZLLBe.K5JfhW0GZXR5AkU5W5Z5Z5Z5Z5Z5Z', '+506 8234-5678', true, NOW(), NOW(), NOW()),
+(3, 1, 'María Contador', 'maria.contador@senselab.com', '$2y$12$V2GJpvLvKloepHM7ZLLBe.K5JfhW0GZXR5AkU5W5Z5Z5Z5Z5Z5Z', '+506 8111-2222', true, NOW(), NOW(), NOW()),
+(4, 1, 'Juan Vendedor', 'juan.vendedor@senselab.com', '$2y$12$V2GJpvLvKloepHM7ZLLBe.K5JfhW0GZXR5AkU5W5Z5Z5Z5Z5Z5Z', '+506 8777-8888', true, NOW(), NOW(), NOW()),
+(5, 1, 'Pedro Bodeguero', 'pedro.bodeguero@senselab.com', '$2y$12$V2GJpvLvKloepHM7ZLLBe.K5JfhW0GZXR5AkU5W5Z5Z5Z5Z5Z5Z', '+506 8999-0000', true, NOW(), NOW(), NOW());
 
 -- 18. CUENTAS CONTABLES
 INSERT INTO cuentas_contables (id, empresa_id, numero_cuenta, nombre, tipo_cuenta_id, saldo_inicial, saldo_actual, moneda, es_activa, creado_en, actualizado_en) VALUES
@@ -257,11 +257,11 @@ INSERT INTO proveedores (id, empresa_id, nombre, identificacion, contacto_princi
 
 -- 25. EMPLEADOS
 INSERT INTO empleados (id, empresa_id, usuario_id, cargo_id, nombre, identificacion, email, telefono, fecha_nacimiento, genero, direccion, ciudad, provincia, fecha_ingreso, fecha_salida, estado_activo, salario_base, creado_en, actualizado_en) VALUES
-(1, 1, 1, 1, 'Administrador', '112233445', 'admin@ursol.com', '+506 8868-7765', '1975-05-20', 'M', 'San José', 'San José', 'San José', '2020-01-15', NULL, true, 1500000, NOW(), NOW()),
-(2, 1, 2, 2, 'Carlos Gerente', '223344556', 'carlos.gerente@ursol.com', '+506 8234-5678', '1985-07-10', 'M', 'Cartago', 'Cartago', 'Cartago', '2021-02-20', NULL, true, 1200000, NOW(), NOW()),
-(3, 1, 3, 3, 'María Contador', '334455667', 'maria.contador@ursol.com', '+506 8111-2222', '1990-03-15', 'F', 'Heredia', 'Heredia', 'Heredia', '2021-06-01', NULL, true, 900000, NOW(), NOW()),
-(4, 1, 4, 4, 'Juan Vendedor', '445566778', 'juan.vendedor@ursol.com', '+506 8777-8888', '1988-11-22', 'M', 'San José', 'San José', 'San José', '2022-01-10', NULL, true, 700000, NOW(), NOW()),
-(5, 1, 5, 6, 'Pedro Bodeguero', '556677889', 'pedro.bodeguero@ursol.com', '+506 8999-0000', '1992-09-05', 'M', 'Alajuela', 'Alajuela', 'Alajuela', '2022-03-15', NULL, true, 600000, NOW(), NOW());
+(1, 1, 1, 1, 'Administrador', '112233445', 'admin@senselab.com', '+(506)8973-5665', '1975-05-20', 'M', 'San José', 'San José', 'San José', '2020-01-15', NULL, true, 1500000, NOW(), NOW()),
+(2, 1, 2, 2, 'Carlos Gerente', '223344556', 'carlos.gerente@senselab.com', '+506 8234-5678', '1985-07-10', 'M', 'Cartago', 'Cartago', 'Cartago', '2021-02-20', NULL, true, 1200000, NOW(), NOW()),
+(3, 1, 3, 3, 'María Contador', '334455667', 'maria.contador@senselab.com', '+506 8111-2222', '1990-03-15', 'F', 'Heredia', 'Heredia', 'Heredia', '2021-06-01', NULL, true, 900000, NOW(), NOW()),
+(4, 1, 4, 4, 'Juan Vendedor', '445566778', 'juan.vendedor@senselab.com', '+506 8777-8888', '1988-11-22', 'M', 'San José', 'San José', 'San José', '2022-01-10', NULL, true, 700000, NOW(), NOW()),
+(5, 1, 5, 6, 'Pedro Bodeguero', '556677889', 'pedro.bodeguero@senselab.com', '+506 8999-0000', '1992-09-05', 'M', 'Alajuela', 'Alajuela', 'Alajuela', '2022-03-15', NULL, true, 600000, NOW(), NOW());
 
 -- ============================================================================
 -- FASE 5: TRANSACCIONES COMPRAS Y VENTAS (SIMPLIFICADAS)
@@ -436,10 +436,10 @@ INSERT INTO cuentas_por_pagar (id, empresa_id, proveedor_id, numero_documento, t
 
 -- 34. CONFIGURACIONES
 INSERT INTO configuraciones (id, empresa_id, clave, valor, descripcion, creado_en, actualizado_en) VALUES
-(1, 1, 'nombre_empresa', 'Sistemas Ursol S.A.', 'Nombre oficial de la empresa', NOW(), NOW()),
+(1, 1, 'nombre_empresa', 'Senselab', 'Nombre oficial de la empresa', NOW(), NOW()),
 (2, 1, 'ruc_empresa', '3101234567-8', 'RUC de la empresa', NOW(), NOW()),
-(3, 1, 'email_empresa', 'info@ursol.com', 'Email de la empresa', NOW(), NOW()),
-(4, 1, 'telefono_empresa', '+506 8868-7765', 'Teléfono de la empresa', NOW(), NOW()),
+(3, 1, 'email_empresa', 'info@senselab.com', 'Email de la empresa', NOW(), NOW()),
+(4, 1, 'telefono_empresa', '+(506)8973-5665', 'Teléfono de la empresa', NOW(), NOW()),
 (5, 1, 'porcentaje_iva_defecto', '13', 'Porcentaje IVA por defecto', NOW(), NOW()),
 (6, 1, 'moneda_defecto', 'CRC', 'Moneda por defecto', NOW(), NOW()),
 (7, 1, 'idioma_defecto', 'es', 'Idioma por defecto', NOW(), NOW()),
@@ -447,7 +447,7 @@ INSERT INTO configuraciones (id, empresa_id, clave, valor, descripcion, creado_e
 
 -- 35. NOTIFICACIONES
 INSERT INTO notificaciones (id, usuario_id, empresa_id, titulo, mensaje, tipo, leida, creado_en, actualizado_en) VALUES
-(1, 1, 1, 'Bienvenida', 'Bienvenido a Ursol CAST API', 'info', true, NOW(), NOW()),
+(1, 1, 1, 'Bienvenida', 'Bienvenido a Senselab Core API', 'info', true, NOW(), NOW()),
 (2, 2, 1, 'Nueva Venta', 'Nueva venta registrada: V-001', 'venta', false, NOW(), NOW()),
 (3, 3, 1, 'Auditoria', 'Cambio en configuración de empresa', 'auditoria', false, NOW(), NOW()),
 (4, 4, 1, 'Nuevo Cliente', 'Cliente José Manuel Rodríguez registrado', 'cliente', false, NOW(), NOW()),

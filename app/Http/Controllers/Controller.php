@@ -11,11 +11,11 @@ use OpenApi\Attributes as OA;
  * @OA\OpenApi(
  *     @OA\Info(
  *         version="1.0.0",
- *         title="Ursol CAST API - ERP System",
+ *         title="Senselab Core API - ERP System",
  *         description="API completa de ERP para empresas costarricenses. Sistema integral de gestión empresarial con soporte para contabilidad, facturación electrónica, inventario, compras, ventas, recursos humanos y más.",
  *         @OA\Contact(
- *             name="Sistemas Ursol",
- *             email="sistemas@ursol.com"
+ *             name="Senselab",
+ *             email="deadmooncr@gmail.com"
  *         )
  *     ),
  *     @OA\Server(
@@ -23,7 +23,7 @@ use OpenApi\Attributes as OA;
  *         description="Servidor de Desarrollo Local"
  *     ),
  *     @OA\Server(
- *         url="https://api.ursol.com",
+ *         url="https://api.senselab.com",
  *         description="Servidor de Producción"
  *     )
  * )

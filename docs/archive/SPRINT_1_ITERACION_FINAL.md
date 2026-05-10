@@ -265,5 +265,5 @@ Crear policies para los 64 controllers restantes. **Esto requiere:**
 ---
 
 **Autor:** GitHub Copilot  
-**Copyright:** 2025 Sistemas Ursol S.A.  
+**Copyright:** 2025 Senselab  
 **Última Actualización:** 2025-11-23 21:30

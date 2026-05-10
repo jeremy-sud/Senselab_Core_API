@@ -1,4 +1,4 @@
-# Ursol CAST API v5.0.1 — Executive Summary
+# Senselab Core API v5.0.1 — Executive Summary
 
 **Sistema ERP Multi-Tenant con IA y Facturación Electrónica para Costa Rica**
 
@@ -8,9 +8,9 @@
 
 | Concepto | Detalle |
 |----------|---------|
-| **Producto** | Ursol CAST API — Backend ERP completo (API REST) |
+| **Producto** | Senselab Core API — Backend ERP completo (API REST) |
 | **Versión** | 5.0.1 (Abril 2026) |
-| **Propietario** | Sistemas Ursol S.A. (Costa Rica) |
+| **Propietario** | Senselab (Costa Rica) |
 | **Desarrollador Principal** | Jeremy Arias Solano |
 | **Valoración** | **$120,000 — $150,000 USD** (costo de replicación) |
 | **Auditoría Independiente** | **9.2 / 10** (13 Abril 2026) |
@@ -123,7 +123,7 @@ Gap de mercado identificado en Costa Rica:
 $30-$120/mes   │ Alegra, Facturador.cr │ Solo contabilidad + FE
                 │                       │ Sin ERP completo, sin IA
 ────────────────┼───────────────────────┤
-$149-$899/mes   │ ★ URSOL CAST ★        │ ERP + FE + IA + Multi-tenant
+$149-$899/mes   │ ★ SENSELAB CAST ★        │ ERP + FE + IA + Multi-tenant
                 │ (oportunidad)          │ ÚNICO en este rango en CR
 ────────────────┼───────────────────────┤
 $1,500+/mes     │ SAP, Softland         │ Enterprise legacy
@@ -152,13 +152,13 @@ $1,500+/mes     │ SAP, Softland         │ Enterprise legacy
 
 | | |
 |---|---|
-| **Empresa** | Sistemas Ursol S.A. |
-| **Web** | https://ursol.com |
-| **Email** | sistemas@ursol.com |
-| **WhatsApp** | +506 8868-7765 |
-| **GitHub** | https://github.com/SistemasUrsol |
+| **Empresa** | Senselab |
+| **Web** | https://senselab.com |
+| **Email** | deadmooncr@gmail.com |
+| **WhatsApp** | +(506)8973-5665 |
+| **GitHub** | https://github.com/SenseLab-dev |
 
 ---
 
-*Documento confidencial — Sistemas Ursol S.A. © 2026*  
+*Documento confidencial — Senselab © 2026*  
 *Versión del documento: 15 de Abril 2026*

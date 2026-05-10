@@ -21,7 +21,7 @@ use Carbon\Carbon;
  *
  * Por defecto usa Gemini (GRATUITO)
  *
- * Desarrollado por Sistemas Ursol S.A.
+ * Desarrollado por Senselab
  */
 class ChatbotService
 {
@@ -191,7 +191,7 @@ class ChatbotService
         $dataJson = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
         return <<<PROMPT
-Eres el asistente virtual de Ursol ERP, un sistema de gestión empresarial para empresas costarricenses.
+Eres el asistente virtual de Senselab ERP, un sistema de gestión empresarial para empresas costarricenses.
 
 Tu rol es ayudar a los usuarios a obtener información sobre su negocio de manera conversacional y amigable.
 

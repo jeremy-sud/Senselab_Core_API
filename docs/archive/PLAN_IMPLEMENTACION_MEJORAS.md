@@ -1,5 +1,5 @@
 # 📋 PLAN DE IMPLEMENTACIÓN DE MEJORAS
-## Ursol CAST API - Roadmap Detallado (Crítico → Leve)
+## Senselab Core API - Roadmap Detallado (Crítico → Leve)
 
 **Fecha:** 7 de Febrero de 2026  
 **Timeline Total:** 12 semanas (3 meses)  
@@ -60,7 +60,7 @@ Wildcard `*` permite versiones con breaking changes.
 
 #### PASO 1: Identificar versiones actuales
 ```bash
-cd /home/dawnweaber/Workspace/Ursol-CAST-API
+cd /home/dawnweaber/Workspace/Senselab_Core_API
 
 # Chequear versiones actuales instaladas
 composer show | grep -E "dompdf|larastan|phpstan"

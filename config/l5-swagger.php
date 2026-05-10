@@ -5,7 +5,7 @@ return [
     'documentations' => [
         'default' => [
             'api' => [
-                'title' => 'Ursol CAST API — Documentación Interactiva',
+                'title' => 'Senselab Core API — Documentación Interactiva',
             ],
 
             'routes' => [

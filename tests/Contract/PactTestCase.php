@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
  * Base class for Pact consumer contract tests.
  *
  * Each consumer test defines expected interactions (request/response pairs)
- * against the Ursol CAST API provider. These generate Pact JSON contracts
+ * against the Senselab Core API provider. These generate Pact JSON contracts
  * in tests/Contract/pacts/ that can be verified against the real provider.
  */
 abstract class PactTestCase extends TestCase
@@ -28,7 +28,7 @@ abstract class PactTestCase extends TestCase
 
         $this->config = new MockServerConfig();
         $this->config->setConsumer($this->getConsumerName());
-        $this->config->setProvider('UrsolCastApi');
+        $this->config->setProvider('SenselabCoreApi');
         $this->config->setPactDir(__DIR__ . '/pacts');
         $this->config->setPactSpecificationVersion('4.0.0');
         $this->config->setHost('127.0.0.1');
@@ -44,7 +44,7 @@ abstract class PactTestCase extends TestCase
      */
     protected function getConsumerName(): string
     {
-        return 'UrsolCastFrontend';
+        return 'SenselabCoreFrontend';
     }
 
     /**

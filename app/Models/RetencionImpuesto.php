@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * Gestiona retenciones de impuestos (renta, IVA) aplicadas a proveedores.
  *
  * @author Jeremy Arias Solano <deadmooncr@gmail.com>
- * @copyright 2025 Sistemas Ursol S.A.
+ * @copyright 2025 Senselab
  */
 class RetencionImpuesto extends Model
 {

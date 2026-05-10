@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ursol-cast-api-service
-  namespace: ursol-cast
+  name: senselab-core-api-service
+  namespace: senselab-core
   labels:
-    app.kubernetes.io/name: ursol-cast-api
+    app.kubernetes.io/name: senselab-core-api
 spec:
   type: ClusterIP
   ports:
@@ -13,14 +13,14 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: ursol-cast-api
+    app.kubernetes.io/name: senselab-core-api
     app.kubernetes.io/component: api
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: mysql-service
-  namespace: ursol-cast
+  namespace: senselab-core
   labels:
     app.kubernetes.io/name: mysql
 spec:
@@ -36,7 +36,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: redis-service
-  namespace: ursol-cast
+  namespace: senselab-core
   labels:
     app.kubernetes.io/name: redis
 spec:

@@ -1,4 +1,4 @@
-# Load Testing — Ursol CAST API
+# Load Testing — Senselab Core API
 
 Tests de carga con [k6](https://k6.io/) para validar rendimiento y detectar problemas que los tests unitarios no atrapan.
 
@@ -59,7 +59,7 @@ k6 run tests/Load/load-n1-detection.js
 
 ### Cambiar URL base (staging, producción)
 ```bash
-k6 run --env K6_BASE_URL=https://staging.ursol.com/api tests/Load/smoke-test.js
+k6 run --env K6_BASE_URL=https://staging.senselab.com/api tests/Load/smoke-test.js
 ```
 
 ### Cambiar credenciales

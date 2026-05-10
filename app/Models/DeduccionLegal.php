@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * Catálogo de deducciones legales aplicables a nómina (CCSS, INS, LPT, etc.).
  * 
  * @author Jeremy Arias Solano <deadmooncr@gmail.com>
- * @copyright 2025 Sistemas Ursol S.A.
+ * @copyright 2025 Senselab
  */
 class DeduccionLegal extends Model
 {

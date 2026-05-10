@@ -1,4 +1,4 @@
-# 🔍 AUDITORÍA TÉCNICA COMPLETA - URSOL CAST API
+# 🔍 AUDITORÍA TÉCNICA COMPLETA - SENSELAB CAST API
 
 **Fecha de Auditoría Original:** 7 de Diciembre 2025  
 **Verificación Actualizada:** 13 de Febrero 2026  
@@ -510,7 +510,7 @@ RUN --mount=type=cache,target=/root/.composer \
 
 2. **Security scanning de imagen:**
 ```bash
-docker scan sistemasursol/ursol-cast-api:latest
+docker scan sistemassenselab/senselab-core-api:latest
 ```
 
 ---
@@ -591,7 +591,7 @@ docker-compose exec php php artisan test
 
 ## ✅ CONCLUSIONES
 
-El proyecto **Ursol CAST API** es un sistema ERP robusto y bien estructurado con:
+El proyecto **Senselab Core API** es un sistema ERP robusto y bien estructurado con:
 
 **Fortalezas:**
 - Arquitectura multi-tenant bien diseñada

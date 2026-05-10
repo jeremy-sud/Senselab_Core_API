@@ -6,7 +6,7 @@
  * Define campos sensibles por modelo que deben encriptarse automáticamente
  * en la base de datos. Usa mutadores transparentes para cifrar/descifrar.
  *
- * @package Ursol\Configuration
+ * @package Senselab\Configuration
  * @version 1.0.0
  */
 

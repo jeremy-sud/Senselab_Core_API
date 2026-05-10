@@ -17,7 +17,7 @@ use Illuminate\Http\Client\RequestException;
  * - Predicciones de demanda
  * - Generación de contenido
  *
- * Desarrollado por Sistemas Ursol S.A.
+ * Desarrollado por Senselab
  */
 class OpenAIService implements AIServiceInterface
 {

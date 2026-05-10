@@ -6,7 +6,7 @@
 
 ```mermaid
 xychart-beta
-    title "Precisión de Servicios IA — Ursol CAST API"
+    title "Precisión de Servicios IA — Senselab Core API"
     x-axis ["OCR Facturas", "CAByS Classifier", "Anomaly Detection", "Chatbot Intent", "Credit Scoring", "Predictions"]
     y-axis "Precisión (%)" 0 --> 100
     bar [92, 98, 95, 90, 88, 85]

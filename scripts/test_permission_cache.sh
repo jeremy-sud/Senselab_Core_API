@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script de Testing para Sistema de Cache de Permisos
-# Ursol CAST API - Sprint 3
+# Senselab Core API - Sprint 3
 # Uso: ./test_permission_cache.sh
 
 # Colores para output

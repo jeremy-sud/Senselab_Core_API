@@ -2,7 +2,7 @@
 
 **Fecha:** 7 de Febrero, 2025  
 **Estado:** ✅ COMPLETADA  
-**Desarrollador:** Jeremy Arias Solano / Sistemas Ursol
+**Desarrollador:** Jeremy Arias Solano / Senselab
 
 ---
 

@@ -1,4 +1,4 @@
-# Auditoría de Dependencias y Licencias — Ursol CAST API v5.0.1
+# Auditoría de Dependencias y Licencias — Senselab Core API v5.0.1
 
 **Fecha:** 15 de Abril 2026  
 **Propósito:** Verificar que todas las dependencias del proyecto son compatibles con la venta de propiedad intelectual y no existen conflictos de licencias copyleft que impidan la distribución comercial.
@@ -56,7 +56,7 @@
 - [x] El código fuente de dompdf permanece disponible (es open source en Packagist)
 - [x] No se ha copiado código de dompdf al proyecto principal
 
-**Conclusión LGPL:** ✅ **Sin riesgo.** Uso estándar como librería. No afecta la licencia propietaria de Ursol CAST API.
+**Conclusión LGPL:** ✅ **Sin riesgo.** Uso estándar como librería. No afecta la licencia propietaria de Senselab Core API.
 
 ### Alternativa (si el comprador lo requiere)
 
@@ -147,9 +147,9 @@ composer audit
 | ¿Las dependencias LGPL están usadas correctamente? | ✅ **Sí** (como librerías, sin modificación) |
 | ¿Hay vulnerabilidades conocidas en dependencias? | ✅ **No** (`composer audit` limpio) |
 
-**La venta de la propiedad intelectual de Ursol CAST API no tiene impedimentos legales por licencias de terceros.**
+**La venta de la propiedad intelectual de Senselab Core API no tiene impedimentos legales por licencias de terceros.**
 
 ---
 
 *Auditoría realizada: 15 de Abril 2026*  
-*Sistemas Ursol S.A.*
+*Senselab*

@@ -21,7 +21,7 @@ use OpenApi\Attributes as OA;
  * Incluye control de saldos, vencimientos y estados de pago.
  *
  * @package App\Http\Controllers\API
- * @author Sistemas Ursol S.A. - Jeremy Arias Solano
+ * @author Senselab - Jeremy Arias Solano
  */
 class CuentaPorCobrarController extends Controller
 {

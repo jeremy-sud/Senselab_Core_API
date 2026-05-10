@@ -19,7 +19,7 @@ use OpenApi\Attributes as OA;
  * Gestiona presupuestos maestros con sus períodos y estados.
  *
  * @package App\Http\Controllers\API
- * @author Sistemas Ursol S.A. - Jeremy Arias Solano
+ * @author Senselab - Jeremy Arias Solano
  */
 class PresupuestoController extends Controller
 {

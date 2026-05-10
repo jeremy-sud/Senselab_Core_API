@@ -1,4 +1,4 @@
-# 🔍 AUDITORÍA INTEGRAL DE DEUDA TÉCNICA — Ursol CAST API
+# 🔍 AUDITORÍA INTEGRAL DE DEUDA TÉCNICA — Senselab Core API
 
 **Fecha:** 1 de mayo de 2026  
 **Versión auditada:** v5.0.2 (Build 18 de abril)  
@@ -269,7 +269,7 @@ Los seeders contienen contraseñas en texto plano:
 
 ```php
 // FoundersSeeder.php
-'password' => Hash::make('Ursol2024!'),
+'password' => Hash::make('Senselab2024!'),
 
 // UsuarioAdminSeeder.php
 'password' => Hash::make('admin123'),
@@ -294,7 +294,7 @@ $password = config('auth.admin_default_password')
     ?? env('ADMIN_PASSWORD', 'ChangeMe123!@#');
 
 Usuario::updateOrCreate(
-    ['email' => 'admin@ursol.local'],
+    ['email' => 'admin@senselab.local'],
     [
         'nombre' => 'Administrador',
         'password' => Hash::make($password),
@@ -629,7 +629,7 @@ Security Issues (P1)       0         0         Continuos
 
 ### 9.1 Estado General
 
-Ursol CAST API es un sistema **enterprise-grade con arquitectura sólida**. La deuda técnica identificada es:
+Senselab Core API es un sistema **enterprise-grade con arquitectura sólida**. La deuda técnica identificada es:
 
 - ✅ **NO bloqueante** en producción
 - ✅ **Bien documentada** y clasificada

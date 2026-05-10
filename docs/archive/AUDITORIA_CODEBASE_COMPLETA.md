@@ -1,4 +1,4 @@
-# 🔍 AUDITORÍA COMPLETA DEL CODEBASE - Ursol CAST API
+# 🔍 AUDITORÍA COMPLETA DEL CODEBASE - Senselab Core API
 
 **Fecha de Auditoría:** 22 de noviembre de 2025  
 **Proyecto:** Sistema ERP Multi-Tenant con Facturación Electrónica  
@@ -841,14 +841,14 @@ Estimated Fix Time: 40-60 horas
 
 ## 📞 CONTACTO Y SOPORTE
 
-**Proyecto:** Ursol CAST API  
-**Empresa:** Sistemas Ursol S.A. (30 años de experiencia)  
+**Proyecto:** Senselab Core API  
+**Empresa:** Senselab (30 años de experiencia)  
 **Lead Developer:** Jeremy Arias Solano  
 **Email:** deadmooncr@gmail.com  
-**Corporativo:** sistemas@ursol.com  
-**WhatsApp:** +506 8868-7765  
+**Corporativo:** deadmooncr@gmail.com  
+**WhatsApp:** +(506)8973-5665  
 **GitHub:** [jeremy-sud](https://github.com/jeremy-sud)  
-**Documentación:** [Ursol Reposit for Developers](https://sites.google.com/view/repdevursol/home/repositorio)
+**Documentación:** [Senselab Reposit for Developers](https://sites.google.com/view/repdevsenselab/home/repositorio)
 
 ---
 
@@ -948,7 +948,7 @@ El proyecto está en **buenas condiciones técnicas** pero requiere **atención 
 
 ---
 
-*© 2025 Sistemas Ursol S.A. - Todos los derechos reservados*  
+*© 2025 Senselab - Todos los derechos reservados*  
 *Auditoría realizada con GitHub Copilot (Claude Sonnet 4.5)*  
 *"Toque Humano" - 30 años de experiencia en Costa Rica*
 

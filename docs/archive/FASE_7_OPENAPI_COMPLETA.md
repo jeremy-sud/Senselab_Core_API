@@ -8,7 +8,7 @@
 
 ## 📊 Resumen Ejecutivo
 
-Se ha completado exitosamente la **documentación OpenAPI/Swagger** de toda la API del sistema ERP Ursol-CAST. El proyecto ahora cuenta con:
+Se ha completado exitosamente la **documentación OpenAPI/Swagger** de toda la API del sistema ERP Senselab-CAST. El proyecto ahora cuenta con:
 
 - ✅ **44/44 Controladores documentados** (100%)
 - ✅ **34 Schemas OpenAPI** definidos
@@ -372,7 +372,7 @@ http://localhost:8000/api/documentation
 
 ## 🏆 Conclusión
 
-La **FASE 7** ha finalizado exitosamente con la documentación completa de toda la API del sistema ERP Ursol-CAST. El proyecto ahora cuenta con una **documentación OpenAPI profesional, interactiva y autogenerada** que facilitará el desarrollo, mantenimiento y futuras integraciones.
+La **FASE 7** ha finalizado exitosamente con la documentación completa de toda la API del sistema ERP Senselab-CAST. El proyecto ahora cuenta con una **documentación OpenAPI profesional, interactiva y autogenerada** que facilitará el desarrollo, mantenimiento y futuras integraciones.
 
 **Total de esfuerzo:** 11 sesiones de documentación sistemática  
 **Resultado:** API 100% documentada con estándares industriales  
@@ -382,5 +382,5 @@ La **FASE 7** ha finalizado exitosamente con la documentación completa de toda 
 
 **Documento generado automáticamente**  
 **Fecha:** 21 de noviembre de 2025  
-**Proyecto:** Ursol CAST API v1.0.0  
-**Autor:** Sistemas Ursol S.A.
+**Proyecto:** Senselab Core API v1.0.0  
+**Autor:** Senselab

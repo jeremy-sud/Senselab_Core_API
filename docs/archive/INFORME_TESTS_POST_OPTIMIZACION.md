@@ -317,4 +317,4 @@ Los 40 tests que fallan son problemas de **configuración de tests**, NO de la b
 
 **Generado:** 26/Nov/2025 05:04 UTC  
 **Comando:** `docker-compose exec -T php php artisan test`  
-**Base de Datos:** Docker MySQL (ursol_user@localhost:8080)
+**Base de Datos:** Docker MySQL (senselab_user@localhost:8080)

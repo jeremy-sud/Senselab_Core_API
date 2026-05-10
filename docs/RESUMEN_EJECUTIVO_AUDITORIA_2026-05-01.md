@@ -1,6 +1,6 @@
 # 🎯 RESUMEN EJECUTIVO — Auditoría de Deuda Técnica
 
-**Ursol CAST API — 1 de mayo de 2026**
+**Senselab Core API — 1 de mayo de 2026**
 
 ---
 

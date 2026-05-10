@@ -9,7 +9,7 @@ use Illuminate\Validation\Rule;
  * Request de validación para actualizar Tipo de Impuesto
  *
  * @package App\Http\Requests
- * @author Sistemas Ursol S.A. - Jeremy Arias Solano
+ * @author Senselab - Jeremy Arias Solano
  */
 class UpdateTipoImpuestoRequest extends FormRequest
 {

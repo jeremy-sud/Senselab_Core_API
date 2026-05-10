@@ -1,7 +1,7 @@
-# 💰 Valoración Comercial - Ursol CAST API
+# 💰 Valoración Comercial - Senselab Core API
 
 **Fecha de Valoración:** 26 de Noviembre 2025  
-**Desarrollado por:** Sistemas Ursol S.A.  
+**Desarrollado por:** Senselab  
 **Desarrollador Principal:** Jeremy Arias Solano
 
 ---
@@ -38,9 +38,9 @@
 | **Facturador.cr** | $30 - $80 | Solo facturación electrónica | No incluye ERP |
 | **Siigo** | $150 - $400 | ERP básico + facturación | Funcionalidad limitada |
 | **SAP Business One** | $1,500 - $3,000 | ERP completo enterprise | Alto costo, complejo |
-| **Ursol CAST** ⭐ | $800 - $1,500 | ERP completo + FE + Multi-tenant | Sistema custom completo |
+| **Senselab CAST** ⭐ | $800 - $1,500 | ERP completo + FE + Multi-tenant | Sistema custom completo |
 
-#### Ventajas Competitivas de Ursol CAST
+#### Ventajas Competitivas de Senselab CAST
 - ✅ **Mejor relación precio-valor** que SAP
 - ✅ **Mucho más completo** que Facturador.cr
 - ✅ **Más flexible** que Siigo
@@ -280,7 +280,7 @@ Rango Conservador:         $65,000 - $75,000
 
 ### Comparación con Competencia:
 
-| Aspecto | Ursol CAST | Sistemas Locales | SAP/Oracle |
+| Aspecto | Senselab CAST | Sistemas Locales | SAP/Oracle |
 |---------|-----------|------------------|------------|
 | **Precio** | $65K-$75K | $40K-$60K | $150K-$300K |
 | **Compliance DGT** | ✅ 100% | ⚠️ Parcial | ✅ Sí |
@@ -294,5 +294,5 @@ Rango Conservador:         $65,000 - $75,000
 
 **💎 Valoración Final: $65,000 - $75,000 USD**
 
-**Desarrollado con ❤️ por Sistemas Ursol S.A.**  
+**Desarrollado con ❤️ por Senselab**  
 **Fecha:** 26 de Noviembre, 2025

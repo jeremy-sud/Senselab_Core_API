@@ -99,7 +99,7 @@ class WebhookService extends BaseService
                     'X-Webhook-Signature' => $signature,
                     'X-Webhook-Event' => 'webhook.test',
                     'X-Webhook-Id' => (string) $webhook->id,
-                    'User-Agent' => 'Ursol-CAST-API/4.2.0',
+                    'User-Agent' => 'Senselab_Core_API/4.2.0',
                 ])
                 ->withBody($payload, 'application/json')
                 ->post($webhook->url);

@@ -1,4 +1,4 @@
-# 📚 ÍNDICE DE AUDITORÍAS — Ursol CAST API
+# 📚 ÍNDICE DE AUDITORÍAS — Senselab Core API
 
 **Centro de documentación de auditorías técnicas**
 
@@ -117,7 +117,7 @@ Mayo 1 2026        8.0/10  →  Deuda técnica identificada
 ### Guías Técnicas
 - [guides/REFACTORIZACION_CONTROLADORES.md](guides/REFACTORIZACION_CONTROLADORES.md) — Refactorización de controllers
 - [api/CONTROLLERS_SUMMARY.md](api/CONTROLLERS_SUMMARY.md) — Resumen de controllers
-- [GLOSARIO_COMPLETO_URSOL_CAST_API.md](GLOSARIO_COMPLETO_URSOL_CAST_API.md) — Terminología del proyecto
+- [GLOSARIO_COMPLETO_SENSELAB_CAST_API.md](GLOSARIO_COMPLETO_SENSELAB_CAST_API.md) — Terminología del proyecto
 
 ---
 
@@ -173,5 +173,5 @@ Desde Mayo 2026, las auditorías incluyen:
 
 **Última actualización:** 1 de mayo 2026  
 **Próxima auditoría:** 1 de junio 2026  
-**Responsable de auditorías:** Sistemas Ursol S.A.
+**Responsable de auditorías:** Senselab
 

@@ -15,10 +15,10 @@ docker-compose ps
 
 | Servicio | Estado | Puerto Host | Puerto Container |
 |----------|--------|-------------|------------------|
-| **ursol_nginx** | Up (healthy) | 8000 → 80, 8443 → 443 | 80, 443 |
-| **ursol_php** | Up (healthy) | - | 9000 |
-| **ursol_mysql** | Up (healthy) | 33061 → 3306 | 3306 |
-| **ursol_redis** | Up (healthy) | 63790 → 6379 | 6379 |
+| **senselab_nginx** | Up (healthy) | 8000 → 80, 8443 → 443 | 80, 443 |
+| **senselab_php** | Up (healthy) | - | 9000 |
+| **senselab_mysql** | Up (healthy) | 33061 → 3306 | 3306 |
+| **senselab_redis** | Up (healthy) | 63790 → 6379 | 6379 |
 
 **Nota:** Los puertos fueron ajustados para evitar conflictos con servicios locales:
 - MySQL: `33061` (en lugar de 3306)
@@ -35,7 +35,7 @@ docker-compose ps
 ### 3. Usuario Administrador Creado ✅
 
 ```
-Email:    admin@ursol.com
+Email:    admin@senselab.com
 Password: admin123
 Rol:      Administrador (68 permisos)
 ```
@@ -119,8 +119,8 @@ docker-compose exec -T php php artisan test --stop-on-failure
 # Database (Docker)
 DB_HOST=mysql
 DB_PORT=3306
-DB_USERNAME=ursol_user
-DB_PASSWORD=ursol_password
+DB_USERNAME=senselab_user
+DB_PASSWORD=senselab_password
 
 # Redis (Docker)
 REDIS_HOST=redis
@@ -292,6 +292,6 @@ make fresh           # Reset BD
 
 ---
 
-**Sistemas Ursol S.A.**  
+**Senselab**  
 Instalación completada por: Jeremy Arias Solano  
 Fecha: 22 de noviembre de 2025 🚀

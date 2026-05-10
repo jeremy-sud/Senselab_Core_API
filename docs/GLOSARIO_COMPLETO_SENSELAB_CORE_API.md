@@ -1,10 +1,10 @@
-# Glosario Completo — Ursol CAST API
+# Glosario Completo — Senselab Core API
 
 **Fecha de creación:** 1 de abril de 2026  
-**Proyecto:** Ursol CAST API v5.0.1  
-**Desarrollado por:** Sistemas Ursol S.A.
+**Proyecto:** Senselab Core API v5.0.1  
+**Desarrollado por:** Senselab
 
-> Este glosario recopila y define **toda** la terminología utilizada en el sistema ERP Ursol CAST API: conceptos de dominio, nombres de clases, patrones de arquitectura, convenciones de base de datos, abreviaturas técnicas, y vocabulario específico de Costa Rica y facturación electrónica. Está pensado como referencia rápida y material de onboarding para cualquier persona que trabaje con el codebase.
+> Este glosario recopila y define **toda** la terminología utilizada en el sistema ERP Senselab Core API: conceptos de dominio, nombres de clases, patrones de arquitectura, convenciones de base de datos, abreviaturas técnicas, y vocabulario específico de Costa Rica y facturación electrónica. Está pensado como referencia rápida y material de onboarding para cualquier persona que trabaje con el codebase.
 
 ---
 
@@ -403,7 +403,7 @@ Trait para controladores que maneja errores de forma segura. En producción ocul
 ### HeaderSubdomainTenantFinder
 Finder personalizado de multi-tenancy (`app/Multitenancy/TenantFinder/HeaderSubdomainTenantFinder.php`). Resuelve la empresa (tenant) por:
 1. Headers: `X-Empresa-Id`, `X-Tenant-Id`, `X-Tenant`
-2. Subdominio: `{subdominio}.api.ursol.com`
+2. Subdominio: `{subdominio}.api.senselab.com`
 
 ### Health Check
 Endpoint de observabilidad (`/up` y `/api/health`) que verifica el estado de la aplicación, base de datos, Redis y otros servicios.
@@ -651,7 +651,7 @@ Las 10 vulnerabilidades web más críticas según OWASP. El proyecto implementa 
 ### Pact PHP
 Herramienta de contract testing. Verifica que el API cumple con contratos definidos entre consumidores y proveedores. Tests en `tests/Contract/`:
 - **Consumer tests**: AuthApi, ClienteApi, ComprobanteFe, Inventario, Producto, Venta
-- **Provider verification**: `UrsolCastApiVerificationTest`
+- **Provider verification**: `SenselabCoreApiVerificationTest`
 
 ### Pago
 Modelo general para registrar pagos. Campos: monto, fecha, forma de pago, referencia, estado.
@@ -932,7 +932,7 @@ Servicio de negocio para gestión de usuarios: creación, actualización, cambio
 La API soporta dos versiones:
 - `/api/v1/` — Versión estable actual
 - `/api/v2/` — Versión con mejoras (nueva estructura de respuestas, campos adicionales)
-También se soporta versioning por header: `Accept: application/vnd.ursol.v2+json`. El middleware `Sunset` indica fechas de deprecación.
+También se soporta versioning por header: `Accept: application/vnd.senselab.v2+json`. El middleware `Sunset` indica fechas de deprecación.
 
 ### Validación
 El sistema de validación incluye:
@@ -970,7 +970,7 @@ Modelo para registrar intentos de entrega de webhooks: URL destino, payload, res
 Servicio para gestionar la configuración de webhooks: crear, actualizar, eliminar, listar webhooks de una empresa.
 
 ### Worker (Queue Worker)
-Proceso que consume y ejecuta jobs de las colas Redis. En Docker se ejecuta como contenedor `ursol_queue` con: `php artisan queue:work --tries=3 --timeout=90 --sleep=3`. En Kubernetes se despliega como Deployment separado con 2–3 réplicas.
+Proceso que consume y ejecuta jobs de las colas Redis. En Docker se ejecuta como contenedor `senselab_queue` con: `php artisan queue:work --tries=3 --timeout=90 --sleep=3`. En Kubernetes se despliega como Deployment separado con 2–3 réplicas.
 
 ---
 
@@ -1101,4 +1101,4 @@ Servicio de Hacienda que construye el documento XML del comprobante electrónico
 
 **Última actualización:** 1 de abril de 2026  
 **Versión del glosario:** 1.0.0  
-**Basado en:** Código fuente Ursol CAST API v4.1.0
+**Basado en:** Código fuente Senselab Core API v4.1.0

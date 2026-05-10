@@ -1,8 +1,8 @@
-# Guía de Integración de Webhooks — Ursol CAST API
+# Guía de Integración de Webhooks — Senselab Core API
 
 ## Introducción
 
-Ursol CAST API permite configurar webhooks para recibir notificaciones en tiempo real cuando ocurren eventos importantes en su sistema. Esta guía explica cómo configurar, verificar y consumir webhooks.
+Senselab Core API permite configurar webhooks para recibir notificaciones en tiempo real cuando ocurren eventos importantes en su sistema. Esta guía explica cómo configurar, verificar y consumir webhooks.
 
 ---
 
@@ -29,7 +29,7 @@ Content-Type: application/json
 
 {
   "nombre": "Mi integración",
-  "url": "https://mi-servidor.com/webhooks/ursol",
+  "url": "https://mi-servidor.com/webhooks/senselab",
   "eventos": ["venta.creada", "pago.recibido"],
   "descripcion": "Notificaciones de ventas y pagos",
   "timeout_segundos": 30,
@@ -58,7 +58,7 @@ Content-Type: application/json
   "data": {
     "id": 1,
     "nombre": "Mi integración",
-    "url": "https://mi-servidor.com/webhooks/ursol",
+    "url": "https://mi-servidor.com/webhooks/senselab",
     "eventos": ["venta.creada", "pago.recibido"],
     "activo": true,
     "secret": "generado-automaticamente-64-chars"
@@ -209,13 +209,13 @@ Cada petición incluye los siguientes headers:
 | `X-Webhook-Event` | Nombre del evento | `venta.creada` |
 | `X-Webhook-Delivery` | ID único de entrega | `uuid-v4` |
 | `X-Webhook-Timestamp` | Timestamp Unix | `1712400600` |
-| `User-Agent` | Identificación del sistema | `Ursol-CAST-API/4.2.0` |
+| `User-Agent` | Identificación del sistema | `Senselab_Core_API/4.2.0` |
 
 ---
 
 ## Verificación de Firma (HMAC-SHA256)
 
-Para verificar que una notificación proviene de Ursol CAST API, valide la firma HMAC-SHA256:
+Para verificar que una notificación proviene de Senselab Core API, valide la firma HMAC-SHA256:
 
 ### PHP
 ```php
@@ -252,7 +252,7 @@ function verificarFirma(payload, signature, secret) {
 }
 
 // En su endpoint Express:
-app.post('/webhooks/ursol', (req, res) => {
+app.post('/webhooks/senselab', (req, res) => {
     const payload = JSON.stringify(req.body);
     const signature = req.headers['x-webhook-signature'];
     
@@ -281,7 +281,7 @@ def verificar_firma(payload: bytes, signature: str, secret: str) -> bool:
 
 ## Política de Reintentos
 
-Si su servidor no responde con un código HTTP 2xx, Ursol CAST API reintentará la entrega:
+Si su servidor no responde con un código HTTP 2xx, Senselab Core API reintentará la entrega:
 
 | Intento | Delay | Tiempo acumulado |
 |---|---|---|

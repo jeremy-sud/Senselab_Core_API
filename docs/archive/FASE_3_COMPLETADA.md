@@ -106,7 +106,7 @@ assignPermissions(array $permisoIds): void
 ```
 
 #### EmpresaDemoSeeder
-**Empresa creada**: "Sistemas Ursol S.A."
+**Empresa creada**: "Senselab"
 - **RUC**: 3-101-123456
 - **Régimen**: Tradicional (01)
 - **Ubicación**: San José, Costa Rica
@@ -114,12 +114,12 @@ assignPermissions(array $permisoIds): void
 
 #### UsuarioAdminSeeder
 **Usuario administrador**:
-- **Email**: `admin@ursol.com`
+- **Email**: `admin@senselab.com`
 - **Password**: `admin123`
 - **Rol**: Administrador
 - **Permisos**: 68 permisos (TODOS los del sistema)
 - **Cargo**: Administrador de Sistema
-- **Empresa**: Sistemas Ursol S.A.
+- **Empresa**: Senselab
 
 ---
 
@@ -132,7 +132,7 @@ assignPermissions(array $permisoIds): void
 **POST `/api/login`**
 ```json
 {
-  "email": "admin@ursol.com",
+  "email": "admin@senselab.com",
   "password": "admin123"
 }
 ```
@@ -181,9 +181,9 @@ assignPermissions(array $permisoIds): void
 | Permisos | 68 | 17 módulos × 4 acciones |
 | Roles | 7 | Administrador, Gerente, Contador, etc. |
 | Cargos | 7 | Gerente, Contador, Vendedor, etc. |
-| Empresas | 1 | Sistemas Ursol S.A. |
+| Empresas | 1 | Senselab |
 | Sucursales | 1 | Oficina Central |
-| Usuarios | 1 | admin@ursol.com (Administrador) |
+| Usuarios | 1 | admin@senselab.com (Administrador) |
 | **TOTAL** | **112 registros** | **Datos maestros + demo** |
 
 ---
@@ -195,7 +195,7 @@ assignPermissions(array $permisoIds): void
 ```bash
 curl -X POST "http://localhost:8000/api/login" \
   -H "Content-Type: application/json" \
-  -d '{"email": "admin@ursol.com", "password": "admin123"}'
+  -d '{"email": "admin@senselab.com", "password": "admin123"}'
 ```
 
 **Resultado**: ✅ Token generado + 68 permisos retornados
@@ -299,7 +299,7 @@ false → 403 Forbidden
 ## Credenciales de Prueba
 
 ### Usuario Administrador
-- **Email**: `admin@ursol.com`
+- **Email**: `admin@senselab.com`
 - **Password**: `admin123`
 - **Rol**: Administrador
 - **Permisos**: TODOS (68 permisos)

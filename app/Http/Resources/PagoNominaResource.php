@@ -9,7 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * Resource para Pago de Nómina
  *
  * @package App\Http\Resources
- * @author Sistemas Ursol S.A. - Jeremy Arias Solano
+ * @author Senselab - Jeremy Arias Solano
  */
 class PagoNominaResource extends JsonResource
 {

@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\DB;
  *
  * Usa análisis estadístico (Z-Score, IQR) + IA para explicaciones
  *
- * Desarrollado por Sistemas Ursol S.A.
+ * Desarrollado por Senselab
  */
 class AnomalyDetectionService
 {

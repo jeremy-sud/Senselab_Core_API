@@ -1,4 +1,4 @@
-# AUDITORÍA TÉCNICA INTEGRAL — Ursol CAST API
+# AUDITORÍA TÉCNICA INTEGRAL — Senselab Core API
 
 **Fecha:** 9 de marzo de 2026  
 **Versión auditada:** v3.1.0 → **Actualizado a v3.3.0 (24 marzo 2026)**  
@@ -15,7 +15,7 @@
 
 ## RESUMEN EJECUTIVO
 
-Ursol CAST API es un sistema ERP multi-tenant desarrollado con Laravel 12 y PHP 8.4, orientado al mercado costarricense con integración de facturación electrónica (DGT v4.4). El proyecto demuestra un nivel de madurez notable en áreas como seguridad, testing y documentación, pero presenta debilidades significativas en manejo de excepciones, consistencia de respuestas API y riesgos de rendimiento (N+1 queries) que impiden una calificación superior.
+Senselab Core API es un sistema ERP multi-tenant desarrollado con Laravel 12 y PHP 8.4, orientado al mercado costarricense con integración de facturación electrónica (DGT v4.4). El proyecto demuestra un nivel de madurez notable en áreas como seguridad, testing y documentación, pero presenta debilidades significativas en manejo de excepciones, consistencia de respuestas API y riesgos de rendimiento (N+1 queries) que impiden una calificación superior.
 
 ---
 
@@ -501,7 +501,7 @@ Todas las tareas usan `withoutOverlapping()` (cluster-safe) y se ejecutan en hor
 
 ## 12. COMPARATIVA CON ESTÁNDARES DE LA INDUSTRIA
 
-| Métrica | Ursol CAST | Estándar Enterprise | Evaluación |
+| Métrica | Senselab CAST | Estándar Enterprise | Evaluación |
 |---|---|---|---|
 | Tests | 959 (100% passing) | 800-1200 | ✅ Excelente |
 | PHPStan | Level 8, 0 errores | Level 7+ | ✅ Máximo |
@@ -520,7 +520,7 @@ Todas las tareas usan `withoutOverlapping()` (cluster-safe) y se ejecutan en hor
 
 ## 13. CONCLUSIÓN
 
-Ursol CAST API es un proyecto **de grado enterprise** con fortalezas significativas en seguridad, testing, documentación e infraestructura. La integración de facturación electrónica costarricense y los 10 servicios de IA le dan un valor diferenciado notable.
+Senselab Core API es un proyecto **de grado enterprise** con fortalezas significativas en seguridad, testing, documentación e infraestructura. La integración de facturación electrónica costarricense y los 10 servicios de IA le dan un valor diferenciado notable.
 
 Las principales áreas de mejora se centran en:
 1. **Manejo de excepciones** (la debilidad más importante del proyecto)
@@ -536,4 +536,4 @@ El roadmap planificado (FASE 15-22) aborda correctamente las principales deficie
 
 ---
 
-*Documento generado el 9 de marzo de 2026 | Actualizado 24 de marzo de 2026 | Ursol CAST API v3.1.0 → v3.3.0*
+*Documento generado el 9 de marzo de 2026 | Actualizado 24 de marzo de 2026 | Senselab Core API v3.1.0 → v3.3.0*

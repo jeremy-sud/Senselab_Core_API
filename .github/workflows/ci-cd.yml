@@ -1,5 +1,5 @@
 # GitHub Actions - CI/CD Pipeline
-# Ursol CAST API
+# Senselab Core API
 
 name: CI/CD Pipeline
 
@@ -159,8 +159,8 @@ jobs:
           context: .
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
           tags: |
-            sistemasursol/ursol-cast-api:latest
-            sistemasursol/ursol-cast-api:${{ github.sha }}
+            sistemassenselab/senselab-core-api:latest
+            sistemassenselab/senselab-core-api:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
   
@@ -179,7 +179,7 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
-            cd /var/www/ursol-cast-api
+            cd /var/www/senselab-core-api
             docker-compose pull
             docker-compose up -d
             docker-compose exec -T php php artisan migrate --force

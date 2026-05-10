@@ -1,13 +1,13 @@
-# Checklist Pre-Release — URSOL‑CAST API
+# Checklist Pre-Release — SENSELAB‑CAST API
 
 **Última actualización:** 23 de abril de 2026  
 **Versión actual:** v5.0.2 (Post-auditoría — Roadmap 100%)  
-**Versión objetivo producción:** v5.0.2 → api.ursol.com  
+**Versión objetivo producción:** v5.0.2 → api.senselab.com  
 **Referencia:** Ver [ROADMAP.md](../ROADMAP.md) para detalle de cada FASE  
 
 ---
 
-## ⛔ ANÁLISIS DE INFRAESTRUCTURA — ursol.com (23 abr 2026)
+## ⛔ ANÁLISIS DE INFRAESTRUCTURA — senselab.com (23 abr 2026)
 
 > Análisis realizado vía FTP (65.181.111.240) el 23 de abril de 2026.
 > **RESULTADO: Deploy de la API en este servidor NO es viable en el estado actual.** Ver detalles abajo.
@@ -26,7 +26,7 @@ Se detectaron los siguientes archivos maliciosos en `public_html/`:
 **Evidencia en `error_log`:**
 ```
 [24-Apr-2026 01:01:41 UTC] PHP Fatal error: Call to undefined function
-register_activation_hook() in /home/ursolcr/public_html/s.php on line 72
+register_activation_hook() in /home/senselabcr/public_html/s.php on line 72
 ```
 El malware estuvo activo el 24 de abril a las 01:01 UTC.
 
@@ -37,16 +37,16 @@ El malware estuvo activo el 24 de abril a las 01:01 UTC.
 - [ ] Revisar `wp-content/plugins/` y `wp-content/themes/` por backdoors adicionales
 - [ ] Revisar `.htaccess` (modificado el 23 abr 18:35 UTC, posibles redirects maliciosos)
 - [ ] Notificar al proveedor de hosting (Hostinger/cPanel) del compromiso
-- [ ] Verificar si otros sitios en la misma cuenta `ursolcr` fueron afectados
+- [ ] Verificar si otros sitios en la misma cuenta `senselabcr` fueron afectados
 - [ ] Después de limpiar, hacer escaneo completo con Wordfence o similar
 
 ---
 
 ### 🔴 BLOQUEANTE — Tipo de hosting incompatible con Laravel 12 + Docker
 
-El servidor `ursol.com` es **hosting compartido cPanel**, lo cual es **incompatible** con los requisitos de esta API:
+El servidor `senselab.com` es **hosting compartido cPanel**, lo cual es **incompatible** con los requisitos de esta API:
 
-| Requisito de la API | Hosting compartido ursol.com | Estado |
+| Requisito de la API | Hosting compartido senselab.com | Estado |
 |---|---|---|
 | Docker + Docker Compose | ❌ No disponible en shared hosting | BLOQUEANTE |
 | Redis 7 (colas Horizon, caché) | ❌ No disponible | BLOQUEANTE |
@@ -58,7 +58,7 @@ El servidor `ursol.com` es **hosting compartido cPanel**, lo cual es **incompati
 
 **Estructura actual del servidor:**
 ```
-/home/ursolcr/public_html/     ← WordPress (ursol.com)
+/home/senselabcr/public_html/     ← WordPress (senselab.com)
   ├── wp-config.php             ← DB host: 159.89.191.229 (externo)
   ├── wp-admin/                 ← WordPress admin
   ├── wp-content/               ← Plugins, temas
@@ -73,7 +73,7 @@ La arquitectura correcta es mantener los dos servicios en servidores separados:
 
 ```
 ┌──────────────────────────────────┐     ┌─────────────────────────────────────┐
-│  ursol.com (hosting actual)      │     │  api.ursol.com (VPS nuevo)           │
+│  senselab.com (hosting actual)      │     │  api.senselab.com (VPS nuevo)           │
 │  Shared hosting cPanel           │     │  Ubuntu 22.04 + Docker               │
 │  ─────────────────────────────   │     │  ───────────────────────────────────  │
 │  WordPress (sitio web)           │────▶│  Laravel 12 API (esta API)            │
@@ -93,8 +93,8 @@ La arquitectura correcta es mantener los dos servicios en servidores separados:
 
 **Pasos para el subdominio:**
 1. Crear VPS con Ubuntu 22.04
-2. Agregar registro DNS: `api.ursol.com` → IP del nuevo VPS  
-   _(esto se hace en el panel DNS del hosting actual de ursol.com, en cPanel > Zone Editor)_
+2. Agregar registro DNS: `api.senselab.com` → IP del nuevo VPS  
+   _(esto se hace en el panel DNS del hosting actual de senselab.com, en cPanel > Zone Editor)_
 3. Seguir la Sección 0 de este checklist para el deploy
 
 ---
@@ -131,9 +131,9 @@ La arquitectura correcta es mantener los dos servicios en servidores separados:
 
 ---
 
-## 0. Infraestructura — Deploy en api.ursol.com
+## 0. Infraestructura — Deploy en api.senselab.com
 
-> Esta sección cubre los pasos **únicos del primer deploy** en el servidor de ursol.com.
+> Esta sección cubre los pasos **únicos del primer deploy** en el servidor de senselab.com.
 > Los deploys posteriores se gestionan automáticamente vía GitHub Actions (ver sección 12).
 
 ### 0.1 Servidor (VPS / Cloud)
@@ -146,8 +146,8 @@ La arquitectura correcta es mantener los dos servicios en servidores separados:
   ```
 - [ ] Crear directorio de trabajo y clonar el repositorio:
   ```bash
-  mkdir -p /var/www/ursol-cast-api
-  git clone git@github.com:jeremy-sud/Ursol-CAST-API.git /var/www/ursol-cast-api
+  mkdir -p /var/www/senselab-core-api
+  git clone git@github.com:SenseLab-dev/Senselab_Core_API.git /var/www/senselab-core-api
   ```
 - [ ] Crear directorio de backups con permisos adecuados:
   ```bash
@@ -156,12 +156,12 @@ La arquitectura correcta es mantener los dos servicios en servidores separados:
 
 ### 0.2 DNS y SSL
 
-- [ ] Crear registro DNS tipo **A**: `api.ursol.com` → IP del servidor.
-- [ ] Esperar propagación DNS (puede tardar hasta 24h — verificar con `dig api.ursol.com`).
+- [ ] Crear registro DNS tipo **A**: `api.senselab.com` → IP del servidor.
+- [ ] Esperar propagación DNS (puede tardar hasta 24h — verificar con `dig api.senselab.com`).
 - [ ] Instalar Certbot y obtener certificado Let's Encrypt:
   ```bash
   sudo apt install certbot python3-certbot-nginx
-  sudo certbot --nginx -d api.ursol.com
+  sudo certbot --nginx -d api.senselab.com
   # Configura renovación automática:
   sudo systemctl enable certbot.timer
   ```
@@ -174,34 +174,34 @@ La arquitectura correcta es mantener los dos servicios en servidores separados:
 
 - [ ] Copiar `.env.example` y completar con valores reales de producción:
   ```bash
-  cd /var/www/ursol-cast-api
+  cd /var/www/senselab-core-api
   cp .env.example .env
   ```
 - [ ] Valores críticos que **deben** cambiarse del ejemplo:
   ```env
   APP_ENV=production
   APP_DEBUG=false
-  APP_URL=https://api.ursol.com
+  APP_URL=https://api.senselab.com
 
   # Base de datos (contenedor Docker interno)
   DB_HOST=mysql
-  DB_DATABASE=ursol_cast_prod
-  DB_USERNAME=ursol_user
+  DB_DATABASE=senselab_core_prod
+  DB_USERNAME=senselab_user
   DB_PASSWORD=<contraseña_segura_nueva>
   DB_ROOT_PASSWORD=<root_password_seguro>
 
   # Redis (contenedor Docker interno)
   REDIS_HOST=redis
 
-  # CORS — solo permitir el frontend de ursol.com
-  FRONTEND_URL=https://www.ursol.com
+  # CORS — solo permitir el frontend de senselab.com
+  FRONTEND_URL=https://www.senselab.com
 
   # Sanctum — dominios estáticos de producción
-  SANCTUM_STATEFUL_DOMAINS=www.ursol.com,api.ursol.com
+  SANCTUM_STATEFUL_DOMAINS=www.senselab.com,api.senselab.com
 
   # Hacienda (credenciales de producción, NO sandbox)
   HACIENDA_ENVIRONMENT=production
-  HACIENDA_CERT_PATH=/var/www/ursol-cast-api/storage/certs/prod.p12
+  HACIENDA_CERT_PATH=/var/www/senselab-core-api/storage/certs/prod.p12
   HACIENDA_CERT_PASSWORD=<pin_certificado>
   HACIENDA_OAUTH_CLIENT_ID=api-prod
 
@@ -231,7 +231,7 @@ La arquitectura correcta es mantener los dos servicios en servidores separados:
 
 - [ ] Ejecutar el deploy inicial desde el servidor (solo la primera vez):
   ```bash
-  cd /var/www/ursol-cast-api
+  cd /var/www/senselab-core-api
   docker-compose -f docker-compose.yml up -d
   docker-compose exec php php artisan migrate --force
   docker-compose exec php php artisan db:seed --class=MasterDataSeeder --force
@@ -241,7 +241,7 @@ La arquitectura correcta es mantener los dos servicios en servidores separados:
   ```
 - [ ] Verificar que el health check responde correctamente:
   ```bash
-  curl https://api.ursol.com/up
+  curl https://api.senselab.com/up
   # Esperado: HTTP 200
   ```
 - [ ] A partir de aquí, todos los deploys futuros son automáticos via GitHub Actions al publicar un release.
@@ -277,7 +277,7 @@ git grep -nE "password|passwd|secret|token|apikey|api_key|pwd|admin123" -- ':!*.
 - [x] **FASE 14.5:** `$hidden = ['password_hash']` en modelo Usuario.
 - [x] **FASE 14.5:** `$e->getMessage()` protegido con `config('app.debug')` en 5 servicios AI.
 - [ ] Asegurar `APP_ENV=production` y `APP_DEBUG=false` en `.env` de producción.
-- [ ] Confirmar `SANCTUM_STATEFUL_DOMAINS=www.ursol.com,api.ursol.com` en `.env` de producción.
+- [ ] Confirmar `SANCTUM_STATEFUL_DOMAINS=www.senselab.com,api.senselab.com` en `.env` de producción.
 - [ ] Confirmar política de tokens: `login()` revoca tokens previos (`$usuario->tokens()->delete()`).
 - [ ] Verificar que logs no registren tokens ni contraseñas (revisar canales `daily` y `sentry`).
 - [ ] Confirmar `SESSION_ENCRYPT=true` (default `true` desde FASE 14.5).
@@ -324,11 +324,11 @@ git grep -nE "password|passwd|secret|token|apikey|api_key|pwd|admin123" -- ':!*.
 - [ ] Forzar HTTPS / HSTS en reverse proxy (nginx/Kubernetes ingress).
 - [ ] Ajustar `config/cors.php` — reemplazar `*` por orígenes de producción permitidos:
   ```php
-  'allowed_origins' => [env('FRONTEND_URL')],  // https://www.ursol.com
+  'allowed_origins' => [env('FRONTEND_URL')],  // https://www.senselab.com
   ```
 - [ ] Verificar que los headers de seguridad se aplican correctamente en producción:
   ```bash
-  curl -I https://api.ursol.com/up
+  curl -I https://api.senselab.com/up
   # Verificar: X-Content-Type-Options, X-Frame-Options, Strict-Transport-Security, Content-Security-Policy
   ```
 
@@ -487,9 +487,9 @@ Módulo de Hacienda completamente implementado (v4.4, DGT-R-000-2024). Validaci�
   ```
 - [ ] Verificar healthcheck endpoint responde correctamente:
   ```bash
-  curl https://api.ursol.com/up
+  curl https://api.senselab.com/up
   # Esperado: HTTP 200
-  curl https://api.ursol.com/api/health
+  curl https://api.senselab.com/api/health
   # Esperado: {"status":"ok",...}
   ```
 
@@ -546,7 +546,7 @@ Módulo de Hacienda completamente implementado (v4.4, DGT-R-000-2024). Validaci�
 
 Login:
 ```bash
-curl -X POST https://api.ursol.com/api/login \
+curl -X POST https://api.senselab.com/api/login \
   -H "Content-Type: application/json" \
   -d '{"email":"<ADMIN_EMAIL>","password":"<PASSWORD>"}'
 ```
@@ -555,20 +555,20 @@ Request con tenant header y token:
 ```bash
 curl -H "Authorization: Bearer <TOKEN>" \
      -H "X-Empresa-Id: <EMPRESA_ID>" \
-     https://api.ursol.com/api/productos
+     https://api.senselab.com/api/productos
 ```
 
 Logout:
 ```bash
-curl -X POST https://api.ursol.com/api/logout \
+curl -X POST https://api.senselab.com/api/logout \
   -H "Authorization: Bearer <TOKEN>" \
   -H "X-Empresa-Id: <EMPRESA_ID>"
 ```
 
 Health check:
 ```bash
-curl https://api.ursol.com/up
-curl https://api.ursol.com/api/health
+curl https://api.senselab.com/up
+curl https://api.senselab.com/api/health
 ```
 
 Manejo de `429 Too Many Requests`:
@@ -597,8 +597,8 @@ php artisan l5-swagger:generate
 php artisan tinker --execute="App::make(\App\Services\PermissionService::class)->warmupPermissionCache();"
 
 # 6. Verificar health
-curl https://api.ursol.com/up
-curl https://api.ursol.com/api/health
+curl https://api.senselab.com/up
+curl https://api.senselab.com/api/health
 ```
 
 ---
@@ -673,6 +673,6 @@ php artisan test --parallel
 - Este checklist está vinculado al [ROADMAP.md](../ROADMAP.md) — mantener ambos documentos sincronizados.
 - Agregar un paso en CI que ejecute el grep de secrets y falle si encuentra coincidencias.
 - Documentar cualquier cambio de última hora en el CHANGELOG.md.
-- **URL de producción:** `https://api.ursol.com` — configurada en sección 0 de este checklist.
+- **URL de producción:** `https://api.senselab.com` — configurada en sección 0 de este checklist.
 - **Deploys posteriores:** automáticos al publicar un release en GitHub (ver `.github/workflows/deploy-production.yml`).
 - **Rollback de emergencia:** `bash scripts/rollback.sh` desde el servidor o desde GitHub Actions (`workflow_dispatch` en `deploy-production.yml`).

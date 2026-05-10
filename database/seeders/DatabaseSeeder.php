@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
         // Datos maestros: catálogos, permisos, roles, impuestos, zonas geográficas
         $this->call(MasterDataSeeder::class);
 
-        // Datos demo: empresa Ursol, fundadores, admin
+        // Datos demo: empresa Senselab, fundadores, admin
         // En producción, comentar o usar --class=MasterDataSeeder
         $this->call(DemoDataSeeder::class);
     }

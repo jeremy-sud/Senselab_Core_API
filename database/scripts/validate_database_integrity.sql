@@ -1,7 +1,7 @@
 -- ============================================================================
 -- SCRIPT DE VALIDACIÓN DE INTEGRIDAD DE BASE DE DATOS
 -- ============================================================================
--- Proyecto: Ursol CAST API
+-- Proyecto: Senselab Core API
 -- Base de Datos: api_db
 -- Fecha: 2025-11-25
 -- Descripción: Valida PKs, FKs, índices y detecta problemas de integridad

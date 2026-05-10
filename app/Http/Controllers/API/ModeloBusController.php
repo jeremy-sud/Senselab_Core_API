@@ -21,7 +21,7 @@ use OpenApi\Attributes as OA;
  * Ej: Paradiso 1800 DD, Viaggio 1050
  *
  * @package App\Http\Controllers\API
- * @author Sistemas Ursol S.A. - Jeremy Arias Solano
+ * @author Senselab - Jeremy Arias Solano
  */
 class ModeloBusController extends Controller
 {

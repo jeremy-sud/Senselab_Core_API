@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * Gestiona cuentas bancarias de las empresas.
  * 
  * @author Jeremy Arias Solano <deadmooncr@gmail.com>
- * @copyright 2025 Sistemas Ursol S.A.
+ * @copyright 2025 Senselab
  */
 class CuentaBancaria extends Model
 {

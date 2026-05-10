@@ -18,7 +18,7 @@ use OpenApi\Attributes as OA;
  * Catálogo según DGT Costa Rica (01-Factura, 02-Nota Débito, 03-Nota Crédito, 04-Tiquete)
  *
  * @author GitHub Copilot
- * @copyright 2025 Sistemas Ursol S.A.
+ * @copyright 2025 Senselab
  */
 
 #[OA\Tag(

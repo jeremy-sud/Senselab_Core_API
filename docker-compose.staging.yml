@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: ursol_php_staging
+    container_name: senselab_php_staging
     restart: unless-stopped
     working_dir: /var/www/html
     volumes:
@@ -17,15 +17,15 @@ services:
       - DB_HOST=mysql
       - DB_PORT=3306
       - DB_DATABASE=${DB_DATABASE:-api_db}
-      - DB_USERNAME=${DB_USERNAME:-ursol_user}
-      - DB_PASSWORD=${DB_PASSWORD:-ursol_password}
+      - DB_USERNAME=${DB_USERNAME:-senselab_user}
+      - DB_PASSWORD=${DB_PASSWORD:-senselab_password}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - CACHE_DRIVER=redis
       - SESSION_DRIVER=redis
       - QUEUE_CONNECTION=redis
     networks:
-      - ursol-staging
+      - senselab-staging
     depends_on:
       mysql:
         condition: service_healthy
@@ -39,7 +39,7 @@ services:
 
   nginx:
     image: nginx:1.25-alpine
-    container_name: ursol_nginx_staging
+    container_name: senselab_nginx_staging
     restart: unless-stopped
     ports:
       - "${NGINX_PORT:-8080}:80"
@@ -48,7 +48,7 @@ services:
       - ./docker/nginx/staging.conf:/etc/nginx/conf.d/default.conf
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
     networks:
-      - ursol-staging
+      - senselab-staging
     depends_on:
       php:
         condition: service_healthy
@@ -60,18 +60,18 @@ services:
 
   mysql:
     image: mysql:8.0
-    container_name: ursol_mysql_staging
+    container_name: senselab_mysql_staging
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: ${DB_DATABASE:-api_db}
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_password}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-ursol_password}
-      MYSQL_USER: ${DB_USERNAME:-ursol_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-senselab_password}
+      MYSQL_USER: ${DB_USERNAME:-senselab_user}
     volumes:
-      - ursol-mysql-staging-data:/var/lib/mysql
+      - senselab-mysql-staging-data:/var/lib/mysql
       - ./docker/mysql/my.cnf:/etc/mysql/conf.d/custom.cnf
     networks:
-      - ursol-staging
+      - senselab-staging
     command: --default-authentication-plugin=mysql_native_password
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-root_password}"]
@@ -81,12 +81,12 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: ursol_redis_staging
+    container_name: senselab_redis_staging
     restart: unless-stopped
     volumes:
       - redis_staging_data:/data
     networks:
-      - ursol-staging
+      - senselab-staging
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -94,11 +94,11 @@ services:
       retries: 5
 
 networks:
-  ursol-staging:
+  senselab-staging:
     driver: bridge
 
 volumes:
-  ursol-mysql-staging-data:
+  senselab-mysql-staging-data:
     driver: local
   redis_staging_data:
     driver: local

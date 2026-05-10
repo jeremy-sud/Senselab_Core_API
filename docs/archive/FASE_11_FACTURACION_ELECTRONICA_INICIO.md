@@ -493,5 +493,5 @@ Para poder usar el sistema de FE, el usuario deberá:
 ---
 
 **Última actualización**: 26 de noviembre de 2025  
-**Responsable**: Sistema de Facturación Electrónica - Ursol CAST API  
+**Responsable**: Sistema de Facturación Electrónica - Senselab Core API  
 **Siguiente revisión**: Al completar Fase 2

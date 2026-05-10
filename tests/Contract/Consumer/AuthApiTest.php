@@ -18,7 +18,7 @@ class AuthApiTest extends PactTestCase
         $request->addHeader('Content-Type', 'application/json');
         // Remove auth header for login — it's not needed
         $request->setBody([
-            'email' => 'admin@ursol.com',
+            'email' => 'admin@senselab.com',
             'password' => 'password123',
         ]);
 
@@ -35,13 +35,13 @@ class AuthApiTest extends PactTestCase
         ];
 
         $this->builder
-            ->given('user admin@ursol.com exists with password')
+            ->given('user admin@senselab.com exists with password')
             ->uponReceiving('a valid login request')
             ->with($request)
             ->willRespondWith($this->jsonResponse(200, $responseBody));
 
         $response = $this->callMockServer('POST', '/api/login', [
-            'email' => 'admin@ursol.com',
+            'email' => 'admin@senselab.com',
             'password' => 'password123',
         ]);
         $this->assertSame(200, $response['status']);

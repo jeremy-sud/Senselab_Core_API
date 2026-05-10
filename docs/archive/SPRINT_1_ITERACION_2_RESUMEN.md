@@ -330,5 +330,5 @@ Total Sprint 1: 22h/45h (49%)
 ---
 
 **Autor:** GitHub Copilot  
-**Copyright:** 2025 Sistemas Ursol S.A.  
+**Copyright:** 2025 Senselab  
 **Última Actualización:** 2025-11-23 19:30

@@ -1,7 +1,7 @@
-# 💰 Valoración Comercial y Estrategia de Pricing — Ursol CAST API v5.0.1
+# 💰 Valoración Comercial y Estrategia de Pricing — Senselab Core API v5.0.1
 
 **Fecha:** 14 de Abril 2026  
-**Desarrollado por:** Sistemas Ursol S.A.  
+**Desarrollado por:** Senselab  
 **Desarrollador Principal:** Jeremy Arias Solano  
 **Basado en:** Auditoría Técnica 13 abr 2026 (Puntuación 9.2/10)  
 **Supersede:** `docs/archive/VALORACION_COMERCIAL_API.md` (Nov 2025, v2.x — obsoleto)  
@@ -28,7 +28,7 @@
 
 ## 📋 Resumen Ejecutivo
 
-Ursol CAST API ha evolucionado de un ERP básico (v2.x, Nov 2025) a una **plataforma empresarial completa con IA** (v5.0.1). La valoración anterior ($65K-$75K) está **significativamente desactualizada**: el sistema ahora incluye 10 servicios de IA, facturación electrónica v4.4 con compliance 100%, webhooks event-driven, reporting engine, y escalabilidad enterprise (read replicas, Horizon, ETags, OpenTelemetry).
+Senselab Core API ha evolucionado de un ERP básico (v2.x, Nov 2025) a una **plataforma empresarial completa con IA** (v5.0.1). La valoración anterior ($65K-$75K) está **significativamente desactualizada**: el sistema ahora incluye 10 servicios de IA, facturación electrónica v4.4 con compliance 100%, webhooks event-driven, reporting engine, y escalabilidad enterprise (read replicas, Horizon, ETags, OpenTelemetry).
 
 **Valoración actualizada: $120,000 - $150,000 USD** (costo de replicación).
 
@@ -198,17 +198,17 @@ $2,000 |
         |
 $1,000 |                              ● Softland/Exactus
         |
-  $600 |                    ◆ Ursol CAST (Enterprise)
+  $600 |                    ◆ Senselab CAST (Enterprise)
         |
-  $400 |              ◆ Ursol CAST (Business)
+  $400 |              ◆ Senselab CAST (Business)
         |
-  $200 |         ◆ Ursol CAST (Pro)
+  $200 |         ◆ Senselab CAST (Pro)
         |    ● Zoho Elite    ● Holded Premium
   $100 |  ● Alegra Plus     ● Holded Advanced
         | ● Alegra Pro   ● Odoo (10u)
    $50 | ● Alegra Pyme ● Facturador.cr
         |● Alegra Emp.
-    $0 |● Odoo Free  ● ERPNext  ● Zoho Free  ◆ Ursol Free
+    $0 |● Odoo Free  ● ERPNext  ● Zoho Free  ◆ Senselab Free
         └─────────────────────────────────────────────→ Completitud
           Solo FE   Contab.+FE  ERP Básico ERP+IA+FE  Enterprise
 ```
@@ -217,7 +217,7 @@ $1,000 |                              ● Softland/Exactus
 
 ## 📊 Análisis Comparativo de Funcionalidades
 
-| Funcionalidad | Ursol CAST | Alegra | Odoo | Zoho Books | SAP B1 | ERPNext |
+| Funcionalidad | Senselab CAST | Alegra | Odoo | Zoho Books | SAP B1 | ERPNext |
 |---------------|:----------:|:------:|:----:|:----------:|:------:|:-------:|
 | **Facturación Electrónica DGT v4.4** | ✅ 38/38 | ✅ | ❌ | ❌ | ⚠️ Add-on | ❌ |
 | **Firma Digital XAdES-EPES** | ✅ Nativo | ✅ | ❌ | ❌ | ⚠️ | ❌ |
@@ -246,7 +246,7 @@ $1,000 |                              ● Softland/Exactus
 
 \* No aplica: productos SaaS cerrados no exponen sus tests.
 
-**Diferenciadores únicos de Ursol CAST** (nadie ofrece esto junto):
+**Diferenciadores únicos de Senselab CAST** (nadie ofrece esto junto):
 1. IA + FE DGT v4.4 + Multi-tenancy + RBAC en un solo producto
 2. Credit Scoring, Anomaly Detection y CABYS Classifier integrados
 3. Compliance 100% Costa Rica (DGT + CAJA) nativo
@@ -306,7 +306,7 @@ Valor Medio:              $135,000 USD
 
 ### Principios Guía
 
-1. **Posicionamiento "Premium Accesible"**: Por encima de Alegra (solo contabilidad+FE), por debajo de SAP/Softland (enterprise legacy). Ursol ofrece ERP completo + IA + FE por una fracción de SAP.
+1. **Posicionamiento "Premium Accesible"**: Por encima de Alegra (solo contabilidad+FE), por debajo de SAP/Softland (enterprise legacy). Senselab ofrece ERP completo + IA + FE por una fracción de SAP.
 
 2. **Modelo per-empresa, no per-usuario**: En Costa Rica las PYMEs son sensibles al costo por-usuario. Cobrar por empresa/tenant permite que pongan más usuarios sin miedo al incremento.
 
@@ -339,7 +339,7 @@ Valor Medio:              $135,000 USD
 |------|--------------------------|
 | **Starter $0** | Compite con Odoo Free y Zoho Free. Genera pipeline de leads. El usuario prueba el producto sin riesgo y migra al crecer. |
 | **Pro $149** | Entre Alegra Plus ($120) y Holded Advanced (€49.50 + add-ons ≈€100). Ofrece *mucho más*: RBAC granular, IA básica, webhooks, multi-almacén, nómina hasta 25. La pyme que paga $120 en Alegra solo tiene contabilidad+FE. |
-| **Business $399** | Sin competencia directa en CR a este precio con este scope. Odoo +10u Custom es $109/mes pero sin FE ni IA. Softland SaaS arranca en $500+. Ursol ofrece multi-empresa + IA completa + reporting + 2K facturas. |
+| **Business $399** | Sin competencia directa en CR a este precio con este scope. Odoo +10u Custom es $109/mes pero sin FE ni IA. Softland SaaS arranca en $500+. Senselab ofrece multi-empresa + IA completa + reporting + 2K facturas. |
 | **Enterprise $899** | Fracción de SAP B1 ($1,330+/mes para 10 usuarios). Incluye todo ilimitado + SLA prioritario + read replicas + OpenTelemetry. Para empresas de 50+ empleados que pagarían $1,500-$3,000 en Softland/SAP. |
 
 ---
@@ -516,7 +516,7 @@ Break-even con:
 |----------|-------------|
 | Tamaño | 20-300 empleados |
 | Necesidad | Gestión de rutas, boletos, flota + FE + nómina |
-| Diferenciador | Ursol CAST es el único ERP con módulo transporte + FE v4.4 |
+| Diferenciador | Senselab CAST es el único ERP con módulo transporte + FE v4.4 |
 | Tier objetivo | Business ($399) o Enterprise ($899) |
 
 ### Segmento Terciario: Micro-empresa / Freelancer
@@ -546,7 +546,7 @@ Break-even con:
 $30-$120/mes  │  Alegra, Facturador.cr  │  Solo contabilidad + FE
               │                          │  Sin ERP, sin IA, sin RBAC
 ──────────────┼──────────────────────────┤
-$149-$899/mes │  ◆◆ URSOL CAST ◆◆       │  ERP + FE + IA + Multi-tenant
+$149-$899/mes │  ◆◆ SENSELAB CAST ◆◆       │  ERP + FE + IA + Multi-tenant
               │  (oportunidad)           │  Único en este rango en CR
 ──────────────┼──────────────────────────┤
 $1,500+/mes   │  SAP, Softland, Exactus  │  Enterprise legacy
@@ -573,7 +573,7 @@ $1,500+/mes   │  SAP, Softland, Exactus  │  Enterprise legacy
 
 ---
 
-**Desarrollado con ❤️ por Sistemas Ursol S.A.**  
+**Desarrollado con ❤️ por Senselab**  
 **"Toque Humano en la Transformación Digital"**
 
 *Última actualización: 14 de Abril 2026*

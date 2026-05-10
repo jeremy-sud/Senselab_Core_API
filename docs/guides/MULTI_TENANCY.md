@@ -7,11 +7,11 @@ Estandarizar el acceso y scoping por `empresa_id` en controladores y modelos, ev
 
 - **Finder activo**: `App\Multitenancy\TenantFinder\HeaderSubdomainTenantFinder`.
 - **Headers soportados**: `X-Empresa-Id`, `X-Tenant-Id`, `X-Tenant`. El valor debe ser el `id` numérico de la empresa.
-- **Subdominios**: si la petición llega por `https://{subdominio}.api.ursol.com`, el finder comparará `{subdominio}` contra `empresas.subdominio` (configura `TENANT_BASE_DOMAIN` en `.env`).
+- **Subdominios**: si la petición llega por `https://{subdominio}.api.senselab.com`, el finder comparará `{subdominio}` contra `empresas.subdominio` (configura `TENANT_BASE_DOMAIN` en `.env`).
 - **Validación**: aun cuando se envía un header o subdominio distinto, `resolveEmpresaOrFail()` compara ese ID con el `empresa_id` del usuario autenticado para prevenir accesos cruzados.
 
 ```bash
-curl -X GET https://tenant-123.api.ursol.com/api/ventas \
+curl -X GET https://tenant-123.api.senselab.com/api/ventas \
     -H "Authorization: Bearer $TOKEN"
 
 # O con header explícito

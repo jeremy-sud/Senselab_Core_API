@@ -1,6 +1,6 @@
-# Guía de Testing - Ursol CAST API
+# Guía de Testing - Senselab Core API
 
-**Desarrollado por Sistemas Ursol S.A.**  
+**Desarrollado por Senselab**  
 *Suite de 1261+ tests automatizados con 4 capas de verificación*  
 **Última actualización:** 10 de abril de 2026 — v4.2.0
 
@@ -143,7 +143,7 @@ tests/
 │   │   ├── ProductoApiTest.php
 │   │   └── VentaApiTest.php
 │   ├── Provider/
-│   │   └── UrsolCastApiVerificationTest.php
+│   │   └── SenselabCoreApiVerificationTest.php
 │   └── pacts/                            # Contratos generados
 │
 └── Load/                                 # ⚡ 6 archivos — k6 load testing

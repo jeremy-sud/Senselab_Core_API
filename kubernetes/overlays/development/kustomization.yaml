@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: ursol-cast-dev
+namespace: senselab-core-dev
 
 resources:
   - ../../base
@@ -15,22 +15,22 @@ patches:
         value: 1
     target:
       kind: Deployment
-      name: ursol-cast-api
+      name: senselab-core-api
   - patch: |-
       - op: replace
         path: /spec/replicas
         value: 1
     target:
       kind: Deployment
-      name: ursol-cast-queue-worker
+      name: senselab-core-queue-worker
 
 configMapGenerator:
-  - name: ursol-cast-config
+  - name: senselab-core-config
     behavior: merge
     literals:
       - APP_ENV=development
       - APP_DEBUG=true
-      - APP_URL=https://dev-api.ursol.com
+      - APP_URL=https://dev-api.senselab.com
       - LOG_LEVEL=debug
       - HACIENDA_ENV=staging
       - HACIENDA_API_URL=https://api-sandbox.comprobanteselectronicos.go.cr

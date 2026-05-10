@@ -47,9 +47,9 @@ ON DUPLICATE KEY UPDATE descripcion = VALUES(descripcion);
 -- 4. SUCURSALES
 -- ==========================================
 INSERT INTO sucursales (empresa_id, nombre, direccion, telefono, email, activo) VALUES
-(1, 'Sucursal Matriz', 'San José, Centro', '+506 2000-0000', 'matriz@ursol.com', 1),
-(1, 'Sucursal Alajuela', 'Alajuela, Centro', '+506 2111-1111', 'alajuela@ursol.com', 1),
-(1, 'Sucursal Cartago', 'Cartago, Centro', '+506 2222-2222', 'cartago@ursol.com', 1)
+(1, 'Sucursal Matriz', 'San José, Centro', '+506 2000-0000', 'matriz@senselab.com', 1),
+(1, 'Sucursal Alajuela', 'Alajuela, Centro', '+506 2111-1111', 'alajuela@senselab.com', 1),
+(1, 'Sucursal Cartago', 'Cartago, Centro', '+506 2222-2222', 'cartago@senselab.com', 1)
 ON DUPLICATE KEY UPDATE direccion = VALUES(direccion);
 
 -- ==========================================
@@ -104,11 +104,11 @@ ON DUPLICATE KEY UPDATE email = VALUES(email);
 -- 9. EMPLEADOS
 -- ==========================================
 INSERT INTO empleados (empresa_id, nombre, primer_apellido, segundo_apellido, tipo_documento, numero_documento, email, telefono, activo) VALUES
-(1, 'Carlos', 'González', 'Morales', 'cédula_residente', '7777777777', 'carlos.gonzalez@ursol.com', '+506 8234-5678', 1),
-(1, 'María', 'López', 'Rodríguez', 'cédula_física', '8888888888', 'maria.lopez@ursol.com', '+506 8111-2222', 1),
-(1, 'Juan', 'Sánchez', 'Vargas', 'cédula_física', '9999999999', 'juan.sanchez@ursol.com', '+506 8777-8888', 1),
-(1, 'Pedro', 'Flores', 'García', 'cédula_física', '1010101010', 'pedro.flores@ursol.com', '+506 8999-0000', 1),
-(1, 'Ana', 'Mendoza', 'López', 'cédula_física', '1111111111', 'ana.mendoza@ursol.com', '+506 8555-6666', 1)
+(1, 'Carlos', 'González', 'Morales', 'cédula_residente', '7777777777', 'carlos.gonzalez@senselab.com', '+506 8234-5678', 1),
+(1, 'María', 'López', 'Rodríguez', 'cédula_física', '8888888888', 'maria.lopez@senselab.com', '+506 8111-2222', 1),
+(1, 'Juan', 'Sánchez', 'Vargas', 'cédula_física', '9999999999', 'juan.sanchez@senselab.com', '+506 8777-8888', 1),
+(1, 'Pedro', 'Flores', 'García', 'cédula_física', '1010101010', 'pedro.flores@senselab.com', '+506 8999-0000', 1),
+(1, 'Ana', 'Mendoza', 'López', 'cédula_física', '1111111111', 'ana.mendoza@senselab.com', '+506 8555-6666', 1)
 ON DUPLICATE KEY UPDATE email = VALUES(email);
 
 -- ==========================================

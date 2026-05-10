@@ -5,20 +5,20 @@
 ### Opción 1: Email Simple (Recomendada)
 
 ```
-Asunto: Acceso al Proyecto Ursol CAST API
+Asunto: Acceso al Proyecto Senselab Core API
 
 Hola [Nombre del Colaborador],
 
-Te doy la bienvenida al equipo de desarrollo de Ursol CAST API.
+Te doy la bienvenida al equipo de desarrollo de Senselab Core API.
 
 Para comenzar a trabajar en el proyecto, sigue estos pasos:
 
 1. Accede al repositorio de GitHub:
-   https://github.com/jeremy-sud/Ursol-CAST-API
+   https://github.com/SenseLab-dev/Senselab_Core_API
 
 2. Clona el repositorio en tu computadora:
-   git clone https://github.com/jeremy-sud/Ursol-CAST-API.git
-   cd Ursol-CAST-API
+   git clone https://github.com/SenseLab-dev/Senselab_Core_API.git
+   cd Senselab_Core_API
 
 3. Ejecuta el script de instalación automática:
    
@@ -32,7 +32,7 @@ Para comenzar a trabajar en el proyecto, sigue estos pasos:
    - INSTALLATION_GUIDE.md (guía detallada)
 
 Credenciales para pruebas:
-Email: admin@ursol.com
+Email: admin@senselab.com
 Password: admin123
 
 NO necesitas que te pase la base de datos. Los seeders la crean automáticamente.
@@ -50,17 +50,17 @@ Saludos,
 ```
 👋 Hola! Bienvenido al equipo.
 
-🔗 Repositorio: https://github.com/jeremy-sud/Ursol-CAST-API
+🔗 Repositorio: https://github.com/SenseLab-dev/Senselab_Core_API
 
 📦 Instalación rápida:
-1. git clone https://github.com/jeremy-sud/Ursol-CAST-API.git
-2. cd Ursol-CAST-API
+1. git clone https://github.com/SenseLab-dev/Senselab_Core_API.git
+2. cd Senselab_Core_API
 3. ./scripts/install.sh (Linux/Mac) o .\scripts\install.ps1 (Windows)
 
 📖 Lee: COLABORADORES_README.md
 
 🔑 Credenciales:
-admin@ursol.com / admin123
+admin@senselab.com / admin123
 
 ✅ Los seeders crean toda la base de datos automáticamente.
 
@@ -239,7 +239,7 @@ Sugiéreles usar este formato para sus Pull Requests:
 **Para que un colaborador trabaje en el proyecto:**
 
 1. Dale acceso al repositorio de GitHub
-2. Envíale el link: https://github.com/jeremy-sud/Ursol-CAST-API
+2. Envíale el link: https://github.com/SenseLab-dev/Senselab_Core_API
 3. Dile que lea: COLABORADORES_README.md
 4. Dile que ejecute: `./scripts/install.sh` o `.\scripts\install.ps1`
 
@@ -252,4 +252,4 @@ Sugiéreles usar este formato para sus Pull Requests:
 
 ---
 
-**Desarrollado por Sistemas Ursol S.A.**
+**Desarrollado por Senselab**

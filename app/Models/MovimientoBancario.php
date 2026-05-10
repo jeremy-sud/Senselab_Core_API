@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * Gestiona movimientos bancarios (depósitos, retiros, transferencias).
  *
  * @author Jeremy Arias Solano <deadmooncr@gmail.com>
- * @copyright 2025 Sistemas Ursol S.A.
+ * @copyright 2025 Senselab
  */
 class MovimientoBancario extends Model
 {

@@ -9,7 +9,7 @@ use Illuminate\Validation\Rule;
  * Request de validación para actualizar Cuenta por Pagar
  *
  * @package App\Http\Requests
- * @author Sistemas Ursol S.A. - Jeremy Arias Solano
+ * @author Senselab - Jeremy Arias Solano
  */
 class UpdateCuentaPorPagarRequest extends FormRequest
 {

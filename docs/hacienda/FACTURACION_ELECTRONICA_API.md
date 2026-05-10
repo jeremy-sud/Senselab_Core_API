@@ -772,4 +772,4 @@ if (!hash_equals($expected, $signature)) {
 **Versión de la API**: v5.0.1  
 **Esquema Hacienda**: v4.4 (DGT-R-000-2024)  
 **Análisis detallado**: `docs/hacienda/ANALISIS_COMPARATIVO_HACIENDA_V44.md`  
-**Contacto**: soporte@ursol-cast-api.com
+**Contacto**: soporte@senselab-core-api.com

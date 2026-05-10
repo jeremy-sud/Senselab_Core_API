@@ -24,7 +24,7 @@ use OpenApi\Attributes as OA;
  * Incluye distancia, duración estimada y tarifa base.
  *
  * @package App\Http\Controllers\API
- * @author Sistemas Ursol S.A. - Jeremy Arias Solano
+ * @author Senselab - Jeremy Arias Solano
  */
 class RutaController extends Controller
 {

@@ -1,11 +1,11 @@
-# 🎨 Guía de Identidad Visual - Ursol CAST API
+# 🎨 Guía de Identidad Visual - Senselab Core API
 
 <p align="center">
-  <img src="./public/assets/logos/ursol-cast-api-logo.png" width="600" alt="Ursol CAST API Logo">
+  <img src="./public/assets/logos/senselab-core-api-logo.png" width="600" alt="Senselab Core API Logo">
 </p>
 
 <p align="center">
-  <img src="./public/assets/logos/ursol-icon.webp" width="100" alt="Sistemas Ursol Icon">
+  <img src="./public/assets/logos/senselab-icon.png" width="100" alt="Senselab Icon">
 </p>
 
 ---
@@ -29,19 +29,19 @@ Todos los assets de marca están ubicados en la carpeta `/public/assets/logos/`:
 
 | Asset | Ubicación | Dimensiones | Formato | Uso |
 |-------|-----------|-------------|---------|-----|
-| **Logo CAST API** | `/public/assets/logos/ursol-cast-api-logo.png` | 2000x800px | PNG | Logo principal del proyecto |
-| **Icono Ursol** | `/public/assets/logos/ursol-icon.webp` | 512x512px | WebP | Icono de la empresa desarrolladora |
+| **Logo CAST API** | `/public/assets/logos/senselab-core-api-logo.png` | 2000x800px | PNG | Logo principal del proyecto |
+| **Icono Senselab** | `/public/assets/logos/senselab-icon.png` | 512x512px | WebP | Icono de la empresa desarrolladora |
 
 ---
 
 ## 🏷️ Logos Oficiales
 
-### 1. Logo Ursol CAST API
+### 1. Logo Senselab Core API
 
-**Archivo:** `ursol-cast-api-logo.png`
+**Archivo:** `senselab-core-api-logo.png`
 
 <p align="center">
-  <img src="./public/assets/logos/ursol-cast-api-logo.png" width="600" alt="Ursol CAST API Logo">
+  <img src="./public/assets/logos/senselab-core-api-logo.png" width="600" alt="Senselab Core API Logo">
 </p>
 
 **Características:**
@@ -59,12 +59,12 @@ Todos los assets de marca están ubicados en la carpeta `/public/assets/logos/`:
 
 ---
 
-### 2. Icono Sistemas Ursol S.A.
+### 2. Icono Senselab
 
-**Archivo:** `ursol-icon.webp`
+**Archivo:** `senselab-icon.png`
 
 <p align="center">
-  <img src="./public/assets/logos/ursol-icon.webp" width="150" alt="Sistemas Ursol Icon">
+  <img src="./public/assets/logos/senselab-icon.png" width="150" alt="Senselab Icon">
 </p>
 
 **Características:**
@@ -87,7 +87,7 @@ Todos los assets de marca están ubicados en la carpeta `/public/assets/logos/`:
 ### Espaciado y Área de Seguridad
 
 - **Logo CAST API:** Mantener un margen mínimo equivalente al 10% de la altura del logo
-- **Icono Ursol:** Mantener un margen mínimo equivalente al 5% del tamaño del icono
+- **Icono Senselab:** Mantener un margen mínimo equivalente al 5% del tamaño del icono
 
 ### Tamaños Mínimos
 
@@ -95,7 +95,7 @@ Todos los assets de marca están ubicados en la carpeta `/public/assets/logos/`:
   - Web: 300px de ancho mínimo
   - Impresión: 5cm de ancho mínimo
   
-- **Icono Ursol:**
+- **Icono Senselab:**
   - Web: 32px de lado mínimo (favicon)
   - Impresión: 1cm de lado mínimo
 
@@ -106,7 +106,7 @@ Todos los assets de marca están ubicados en la carpeta `/public/assets/logos/`:
   - ✅ Fondo con transparencia
   - ⚠️ Evitar fondos oscuros que reduzcan contraste
   
-- **Icono Ursol:**
+- **Icono Senselab:**
   - ✅ Cualquier fondo (diseñado para versatilidad)
   - ✅ Con o sin transparencia
 
@@ -114,24 +114,24 @@ Todos los assets de marca están ubicados en la carpeta `/public/assets/logos/`:
 
 ## 🎨 Colores Corporativos
 
-### Paleta Principal - Sistemas Ursol S.A.
+### Paleta Principal - Senselab
 
 ```css
 /* Azul Corporativo */
---ursol-blue: #0066CC;
---ursol-blue-dark: #004C99;
---ursol-blue-light: #3385D6;
+--senselab-blue: #0066CC;
+--senselab-blue-dark: #004C99;
+--senselab-blue-light: #3385D6;
 
 /* Gris Corporativo */
---ursol-gray: #4A4A4A;
---ursol-gray-light: #8A8A8A;
---ursol-gray-lighter: #E5E5E5;
+--senselab-gray: #4A4A4A;
+--senselab-gray-light: #8A8A8A;
+--senselab-gray-lighter: #E5E5E5;
 
 /* Acentos */
---ursol-accent: #FF6B00;
---ursol-success: #28A745;
---ursol-warning: #FFC107;
---ursol-danger: #DC3545;
+--senselab-accent: #FF6B00;
+--senselab-success: #28A745;
+--senselab-warning: #FFC107;
+--senselab-danger: #DC3545;
 ```
 
 ### Paleta Secundaria - CAST API
@@ -178,11 +178,11 @@ Todos los assets de marca están ubicados en la carpeta `/public/assets/logos/`:
 
 ```markdown
 <p align="center">
-  <img src="./public/assets/logos/ursol-cast-api-logo.png" width="600" alt="Ursol CAST API Logo">
+  <img src="./public/assets/logos/senselab-core-api-logo.png" width="600" alt="Senselab Core API Logo">
 </p>
 
 <p align="center">
-  <img src="./public/assets/logos/ursol-icon.webp" width="80" alt="Sistemas Ursol Icon">
+  <img src="./public/assets/logos/senselab-icon.png" width="80" alt="Senselab Icon">
 </p>
 ```
 
@@ -192,7 +192,7 @@ Todos los assets de marca están ubicados en la carpeta `/public/assets/logos/`:
 ---
 **Desarrollado por:**
 
-<img src="./public/assets/logos/ursol-icon.webp" width="40" alt="Ursol Icon"> **Sistemas Ursol S.A.**
+<img src="./public/assets/logos/senselab-icon.png" width="40" alt="Senselab Icon"> **Senselab**
 ---
 ```
 
@@ -201,8 +201,8 @@ Todos los assets de marca están ubicados en la carpeta `/public/assets/logos/`:
 ```
 feat: Implementar nueva funcionalidad
 
-Desarrollado por: Sistemas Ursol S.A.
-Proyecto: Ursol CAST API
+Desarrollado por: Senselab
+Proyecto: Senselab Core API
 ```
 
 ---
@@ -213,27 +213,27 @@ Proyecto: Ursol CAST API
 
 ```html
 <!-- public/index.html -->
-<link rel="icon" type="image/webp" href="/assets/logos/ursol-icon.webp">
-<link rel="apple-touch-icon" href="/assets/logos/ursol-icon.webp">
+<link rel="icon" type="image/png" href="/assets/logos/senselab-icon.png">
+<link rel="apple-touch-icon" href="/assets/logos/senselab-icon.png">
 ```
 
 ### Open Graph / Social Media
 
 ```html
-<meta property="og:image" content="/assets/logos/ursol-cast-api-logo.png">
+<meta property="og:image" content="/assets/logos/senselab-core-api-logo.png">
 <meta property="og:image:width" content="2000">
 <meta property="og:image:height" content="800">
-<meta name="twitter:image" content="/assets/logos/ursol-cast-api-logo.png">
+<meta name="twitter:image" content="/assets/logos/senselab-core-api-logo.png">
 ```
 
 ### Email Signatures
 
 ```html
-<img src="https://tu-dominio.com/assets/logos/ursol-icon.webp" 
+<img src="https://tu-dominio.com/assets/logos/senselab-icon.png" 
      width="64" 
-     alt="Sistemas Ursol" 
+     alt="Senselab" 
      style="vertical-align:middle; margin-right:10px;">
-<strong>Sistemas Ursol S.A.</strong>
+<strong>Senselab</strong>
 ```
 
 ---
@@ -242,19 +242,19 @@ Proyecto: Ursol CAST API
 
 ### Documentación Técnica
 - **Logo CAST API:** 400-600px de ancho
-- **Icono Ursol:** 60-100px de lado
+- **Icono Senselab:** 60-100px de lado
 
 ### Presentaciones
 - **Logo CAST API:** Diapositiva de portada (ancho completo)
-- **Icono Ursol:** Esquina superior derecha (80-120px)
+- **Icono Senselab:** Esquina superior derecha (80-120px)
 
 ### Redes Sociales
 - **LinkedIn/Facebook:** Logo CAST API 1200x628px
 - **Twitter:** Logo CAST API 1200x675px
-- **Avatar/Perfil:** Icono Ursol 512x512px
+- **Avatar/Perfil:** Icono Senselab 512x512px
 
 ### Firma de Email
-- **Icono Ursol:** 40-64px de lado
+- **Icono Senselab:** 40-64px de lado
 - Acompañado de texto corporativo
 
 ---
@@ -266,7 +266,7 @@ Proyecto: Ursol CAST API
 - Cambiar los colores originales
 - Agregar efectos (sombras, brillos, gradientes no autorizados)
 - Rotar o inclinar los logos
-- Usar en contextos que no representen los valores de Ursol S.A.
+- Usar en contextos que no representen los valores de Senselab S.A.
 - Modificar o recrear el logo sin autorización
 - Usar versiones de baja calidad o pixeladas
 
@@ -281,26 +281,26 @@ Proyecto: Ursol CAST API
 
 ## 📞 Contacto para Uso de Marca
 
-Para consultas sobre el uso de la marca **Sistemas Ursol S.A.** o **Ursol CAST API**:
+Para consultas sobre el uso de la marca **Senselab** o **Senselab Core API**:
 
-- **Empresa:** Sistemas Ursol S.A.
+- **Empresa:** Senselab
 - **Fundador:** Eduardo Alberto Ureña Solano
 - **Equipo de Desarrollo:** Jeremy Arias Solano
-- **WhatsApp:** [+506 8868-7765](https://wa.me/50688687765)
-- **Web:** [ursol.com](https://ursol.com) | [ursol.net](https://ursol.net)
-- **GitHub:** [SistemasUrsol](https://github.com/SistemasUrsol)
+- **WhatsApp:** [+(506)8973-5665](https://wa.me/50689735665)
+- **Web:** [senselab.com](https://senselab.com) | [senselab.com](https://senselab.com)
+- **GitHub:** [SenseLab-dev](https://github.com/SenseLab-dev)
 
 ---
 
 ## 📜 Derechos de Autor
 
-© 2024-2025 **Sistemas Ursol S.A.** - Todos los derechos reservados.
+© 2024-2025 **Senselab** - Todos los derechos reservados.
 
-Los logos y marcas son propiedad de **Sistemas Ursol S.A.** El código fuente del proyecto está licenciado bajo **MIT License**, pero las marcas y logos mantienen derechos reservados.
+Los logos y marcas son propiedad de **Senselab** El código fuente del proyecto está licenciado bajo **MIT License**, pero las marcas y logos mantienen derechos reservados.
 
 ---
 
 <p align="center">
-  <strong>Desarrollado con ❤️ y el "Toque Humano" por Sistemas Ursol S.A.</strong><br>
+  <strong>Desarrollado con ❤️ y el "Toque Humano" por Senselab</strong><br>
   <em>San José, Costa Rica 🇨🇷 | Desde 1995</em>
 </p>

@@ -1,28 +1,28 @@
 LICENCIA DE PROPIEDAD EXCLUSIVA
 ================================
 
-Copyright © 2025-2026 Sistemas Ursol S.A. - Todos los Derechos Reservados
+Copyright © 2025-2026 Senselab - Todos los Derechos Reservados
 
 Desarrollado por:
-- Sistemas Ursol S.A. (sistemas@ursol.com)
-- Jeremy Arias Solano — Co-fundador de Sistemas Ursol S.A., Arquitecto de Software y Desarrollador Completo (deadmooncr@gmail.com)
+- Senselab (deadmooncr@gmail.com)
+- Jeremy Arias Solano — Co-fundador de Senselab, Arquitecto de Software y Desarrollador Completo (deadmooncr@gmail.com)
 - Eduardo Alberto Ureña Solano — Fundador y Visionario
 
 Con casi 30 años de experiencia en el mercado costarricense,
 proporcionando soluciones tecnológicas con el "Toque Humano".
 
-Website: https://ursol.com | https://ursol.net
-GitHub: https://github.com/SistemasUrsol
-Contact: +506 8868-7765 (WhatsApp)
+Website: https://senselab.com | https://senselab.com
+GitHub: https://github.com/SenseLab-dev
+Contact: +(506)8973-5665 (WhatsApp)
 
 
 TÉRMINOS Y CONDICIONES
 ======================
 
-Este software ("Ursol-CAST-API") es propiedad exclusiva de Sistemas Ursol S.A.
+Este software ("Senselab_Core_API") es propiedad exclusiva de Senselab
 Todos los derechos están reservados. No se permite la reproducción, distribución,
 modificación, adaptación, traducción o uso de este software sin autorización
-explícita y por escrito de Sistemas Ursol S.A.
+explícita y por escrito de Senselab
 
 RESTRICCIONES DE USO:
 ====================
@@ -37,7 +37,7 @@ RESTRICCIONES DE USO:
      redes de distribución o cualquier medio sin permiso escrito.
 
 2. USO EXCLUSIVO:
-   - Este software está destinado exclusivamente para uso interno de Sistemas Ursol S.A.
+   - Este software está destinado exclusivamente para uso interno de Senselab
    - Los empleados y contratistas autorizados podrán acceder al código fuente
      únicamente bajo acuerdos de confidencialidad.
    - Cualquier acceso al código fuente implica la aceptación de estos términos.
@@ -47,7 +47,7 @@ RESTRICCIONES DE USO:
      protección máxima.
    - Los clientes tienen licencia de USO del software, pero NUNCA propiedad
      sobre el código fuente ni sobre la infraestructura subyacente.
-   - Los contratos de servicio (SLA) especifican que Sistemas Ursol S.A. es
+   - Los contratos de servicio (SLA) especifican que Senselab es
      propietaria del código, la arquitectura y todos los derechos de propiedad intelectual.
    - Se prohíbe cualquier intento de acceso no autorizado a datos de otros clientes.
    - Se prohíbe completamente cualquier extracción, copia o transferencia de código
@@ -68,7 +68,7 @@ EXENCIÓN DE RESPONSABILIDAD
 EL SOFTWARE SE PROPORCIONA "TAL CUAL", SIN GARANTÍA DE NINGÚN TIPO, EXPRESA O
 IMPLÍCITA, INCLUYENDO PERO NO LIMITADO A LAS GARANTÍAS DE COMERCIABILIDAD,
 APTITUD PARA UN PROPÓSITO PARTICULAR Y NO INCUMPLIMIENTO. EN NINGÚN CASO
-SISTEMAS URSOL S.A. SERÁ RESPONSABLE DE DAÑOS DIRECTOS, INDIRECTOS,
+SISTEMAS SENSELAB S.A. SERÁ RESPONSABLE DE DAÑOS DIRECTOS, INDIRECTOS,
 INCIDENTALES, ESPECIALES, EJEMPLARES O CONSECUENTES, INCLUIDA PÉRDIDA DE
 GANANCIAS, INCLUSO SI SE ADVIERTE DE LA POSIBILIDAD DE DICHOS DAÑOS.
 
@@ -77,9 +77,9 @@ CONTACTO PARA AUTORIZACIONES
 =============================
 
 Para solicitar autorización de uso, distribución o modificación de este software:
-Email: sistemas@ursol.com
-Teléfono: +506 8868-7765 (WhatsApp)
-Website: https://ursol.com
+Email: deadmooncr@gmail.com
+Teléfono: +(506)8973-5665 (WhatsApp)
+Website: https://senselab.com
 
 
 Última modificación: Marzo de 2026

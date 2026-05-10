@@ -1,4 +1,4 @@
-# Dockerfile para Ursol CAST API
+# Dockerfile para Senselab Core API
 # Multi-stage build para optimización
 
 # Etapa 1: Dependencias de Composer
@@ -33,9 +33,9 @@ RUN composer dump-autoload --optimize --classmap-authoritative
 FROM php:8.4-fpm-alpine
 
 # Metadata
-LABEL maintainer="Sistemas Ursol S.A. <sistemas@ursol.com>"
+LABEL maintainer="Senselab <deadmooncr@gmail.com>"
 LABEL version="1.0.0"
-LABEL description="Ursol CAST API - ERP System"
+LABEL description="Senselab Core API - ERP System"
 
 # Instalar dependencias del sistema
 RUN apk add --no-cache \

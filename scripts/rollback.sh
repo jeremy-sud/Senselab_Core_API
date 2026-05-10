@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #############################################
-# Rollback Script para Ursol CAST API
+# Rollback Script para Senselab Core API
 # Uso: ./scripts/rollback.sh [staging|production] [version]
 #############################################
 
@@ -27,7 +27,7 @@ if [[ -f "${PROJECT_ROOT}/.env" ]]; then
 fi
 
 echo -e "${RED}========================================${NC}"
-echo -e "${RED}Ursol CAST API - ROLLBACK Script${NC}"
+echo -e "${RED}Senselab Core API - ROLLBACK Script${NC}"
 echo -e "${RED}Environment: $ENVIRONMENT${NC}"
 echo -e "${RED}========================================${NC}"
 

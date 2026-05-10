@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * Catálogo de códigos de actividad económica de Costa Rica.
  * 
  * @author Jeremy Arias Solano <deadmooncr@gmail.com>
- * @copyright 2025 Sistemas Ursol S.A.
+ * @copyright 2025 Senselab
  */
 class CodigoActividadEconomica extends Model
 {

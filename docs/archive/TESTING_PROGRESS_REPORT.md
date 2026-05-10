@@ -535,4 +535,4 @@ docker-compose up -d --build
 **Commits**: bbeb41f (inicio) → 1981b4a (final)  
 **Progreso Total**: De 60% (49/81) → **100% éxito (339/339)** 🎉  
 **Tests Agregados**: +258 tests (81 → 339)  
-**Proyecto GitHub**: jeremy-sud/Ursol-CAST-API (privado)
+**Proyecto GitHub**: SenseLab-dev/Senselab_Core_API (privado)

@@ -1,6 +1,6 @@
 # 📦 Resumen para Nuevos Colaboradores
 
-## ✅ ¿Cómo instalar Ursol CAST API en tu laptop?
+## ✅ ¿Cómo instalar Senselab Core API en tu laptop?
 
 **¡Es muy fácil! NO necesitas que te pasen la base de datos por privado.**
 
@@ -10,15 +10,15 @@
 
 ### Para Linux/Mac:
 ```bash
-git clone https://github.com/jeremy-sud/Ursol-CAST-API.git
-cd Ursol-CAST-API
+git clone https://github.com/SenseLab-dev/Senselab_Core_API.git
+cd Senselab_Core_API
 ./scripts/install.sh
 ```
 
 ### Para Windows (PowerShell):
 ```powershell
-git clone https://github.com/jeremy-sud/Ursol-CAST-API.git
-cd Ursol-CAST-API
+git clone https://github.com/SenseLab-dev/Senselab_Core_API.git
+cd Senselab_Core_API
 .\install.ps1
 ```
 
@@ -53,14 +53,14 @@ Después de la instalación, ya tendrás:
 
 **Usuario Administrador:**
 ```
-Email:    admin@ursol.com
+Email:    admin@senselab.com
 Password: admin123
 Permisos: 68 (acceso completo)
 ```
 
 **Empresa Demo:**
 ```
-Nombre:  Sistemas Ursol S.A.
+Nombre:  Senselab
 Cédula:  3-101-123456
 ```
 
@@ -99,7 +99,7 @@ php artisan serve
 ```bash
 curl -X POST http://localhost:8000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@ursol.com","password":"admin123"}'
+  -d '{"email":"admin@senselab.com","password":"admin123"}'
 ```
 
 ### 3. Ver documentación Swagger
@@ -147,7 +147,7 @@ php artisan migrate
 ### ¿Y si tengo problemas?
 1. Revisa la sección de **Troubleshooting** en [INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)
 2. Crea un Issue en GitHub con los detalles
-3. Contacta al equipo por WhatsApp: +506 8868-7765
+3. Contacta al equipo por WhatsApp: +(506)8973-5665
 
 ---
 
@@ -175,10 +175,10 @@ Después de instalar:
 
 ## 📞 Soporte
 
-**Sistemas Ursol S.A.**  
-📧 Email: soporte@ursol.com  
-💬 WhatsApp: +506 8868-7765  
-🌐 Web: https://ursol.com
+**Senselab**  
+📧 Email: soporte@senselab.com  
+💬 WhatsApp: +(506)8973-5665  
+🌐 Web: https://senselab.com
 
 ---
 

@@ -128,12 +128,12 @@ class EmpresaController extends Controller
             content: new OA\JsonContent(
                 required: ['nombre', 'num_identificacion_dgt', 'regimen_tributario_id'],
                 properties: [
-                    new OA\Property(property: 'nombre', type: 'string', example: 'Sistemas Ursol S.A.'),
-                    new OA\Property(property: 'razon_social', type: 'string', nullable: true, example: 'Sistemas Ursol Sociedad Anónima'),
+                    new OA\Property(property: 'nombre', type: 'string', example: 'Senselab'),
+                    new OA\Property(property: 'razon_social', type: 'string', nullable: true, example: 'Senselab Sociedad Anónima'),
                     new OA\Property(property: 'num_identificacion_dgt', type: 'string', example: '3-101-123456'),
                     new OA\Property(property: 'regimen_tributario_id', type: 'integer', example: 1),
                     new OA\Property(property: 'telefono', type: 'string', nullable: true, example: '2222-3333'),
-                    new OA\Property(property: 'email', type: 'string', format: 'email', nullable: true, example: 'info@ursol.com'),
+                    new OA\Property(property: 'email', type: 'string', format: 'email', nullable: true, example: 'info@senselab.com'),
                     new OA\Property(property: 'direccion', type: 'string', nullable: true, example: 'San José, Escazú'),
                     new OA\Property(property: 'activo', type: 'boolean', example: true)
                 ]
@@ -254,7 +254,7 @@ class EmpresaController extends Controller
             required: true,
             content: new OA\JsonContent(
                 properties: [
-                    new OA\Property(property: 'nombre', type: 'string', example: 'Sistemas Ursol S.A.'),
+                    new OA\Property(property: 'nombre', type: 'string', example: 'Senselab'),
                     new OA\Property(property: 'razon_social', type: 'string', nullable: true),
                     new OA\Property(property: 'telefono', type: 'string', nullable: true),
                     new OA\Property(property: 'email', type: 'string', format: 'email', nullable: true),

@@ -62,9 +62,9 @@ php artisan test --filter NombreDelTest
 **Desarrollador:** [Tu Nombre]  
 **Email:** [tu@email.com]
 
-**Revisado por:** Sistemas Ursol S.A.  
-**Contacto:** sistemas@ursol.com | +506 8868-7765
+**Revisado por:** Senselab  
+**Contacto:** deadmooncr@gmail.com | +(506)8973-5665
 
 ---
-**Desarrollado por Sistemas Ursol S.A.**  
+**Desarrollado por Senselab**  
 Costa Rica | 30 años de experiencia tecnológica

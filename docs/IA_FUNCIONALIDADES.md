@@ -1,4 +1,4 @@
-# 🤖 Funcionalidades de Inteligencia Artificial - Ursol CAST API
+# 🤖 Funcionalidades de Inteligencia Artificial - Senselab Core API
 
 **Última Actualización:** 5 de Diciembre 2025
 
@@ -379,7 +379,7 @@ Los tests existentes (405) siguen pasando. Para probar manualmente:
 
 ```bash
 # Verificar rutas registradas
-docker exec ursol_php php artisan route:list --path=ai
+docker exec senselab_php php artisan route:list --path=ai
 
 # Probar endpoint de capabilities (no requiere OpenAI key)
 curl -X GET http://localhost:8000/api/ai/ocr/capabilities \
@@ -592,6 +592,6 @@ Evalúa riesgo de una transacción específica.
 
 ## 📞 Soporte
 
-Desarrollado por **Sistemas Ursol S.A.**
+Desarrollado por **Senselab**
 - Documentación: `/docs/ai`
 - Issues: GitHub Issues del repositorio

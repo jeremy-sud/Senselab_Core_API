@@ -19,7 +19,7 @@ use OpenApi\Attributes as OA;
  * Controlador para gestión de URLs acortadas
  *
  * @author Jeremy Arias Solano <deadmooncr@gmail.com>
- * @copyright 2025 Sistemas Ursol S.A.
+ * @copyright 2025 Senselab
  */
 
 #[OA\Tag(

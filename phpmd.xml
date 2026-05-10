@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <!--
-  PHP Mess Detector — Ruleset para Ursol CAST API
+  PHP Mess Detector — Ruleset para Senselab Core API
   Usado por: .github/workflows/code-analysis.yml (job phpmd)
 
   Referencia: https://phpmd.org/rules/index.html
 -->
-<ruleset name="Ursol CAST API"
+<ruleset name="Senselab Core API"
          xmlns="http://pmd.sf.net/ruleset/1.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
          xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
 
-    <description>Reglas de PHPMD para el proyecto Ursol CAST API</description>
+    <description>Reglas de PHPMD para el proyecto Senselab Core API</description>
 
     <!-- ================================================================
          Código innecesariamente complejo

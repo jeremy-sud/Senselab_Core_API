@@ -25,7 +25,7 @@ use OpenApi\Attributes as OA;
  * Refactorización completada: FASE 8
  *
  * @package App\Http\Controllers\API
- * @author Sistemas Ursol S.A. - Jeremy Arias Solano
+ * @author Senselab - Jeremy Arias Solano
  */
 class CuentaContableController extends Controller
 {

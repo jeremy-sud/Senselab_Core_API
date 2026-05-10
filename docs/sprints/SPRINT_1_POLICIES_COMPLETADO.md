@@ -448,5 +448,5 @@ Total: 13h/30h completadas (43%)
 ---
 
 **Autor:** GitHub Copilot  
-**Copyright:** 2025 Sistemas Ursol S.A.  
+**Copyright:** 2025 Senselab  
 **Última Actualización:** 2025-01-XX

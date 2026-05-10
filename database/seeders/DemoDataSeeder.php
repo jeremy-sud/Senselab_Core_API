@@ -18,9 +18,9 @@ class DemoDataSeeder extends Seeder
         $this->command->info('Ejecutando seeders de datos demo...');
 
         $this->call([
-            EmpresaDemoSeeder::class,      // Empresa "Sistemas Ursol S.A." + sucursal
+            EmpresaDemoSeeder::class,      // Empresa "Senselab" + sucursal
             FoundersSeeder::class,         // Usuarios fundadores con rol Super Admin
-            UsuarioAdminSeeder::class,     // admin@ursol.com con rol Administrador
+            UsuarioAdminSeeder::class,     // admin@senselab.com con rol Administrador
         ]);
 
         $this->command->info('Datos demo cargados exitosamente.');

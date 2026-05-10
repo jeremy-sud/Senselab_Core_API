@@ -1,15 +1,15 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: ursol-cast-api-hpa
-  namespace: ursol-cast
+  name: senselab-core-api-hpa
+  namespace: senselab-core
   labels:
-    app.kubernetes.io/name: ursol-cast-api
+    app.kubernetes.io/name: senselab-core-api
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: ursol-cast-api
+    name: senselab-core-api
   minReplicas: 2
   maxReplicas: 10
   metrics:

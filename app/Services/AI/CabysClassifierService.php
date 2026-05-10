@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\DB;
  *
  * Usa Gemini (GRATUITO) por defecto
  *
- * Desarrollado por Sistemas Ursol S.A.
+ * Desarrollado por Senselab
  */
 class CabysClassifierService
 {

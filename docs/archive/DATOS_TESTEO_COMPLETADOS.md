@@ -210,11 +210,11 @@ PROD-060: MacBook Pro 14"
 
 ```bash
 # Para api_db
-mysql -h 127.0.0.1 -P 33061 -u ursol_user -pursol_password api_db < \
+mysql -h 127.0.0.1 -P 33061 -u senselab_user -psenselab_password api_db < \
   scripts/fill_tables_corrected.sql
 
 # Para api_db_testing
-mysql -h 127.0.0.1 -P 33061 -u ursol_user -pursol_password api_db_testing < \
+mysql -h 127.0.0.1 -P 33061 -u senselab_user -psenselab_password api_db_testing < \
   scripts/fill_tables_corrected.sql
 ```
 
@@ -222,7 +222,7 @@ mysql -h 127.0.0.1 -P 33061 -u ursol_user -pursol_password api_db_testing < \
 
 ```bash
 # Acceder al MySQL en Docker
-docker exec -it ursol_mysql mysql -u ursol_user -pursol_password api_db
+docker exec -it senselab_mysql mysql -u senselab_user -psenselab_password api_db
 
 # Consultasr rápidas
 SELECT COUNT(*) FROM productos;
@@ -281,7 +281,7 @@ TRUNCATE TABLE proveedores;
 ## 📞 Contacto & Soporte
 
 **Script completo:** `/scripts/fill_tables_corrected.sql`  
-**Credenciales:** `ursol_user:ursol_password`  
+**Credenciales:** `senselab_user:senselab_password`  
 **Puerto MySQL:** `127.0.0.1:33061`  
 **Version:** MySQL 8.0.x (Docker)
 
@@ -306,6 +306,6 @@ TRUNCATE TABLE proveedores;
 
 ---
 
-**Generado:** Sistema Ursol CAST API  
+**Generado:** Sistema Senselab Core API  
 **Estado:** ✅ LISTO PARA TESTING  
 **Última actualización:** Febrero 2026

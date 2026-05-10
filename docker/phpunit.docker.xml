@@ -28,8 +28,8 @@
         <env name="DB_HOST" value="mysql"/>
         <env name="DB_PORT" value="3306"/>
         <env name="DB_DATABASE" value="api_db_testing"/>
-        <env name="DB_USERNAME" value="ursol_user"/>
-        <env name="DB_PASSWORD" value="ursol_password"/>
+        <env name="DB_USERNAME" value="senselab_user"/>
+        <env name="DB_PASSWORD" value="senselab_password"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>

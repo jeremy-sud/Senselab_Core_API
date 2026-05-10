@@ -1,6 +1,6 @@
 # 🎉 SESIÓN COMPLETADA: Generación de Componentes Laravel
 ## Fecha: $(date)
-## Proyecto: Ursol-CAST-API
+## Proyecto: Senselab_Core_API
 
 ---
 

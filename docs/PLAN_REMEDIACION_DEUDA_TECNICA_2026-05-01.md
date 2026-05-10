@@ -1,4 +1,4 @@
-# 📋 PLAN DE REMEDIACIÓN DE DEUDA TÉCNICA — Ursol CAST API
+# 📋 PLAN DE REMEDIACIÓN DE DEUDA TÉCNICA — Senselab Core API
 
 **Fecha de creación:** 1 de mayo de 2026  
 **Basado en:** AUDITORIA_DEUDA_TECNICA_2026-05-01.md  
@@ -211,7 +211,7 @@ git add -p                   # Review cambios
 ```php
 // database/seeders/UsuarioAdminSeeder.php (ANTES)
 Usuario::updateOrCreate(
-    ['email' => 'admin@ursol.local'],
+    ['email' => 'admin@senselab.local'],
     [
         'nombre' => 'Administrador',
         'password' => Hash::make('admin123'),  // ❌ Hardcodeada
@@ -230,7 +230,7 @@ if ($password === 'ChangeMe@2026!#') {
 }
 
 $usuario = Usuario::updateOrCreate(
-    ['email' => 'admin@ursol.local'],
+    ['email' => 'admin@senselab.local'],
     [
         'nombre' => 'Administrador del Sistema',
         'password' => Hash::make($password),
@@ -262,7 +262,7 @@ FOUNDER_SEEDER_PASSWORD=ChangeMe@2026!#
 public function test_seeder_uses_env_password() {
     $this->artisan('db:seed', ['--class' => 'UsuarioAdminSeeder']);
     
-    $user = Usuario::where('email', 'admin@ursol.local')->first();
+    $user = Usuario::where('email', 'admin@senselab.local')->first();
     $this->assertNotNull($user);
     
     // Verificar que contraseña funciona

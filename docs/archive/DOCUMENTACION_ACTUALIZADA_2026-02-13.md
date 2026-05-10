@@ -168,7 +168,7 @@ $ find tests -name "*.php" -type f | wc -l
 
 ## 📞 CONTACTO & SOPORTE
 
-**Desarrollado por:** Sistemas Ursol S.A.  
+**Desarrollado por:** Senselab  
 **Documentación por:** GitHub Copilot + Análisis Verificado  
 **Fecha de Actualización:** 13 de Febrero de 2026  
 **Versión Actual:** 2.1.0  

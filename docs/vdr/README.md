@@ -1,9 +1,9 @@
-# 📂 Virtual Data Room — Ursol CAST API v5.0.1
+# 📂 Virtual Data Room — Senselab Core API v5.0.1
 
 ## Índice de Secciones para Google Sites
 
 Este directorio contiene todos los documentos organizados para el sitio de venta:  
-**https://sites.google.com/view/repdevursol/home**
+**https://sites.google.com/view/repdevsenselab/home**
 
 ---
 
@@ -57,8 +57,8 @@ Este directorio contiene todos los documentos organizados para el sitio de venta
 | 3.2 | Diagramas IA (ciclo de vida + precisión) | `docs/diagrams/03-ciclo-vida-dato-ia.md` + `04-precision-servicios-ia.md` | Renderizar → PNG |
 | 3.3 | Resumen de Controllers (95) | `docs/api/CONTROLLERS_COMPLETE_SUMMARY.md` | Subir PDF |
 | 3.4 | Modelo de Datos (98 modelos + relaciones) | `docs/api/MODELS_RELATIONS.md` | Subir PDF |
-| 3.5 | Glosario Completo | `docs/GLOSARIO_COMPLETO_URSOL_CAST_API.md` | Subir PDF |
-| 3.6 | Curso Completo (onboarding) | `docs/curso_completo_ursol_cast_api.md` | Subir PDF |
+| 3.5 | Glosario Completo | `docs/GLOSARIO_COMPLETO_SENSELAB_CAST_API.md` | Subir PDF |
+| 3.6 | Curso Completo (onboarding) | `docs/curso_completo_senselab_core_api.md` | Subir PDF |
 
 ---
 
@@ -132,7 +132,7 @@ Este directorio contiene todos los documentos organizados para el sitio de venta
 Si organizas archivos en Google Drive como respaldo del sitio, usa esta nomenclatura:
 
 ```
-📂 Ursol_CAST_API_VDR_v5.0.1/
+📂 Senselab_CAST_API_VDR_v5.0.1/
 ├── 00_Executive_Summary.pdf
 ├── 01_Technical_Core/
 │   ├── 01.1_Auditoria_Tecnica_9.2.pdf
@@ -233,4 +233,4 @@ php artisan test --coverage-html=coverage-report/
 ---
 
 **Generado:** 15 de Abril 2026  
-**Sistemas Ursol S.A.**
+**Senselab**

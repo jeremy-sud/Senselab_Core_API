@@ -55,8 +55,8 @@
 
 ### 1. Clonar el Proyecto
 ```bash
-git clone https://github.com/jeremy-sud/Ursol-CAST-API.git
-cd Ursol-CAST-API
+git clone https://github.com/SenseLab-dev/Senselab_Core_API.git
+cd Senselab_Core_API
 ```
 
 ### 2. Instalar Dependencias
@@ -619,4 +619,4 @@ ls -lah storage/app/hacienda/xml/
 
 **Última actualización**: 26 de noviembre de 2025
 **Versión del sistema**: 1.0.0
-**Autor**: Equipo Ursol-CAST-API
+**Autor**: Equipo Senselab_Core_API

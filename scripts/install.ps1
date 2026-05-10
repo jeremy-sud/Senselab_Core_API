@@ -1,10 +1,10 @@
-# Script de Instalación Automatizada - Ursol CAST API
-# Sistemas Ursol S.A.
+# Script de Instalación Automatizada - Senselab Core API
+# Senselab
 # Para Windows - PowerShell
 
 Write-Host "==================================================" -ForegroundColor Cyan
-Write-Host "  URSOL CAST API - Instalación Automatizada" -ForegroundColor Cyan
-Write-Host "  Sistemas Ursol S.A." -ForegroundColor Cyan
+Write-Host "  SENSELAB CAST API - Instalación Automatizada" -ForegroundColor Cyan
+Write-Host "  Senselab" -ForegroundColor Cyan
 Write-Host "==================================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -197,7 +197,7 @@ Write-Host "  • 11 Unidades de Medida"
 Write-Host "  • 68 Permisos (17 módulos × 4 acciones)"
 Write-Host "  • 7 Roles (Administrador, Gerente, Contador, etc.)"
 Write-Host "  • 7 Cargos"
-Write-Host "  • 1 Empresa demo (Sistemas Ursol S.A.)"
+Write-Host "  • 1 Empresa demo (Senselab)"
 Write-Host "  • 1 Usuario administrador"
 Write-Host ""
 
@@ -238,12 +238,12 @@ Write-Host "   API:     http://localhost:8000/api"
 Write-Host "   Swagger: http://localhost:8000/api/documentation"
 Write-Host ""
 Write-Host "🔐 Credenciales de acceso:" -ForegroundColor Cyan
-Write-Host "   Email:    admin@ursol.com"
+Write-Host "   Email:    admin@senselab.com"
 Write-Host "   Password: admin123"
 Write-Host "   Permisos: 68 (todos los módulos)"
 Write-Host ""
 Write-Host "📊 Empresa demo creada:" -ForegroundColor Cyan
-Write-Host "   Nombre:  Sistemas Ursol S.A."
+Write-Host "   Nombre:  Senselab"
 Write-Host "   Cédula:  3-101-123456"
 Write-Host ""
 Write-Host "📚 Documentación:" -ForegroundColor Cyan

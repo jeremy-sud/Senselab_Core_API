@@ -1,4 +1,4 @@
-# Auditoría Completa — Ursol CAST API
+# Auditoría Completa — Senselab Core API
 
 **Fecha:** 22 de febrero de 2026  
 **Branch:** main  
@@ -234,4 +234,4 @@ PHPUnit:  529 tests, 1698 assertions, 0 failures, 5 skipped
 
 ---
 
-*Auditoría realizada sobre el branch `main` del repositorio `jeremy-sud/Ursol-CAST-API`.*
+*Auditoría realizada sobre el branch `main` del repositorio `SenseLab-dev/Senselab_Core_API`.*

@@ -24,7 +24,7 @@ use OpenApi\Attributes as OA;
  * Incluye consultas de disponibilidad y estado de flota.
  *
  * @package App\Http\Controllers\API
- * @author Sistemas Ursol S.A. - Jeremy Arias Solano
+ * @author Senselab - Jeremy Arias Solano
  */
 class BusUnidadController extends Controller
 {

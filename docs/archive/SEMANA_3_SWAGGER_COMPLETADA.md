@@ -256,14 +256,14 @@ php artisan route:clear
 ### Especificación OpenAPI 3.0 Completa
 
 ✅ **Info Section:**
-- Title: "Ursol CAST API - ERP System"
+- Title: "Senselab Core API - ERP System"
 - Version: 1.0.0
-- Contact: sistemas@ursol.com
+- Contact: deadmooncr@gmail.com
 - Description completa
 
 ✅ **Servers:**
 - Desarrollo: `http://localhost:8000`
-- Producción: `https://api.ursol.com`
+- Producción: `https://api.senselab.com`
 
 ✅ **Security Schemes:**
 - Laravel Sanctum Bearer Token
@@ -440,4 +440,4 @@ ls -lh storage/api-docs/api-docs.json
 ---
 
 *Generado automáticamente: 30 de Noviembre de 2025*  
-*Ursol CAST API - ERP System v1.0.0*
+*Senselab Core API - ERP System v1.0.0*

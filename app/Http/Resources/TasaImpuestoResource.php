@@ -10,7 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * Resource para Tasa de Impuesto
  *
  * @package App\Http\Resources
- * @author Sistemas Ursol S.A. - Jeremy Arias Solano
+ * @author Senselab - Jeremy Arias Solano
  */
 class TasaImpuestoResource extends JsonResource
 {

@@ -22,7 +22,7 @@ use OpenApi\Attributes as OA;
  * Gestiona los productos específicos incluidos en cada salida de inventario.
  *
  * @package App\Http\Controllers\API
- * @author Sistemas Ursol S.A. - Jeremy Arias Solano
+ * @author Senselab - Jeremy Arias Solano
  */
 class DetalleSalidaInventarioController extends Controller
 {

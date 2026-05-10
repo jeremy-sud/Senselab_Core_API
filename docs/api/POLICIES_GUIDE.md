@@ -3,7 +3,7 @@
 **Autor**: Jeremy Arias Solano  
 **Fecha**: 23 de noviembre de 2025  
 **Versión**: 1.0  
-**Proyecto**: Ursol CAST API
+**Proyecto**: Senselab Core API
 
 ---
 
@@ -23,7 +23,7 @@
 
 ## Introducción
 
-El sistema de autorización de Ursol CAST API implementa **57 policies** que protegen **152+ métodos CRUD** en controllers, garantizando:
+El sistema de autorización de Senselab Core API implementa **57 policies** que protegen **152+ métodos CRUD** en controllers, garantizando:
 
 - ✅ **Multi-tenancy**: Los usuarios solo acceden a recursos de su empresa
 - ✅ **RBAC (Role-Based Access Control)**: Verificación de permisos granulares
@@ -216,7 +216,7 @@ use App\Models\NuevoModelo;
  * 
  * @package App\Policies
  * @author Jeremy Arias Solano <deadmooncr@gmail.com>
- * @copyright 2025 Sistemas Ursol S.A.
+ * @copyright 2025 Senselab
  */
 class NuevoModeloPolicy extends BasePolicy
 {

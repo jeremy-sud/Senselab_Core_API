@@ -15,7 +15,7 @@ class UsuarioAdminSeeder extends Seeder
     public function run(): void
     {
         // Obtener empresa demo
-        $empresa = DB::table('empresas')->where('nombre', 'Sistemas Ursol S.A.')->first();
+        $empresa = DB::table('empresas')->where('nombre', 'Senselab')->first();
         
         if (!$empresa) {
             $this->command->error('✗ Error: Empresa demo no encontrada. Ejecuta EmpresaDemoSeeder primero.');
@@ -42,10 +42,10 @@ class UsuarioAdminSeeder extends Seeder
             'nombre' => 'Admin',
             'apellidos' => 'Sistema',
             'cargo_id' => $cargo->id,
-            'email' => 'admin@ursol.com',
+            'email' => 'admin@senselab.com',
             'password_hash' => Hash::make($adminPassword),
             'empresa_id' => $empresa->id,
-            'telefono' => '+506 8868-7765',
+            'telefono' => '+(506)8973-5665',
             'direccion' => 'San José, Costa Rica',
             'activo' => true,
             'eliminado' => false,
@@ -75,7 +75,7 @@ class UsuarioAdminSeeder extends Seeder
             }
 
             $this->command->info('✓ Usuario administrador creado exitosamente.');
-            $this->command->info('   Email: admin@ursol.com');
+            $this->command->info('   Email: admin@senselab.com');
             $this->command->info('   Password: admin123');
             $this->command->info('   Rol: Administrador (con ' . count($permisos) . ' permisos)');
         } else {

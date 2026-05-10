@@ -19,7 +19,7 @@ use OpenApi\Attributes as OA;
  * Gestión de cuentas bancarias de la empresa
  *
  * @author GitHub Copilot
- * @copyright 2025 Sistemas Ursol S.A.
+ * @copyright 2025 Senselab
  */
 
 #[OA\Tag(

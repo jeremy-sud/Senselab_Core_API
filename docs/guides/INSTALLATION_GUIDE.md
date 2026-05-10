@@ -1,7 +1,7 @@
-# Guía de Instalación - Ursol CAST API
+# Guía de Instalación - Senselab Core API
 
 **Para Colaboradores y Nuevos Desarrolladores**  
-**Sistemas Ursol S.A.**  
+**Senselab**  
 **Última actualización:** 21 de noviembre de 2025
 
 ---
@@ -68,10 +68,10 @@ git --version
 cd ~/Workspace  # o donde prefieras trabajar
 
 # Clonar el repositorio
-git clone https://github.com/jeremy-sud/Ursol-CAST-API.git
+git clone https://github.com/SenseLab-dev/Senselab_Core_API.git
 
 # Entrar al directorio del proyecto
-cd Ursol-CAST-API
+cd Senselab_Core_API
 ```
 
 ### Paso 2: Instalar Dependencias de PHP
@@ -99,7 +99,7 @@ Abre el archivo `.env` con tu editor favorito y configura los siguientes valores
 
 ```env
 # Configuración de la Aplicación
-APP_NAME="Ursol CAST API"
+APP_NAME="Senselab Core API"
 APP_ENV=local
 APP_DEBUG=true
 APP_URL=http://localhost:8000
@@ -166,7 +166,7 @@ php artisan db:seed
 
 ✅ **Datos de Prueba (16 registros):**
 - 7 Cargos (Gerente General, Contador, Vendedor, etc.)
-- 1 Empresa demo: "Sistemas Ursol S.A." (cédula: 3-101-123456)
+- 1 Empresa demo: "Senselab" (cédula: 3-101-123456)
 - 1 Sucursal: "Casa Matriz"
 - 1 Usuario administrador con todos los permisos
 
@@ -217,7 +217,7 @@ POST http://localhost:8000/api/auth/login
 Content-Type: application/json
 
 {
-    "email": "admin@ursol.com",
+    "email": "admin@senselab.com",
     "password": "admin123"
 }
 ```
@@ -227,7 +227,7 @@ Content-Type: application/json
 ```bash
 curl -X POST http://localhost:8000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@ursol.com","password":"admin123"}'
+  -d '{"email":"admin@senselab.com","password":"admin123"}'
 ```
 
 **Respuesta esperada (200 OK):**
@@ -239,7 +239,7 @@ curl -X POST http://localhost:8000/api/auth/login \
     "usuario": {
         "id": 1,
         "nombre": "Administrador del Sistema",
-        "email": "admin@ursol.com",
+        "email": "admin@senselab.com",
         "empresa_id": 1,
         "activo": true
     },
@@ -294,7 +294,7 @@ Aquí podrás:
 ### Usuario Administrador (Pre-creado)
 
 ```
-Email:    admin@ursol.com
+Email:    admin@senselab.com
 Password: admin123
 Permisos: 68 (todos los permisos del sistema)
 ```
@@ -307,7 +307,7 @@ Permisos: 68 (todos los permisos del sistema)
 ### Empresa Demo (Pre-creada)
 
 ```
-Nombre:              Sistemas Ursol S.A.
+Nombre:              Senselab
 Cédula Jurídica:     3-101-123456
 Régimen Tributario:  Régimen Simplificado
 Sucursal:            Casa Matriz
@@ -417,7 +417,7 @@ Una vez que tengas todo funcionando:
 ### 2. Familiarizarte con la Estructura
 
 ```
-Ursol-CAST-API/
+Senselab_Core_API/
 ├── app/
 │   ├── Http/Controllers/API/  ← 44 controladores de API
 │   ├── Models/                ← 59 modelos Eloquent
@@ -478,7 +478,7 @@ git push origin feature/mi-nueva-funcionalidad
 
 Si tienes problemas que no están cubiertos en esta guía:
 
-1. **Revisar Issues en GitHub:** https://github.com/jeremy-sud/Ursol-CAST-API/issues
+1. **Revisar Issues en GitHub:** https://github.com/SenseLab-dev/Senselab_Core_API/issues
 2. **Crear un nuevo Issue** con:
    - Descripción del problema
    - Pasos para reproducir
@@ -486,9 +486,9 @@ Si tienes problemas que no están cubiertos en esta guía:
    - Logs de error (si aplica)
 
 3. **Contactar al equipo:**
-   - 📧 Email: soporte@ursol.com
-   - 💬 WhatsApp: +506 8868-7765
-   - 🌐 Web: https://ursol.com
+   - 📧 Email: soporte@senselab.com
+   - 💬 WhatsApp: +(506)8973-5665
+   - 🌐 Web: https://senselab.com
 
 ---
 
@@ -513,9 +513,9 @@ Marca cada paso cuando lo completes:
 - [ ] Tests ejecutados (`php artisan test`)
 - [ ] Documentación revisada
 
-**¡Felicidades! Ya tienes Ursol CAST API funcionando en tu entorno local.** 🎉
+**¡Felicidades! Ya tienes Senselab Core API funcionando en tu entorno local.** 🎉
 
 ---
 
-**Desarrollado con ❤️ por Sistemas Ursol S.A.**  
+**Desarrollado con ❤️ por Senselab**  
 **30 años de experiencia en soluciones tecnológicas**

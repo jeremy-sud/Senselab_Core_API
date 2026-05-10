@@ -144,7 +144,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ### Agregado
 - API versionado con prefijo `/api/v1/` y `/api/v2/`
-- Header-based versioning (`Accept: application/vnd.ursol.v2+json`)
+- Header-based versioning (`Accept: application/vnd.senselab.v2+json`)
 - Middleware `Sunset` para deprecación de endpoints v1
 - Resources versionados (v1 compatibilidad, v2 con HATEOAS)
 - Swagger UI con selector de versión
@@ -161,7 +161,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
   - `ComprobanteFeApiTest` (3): list, show, generate for Hacienda
   - `AuthApiTest` (5): login, invalid credentials, me profile, unauthenticated, validation errors
   - `InventarioApiTest` (4): list entradas, show entrada, list salidas, create entrada
-- **`tests/Contract/Provider/UrsolCastApiVerificationTest.php`** — Provider verification con Verifier
+- **`tests/Contract/Provider/SenselabCoreApiVerificationTest.php`** — Provider verification con Verifier
 - **`.github/workflows/contract-tests.yml`** — CI workflow con artifact upload de pacts
 - **3 targets Makefile**: `contract-test`, `contract-test-consumer`, `contract-test-provider`
 - **PHPUnit suites** `Contract-Consumer` y `Contract-Provider` añadidos a `phpunit.xml`
@@ -939,7 +939,7 @@ Sprint de diagnóstico profundo y ejecución de correcciones priorizadas. Se aud
 - Arr::prepend en ArrayHelpersTest (captura resultado correctamente)
 
 ### 🚀 Repositorio GitHub
-- Proyecto completo subido a GitHub: jeremy-sud/Ursol-CAST-API
+- Proyecto completo subido a GitHub: SenseLab-dev/Senselab_Core_API
 - Incluye archivos sensibles (.env, vendor, storage) - repositorio privado
 - Tamaño total: 32.53 MB (11069 archivos)
 - Commits: feat: Agregar 80 tests nuevos + feat: Incluir archivos completos
@@ -1145,5 +1145,5 @@ Sprint de diagnóstico profundo y ejecución de correcciones priorizadas. Se aud
 - Reportes
 - Configuración
 
-[Unreleased]: https://github.com/usuario/ursol-cast-api/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/usuario/ursol-cast-api/releases/tag/v1.0.0
+[Unreleased]: https://github.com/usuario/senselab-core-api/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/usuario/senselab-core-api/releases/tag/v1.0.0

@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# Script de Instalación Automatizada - Ursol CAST API
-# Sistemas Ursol S.A.
+# Script de Instalación Automatizada - Senselab Core API
+# Senselab
 # Para Ubuntu/Debian - Bash
 
 set -euo pipefail  # Detener si hay errores, evitar uso de variables no inicializadas
 
 echo "=================================================="
-echo "  URSOL CAST API - Instalación Automatizada"
-echo "  Sistemas Ursol S.A."
+echo "  SENSELAB CAST API - Instalación Automatizada"
+echo "  Senselab"
 echo "=================================================="
 echo ""
 
@@ -205,7 +205,7 @@ echo "  • 11 Unidades de Medida"
 echo "  • 68 Permisos (17 módulos × 4 acciones)"
 echo "  • 7 Roles (Administrador, Gerente, Contador, etc.)"
 echo "  • 7 Cargos"
-echo "  • 1 Empresa demo (Sistemas Ursol S.A.)"
+echo "  • 1 Empresa demo (Senselab)"
 echo "  • 1 Usuario administrador"
 echo ""
 
@@ -248,12 +248,12 @@ echo "   API:     http://localhost:8000/api"
 echo "   Swagger: http://localhost:8000/api/documentation"
 echo ""
 echo "🔐 Credenciales de acceso:"
-echo "   Email:    admin@ursol.com"
+echo "   Email:    admin@senselab.com"
 echo "   Password: admin123"
 echo "   Permisos: 68 (todos los módulos)"
 echo ""
 echo "📊 Empresa demo creada:"
-echo "   Nombre:  Sistemas Ursol S.A."
+echo "   Nombre:  Senselab"
 echo "   Cédula:  3-101-123456"
 echo ""
 echo "📚 Documentación:"

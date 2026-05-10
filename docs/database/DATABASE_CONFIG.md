@@ -1,4 +1,4 @@
-# Configuración de Base de Datos - Ursol CAST API
+# Configuración de Base de Datos - Senselab Core API
 
 ## 🗄️ Base de Datos MySQL
 
@@ -34,8 +34,8 @@ DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=api_db
-DB_USERNAME=ursol_user
-DB_PASSWORD=ursol_password
+DB_USERNAME=senselab_user
+DB_PASSWORD=senselab_password
 ```
 
 ### Archivo .env.testing (Testing) - Crear si no existe
@@ -44,8 +44,8 @@ DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=api_db_testing
-DB_USERNAME=ursol_user
-DB_PASSWORD=ursol_password
+DB_USERNAME=senselab_user
+DB_PASSWORD=senselab_password
 ```
 
 ### PHPUnit (tests/phpunit.xml)
@@ -84,7 +84,7 @@ DB_PASSWORD=ursol_password
 ## 🗂️ Archivo de Referencia SQL
 
 ### api_db.sql
-- **Ubicación:** `/home/dawnweaber/Workspace/Ursol-CAST-API/api_db.sql`
+- **Ubicación:** `/home/dawnweaber/Workspace/Senselab_Core_API/api_db.sql`
 - **Propósito:** Solo referencia para desarrollo
 - **NO es la base de datos activa**
 - La base de datos real está en MySQL (localhost/phpmyadmin)

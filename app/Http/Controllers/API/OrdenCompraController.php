@@ -23,7 +23,7 @@ use OpenApi\Attributes as OA;
  * Refactorización completada: FASE 8
  *
  * @package App\Http\Controllers\API
- * @author Sistemas Ursol S.A.
+ * @author Senselab
  */
 class OrdenCompraController extends Controller
 {

@@ -25,7 +25,7 @@
       background: #fafafa;
     }
 
-    /* Ursol CAST API — Custom Branding */
+    /* Senselab Core API — Custom Branding */
     .swagger-ui .topbar {
         background-color: #1a1a2e;
         padding: 10px 0;
@@ -47,12 +47,12 @@
         display: inline-block;
         width: 44px;
         height: 44px;
-        background: url('/assets/logos/ursol-cast-api-logo.png') no-repeat center center;
+        background: url('/assets/logos/senselab-core-api-logo.png') no-repeat center center;
         background-size: contain;
         margin-right: 12px;
     }
     .swagger-ui .topbar .topbar-wrapper .link::after {
-        content: 'Ursol CAST API';
+        content: 'Senselab Core API';
         font-size: 20px;
         font-weight: 700;
         color: #ffffff;

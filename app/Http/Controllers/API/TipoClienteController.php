@@ -19,7 +19,7 @@ use OpenApi\Attributes as OA;
  * Catálogo de tipos (Mayorista, Minorista, Gobierno, etc.)
  *
  * @author GitHub Copilot
- * @copyright 2025 Sistemas Ursol S.A.
+ * @copyright 2025 Senselab
  */
 
 #[OA\Tag(

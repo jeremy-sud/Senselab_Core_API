@@ -269,11 +269,11 @@ storage/api-docs/api-docs.json - 1.1 MB
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Ursol CAST API - ERP System",
+    "title": "Senselab Core API - ERP System",
     "version": "1.0.0",
     "description": "Sistema ERP completo con multi-tenancy, RBAC y facturación electrónica",
     "contact": {
-      "email": "sistemas@ursol.com"
+      "email": "deadmooncr@gmail.com"
     }
   },
   "servers": [
@@ -282,7 +282,7 @@ storage/api-docs/api-docs.json - 1.1 MB
       "description": "Servidor de Desarrollo Local"
     },
     {
-      "url": "https://api.ursol.com",
+      "url": "https://api.senselab.com",
       "description": "Servidor de Producción"
     }
   ],

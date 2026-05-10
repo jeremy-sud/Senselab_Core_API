@@ -96,7 +96,7 @@ class HaciendaSandboxE2ETest extends TestCase
             'hacienda.certificate.path' => $this->certPath,
             'hacienda.certificate.password' => $this->certPin,
             'hacienda.version_esquema' => '4.4',
-            'hacienda.proveedor_sistemas' => 'URSOL CAST ERP',
+            'hacienda.proveedor_sistemas' => 'SENSELAB CAST ERP',
         ]);
 
         $this->empresa = Empresa::factory()->create([
@@ -105,7 +105,7 @@ class HaciendaSandboxE2ETest extends TestCase
             'num_identificacion_dgt' => self::CEDULA_EMISOR,
             'tipo_identificacion' => self::TIPO_IDENTIFICACION_EMISOR,
             'actividad_economica_principal' => '620100',
-            'proveedor_sistemas' => 'URSOL CAST ERP',
+            'proveedor_sistemas' => 'SENSELAB CAST ERP',
             'email' => 'sandbox@test.cr',
             'telefono' => '22220000',
             'provincia' => '1',

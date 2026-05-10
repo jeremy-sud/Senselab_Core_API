@@ -102,7 +102,7 @@ class DeliverWebhookJob implements ShouldQueue
                     'X-Webhook-Event' => $this->evento,
                     'X-Webhook-Id' => (string) $this->webhookId,
                     'X-Webhook-Timestamp' => (string) time(),
-                    'User-Agent' => 'Ursol-CAST-API/4.2.0',
+                    'User-Agent' => 'Senselab_Core_API/4.2.0',
                 ])
                 ->withBody($payloadJson, 'application/json')
                 ->post($webhook->url);

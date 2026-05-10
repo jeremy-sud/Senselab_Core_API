@@ -1,4 +1,4 @@
-# DTOs (Data Transfer Objects) - Ursol CAST API
+# DTOs (Data Transfer Objects) - Senselab Core API
 
 **Creado:** 12 de febrero de 2026  
 **Propósito:** Separar las capas de presentación, validación y lógica de negocio  

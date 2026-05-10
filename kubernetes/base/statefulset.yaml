@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mysql
-  namespace: ursol-cast
+  namespace: senselab-core
   labels:
     app.kubernetes.io/name: mysql
 spec:
@@ -26,19 +26,19 @@ spec:
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: ursol-cast-secrets
+                  name: senselab-core-secrets
                   key: DB_PASSWORD
             - name: MYSQL_DATABASE
               value: api_db
             - name: MYSQL_USER
               valueFrom:
                 secretKeyRef:
-                  name: ursol-cast-secrets
+                  name: senselab-core-secrets
                   key: DB_USERNAME
             - name: MYSQL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: ursol-cast-secrets
+                  name: senselab-core-secrets
                   key: DB_PASSWORD
           resources:
             requests:
@@ -77,7 +77,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: redis
-  namespace: ursol-cast
+  namespace: senselab-core
   labels:
     app.kubernetes.io/name: redis
 spec:

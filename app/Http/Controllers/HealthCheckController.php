@@ -180,7 +180,7 @@ class HealthCheckController extends Controller
             return response()->json([
                 'status' => 'ok',
                 'application' => [
-                    'name' => config('app.name', 'Ursol CAST API'),
+                    'name' => config('app.name', 'Senselab Core API'),
                     'version' => config('app.version', '1.0.0'),
                     'environment' => app()->environment(),
                     'debug_mode' => config('app.debug'),

@@ -342,12 +342,12 @@ php artisan queue:monitor
 
 ### **Supervisor Configuration (Producción)**
 
-**Archivo**: `/etc/supervisor/conf.d/ursol-cast-api-worker.conf`
+**Archivo**: `/etc/supervisor/conf.d/senselab-core-api-worker.conf`
 
 ```ini
-[program:ursol-cast-api-worker]
+[program:senselab-core-api-worker]
 process_name=%(program_name)s_%(process_num)02d
-command=php /var/www/Ursol-CAST-API/artisan queue:work redis --queue=hacienda,reports,emails,imports,maintenance --sleep=3 --tries=3 --max-time=3600 --timeout=300
+command=php /var/www/Senselab_Core_API/artisan queue:work redis --queue=hacienda,reports,emails,imports,maintenance --sleep=3 --tries=3 --max-time=3600 --timeout=300
 autostart=true
 autorestart=true
 stopasgroup=true
@@ -355,7 +355,7 @@ killasgroup=true
 user=www-data
 numprocs=4
 redirect_stderr=true
-stdout_logfile=/var/www/Ursol-CAST-API/storage/logs/worker.log
+stdout_logfile=/var/www/Senselab_Core_API/storage/logs/worker.log
 stopwaitsecs=3600
 ```
 
@@ -366,31 +366,31 @@ sudo supervisorctl reread
 sudo supervisorctl update
 
 # Iniciar workers
-sudo supervisorctl start ursol-cast-api-worker:*
+sudo supervisorctl start senselab-core-api-worker:*
 
 # Ver estado
 sudo supervisorctl status
 
 # Reiniciar workers
-sudo supervisorctl restart ursol-cast-api-worker:*
+sudo supervisorctl restart senselab-core-api-worker:*
 
 # Detener workers
-sudo supervisorctl stop ursol-cast-api-worker:*
+sudo supervisorctl stop senselab-core-api-worker:*
 ```
 
 ### **Systemd Service (Alternativa a Supervisor)**
 
-**Archivo**: `/etc/systemd/system/ursol-cast-queue@.service`
+**Archivo**: `/etc/systemd/system/senselab-core-queue@.service`
 
 ```ini
 [Unit]
-Description=Ursol CAST API Queue Worker %i
+Description=Senselab Core API Queue Worker %i
 After=redis.service mysql.service
 
 [Service]
 Type=simple
 User=www-data
-WorkingDirectory=/var/www/Ursol-CAST-API
+WorkingDirectory=/var/www/Senselab_Core_API
 ExecStart=/usr/bin/php artisan queue:work redis --queue=hacienda,reports,emails,imports,maintenance --sleep=3 --tries=3 --max-time=3600
 Restart=always
 RestartSec=10
@@ -402,16 +402,16 @@ WantedBy=multi-user.target
 **Comandos Systemd**:
 ```bash
 # Habilitar servicio
-sudo systemctl enable ursol-cast-queue@{1..4}
+sudo systemctl enable senselab-core-queue@{1..4}
 
 # Iniciar workers (4 instancias)
-sudo systemctl start ursol-cast-queue@{1..4}
+sudo systemctl start senselab-core-queue@{1..4}
 
 # Ver estado
-sudo systemctl status 'ursol-cast-queue@*'
+sudo systemctl status 'senselab-core-queue@*'
 
 # Logs
-sudo journalctl -u 'ursol-cast-queue@*' -f
+sudo journalctl -u 'senselab-core-queue@*' -f
 ```
 
 ---
@@ -425,7 +425,7 @@ sudo journalctl -u 'ursol-cast-queue@*' -f
 crontab -e
 
 # Añadir línea (ejecutar Laravel scheduler cada minuto)
-* * * * * cd /var/www/Ursol-CAST-API && php artisan schedule:run >> /dev/null 2>&1
+* * * * * cd /var/www/Senselab_Core_API && php artisan schedule:run >> /dev/null 2>&1
 ```
 
 ### **Listar Tareas Programadas**

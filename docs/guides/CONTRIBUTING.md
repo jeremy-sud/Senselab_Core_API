@@ -1,18 +1,18 @@
-# Guía de Contribución - Ursol CAST API
+# Guía de Contribución - Senselab Core API
 
 <p align="center">
-  <img src="./public/assets/logos/ursol-icon.webp" width="100" alt="Sistemas Ursol Icon">
+  <img src="./public/assets/logos/senselab-icon.png" width="100" alt="Senselab Icon">
 </p>
 
-¡Gracias por tu interés en contribuir al proyecto Ursol CAST API desarrollado por **Sistemas Ursol S.A.**!
+¡Gracias por tu interés en contribuir al proyecto Senselab Core API desarrollado por **Senselab**!
 
-## 🏢 Sobre Sistemas Ursol S.A.
+## 🏢 Sobre Senselab
 
 Somos una empresa familiar costarricense con **casi 30 años de experiencia** en el sector tecnológico. Nos caracterizamos por nuestra **ética inquebrantable**, **atención personalizada** y el **"Toque Humano"** en cada proyecto.
 
 - **Fundador**: Eduardo Alberto Ureña Solano (35+ años de experiencia)
 - **Desarrollador Principal**: Jeremy Arias Solano
-- **Contacto**: sistemas@ursol.com | +506 8868-7765
+- **Contacto**: deadmooncr@gmail.com | +(506)8973-5665
 
 ## 🤝 Cómo Contribuir
 
@@ -20,11 +20,11 @@ Somos una empresa familiar costarricense con **casi 30 años de experiencia** en
 
 ```bash
 # Fork desde GitHub
-git clone https://github.com/SistemasUrsol/Ursol-CAST-API.git
-cd Ursol-CAST-API
+git clone https://github.com/SenseLab-dev/Senselab_Core_API.git
+cd Senselab_Core_API
 
 # Agregar remote upstream
-git remote add upstream https://github.com/SistemasUrsol/Ursol-CAST-API.git
+git remote add upstream https://github.com/SenseLab-dev/Senselab_Core_API.git
 ```
 
 ### 2. Crear una Rama de Feature
@@ -55,7 +55,7 @@ php artisan key:generate
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=ursol_cast_api
+DB_DATABASE=senselab_core_api
 DB_USERNAME=tu_usuario
 DB_PASSWORD=tu_password
 
@@ -63,7 +63,7 @@ DB_PASSWORD=tu_password
 php artisan migrate:fresh --seed
 
 # Credenciales de prueba después de seeders:
-# Email: admin@ursol.com
+# Email: admin@senselab.com
 # Password: admin123
 # Permisos: 68 (acceso total)
 ```
@@ -90,7 +90,7 @@ namespace App\Services;
  * Servicio para gestión de facturación electrónica
  * 
  * @author Jeremy Arias Solano <deadmooncr@gmail.com>
- * @copyright 2025 Sistemas Ursol S.A.
+ * @copyright 2025 Senselab
  */
 class FacturacionElectronicaService
 {
@@ -236,7 +236,7 @@ class VentaControllerTest extends TestCase
     public function usuario_autenticado_puede_crear_venta()
     {
         // Obtener usuario admin (creado por UsuarioAdminSeeder)
-        $admin = Usuario::where('email', 'admin@ursol.com')->first();
+        $admin = Usuario::where('email', 'admin@senselab.com')->first();
         
         // Autenticar con Sanctum
         $token = $admin->createToken('test-token')->plainTextToken;
@@ -326,9 +326,9 @@ Si tu cambio afecta la API, actualiza:
 
 Para reportar bugs:
 
-1. **GitHub Issues**: [Crear issue](https://github.com/SistemasUrsol/Ursol-CAST-API/issues)
-2. **Email**: sistemas@ursol.com
-3. **WhatsApp**: +506 8868-7765
+1. **GitHub Issues**: [Crear issue](https://github.com/SenseLab-dev/Senselab_Core_API/issues)
+2. **Email**: deadmooncr@gmail.com
+3. **WhatsApp**: +(506)8973-5665
 
 **Template de Bug Report:**
 
@@ -394,18 +394,18 @@ Si encuentras una vulnerabilidad de seguridad:
 
 Contactar directamente a:
 - Email: deadmooncr@gmail.com
-- Email corporativo: sistemas@ursol.com
-- WhatsApp: +506 8868-7765
+- Email corporativo: deadmooncr@gmail.com
+- WhatsApp: +(506)8973-5665
 
 ## 📞 Contacto
 
-**Sistemas Ursol S.A.**
-- **Email**: sistemas@ursol.com
+**Senselab**
+- **Email**: deadmooncr@gmail.com
 - **Email Técnico**: deadmooncr@gmail.com
-- **WhatsApp**: +506 8868-7765
-- **Web**: [ursol.com](https://ursol.com) | [ursol.net](https://ursol.net)
-- **Repositorio**: [Ursol Reposit for Developers](https://sites.google.com/view/repdevursol/home/repositorio)
-- **GitHub**: [github.com/SistemasUrsol](https://github.com/orgs/SistemasUrsol)
+- **WhatsApp**: +(506)8973-5665
+- **Web**: [senselab.com](https://senselab.com) | [senselab.com](https://senselab.com)
+- **Repositorio**: [Senselab Reposit for Developers](https://sites.google.com/view/repdevsenselab/home/repositorio)
+- **GitHub**: [github.com/SenseLab-dev](https://github.com/orgs/SenseLab-dev)
 
 ## 🙏 Agradecimientos
 
@@ -413,7 +413,7 @@ Agradecemos a todos los contribuidores que ayudan a mejorar este proyecto.
 
 ---
 
-**Desarrollado con ❤️ y el "Toque Humano" por Sistemas Ursol S.A.**  
+**Desarrollado con ❤️ y el "Toque Humano" por Senselab**  
 *Costa Rica | 30 años de experiencia tecnológica*
 
-© 2025 Sistemas Ursol S.A. - Todos los derechos reservados
+© 2025 Senselab - Todos los derechos reservados

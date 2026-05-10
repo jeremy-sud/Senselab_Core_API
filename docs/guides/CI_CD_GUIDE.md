@@ -95,7 +95,7 @@ Este proyecto utiliza **GitHub Actions** para automatizar testing, análisis de 
 7. Smoke tests
 8. Notificación Slack
 
-**Entorno:** https://staging.ursol-cast.com
+**Entorno:** https://staging.senselab-core.com
 
 ### 4. Deploy to Production (`deploy-production.yml`)
 
@@ -112,7 +112,7 @@ Este proyecto utiliza **GitHub Actions** para automatizar testing, análisis de 
 8. Smoke tests
 9. Rollback automático si falla
 
-**Entorno:** https://api.ursol-cast.com
+**Entorno:** https://api.senselab-core.com
 
 ## ⚙️ Configuración Inicial
 
@@ -125,18 +125,18 @@ Navegar a: `Settings > Secrets and variables > Actions`
 DB_PASSWORD=<secure-password>
 
 # Staging Server
-STAGING_SERVER=staging.ursol-cast.com
+STAGING_SERVER=staging.senselab-core.com
 STAGING_USER=deploy
 SSH_PRIVATE_KEY=<ssh-key-staging>
 
 # Production Server
-PRODUCTION_SERVER=api.ursol-cast.com
+PRODUCTION_SERVER=api.senselab-core.com
 PRODUCTION_USER=deploy
 SSH_PRIVATE_KEY_PROD=<ssh-key-production>
 
 # SonarQube
 SONAR_TOKEN=<sonarqube-token>
-SONAR_HOST_URL=https://sonarqube.ursol-cast.com
+SONAR_HOST_URL=https://sonarqube.senselab-core.com
 
 # Codecov
 CODECOV_TOKEN=<codecov-token>
@@ -164,7 +164,7 @@ Crear environments en `Settings > Environments`:
 
 ```bash
 # Ejecutar localmente con reporte
-docker exec ursol_php vendor/bin/phpunit --coverage-html coverage
+docker exec senselab_php vendor/bin/phpunit --coverage-html coverage
 
 # Ver reporte
 open coverage/index.html
@@ -179,10 +179,10 @@ open coverage/index.html
 
 ```bash
 # Análisis completo
-docker exec ursol_php vendor/bin/phpstan analyse
+docker exec senselab_php vendor/bin/phpstan analyse
 
 # Generar baseline
-docker exec ursol_php vendor/bin/phpstan analyse --generate-baseline
+docker exec senselab_php vendor/bin/phpstan analyse --generate-baseline
 ```
 
 **Nivel:** 6 (de 9)
@@ -191,10 +191,10 @@ docker exec ursol_php vendor/bin/phpstan analyse --generate-baseline
 
 ```bash
 # Ver cambios necesarios
-docker exec ursol_php vendor/bin/php-cs-fixer fix --dry-run --diff
+docker exec senselab_php vendor/bin/php-cs-fixer fix --dry-run --diff
 
 # Aplicar correcciones
-docker exec ursol_php vendor/bin/php-cs-fixer fix
+docker exec senselab_php vendor/bin/php-cs-fixer fix
 ```
 
 **Estándar:** PSR-12 + reglas custom
@@ -214,10 +214,10 @@ git push origin develop
 **Verificación Post-Deploy:**
 ```bash
 # Health check
-curl https://staging.ursol-cast.com/api/health
+curl https://staging.senselab-core.com/api/health
 
 # Version check
-curl https://staging.ursol-cast.com/api/version
+curl https://staging.senselab-core.com/api/version
 ```
 
 ### Production Deployment
@@ -252,9 +252,9 @@ git push origin v1.2.0
 
 ```bash
 # Conectar a servidor producción
-ssh deploy@api.ursol-cast.com
+ssh deploy@api.senselab-core.com
 
-cd /var/www/ursol-cast-api
+cd /var/www/senselab-core-api
 
 # Ver último backup
 ls -lh /backups/
@@ -265,7 +265,7 @@ docker-compose down && docker-compose up -d
 
 # Rollback de database
 BACKUP_DIR="/backups/20231130_143022"
-docker-compose exec -T mysql mysql -u root -p$MYSQL_ROOT_PASSWORD ursol_cast < $BACKUP_DIR/database.sql
+docker-compose exec -T mysql mysql -u root -p$MYSQL_ROOT_PASSWORD senselab_core < $BACKUP_DIR/database.sql
 
 # Restart y verificación
 docker-compose exec php php artisan migrate:rollback
@@ -273,7 +273,7 @@ docker-compose exec php php artisan cache:clear
 docker-compose exec php php artisan up
 
 # Verificar
-curl https://api.ursol-cast.com/api/health
+curl https://api.senselab-core.com/api/health
 ```
 
 ## 🐛 Troubleshooting
@@ -389,7 +389,7 @@ composer update --with-dependencies
 **Problemas con CI/CD:**
 - GitHub Issues con label `ci/cd`
 - Slack: #devops-support
-- Email: devops@ursol.com
+- Email: devops@senselab.com
 
 **Emergencias Producción:**
 - On-call: +506 XXXX-XXXX

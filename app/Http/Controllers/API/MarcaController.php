@@ -20,7 +20,7 @@ use OpenApi\Attributes as OA;
  * Nota: Las marcas son globales (sin empresa_id) según api_db.sql
  *
  * @package App\Http\Controllers\API
- * @author Sistemas Ursol S.A.
+ * @author Senselab
  */
 class MarcaController extends Controller
 {

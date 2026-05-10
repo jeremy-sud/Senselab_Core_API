@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * Gestiona zonas geográficas (provincias, cantones, zonas de ventas, rutas).
  *
  * @author Jeremy Arias Solano <deadmooncr@gmail.com>
- * @copyright 2025 Sistemas Ursol S.A.
+ * @copyright 2025 Senselab
  */
 class ZonaGeografica extends Model
 {

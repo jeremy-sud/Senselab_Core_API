@@ -1,9 +1,9 @@
-# Base de Datos - Ursol CAST API
+# Base de Datos - Senselab Core API
 
-**Desarrollado por:** Sistemas Ursol S.A.  
+**Desarrollado por:** Senselab  
 **País:** Costa Rica | 30 años de experiencia tecnológica  
 **Desarrollador:** Jeremy Arias Solano  
-**Contacto:** sistemas@ursol.com | WhatsApp +506 8868-7765
+**Contacto:** deadmooncr@gmail.com | WhatsApp +(506)8973-5665
 
 ---
 
@@ -99,11 +99,11 @@ Se han creado seeders para poblar datos iniciales en las siguientes tablas:
    - Gerente General, Contador, Vendedor, Cajero, Bodeguero, Conductor, Asistente Administrativo
 
 8. **EmpresaDemoSeeder** - 2 registros
-   - 1 Empresa: "Sistemas Ursol S.A." (3-101-123456)
+   - 1 Empresa: "Senselab" (3-101-123456)
    - 1 Sucursal: "Oficina Central"
 
 9. **UsuarioAdminSeeder** - 7 registros
-   - 1 Usuario: admin@ursol.com (password: admin123)
+   - 1 Usuario: admin@senselab.com (password: admin123)
    - 6 Relaciones rol_usuario (usuario con rol Administrador)
    - Asignación automática de todos los 68 permisos
 
@@ -229,17 +229,17 @@ curl -X POST http://localhost:8000/api/login \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -d '{
-    "email": "admin@ursol.com",
+    "email": "admin@senselab.com",
     "password": "admin123"
   }'
 ```
 
 **Credenciales:**
-- **Email:** admin@ursol.com
+- **Email:** admin@senselab.com
 - **Password:** admin123
 - **Rol:** Administrador
 - **Permisos:** 68 (acceso total)
-- **Empresa:** Sistemas Ursol S.A. (ID: 1)
+- **Empresa:** Senselab (ID: 1)
 
 ## 🧪 Testing con Factories
 
@@ -376,7 +376,7 @@ Se corrigieron 4 migraciones existentes:
 5. **Autenticación:** Laravel Sanctum con tokens personales por usuario
 6. **RBAC:** Sistema completo de roles y permisos con 68 permisos granulares
 7. **Seeders:** Ejecutar siempre en orden (DatabaseSeeder se encarga automáticamente)
-8. **Credenciales demo:** admin@ursol.com / admin123 (solo en desarrollo)
+8. **Credenciales demo:** admin@senselab.com / admin123 (solo en desarrollo)
 
 ## 🎯 Próximos Pasos
 

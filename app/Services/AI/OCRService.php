@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Storage;
  *
  * Por defecto usa Gemini (GRATUITO)
  *
- * Desarrollado por Sistemas Ursol S.A.
+ * Desarrollado por Senselab
  */
 class OCRService
 {

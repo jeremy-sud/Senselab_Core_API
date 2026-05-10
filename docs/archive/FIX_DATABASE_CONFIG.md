@@ -160,7 +160,7 @@ DB_PASSWORD=nueva_contraseña
 ## ⚠️ Notas Importantes
 
 ### ✅ Archivo api_db.sql
-- **Ubicación:** `/home/dawnweaber/Workspace/Ursol-CAST-API/api_db.sql`
+- **Ubicación:** `/home/dawnweaber/Workspace/Senselab_Core_API/api_db.sql`
 - **Propósito:** Solo referencia para desarrollo
 - **NO es la base de datos activa**
 - La base de datos real está en MySQL vía phpMyAdmin

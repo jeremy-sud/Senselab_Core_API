@@ -550,7 +550,7 @@ class ProductoResource extends JsonResource
 
 ---
 
-**Desarrollado por Sistemas Ursol S.A.**  
+**Desarrollado por Senselab**  
 **Autor:** Jeremy Arias Solano  
 **Fecha:** Noviembre 2024  
 **Versión:** 1.0.0

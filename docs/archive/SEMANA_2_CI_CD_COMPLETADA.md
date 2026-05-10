@@ -76,7 +76,7 @@ Se implementó un **pipeline completo de CI/CD** usando GitHub Actions, que auto
 9. Smoke tests (health endpoint)
 10. Notificación Slack
 
-**Entorno:** staging.ursol-cast.com
+**Entorno:** staging.senselab-core.com
 
 ### 4. Deploy Production (`.github/workflows/deploy-production.yml`)
 
@@ -400,6 +400,6 @@ make rollback        # Rollback de producción
 
 ---
 
-**Desarrollado por:** Sistemas Ursol S.A.  
+**Desarrollado por:** Senselab  
 **Fecha:** 30 de Noviembre 2025  
 **Versión:** 1.0.0

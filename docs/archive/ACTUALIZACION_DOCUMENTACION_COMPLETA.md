@@ -1,8 +1,8 @@
 # 📚 Actualización Completa de Documentación - Diciembre 2024
 
-**Proyecto:** Ursol CAST API  
+**Proyecto:** Senselab Core API  
 **Desarrollador:** Jeremy Arias Solano  
-**Empresa:** Sistemas Ursol S.A. - Costa Rica  
+**Empresa:** Senselab - Costa Rica  
 **Fecha:** Diciembre 2024  
 **Commit:** `eafec7a` - docs: Actualizar documentación completa post-FASE 9
 
@@ -204,7 +204,7 @@ Actualizar **TODA** la documentación del proyecto (.md) para reflejar el estado
 
 ```bash
 # 1. Contar tablas en MySQL (resultado: 78)
-docker exec -i ursol_mysql mysql -u root -proot123 -e "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'api_db';"
+docker exec -i senselab_mysql mysql -u root -proot123 -e "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'api_db';"
 
 # 2. Contar migraciones CREATE (resultado: 77)
 find database/migrations -name "*_create_*_table.php" | wc -l
@@ -390,6 +390,6 @@ El proyecto está listo para continuar con desarrollo futuro con documentación 
 ---
 
 **Autor:** Jeremy Arias Solano  
-**Empresa:** Sistemas Ursol S.A.  
+**Empresa:** Senselab  
 **País:** Costa Rica 🇨🇷  
 **Fecha:** Diciembre 2024

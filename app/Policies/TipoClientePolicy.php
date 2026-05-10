@@ -9,7 +9,7 @@ use App\Models\TipoCliente;
  *
  * @package App\Policies
  * @author Jeremy Arias Solano <deadmooncr@gmail.com>
- * @copyright 2025 Sistemas Ursol S.A.
+ * @copyright 2025 Senselab
  */
 class TipoClientePolicy extends BasePolicy
 {

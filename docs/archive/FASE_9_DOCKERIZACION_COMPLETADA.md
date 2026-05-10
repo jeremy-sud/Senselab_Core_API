@@ -2,7 +2,7 @@
 
 ## 📋 Resumen
 
-La **Fase 9** implementa containerización completa del proyecto Ursol CAST API utilizando Docker y Docker Compose, proporcionando:
+La **Fase 9** implementa containerización completa del proyecto Senselab Core API utilizando Docker y Docker Compose, proporcionando:
 
 - ✅ Entorno de desarrollo reproducible
 - ✅ Despliegue simplificado a producción
@@ -119,7 +119,7 @@ volumes:
 Red personalizada con subnet dedicada:
 ```yaml
 networks:
-  ursol_network:
+  senselab_network:
     driver: bridge
     ipam:
       config:
@@ -284,9 +284,9 @@ make help            # Ver todos los comandos
 |----------|-----|--------------|
 | API | http://localhost:8000 | - |
 | Swagger | http://localhost:8000/api/documentation | - |
-| PHPMyAdmin | http://localhost:8080 | ursol_user / ursol_password |
+| PHPMyAdmin | http://localhost:8080 | senselab_user / senselab_password |
 | Mailhog | http://localhost:8025 | - |
-| Admin API | - | admin@ursol.com / admin123 |
+| Admin API | - | admin@senselab.com / admin123 |
 
 ---
 
@@ -570,7 +570,7 @@ Estructura completa:
 
 ### Valor Agregado
 
-El proyecto **Ursol CAST API** ahora tiene:
+El proyecto **Senselab Core API** ahora tiene:
 - Stack moderno y profesional
 - Infraestructura cloud-ready
 - DevOps best practices
@@ -581,8 +581,8 @@ El proyecto **Ursol CAST API** ahora tiene:
 
 ## 📞 Soporte Técnico
 
-**Sistemas Ursol S.A.**  
-Email: sistemas@ursol.com  
+**Senselab**  
+Email: deadmooncr@gmail.com  
 GitHub: [@jeremy-sud](https://github.com/jeremy-sud)
 
 ---
@@ -590,4 +590,4 @@ GitHub: [@jeremy-sud](https://github.com/jeremy-sud)
 **Estado:** ✅ COMPLETADA  
 **Fecha:** 22 de noviembre de 2025  
 **Desarrollador:** Jeremy Arias Solano  
-**Empresa:** Sistemas Ursol S.A.
+**Empresa:** Senselab

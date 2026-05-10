@@ -2,7 +2,7 @@
 
 ################################################################################
 # Script de Backup Automático de Base de Datos
-# Sistema Ursol CAST API
+# Sistema Senselab Core API
 # 
 # Este script realiza backups diarios de la base de datos MySQL y gestiona
 # la rotación de backups antiguos.

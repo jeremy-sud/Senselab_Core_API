@@ -1,8 +1,8 @@
-# Guía de Transición Tecnológica — Ursol CAST API v5.0.1
+# Guía de Transición Tecnológica — Senselab Core API v5.0.1
 
 ## De "Comprar los Archivos" a "Sistema en Producción" en 48 Horas
 
-**Documento Confidencial — Sistemas Ursol S.A.**  
+**Documento Confidencial — Senselab**  
 **Fecha:** 15 de Abril 2026  
 **Dirigido a:** Equipo técnico del comprador  
 **Pre-requisito:** Firma del contrato de transferencia de IP
@@ -81,8 +81,8 @@
 
 **Opción B — Clone + Push a nuevo remoto:**
 ```bash
-git clone --mirror <url-repositorio-ursol>
-cd Ursol-CAST-API.git
+git clone --mirror <url-repositorio-senselab>
+cd Senselab_Core_API.git
 git remote set-url origin <url-repositorio-comprador>
 git push --mirror
 ```
@@ -107,7 +107,7 @@ Orden de lectura recomendado (2 horas):
 4. **`docs/guides/DOCKER_GUIDE.md`** — Docker (15 min)
 5. **`docs/api/API_DOCUMENTATION.md`** — Especificación API (30 min)
 6. **`SECURITY.md`** — Seguridad OWASP (15 min)
-7. **`docs/GLOSARIO_COMPLETO_URSOL_CAST_API.md`** — Referencia rápida (15 min)
+7. **`docs/GLOSARIO_COMPLETO_SENSELAB_CAST_API.md`** — Referencia rápida (15 min)
 
 ---
 
@@ -117,7 +117,7 @@ Orden de lectura recomendado (2 horas):
 
 ```bash
 # 1. Clonar el repositorio
-git clone <url-repositorio> && cd Ursol-CAST-API
+git clone <url-repositorio> && cd Senselab_Core_API
 
 # 2. Copiar variables de entorno
 cp .env.example .env
@@ -125,8 +125,8 @@ cp .env.example .env
 # 3. Configurar .env (editar con los valores reales)
 # Las variables críticas a configurar:
 #   DB_HOST=mysql
-#   DB_DATABASE=ursol_cast
-#   DB_USERNAME=ursol
+#   DB_DATABASE=senselab_core
+#   DB_USERNAME=senselab
 #   DB_PASSWORD=<password-seguro>
 #   REDIS_HOST=redis
 #   GEMINI_API_KEY=<tu-key>
@@ -259,12 +259,12 @@ php artisan test --filter=Gemini
 ```bash
 # Ejemplo con ECS Fargate:
 # 1. Crear ECR repository
-aws ecr create-repository --repository-name ursol-cast-api
+aws ecr create-repository --repository-name senselab-core-api
 
 # 2. Build & push Docker image
-docker build -t ursol-cast-api .
-docker tag ursol-cast-api:latest <account>.dkr.ecr.<region>.amazonaws.com/ursol-cast-api:latest
-docker push <account>.dkr.ecr.<region>.amazonaws.com/ursol-cast-api:latest
+docker build -t senselab-core-api .
+docker tag senselab-core-api:latest <account>.dkr.ecr.<region>.amazonaws.com/senselab-core-api:latest
+docker push <account>.dkr.ecr.<region>.amazonaws.com/senselab-core-api:latest
 
 # 3. Usar los manifiestos de Kubernetes del proyecto
 # kubernetes/base/ contiene todos los archivos necesarios
@@ -292,8 +292,8 @@ kubectl apply -k kubernetes/base/
 kubectl apply -k kubernetes/overlays/production/
 
 # Verificar deployment
-kubectl get pods -n ursol-cast-api
-kubectl logs -f deployment/ursol-cast-api -n ursol-cast-api
+kubectl get pods -n senselab-core-api
+kubectl logs -f deployment/senselab-core-api -n senselab-core-api
 ```
 
 ### 4.4 Variables de entorno para producción
@@ -307,8 +307,8 @@ APP_URL=https://api.sudominio.com
 # Base de datos principal
 DB_CONNECTION=mysql
 DB_HOST=<rds-endpoint>
-DB_DATABASE=ursol_cast_production
-DB_USERNAME=ursol_prod
+DB_DATABASE=senselab_core_production
+DB_USERNAME=senselab_prod
 DB_PASSWORD=<password-seguro-32-chars>
 
 # Read Replica (opcional pero recomendado)
@@ -405,7 +405,7 @@ certbot --nginx -d api.sudominio.com
 
 ```bash
 # Agregar al crontab del servidor:
-* * * * * cd /path/to/ursol-cast-api && php artisan schedule:run >> /dev/null 2>&1
+* * * * * cd /path/to/senselab-core-api && php artisan schedule:run >> /dev/null 2>&1
 ```
 
 ---
@@ -568,13 +568,13 @@ Hora 0          Hora 2          Hora 6          Hora 12         Hora 24         
 **Sí.** Se recomienda al menos 1 desarrollador con experiencia en Laravel 10+ y PHP 8.x. El código está documentado a nivel enterprise, pero la persona debe entender inyección de dependencias, Eloquent ORM, y el patrón Service-Repository.
 
 ### ¿Puedo usar un front-end diferente?
-**Sí.** Ursol CAST es un API puro (headless). Puede conectarse con React, Vue, Angular, Flutter, React Native, o cualquier cliente HTTP. La especificación OpenAPI/Swagger facilita la generación de SDKs cliente.
+**Sí.** Senselab CAST es un API puro (headless). Puede conectarse con React, Vue, Angular, Flutter, React Native, o cualquier cliente HTTP. La especificación OpenAPI/Swagger facilita la generación de SDKs cliente.
 
 ### ¿Puedo hostear en mi propio servidor?
 **Sí.** El sistema funciona en cualquier infraestructura que soporte PHP 8.4, MySQL 8.0 y Redis. Docker opcional pero recomendado.
 
 ### ¿Los servicios de IA son propios o de terceros?
-Los servicios de IA utilizan **APIs de Gemini (Google) y OpenAI** como motores, pero toda la lógica de integración, prompts, fallbacks, parsing de respuestas y orquestación es código propio de Ursol CAST. No dependes de un servicio IA específico — el patrón de fallback permite cambiar de proveedor.
+Los servicios de IA utilizan **APIs de Gemini (Google) y OpenAI** como motores, pero toda la lógica de integración, prompts, fallbacks, parsing de respuestas y orquestación es código propio de Senselab CAST. No dependes de un servicio IA específico — el patrón de fallback permite cambiar de proveedor.
 
 ### ¿Qué pasa si Hacienda cambia la versión de FE?
 El módulo de facturación electrónica está diseñado modular. Las 38 brechas de la v4.4 están mapeadas en `docs/hacienda/`. Actualizar a una futura v4.5 o v5.0 requeriría ajustes en los servicios de Hacienda, pero la arquitectura está preparada para ello.
@@ -584,5 +584,5 @@ El módulo de facturación electrónica está diseñado modular. Las 38 brechas 
 
 ---
 
-*Documento confidencial — Sistemas Ursol S.A. © 2026*  
+*Documento confidencial — Senselab © 2026*  
 *Versión: 15 de Abril 2026*

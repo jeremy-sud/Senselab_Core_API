@@ -21,7 +21,7 @@ use OpenApi\Attributes as OA;
  * Gestiona configuraciones clave-valor por empresa (moneda, idioma, tasas, etc.).
  *
  * @package App\Http\Controllers\API
- * @author Sistemas Ursol S.A. - Jeremy Arias Solano
+ * @author Senselab - Jeremy Arias Solano
  */
 class ConfiguracionController extends Controller
 {

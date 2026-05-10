@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Log;
  * API GRATUITA - Sin costos de uso
  * Obtener API Key: https://aistudio.google.com/
  *
- * Desarrollado por Sistemas Ursol S.A.
+ * Desarrollado por Senselab
  */
 class GeminiService implements AIServiceInterface
 {

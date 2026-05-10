@@ -1,7 +1,7 @@
 # 🔍 ANÁLISIS DE VERIFICACIÓN COMPLETA - Base de Datos vs API
 
 **Fecha**: 22 de noviembre de 2025  
-**Proyecto**: Ursol CAST API  
+**Proyecto**: Senselab Core API  
 **Estado**: ANÁLISIS COMPLETADO
 
 ---

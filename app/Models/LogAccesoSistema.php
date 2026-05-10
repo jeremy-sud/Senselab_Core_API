@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * Registra auditoría de accesos al sistema (login, logout, intentos fallidos).
  *
  * @author Jeremy Arias Solano <deadmooncr@gmail.com>
- * @copyright 2025 Sistemas Ursol S.A.
+ * @copyright 2025 Senselab
  */
 class LogAccesoSistema extends Model
 {

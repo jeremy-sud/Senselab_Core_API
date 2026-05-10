@@ -231,15 +231,15 @@
 ## 📞 Soporte
 
 ### Contacto
-- **Email**: sistemas@ursol.com
-- **WhatsApp**: +506 8868-7765
-- **GitHub**: github.com/SistemasUrsol
-- **Documentación**: https://sites.google.com/view/repdevursol/home/repositorio
+- **Email**: deadmooncr@gmail.com
+- **WhatsApp**: +(506)8973-5665
+- **GitHub**: github.com/SenseLab-dev
+- **Documentación**: https://sites.google.com/view/repdevsenselab/home/repositorio
 
 ### Equipo
 - **Jeremy Arias Solano** - Lead Developer
 - **Eduardo Alberto Ureña Solano** - Founder & Visionary
-- **Sistemas Ursol S.A.** - 30 años de experiencia
+- **Senselab** - 30 años de experiencia
 
 ---
 
@@ -288,6 +288,6 @@ php artisan tinker
 - 📖 Documentación completa
 - ✅ Preparado para escalar
 
-**Desarrollado con 💙 por Sistemas Ursol S.A.**
+**Desarrollado con 💙 por Senselab**
 
 *Última verificación: 19 de Noviembre de 2025*

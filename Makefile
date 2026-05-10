@@ -1,4 +1,4 @@
-# Makefile para Ursol CAST API
+# Makefile para Senselab Core API
 # Comandos útiles para gestionar contenedores Docker
 
 .PHONY: help build up down restart logs logs-php logs-nginx logs-mysql ps shell shell-mysql shell-redis \
@@ -17,7 +17,7 @@ RED    := \033[0;31m
 NC     := \033[0m # No Color
 
 help: ## Mostrar esta ayuda
-	@echo "$(GREEN)Ursol CAST API - Comandos Docker$(NC)"
+	@echo "$(GREEN)Senselab Core API - Comandos Docker$(NC)"
 	@echo ""
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "$(YELLOW)%-20s$(NC) %s\n", $$1, $$2}'
 
@@ -25,7 +25,7 @@ help: ## Mostrar esta ayuda
 
 ci-test: ## Ejecutar tests como en CI (Docker con MySQL)
 	@echo "$(GREEN)Ejecutando tests (modo CI)...$(NC)"
-	docker exec ursol_php vendor/bin/phpunit --configuration=docker/phpunit.docker.xml --stop-on-failure --coverage-text
+	docker exec senselab_php vendor/bin/phpunit --configuration=docker/phpunit.docker.xml --stop-on-failure --coverage-text
 
 ci-quality: ## Verificar calidad de código
 	@echo "$(GREEN)Verificando calidad de código...$(NC)"
@@ -34,7 +34,7 @@ ci-quality: ## Verificar calidad de código
 
 ci-security: ## Verificar seguridad
 	@echo "$(GREEN)Verificando seguridad...$(NC)"
-	docker exec ursol_php composer audit
+	docker exec senselab_php composer audit
 
 deploy-staging: ## Deploy a staging
 	@echo "$(GREEN)Desplegando a staging...$(NC)"
@@ -90,7 +90,7 @@ shell: ## Acceder a shell de PHP
 	docker-compose exec php sh
 
 shell-mysql: ## Acceder a shell de MySQL
-	docker-compose exec mysql mysql -u ursol_user -p api_db
+	docker-compose exec mysql mysql -u senselab_user -p api_db
 
 shell-redis: ## Acceder a shell de Redis
 	docker-compose exec redis redis-cli
@@ -232,7 +232,7 @@ dev-down: ## Detener entorno de desarrollo
 # === INSTALACIÓN INICIAL ===
 
 install: ## Instalación inicial completa
-	@echo "$(GREEN)Instalación inicial de Ursol CAST API$(NC)"
+	@echo "$(GREEN)Instalación inicial de Senselab Core API$(NC)"
 	@make build
 	@make up
 	@echo "$(YELLOW)Esperando que MySQL esté listo...$(NC)"
@@ -250,7 +250,7 @@ install: ## Instalación inicial completa
 	@echo "$(GREEN)✓ ¡Instalación completada!$(NC)"
 	@echo "$(GREEN)✓ API: http://localhost:8000$(NC)"
 	@echo "$(GREEN)✓ Swagger: http://localhost:8000/api/documentation$(NC)"
-	@echo "$(GREEN)✓ Credenciales: admin@ursol.com / admin123$(NC)"
+	@echo "$(GREEN)✓ Credenciales: admin@senselab.com / admin123$(NC)"
 
 # === LIMPIEZA ===
 
@@ -274,13 +274,13 @@ prod-down: ## Detener modo producción
 
 backup-db: ## Backup de base de datos
 	@echo "$(GREEN)Creando backup de base de datos...$(NC)"
-	docker-compose exec mysql sh -c 'exec mysqldump -u ursol_user -p"$$MYSQL_PASSWORD" api_db' > backup_$(shell date +%Y%m%d_%H%M%S).sql
+	docker-compose exec mysql sh -c 'exec mysqldump -u senselab_user -p"$$MYSQL_PASSWORD" api_db' > backup_$(shell date +%Y%m%d_%H%M%S).sql
 	@echo "$(GREEN)✓ Backup creado$(NC)"
 
 # === INFO ===
 
 status: ## Ver estado completo del sistema
-	@echo "$(GREEN)Estado de Ursol CAST API$(NC)"
+	@echo "$(GREEN)Estado de Senselab Core API$(NC)"
 	@echo ""
 	@echo "$(YELLOW)Contenedores:$(NC)"
 	@docker-compose ps

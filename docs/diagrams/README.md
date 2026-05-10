@@ -1,4 +1,4 @@
-# 📊 Diagramas y Visualizaciones — Ursol CAST API
+# 📊 Diagramas y Visualizaciones — Senselab Core API
 
 > Guía visual de arquitectura enterprise para desarrolladores y ejecutivos.  
 > Todos los diagramas usan **Mermaid** y se renderizan automáticamente en GitHub, GitLab, VS Code y documentación estática.
@@ -37,7 +37,7 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    URSOL CAST API v5.0.1                     │
+│                    SENSELAB CAST API v5.0.1                     │
 ├──────────────┬──────────────┬──────────────┬────────────────┤
 │  96 Controllers │  98 Models   │  67 Services │  80 Policies  │
 ├──────────────┼──────────────┼──────────────┼────────────────┤

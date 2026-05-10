@@ -1,4 +1,4 @@
-Documento de Estudio Estructural para reducir el riesgo operativo: Ursol CAST API (REST Multi-tenant)
+Documento de Estudio Estructural para reducir el riesgo operativo: Senselab Core API (REST Multi-tenant)
 
 Última actualización: 17 de abril de 2026
 Versión del proyecto: v5.0.1 (FASE 22 completada)
@@ -6,7 +6,7 @@ Análisis basado en: lectura directa del repositorio + auditorías técnicas (7 
 Referencia: ROADMAP.md para historial de fases
 
 1) Vista general de arquitectura
-Ursol-CAST-API es un backend Laravel 12 (PHP 8.4) orientado a ERP multi-módulo, multi-tenant por empresa, con RBAC granular (80 policies), facturación electrónica CR v4.4 (Hacienda DGT-R-000-2024), componentes de IA (10 servicios), observabilidad (Sentry, health checks, métricas), y despliegue Docker/Kubernetes.
+Senselab_Core_API es un backend Laravel 12 (PHP 8.4) orientado a ERP multi-módulo, multi-tenant por empresa, con RBAC granular (80 policies), facturación electrónica CR v4.4 (Hacienda DGT-R-000-2024), componentes de IA (10 servicios), observabilidad (Sentry, health checks, métricas), y despliegue Docker/Kubernetes.
 El sistema ha pasado por 22 fases de mejora documentadas. La deuda técnica principal ya no es funcional sino de consistencia arquitectónica residual y validación E2E de Hacienda.
 
 Métricas verificadas del código (17 Abr 2026):
@@ -33,7 +33,7 @@ PHPStan Level 8, 0 errores, baseline vacío
 9 workflows CI/CD en GitHub Actions
 2) Mapa mental en texto (organización real del sistema)
 
-URSOL CAST API (Laravel 12, PHP 8.4) — v5.0.1
+SENSELAB CAST API (Laravel 12, PHP 8.4) — v5.0.1
 ├── Capa de entrada HTTP
 │   ├── bootstrap/app.php
 │   │   ├── routing: web/api/console + /up

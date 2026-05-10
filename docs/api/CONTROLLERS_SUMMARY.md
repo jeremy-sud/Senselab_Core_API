@@ -1,7 +1,7 @@
 # 🎯 API Controllers - Implementación Completa
 
-**Proyecto:** Ursol CAST API  
-**Empresa:** Sistemas Ursol S.A.  
+**Proyecto:** Senselab Core API  
+**Empresa:** Senselab  
 **País:** Costa Rica  
 **Desarrollador:** Jeremy Arias Solano  
 **Fecha:** 20 de noviembre de 2025  
@@ -423,19 +423,19 @@ Se ha completado exitosamente la implementación de **10 controladores API** com
 - 📝 **FASE 5**: Documentación API con Swagger (PENDIENTE)
 
 **Base de datos:** 112 registros cargados (96 maestros + 16 demo/test)
-**Credenciales de prueba:** admin@ursol.com / admin123 (68 permisos)
+**Credenciales de prueba:** admin@senselab.com / admin123 (68 permisos)
 
 ---
 
 ## 📞 Contacto y Soporte
 
-**Sistemas Ursol S.A.**
-- Email: sistemas@ursol.com
-- WhatsApp: +506 8868-7765
-- Web: [ursol.com](https://ursol.com)
-- GitHub: [github.com/SistemasUrsol](https://github.com/orgs/SistemasUrsol)
+**Senselab**
+- Email: deadmooncr@gmail.com
+- WhatsApp: +(506)8973-5665
+- Web: [senselab.com](https://senselab.com)
+- GitHub: [github.com/SenseLab-dev](https://github.com/orgs/SenseLab-dev)
 
 ---
 
 *Documento actualizado: 20 de noviembre de 2025*  
-*Desarrollado con ❤️ y el "Toque Humano" por Sistemas Ursol S.A.*
+*Desarrollado con ❤️ y el "Toque Humano" por Senselab*

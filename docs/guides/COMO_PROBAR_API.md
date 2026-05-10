@@ -1,6 +1,6 @@
 # 🧪 Cómo Probar la API - Guía Completa
 
-**Sistemas Ursol S.A.**  
+**Senselab**  
 **Actualizado:** 21 de noviembre de 2025
 
 ---
@@ -21,7 +21,7 @@
 Antes de probar, inicia el servidor de desarrollo:
 
 ```bash
-cd /home/dawnweaber/Workspace/Ursol-CAST-API
+cd /home/dawnweaber/Workspace/Senselab_Core_API
 php artisan serve
 ```
 
@@ -58,7 +58,7 @@ http://localhost:8000/api/documentation
 3. Edita el JSON:
    ```json
    {
-     "email": "admin@ursol.com",
+     "email": "admin@senselab.com",
      "password": "admin123"
    }
    ```
@@ -157,7 +157,7 @@ Descarga e instala desde: https://www.postman.com/downloads/
 
 1. Abre Postman
 2. Click en "New" → "Collection"
-3. Nombre: "Ursol CAST API"
+3. Nombre: "Senselab Core API"
 4. Guarda
 
 #### Paso 3: Configurar Variable de Entorno
@@ -187,7 +187,7 @@ Descarga e instala desde: https://www.postman.com/downloads/
 6. Contenido:
    ```json
    {
-     "email": "admin@ursol.com",
+     "email": "admin@senselab.com",
      "password": "admin123"
    }
    ```
@@ -256,7 +256,7 @@ Ahora cada vez que hagas login, el token se actualiza automáticamente.
 curl -X POST http://localhost:8000/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "admin@ursol.com",
+    "email": "admin@senselab.com",
     "password": "admin123"
   }'
 ```
@@ -275,7 +275,7 @@ curl -X POST http://localhost:8000/api/auth/login \
 ```bash
 TOKEN=$(curl -s -X POST http://localhost:8000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@ursol.com","password":"admin123"}' \
+  -d '{"email":"admin@senselab.com","password":"admin123"}' \
   | jq -r '.token')
 
 echo $TOKEN
@@ -356,7 +356,7 @@ curl -X DELETE http://localhost:8000/api/productos/1 \
 4. Tab "Body" → JSON:
    ```json
    {
-     "email": "admin@ursol.com",
+     "email": "admin@senselab.com",
      "password": "admin123"
    }
    ```
@@ -396,7 +396,7 @@ curl -X DELETE http://localhost:8000/api/productos/1 \
 #### Opción A: En Servidor con Dominio
 ```bash
 # Cambiar base_url a tu dominio
-https://api.ursol.com/api/auth/login
+https://api.senselab.com/api/auth/login
 ```
 
 #### Opción B: En VPS con IP Pública
@@ -499,7 +499,7 @@ php artisan test --coverage
 # 1. Login
 TOKEN=$(curl -s -X POST http://localhost:8000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@ursol.com","password":"admin123"}' \
+  -d '{"email":"admin@senselab.com","password":"admin123"}' \
   | jq -r '.token')
 
 # 2. Crear cliente
@@ -634,4 +634,4 @@ curl -X GET http://localhost:8000/api/inventario/kardex/1 \
 
 **¡Ya puedes probar tu API de todas las formas posibles!** 🚀
 
-**Desarrollado por Sistemas Ursol S.A.**
+**Desarrollado por Senselab**

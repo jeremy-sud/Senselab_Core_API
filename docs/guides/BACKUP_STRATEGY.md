@@ -1,8 +1,8 @@
-# Estrategia de Backups - Ursol CAST API
+# Estrategia de Backups - Senselab Core API
 
 ## Descripción General
 
-Este documento describe la estrategia de backups para la base de datos del sistema Ursol CAST API, incluyendo procedimientos de backup, restauración y mejores prácticas.
+Este documento describe la estrategia de backups para la base de datos del sistema Senselab Core API, incluyendo procedimientos de backup, restauración y mejores prácticas.
 
 ## Ubicación de Scripts
 
@@ -43,7 +43,7 @@ RETENTION_DAYS=7  # Cambiar a número deseado
 ### 1. Realizar Backup Manual
 
 ```bash
-cd /home/dawnweaber/Workspace/Ursol-CAST-API
+cd /home/dawnweaber/Workspace/Senselab_Core_API
 ./database/backups/backup.sh
 ```
 
@@ -94,7 +94,7 @@ crontab -e
 
 2. Agregar línea para backup diario a las 2:00 AM:
 ```cron
-0 2 * * * /home/dawnweaber/Workspace/Ursol-CAST-API/database/backups/backup.sh >> /home/dawnweaber/Workspace/Ursol-CAST-API/storage/logs/backup.log 2>&1
+0 2 * * * /home/dawnweaber/Workspace/Senselab_Core_API/database/backups/backup.sh >> /home/dawnweaber/Workspace/Senselab_Core_API/storage/logs/backup.log 2>&1
 ```
 
 3. Verificar que se agregó:
@@ -151,7 +151,7 @@ Para producción, se recomienda seguir la regla **3-2-1**:
 2. **Backup en Almacenamiento Externo** (S3/DO Spaces)
    ```bash
    # Después de crear backup
-   aws s3 cp backup_*.sql.gz s3://ursol-backups/database/
+   aws s3 cp backup_*.sql.gz s3://senselab-backups/database/
    ```
    - Retención: 30 días
    - Recuperación ante desastres
@@ -159,7 +159,7 @@ Para producción, se recomienda seguir la regla **3-2-1**:
 3. **Backup Off-Site** (Servidor diferente)
    ```bash
    # Rsync a servidor remoto
-   rsync -avz database/backups/ usuario@backup-server:/backups/ursol-cast/
+   rsync -avz database/backups/ usuario@backup-server:/backups/senselab-core/
    ```
    - Retención: 90 días
    - Protección contra fallas de infraestructura
@@ -179,10 +179,10 @@ Crear `database/backups/backup-remote.sh`:
 LATEST_BACKUP=$(ls -t database/backups/backup_*.sql.gz | head -1)
 
 # Subir a S3 (requiere AWS CLI configurado)
-aws s3 cp "$LATEST_BACKUP" "s3://ursol-backups/database/$(basename $LATEST_BACKUP)"
+aws s3 cp "$LATEST_BACKUP" "s3://senselab-backups/database/$(basename $LATEST_BACKUP)"
 
 # O usar rsync a servidor remoto
-# rsync -avz "$LATEST_BACKUP" usuario@backup-server:/backups/ursol-cast/
+# rsync -avz "$LATEST_BACKUP" usuario@backup-server:/backups/senselab-core/
 ```
 
 ## Monitoreo de Backups
@@ -275,7 +275,7 @@ mysql -e "DROP DATABASE api_db_test"
 # 1. Levantar nuevo servidor
 # 2. Instalar MySQL
 # 3. Copiar backup más reciente
-scp backup-server:/backups/ursol-cast/backup_*.sql.gz ./
+scp backup-server:/backups/senselab-core/backup_*.sql.gz ./
 
 # 4. Restaurar
 ./database/backups/restore.sh backup_api_db_20240115_120000.sql.gz
@@ -390,7 +390,7 @@ chown root:root database/backups/*.sql.gz
 ## Contacto y Soporte
 
 Para problemas con backups o recuperación:
-- Email: sistemas@ursol.com
+- Email: deadmooncr@gmail.com
 - Urgencias: Contactar administrador de sistemas
 
 ## Historial de Cambios

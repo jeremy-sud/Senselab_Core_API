@@ -3,12 +3,12 @@
  *
  * Variables de entorno:
  *   K6_BASE_URL  - URL base de la API (default: http://localhost:8000/api)
- *   K6_USERNAME  - Email para login (default: admin@ursol.com)
+ *   K6_USERNAME  - Email para login (default: admin@senselab.com)
  *   K6_PASSWORD  - Password para login (default: password)
  */
 
 export const BASE_URL = __ENV.K6_BASE_URL || 'http://localhost:8000/api';
-export const USERNAME = __ENV.K6_USERNAME || 'admin@ursol.com';
+export const USERNAME = __ENV.K6_USERNAME || 'admin@senselab.com';
 export const PASSWORD = __ENV.K6_PASSWORD || 'password';
 
 /**

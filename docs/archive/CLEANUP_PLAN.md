@@ -1,4 +1,4 @@
-# 🧹 Plan de Limpieza y Organización de Ursol CAST API
+# 🧹 Plan de Limpieza y Organización de Senselab Core API
 
 **Fecha:** 13 de febrero de 2026
 **Responsable:** GitHub Copilot

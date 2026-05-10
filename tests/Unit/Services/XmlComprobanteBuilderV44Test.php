@@ -59,7 +59,7 @@ class XmlComprobanteBuilderV44Test extends TestCase
             'num_identificacion_dgt' => '3101123456',
             'tipo_identificacion' => '02',
             'actividad_economica_principal' => '620100',
-            'proveedor_sistemas' => 'URSOL CAST',
+            'proveedor_sistemas' => 'SENSELAB CAST',
             'email' => 'test@test.com',
             'telefono' => '22223333',
             'provincia' => '1',

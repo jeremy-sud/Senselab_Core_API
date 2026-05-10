@@ -250,5 +250,5 @@ Visita la ruta y verifica que el error aparezca en tu dashboard de Sentry.
 ## Soporte
 
 Para problemas con la configuración de Sentry:
-- Email: sistemas@ursol.com
+- Email: deadmooncr@gmail.com
 - Documentación: Ver enlaces arriba

@@ -1,6 +1,6 @@
-# Relaciones de Modelos Eloquent - Ursol CAST API
+# Relaciones de Modelos Eloquent - Senselab Core API
 
-**Desarrollado por:** Sistemas Ursol S.A.  
+**Desarrollado por:** Senselab  
 **Empresa:** Costa Rica | 30 años de experiencia  
 **Proyecto:** Sistema ERP Multi-Tenant con Facturación Electrónica  
 **Framework:** Laravel 11  
@@ -541,14 +541,14 @@ $venta = Venta::factory()
 
 Para consultas sobre modelos, relaciones o estructura de base de datos:
 
-**Sistemas Ursol S.A.**
+**Senselab**
 - **Email Técnico**: deadmooncr@gmail.com
-- **Email Corporativo**: sistemas@ursol.com
-- **WhatsApp**: +506 8868-7765
+- **Email Corporativo**: deadmooncr@gmail.com
+- **WhatsApp**: +(506)8973-5665
 - **Desarrollador**: [Jeremy Arias Solano](https://github.com/jeremy-sud)
-- **Documentación**: [Ursol Reposit for Developers](https://sites.google.com/view/repdevursol/home/repositorio)
+- **Documentación**: [Senselab Reposit for Developers](https://sites.google.com/view/repdevsenselab/home/repositorio)
 
 ---
 
-*© 2025 Sistemas Ursol S.A. - Todos los derechos reservados*  
+*© 2025 Senselab - Todos los derechos reservados*  
 *Desarrollado con el "Toque Humano" que nos caracteriza*

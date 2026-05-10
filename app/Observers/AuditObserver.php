@@ -162,7 +162,7 @@ class AuditObserver
 
             AuditLog::create([
                 'user_id' => $user?->id,
-                'user_email' => $user->email ?? 'system@ursol-cast.local',
+                'user_email' => $user->email ?? 'system@senselab-core.local',
                 'user_name' => $user->name ?? 'System',
                 'auditable_type' => get_class($model),
                 'auditable_id' => $model->getKey(),

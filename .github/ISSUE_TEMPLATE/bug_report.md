@@ -44,9 +44,9 @@ assignees: jeremy-sud
 ## 📞 Contacto
 
 Para soporte urgente:
-- Email: sistemas@ursol.com
-- WhatsApp: +506 8868-7765
+- Email: deadmooncr@gmail.com
+- WhatsApp: +(506)8973-5665
 
 ---
-**Desarrollado por Sistemas Ursol S.A.**  
+**Desarrollado por Senselab**  
 Costa Rica | 30 años de experiencia
