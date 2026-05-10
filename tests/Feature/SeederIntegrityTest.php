@@ -125,11 +125,9 @@ class SeederIntegrityTest extends BaseTestCase
         $empresa = DB::table('empresas')->where('nombre', 'like', '%Senselab%')->first();
         $this->assertNotNull($empresa, 'Empresa demo Senselab no fue creada');
 
-        // Verificar usuarios demo
         $usuarios = DB::table('usuarios')->whereIn('email', [
-            'eduardo@senselab.com',
-            'jeremy@senselab.com',
             'admin@senselab.com',
+            'jeremy@senselab.com',
         ])->count();
 
         $this->assertGreaterThanOrEqual(2, $usuarios,

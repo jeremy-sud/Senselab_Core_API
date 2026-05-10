@@ -15,7 +15,7 @@
         "accounting",
         "payroll"
     ],
-    "license": "MIT",
+    "license": "AGPL-3.0-or-later",
     "authors": [
         {
             "name": "Senselab",
@@ -28,10 +28,6 @@
             "email": "deadmooncr@gmail.com",
             "homepage": "https://github.com/jeremy-sud",
             "role": "Lead Developer"
-        },
-        {
-            "name": "Eduardo Alberto Ureña Solano",
-            "role": "Founder & Visionary"
         }
     ],
     "support": {

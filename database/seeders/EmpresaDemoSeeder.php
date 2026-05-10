@@ -12,7 +12,6 @@ class EmpresaDemoSeeder extends Seeder
      *
      * Senselab - Empresa de desarrollo de software especializada
      * en soluciones empresariales, facturación electrónica y sistemas ERP.
-     * Fundada por Eduardo Ureña Solano.
      */
     public function run(): void
     {

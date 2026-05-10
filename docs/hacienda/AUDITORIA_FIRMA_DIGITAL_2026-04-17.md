@@ -463,7 +463,7 @@ Resultado: HTTP 200 OK ✅
 access_token: eyJhbG... (JWT válido)
 expires_in: 300 (5 minutos)
 refresh_expires_in: 1200 (20 minutos)
-Nombre en token: EDUARDO ALBERTO UREnA SOLANO
+Nombre en token: SENSELAB ADMINISTRADOR
 ```
 
 **Nota importante para el password:** Debe enviarse con `--data-urlencode` o equivalente, ya que contiene `|`, `:`, `$`, `%`, `?`, `+`. El `OAuthTokenManager` usa `form_params` de Guzzle que hace URL-encoding automático — esto es correcto.
@@ -473,7 +473,7 @@ Nombre en token: EDUARDO ALBERTO UREnA SOLANO
 Archivo: storage/app/certificates/sandbox/010647095827.p12
 PIN: 4959
 Algoritmos: pbeWithSHA1And40BitRC2-CBC (LEGACY) ❌ con OpenSSL 3.x
-Titular: EDUARDO ALBERTO UREnA SOLANO
+Titular: SENSELAB ADMINISTRADOR
 Emisor: CA PERSONA FISICA - SANDBOX
 Válido: 2025-07-22 hasta 2029-07-21
 Serial: 1753222813512

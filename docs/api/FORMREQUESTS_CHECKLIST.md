@@ -238,7 +238,7 @@
 
 ### Equipo
 - **Jeremy Arias Solano** - Lead Developer
-- **Eduardo Alberto Ureña Solano** - Founder & Visionary
+- **Senselab Admin** - Founder & Visionary
 - **Senselab** - 30 años de experiencia
 
 ---

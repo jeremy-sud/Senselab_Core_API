@@ -10,7 +10,7 @@
 
 Somos una empresa familiar costarricense con **casi 30 años de experiencia** en el sector tecnológico. Nos caracterizamos por nuestra **ética inquebrantable**, **atención personalizada** y el **"Toque Humano"** en cada proyecto.
 
-- **Fundador**: Eduardo Alberto Ureña Solano (35+ años de experiencia)
+- **Fundador**: Senselab Team
 - **Desarrollador Principal**: Jeremy Arias Solano
 - **Contacto**: deadmooncr@gmail.com | +(506)8973-5665
 

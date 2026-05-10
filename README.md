@@ -447,7 +447,7 @@ Este usuario tiene acceso completo con **68 permisos** (todos los módulos del s
 
 ### 🏢 Sobre Senselab
 
-Con **más de 30 años de experiencia** en el mercado costarricense, Senselab es una empresa familiar que se distingue por su **ética inquebrantable**, **atención personalizada** y el **"Toque Humano"** en cada proyecto. Fundada y liderada por **Eduardo Alberto Ureña Solano**, quien aporta más de 35 años de experiencia en el sector tecnológico.
+Con **más de 30 años de experiencia** en el mercado costarricense, Senselab es una empresa familiar que se distingue por su **ética inquebrantable**, **atención personalizada** y el **"Toque Humano"** en cada proyecto. Liderada por un equipo con más de 35 años de experiencia acumulada en el sector tecnológico.
 
 **Nuestros Servicios:**
 
@@ -2811,14 +2811,14 @@ Esperamos que todos los contribuyentes sean respetuosos y constructivos.
 
 ## 📄 Licencia
 
-Este software es **propiedad exclusiva de Senselab** Todos los derechos están reservados.
+Este proyecto se lanza bajo la licencia **GNU Affero General Public License v3 (AGPLv3)** para que cualquier mejora vuelva a la comunidad.
 
--   ❌ No se permite copiar, distribuir o transmitir este software sin autorización
--   ❌ No se permite modificar, descompilar o hacer ingeniería inversa
--   ❌ No se permite revender, sublicenciar o transferir derechos
--   ✅ Uso exclusivo bajo acuerdo de licencia con Senselab
+### 💼 Planes Comerciales
 
-**Desarrollado por:** Jeremy Arias Solano — Co-fundador de Senselab
+Ofrecemos planes comerciales para empresas que requieran:
+- 🚀 **Alta disponibilidad** (High Availability).
+- 🧩 **Módulos adicionales** exclusivos.
+- 🛠️ **Soporte prioritario** y SLAs personalizados.
 
 **[Ver licencia completa](LICENSE)**
 
@@ -2933,15 +2933,6 @@ Incluye:
 
 ## 👥 Equipo
 
-### Fundador y Visionario
-
-**Eduardo Alberto Ureña Solano**
-
--   Fundador de Senselab
--   35+ años de experiencia en tecnología
--   Líder estratégico del proyecto
--   GitHub: [@senselabcr](https://github.com/senselabcr)
-
 ### Desarrollador Principal y Arquitecto
 
 **Jeremy Arias Solano**
@@ -2971,11 +2962,11 @@ Estamos siempre buscando:
   <a href="https://senselab.com"><img src="./public/assets/logos/senselab-icon.png" width="60" alt="Senselab"></a><br><br>
   <strong>Senselab</strong><br>
   <em>Soluciones Tecnológicas Completas</em><br>
-  <em>Costa Rica | 30+ años de experiencia</em><br><br>
+  <em>Costa Rica | Build with Sense</em><br><br>
   📞 <a href="https://wa.me/50689735665">+(506)8973-5665</a> | 
   📧 <a href="mailto:deadmooncr@gmail.com">deadmooncr@gmail.com</a><br><br>
   <sub>© 2026 Senselab - Todos los derechos reservados</sub><br>
-  <sub>Software Propietario — Uso exclusivo bajo licencia</sub>
+  <sub>Licencia AGPLv3 — Opciones comerciales disponibles</sub>
 </p>
 
 ---

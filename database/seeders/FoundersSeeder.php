@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
  * Seeder para crear los usuarios fundadores de Senselab
  *
  * Fundadores:
- * - Eduardo Ureña Solano (Fundador, CEO)
+ * - Admin Senselab (Admin Principal)
  * - Jeremy Arias Solano (Co-Fundador, CTO)
  */
 class FoundersSeeder extends Seeder
@@ -47,23 +47,23 @@ class FoundersSeeder extends Seeder
         }
 
         // =============================================================
-        // FUNDADOR: Eduardo Ureña Solano
+        // ADMINISTRADOR PRINCIPAL
         // =============================================================
         
         // Obtener contraseña de variable de entorno o usar default
-        $eduardoPassword = env('FOUNDER1_PASSWORD', 'Senselab2024!');
+        $adminPassword = env('ADMIN_PASSWORD', 'Senselab2024!');
         
-        if ($eduardoPassword === 'Senselab2024!') {
-            $this->command->warn('⚠️  ADVERTENCIA: Usando contraseña de desarrollo para Eduardo');
-            $this->command->warn('⚠️  Cambiar FOUNDER1_PASSWORD en .env para producción');
+        if ($adminPassword === 'Senselab2024!') {
+            $this->command->warn('⚠️  ADVERTENCIA: Usando contraseña de desarrollo para Admin');
+            $this->command->warn('⚠️  Cambiar ADMIN_PASSWORD en .env para producción');
         }
         
-        $eduardo = [
-            'nombre' => 'Eduardo',
-            'apellidos' => 'Ureña Solano',
+        $admin = [
+            'nombre' => 'Admin',
+            'apellidos' => 'Senselab',
             'cargo_id' => $cargoFundador->id,
-            'email' => 'eduardo@senselab.com',
-            'password_hash' => Hash::make($eduardoPassword),
+            'email' => 'admin@senselab.com',
+            'password_hash' => Hash::make($adminPassword),
             'empresa_id' => $empresa->id,
             'telefono' => '+(506)8973-5665',
             'direccion' => 'San José, Costa Rica',
@@ -71,11 +71,11 @@ class FoundersSeeder extends Seeder
             'eliminado' => false,
         ];
 
-        $eduardoId = DB::table('usuarios')->insertGetId($eduardo);
+        $adminId = DB::table('usuarios')->insertGetId($admin);
 
-        // Asignar rol Super Administrador a Eduardo
+        // Asignar rol Super Administrador a Admin
         DB::table('rol_usuario')->insert([
-            'usuario_id' => $eduardoId,
+            'usuario_id' => $adminId,
             'rol_id' => $rolSuperAdmin->id,
             'activo' => true,
             'eliminado' => false,
@@ -85,33 +85,33 @@ class FoundersSeeder extends Seeder
         $rolAdmin = DB::table('roles')->where('nombre', 'Administrador')->first();
         if ($rolAdmin) {
             DB::table('rol_usuario')->insert([
-                'usuario_id' => $eduardoId,
+                'usuario_id' => $adminId,
                 'rol_id' => $rolAdmin->id,
                 'activo' => true,
                 'eliminado' => false,
             ]);
         }
 
-        // Crear empleado asociado a Eduardo
+        // Crear empleado asociado a Admin
         DB::table('empleados')->insert([
             'empresa_id' => $empresa->id,
-            'nombre' => 'Eduardo',
-            'primer_apellido' => 'Ureña',
-            'segundo_apellido' => 'Solano',
+            'nombre' => 'Admin',
+            'primer_apellido' => 'Senselab',
+            'segundo_apellido' => '',
             'tipo_documento' => 'Cédula Nacional',
-            'numero_documento' => '1-1234-5678', // Ficticio
-            'email' => 'eduardo@senselab.com',
+            'numero_documento' => '1-0000-0000', // Ficticio
+            'email' => 'admin@senselab.com',
             'telefono' => '+(506)8973-5665',
             'direccion' => 'San José, Costa Rica',
             'fecha_ingreso' => '2020-01-15',
             'cargo_id' => $cargoFundador->id,
-            'salario' => 0.00, // Fundador - no aplica
+            'salario' => 0.00,
             'activo' => true,
             'eliminado' => false,
         ]);
 
-        $this->command->info('✓ Usuario Eduardo Ureña Solano (Fundador) creado exitosamente.');
-        $this->command->info('   Email: eduardo@senselab.com');
+        $this->command->info('✓ Usuario Admin Senselab creado exitosamente.');
+        $this->command->info('   Email: admin@senselab.com');
         $this->command->info('   Password: Senselab2024!');
 
         // =============================================================
@@ -203,8 +203,8 @@ class FoundersSeeder extends Seeder
         $this->command->info('    SISTEMAS SENSELAB S.A. - Usuarios Fundadores Creados');
         $this->command->info('═══════════════════════════════════════════════════════════');
         $this->command->info('');
-        $this->command->info('  👤 Eduardo Ureña Solano (Fundador)');
-        $this->command->info('     ✉️  eduardo@senselab.com');
+        $this->command->info('  👤 Admin Senselab');
+        $this->command->info('     ✉️  admin@senselab.com');
         $this->command->info('     🔑 Senselab2024!');
         $this->command->info('');
         $this->command->info('  👤 Jeremy Arias Solano (Co-Fundador)');

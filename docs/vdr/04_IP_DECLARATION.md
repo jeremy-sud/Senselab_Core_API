@@ -37,7 +37,7 @@ Sitio Web: https://senselab.com
 | Autor | Rol | Contribución |
 |-------|-----|-------------|
 | **Jeremy Arias Solano** | Arquitecto de Software y Desarrollador Principal. Co-fundador de Senselab | 100% del código fuente, arquitectura, testing, documentación técnica, implementación de IA, facturación electrónica, DevOps y CI/CD |
-| **Eduardo Alberto Ureña Solano** | Fundador y Visionario | Dirección estratégica, visión de producto, requisitos de negocio |
+| **Senselab Admin** | Fundador y Visionario | Dirección estratégica, visión de producto, requisitos de negocio |
 
 ---
 

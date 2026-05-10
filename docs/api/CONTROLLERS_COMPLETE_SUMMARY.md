@@ -422,6 +422,6 @@ app/
 ---
 
 **Desarrollado por:** Senselab  
-**Equipo:** Jeremy Arias Solano, Eduardo Alberto Ureña Solano  
+**Equipo:** Jeremy Arias Solano, Senselab Admin  
 **Licencia:** MIT  
 **Repositorio:** https://github.com/SenseLab-dev/Senselab_Core_API
