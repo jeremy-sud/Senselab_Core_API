@@ -107,7 +107,7 @@ Orden de lectura recomendado (2 horas):
 4. **`docs/guides/DOCKER_GUIDE.md`** — Docker (15 min)
 5. **`docs/api/API_DOCUMENTATION.md`** — Especificación API (30 min)
 6. **`SECURITY.md`** — Seguridad OWASP (15 min)
-7. **`docs/GLOSARIO_COMPLETO_SENSELAB_CAST_API.md`** — Referencia rápida (15 min)
+7. **`docs/GLOSARIO_COMPLETO_SENSELAB_CORE_API.md`** — Referencia rápida (15 min)
 
 ---
 
@@ -568,13 +568,13 @@ Hora 0          Hora 2          Hora 6          Hora 12         Hora 24         
 **Sí.** Se recomienda al menos 1 desarrollador con experiencia en Laravel 10+ y PHP 8.x. El código está documentado a nivel enterprise, pero la persona debe entender inyección de dependencias, Eloquent ORM, y el patrón Service-Repository.
 
 ### ¿Puedo usar un front-end diferente?
-**Sí.** Senselab CAST es un API puro (headless). Puede conectarse con React, Vue, Angular, Flutter, React Native, o cualquier cliente HTTP. La especificación OpenAPI/Swagger facilita la generación de SDKs cliente.
+**Sí.** Senselab Core es un API puro (headless). Puede conectarse con React, Vue, Angular, Flutter, React Native, o cualquier cliente HTTP. La especificación OpenAPI/Swagger facilita la generación de SDKs cliente.
 
 ### ¿Puedo hostear en mi propio servidor?
 **Sí.** El sistema funciona en cualquier infraestructura que soporte PHP 8.4, MySQL 8.0 y Redis. Docker opcional pero recomendado.
 
 ### ¿Los servicios de IA son propios o de terceros?
-Los servicios de IA utilizan **APIs de Gemini (Google) y OpenAI** como motores, pero toda la lógica de integración, prompts, fallbacks, parsing de respuestas y orquestación es código propio de Senselab CAST. No dependes de un servicio IA específico — el patrón de fallback permite cambiar de proveedor.
+Los servicios de IA utilizan **APIs de Gemini (Google) y OpenAI** como motores, pero toda la lógica de integración, prompts, fallbacks, parsing de respuestas y orquestación es código propio de Senselab Core. No dependes de un servicio IA específico — el patrón de fallback permite cambiar de proveedor.
 
 ### ¿Qué pasa si Hacienda cambia la versión de FE?
 El módulo de facturación electrónica está diseñado modular. Las 38 brechas de la v4.4 están mapeadas en `docs/hacienda/`. Actualizar a una futura v4.5 o v5.0 requeriría ajustes en los servicios de Hacienda, pero la arquitectura está preparada para ello.

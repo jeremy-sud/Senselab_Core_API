@@ -81,7 +81,7 @@
 | Documento | Descripción |
 |-----------|-------------|
 | [📘 Curso Completo: De Cero a Experto](docs/curso_completo_senselab_core_api.md) | Curso autodidacta integral — arquitectura, módulos, seguridad, testing, despliegue, IA, facturación electrónica y roadmap |
-| [📗 Glosario Completo de Terminología](docs/GLOSARIO_COMPLETO_SENSELAB_CAST_API.md) | Referencia exhaustiva de toda la terminología: modelos, servicios, DTOs, traits, eventos, jobs, observers, config y más |
+| [📗 Glosario Completo de Terminología](docs/GLOSARIO_COMPLETO_SENSELAB_CORE_API.md) | Referencia exhaustiva de toda la terminología: modelos, servicios, DTOs, traits, eventos, jobs, observers, config y más |
 
 ---
 

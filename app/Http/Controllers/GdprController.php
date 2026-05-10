@@ -114,7 +114,7 @@ class GdprController extends Controller
                     "Su código de verificación GDPR es: {$verificationCode}\n\nEste código expira en 15 minutos.",
                     function ($message) use ($user) {
                         $message->to($user->email)
-                                ->subject('Código de verificación GDPR - Senselab CAST');
+                                ->subject('Código de verificación GDPR - Senselab Core');
                     }
                 );
             } catch (\Exception $mailException) {

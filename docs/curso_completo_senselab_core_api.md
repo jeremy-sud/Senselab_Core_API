@@ -1637,7 +1637,7 @@ BAJO (deuda técnica):
 | Guía de FormRequests | `docs/api/FORMREQUESTS_USAGE_GUIDE.md` | Validaciones |
 | Facturación electrónica | `docs/hacienda/FACTURACION_ELECTRONICA_API.md` | Hacienda integration |
 | Funcionalidades IA | `docs/IA_FUNCIONALIDADES.md` | 10 servicios de IA detallados |
-| Glosario completo | `docs/GLOSARIO_COMPLETO_SENSELAB_CAST_API.md` | Toda la terminología |
+| Glosario completo | `docs/GLOSARIO_COMPLETO_SENSELAB_CORE_API.md` | Toda la terminología |
 | Estado del proyecto | `ESTADO_ACTUAL_PROYECTO.md` | Estadísticas verificadas |
 | Roadmap | `ROADMAP.md` | Fases y planificación |
 | Changelog | `CHANGELOG.md` | Historial de cambios |

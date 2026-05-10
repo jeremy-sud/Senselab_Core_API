@@ -1,4 +1,4 @@
-# 🔍 AUDITORÍA DE CONTROLLERS - SENSELAB CAST API
+# 🔍 AUDITORÍA DE CONTROLLERS - SENSELAB CORE API
 
 **Fecha:** 22 de noviembre de 2025  
 **Auditado por:** GitHub Copilot  

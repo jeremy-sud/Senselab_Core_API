@@ -117,7 +117,7 @@ Mayo 1 2026        8.0/10  →  Deuda técnica identificada
 ### Guías Técnicas
 - [guides/REFACTORIZACION_CONTROLADORES.md](guides/REFACTORIZACION_CONTROLADORES.md) — Refactorización de controllers
 - [api/CONTROLLERS_SUMMARY.md](api/CONTROLLERS_SUMMARY.md) — Resumen de controllers
-- [GLOSARIO_COMPLETO_SENSELAB_CAST_API.md](GLOSARIO_COMPLETO_SENSELAB_CAST_API.md) — Terminología del proyecto
+- [GLOSARIO_COMPLETO_SENSELAB_CORE_API.md](GLOSARIO_COMPLETO_SENSELAB_CORE_API.md) — Terminología del proyecto
 
 ---
 

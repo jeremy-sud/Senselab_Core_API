@@ -3,7 +3,7 @@
 # Para Windows - PowerShell
 
 Write-Host "==================================================" -ForegroundColor Cyan
-Write-Host "  SENSELAB CAST API - Instalación Automatizada" -ForegroundColor Cyan
+Write-Host "  SENSELAB CORE API - Instalación Automatizada" -ForegroundColor Cyan
 Write-Host "  Senselab" -ForegroundColor Cyan
 Write-Host "==================================================" -ForegroundColor Cyan
 Write-Host ""

@@ -33,7 +33,7 @@ PHPStan Level 8, 0 errores, baseline vacío
 9 workflows CI/CD en GitHub Actions
 2) Mapa mental en texto (organización real del sistema)
 
-SENSELAB CAST API (Laravel 12, PHP 8.4) — v5.0.1
+SENSELAB CORE API (Laravel 12, PHP 8.4) — v5.0.1
 ├── Capa de entrada HTTP
 │   ├── bootstrap/app.php
 │   │   ├── routing: web/api/console + /up

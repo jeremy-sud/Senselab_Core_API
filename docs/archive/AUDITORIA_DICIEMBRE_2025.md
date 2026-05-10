@@ -1,4 +1,4 @@
-# 🔍 AUDITORÍA TÉCNICA COMPLETA - SENSELAB CAST API
+# 🔍 AUDITORÍA TÉCNICA COMPLETA - SENSELAB CORE API
 
 **Fecha de Auditoría Original:** 7 de Diciembre 2025  
 **Verificación Actualizada:** 13 de Febrero 2026  

@@ -57,7 +57,7 @@
 
 ## 1. Resumen Ejecutivo
 
-La API Senselab-CAST cuenta con una implementación **sólida** de facturación electrónica para Costa Rica, incluyendo soporte para la versión 4.4 del esquema de Hacienda. Sin embargo, tras un análisis exhaustivo comparando campo por campo con la especificación oficial, se identificaron **38 brechas** distribuidas así:
+La API Senselab-Core cuenta con una implementación **sólida** de facturación electrónica para Costa Rica, incluyendo soporte para la versión 4.4 del esquema de Hacienda. Sin embargo, tras un análisis exhaustivo comparando campo por campo con la especificación oficial, se identificaron **38 brechas** distribuidas así:
 
 | Criticidad | Cantidad | Descripción |
 |:----------:|:--------:|-------------|

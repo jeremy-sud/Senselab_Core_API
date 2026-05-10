@@ -32,7 +32,7 @@ Se investigaron los precios públicos de **8 competidores** directos e indirecto
 | **Media (vacía)** | $120 - $500 | **Ninguno en CR** | Gap de mercado. Oportunidad para Senselab. |
 | **Alta** | $500 - $3,000+ | Softland, Exactus, SAP B1 | ERP legacy enterprise. Caro, lento, sin IA. |
 
-> **Conclusión:** Senselab CAST se posiciona en la banda media ($149-$899), donde actualmente no hay competidores locales con oferta ERP + IA + FE.
+> **Conclusión:** Senselab Core se posiciona en la banda media ($149-$899), donde actualmente no hay competidores locales con oferta ERP + IA + FE.
 
 ### 2. Alegra domina el segmento bajo en CR
 
@@ -73,7 +73,7 @@ Se investigaron los precios públicos de **8 competidores** directos e indirecto
 - Sin localización CR ni FE v4.4
 - Requiere partner para implementación ($5K-$30K)
 - Sin IA integrada, UX menos pulida
-- **Relevancia:** Valida que el modelo "open source + hosting pagado" funciona, pero no compite en features con Senselab CAST.
+- **Relevancia:** Valida que el modelo "open source + hosting pagado" funciona, pero no compite en features con Senselab Core.
 
 ### 7. Ningún competidor ofrece IA + FE + Multi-tenancy + RBAC juntos
 
@@ -83,7 +83,7 @@ Se verificó que **ningún producto** en el rango $0-$500/mes ofrece simultánea
 - Multi-tenancy con BD aislada por empresa
 - RBAC granular con 68 permisos y 8 roles
 
-Esto es el **principal diferenciador** de Senselab CAST y justifica su posicionamiento premium sobre Alegra.
+Esto es el **principal diferenciador** de Senselab Core y justifica su posicionamiento premium sobre Alegra.
 
 ### 8. Holded valida el modelo de add-ons modulares
 
@@ -109,7 +109,7 @@ Esto es el **principal diferenciador** de Senselab CAST y justifica su posiciona
 
 ---
 
-## Implicaciones para Senselab CAST
+## Implicaciones para Senselab Core
 
 1. **Pricing de $149/mes (Pro)** está justificado: ofrece 3x más features que Alegra Plus ($120) y es 4x más barato que Softland ($500+).
 

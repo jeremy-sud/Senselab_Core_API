@@ -198,11 +198,11 @@ $2,000 |
         |
 $1,000 |                              ● Softland/Exactus
         |
-  $600 |                    ◆ Senselab CAST (Enterprise)
+  $600 |                    ◆ Senselab Core (Enterprise)
         |
-  $400 |              ◆ Senselab CAST (Business)
+  $400 |              ◆ Senselab Core (Business)
         |
-  $200 |         ◆ Senselab CAST (Pro)
+  $200 |         ◆ Senselab Core (Pro)
         |    ● Zoho Elite    ● Holded Premium
   $100 |  ● Alegra Plus     ● Holded Advanced
         | ● Alegra Pro   ● Odoo (10u)
@@ -217,7 +217,7 @@ $1,000 |                              ● Softland/Exactus
 
 ## 📊 Análisis Comparativo de Funcionalidades
 
-| Funcionalidad | Senselab CAST | Alegra | Odoo | Zoho Books | SAP B1 | ERPNext |
+| Funcionalidad | Senselab Core | Alegra | Odoo | Zoho Books | SAP B1 | ERPNext |
 |---------------|:----------:|:------:|:----:|:----------:|:------:|:-------:|
 | **Facturación Electrónica DGT v4.4** | ✅ 38/38 | ✅ | ❌ | ❌ | ⚠️ Add-on | ❌ |
 | **Firma Digital XAdES-EPES** | ✅ Nativo | ✅ | ❌ | ❌ | ⚠️ | ❌ |
@@ -246,7 +246,7 @@ $1,000 |                              ● Softland/Exactus
 
 \* No aplica: productos SaaS cerrados no exponen sus tests.
 
-**Diferenciadores únicos de Senselab CAST** (nadie ofrece esto junto):
+**Diferenciadores únicos de Senselab Core** (nadie ofrece esto junto):
 1. IA + FE DGT v4.4 + Multi-tenancy + RBAC en un solo producto
 2. Credit Scoring, Anomaly Detection y CABYS Classifier integrados
 3. Compliance 100% Costa Rica (DGT + CAJA) nativo
@@ -516,7 +516,7 @@ Break-even con:
 |----------|-------------|
 | Tamaño | 20-300 empleados |
 | Necesidad | Gestión de rutas, boletos, flota + FE + nómina |
-| Diferenciador | Senselab CAST es el único ERP con módulo transporte + FE v4.4 |
+| Diferenciador | Senselab Core es el único ERP con módulo transporte + FE v4.4 |
 | Tier objetivo | Business ($399) o Enterprise ($899) |
 
 ### Segmento Terciario: Micro-empresa / Freelancer

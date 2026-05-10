@@ -138,7 +138,7 @@
 
 ### 4.3 Hacia GDPR/LGPD Compliance
 
-| Requisito GDPR | Estado en Senselab CAST |
+| Requisito GDPR | Estado en Senselab Core |
 |-----------------|:--------------------:|
 | Consentimiento explícito | ⬜ Requiere capa de presentación |
 | Derecho de acceso | ✅ API de consulta por usuario |

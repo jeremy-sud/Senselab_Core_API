@@ -57,7 +57,7 @@ Este directorio contiene todos los documentos organizados para el sitio de venta
 | 3.2 | Diagramas IA (ciclo de vida + precisión) | `docs/diagrams/03-ciclo-vida-dato-ia.md` + `04-precision-servicios-ia.md` | Renderizar → PNG |
 | 3.3 | Resumen de Controllers (95) | `docs/api/CONTROLLERS_COMPLETE_SUMMARY.md` | Subir PDF |
 | 3.4 | Modelo de Datos (98 modelos + relaciones) | `docs/api/MODELS_RELATIONS.md` | Subir PDF |
-| 3.5 | Glosario Completo | `docs/GLOSARIO_COMPLETO_SENSELAB_CAST_API.md` | Subir PDF |
+| 3.5 | Glosario Completo | `docs/GLOSARIO_COMPLETO_SENSELAB_CORE_API.md` | Subir PDF |
 | 3.6 | Curso Completo (onboarding) | `docs/curso_completo_senselab_core_api.md` | Subir PDF |
 
 ---

@@ -501,7 +501,7 @@ Todas las tareas usan `withoutOverlapping()` (cluster-safe) y se ejecutan en hor
 
 ## 12. COMPARATIVA CON ESTÁNDARES DE LA INDUSTRIA
 
-| Métrica | Senselab CAST | Estándar Enterprise | Evaluación |
+| Métrica | Senselab Core | Estándar Enterprise | Evaluación |
 |---|---|---|---|
 | Tests | 959 (100% passing) | 800-1200 | ✅ Excelente |
 | PHPStan | Level 8, 0 errores | Level 7+ | ✅ Máximo |

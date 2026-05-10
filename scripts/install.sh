@@ -7,7 +7,7 @@
 set -euo pipefail  # Detener si hay errores, evitar uso de variables no inicializadas
 
 echo "=================================================="
-echo "  SENSELAB CAST API - Instalación Automatizada"
+echo "  SENSELAB CORE API - Instalación Automatizada"
 echo "  Senselab"
 echo "=================================================="
 echo ""

@@ -672,7 +672,7 @@ Arquitectura dual-provider con fallback. Integración CABYS específica para Cos
 
 ## 15. COMPARATIVA CON ESTÁNDARES ENTERPRISE
 
-| Métrica | Senselab CAST | Estándar Enterprise | Evaluación |
+| Métrica | Senselab Core | Estándar Enterprise | Evaluación |
 |---|---|---|---|
 | Test files | 141 | 80-150 | ✅ Rango superior |
 | Capas de testing | 6 (unit, feature, contract, mutation, E2E, load) | 3-4 | ✅ **Superior** |
