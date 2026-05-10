@@ -29,7 +29,7 @@ class StoreConfiguracionRequest extends FormRequest
                 })
             ],
             'valor' => 'required|string',
-            'tipo_dato' => 'required|string|in:texto,numero,booleano,json',
+            'tipo_dato' => 'required|string|in:string,integer,float,boolean,json,array',
             'descripcion' => 'nullable|string'
         ];
     }
@@ -46,7 +46,7 @@ class StoreConfiguracionRequest extends FormRequest
             'clave.unique' => 'Ya existe una configuración con esta clave en tu empresa',
             'valor.required' => 'El valor es obligatorio',
             'tipo_dato.required' => 'El tipo de dato es obligatorio',
-            'tipo_dato.in' => 'El tipo de dato debe ser: texto, numero, booleano o json'
+            'tipo_dato.in' => 'El tipo de dato debe ser: string, integer, float, boolean, json o array'
         ];
     }
 }

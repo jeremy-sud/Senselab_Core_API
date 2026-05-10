@@ -37,12 +37,23 @@ class LogRequest
         // Obtener contexto de usuario
         $userId = auth()->id();
         $userEmail = auth()->user()?->email;
+        $empresaId = auth()->user()?->empresa_id;
         $userAgent = $request->userAgent();
+
+        // FASE 23 / DT-11: Configurar contexto global de logs para este tenant
+        if ($empresaId) {
+            Log::withContext([
+                'empresa_id' => $empresaId,
+                'user_id' => $userId,
+                'trace_id' => $traceId,
+            ]);
+        }
 
         // Log de entrada de request
         Log::channel('security')->info('http.request.started', [
             'trace_id' => $traceId,
             'user_id' => $userId,
+            'empresa_id' => $empresaId,
             'user_email' => $userEmail,
             'ip' => $request->ip(),
             'method' => $request->method(),
@@ -63,6 +74,7 @@ class LogRequest
             Log::channel('security')->info('http.request.completed', [
                 'trace_id' => $traceId,
                 'user_id' => $userId,
+                'empresa_id' => $empresaId,
                 'method' => $request->method(),
                 'path' => $request->path(),
                 'status_code' => $response->status(),
@@ -78,6 +90,7 @@ class LogRequest
                     'method' => $request->method(),
                     'duration_ms' => round($duration, 2),
                     'user_id' => $userId,
+                    'empresa_id' => $empresaId,
                     'status_code' => $response->status(),
                     'threshold_ms' => 1000,
                 ]);
@@ -94,6 +107,7 @@ class LogRequest
             Log::channel('security')->error('http.request.failed', [
                 'trace_id' => $traceId,
                 'user_id' => $userId,
+                'empresa_id' => $empresaId,
                 'user_email' => $userEmail,
                 'method' => $request->method(),
                 'path' => $request->path(),

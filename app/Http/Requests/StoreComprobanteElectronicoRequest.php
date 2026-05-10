@@ -242,4 +242,72 @@ class StoreComprobanteElectronicoRequest extends FormRequest
             'certificado_id' => 'certificado digital',
         ];
     }
+
+    /**
+     * Configure the validator instance.
+     *
+     * @param  \Illuminate\Validation\Validator  $validator
+     * @return void
+     */
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $lineas = $this->input('lineas', []);
+            if (!is_array($lineas)) {
+                return;
+            }
+
+            foreach ($lineas as $index => $linea) {
+                // Ensure required fields exist for calculation
+                if (!isset($linea['precio_unitario'], $linea['cantidad'])) {
+                    continue;
+                }
+
+                $precioUnitario = (float) $linea['precio_unitario'];
+                $cantidad = (float) $linea['cantidad'];
+                
+                $expectedMontoTotal = round($precioUnitario * $cantidad, 5);
+                $actualMontoTotal = isset($linea['monto_total']) ? (float) $linea['monto_total'] : 0.0;
+
+                // Hacienda allows minor rounding differences, but we'll check tight enough
+                if (abs($expectedMontoTotal - $actualMontoTotal) > 0.5) {
+                    $validator->errors()->add("lineas.{$index}.monto_total", "El monto total de la línea {$linea['numero_linea']} debe ser igual a precio_unitario * cantidad ({$expectedMontoTotal}).");
+                }
+
+                $montoDescuento = 0.0;
+                if (isset($linea['descuentos']) && is_array($linea['descuentos'])) {
+                    foreach ($linea['descuentos'] as $descuento) {
+                        if (isset($descuento['monto_descuento'])) {
+                            $montoDescuento += (float) $descuento['monto_descuento'];
+                        }
+                    }
+                } elseif (isset($linea['monto_descuento'])) {
+                    $montoDescuento = (float) $linea['monto_descuento'];
+                }
+
+                $expectedSubtotal = round($actualMontoTotal - $montoDescuento, 5);
+                $actualSubtotal = isset($linea['subtotal']) ? (float) $linea['subtotal'] : 0.0;
+
+                if (abs($expectedSubtotal - $actualSubtotal) > 0.5) {
+                    $validator->errors()->add("lineas.{$index}.subtotal", "El subtotal de la línea {$linea['numero_linea']} debe ser igual a monto_total - descuentos ({$expectedSubtotal}).");
+                }
+
+                $montoImpuestos = 0.0;
+                if (isset($linea['impuestos']) && is_array($linea['impuestos'])) {
+                    foreach ($linea['impuestos'] as $impuesto) {
+                        if (isset($impuesto['monto'])) {
+                            $montoImpuestos += (float) $impuesto['monto'];
+                        }
+                    }
+                }
+
+                $expectedMontoTotalLinea = round($actualSubtotal + $montoImpuestos, 5);
+                $actualMontoTotalLinea = isset($linea['monto_total_linea']) ? (float) $linea['monto_total_linea'] : 0.0;
+
+                if (abs($expectedMontoTotalLinea - $actualMontoTotalLinea) > 0.5) {
+                    $validator->errors()->add("lineas.{$index}.monto_total_linea", "El monto total de la línea {$linea['numero_linea']} debe ser igual a subtotal + impuestos ({$expectedMontoTotalLinea}).");
+                }
+            }
+        });
+    }
 }

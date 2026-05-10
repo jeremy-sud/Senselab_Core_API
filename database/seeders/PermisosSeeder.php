@@ -32,6 +32,7 @@ class PermisosSeeder extends Seeder
             'reportes' => 'Reportes',
             'configuracion' => 'Configuración',
             'webhooks' => 'Webhooks',
+            'reservas' => 'Reservas',
         ];
 
         $acciones = ['ver', 'crear', 'editar', 'eliminar'];

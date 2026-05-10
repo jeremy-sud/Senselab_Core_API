@@ -1,29 +1,26 @@
 # Estado Actual del Proyecto - Ursol CAST API
 
-**Fecha de actualización:** 18 de abril 2026  
+**Fecha de actualización:** 10 de mayo 2026  
 **Desarrollado por:** Sistemas Ursol S.A.  
 **Desarrollador principal:** Jeremy Arias Solano  
-**Versión actual:** v5.0.2 (Deuda técnica + Service Layer — 18 abr 2026)
+**Versión actual:** v5.1.0 (Validación Totales FE + Módulo Reservas)
 
 > **Historial de versiones:**
+> - v5.1.0: Validación de totales de Facturación Electrónica implementada, nuevo módulo de Reservas creado. Deuda técnica DT-10 y DT-11 resuelta (Tests N+1 y tenant_id en logs globales).
 > - v5.0.2: Deuda técnica — Service Layer en 4 controllers (RolPermiso, RolUsuario, ComplianceDashboard, ComprobanteElectronico), timestamps español en 4 modelos, auditoría Hacienda H-1 a H-10
 > - v5.0.1: Post-auditoría — Validación SSRF webhooks, Swagger reporting (+14 anotaciones), test UseReadReplica (+9 tests), fix imports, deuda técnica DT-7/DT-8/DT-9 resuelta
 > - v5.0.0: FASE 22 — Escalabilidad: Read replicas, Laravel Horizon, ETags, OpenTelemetry
-> - v4.3.0: FASE 21 — Reporting Engine: Dashboard KPIs, reportes financieros, exportación PDF/Excel/CSV
-> - v4.2.0: FASE 20 — Webhooks + Event-Driven: 5 eventos, HMAC-SHA256, retry exponencial
-> - v4.1.0: FASE 19.7 — PHPStan 98→0 errores, +17 DTOs (60 total, ~65% cobertura)
-> - v4.0.0: FASE 18 — API versionado con prefijo v1/v2, header-based versioning, Sunset middleware
 > - Hacienda v4.4 Compliance — 38/38 brechas resueltas (100%)
-> - PHPStan Level 8 ✅, Tests 100% passing ✅, Imports limpios ✅
+> - PHPStan Level 8 ✅, Tests passing ✅, Imports limpios ✅
 
 ---
 
-## Estadísticas generales (conteos VERIFICADOS 18 abr 2026)
-- **Controladores implementados:** 97 (excluyendo Controller.php base)
-- **Policies RBAC:** 81 ✅ (registradas en AuthServiceProvider dedicado)
-- **Modelos Eloquent:** 98 (87 base + 8 Hacienda v4.4 + 3 nuevos: Webhook, WebhookLog, ReporteProgramado)
-- **Migraciones:** 106
-- **FormRequests:** 175 (validación completa)
+## Estadísticas generales (conteos VERIFICADOS 10 may 2026)
+- **Controladores implementados:** 98 (excluyendo Controller.php base)
+- **Policies RBAC:** 82 ✅ (registradas en AuthServiceProvider dedicado)
+- **Modelos Eloquent:** 99 (87 base + 8 Hacienda v4.4 + 4 nuevos)
+- **Migraciones:** 107
+- **FormRequests:** 177 (validación completa)
 - **API Resources:** 81 (transformación JSON)
 - **DTOs:** 73 (~75% cobertura)
 - **Jobs/Queues:** 10 (procesamiento asíncrono)
@@ -767,9 +764,7 @@ Todas las anotaciones legacy docblock migradas a PHP 8 Attributes nativos:
 | `ProductoFactory` | Usa `codigo_interno` (tabla tiene `codigo`), valores `tipo_producto` incorrectos |
 
 #### Configuracion — Mismatch FormRequest/Model en tipo_dato
-- **FormRequest** acepta: `texto`, `numero`, `booleano`, `json`
-- **Modelo** valida: `string`, `integer`, `float`, `boolean`, `json`, `array`
-- Solo `json` es aceptado por ambos — bug real de aplicación pendiente de resolver
+- **Fix (v5.1.0):** Actualizados `StoreConfiguracionRequest` y `UpdateConfiguracionRequest` para aceptar `string, integer, float, boolean, json, array` igual que el modelo `Configuracion`. (Resuelto el bug real de aplicación)
 
 ### Resultado Final
 - **Antes:** 767 tests — 762 passing, 0 failing, 5 skipped

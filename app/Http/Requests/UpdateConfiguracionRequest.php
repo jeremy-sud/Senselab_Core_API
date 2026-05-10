@@ -21,7 +21,7 @@ class UpdateConfiguracionRequest extends FormRequest
         return [
             'clave' => 'sometimes|required|string|max:255',
             'valor' => 'sometimes|required|string',
-            'tipo_dato' => 'sometimes|required|string|in:texto,numero,booleano,json',
+            'tipo_dato' => 'sometimes|required|string|in:string,integer,float,boolean,json,array',
             'descripcion' => 'nullable|string'
         ];
     }
@@ -36,7 +36,7 @@ class UpdateConfiguracionRequest extends FormRequest
         return [
             'clave.required' => 'La clave es obligatoria',
             'valor.required' => 'El valor es obligatorio',
-            'tipo_dato.in' => 'El tipo de dato debe ser: texto, numero, booleano o json'
+            'tipo_dato.in' => 'El tipo de dato debe ser: string, integer, float, boolean, json o array'
         ];
     }
 }

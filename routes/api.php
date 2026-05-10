@@ -87,3 +87,6 @@ require __DIR__ . '/api/reporting.php';
 
 // Inteligencia Artificial
 require __DIR__ . '/api/ai.php';
+
+// Reservas
+require __DIR__ . '/api/reservas.php';

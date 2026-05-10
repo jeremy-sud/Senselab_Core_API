@@ -136,7 +136,7 @@ class FacturacionElectronicaE2ECasosEdgeTest extends TestCase
     #[Test]
     public function validacion_totales_incorrectos_rechaza_comprobante()
     {
-        $this->markTestSkipped('Validación de totales aún no implementada en FormRequest');
+        // $this->markTestSkipped('Validación de totales aún no implementada en FormRequest');
         
         $facturaData = [
             'tipo_documento' => '01',

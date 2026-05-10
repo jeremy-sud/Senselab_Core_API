@@ -496,8 +496,8 @@ Items identificados en la auditoría técnica que no encajan directamente en una
 | DT-7 | ~~`shell_exec()` en HealthCheck~~ | ✅ RESUELTO | Ya usa `file_get_contents('/proc/uptime')` y `sys_getloadavg()` — sin `shell_exec()` en código actual | v5.0.1 |
 | DT-8 | ~~Distributed tracing~~ | ✅ RESUELTO | OpenTelemetry implementado: `TracingMiddleware` + `config/tracing.php` + Jaeger/Zipkin/OTLP | FASE 22 |
 | DT-9 | ~~Imports a modelos inexistentes~~ | ✅ RESUELTO | Eliminado import `App\Models\Comprobante` de `HaciendaIntegrationTest.php`. MetricsController cache hit rate ahora usa Redis INFO stats reales. | v5.0.1 |
-| DT-10 | Tests detección N+1 | 🟢 BAJO | Implementar tests automáticos de rendimiento para detectar regresiones N+1 | Futuro |
-| DT-11 | `tenant_id` en logs | 🟢 BAJO | Agregar `empresa_id` automáticamente en todos los canales de logging | Futuro |
+| DT-10 | ~~Tests detección N+1~~ | ✅ RESUELTO | Implementado test `NPlusOneDetectionTest` que verifica query counts proporcionales usando PHPUnit | v5.1.0 |
+| DT-11 | ~~`tenant_id` en logs~~ | ✅ RESUELTO | Implementado `Log::withContext()` en `LogRequest` para agregar `empresa_id` a todos los logs de manera global | v5.1.0 |
 
 ---
 
