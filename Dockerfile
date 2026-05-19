@@ -15,6 +15,13 @@ WORKDIR /app
 # Copiar solo archivos necesarios para composer
 COPY composer.json composer.lock ./
 
+RUN apk add --no-cache \
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libpng-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd
+
 # Instalar dependencias (sin dev en producción)
 RUN composer install \
     --no-dev \

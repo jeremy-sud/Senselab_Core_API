@@ -4,6 +4,9 @@
 .env
 .env.backup
 .env.production
+production_deployment_blueprint.md
+aws-pem/
+*.pem
 credenciales_sandbox_hacienda.txt
 # api_db.sql
 # *.sql
