@@ -1,11 +1,11 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Ursol CAST API - ERP System",
+        "title": "Senselab Core API - ERP System",
         "description": "API completa de ERP para empresas costarricenses. Sistema integral de gestión empresarial con soporte para contabilidad, facturación electrónica, inventario, compras, ventas, recursos humanos y más.",
         "contact": {
-            "name": "Sistemas Ursol",
-            "email": "sistemas@ursol.com"
+            "name": "Senselab",
+            "email": "deadmooncr@gmail.com"
         },
         "version": "1.0.0"
     },
@@ -15,7 +15,7 @@
             "description": "Servidor de Desarrollo Local"
         },
         {
-            "url": "https://api.ursol.com",
+            "url": "https://api.senselab.com",
             "description": "Servidor de Producción"
         }
     ],
@@ -1855,7 +1855,7 @@
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "example": "admin@ursol.com"
+                                        "example": "admin@senselab.com"
                                     },
                                     "password": {
                                         "type": "string",
@@ -9543,11 +9543,11 @@
                                 "properties": {
                                     "nombre": {
                                         "type": "string",
-                                        "example": "Sistemas Ursol S.A."
+                                        "example": "Senselab"
                                     },
                                     "razon_social": {
                                         "type": "string",
-                                        "example": "Sistemas Ursol Sociedad Anónima",
+                                        "example": "Senselab Sociedad Anónima",
                                         "nullable": true
                                     },
                                     "num_identificacion_dgt": {
@@ -9566,7 +9566,7 @@
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "example": "info@ursol.com",
+                                        "example": "info@senselab.com",
                                         "nullable": true
                                     },
                                     "direccion": {
@@ -9745,7 +9745,7 @@
                                 "properties": {
                                     "nombre": {
                                         "type": "string",
-                                        "example": "Sistemas Ursol S.A."
+                                        "example": "Senselab"
                                     },
                                     "razon_social": {
                                         "type": "string",
@@ -29766,13 +29766,13 @@
                         "description": "Nombre de la empresa",
                         "type": "string",
                         "maxLength": 255,
-                        "example": "Sistemas Ursol S.A."
+                        "example": "Senselab"
                     },
                     "nombre_comercial": {
                         "description": "Nombre comercial",
                         "type": "string",
                         "maxLength": 255,
-                        "example": "Ursol",
+                        "example": "Senselab",
                         "nullable": true
                     },
                     "razon_social": {
@@ -29830,7 +29830,7 @@
                         "description": "Teléfono principal",
                         "type": "string",
                         "maxLength": 50,
-                        "example": "+506 8868-7765",
+                        "example": "+(506)0000-0000",
                         "nullable": true
                     },
                     "email": {
@@ -29838,7 +29838,7 @@
                         "type": "string",
                         "format": "email",
                         "maxLength": 255,
-                        "example": "sistemas@ursol.com",
+                        "example": "deadmooncr@gmail.com",
                         "nullable": true
                     },
                     "prefijo_orden_compra": {
@@ -30997,7 +30997,7 @@
                         "description": "Teléfono de la sucursal",
                         "type": "string",
                         "maxLength": 50,
-                        "example": "+506 8868-7765",
+                        "example": "+(506)0000-0000",
                         "nullable": true
                     },
                     "email": {
@@ -31005,7 +31005,7 @@
                         "type": "string",
                         "format": "email",
                         "maxLength": 255,
-                        "example": "central@ursol.com",
+                        "example": "central@senselab.com",
                         "nullable": true
                     },
                     "activo": {
