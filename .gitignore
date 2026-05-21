@@ -5,6 +5,7 @@
 .env.backup
 .env.production
 production_deployment_blueprint.md
+senselab_frontend_ideas.md
 aws-pem/
 *.pem
 credenciales_sandbox_hacienda.txt
