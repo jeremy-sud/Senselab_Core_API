@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Confiar en todos los proxies (Cloudflare, AWS ALB) para leer cabeceras HTTPS X-Forwarded-Proto correctamente
+        $middleware->trustProxies(at: '*');
+
         $middleware->alias([
             'permission' => \App\Http\Middleware\CheckPermission::class,
             'security.headers' => \App\Http\Middleware\SecurityHeaders::class,
