@@ -72,7 +72,7 @@ class ConsultarEstadoComprobanteJob implements ShouldQueue
             }
 
             // Consultar estado en Hacienda
-            $apiClient = new HaciendaApiClient();
+            $apiClient = new HaciendaApiClient($comprobante->empresa_id);
             $response = $apiClient->consultarEstado($comprobante->clave);
 
             if (!$response['success']) {

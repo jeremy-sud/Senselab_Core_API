@@ -32,6 +32,11 @@ class OAuthTokenManager
     protected string $logoutUrl;
 
     /**
+     * ID de la empresa (Tenant)
+     */
+    protected ?int $empresaId;
+
+    /**
      * Credenciales OAuth
      *
      * @var array<string, mixed>
@@ -41,12 +46,31 @@ class OAuthTokenManager
     /**
      * Constructor
      */
-    public function __construct(string $ambiente = 'sandbox')
+    public function __construct(mixed $empresaIdOrAmbiente = null, ?string $ambiente = null)
     {
-        $this->ambiente = $ambiente;
-        $this->tokenUrl = config("hacienda.api_urls.{$ambiente}.oauth");
-        $this->logoutUrl = config("hacienda.api_urls.{$ambiente}.logout", '');
-        $this->credentials = config('hacienda.oauth');
+        if (is_string($empresaIdOrAmbiente) && in_array($empresaIdOrAmbiente, ['sandbox', 'production'])) {
+            $this->empresaId = auth()->user()->empresa_id ?? null;
+            $this->ambiente = $empresaIdOrAmbiente;
+        } else {
+            $this->empresaId = $empresaIdOrAmbiente ?? auth()->user()->empresa_id ?? null;
+            $this->ambiente = $ambiente ?? \App\Models\ConfiguracionApi::obtener('hacienda_environment', $this->empresaId, config('hacienda.environment', 'sandbox'));
+        }
+
+        $this->tokenUrl = config("hacienda.api_urls.{$this->ambiente}.oauth");
+        $this->logoutUrl = config("hacienda.api_urls.{$this->ambiente}.logout", '');
+
+        if ($this->empresaId) {
+            $this->credentials = [
+                'client_id'     => \App\Models\ConfiguracionApi::obtener('hacienda_oauth_client_id', $this->empresaId, config('hacienda.oauth.client_id', 'api-stag')),
+                'client_secret' => \App\Models\ConfiguracionApi::obtener('hacienda_oauth_client_secret', $this->empresaId, config('hacienda.oauth.client_secret', '')),
+                'grant_type'    => 'password',
+                'username'      => \App\Models\ConfiguracionApi::obtener('hacienda_oauth_username', $this->empresaId, config('hacienda.oauth.username')),
+                'password'      => \App\Models\ConfiguracionApi::obtener('hacienda_oauth_password', $this->empresaId, config('hacienda.oauth.password')),
+                'scope'         => \App\Models\ConfiguracionApi::obtener('hacienda_oauth_scope', $this->empresaId, config('hacienda.oauth.scope', '')),
+            ];
+        } else {
+            $this->credentials = config('hacienda.oauth');
+        }
 
         $this->validateCredentials();
     }

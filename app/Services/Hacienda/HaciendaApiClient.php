@@ -9,6 +9,8 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Client\Response;
 
+use App\Models\ConfiguracionApi;
+
 /**
  * Cliente HTTP para comunicación con el API de Hacienda Costa Rica
  *
@@ -16,6 +18,11 @@ use Illuminate\Http\Client\Response;
  */
 class HaciendaApiClient
 {
+    /**
+     * ID de la empresa (Tenant)
+     */
+    protected ?int $empresaId;
+
     /**
      * Ambiente actual (sandbox o production)
      */
@@ -42,14 +49,16 @@ class HaciendaApiClient
      * Constructor
      */
     public function __construct(
+        ?int $empresaId = null,
         ?string $ambiente = null,
         ?OAuthTokenManager $tokenManager = null,
         ?RateLimiter $rateLimiter = null
     ) {
-        $this->ambiente = $ambiente ?? config('hacienda.environment', 'sandbox');
+        $this->empresaId = $empresaId ?? auth()->user()->empresa_id ?? null;
+        $this->ambiente = $ambiente ?? ConfiguracionApi::obtener('hacienda_environment', $this->empresaId, config('hacienda.environment', 'sandbox'));
         $this->config = config("hacienda.api_urls.{$this->ambiente}");
         
-        $this->tokenManager = $tokenManager ?? new OAuthTokenManager($this->ambiente);
+        $this->tokenManager = $tokenManager ?? new OAuthTokenManager($this->empresaId, $this->ambiente);
         $this->rateLimiter = $rateLimiter ?? new RateLimiter();
     }
 

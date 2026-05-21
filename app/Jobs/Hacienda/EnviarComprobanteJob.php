@@ -215,7 +215,7 @@ class EnviarComprobanteJob implements ShouldQueue
      */
     protected function enviarAHacienda(ComprobanteElectronicoFe $comprobante): void
     {
-        $apiClient = new HaciendaApiClient();
+        $apiClient = new HaciendaApiClient($comprobante->empresa_id);
         $firmador = new FirmaDigitalService();
 
         // Convertir XML a Base64
