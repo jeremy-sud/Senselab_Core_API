@@ -51,19 +51,37 @@ class UsuarioAdminSeeder extends Seeder
             'eliminado' => false,
         ];
 
-        $usuarioId = DB::table('usuarios')->insertGetId($usuario);
+        // Verificar si el usuario ya existe para evitar duplicaciones
+        $existingUser = DB::table('usuarios')->where('email', 'admin@senselab.com')->first();
+        $creadoNuevo = false;
+        
+        if ($existingUser) {
+            $this->command->info('✓ El usuario admin@senselab.com ya existe en el sistema. Omitiendo creación.');
+            $usuarioId = $existingUser->id;
+        } else {
+            $usuarioId = DB::table('usuarios')->insertGetId($usuario);
+            $creadoNuevo = true;
+        }
 
         // Asignar rol de Administrador
         $rolAdmin = DB::table('roles')->where('nombre', 'Administrador')->first();
         
         if ($rolAdmin) {
-            DB::table('rol_usuario')->insert([
-                'usuario_id' => $usuarioId,
-                'rol_id' => $rolAdmin->id,
-                'activo' => true,
-                'eliminado' => false,
-            ]);
-
+            // Evitar duplicación en la asignación de rol
+            $existingRol = DB::table('rol_usuario')
+                ->where('usuario_id', $usuarioId)
+                ->where('rol_id', $rolAdmin->id)
+                ->first();
+                
+            if (!$existingRol) {
+                DB::table('rol_usuario')->insert([
+                    'usuario_id' => $usuarioId,
+                    'rol_id' => $rolAdmin->id,
+                    'activo' => true,
+                    'eliminado' => false,
+                ]);
+            }
+ 
             // Asignar TODOS los permisos al rol Administrador
             $permisos = DB::table('permisos')->where('activo', true)->where('eliminado', false)->get();
             
@@ -73,11 +91,13 @@ class UsuarioAdminSeeder extends Seeder
                     ['activo' => true]
                 );
             }
-
-            $this->command->info('✓ Usuario administrador creado exitosamente.');
-            $this->command->info('   Email: admin@senselab.com');
-            $this->command->info('   Password: admin123');
-            $this->command->info('   Rol: Administrador (con ' . count($permisos) . ' permisos)');
+ 
+            if ($creadoNuevo) {
+                $this->command->info('✓ Usuario administrador creado exitosamente.');
+                $this->command->info('   Email: admin@senselab.com');
+                $this->command->info('   Password: ' . $adminPassword);
+            }
+            $this->command->info('   Rol: Administrador (con ' . count($permisos) . ' permisos) enlazado.');
         } else {
             $this->command->error('✗ Error: Rol Administrador no encontrado.');
         }
