@@ -50,12 +50,13 @@ class FoundersSeeder extends Seeder
         // ADMINISTRADOR PRINCIPAL
         // =============================================================
         
-        // Obtener contraseña de variable de entorno o usar default
-        $adminPassword = env('ADMIN_PASSWORD', 'Senselab2024!');
+        // Obtener contraseña de variable de entorno
+        $adminPassword = env('ADMIN_PASSWORD');
         
-        if ($adminPassword === 'Senselab2024!') {
-            $this->command->warn('⚠️  ADVERTENCIA: Usando contraseña de desarrollo para Admin');
-            $this->command->warn('⚠️  Cambiar ADMIN_PASSWORD en .env para producción');
+        if (!$adminPassword) {
+            $adminPassword = Str::random(16);
+            $this->command->warn('⚠️  ADMIN_PASSWORD no está configurada en el .env. Se generó una aleatoria segura:');
+            $this->command->warn('   👉 ' . $adminPassword);
         }
         
         $admin = [
@@ -118,12 +119,13 @@ class FoundersSeeder extends Seeder
         // CO-FUNDADOR: Jeremy Arias Solano
         // =============================================================
         
-        // Obtener contraseña de variable de entorno o usar default
-        $jeremyPassword = env('FOUNDER2_PASSWORD', 'Senselab2024!');
+        // Obtener contraseña de variable de entorno
+        $jeremyPassword = env('FOUNDER2_PASSWORD');
         
-        if ($jeremyPassword === 'Senselab2024!') {
-            $this->command->warn('⚠️  ADVERTENCIA: Usando contraseña de desarrollo para Jeremy');
-            $this->command->warn('⚠️  Cambiar FOUNDER2_PASSWORD en .env para producción');
+        if (!$jeremyPassword) {
+            $jeremyPassword = Str::random(16);
+            $this->command->warn('⚠️  FOUNDER2_PASSWORD no está configurada en el .env. Se generó una aleatoria segura:');
+            $this->command->warn('   👉 ' . $jeremyPassword);
         }
         
         $jeremy = [
@@ -205,11 +207,11 @@ class FoundersSeeder extends Seeder
         $this->command->info('');
         $this->command->info('  👤 Admin Senselab');
         $this->command->info('     ✉️  admin@senselab.com');
-        $this->command->info('     🔑 Senselab2024!');
+        $this->command->info('     🔑 ' . $adminPassword);
         $this->command->info('');
         $this->command->info('  👤 Jeremy Arias Solano (Co-Fundador)');
         $this->command->info('     ✉️  jeremy@senselab.com');
-        $this->command->info('     🔑 Senselab2024!');
+        $this->command->info('     🔑 ' . $jeremyPassword);
         $this->command->info('');
         $this->command->info('  🛡️  Ambos usuarios tienen rol: Super Administrador');
         $this->command->info('  ⚠️  Cambiar contraseñas antes de pasar a producción!');

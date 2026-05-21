@@ -7,8 +7,8 @@
 
 **Clave API de Gemini expuesta en historial git**
 
-- La clave `AIzaSyBM9rUx56gUotGN8V9sRK5uhWyXTr1ELA0` fue encontrada en 3 commits del historial git.
-- Acción tomada: **Revocada y reemplazada** por una nueva clave (`AIzaSyAoZGMJ48TXcvbSFHPjUQJ6w8XRPH_jnlg`).
+- La clave anterior fue encontrada en 3 commits del historial git.
+- Acción tomada: **Revocada y reemplazada** por una nueva clave segura configurada únicamente a través de la variable de entorno `GEMINI_API_KEY` en el archivo `.env` (el cual no está comiteado en Git).
 - Recomendación: Si el repo fue público, considerar la clave anterior como comprometida y monitorear uso indebido.
 
 **Contraseñas hardcodeadas en seeders**
