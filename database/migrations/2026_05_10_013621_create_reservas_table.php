@@ -13,9 +13,13 @@ return new class extends Migration
     {
         Schema::create('reservas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('empresa_id')->constrained('empresas')->onDelete('cascade');
-            $table->foreignId('cliente_id')->constrained('clientes')->onDelete('cascade');
-            $table->foreignId('usuario_id')->nullable()->constrained('usuarios')->onDelete('set null');
+            $table->unsignedInteger('empresa_id');
+            $table->unsignedInteger('cliente_id');
+            $table->unsignedInteger('usuario_id')->nullable();
+            
+            $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
+            $table->foreign('cliente_id')->references('id')->on('clientes')->onDelete('cascade');
+            $table->foreign('usuario_id')->references('id')->on('usuarios')->onDelete('set null');
             $table->string('servicio', 150);
             $table->dateTime('fecha_inicio');
             $table->dateTime('fecha_fin');
