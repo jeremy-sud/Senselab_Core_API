@@ -42,3 +42,4 @@ credenciales_sandbox_hacienda.txt
 Homestead.json
 Homestead.yaml
 Thumbs.db
+scripts/purge_secrets.sh
