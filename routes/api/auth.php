@@ -23,12 +23,12 @@ Route::post('/login', [AuthController::class, 'login'])
     ->middleware('throttle:login');
 
 // Google OAuth
-Route::get('/google/redirect', [GoogleAuthController::class, 'redirectToGoogle'])->name('auth.google.redirect');
-Route::get('/google/callback', [GoogleAuthController::class, 'handleCallback'])->name('auth.google.callback');
+Route::get('/google/redirect', [GoogleAuthController::class, 'redirectToGoogle']);
+Route::get('/google/callback', [GoogleAuthController::class, 'handleCallback']);
 
 // Apple OAuth (el callback es POST por política de Apple form_post)
-Route::get('/apple/redirect', [AppleAuthController::class, 'redirectToApple'])->name('auth.apple.redirect');
-Route::post('/apple/callback', [AppleAuthController::class, 'handleCallback'])->name('auth.apple.callback');
+Route::get('/apple/redirect', [AppleAuthController::class, 'redirectToApple']);
+Route::post('/apple/callback', [AppleAuthController::class, 'handleCallback']);
 
 /*
 |--------------------------------------------------------------------------
