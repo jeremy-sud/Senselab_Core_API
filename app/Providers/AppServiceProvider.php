@@ -41,10 +41,13 @@ class AppServiceProvider extends ServiceProvider
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
 
-        // Register custom Carbon macro for microseconds format
-        \Illuminate\Support\Carbon::macro('iso8601Micro', function () {
+        // Register custom Carbon macro for microseconds format across all Carbon classes
+        $iso8601MicroMacro = function () {
             return $this->format('Y-m-d\TH:i:s.uP');
-        });
+        };
+        \Illuminate\Support\Carbon::macro('iso8601Micro', $iso8601MicroMacro);
+        \Carbon\Carbon::macro('iso8601Micro', $iso8601MicroMacro);
+        \Carbon\CarbonImmutable::macro('iso8601Micro', $iso8601MicroMacro);
 
         $this->configureRateLimiting();
         $this->registerWebhookEvents();
