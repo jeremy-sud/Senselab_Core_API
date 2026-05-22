@@ -42,6 +42,11 @@ require __DIR__ . '/api/observabilidad.php';
 // Autenticación (públicas y protegidas)
 require __DIR__ . '/api/auth.php';
 
+// Soporte para prefijo heredado /api/auth/* para compatibilidad de frontend (landing page)
+Route::prefix('auth')->group(function () {
+    require __DIR__ . '/api/auth.php';
+});
+
 // Compliance y GDPR
 require __DIR__ . '/api/compliance.php';
 
