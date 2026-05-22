@@ -6,6 +6,8 @@
 .env.production
 production_deployment_blueprint.md
 senselab_frontend_ideas.md
+ecosystem_integration_blueprint.md
+production_credentials_to_change.txt
 aws-pem/
 *.pem
 credenciales_sandbox_hacienda.txt
