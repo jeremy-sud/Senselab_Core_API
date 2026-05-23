@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 return [
+
     /*
     |--------------------------------------------------------------------------
     | Cross-Origin Resource Sharing (CORS) Configuration
@@ -28,10 +29,10 @@ return [
     |--------------------------------------------------------------------------
     |
     | Define qué rutas de la aplicación deben tener CORS habilitado.
-    | Recomendación: Solo rutas API, no rutas web
+    | Incluye rutas de API, Sanctum CSRF, y rutas de autenticación SSO.
     |
     */
-    'paths' => explode(',', env('CORS_PATHS', 'api/*,sanctum/csrf-cookie')),
+    'paths' => explode(',', env('CORS_PATHS', 'api/*,sanctum/csrf-cookie,login,logout')),
 
     /*
     |--------------------------------------------------------------------------
@@ -54,15 +55,18 @@ return [
     | CRITICAL: Nunca usar '*' en producción (permite todos los dominios)
     | Usar variable de entorno para cada ambiente
     |
-    | Ejemplos:
-    | - Desarrollo: http://localhost:3000, http://localhost:5173
-    | - Staging: https://app-staging.example.com
-    | - Producción: https://app.example.com
+    | Producción:
+    | - https://scisenselab.com          (portal principal)
+    | - https://app.scisenselab.com      (frontend SPA)
+    | - https://portal.scisenselab.com   (portal de inquilinos)
+    |
+    | Desarrollo:
+    | - http://localhost:3000, http://localhost:5173, http://localhost:8000
     |
     */
     'allowed_origins' => explode(',', env(
         'CORS_ALLOWED_ORIGINS',
-        'http://localhost:3000,http://localhost:5173,http://localhost:8000'
+        'https://scisenselab.com,https://app.scisenselab.com,https://portal.scisenselab.com,http://localhost:3000,http://localhost:5173,http://localhost:8000'
     )),
 
     /*
@@ -70,15 +74,15 @@ return [
     | CORS Allowed Origins Patterns
     |--------------------------------------------------------------------------
     |
-    | Para casos avanzados: permitir múltiples subdominios dinámicamente.
-    | Usar expresiones regulares cuando sea necesario.
+    | Soporte para subdominios multi-tenant B2B de forma dinámica (Regex).
+    | Permite *.scisenselab.com para cualquier subdominio de inquilino.
     |
-    | Ejemplo: /^https:\/\/(.+\.)?example\.com$/
+    | Ejemplo: empresa1.scisenselab.com, cliente-abc.scisenselab.com
     |
     */
     'allowed_origins_patterns' => array_filter([
-        // Subdominios del tenant (Multi-tenancy)
-        env('CORS_SUBDOMAIN_PATTERN'),
+        // Subdominios del tenant (Multi-tenancy) - *.scisenselab.com
+        env('CORS_SUBDOMAIN_PATTERN', '#^https://[a-zA-Z0-9\-]+\.scisenselab\.com$#'),
     ]),
 
     /*
@@ -87,12 +91,17 @@ return [
     |--------------------------------------------------------------------------
     |
     | Headers personalizados que los clientes pueden enviar.
-    | Recomendación: Ser explícito según las necesidades de la API
+    |
+    | 🚨 CLAVE: Incluye cabeceras del ecosistema Senselab:
+    | - X-Senselab-Tenant-Id: Identificador del inquilino activo (multi-tenant)
+    | - X-Tenant: Cabecera simplificada de inquilino
+    | - X-API-Key: Autenticación por API key
+    | - X-Tenant-ID: Identificador de inquilino (legacy)
     |
     */
     'allowed_headers' => explode(',', env(
         'CORS_ALLOWED_HEADERS',
-        'Content-Type,Authorization,X-Requested-With,Accept,Origin,Access-Control-Request-Method,Access-Control-Request-Headers,X-API-Key,X-Tenant-ID'
+        'Content-Type,Authorization,X-Requested-With,Accept,Origin,Access-Control-Request-Method,Access-Control-Request-Headers,X-API-Key,X-Tenant-ID,X-Senselab-Tenant-Id,X-Tenant'
     )),
 
     /*
@@ -103,10 +112,14 @@ return [
     | Headers que el navegador puede acceder en las respuestas CORS.
     | Por defecto, solo los headers "simples" están disponibles.
     |
+    | 🚨 CLAVE: Exponer headers de respuesta para que Axios/Fetch los lea:
+    | - Deprecation: Utilizada por el Sunset Middleware (RFC 8594)
+    | - Sunset: Alerta de fecha límite de apagado de endpoints (RFC 8594)
+    |
     */
     'exposed_headers' => explode(',', env(
         'CORS_EXPOSED_HEADERS',
-        'X-Total-Count,X-Page-Count,X-Current-Page,X-Per-Page,X-Request-ID,X-Response-Time'
+        'X-Total-Count,X-Page-Count,X-Current-Page,X-Per-Page,X-Request-ID,X-Response-Time,Deprecation,Sunset'
     )),
 
     /*
@@ -118,10 +131,10 @@ return [
     |
     | Valores recomendados:
     | - Desarrollo: 0 (sin caché)
-    | - Producción: 86400 (24 horas) o 604800 (7 días)
+    | - Producción: 600 (10 minutos) — balance entre UX y seguridad
     |
     */
-    'max_age' => (int) env('CORS_MAX_AGE', env('APP_ENV') === 'production' ? 86400 : 0),
+    'max_age' => (int) env('CORS_MAX_AGE', env('APP_ENV') === 'production' ? 600 : 0),
 
     /*
     |--------------------------------------------------------------------------
@@ -130,10 +143,11 @@ return [
     |
     | Si se debe permitir cookies y headers de autenticación en requests CORS.
     |
-    | SEGURIDAD CRÍTICA:
+    | 🚨 CRÍTICO para SSO multi-subdomain:
     | - Si es true: 'allowed_origins' NO puede ser '*'
-    | - Las cookies será enviadas con credenciales del usuario
-    | - SameSite cookie flag DEBE estar configurado
+    | - Las cookies de sesión serán compartidas entre subdominios
+    | - Permite autenticación multitab en *.scisenselab.com
+    | - SameSite cookie flag DEBE estar configurado en session.php
     |
     */
     'supports_credentials' => env('CORS_SUPPORTS_CREDENTIALS', true),

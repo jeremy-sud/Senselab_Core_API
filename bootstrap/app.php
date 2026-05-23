@@ -28,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
             // FASE 22: Escalabilidad
             'etag' => \App\Http\Middleware\ETagMiddleware::class,
             'tracing' => \App\Http\Middleware\TracingMiddleware::class,
+            'sunset.monitor' => \App\Http\Middleware\SunsetMonitorMiddleware::class,
         ]);
 
         // CORS - Cross-Origin Resource Sharing (FASE 1.2)
@@ -62,6 +63,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // Security Headers - OWASP Top 10 compliance (FASE 1.2)
         // Se ejecuta al final para garantizar que se apliquen a todas las respuestas
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+
+        // Sunset Monitor - Alertas de obsolescencia de API (RFC 8594)
+        $middleware->append(\App\Http\Middleware\SunsetMonitorMiddleware::class);
         
         // Sprint 8.5 - Rate Limiting (Legacy - kept for backward compatibility)
         // Los rate limiters personalizados se configuran en AppServiceProvider::boot()

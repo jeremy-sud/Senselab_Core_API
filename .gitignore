@@ -4,6 +4,7 @@
 .env
 .env.backup
 .env.production
+.env*.local
 production_deployment_blueprint.md
 senselab_frontend_ideas.md
 ecosystem_integration_blueprint.md
@@ -11,8 +12,10 @@ production_credentials_to_change.txt
 aws-pem/
 *.pem
 credenciales_sandbox_hacienda.txt
-# api_db.sql
-# *.sql
+api_db.sql
+*.sql
+*.sqlite
+*.db
 .phpactor.json
 .phpunit.result.cache
 /.fleet
@@ -30,12 +33,12 @@ credenciales_sandbox_hacienda.txt
 /vendor/_laravel_ide/
 # /. vscode (permitir configuración VS Code)
 /.zed
-# /auth.json (permitir credenciales composer)
+/auth.json
 /node_modules
 /public/build
 /public/hot
 /public/storage
-# /storage/*.key (permitir certificados)
+/storage/*.key
 /storage/app/certificates/
 /storage/pail
 # /vendor (incluir dependencias)

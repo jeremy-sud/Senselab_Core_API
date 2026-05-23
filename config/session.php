@@ -154,9 +154,13 @@ return [
     | available to. By default, the cookie will be available to the root
     | domain and all subdomains. Typically, this shouldn't be changed.
     |
+    | 🚨 SSO Multi-Subdomain: Usar comodín '.scisenselab.com' para que
+    | la cookie de sesión sea válida en app.scisenselab.com,
+    | portal.scisenselab.com, empresa.scisenselab.com, etc.
+    |
     */
 
-    'domain' => env('SESSION_DOMAIN'),
+    'domain' => env('SESSION_DOMAIN', '.scisenselab.com'),
 
     /*
     |--------------------------------------------------------------------------
@@ -167,9 +171,11 @@ return [
     | to the server if the browser has a HTTPS connection. This will keep
     | the cookie from being sent to you when it can't be done securely.
     |
+    | 🚨 SSO: Forzar HTTPS para cookies de sesión en producción.
+    |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE', null),
+    'secure' => env('SESSION_SECURE_COOKIE', true),
 
     /*
     |--------------------------------------------------------------------------
