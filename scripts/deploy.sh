@@ -75,9 +75,9 @@ git pull origin "$CURRENT_BRANCH"
 # Step 4: Run tests
 echo -e "\n${GREEN}[4/8] Running test suite...${NC}"
 if [[ "$ENVIRONMENT" == "production" ]]; then
-    docker-compose exec -T php php artisan test --stop-on-failure
+    docker-compose exec -T php vendor/bin/phpunit --stop-on-failure
 else
-    docker-compose -f docker-compose.staging.yml exec -T php php artisan test --stop-on-failure
+    docker-compose -f docker-compose.staging.yml exec -T php vendor/bin/phpunit --stop-on-failure
 fi
 
 # Step 5: Backup (only production)
