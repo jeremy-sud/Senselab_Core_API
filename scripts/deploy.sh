@@ -169,11 +169,7 @@ fi
 echo -e "\n${GREEN}[8/8] Running smoke tests...${NC}"
 
 # Health check
-if [[ "$ENVIRONMENT" == "production" ]]; then
-    HEALTH_URL="https://api.senselab-core.com/health"
-else
-    HEALTH_URL="http://localhost:8080/health"
-fi
+HEALTH_URL="http://localhost/health"
 
 for i in $(seq 1 10); do
     HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$HEALTH_URL" 2>/dev/null || echo "000")
