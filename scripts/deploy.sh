@@ -89,7 +89,7 @@ if [[ "$ENVIRONMENT" == "production" ]]; then
     # Database backup
     docker-compose exec -T mysql mysqldump \
         -u root \
-        -p"${MYSQL_ROOT_PASSWORD}" \
+        -p"${MYSQL_ROOT_PASSWORD:-$DB_ROOT_PASSWORD}" \
         "${DB_DATABASE}" > "$BACKUP_DIR/database.sql"
     
     # Files backup
