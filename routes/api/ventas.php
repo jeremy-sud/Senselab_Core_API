@@ -49,7 +49,7 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     Route::get('/ventas', [VentaController::class, 'index'])
         ->middleware('permission:ver-ventas');
     Route::post('/ventas', [VentaController::class, 'store'])
-        ->middleware(['permission:crear-ventas', 'throttle:60,1']);
+        ->middleware(['permission:crear-ventas', 'throttle:60,1', 'enforce.limits:invoice']);
     Route::post('/ventas/reportes/pdf', [VentaController::class, 'generatePdfReport'])
         ->middleware(['permission:ver-ventas', 'throttle:reports']);
     Route::get('/ventas/{venta}', [VentaController::class, 'show'])

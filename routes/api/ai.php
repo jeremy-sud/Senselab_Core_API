@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth:sanctum', 'throttle:120,1'])->prefix('ai')->group(function () {
+Route::middleware(['auth:sanctum', 'throttle:120,1', 'enforce.limits:ai'])->prefix('ai')->group(function () {
 
     // ------------------------------------------------------------------------
     // OCR - Escaneo de Facturas con GPT-4 Vision

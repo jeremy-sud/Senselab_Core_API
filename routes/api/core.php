@@ -59,7 +59,9 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     // ------------------------------------------------------------------------
     // MÓDULO: USUARIOS
     // ------------------------------------------------------------------------
-    Route::apiResource('usuarios', UsuarioController::class);
+    Route::post('/usuarios', [UsuarioController::class, 'store'])
+        ->middleware(['permission:crear-usuarios', 'enforce.limits:user']);
+    Route::apiResource('usuarios', UsuarioController::class)->except(['store']);
     Route::post('/usuarios/{usuario}/cambiar-password', [UsuarioController::class, 'cambiarPassword'])
         ->middleware('permission:editar-usuarios');
     Route::post('/usuarios/{usuario}/toggle-activo', [UsuarioController::class, 'toggleActivo'])

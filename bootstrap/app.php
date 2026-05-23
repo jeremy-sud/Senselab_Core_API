@@ -29,6 +29,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'etag' => \App\Http\Middleware\ETagMiddleware::class,
             'tracing' => \App\Http\Middleware\TracingMiddleware::class,
             'sunset.monitor' => \App\Http\Middleware\SunsetMonitorMiddleware::class,
+            // Suscripciones y Límites SaaS (Hito 3)
+            'enforce.limits' => \App\Http\Middleware\EnforceTenantPlanLimits::class,
         ]);
 
         // CORS - Cross-Origin Resource Sharing (FASE 1.2)

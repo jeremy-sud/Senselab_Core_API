@@ -9,6 +9,7 @@
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\GoogleAuthController;
 use App\Http\Controllers\API\AppleAuthController;
+use App\Http\Controllers\API\TenantSubscriptionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -45,4 +46,8 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
             'permissions' => $request->user()->getAllPermissions()
         ]);
     });
+
+    // Endpoints v5 - Suscripciones y Monitoreo de Límites SaaS (Hito 3)
+    Route::get('/v5/user/profile', [TenantSubscriptionController::class, 'getProfile']);
+    Route::post('/v5/billing/subscription/upgrade', [TenantSubscriptionController::class, 'upgradeSubscription']);
 });
