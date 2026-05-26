@@ -226,5 +226,24 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerPolicies();
+
+        // Puente entre el sistema de Gate nativo de Laravel y las tablas RBAC de la base de datos
+        Gate::before(function ($user, $ability) {
+            if ($user instanceof \App\Models\Usuario) {
+                if (is_string($ability)) {
+                    // Mapeo de habilidades inglesas/estándar a slugs de base de datos en español
+                    $mappedAbility = match ($ability) {
+                        'create-webhooks' => 'crear-webhooks',
+                        'update-webhooks' => 'editar-webhooks',
+                        'delete-webhooks' => 'eliminar-webhooks',
+                        'view-webhooks' => 'ver-webhooks',
+                        default => $ability,
+                    };
+                    if ($user->hasPermission($mappedAbility)) {
+                        return true;
+                    }
+                }
+            }
+        });
     }
 }

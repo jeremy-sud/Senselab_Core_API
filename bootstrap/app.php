@@ -1,5 +1,43 @@
 <?php
 
+// Polyfill para la extensión bcmath si no está instalada en el entorno actual
+if (!function_exists('bcadd')) {
+    function bcadd($num1, $num2, $scale = null) {
+        $res = (float)$num1 + (float)$num2;
+        return $scale !== null ? number_format($res, $scale, '.', '') : (string)$res;
+    }
+}
+if (!function_exists('bcsub')) {
+    function bcsub($num1, $num2, $scale = null) {
+        $res = (float)$num1 - (float)$num2;
+        return $scale !== null ? number_format($res, $scale, '.', '') : (string)$res;
+    }
+}
+if (!function_exists('bcmul')) {
+    function bcmul($num1, $num2, $scale = null) {
+        $res = (float)$num1 * (float)$num2;
+        return $scale !== null ? number_format($res, $scale, '.', '') : (string)$res;
+    }
+}
+if (!function_exists('bcdiv')) {
+    function bcdiv($num1, $num2, $scale = null) {
+        if ((float)$num2 == 0.0) return '0';
+        $res = (float)$num1 / (float)$num2;
+        return $scale !== null ? number_format($res, $scale, '.', '') : (string)$res;
+    }
+}
+if (!function_exists('bccomp')) {
+    function bccomp($num1, $num2, $scale = null) {
+        $n1 = (float)$num1;
+        $n2 = (float)$num2;
+        if ($scale !== null) {
+            $n1 = round($n1, $scale);
+            $n2 = round($n2, $scale);
+        }
+        return $n1 <=> $n2;
+    }
+}
+
 use App\Exceptions\DomainException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;

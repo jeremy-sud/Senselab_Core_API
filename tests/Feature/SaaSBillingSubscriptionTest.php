@@ -32,6 +32,12 @@ class SaaSBillingSubscriptionTest extends TestCase
         $this->seedRoles();
         $this->seedPermisos();
 
+        // Crear empresa dummy para ocupar el ID 1 y evitar falsos positivos como administrador global
+        $this->createEmpresa([
+            'nombre' => 'Dummy Admin Company',
+            'email' => 'dummy@scisenselab.com',
+        ]);
+
         // Crear empresa de prueba
         $this->empresa = $this->createEmpresa([
             'nombre' => 'Test Company S.A.',
@@ -116,8 +122,8 @@ class SaaSBillingSubscriptionTest extends TestCase
             'nombre' => 'Segundo',
             'apellidos' => 'Usuario',
             'email' => 'segundo@scisenselab.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
+            'password' => 'Password123!',
+            'password_confirmation' => 'Password123!',
             'empresa_id' => $this->empresa->id,
             'cargo_id' => null,
             'activo' => true,
@@ -145,11 +151,38 @@ class SaaSBillingSubscriptionTest extends TestCase
             ]
         );
 
+        $sucursal = $this->createSucursal($this->empresa);
+        $cliente = \App\Models\Cliente::create([
+            'empresa_id' => $this->empresa->id,
+            'tipo_identificacion' => '01',
+            'numero_identificacion' => '1-1234-5678',
+            'nombre' => 'Cliente',
+            'apellidos' => 'Test',
+            'email' => 'cliente@test.com',
+            'telefono' => '8888-9999',
+            'activo' => true,
+            'eliminado' => false
+        ]);
+        $almacen = \App\Models\Almacen::create([
+            'empresa_id' => $this->empresa->id,
+            'nombre' => 'Almacén Principal',
+            'codigo' => 'ALM-001',
+            'activo' => true,
+            'eliminado' => false
+        ]);
+        $formaPago = $this->getFormaPago();
+
         $response = $this->authenticatedJson('POST', '/api/ventas', [
-            'nombre_cliente' => 'Cliente Test',
-            'num_identificacion_cliente' => '1-1111-1111',
-            'moneda' => 'CRC',
-            'tipo_cambio' => 1.0,
+            'empresa_id' => $this->empresa->id,
+            'cliente_id' => $cliente->id,
+            'sucursal_id' => $sucursal->id,
+            'usuario_id' => $this->usuario->id,
+            'forma_pago_id' => $formaPago->id,
+            'almacen_id' => $almacen->id,
+            'fecha_venta' => now()->format('Y-m-d'),
+            'tipo_comprobante' => 'factura',
+            'tipo_pago' => 'Contado',
+            'estado' => 'Completada',
             'detalles' => [
                 [
                     'producto_id' => $this->getProductMock()->id,

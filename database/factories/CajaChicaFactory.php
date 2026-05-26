@@ -21,7 +21,7 @@ class CajaChicaFactory extends Factory
             'nombre' => 'Caja Chica ' . implode(' ', $this->faker->words(2)),
             'monto_inicial' => $montoInicial = $this->faker->randomFloat(2, 5000, 50000),
             'saldo_actual' => $this->faker->randomFloat(2, 0, $montoInicial),
-            'responsable_id' => Usuario::factory(),
+            'responsable_id' => \App\Models\Empleado::factory(),
             'fecha_apertura' => $fechaApertura,
             'fecha_cierre' => $estado !== 'Abierta' ? $this->faker->dateTimeBetween($fechaApertura, 'now') : null,
             'estado' => $estado,

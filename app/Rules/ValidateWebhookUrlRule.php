@@ -172,16 +172,35 @@ class ValidateWebhookUrlRule implements ValidationRule
      */
     private function resolveHostToIp(string $host): string|false
     {
-        // Usar getaddrinfo para soporte IPv6
-        $result = getaddrinfo($host, null, AF_UNSPEC, SOCK_STREAM);
-
-        if ($result === false) {
-            return false;
+        // Si ya es una IP (v4 o v6), no necesita resolución
+        if (filter_var($host, FILTER_VALIDATE_IP)) {
+            return $host;
         }
 
-        // Retornar la primera IP
-        if (is_array($result) && count($result) > 0) {
-            return $result[0]['addr'];
+        // Intentar resolver usando dns_get_record para IPv6 (AAAA) primero
+        try {
+            $records = @dns_get_record($host, DNS_AAAA);
+            if (is_array($records) && count($records) > 0 && isset($records[0]['ipv6'])) {
+                return $records[0]['ipv6'];
+            }
+        } catch (\Throwable $e) {
+            // Ignorar y continuar con IPv4
+        }
+
+        // Intentar resolver usando dns_get_record para IPv4 (A)
+        try {
+            $records = @dns_get_record($host, DNS_A);
+            if (is_array($records) && count($records) > 0 && isset($records[0]['ip'])) {
+                return $records[0]['ip'];
+            }
+        } catch (\Throwable $e) {
+            // Ignorar y continuar con fallback
+        }
+
+        // Fallback estándar de PHP (IPv4)
+        $ip = @gethostbyname($host);
+        if ($ip !== $host && filter_var($ip, FILTER_VALIDATE_IP)) {
+            return $ip;
         }
 
         return false;

@@ -50,7 +50,7 @@ class SeederIntegrityTest extends BaseTestCase
             'tipos_cuentas' => 8,
             'unidades_medida' => 11,
             'cargos' => 13,
-            'permisos' => 72,
+            'permisos' => 76,
             'roles' => 8,
             'tipos_comprobantes_fe' => 10,
             'tipos_impuesto' => 6,

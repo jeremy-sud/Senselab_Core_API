@@ -146,6 +146,9 @@ abstract class TestCase extends BaseTestCase
                     $usuario->roles()->attach($rol->id);
                 }
             }
+            if (method_exists($usuario, 'clearPermissionCache')) {
+                $usuario->clearPermissionCache();
+            }
         }
 
         return $usuario;
@@ -572,7 +575,15 @@ abstract class TestCase extends BaseTestCase
     protected function assignAllPermissionsToRole(Rol $rol): void
     {
         $permisos = Permiso::all()->pluck('id')->toArray();
-        $rol->permisos()->sync($permisos); // Usa sync en lugar de attach para evitar duplicados
+        if (method_exists($rol, 'syncPermissions')) {
+            $rol->syncPermissions($permisos);
+        } else {
+            $syncData = [];
+            foreach ($permisos as $permisoId) {
+                $syncData[$permisoId] = ['activo' => true];
+            }
+            $rol->permisos()->sync($syncData);
+        }
     }
 
     /**
