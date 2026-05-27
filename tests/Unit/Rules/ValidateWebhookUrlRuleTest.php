@@ -22,7 +22,7 @@ class ValidateWebhookUrlRuleTest extends TestCase
     {
         $validator = Validator::make(
             ['webhook_url' => $url],
-            ['webhook_url' => $this->rule]
+            ['webhook_url' => ['required', $this->rule]]
         );
 
         $this->assertTrue($validator->fails());

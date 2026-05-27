@@ -17,10 +17,12 @@ final class ClassifyProductDTO
 
     public static function fromRequest(Request $request): self
     {
+        $data = method_exists($request, 'validated') ? $request->validated() : [];
+        
         return new self(
-            description: $request->validated('description'),
-            category_hint: $request->validated('category_hint'),
-            max_suggestions: $request->validated('max_suggestions'),
+            description: $data['description'] ?? $request->input('description') ?? '',
+            category_hint: $data['category_hint'] ?? $request->input('category_hint'),
+            max_suggestions: $data['max_suggestions'] ?? $request->input('max_suggestions'),
         );
     }
 

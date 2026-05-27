@@ -18,8 +18,10 @@ final class BatchClassifyDTO
 
     public static function fromRequest(Request $request): self
     {
+        $data = method_exists($request, 'validated') ? $request->validated() : [];
+        
         return new self(
-            products: $request->validated('products'),
+            products: $data['products'] ?? $request->input('products') ?? [],
         );
     }
 

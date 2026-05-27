@@ -49,12 +49,17 @@ class HaciendaApiClient
      * Constructor
      */
     public function __construct(
-        ?int $empresaId = null,
+        int|string|null $empresaId = null,
         ?string $ambiente = null,
         ?OAuthTokenManager $tokenManager = null,
         ?RateLimiter $rateLimiter = null
     ) {
-        $this->empresaId = $empresaId ?? auth()->user()->empresa_id ?? null;
+        if (is_string($empresaId) && in_array($empresaId, ['sandbox', 'production'])) {
+            $ambiente = $empresaId;
+            $empresaId = null;
+        }
+
+        $this->empresaId = $empresaId !== null ? (int) $empresaId : (auth()->user()->empresa_id ?? null);
         $this->ambiente = $ambiente ?? ConfiguracionApi::obtener('hacienda_environment', $this->empresaId, config('hacienda.environment', 'sandbox'));
         $this->config = config("hacienda.api_urls.{$this->ambiente}");
         
