@@ -346,19 +346,24 @@ class ConfiguracionController extends Controller
         $actualizadas = 0;
 
         foreach ($request->configuraciones as $config) {
-            $configuracion = Configuracion::where('empresa_id', $empresaId)
-                ->where('clave', $config['clave'])
-                ->first();
-
-            if ($configuracion) {
-                $configuracion->update(['valor' => $config['valor']]);
-                $actualizadas++;
-            }
+            Configuracion::updateOrCreate(
+                [
+                    'empresa_id' => $empresaId,
+                    'clave' => $config['clave'],
+                ],
+                [
+                    'valor' => $config['valor'],
+                    'tipo_dato' => 'string'
+                ]
+            );
+            $actualizadas++;
         }
+
+        $this->flushCache();
 
         return response()->json([
             'success' => true,
-            'message' => "Se actualizaron {$actualizadas} configuraciones exitosamente",
+            'message' => "Se actualizaron e inicializaron {$actualizadas} configuraciones exitosamente",
             'total_actualizadas' => $actualizadas
         ]);
     }
