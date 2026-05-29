@@ -95,3 +95,6 @@ require __DIR__ . '/api/ai.php';
 
 // Reservas
 require __DIR__ . '/api/reservas.php';
+
+// Portal B2B - Tenant Management (portal.scisenselab.com)
+require __DIR__ . '/api/tenant.php';
