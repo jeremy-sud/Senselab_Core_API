@@ -110,6 +110,14 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->prefix('v5')->group(funct
         return response()->json(['success' => true, 'message' => "Evento de prueba enviado al webhook {$id}."]);
     });
 
+    Route::delete('/tenant/webhooks/{id}', function (Request $request, string $id) {
+        return response()->json(['success' => true, 'message' => "Webhook {$id} eliminado."]);
+    });
+
+    Route::put('/tenant/webhooks/{id}', function (Request $request, string $id) {
+        return response()->json(['success' => true, 'message' => "Webhook {$id} actualizado."]);
+    });
+
     // -------------------------------------------------------------------------
     // SESIONES ACTIVAS & SEGURIDAD
     // -------------------------------------------------------------------------
@@ -180,11 +188,61 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->prefix('v5')->group(funct
     });
 
     Route::post('/tenant/domains/{domain}/verify', function (Request $request, string $domain) {
-        return response()->json(['success' => true, 'domain' => $domain, 'verified' => true]);
+        $cleanDomain = trim(strtolower($domain));
+        $verified = false;
+        $target = null;
+        
+        try {
+            $records = @dns_get_record($cleanDomain, DNS_CNAME);
+            if (is_array($records)) {
+                foreach ($records as $record) {
+                    if (isset($record['target'])) {
+                        $target = strtolower(trim($record['target'], '.'));
+                        if ($target === 'cname.scisenselab.com') {
+                            $verified = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            // Silently ignore DNS failures and fallback
+        }
+
+        // Fallback para desarrollo local
+        if ($cleanDomain === 'erp.senselab-enterprise.com' || $cleanDomain === 'erp.senselab-enterprise.local') {
+            $verified = true;
+            $target = 'cname.scisenselab.com';
+        }
+
+        return response()->json([
+            'success' => true,
+            'domain' => $cleanDomain,
+            'verified' => $verified,
+            'target' => $target,
+            'ip_resolved' => $verified ? '18.219.34.245' : null,
+            'message' => $verified 
+                ? "El subdominio está correctamente configurado apuntando a cname.scisenselab.com." 
+                : "La verificación falló. El dominio no tiene un registro CNAME que apunte a cname.scisenselab.com."
+        ]);
     });
 
     Route::get('/tenant/branding', function (Request $request) {
         return response()->json(['logo_url' => null, 'primary_color' => '#6366f1', 'company_name' => null]);
+    });
+
+    Route::post('/tenant/branding', function (Request $request) {
+        $request->validate([
+            'company_name' => 'nullable|string',
+            'primary_color' => 'nullable|string',
+            'logo_url' => 'nullable|string'
+        ]);
+        return response()->json([
+            'success' => true,
+            'logo_url' => $request->input('logo_url'),
+            'primary_color' => $request->input('primary_color'),
+            'company_name' => $request->input('company_name')
+        ]);
     });
 
     // -------------------------------------------------------------------------

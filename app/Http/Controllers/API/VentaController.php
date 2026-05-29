@@ -96,6 +96,7 @@ class VentaController extends Controller
         try {
             $dto = VentaCreateDTO::fromRequest($request);
             $venta = $this->ventaService->crear($dto);
+            $venta->load('facturaElectronica');
 
             return response()->json([
                 'data' => VentaResource::make($venta)->resolve()

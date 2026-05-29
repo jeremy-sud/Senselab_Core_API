@@ -82,6 +82,50 @@ class VentaService
                 'monto_impuesto_total' => $totales['impuestos'],
                 'monto_total_venta' => ($totales['subtotal'] - $totales['descuentos']) + $totales['impuestos'],
             ]);
+
+            // Generar ComprobanteElectronicoFe correspondiente para el flujo de Hacienda
+            $tipoDoc = $venta->tipo_comprobante === 'tiquete' ? '04' : '01';
+            $fechaEmision = \Carbon\Carbon::now();
+            $compService = app(\App\Services\ComprobanteElectronicoService::class);
+            $consecutivo = $compService->generarConsecutivo($tipoDoc, $venta->empresa_id);
+            $generadorClave = new \App\Services\Hacienda\ClaveNumericaGenerator();
+            
+            $identificacionDgt = $venta->empresa->num_identificacion_dgt ?? '310112345678';
+            $clave = $generadorClave->generar($fechaEmision, $identificacionDgt, $consecutivo, '1');
+
+            \App\Models\ComprobanteElectronicoFe::create([
+                'empresa_id' => $venta->empresa_id,
+                'tipo_documento' => $tipoDoc,
+                'clave' => $clave,
+                'consecutivo' => $consecutivo,
+                'fecha_emision' => $fechaEmision,
+                'condicion_venta' => $venta->plazo_credito_dias > 0 ? '02' : '01',
+                'plazo_credito' => $venta->plazo_credito_dias,
+                'medio_pago' => '01',
+                'receptor_nombre' => $venta->cliente->nombre,
+                'receptor_tipo_identificacion' => $venta->cliente->tipo_identificacion ?? '01',
+                'receptor_numero_identificacion' => $venta->cliente->identificacion,
+                'receptor_email' => $venta->cliente->email,
+                'moneda' => $venta->moneda ?? 'CRC',
+                'tipo_cambio' => $venta->tipo_cambio ?? 1.00000,
+                'total_servicios_gravados' => $totales['subtotal'],
+                'total_gravado' => $totales['subtotal'],
+                'total_venta' => $totales['subtotal'],
+                'total_descuentos' => $totales['descuentos'],
+                'total_venta_neta' => $totales['subtotal'] - $totales['descuentos'],
+                'total_impuesto' => $totales['impuestos'],
+                'total_comprobante' => ($totales['subtotal'] - $totales['descuentos']) + $totales['impuestos'],
+                'estado' => 'pendiente',
+                'situacion' => '1',
+            ]);
+
+            // Vincular la clave de vuelta a la Venta
+            $venta->update([
+                'clave_numerica_hacienda' => $clave,
+                'consecutivo_hacienda' => $consecutivo,
+                'estado_hacienda' => 'pendiente',
+                'fecha_emision_hacienda' => $fechaEmision,
+            ]);
             
             DB::commit();
 

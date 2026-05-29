@@ -171,6 +171,14 @@ class Venta extends Model
     }
 
     /**
+     * Relación con el comprobante electrónico (Facturación Electrónica DGT).
+     */
+    public function facturaElectronica(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(ComprobanteElectronicoFe::class, 'clave', 'clave_numerica_hacienda');
+    }
+
+    /**
      * Scope para filtrar solo los registros activos.
      */
     public function scopeActivos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
