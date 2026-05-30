@@ -47,7 +47,8 @@
         "phpoffice/phpspreadsheet": "^5.5",
         "robrichards/xmlseclibs": "^3.1",
         "sentry/sentry-laravel": "^4.20",
-        "spatie/laravel-multitenancy": "^4.0"
+        "spatie/laravel-multitenancy": "^4.0",
+        "symfony/mime": "^7.4.12"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
