@@ -1668,9 +1668,9 @@
             'dev_requirement' => false,
         ),
         'symfony/mime' => array(
-            'pretty_version' => 'v7.3.4',
-            'version' => '7.3.4.0',
-            'reference' => 'b1b828f69cbaf887fa835a091869e55df91d0e35',
+            'pretty_version' => 'v7.4.13',
+            'version' => '7.4.13.0',
+            'reference' => 'a845722765c4f6b2ce88beaf4f4479975b186770',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/mime',
             'aliases' => array(),
