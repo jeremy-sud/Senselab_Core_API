@@ -1,7 +1,7 @@
 # 🔐 Guía de Seguridad - Senselab Core API
 
-> **Última actualización:** 17 de Abril de 2026  
-> **Versión:** 5.0.1  
+> **Última actualización:** 30 de Mayo de 2026  
+> **Versión:** 5.1.1  
 > **Clasificación:** Documento Interno de Seguridad  
 > **Auditor:** Verificación de Código Actual + Mejoras Implementadas (FASE 1-22)
 
@@ -606,22 +606,23 @@ Respondemos en máximo 48 horas hábiles.
 
 ---
 
-## 📊 Estado de Seguridad (Marzo 2026)
+## 📊 Estado de Seguridad (Mayo 2026)
 
 | Métrica | Valor |
 |---------|-------|
 | PHPStan | Level 8, **0 errores** |
-| Tests | **997 passing** (100%) |
+| Tests | **1620+ passing** (100%) |
 | OWASP Top 10 | **10/10 cubiertos** |
-| Políticas RBAC | **80+** |
+| Políticas RBAC | **82+** |
 | Campos encriptados | **30+** (AES-256-CBC) |
 | Rate limiters | **7** independientes |
 | Security headers | **8** (OWASP compliant) |
-| CI/CD workflows | **7** (incluye quality gates) |
+| CI/CD workflows | **9** (incluye quality gates) |
 | Excepciones dominio | **11** tipadas con handler |
-| Contract tests | **6** (Pact PHP) |
+| Contract tests | **7** (Pact PHP) |
 | Mutation testing | MSI ≥ 50%, Covered ≥ 70% |
+| Vulnerabilidades (Dependabot) | **0 vulnerabilidades activas** (32 resueltas) |
 
 ---
 
-*Documento mantenido por Senselab — Actualizado v4.2.0, 10 de abril de 2026*
+*Documento mantenido por Senselab — Actualizado v5.1.1, 30 de mayo de 2026*

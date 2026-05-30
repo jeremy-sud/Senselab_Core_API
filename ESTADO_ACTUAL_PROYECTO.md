@@ -1,11 +1,12 @@
 # Estado Actual del Proyecto - Senselab Core API
 
-**Fecha de actualización:** 10 de mayo 2026  
+**Fecha de actualización:** 30 de mayo 2026  
 **Desarrollado por:** Senselab  
 **Desarrollador principal:** Jeremy Arias Solano  
-**Versión actual:** v5.1.0 (Validación Totales FE + Módulo Reservas)
+**Versión actual:** v5.1.1 (Mitigación Vulnerabilidades Dependabot)
 
 > **Historial de versiones:**
+> - v5.1.1: Mitigación de 32 vulnerabilidades de severidad alta reportadas por GitHub Dependabot. Actualizados axios (^1.15.1), vite (^7.3.2), rollup (^4.59.0), tar (^7.5.11), symfony/mime (^7.4.12) y sonarqube-scan-action (@v6).
 > - v5.1.0: Validación de totales de Facturación Electrónica implementada, nuevo módulo de Reservas creado. Deuda técnica DT-10 y DT-11 resuelta (Tests N+1 y tenant_id en logs globales).
 > - v5.0.2: Deuda técnica — Service Layer en 4 controllers (RolPermiso, RolUsuario, ComplianceDashboard, ComprobanteElectronico), timestamps español en 4 modelos, auditoría Hacienda H-1 a H-10
 > - v5.0.1: Post-auditoría — Validación SSRF webhooks, Swagger reporting (+14 anotaciones), test UseReadReplica (+9 tests), fix imports, deuda técnica DT-7/DT-8/DT-9 resuelta

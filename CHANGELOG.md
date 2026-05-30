@@ -5,6 +5,27 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [v5.1.1] — 2026-05-30 — Mitigación de Vulnerabilidades de Seguridad Dependabot
+
+### Seguridad
+- **Resolución de Vulnerabilidades de Severidad Alta:** Se actualizaron y remediaron 32 vulnerabilidades de severidad alta reportadas por GitHub Dependabot:
+  - **Vite [CVE-2026-39364 y CVE-2026-39363]:** Actualizado de `v7.2.6` a `v7.3.3` (Arbitrary File Read y `server.fs.deny` bypass solucionados).
+  - **Axios [CVE-2025-62718 y CVE-2026-42043]:** Actualizado de `v1.13.2` a `v1.16.1` (SSRF loopback subnet bypass, DoS y Prototype Pollution resueltos).
+  - **Rollup 4 [CVE-2026-27606]:** Actualizada dependencia transitiva de `vite` a `v4.60.4` (Arbitrary File Write via Path Traversal mitigado).
+  - **tar / node-tar [CVE-2026-31802 y CVE-2026-29786]:** Actualizada dependencia transitiva de `surge` a `v7.5.15` (Hardlink/Symlink Path Traversal mitigado).
+  - **symfony/mime [CVE-2026-45067]:** Añadido explícitamente en `composer.json` y actualizado a `v7.4.13` (Email Header/SMTP Command Injection solucionado).
+  - **SonarQube Scan Action [CVE-2025-58178 y CVE-2025-59844]:** Actualizada acción en `.github/workflows/code-analysis.yml` a `@v6` (Argument Injection mitigado).
+
+### Despliegue
+- **Hardening en Producción (AWS EC2):** Actualización y regeneración de imágenes de Docker con limpieza de caché (`docker compose build --no-cache`), recreación de contenedores y optimización de cachés/rutas de Laravel en producción.
+
+## [v5.1.0] — 2026-05-10 — Validación Totales Facturación Electrónica & Módulo Reservas
+
+### Agregado
+- **Validación de Totales FE:** Implementación de validación avanzada de totales en Facturación Electrónica de Costa Rica.
+- **Módulo de Reservas:** Nuevo módulo de reservas de servicios y asignación.
+- **Resolución Deuda Técnica:** Solución de DT-10 y DT-11 (detección y optimización de consultas N+1 en tests, e integración de `tenant_id` en el canal de logs globales).
+
 ## [v5.0.2] — 2026-04-17 — Auditoría Firma Digital Hacienda: 10 hallazgos resueltos
 
 ### Seguridad
