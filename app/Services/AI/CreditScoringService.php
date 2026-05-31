@@ -301,7 +301,7 @@ class CreditScoringService
         $primeraCompra = DB::table('ventas')
             ->where('cliente_id', $clienteId)
             ->where('empresa_id', $this->empresaId)
-            ->min('fecha');
+            ->min('fecha_venta');
 
         $diasCliente = $primeraCompra
             ? Carbon::parse($primeraCompra)->diffInDays(Carbon::now())
@@ -319,7 +319,7 @@ class CreditScoringService
         $comprasRecientes = DB::table('ventas')
             ->where('cliente_id', $clienteId)
             ->where('empresa_id', $this->empresaId)
-            ->where('fecha', '>=', Carbon::now()->subMonths(6))
+            ->where('fecha_venta', '>=', Carbon::now()->subMonths(6))
             ->count();
 
         // Cuentas por cobrar

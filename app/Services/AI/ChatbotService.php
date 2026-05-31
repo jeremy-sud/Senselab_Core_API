@@ -236,16 +236,16 @@ PROMPT;
 
             return [
                 'hoy' => [
-                    'total' => $query->clone()->whereDate('created_at', $hoy)->sum('monto_total_venta'),
-                    'cantidad' => $query->clone()->whereDate('created_at', $hoy)->count(),
+                    'total' => $query->clone()->whereDate('fecha_venta', $hoy)->sum('monto_total_venta'),
+                    'cantidad' => $query->clone()->whereDate('fecha_venta', $hoy)->count(),
                 ],
                 'semana' => [
-                    'total' => $query->clone()->where('created_at', '>=', $inicioSemana)->sum('monto_total_venta'),
-                    'cantidad' => $query->clone()->where('created_at', '>=', $inicioSemana)->count(),
+                    'total' => $query->clone()->where('fecha_venta', '>=', $inicioSemana)->sum('monto_total_venta'),
+                    'cantidad' => $query->clone()->where('fecha_venta', '>=', $inicioSemana)->count(),
                 ],
                 'mes' => [
-                    'total' => $query->clone()->where('created_at', '>=', $inicioMes)->sum('monto_total_venta'),
-                    'cantidad' => $query->clone()->where('created_at', '>=', $inicioMes)->count(),
+                    'total' => $query->clone()->where('fecha_venta', '>=', $inicioMes)->sum('monto_total_venta'),
+                    'cantidad' => $query->clone()->where('fecha_venta', '>=', $inicioMes)->count(),
                 ],
             ];
         });
@@ -336,7 +336,7 @@ PROMPT;
             $query = DB::table('detalle_ventas')
                 ->join('ventas', 'detalle_ventas.venta_id', '=', 'ventas.id')
                 ->join('productos', 'detalle_ventas.producto_id', '=', 'productos.id')
-                ->where('ventas.created_at', '>=', $inicioMes)
+                ->where('ventas.fecha_venta', '>=', $inicioMes)
                 ->where('ventas.estado', '!=', 'anulada');
 
             if ($this->empresaId) {
@@ -370,7 +370,7 @@ PROMPT;
 
             $query = DB::table('ventas')
                 ->join('clientes', 'ventas.cliente_id', '=', 'clientes.id')
-                ->where('ventas.created_at', '>=', $inicioMes)
+                ->where('ventas.fecha_venta', '>=', $inicioMes)
                 ->where('ventas.estado', '!=', 'anulada');
 
             if ($this->empresaId) {
@@ -428,7 +428,7 @@ PROMPT;
         return Cache::remember($cacheKey, 300, function () {
             $hoy = Carbon::today();
 
-            $ventasQuery = Venta::whereDate('created_at', $hoy);
+            $ventasQuery = Venta::whereDate('fecha_venta', $hoy);
             if ($this->empresaId) {
                 $ventasQuery->where('empresa_id', $this->empresaId);
             }
@@ -454,7 +454,7 @@ PROMPT;
         return Cache::remember($cacheKey, 600, function () {
             $inicioMes = Carbon::now()->startOfMonth();
 
-            $ventasQuery = Venta::where('created_at', '>=', $inicioMes);
+            $ventasQuery = Venta::where('fecha_venta', '>=', $inicioMes);
             if ($this->empresaId) {
                 $ventasQuery->where('empresa_id', $this->empresaId);
             }

@@ -168,7 +168,7 @@ class PredictionService
                 ->leftJoin('ventas as v', function ($join) {
                     $join->on('dv.venta_id', '=', 'v.id')
                         ->where('v.empresa_id', '=', $this->empresaId)
-                        ->where('v.fecha', '>=', Carbon::now()->subMonths(3));
+                        ->where('v.fecha_venta', '>=', Carbon::now()->subMonths(3));
                 })
                 ->where('p.empresa_id', $this->empresaId)
                 ->where('p.activo', true)
@@ -350,11 +350,11 @@ PROMPT;
                 ->join('productos as p', 'dv.producto_id', '=', 'p.id')
                 ->leftJoin('categorias as c', 'p.categoria_id', '=', 'c.id')
                 ->where('v.empresa_id', $this->empresaId)
-                ->where('v.fecha', '>=', $startDate)
-                ->groupBy(DB::raw('YEAR(v.fecha)'), DB::raw('MONTH(v.fecha)'), 'c.id', 'c.nombre')
+                ->where('v.fecha_venta', '>=', $startDate)
+                ->groupBy(DB::raw('YEAR(v.fecha_venta)'), DB::raw('MONTH(v.fecha_venta)'), 'c.id', 'c.nombre')
                 ->select([
-                    DB::raw('YEAR(v.fecha) as ano'),
-                    DB::raw('MONTH(v.fecha) as mes'),
+                    DB::raw('YEAR(v.fecha_venta) as ano'),
+                    DB::raw('MONTH(v.fecha_venta) as mes'),
                     'c.id as categoria_id',
                     DB::raw('COALESCE(c.nombre, "Sin categoría") as categoria'),
                     DB::raw('SUM(dv.cantidad) as unidades'),
@@ -441,14 +441,14 @@ PROMPT;
             // Obtener ventas diarias históricas
             $dailySales = DB::table('ventas')
                 ->where('empresa_id', $this->empresaId)
-                ->where('fecha', '>=', $startDate)
-                ->groupBy('fecha')
+                ->where('fecha_venta', '>=', $startDate)
+                ->groupBy('fecha_venta')
                 ->select([
-                    'fecha',
+                    'fecha_venta',
                     DB::raw('SUM(monto_total_venta) as total'),
                     DB::raw('COUNT(*) as num_ventas'),
                 ])
-                ->orderBy('fecha')
+                ->orderBy('fecha_venta')
                 ->get();
             
             if ($dailySales->count() < 30) {
@@ -481,7 +481,7 @@ PROMPT;
             // Análisis por día de semana
             $byDayOfWeek = [];
             foreach ($dailySales as $sale) {
-                $dayOfWeek = Carbon::parse($sale->fecha)->dayOfWeek;
+                $dayOfWeek = Carbon::parse($sale->fecha_venta)->dayOfWeek;
                 if (!isset($byDayOfWeek[$dayOfWeek])) {
                     $byDayOfWeek[$dayOfWeek] = [];
                 }
@@ -546,14 +546,14 @@ PROMPT;
             ->join('ventas as v', 'dv.venta_id', '=', 'v.id')
             ->where('dv.producto_id', $productoId)
             ->where('v.empresa_id', $this->empresaId)
-            ->where('v.fecha', '>=', $startDate)
+            ->where('v.fecha_venta', '>=', $startDate)
             ->select([
-                'v.fecha',
+                'v.fecha_venta',
                 'dv.cantidad',
                 'dv.precio_unitario',
                 'dv.subtotal',
             ])
-            ->orderBy('v.fecha')
+            ->orderBy('v.fecha_venta')
             ->get();
     }
     
@@ -567,8 +567,8 @@ PROMPT;
     {
         $quantities = $salesHistory->pluck('cantidad')->toArray();
         $totalQuantity = array_sum($quantities);
-        $days = max(1, Carbon::parse($salesHistory->first()->fecha)
-            ->diffInDays(Carbon::parse($salesHistory->last()->fecha)));
+        $days = max(1, Carbon::parse($salesHistory->first()->fecha_venta)
+            ->diffInDays(Carbon::parse($salesHistory->last()->fecha_venta)));
         
         $dailyAverage = $totalQuantity / max(1, $days);
         $weeklyAverage = $dailyAverage * 7;
