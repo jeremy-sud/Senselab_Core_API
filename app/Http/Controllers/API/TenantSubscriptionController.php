@@ -162,7 +162,7 @@ class TenantSubscriptionController extends Controller
             'starter' => 29,
             'pro' => 79,
             'business' => 149,
-            'enterprise' => 299,
+            'enterprise' => 499,
             default => 29
         };
 
@@ -254,7 +254,7 @@ class TenantSubscriptionController extends Controller
             'free' => 1,
             'starter' => 1,
             'pro' => 3,
-            'business' => 10,
+            'business' => 999999,
             'enterprise' => 999999
         };
 
