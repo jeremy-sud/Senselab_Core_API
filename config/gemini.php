@@ -25,41 +25,44 @@ return [
     |--------------------------------------------------------------------------
     */
     'models' => [
-        // Modelo principal para chat - Rápido y gratuito
-        'chat' => env('GEMINI_CHAT_MODEL', 'gemini-2.0-flash'),
+        // Modelo principal para chat - Rápido, gratuito y con mayor cuota
+        'chat' => env('GEMINI_CHAT_MODEL', 'gemini-2.5-flash'),
         
-        // Modelo con capacidad de visión para OCR
-        'vision' => env('GEMINI_VISION_MODEL', 'gemini-1.5-flash'),
+        // Modelo con capacidad de visión para OCR (multimodal)
+        'vision' => env('GEMINI_VISION_MODEL', 'gemini-2.5-flash'),
         
-        // Modelo para tareas complejas (límite más bajo en tier gratis)
-        'pro' => env('GEMINI_PRO_MODEL', 'gemini-1.5-pro'),
+        // Modelo para tareas complejas
+        'pro' => env('GEMINI_PRO_MODEL', 'gemini-2.5-pro'),
     ],
 
     /*
     |--------------------------------------------------------------------------
     | Rate Limits (Tier Gratuito)
     |--------------------------------------------------------------------------
-    | Gemini Free Tier:
-    | - gemini-2.0-flash: 15 RPM (requests per minute)
-    | - gemini-1.5-flash: 15 RPM
-    | - gemini-1.5-pro: 2 RPM
+    | Gemini Free Tier (actualizado mayo 2026):
+    | - gemini-2.5-flash: 10 RPM, 500 RPD  ← MODELO ACTIVO EN PRODUCCIÓN
+    | - gemini-2.0-flash: 15 RPM, 1500 RPD (cuota agotada, reemplazado)
+    | - gemini-2.5-pro:    5 RPM,  100 RPD (reservado para tareas complejas)
+    |
+    | Nota: cada modelo tiene su propia cuota independiente.
+    | Referencia: https://ai.google.dev/pricing
     |
     */
     'rate_limits' => [
+        'gemini-2.5-flash' => [
+            'rpm' => 10,           // Requests per minute (Free Tier)
+            'tpm' => 250000,       // Tokens per minute
+            'rpd' => 500,          // Requests per day (Free Tier)
+        ],
         'gemini-2.0-flash' => [
             'rpm' => 15,           // Requests per minute
             'tpm' => 1000000,      // Tokens per minute
             'rpd' => 1500,         // Requests per day
         ],
-        'gemini-1.5-flash' => [
-            'rpm' => 15,
-            'tpm' => 1000000,
-            'rpd' => 1500,
-        ],
-        'gemini-1.5-pro' => [
-            'rpm' => 2,
-            'tpm' => 32000,
-            'rpd' => 50,
+        'gemini-2.5-pro' => [
+            'rpm' => 5,
+            'tpm' => 250000,
+            'rpd' => 100,
         ],
     ],
 
@@ -108,7 +111,7 @@ return [
     'ocr' => [
         'max_file_size' => 10 * 1024 * 1024, // 10MB
         'supported_formats' => ['pdf', 'jpg', 'jpeg', 'png', 'webp'],
-        'model' => 'gemini-1.5-flash', // Modelo con visión
+        'model' => env('GEMINI_VISION_MODEL', 'gemini-2.5-flash'), // Modelo multimodal con visión
     ],
 
     /*
@@ -117,7 +120,7 @@ return [
     |--------------------------------------------------------------------------
     */
     'chatbot' => [
-        'model' => 'gemini-2.0-flash',
+        'model' => 'gemini-2.5-flash',
         'context_messages' => 5,
         'max_tokens' => 2048,
         'temperature' => 0.7,
