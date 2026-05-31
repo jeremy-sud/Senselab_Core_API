@@ -139,6 +139,7 @@ php artisan route:cache
 - `docs/guides/TESTING_GUIDE.md`
 - `docs/guides/GUIA_DATOS_TESTEO.md`
 - `docs/guides/REFACTORIZACION_CONTROLADORES.md`
+- `docs/guides/ECOSYSTEM_ALIGNMENT.md`
 
 ### docs/hacienda/
 - `docs/hacienda/FACTURACION_ELECTRONICA_API.md`
