@@ -236,15 +236,15 @@ PROMPT;
 
             return [
                 'hoy' => [
-                    'total' => $query->clone()->whereDate('created_at', $hoy)->sum('monto_total'),
+                    'total' => $query->clone()->whereDate('created_at', $hoy)->sum('monto_total_venta'),
                     'cantidad' => $query->clone()->whereDate('created_at', $hoy)->count(),
                 ],
                 'semana' => [
-                    'total' => $query->clone()->where('created_at', '>=', $inicioSemana)->sum('monto_total'),
+                    'total' => $query->clone()->where('created_at', '>=', $inicioSemana)->sum('monto_total_venta'),
                     'cantidad' => $query->clone()->where('created_at', '>=', $inicioSemana)->count(),
                 ],
                 'mes' => [
-                    'total' => $query->clone()->where('created_at', '>=', $inicioMes)->sum('monto_total'),
+                    'total' => $query->clone()->where('created_at', '>=', $inicioMes)->sum('monto_total_venta'),
                     'cantidad' => $query->clone()->where('created_at', '>=', $inicioMes)->count(),
                 ],
             ];
@@ -380,7 +380,7 @@ PROMPT;
             return $query->select(
                 'clientes.nombre',
                 DB::raw('COUNT(*) as cantidad_compras'),
-                DB::raw('SUM(ventas.monto_total) as total_comprado')
+                DB::raw('SUM(ventas.monto_total_venta) as total_comprado')
             )
                 ->groupBy('clientes.id', 'clientes.nombre')
                 ->orderByDesc('total_comprado')
@@ -435,9 +435,9 @@ PROMPT;
 
             return [
                 'fecha' => $hoy->format('Y-m-d'),
-                'ventas_total' => $ventasQuery->clone()->sum('monto_total'),
+                'ventas_total' => $ventasQuery->clone()->sum('monto_total_venta'),
                 'ventas_cantidad' => $ventasQuery->clone()->count(),
-                'ticket_promedio' => $ventasQuery->clone()->avg('monto_total'),
+                'ticket_promedio' => $ventasQuery->clone()->avg('monto_total_venta'),
             ];
         });
     }
@@ -461,9 +461,9 @@ PROMPT;
 
             return [
                 'mes' => Carbon::now()->format('F Y'),
-                'ventas_total' => $ventasQuery->clone()->sum('monto_total'),
+                'ventas_total' => $ventasQuery->clone()->sum('monto_total_venta'),
                 'ventas_cantidad' => $ventasQuery->clone()->count(),
-                'ticket_promedio' => $ventasQuery->clone()->avg('monto_total'),
+                'ticket_promedio' => $ventasQuery->clone()->avg('monto_total_venta'),
             ];
         });
     }

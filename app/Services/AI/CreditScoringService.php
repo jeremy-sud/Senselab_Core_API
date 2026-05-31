@@ -312,7 +312,7 @@ class CreditScoringService
             ->where('cliente_id', $clienteId)
             ->where('empresa_id', $this->empresaId)
             ->whereNull('deleted_at')
-            ->selectRaw('COUNT(*) as total, COALESCE(SUM(total), 0) as monto')
+            ->selectRaw('COUNT(*) as total, COALESCE(SUM(monto_total_venta), 0) as monto')
             ->first();
 
         // Frecuencia de compras (últimos 6 meses)

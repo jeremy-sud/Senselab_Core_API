@@ -445,7 +445,7 @@ PROMPT;
                 ->groupBy('fecha')
                 ->select([
                     'fecha',
-                    DB::raw('SUM(total) as total'),
+                    DB::raw('SUM(monto_total_venta) as total'),
                     DB::raw('COUNT(*) as num_ventas'),
                 ])
                 ->orderBy('fecha')
