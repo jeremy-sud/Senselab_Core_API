@@ -5,6 +5,27 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [v5.1.2] — 2026-05-30 — IA Gemini operativa en producción AWS (gemini-2.5-flash)
+
+### Configuración
+- **`GEMINI_API_KEY` configurada en AWS EC2:** Variable de entorno agregada al `.env` de producción (`/home/ec2-user/Workspace/Senselab_Core_API/.env`) en el servidor `18.219.34.245`. Config cache de Laravel regenerado con `php artisan config:cache` en el contenedor `senselab_php`.
+- **Modelo actualizado a `gemini-2.5-flash`:** Migración de `gemini-2.0-flash` / `gemini-1.5-flash` (deprecated) al modelo `gemini-2.5-flash` como modelo activo para chat, OCR y generación de contenido. Cuota independiente y modelo más reciente de Google.
+- **Variables de entorno nuevas en `.env`:** `GEMINI_CHAT_MODEL=gemini-2.5-flash` y `GEMINI_VISION_MODEL=gemini-2.5-flash` añadidas tanto en local como en producción.
+
+### Archivos Modificados
+- **`config/gemini.php`:** Defaults actualizados a `gemini-2.5-flash`, OCR model ahora lee de `env('GEMINI_VISION_MODEL')`, rate limits documentados para los modelos actuales de mayo 2026.
+- **`docs/IA_FUNCIONALIDADES.md`:** Tabla de modelos, límites de cuota y ejemplo de `.env` actualizados.
+
+### Herramientas
+- **`scripts/deploy_gemini_key.sh`** (nuevo): Script reutilizable para configurar/rotar `GEMINI_API_KEY` en el servidor AWS vía SSH. Uso: `bash scripts/deploy_gemini_key.sh <SERVER_IP> [SSH_USER]`.
+
+### Verificado en producción
+- `GeminiService::isConfigured()` → `TRUE`
+- `GeminiService::isAvailable()` (ping a `generativelanguage.googleapis.com`) → `TRUE`
+- Chat real con `gemini-2.5-flash` → respuesta exitosa desde contenedor Docker en AWS
+
+---
+
 ## [v5.1.1] — 2026-05-30 — Mitigación de Vulnerabilidades de Seguridad Dependabot
 
 ### Seguridad

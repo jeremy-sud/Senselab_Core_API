@@ -1,6 +1,6 @@
 # 🤖 Funcionalidades de Inteligencia Artificial - Senselab Core API
 
-**Última Actualización:** 5 de Diciembre 2025
+**Última Actualización:** 30 de Mayo 2026
 
 ## 🎉 ¡AHORA CON IA GRATUITA!
 
@@ -9,9 +9,9 @@ El sistema utiliza **Google Gemini API** por defecto, que es **completamente gra
 | Característica | Gemini (Gratis) | OpenAI (Pago) |
 |----------------|-----------------|---------------|
 | **Costo** | $0.00 | ~$0.01-0.05/request |
-| **Chat/Texto** | ✅ gemini-2.0-flash | gpt-4 |
-| **Vision/OCR** | ✅ gemini-1.5-flash | gpt-4-vision |
-| **Límite** | 15 req/min, 1500/día | Según plan |
+| **Chat/Texto** | ✅ gemini-2.5-flash | gpt-4 |
+| **Vision/OCR** | ✅ gemini-2.5-flash | gpt-4-vision |
+| **Límite** | 10 req/min, 500/día | Según plan |
 | **Obtener Key** | [aistudio.google.com](https://aistudio.google.com/) | platform.openai.com |
 
 ## 📊 Resumen Ejecutivo
@@ -37,8 +37,8 @@ Se han implementado **10 servicios de IA** y **32 endpoints API** que potencian 
 
 | Módulo | Descripción | Endpoints | Tecnología |
 |--------|-------------|-----------|------------|
-| **OCR Facturas** | Escaneo automático de facturas de proveedores | 3 | Gemini Vision |
-| **Chatbot ERP** | Asistente virtual con consultas en lenguaje natural | 3 | Gemini 2.0 Flash |
+| **OCR Facturas** | Escaneo automático de facturas de proveedores | 3 | Gemini Vision (2.5-flash) |
+| **Chatbot ERP** | Asistente virtual con consultas en lenguaje natural | 3 | Gemini 2.5 Flash |
 | **Predicciones** | Análisis de demanda y alertas de inventario | 6 | Análisis estadístico + IA |
 
 ### Prioridad Media (Valor Agregado) ✅
@@ -46,7 +46,7 @@ Se han implementado **10 servicios de IA** y **32 endpoints API** que potencian 
 | Módulo | Descripción | Endpoints | Tecnología |
 |--------|-------------|-----------|------------|
 | **Detección de Anomalías** | Detecta fraudes, errores contables y transacciones sospechosas | 4 | Análisis estadístico + IA |
-| **Generación de Contenido** | Emails de cobro, agradecimiento, reportes automáticos | 5 | Gemini 2.0 Flash |
+| **Generación de Contenido** | Emails de cobro, agradecimiento, reportes automáticos | 5 | Gemini 2.5 Flash |
 | **Clasificación CABYS** | Sugiere códigos CABYS para productos (Costa Rica) | 5 | Keywords + IA |
 | **Credit Scoring** | Calcula riesgo crediticio de clientes (0-100) | 6 | Scoring ponderado + IA |
 
@@ -98,10 +98,13 @@ Agregar al archivo `.env`:
 # Google Gemini (GRATUITO - Recomendado)
 GEMINI_API_KEY=tu-api-key-aqui
 
-# Modelos (opcional, tiene defaults)
-GEMINI_CHAT_MODEL=gemini-2.0-flash
-GEMINI_VISION_MODEL=gemini-1.5-flash
+# Modelos — gemini-2.5-flash es el activo en producción
+GEMINI_CHAT_MODEL=gemini-2.5-flash
+GEMINI_VISION_MODEL=gemini-2.5-flash
 ```
+
+> **Nota sobre modelos:** `gemini-2.5-flash` es el modelo activo desde mayo 2026.
+> Tiene una cuota diaria independiente de `gemini-2.0-flash` (deprecated en esta config).
 
 ### 3. Alternativa: OpenAI (De pago)
 
