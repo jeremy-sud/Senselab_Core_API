@@ -259,9 +259,9 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->prefix('v5')->group(funct
         ]);
     });
 
-    Route::get('/tenant/payment-methods', function (Request $request) {
-        return response()->json([
-            ['id' => 'pm_1', 'brand' => 'visa', 'last4' => '4242', 'exp_month' => 12, 'exp_year' => 2028, 'is_default' => true],
-        ]);
-    });
+    Route::get('/tenant/payment-methods', [TenantSubscriptionController::class, 'getPaymentMethods']);
+    Route::post('/tenant/payment-methods', [TenantSubscriptionController::class, 'savePaymentMethod']);
 });
+
+// ── Webhook de Stripe (Público, sin auth de usuario) ──
+Route::post('/v5/billing/stripe-webhook', [TenantSubscriptionController::class, 'handleStripeWebhook']);

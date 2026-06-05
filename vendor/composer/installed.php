@@ -1544,6 +1544,15 @@
             'aliases' => array(),
             'dev_requirement' => true,
         ),
+        'stripe/stripe-php' => array(
+            'pretty_version' => 'v20.2.0',
+            'version' => '20.2.0.0',
+            'reference' => '38b784dd45b447609032c151c40712d9b3feecb0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../stripe/stripe-php',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'swagger-api/swagger-ui' => array(
             'pretty_version' => 'v5.30.2',
             'version' => '5.30.2.0',

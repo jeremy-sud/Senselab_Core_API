@@ -41,4 +41,14 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
+    'stripe' => [
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
+        'prices' => [
+            'starter' => env('STRIPE_PRICE_STARTER'),
+            'pro' => env('STRIPE_PRICE_PRO'),
+            'business' => env('STRIPE_PRICE_BUSINESS'),
+        ],
+    ],
+
 ];

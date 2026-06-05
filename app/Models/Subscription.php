@@ -24,6 +24,9 @@ class Subscription extends Model
         'max_invoices_month',
         'max_ai_queries_month',
         'current_period_end',
+        'stripe_customer_id',
+        'stripe_subscription_id',
+        'stripe_price_id',
     ];
 
     protected $casts = [
