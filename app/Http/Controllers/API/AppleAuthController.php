@@ -77,19 +77,6 @@ class AppleAuthController extends Controller
             $usuario = Usuario::where('email', $email)->first();
 
             if (!$usuario) {
-                // Obtener o crear empresa por defecto
-                $empresa = Empresa::first();
-                if (!$empresa) {
-                    $empresa = Empresa::create([
-                        'nombre' => 'Senselab Labs S.A.',
-                        'nombre_comercial' => 'Senselab Labs',
-                        'razon_social' => 'Senselab Labs S.A.',
-                        'num_identificacion_dgt' => '3-101-789012',
-                        'tipo_identificacion' => 'Físico',
-                        'activo' => true,
-                    ]);
-                }
-
                 // Apple envía los datos del usuario en la primera autenticación en el parámetro 'user'
                 $nombre = 'Usuario';
                 $apellidos = 'Apple';
@@ -105,7 +92,20 @@ class AppleAuthController extends Controller
                     }
                 }
 
-                $cargo = Cargo::first();
+                $fullName = trim("{$nombre} {$apellidos}");
+                $empresaNombre = $fullName . ' Labs S.A.';
+                $empresa = Empresa::create([
+                    'nombre' => $empresaNombre,
+                    'nombre_comercial' => $fullName . ' Labs',
+                    'razon_social' => $empresaNombre,
+                    'num_identificacion_dgt' => '3-101-' . str_pad((string)rand(100000, 999999), 6, '0', STR_PAD_LEFT),
+                    'tipo_identificacion' => '02', // '02' = Cédula Jurídica
+                    'activo' => true,
+                ]);
+
+                $cargo = Cargo::where('nombre', 'Administrador')->first()
+                    ?: Cargo::where('nombre', 'like', '%Admin%')->first()
+                    ?: Cargo::first();
 
                 $usuario = Usuario::create([
                     'nombre' => $nombre,
@@ -125,6 +125,27 @@ class AppleAuthController extends Controller
                 if ($rol) {
                     $usuario->assignRoles([$rol->id]);
                 }
+
+                // Inicializar suscripción y uso para el nuevo inquilino
+                $tenantId = 'sl_tenant_' . str_pad((string)$empresa->id, 6, '0', STR_PAD_LEFT);
+                \App\Models\Subscription::create([
+                    'tenant_id' => $tenantId,
+                    'empresa_id' => $empresa->id,
+                    'usuario_id' => $usuario->id,
+                    'plan' => 'free',
+                    'status' => 'active',
+                    'max_users' => 1,
+                    'max_invoices_month' => 10,
+                    'max_ai_queries_month' => 5,
+                    'current_period_end' => now()->addYear(),
+                ]);
+
+                \App\Models\TenantUsage::create([
+                    'tenant_id' => $tenantId,
+                    'active_users_count' => 1,
+                    'invoices_count_current_month' => 0,
+                    'ai_queries_count_current_month' => 0,
+                ]);
             }
 
             // Verificar si el usuario está inactivo o eliminado
