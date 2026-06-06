@@ -7,10 +7,9 @@
  * cuotas, llaves API, webhooks, sesiones, auditoría y 2FA.
  *
  * @package routes/api
- */
-
-use App\Http\Controllers\API\TenantSubscriptionController;
+ */use App\Http\Controllers\API\TenantSubscriptionController;
 use App\Http\Controllers\API\TenantPortalController;
+use App\Http\Controllers\API\TenantApiKeyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 | Todas requieren auth:sanctum. El prefijo /v5/tenant se aplica aquí
 | para mantener coherencia con el esquema de versiones de la API.
-*/
+| */
 
 Route::middleware(['auth:sanctum', 'throttle:120,1'])->prefix('v5')->group(function () {
 
@@ -42,41 +41,14 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->prefix('v5')->group(funct
     // -------------------------------------------------------------------------
 
     // Obtener todas las llaves del tenant autenticado
-    Route::get('/tenant/api-keys', function (Request $request) {
-        // Placeholder — retorna mock si TenantPortalController no está disponible
-        return response()->json([
-            [
-                'id' => '1',
-                'name' => 'Facturador Sucursal Escazú',
-                'prefix' => 'sl_live_',
-                'token' => 'sl_live_••••••••••••••••',
-                'environment' => 'live',
-                'created_at' => '2026-05-24T04:47:24Z',
-            ]
-        ]);
-    });
+    Route::get('/tenant/api-keys', [TenantApiKeyController::class, 'index']);
 
     // Generar nueva llave
-    Route::post('/tenant/api-keys', function (Request $request) {
-        $request->validate(['name' => 'required|string', 'environment' => 'in:live,sandbox']);
-        $env = $request->input('environment', 'sandbox');
-        $prefix = $env === 'live' ? 'sl_live_' : 'sl_sandbox_';
-        $token = $prefix . bin2hex(random_bytes(16));
-        return response()->json([
-            'id' => 'key_' . uniqid(),
-            'name' => $request->input('name'),
-            'prefix' => $prefix,
-            'token' => $token,
-            'environment' => $env,
-            'created_at' => now()->toISOString(),
-            'message' => 'Guarde esta llave de forma segura. No se volverá a mostrar.',
-        ], 201);
-    });
+    Route::post('/tenant/api-keys', [TenantApiKeyController::class, 'store']);
 
     // Revocar llave
-    Route::post('/tenant/api-keys/{id}/revoke', function (Request $request, string $id) {
-        return response()->json(['success' => true, 'message' => "Llave {$id} revocada."]);
-    });
+    Route::post('/tenant/api-keys/{id}/revoke', [TenantApiKeyController::class, 'revoke']);
+
 
     // -------------------------------------------------------------------------
     // WEBHOOKS
