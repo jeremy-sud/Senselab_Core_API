@@ -204,6 +204,8 @@ class TenantSubscriptionController extends Controller
                 'name' => $user->nombre . ' ' . $user->apellidos,
                 'email' => $user->email,
                 'company_name' => $user->empresa ? $user->empresa->nombre : 'Senselab Partners S.A.',
+                'empresa_id' => $user->empresa_id,
+                'tenant_id' => $tenantId,
                 'twofa_enabled' => true,
                 'linked_platforms' => [
                     'google' => true,
