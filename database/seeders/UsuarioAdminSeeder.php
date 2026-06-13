@@ -42,7 +42,7 @@ class UsuarioAdminSeeder extends Seeder
             'nombre' => 'Admin',
             'apellidos' => 'Sistema',
             'cargo_id' => $cargo->id,
-            'email' => 'admin@senselab.com',
+            'email' => 'admin@scisenselab.com',
             'password_hash' => Hash::make($adminPassword),
             'empresa_id' => $empresa->id,
             'telefono' => '+(506)0000-0000',
@@ -51,12 +51,11 @@ class UsuarioAdminSeeder extends Seeder
             'eliminado' => false,
         ];
 
-        // Verificar si el usuario ya existe para evitar duplicaciones
-        $existingUser = DB::table('usuarios')->where('email', 'admin@senselab.com')->first();
+        $existingUser = DB::table('usuarios')->where('email', 'admin@scisenselab.com')->first();
         $creadoNuevo = false;
         
         if ($existingUser) {
-            $this->command->info('✓ El usuario admin@senselab.com ya existe en el sistema. Omitiendo creación.');
+            $this->command->info('✓ El usuario admin@scisenselab.com ya existe en el sistema. Omitiendo creación.');
             $usuarioId = $existingUser->id;
         } else {
             $usuarioId = DB::table('usuarios')->insertGetId($usuario);
@@ -94,7 +93,7 @@ class UsuarioAdminSeeder extends Seeder
  
             if ($creadoNuevo) {
                 $this->command->info('✓ Usuario administrador creado exitosamente.');
-                $this->command->info('   Email: admin@senselab.com');
+                $this->command->info('   Email: admin@scisenselab.com');
                 $this->command->info('   Password: ' . $adminPassword);
             }
             $this->command->info('   Rol: Administrador (con ' . count($permisos) . ' permisos) enlazado.');

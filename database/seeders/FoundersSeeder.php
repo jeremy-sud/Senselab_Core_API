@@ -63,7 +63,7 @@ class FoundersSeeder extends Seeder
             'nombre' => 'Admin',
             'apellidos' => 'Senselab',
             'cargo_id' => $cargoFundador->id,
-            'email' => 'admin@senselab.com',
+            'email' => 'admin@scisenselab.com',
             'password_hash' => Hash::make($adminPassword),
             'empresa_id' => $empresa->id,
             'telefono' => '+(506)0000-0000',
@@ -101,7 +101,7 @@ class FoundersSeeder extends Seeder
             'segundo_apellido' => '',
             'tipo_documento' => 'Cédula Nacional',
             'numero_documento' => '1-0000-0000', // Ficticio
-            'email' => 'admin@senselab.com',
+            'email' => 'admin@scisenselab.com',
             'telefono' => '+(506)0000-0000',
             'direccion' => 'San José, Costa Rica',
             'fecha_ingreso' => '2020-01-15',
@@ -112,7 +112,7 @@ class FoundersSeeder extends Seeder
         ]);
 
         $this->command->info('✓ Usuario Admin Senselab creado exitosamente.');
-        $this->command->info('   Email: admin@senselab.com');
+        $this->command->info('   Email: admin@scisenselab.com');
         $this->command->info('   Password: Senselab2024!');
 
         // =============================================================
@@ -206,7 +206,7 @@ class FoundersSeeder extends Seeder
         $this->command->info('═══════════════════════════════════════════════════════════');
         $this->command->info('');
         $this->command->info('  👤 Admin Senselab');
-        $this->command->info('     ✉️  admin@senselab.com');
+        $this->command->info('     ✉️  admin@scisenselab.com');
         $this->command->info('     🔑 ' . $adminPassword);
         $this->command->info('');
         $this->command->info('  👤 Jeremy Arias Solano (Co-Fundador)');
