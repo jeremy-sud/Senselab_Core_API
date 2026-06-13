@@ -108,7 +108,7 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "🔑 Credenciales por defecto:"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo "  Email:    admin@senselab.com"
+echo "  Email:    admin@scisenselab.com"
 echo "  Password: admin123"
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

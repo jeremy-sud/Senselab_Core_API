@@ -238,7 +238,7 @@ Write-Host "   API:     http://localhost:8000/api"
 Write-Host "   Swagger: http://localhost:8000/api/documentation"
 Write-Host ""
 Write-Host "🔐 Credenciales de acceso:" -ForegroundColor Cyan
-Write-Host "   Email:    admin@senselab.com"
+Write-Host "   Email:    admin@scisenselab.com"
 Write-Host "   Password: admin123"
 Write-Host "   Permisos: 68 (todos los módulos)"
 Write-Host ""

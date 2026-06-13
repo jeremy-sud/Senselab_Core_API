@@ -13,7 +13,7 @@ class UsuarioResource extends JsonResource
     public function toArray(Request $request): array
     {
         $subscription = \App\Models\Subscription::where('empresa_id', $this->empresa_id)->first();
-        $plan = $subscription ? $subscription->plan : (($this->email === 'admin@scisenselab.com' || $this->email === 'admin@senselab.com' || $this->empresa_id == 1) ? 'business' : 'free');
+        $plan = $subscription ? $subscription->plan : (($this->email === 'admin@scisenselab.com' || $this->empresa_id == 1) ? 'business' : 'free');
 
         return [
             'id' => $this->id,

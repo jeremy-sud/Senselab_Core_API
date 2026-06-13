@@ -20,7 +20,7 @@ class DemoDataSeeder extends Seeder
         $this->call([
             EmpresaDemoSeeder::class,      // Empresa "Senselab" + sucursal
             FoundersSeeder::class,         // Usuarios fundadores con rol Super Admin
-            UsuarioAdminSeeder::class,     // admin@senselab.com con rol Administrador
+            UsuarioAdminSeeder::class,     // admin@scisenselab.com con rol Administrador
         ]);
 
         $this->command->info('Datos demo cargados exitosamente.');

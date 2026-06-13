@@ -159,7 +159,7 @@ INSERT INTO tipos_impuesto (id, nombre, tasa, descripcion, empresa_id, creado_en
 -- 17. USUARIOS (Personas)
 -- Hashear: admin123 = $2y$12$V2GJpvLvKloepHM7ZLLBe.K5JfhW0GZXR5AkU5W5Z5Z5Z5Z5Z5Z5
 INSERT INTO usuarios (id, empresa_id, nombre, email, password, telefono, estado_activo, ultimo_acceso, creado_en, actualizado_en) VALUES
-(1, 1, 'Administrador', 'admin@senselab.com', '$2y$12$V2GJpvLvKloepHM7ZLLBe.K5JfhW0GZXR5AkU5W5Z5Z5Z5Z5Z5Z', '+(506)0000-0000', true, NOW(), NOW(), NOW()),
+(1, 1, 'Administrador', 'admin@scisenselab.com', '$2y$12$V2GJpvLvKloepHM7ZLLBe.K5JfhW0GZXR5AkU5W5Z5Z5Z5Z5Z5Z', '+(506)0000-0000', true, NOW(), NOW(), NOW()),
 (2, 1, 'Carlos Gerente', 'carlos.gerente@senselab.com', '$2y$12$V2GJpvLvKloepHM7ZLLBe.K5JfhW0GZXR5AkU5W5Z5Z5Z5Z5Z5Z', '+506 8234-5678', true, NOW(), NOW(), NOW()),
 (3, 1, 'María Contador', 'maria.contador@senselab.com', '$2y$12$V2GJpvLvKloepHM7ZLLBe.K5JfhW0GZXR5AkU5W5Z5Z5Z5Z5Z5Z', '+506 8111-2222', true, NOW(), NOW(), NOW()),
 (4, 1, 'Juan Vendedor', 'juan.vendedor@senselab.com', '$2y$12$V2GJpvLvKloepHM7ZLLBe.K5JfhW0GZXR5AkU5W5Z5Z5Z5Z5Z5Z', '+506 8777-8888', true, NOW(), NOW(), NOW()),
@@ -257,7 +257,7 @@ INSERT INTO proveedores (id, empresa_id, nombre, identificacion, contacto_princi
 
 -- 25. EMPLEADOS
 INSERT INTO empleados (id, empresa_id, usuario_id, cargo_id, nombre, identificacion, email, telefono, fecha_nacimiento, genero, direccion, ciudad, provincia, fecha_ingreso, fecha_salida, estado_activo, salario_base, creado_en, actualizado_en) VALUES
-(1, 1, 1, 1, 'Administrador', '112233445', 'admin@senselab.com', '+(506)0000-0000', '1975-05-20', 'M', 'San José', 'San José', 'San José', '2020-01-15', NULL, true, 1500000, NOW(), NOW()),
+(1, 1, 1, 1, 'Administrador', '112233445', 'admin@scisenselab.com', '+(506)0000-0000', '1975-05-20', 'M', 'San José', 'San José', 'San José', '2020-01-15', NULL, true, 1500000, NOW(), NOW()),
 (2, 1, 2, 2, 'Carlos Gerente', '223344556', 'carlos.gerente@senselab.com', '+506 8234-5678', '1985-07-10', 'M', 'Cartago', 'Cartago', 'Cartago', '2021-02-20', NULL, true, 1200000, NOW(), NOW()),
 (3, 1, 3, 3, 'María Contador', '334455667', 'maria.contador@senselab.com', '+506 8111-2222', '1990-03-15', 'F', 'Heredia', 'Heredia', 'Heredia', '2021-06-01', NULL, true, 900000, NOW(), NOW()),
 (4, 1, 4, 4, 'Juan Vendedor', '445566778', 'juan.vendedor@senselab.com', '+506 8777-8888', '1988-11-22', 'M', 'San José', 'San José', 'San José', '2022-01-10', NULL, true, 700000, NOW(), NOW()),

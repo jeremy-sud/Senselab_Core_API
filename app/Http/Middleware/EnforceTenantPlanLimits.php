@@ -29,7 +29,7 @@ class EnforceTenantPlanLimits
         }
 
         // Bypassear límites si es administrador global o el tenant central de Senselab
-        if ($user->email === 'admin@scisenselab.com' || $user->email === 'admin@senselab.com' || $user->empresa_id == 1) {
+        if ($user->email === 'admin@scisenselab.com' || $user->empresa_id == 1) {
             return $next($request);
         }
 

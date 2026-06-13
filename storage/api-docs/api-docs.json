@@ -1855,7 +1855,7 @@
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "example": "admin@senselab.com"
+                                        "example": "admin@scisenselab.com"
                                     },
                                     "password": {
                                         "type": "string",
@@ -19257,6 +19257,153 @@
                 ]
             }
         },
+        "/api/v5/user/profile": {
+            "get": {
+                "tags": [
+                    "Suscripciones"
+                ],
+                "summary": "Obtener perfil y límites del plan ERP",
+                "description": "Retorna la información del usuario junto con su suscripción activa, límites del plan y consumos del mes actual.",
+                "operationId": "getTenantProfile",
+                "responses": {
+                    "200": {
+                        "description": "Perfil y límites obtenidos exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Jeremy Arias Solano"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "admin@scisenselab.com"
+                                                },
+                                                "company_name": {
+                                                    "type": "string",
+                                                    "example": "Senselab Partners S.A."
+                                                },
+                                                "twofa_enabled": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "linked_platforms": {
+                                                    "properties": {
+                                                        "google": {
+                                                            "type": "boolean",
+                                                            "example": true
+                                                        },
+                                                        "apple": {
+                                                            "type": "boolean",
+                                                            "example": false
+                                                        },
+                                                        "github": {
+                                                            "type": "boolean",
+                                                            "example": true
+                                                        },
+                                                        "microsoft": {
+                                                            "type": "boolean",
+                                                            "example": false
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "subscription": {
+                                                    "properties": {
+                                                        "plan": {
+                                                            "type": "string",
+                                                            "example": "business"
+                                                        },
+                                                        "status": {
+                                                            "type": "string",
+                                                            "example": "active"
+                                                        },
+                                                        "price": {
+                                                            "type": "number",
+                                                            "example": 149
+                                                        },
+                                                        "billing_period": {
+                                                            "type": "string",
+                                                            "example": "annual"
+                                                        },
+                                                        "usage": {
+                                                            "properties": {
+                                                                "active_users": {
+                                                                    "properties": {
+                                                                        "used": {
+                                                                            "type": "integer",
+                                                                            "example": 1
+                                                                        },
+                                                                        "max": {
+                                                                            "type": "mixed",
+                                                                            "example": "unlimited"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                },
+                                                                "invoices_month": {
+                                                                    "properties": {
+                                                                        "used": {
+                                                                            "type": "integer",
+                                                                            "example": 74
+                                                                        },
+                                                                        "max": {
+                                                                            "type": "mixed",
+                                                                            "example": "unlimited"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                },
+                                                                "ai_queries_month": {
+                                                                    "properties": {
+                                                                        "used": {
+                                                                            "type": "integer",
+                                                                            "example": 42
+                                                                        },
+                                                                        "max": {
+                                                                            "type": "mixed",
+                                                                            "example": "unlimited"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/tipos-cambio-historial": {
             "get": {
                 "tags": [
@@ -31838,6 +31985,10 @@
         {
             "name": "Sucursales",
             "description": "Sucursales"
+        },
+        {
+            "name": "Suscripciones",
+            "description": "Suscripciones"
         },
         {
             "name": "Tipos Cambio Historial",

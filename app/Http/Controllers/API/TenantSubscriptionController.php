@@ -120,7 +120,7 @@ class TenantSubscriptionController extends Controller
         // Cargar o inicializar la suscripción de este inquilino
         $subscription = Subscription::where('tenant_id', $tenantId)->first();
         if (!$subscription) {
-            $isGlobalAdmin = ($user->email === 'admin@scisenselab.com' || $user->email === 'admin@senselab.com' || $user->empresa_id == 1);
+            $isGlobalAdmin = ($user->email === 'admin@scisenselab.com' || $user->empresa_id == 1);
             $plan = $isGlobalAdmin ? 'business' : 'starter';
 
             $subscription = Subscription::create([

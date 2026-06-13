@@ -145,7 +145,7 @@ class GoogleAuthController extends Controller
 
             // Retornar al frontend con el token y los datos de usuario
             $subscription = \App\Models\Subscription::where('empresa_id', $usuario->empresa_id)->first();
-            $isFounderEmail = in_array($usuario->email, ['admin@scisenselab.com', 'admin@senselab.com', 'jasmm222@gmail.com', 'deadmooncr@gmail.com']);
+            $isFounderEmail = in_array($usuario->email, ['admin@scisenselab.com', 'jasmm222@gmail.com', 'deadmooncr@gmail.com']);
             $plan = $subscription ? $subscription->plan : (($isFounderEmail || $usuario->empresa_id == 1) ? 'business' : 'free');
 
             $userData = [
