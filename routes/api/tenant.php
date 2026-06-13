@@ -200,20 +200,81 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->prefix('v5')->group(funct
     });
 
     Route::get('/tenant/branding', function (Request $request) {
-        return response()->json(['logo_url' => null, 'primary_color' => '#6366f1', 'company_name' => null]);
+        $empresa = $request->user()->empresa;
+        if (!$empresa) {
+            return response()->json([
+                'logo_url' => null,
+                'primary_color' => '#6366f1',
+                'company_name' => null,
+                'identificacion' => null,
+                'actividad_economica' => null,
+                'direccion' => null,
+            ]);
+        }
+
+        $isConfigured = !empty($empresa->nombre) && 
+            !in_array($empresa->nombre, ['Nueva Empresa', 'Senselab HQ', 'Mi Empresa']) &&
+            !empty($empresa->num_identificacion_dgt) &&
+            !empty($empresa->actividad_economica_principal) &&
+            !empty($empresa->direccion);
+
+        $primaryColor = \App\Models\Configuracion::obtenerPorClave($empresa->id, 'branding_primary_color', '#6366f1');
+        $logoUrl = \App\Models\Configuracion::obtenerPorClave($empresa->id, 'branding_logo_url', null);
+
+        return response()->json([
+            'logo_url' => $logoUrl,
+            'primary_color' => $primaryColor,
+            'company_name' => $isConfigured ? $empresa->nombre : null,
+            'identificacion' => $empresa->num_identificacion_dgt,
+            'actividad_economica' => $empresa->actividad_economica_principal,
+            'direccion' => $empresa->direccion,
+        ]);
     });
 
     Route::post('/tenant/branding', function (Request $request) {
         $request->validate([
-            'company_name' => 'nullable|string',
-            'primary_color' => 'nullable|string',
-            'logo_url' => 'nullable|string'
+            'company_name' => 'required|string|max:255',
+            'identificacion' => 'required|string|max:100',
+            'actividad_economica' => 'required|string|max:255',
+            'direccion' => 'required|string|max:500',
+            'primary_color' => 'nullable|string|max:20',
+            'logo_url' => 'nullable|string|max:2048'
         ]);
+
+        $empresa = $request->user()->empresa;
+        if ($empresa) {
+            $empresa->update([
+                'nombre' => $request->input('company_name'),
+                'num_identificacion_dgt' => $request->input('identificacion'),
+                'actividad_economica_principal' => $request->input('actividad_economica'),
+                'direccion' => $request->input('direccion'),
+            ]);
+            
+            if ($request->has('primary_color')) {
+                \App\Models\Configuracion::updateOrCreate(
+                    ['empresa_id' => $empresa->id, 'clave' => 'branding_primary_color'],
+                    ['valor' => $request->input('primary_color'), 'tipo_dato' => 'string']
+                );
+            }
+            if ($request->has('logo_url')) {
+                \App\Models\Configuracion::updateOrCreate(
+                    ['empresa_id' => $empresa->id, 'clave' => 'branding_logo_url'],
+                    ['valor' => $request->input('logo_url'), 'tipo_dato' => 'string']
+                );
+            }
+        }
+
+        $primaryColor = \App\Models\Configuracion::obtenerPorClave($empresa->id, 'branding_primary_color', $request->input('primary_color', '#6366f1'));
+        $logoUrl = \App\Models\Configuracion::obtenerPorClave($empresa->id, 'branding_logo_url', $request->input('logo_url'));
+
         return response()->json([
             'success' => true,
-            'logo_url' => $request->input('logo_url'),
-            'primary_color' => $request->input('primary_color'),
-            'company_name' => $request->input('company_name')
+            'company_name' => $empresa->nombre,
+            'identificacion' => $empresa->num_identificacion_dgt,
+            'actividad_economica' => $empresa->actividad_economica_principal,
+            'direccion' => $empresa->direccion,
+            'logo_url' => $logoUrl,
+            'primary_color' => $primaryColor,
         ]);
     });
 
