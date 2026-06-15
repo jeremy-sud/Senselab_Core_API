@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\BelongsToTenant;
 
 class Reserva extends Model
 {
     /** @use HasFactory<\Database\Factories\ReservaFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, BelongsToTenant;
     
     public const CREATED_AT = 'creado_en';
     public const UPDATED_AT = 'actualizado_en';

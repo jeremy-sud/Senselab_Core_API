@@ -421,10 +421,6 @@ class FirmaDigitalService
                 'trace' => $e->getTraceAsString(),
             ]);
             return null;
-        } finally {
-            // Limpiar archivos temporales
-            @unlink($tempPem);
-            @unlink($tempP12);
         }
     }
 

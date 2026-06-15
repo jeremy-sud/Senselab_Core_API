@@ -31,6 +31,7 @@ class NominaEmpleadoPolicy
 
         // Personal RRHH puede ver todas las nóminas de su empresa
         return $user->hasPermission('nomina_empleados.show') &&
+               $nomina->empleado &&
                $user->empresa_id === $nomina->empleado->empresa_id;
     }
 
@@ -56,6 +57,7 @@ class NominaEmpleadoPolicy
 
         // Solo RRHH puede editar
         return $user->hasPermission('nomina_empleados.update') &&
+               $nomina->empleado &&
                $user->empresa_id === $nomina->empleado->empresa_id &&
                $user->hasAnyRole(['Administrador', 'RRHH']);
     }
@@ -72,6 +74,7 @@ class NominaEmpleadoPolicy
 
         // Solo administradores pueden eliminar nóminas
         return $user->hasPermission('nomina_empleados.destroy') &&
+               $nomina->empleado &&
                $user->empresa_id === $nomina->empleado->empresa_id &&
                $user->hasRole('Administrador');
     }

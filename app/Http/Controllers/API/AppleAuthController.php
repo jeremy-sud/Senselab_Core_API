@@ -21,8 +21,8 @@ class AppleAuthController extends Controller
         $state = encrypt(['redirect_origin' => $redirectOrigin]);
 
         $query = http_build_query([
-            'client_id' => env('APPLE_CLIENT_ID', 'com.scisenselab.service'),
-            'redirect_uri' => env('APPLE_REDIRECT_URI', 'https://api.scisenselab.com/api/auth/apple/callback'),
+            'client_id' => config('services.apple.client_id'),
+            'redirect_uri' => config('services.apple.redirect_uri'),
             'response_type' => 'code id_token',
             'response_mode' => 'form_post',
             'scope' => 'name email',

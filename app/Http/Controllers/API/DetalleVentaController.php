@@ -100,7 +100,9 @@ class DetalleVentaController extends Controller
         return $this->getCached($cacheKey, function () use ($request) {
             $perPage = $request->input('per_page', 15);
 
-            $query = DetalleVenta::with(['venta', 'producto', 'tipoImpuesto'])
+            $query = DetalleVenta::whereHas('venta', function ($q) use ($request) {
+                $q->where('empresa_id', $request->user()->empresa_id);
+            })->with(['venta', 'producto', 'tipoImpuesto'])
                 ->activos();
 
             if ($request->filled('venta_id')) {

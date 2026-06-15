@@ -82,7 +82,9 @@ class NominaEmpleadoController extends Controller
         return $this->getCached($cacheKey, function () use ($request) {
             $perPage = $request->input('per_page', 15);
 
-            $query = NominaEmpleado::with(['periodoNomina', 'empleado'])
+            $query = NominaEmpleado::whereHas('empleado', function ($q) use ($request) {
+                $q->where('empresa_id', $request->user()->empresa_id);
+            })->with(['periodoNomina', 'empleado'])
                 ->activos();
 
             if ($request->filled('periodo_nomina_id')) {
