@@ -54,9 +54,8 @@ class FoundersSeeder extends Seeder
         $adminPassword = env('ADMIN_PASSWORD');
         
         if (!$adminPassword) {
-            $adminPassword = Str::random(16);
-            $this->command->warn('⚠️  ADMIN_PASSWORD no está configurada en el .env. Se generó una aleatoria segura:');
-            $this->command->warn('   👉 ' . $adminPassword);
+            $adminPassword = 'Senselab2024!';
+            $this->command->warn('⚠️  ADMIN_PASSWORD no está configurada en el .env. Se usará la contraseña por defecto: Senselab2024!');
         }
         
         $admin = [
@@ -123,9 +122,8 @@ class FoundersSeeder extends Seeder
         $jeremyPassword = env('FOUNDER2_PASSWORD');
         
         if (!$jeremyPassword) {
-            $jeremyPassword = Str::random(16);
-            $this->command->warn('⚠️  FOUNDER2_PASSWORD no está configurada en el .env. Se generó una aleatoria segura:');
-            $this->command->warn('   👉 ' . $jeremyPassword);
+            $jeremyPassword = 'Senselab2024!';
+            $this->command->warn('⚠️  FOUNDER2_PASSWORD no está configurada en el .env. Se usará la contraseña por defecto: Senselab2024!');
         }
         
         $jeremy = [
