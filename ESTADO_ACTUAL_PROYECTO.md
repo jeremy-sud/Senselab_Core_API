@@ -1,11 +1,12 @@
 # Estado Actual del Proyecto - Senselab Core API
 
-**Fecha de actualización:** 30 de mayo 2026  
+**Fecha de actualización:** 16 de junio 2026  
 **Desarrollado por:** Senselab  
 **Desarrollador principal:** Jeremy Arias Solano  
-**Versión actual:** v5.1.1 (Mitigación Vulnerabilidades Dependabot)
+**Versión actual:** v5.1.2 (Soporte SSO & Alineación Cofundador)
 
 > **Historial de versiones:**
+> - v5.1.2: Resolución de sesión SSO en ecosistema Senselab, alineación de correo de Cofundador (`deadmooncr@gmail.com`) y asignación de rol Super Administrador.
 > - v5.1.1: Mitigación de 32 vulnerabilidades de severidad alta reportadas por GitHub Dependabot. Actualizados axios (^1.15.1), vite (^7.3.2), rollup (^4.59.0), tar (^7.5.11), symfony/mime (^7.4.12) y sonarqube-scan-action (@v6).
 > - v5.1.0: Validación de totales de Facturación Electrónica implementada, nuevo módulo de Reservas creado. Deuda técnica DT-10 y DT-11 resuelta (Tests N+1 y tenant_id en logs globales).
 > - v5.0.2: Deuda técnica — Service Layer en 4 controllers (RolPermiso, RolUsuario, ComplianceDashboard, ComprobanteElectronico), timestamps español en 4 modelos, auditoría Hacienda H-1 a H-10
@@ -20,7 +21,7 @@
 - **Controladores implementados:** 98 (excluyendo Controller.php base)
 - **Policies RBAC:** 82 ✅ (registradas en AuthServiceProvider dedicado)
 - **Modelos Eloquent:** 99 (87 base + 8 Hacienda v4.4 + 4 nuevos)
-- **Migraciones:** 107
+- **Migraciones:** 108
 - **FormRequests:** 177 (validación completa)
 - **API Resources:** 81 (transformación JSON)
 - **DTOs:** 73 (~75% cobertura)
@@ -159,10 +160,14 @@ php artisan route:cache
 
 ---
 
-## Credenciales demo (segun seeders)
+## Credenciales demo y Fundadores (segun seeders)
 
-- **Usuario administrador:** Email `admin@scisenselab.com`, Password `Senselab2024!`
+- **Usuario administrador principal:** Email `admin@scisenselab.com`, Password `Senselab2024!`
+- **Usuario Cofundador/CTO:** Email `deadmooncr@gmail.com`, Password `Senselab2024!`
 - **Empresa demo:** `Senselab`, Cedula juridica `3-101-876543`
+
+> [!NOTE]
+> En la base de datos de producción (AWS), los correos y roles han sido alineados mediante la migración `2026_06_16_000000_align_production_founder_emails.php` para asegurar el inicio de sesión correcto de ambos administradores con rol de `Super Administrador`.
 
 ---
 
