@@ -161,7 +161,7 @@ php artisan route:cache
 
 ## Credenciales demo (segun seeders)
 
-- **Usuario administrador:** Email `admin@senselab.com`, Password `admin123`
+- **Usuario administrador:** Email `admin@scisenselab.com`, Password `Senselab2024!`
 - **Empresa demo:** `Senselab`, Cedula juridica `3-101-876543`
 
 ---

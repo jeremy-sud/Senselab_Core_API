@@ -36,7 +36,7 @@ return [
     ],
 
     'identification' => [
-        'header_keys' => ['X-Empresa-Id', 'X-Tenant-Id', 'X-Tenant'],
+        'header_keys' => ['X-Empresa-Id', 'X-Tenant-Id', 'X-Tenant', 'X-Senselab-Tenant-Id'],
         'base_domain' => env('TENANT_BASE_DOMAIN', parse_url(config('app.url'), PHP_URL_HOST) ?: null),
         'ignore_subdomains' => ['www', 'api'],
     ],

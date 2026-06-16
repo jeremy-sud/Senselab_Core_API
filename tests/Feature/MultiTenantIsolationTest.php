@@ -259,4 +259,19 @@ class MultiTenantIsolationTest extends TestCase
         $count = Producto::count();
         $this->assertGreaterThanOrEqual(0, $count);
     }
+
+    #[Test]
+    public function test_header_subdomain_tenant_finder_resolves_prefixed_tenant_id()
+    {
+        $finder = new \App\Multitenancy\TenantFinder\HeaderSubdomainTenantFinder();
+        
+        // Simular request con cabecera X-Senselab-Tenant-Id
+        $request = \Illuminate\Http\Request::create('/api/productos', 'GET');
+        $request->headers->set('X-Senselab-Tenant-Id', 'sl_tenant_' . str_pad((string)$this->empresaA->id, 6, '0', STR_PAD_LEFT));
+        
+        $resolvedTenant = $finder->findForRequest($request);
+        
+        $this->assertNotNull($resolvedTenant);
+        $this->assertEquals($this->empresaA->id, $resolvedTenant->id);
+    }
 }

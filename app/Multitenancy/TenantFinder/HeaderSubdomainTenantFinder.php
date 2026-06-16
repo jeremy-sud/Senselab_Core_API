@@ -77,6 +77,11 @@ class HeaderSubdomainTenantFinder extends TenantFinder
 
     protected function locateTenant(string $identifier): ?Empresa
     {
+        if (str_starts_with($identifier, 'sl_tenant_')) {
+            $id = (int) substr($identifier, 10);
+            return Empresa::query()->find($id);
+        }
+
         if (is_numeric($identifier)) {
             return Empresa::query()->find((int) $identifier);
         }

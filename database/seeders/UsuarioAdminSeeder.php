@@ -31,9 +31,9 @@ class UsuarioAdminSeeder extends Seeder
         }
 
         // Crear usuario administrador
-        $adminPassword = env('ADMIN_SEEDER_PASSWORD', 'admin123');
+        $adminPassword = env('ADMIN_SEEDER_PASSWORD', 'Senselab2024!');
         
-        if ($adminPassword === 'admin123') {
+        if ($adminPassword === 'Senselab2024!') {
             $this->command->warn('⚠️  ADVERTENCIA: Usando contraseña de desarrollo para admin');
             $this->command->warn('⚠️  Cambiar ADMIN_SEEDER_PASSWORD en .env para producción');
         }
