@@ -20,9 +20,9 @@ return new class extends Migration
                 'eliminado' => false
             ]);
 
-        // Reset password for jeremy@scisenselab.com to Senselab2024!
+        // Reset password for deadmooncr@gmail.com to Senselab2024!
         DB::table('usuarios')
-            ->where('email', 'jeremy@scisenselab.com')
+            ->where('email', 'deadmooncr@gmail.com')
             ->update([
                 'password_hash' => Hash::make('Senselab2024!'),
                 'activo' => true,

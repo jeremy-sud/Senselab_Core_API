@@ -127,7 +127,7 @@ class SeederIntegrityTest extends BaseTestCase
 
         $usuarios = DB::table('usuarios')->whereIn('email', [
             'admin@scisenselab.com',
-            'jeremy@senselab.com',
+            'deadmooncr@gmail.com',
         ])->count();
 
         $this->assertGreaterThanOrEqual(2, $usuarios,
