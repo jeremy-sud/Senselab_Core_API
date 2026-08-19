@@ -1,11 +1,12 @@
 # Estado Actual del Proyecto - Senselab Core API
 
-**Fecha de actualización:** 16 de junio 2026  
+**Fecha de actualización:** 19 de agosto 2026  
 **Desarrollado por:** Senselab  
 **Desarrollador principal:** Jeremy Arias Solano  
-**Versión actual:** v5.1.2 (Soporte SSO & Alineación Cofundador)
+**Versión actual:** v5.2.1 (Producción Cloudflare SSL Full & Enrutamiento Caddy)
 
 > **Historial de versiones:**
+> - v5.2.1: Solución a Error 522 Cloudflare en `api.scisenselab.com`, enrutamiento Caddy multi-dominio en producción con TLS interno, persistencia PM2 (`senselab-api`) y alineación Sanctum SSO.
 > - v5.1.2: Resolución de sesión SSO en ecosistema Senselab, alineación de correo de Cofundador (`deadmooncr@gmail.com`) y asignación de rol Super Administrador.
 > - v5.1.1: Mitigación de 32 vulnerabilidades de severidad alta reportadas por GitHub Dependabot. Actualizados axios (^1.15.1), vite (^7.3.2), rollup (^4.59.0), tar (^7.5.11), symfony/mime (^7.4.12) y sonarqube-scan-action (@v6).
 > - v5.1.0: Validación de totales de Facturación Electrónica implementada, nuevo módulo de Reservas creado. Deuda técnica DT-10 y DT-11 resuelta (Tests N+1 y tenant_id en logs globales).

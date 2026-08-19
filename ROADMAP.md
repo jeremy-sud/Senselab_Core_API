@@ -542,3 +542,31 @@ Items identificados en la auditoría técnica que no encajan directamente en una
 | 23.3 | Verificación de Reglas Ecosistema | 1) Multi-Tenancy (`BelongsToTenant` + `empresa_id` en modelos del cliente). 2) Service Layer (controladores delgados e inyección de dependencias en constructor). 3) OpenAPI/Swagger (~97% cobertura activa). 4) Zero Placeholders (código listo para producción). | ✅ |
 | 23.4 | Protocolo de Infraestructura Cloudflare | Solución a Error 522 en `api.scisenselab.com` (salud de procesos PM2/Caddy), CNAME/301 redirect para `www.scisenselab.com` y ocultamiento de IP de origen via Proxied records. | ✅ |
 
+---
+
+## FASE 24 — Servidor de Producción: Cloudflare SSL Full & Caddy Proxy Routing (v5.2.1 - Agosto 2026) ✅ COMPLETADA
+
+**Objetivo:** Eliminar error 522 en `api.scisenselab.com`, asegurar persistencia de procesos en PM2 y garantizar conectividad HTTPS con Cloudflare en modo Full SSL.
+
+| # | Tarea | Detalle | Estado |
+|---|---|---|---|
+| 24.1 | Enrutamiento Caddy Multi-Domain | Adición de dominios `.com` (`api.scisenselab.com`, `scisenselab.com`, `app.scisenselab.com`, `portal.scisenselab.com`, `mobile.scisenselab.com`) con directiva `tls internal` en `/home/dawnweaber/Workspace/Caddyfile`. | ✅ |
+| 24.2 | Persistencia PM2 | Verificación del backend Laravel (`artisan serve --port=8000`) en PM2 (id 0) y guardado persistente con `pm2 save`. | ✅ |
+| 24.3 | Alineación SSO & Cookie Domain | Configuración de `SANCTUM_STATEFUL_DOMAINS` en `.env` para permitir autenticación cruzada fluida en `*.scisenselab.com` y `*.scisenselab.local`. | ✅ |
+| 24.4 | Verificación Runtime HTTPS | Validación exitosa de TLS 1.3 / HTTP2 proxied a través de Caddy en `https://api.scisenselab.com/api/health/live`. | ✅ |
+
+---
+
+## FASE 25 — Roadmap de Mejoras de Infraestructura y Observabilidad del Ecosistema (v5.3.0 - Q4 2026) 🚀 PLANIFICADO
+
+**Objetivo:** Elevar la resiliencia operativa, seguridad perimetral y trazabilidad de datos en producción.
+
+| # | Tarea | Detalle | Estado |
+|---|---|---|---|
+| 25.1 | Middleware CF-Connecting-IP | Garantizar extracción nativa de `CF-Connecting-IP` y `CF-Visitor` en Laravel TrustProxies para que audit logs y rate limiters registren la IP real del cliente en lugar de la IP de Cloudflare. | ⏳ Pendiente |
+| 25.2 | Cloudflare Origin Certificates | Instalar certificados de Origen de Cloudflare en Caddy (`tls /etc/caddy/certs/origin.pem /etc/caddy/certs/origin.key`) para habilitar el modo **Full (Strict)** SSL/TLS. | ⏳ Pendiente |
+| 25.3 | Auto-Healer Daemon para PM2 | Crear job/cron de monitoreo que ejecute `curl -s http://localhost:8000/api/health/live` y reinicie automáticamente `senselab-api` vía PM2 en caso de fallo. | ⏳ Pendiente |
+| 25.4 | Horizon & WebSocket Proxy Routing | Configurar proxy pasante en Caddy para `/horizon` con autenticación restringida a administradores centralizados. | ⏳ Pendiente |
+| 25.5 | Migrador de Tenants Concurrente | Implementar comando Artisan `php artisan tenant:migrate-all --parallel` para ejecutar migraciones masivas en bases de datos de inquilinos aisladas con pool de hilos. | ⏳ Pendiente |
+
+
