@@ -2,6 +2,93 @@
 
 All notable changes to `laravel-multitenancy` will be documented in this file
 
+## 4.1.5 - 2026-07-22
+
+### What's Changed
+
+* Fix tenant id retrival during job retry by @gazben in https://github.com/spatie/laravel-multitenancy/pull/642
+
+**Full Changelog**: https://github.com/spatie/laravel-multitenancy/compare/4.1.4...4.1.5
+
+## 4.1.4 - 2026-07-17
+
+### What's Changed
+
+* Support legacy queue payloads in tenant-awareness detection by @ragulka in https://github.com/spatie/laravel-multitenancy/pull/640
+
+### New Contributors
+
+* @ragulka made their first contribution in https://github.com/spatie/laravel-multitenancy/pull/640
+
+**Full Changelog**: https://github.com/spatie/laravel-multitenancy/compare/4.1.3...4.1.4
+
+## 4.1.3 - 2026-05-22
+
+### What's Changed
+
+* Resolve tenant from payload context when retrying jobs by @freekmurze in https://github.com/spatie/laravel-multitenancy/pull/638
+
+**Full Changelog**: https://github.com/spatie/laravel-multitenancy/compare/4.1.2...4.1.3
+
+## 4.1.2 - 2026-05-13
+
+### What's Changed
+
+* Add Laravel Boost skill by @victoryoalli in https://github.com/spatie/laravel-multitenancy/pull/635
+
+### New Contributors
+
+* @victoryoalli made their first contribution in https://github.com/spatie/laravel-multitenancy/pull/635
+
+**Full Changelog**: https://github.com/spatie/laravel-multitenancy/compare/4.1.1...4.1.2
+
+## 4.1.1 - 2026-04-12
+
+### What's Changed
+
+* Add description to TenantsArtisanCommand by @dac514 in https://github.com/spatie/laravel-multitenancy/pull/633
+
+### New Contributors
+
+* @dac514 made their first contribution in https://github.com/spatie/laravel-multitenancy/pull/633
+
+**Full Changelog**: https://github.com/spatie/laravel-multitenancy/compare/4.1.0...4.1.1
+
+## 4.0.9 - 2026-02-09
+
+### What's Changed
+
+* Fix #617: Add default value for TasksCollection constructor parameter by @freekmurze in https://github.com/spatie/laravel-multitenancy/pull/625
+* Fix #620: Handle JobRetryRequested in queue tenant awareness by @freekmurze in https://github.com/spatie/laravel-multitenancy/pull/624
+
+**Full Changelog**: https://github.com/spatie/laravel-multitenancy/compare/4.0.8...4.0.9
+
+## 4.0.8 - 2026-02-09
+
+### What's Changed
+
+* Fix tenant context not being restored when exception occurs in `execute()` by @moisish in https://github.com/spatie/laravel-multitenancy/pull/622
+* Bump minimum testbench to ^9.1.4 to fix `$latestResponse` error on prefer-lowest
+* Fix notification test assertions for Laravel 11/12 compatibility
+
+### New Contributors
+
+* @moisish made their first contribution in https://github.com/spatie/laravel-multitenancy/pull/622
+
+**Full Changelog**: https://github.com/spatie/laravel-multitenancy/compare/4.0.7...4.0.8
+
+## 4.0.7 - 2025-09-26
+
+### What's Changed
+
+* Fix syntax for tenant aware interface config by @danharrin in https://github.com/spatie/laravel-multitenancy/pull/608
+
+### New Contributors
+
+* @danharrin made their first contribution in https://github.com/spatie/laravel-multitenancy/pull/608
+
+**Full Changelog**: https://github.com/spatie/laravel-multitenancy/compare/4.0.6...4.0.7
+
 ## 4.0.6 - 2025-09-26
 
 ### What's Changed

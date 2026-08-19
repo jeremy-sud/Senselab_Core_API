@@ -12,7 +12,7 @@ use Sentry\Util\PrefixStripper;
  *
  * @internal
  *
- * @psalm-type StacktraceFrame array{
+ * @phpstan-type StacktraceFrame array{
  *     function?: string,
  *     line?: int,
  *     file?: string,
@@ -54,7 +54,7 @@ final class FrameBuilder
      * @param int                  $line           The line at which the frame originated
      * @param array<string, mixed> $backtraceFrame The raw frame
      *
-     * @psalm-param StacktraceFrame $backtraceFrame
+     * @phpstan-param StacktraceFrame $backtraceFrame
      */
     public function buildFromBacktraceFrame(string $file, int $line, array $backtraceFrame): Frame
     {
@@ -131,11 +131,16 @@ final class FrameBuilder
 
         $excludedAppPaths = $this->options->getInAppExcludedPaths();
         $includedAppPaths = $this->options->getInAppIncludedPaths();
+
+        if ($excludedAppPaths === [] && $includedAppPaths === []) {
+            return true;
+        }
+
         $absoluteFilePath = @realpath($file) ?: $file;
         $isInApp = true;
 
         foreach ($excludedAppPaths as $excludedAppPath) {
-            if (mb_substr($absoluteFilePath, 0, mb_strlen($excludedAppPath)) === $excludedAppPath) {
+            if (strncmp($absoluteFilePath, $excludedAppPath, \strlen($excludedAppPath)) === 0) {
                 $isInApp = false;
 
                 break;
@@ -143,7 +148,7 @@ final class FrameBuilder
         }
 
         foreach ($includedAppPaths as $includedAppPath) {
-            if (mb_substr($absoluteFilePath, 0, mb_strlen($includedAppPath)) === $includedAppPath) {
+            if (strncmp($absoluteFilePath, $includedAppPath, \strlen($includedAppPath)) === 0) {
                 $isInApp = true;
 
                 break;
@@ -158,7 +163,7 @@ final class FrameBuilder
      *
      * @param array<string, mixed> $backtraceFrame The frame data
      *
-     * @psalm-param StacktraceFrame $backtraceFrame
+     * @phpstan-param StacktraceFrame $backtraceFrame
      *
      * @return array<string, mixed>
      */

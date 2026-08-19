@@ -1,2 +1,0 @@
-# mime-type-detection
-

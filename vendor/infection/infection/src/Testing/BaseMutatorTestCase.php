@@ -45,13 +45,12 @@ use Infection\Framework\Str;
 use Infection\Mutation\Mutation;
 use Infection\Mutator\Mutator;
 use Infection\Mutator\NodeMutationGenerator;
-use Infection\PhpParser\NodeTraverserFactory;
 use Infection\PhpParser\Visitor\MutationCollectorVisitor;
 use Infection\PhpParser\Visitor\MutatorVisitor;
 use Infection\Source\Matcher\NullSourceLineMatcher;
 use Infection\TestFramework\Tracing\Trace\EmptyTrace;
 use Infection\TestFramework\Tracing\Trace\LineRangeCalculator;
-use Infection\Tests\TestingUtility\FileSystem\MockSplFileInfo;
+use Infection\Testing\FileSystem\MockSplFileInfo;
 use const PHP_EOL;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\CloningVisitor;
@@ -65,7 +64,7 @@ use Webmozart\Assert\Assert;
 
 abstract class BaseMutatorTestCase extends TestCase
 {
-    private const WRAPPED_CODE_METHOD_BODY_INDENT = '        ';
+    private const string WRAPPED_CODE_METHOD_BODY_INDENT = '        ';
 
     protected Mutator $mutator;
 
@@ -251,13 +250,14 @@ abstract class BaseMutatorTestCase extends TestCase
             ),
         );
 
-        $factory = new NodeTraverserFactory();
+        $factory = SingletonContainer::getContainer()->getNodeTraverserFactory();
 
         $factory
-            ->createPreTraverser()
+            ->createEnrichmentTraverser()
             ->traverse($nodes);
+
         $factory
-            ->create($mutationsCollectorVisitor)
+            ->createMutationTraverser($mutationsCollectorVisitor)
             ->traverse($nodes);
 
         return take($mutationsCollectorVisitor->getMutations())->toList();

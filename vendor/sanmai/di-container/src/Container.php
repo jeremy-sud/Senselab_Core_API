@@ -38,10 +38,12 @@ declare(strict_types=1);
 
 namespace DIContainer;
 
+use IteratorAggregate;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionNamedType;
 use ReflectionParameter;
+use Traversable;
 
 use function array_key_exists;
 use function count;
@@ -52,13 +54,23 @@ use function Pipeline\take;
 use function reset;
 use function sprintf;
 use function str_contains;
+use function class_exists;
+use function interface_exists;
 
-class Container implements ContainerInterface
+/**
+ * @implements IteratorAggregate<array-key, class-string<object>|non-empty-string>
+ */
+class Container implements ContainerInterface, IteratorAggregate
 {
     /**
      * @var array<class-string<object>|non-empty-string, object>
      */
     private array $values = [];
+
+    /**
+     * @var array<class-string<object>|non-empty-string, object>
+     */
+    private array $prebuilt = [];
 
     /**
      * @var array<class-string<object>|non-empty-string, callable>
@@ -71,12 +83,23 @@ class Container implements ContainerInterface
     private array $builders = [];
 
     /**
-     * @param iterable<class-string<object>, callable|class-string<Builder<object>>> $values
-     * @param iterable<non-empty-string, callable|class-string<Builder<object>>> $bindings
+     * @var array<class-string<object>|non-empty-string, class-string<object>>
+     */
+    private array $implementations = [];
+
+    /** Placeholder marking an unresolved parameter */
+    private readonly object $missing;
+
+    /**
+     * @param iterable<class-string<object>, callable|class-string<Builder<object>>|class-string<object>> $values
+     * @param iterable<non-empty-string, callable|class-string<Builder<object>>|class-string<object>> $bindings For non-class service IDs
      */
     public function __construct(iterable $values = [], iterable $bindings = [])
     {
+        // Cache the value letting a builder override it
         $this->values[ContainerInterface::class] = $this;
+
+        $this->missing = new class {};
 
         foreach ($values as $id => $value) {
             $this->set($id, $value);
@@ -88,11 +111,11 @@ class Container implements ContainerInterface
     }
 
     /**
-     * Register a factory or builder for a class-based service ID.
+     * Register a factory, a builder, or an implementation class for a class-based service ID.
      *
      * @template T of object
      * @param class-string<T> $id
-     * @param class-string<Builder<T>>|callable(static): T $value
+     * @param class-string<T>|class-string<Builder<T>>|callable(static): T $value
      */
     public function set(string $id, callable|string $value): void
     {
@@ -100,14 +123,15 @@ class Container implements ContainerInterface
     }
 
     /**
-     * Register a factory or builder for a non-class service ID (e.g., 'app.locator').
+     * Register a factory, a builder, or an implementation class for a non-class service ID (e.g., 'app.locator').
      *
      * @param non-empty-string $id
-     * @param class-string<Builder<object>>|callable(static): object $value
+     * @param class-string<object>|class-string<Builder<object>>|callable(static): object $value
      */
     public function bind(string $id, callable|string $value): void
     {
-        unset($this->values[$id]);
+        // Registered dependencies override everything else at bind time
+        $this->remove($id);
 
         // A value can be a callable and also implement our `Builder` interface:
         // we must treat such cases as factories, not builders, to ensure
@@ -117,7 +141,26 @@ class Container implements ContainerInterface
             return;
         }
 
-        $this->builders[$id] = $value;
+        if (is_a($value, Builder::class, true)) {
+            $this->builders[$id] = $value;
+            return;
+        }
+
+        $this->implementations[$id] = $value;
+    }
+
+    /**
+     * @param class-string<object>|non-empty-string $id
+     */
+    public function remove(string $id): void
+    {
+        unset(
+            $this->values[$id],
+            $this->factories[$id],
+            $this->builders[$id],
+            $this->implementations[$id],
+            $this->prebuilt[$id],
+        );
     }
 
     /**
@@ -129,10 +172,12 @@ class Container implements ContainerInterface
      */
     public function inject(string $id, object $value): void
     {
-        unset($this->factories[$id], $this->builders[$id]);
+        self::assertType($id, $value);
 
-        /** @var class-string<T> $id */
-        $this->setValueOrThrow($id, $value);
+        // Injected pre-built dependencies override everything else at the time of injection
+        $this->remove($id);
+
+        $this->prebuilt[$id] = $value;
     }
 
     /**
@@ -145,21 +190,24 @@ class Container implements ContainerInterface
      */
     private function setValueOrThrow(string $id, object $value): object
     {
+        self::assertType($id, $value);
+
+        $this->values[$id] = $value;
+
+        /** @var T */
+        return $value;
+    }
+
+    private static function assertType(string $id, object $value): void
+    {
         // Break the contract to skip the type check for IDs that do not look like a valid namespaced PHP class name
         if (str_contains($id, '.') || !str_contains($id, '\\')) {
-            $this->values[$id] = $value;
-
-            /** @var T */
-            return $value;
+            return;
         }
 
         if (!$value instanceof $id) {
             throw new Exception(sprintf('Expected instance of %s, got %s', $id, get_class($value)));
         }
-
-        $this->values[$id] = $value;
-
-        return $value;
     }
 
     /**
@@ -170,10 +218,24 @@ class Container implements ContainerInterface
      */
     public function get(string $id)
     {
+        // All kinds of already built instances come first
         if (array_key_exists($id, $this->values)) {
             return $this->values[$id];
         }
 
+        if (array_key_exists($id, $this->prebuilt)) {
+            return $this->prebuilt[$id];
+        }
+
+        // Resolve concrete implementations using common rules
+        if (
+            array_key_exists($id, $this->implementations)
+            && $this->implementations[$id] !== $id
+        ) {
+            return $this->setValueOrThrow($id, $this->get($this->implementations[$id]));
+        }
+
+        // Builders and factories assume extra work, so they follow next
         if (array_key_exists($id, $this->builders)) {
             /** @var Builder<T> $builder */
             $builder = $this->get($this->builders[$id]);
@@ -217,65 +279,89 @@ class Container implements ContainerInterface
         }
 
         $resolvedArguments = take($constructor->getParameters())
-            ->map($this->resolveParameter(...))
+            ->cast($this->findParameterValue(...))
+            ->select($this->notMissing(...))
             ->toList();
 
+        $requiredNumberOfParameters = $constructor->getNumberOfParameters();
+
+        // Account for the variadic parameter (there can be only one, always optional)
+        if ($constructor->isVariadic()) {
+            $requiredNumberOfParameters -= 1;
+        }
+
         // Check if we identified all parameters for the service
-        if (count($resolvedArguments) !== $constructor->getNumberOfParameters()) {
+        if (count($resolvedArguments) !== $requiredNumberOfParameters) {
             return null;
         }
 
         return $reflectionClass->newInstanceArgs($resolvedArguments);
     }
 
-    /**
-     * Builds a potentially incomplete list of arguments for a constructor; as list of arguments may
-     * contain null values, we use a generator that can yield none or one value as an option type.
-     *
-     * @return iterable<array-key, object>
-     */
-    private function resolveParameter(ReflectionParameter $parameter): iterable
+    private function notMissing(mixed $value): bool
     {
-        // Variadic parameters need hand-weaving
+        return $this->missing !== $value;
+    }
+
+    private function resolveDefaultValue(ReflectionParameter $parameter): mixed
+    {
+        return match ($parameter->isDefaultValueAvailable()) {
+            true => $parameter->getDefaultValue(),
+            default => $this->missing,
+        };
+    }
+
+    /**
+     * Returns a possible argument value for the constructor; it can return a specific computed
+     * value just as well as a placeholder for the missing value.
+     *
+     * @return mixed
+     */
+    private function findParameterValue(ReflectionParameter $parameter): mixed
+    {
+        // Variadic parameters imply collections, which we do not provide, for now
         if ($parameter->isVariadic()) {
-            return;
+            return $this->missing;
         }
 
         $paramType = $parameter->getType();
 
         // Not considering composite types, such as unions or intersections, for now
         if (!$paramType instanceof ReflectionNamedType) {
-            throw new Exception('Composite types are not supported');
-        }
-
-        // Only attempt to resolve a non-built-in named type (a class/interface)
-        if ($paramType->isBuiltin()) {
-            return;
+            return $this->resolveDefaultValue($parameter);
         }
 
         /** @var class-string $paramTypeName */
         $paramTypeName = $paramType->getName();
 
+        // Defer to a default value for built-in types and classes that cannot be reflected
+        if (!class_exists($paramTypeName) && !interface_exists($paramTypeName)) {
+            return $this->resolveDefaultValue($parameter);
+        }
+
         // Found an instantiable class, done
         if ((new ReflectionClass($paramTypeName))->isInstantiable()) {
-            yield $this->get($paramTypeName);
-
-            return;
+            return $this->get($paramTypeName);
         }
 
         // Look for a factory that can create an instance of an interface or abstract class
         $matchingTypes = $this->providersForType($paramTypeName);
 
-        // We expect exactly one factory to match the type, otherwise we cannot resolve the parameter
-        if (1 !== count($matchingTypes)) {
-            return;
+        // We expect exactly one factory to match the type to resolve a parameter unambiguously
+        if (1 === count($matchingTypes)) {
+            return $this->get(reset($matchingTypes));
         }
 
-        yield $this->get(reset($matchingTypes));
+        // But we should also consider default values if present and no default provider
+        if ([] === $matchingTypes) {
+            return $this->resolveDefaultValue($parameter);
+        }
+
+        return $this->missing;
     }
 
     /**
-     * Retrieves the class or interface names of all registered factories/builders that can produce instances of the given type.
+     * Retrieves the class or interface names of all registered factories/builders/etc that can produce instances of the given type.
      * This includes direct implementations, subclasses, or the type itself.
      *
      * @template T of object
@@ -285,7 +371,7 @@ class Container implements ContainerInterface
     private function providersForType(string $type): array
     {
         /** @var list<class-string<object>> */
-        return take($this->factories, $this->builders)
+        return take($this->factories, $this->builders, $this->implementations, $this->prebuilt)
             ->keys()
             ->filter(static fn(string $id) => is_a($id, $type, true))
             ->toList();
@@ -294,6 +380,14 @@ class Container implements ContainerInterface
     public function has(string $id): bool
     {
         if (array_key_exists($id, $this->values)) {
+            return true;
+        }
+
+        if (array_key_exists($id, $this->implementations)) {
+            return true;
+        }
+
+        if (array_key_exists($id, $this->prebuilt)) {
             return true;
         }
 
@@ -307,5 +401,15 @@ class Container implements ContainerInterface
 
         // Very pessimistic; could probably try to create it.
         return false;
+    }
+
+    public function getIterator(): Traversable
+    {
+        return take(
+            $this->factories,
+            $this->builders,
+            $this->implementations,
+            $this->prebuilt,
+        )->keys();
     }
 }
