@@ -36,6 +36,27 @@
 // CARGA DE RUTAS PARTICIONADAS
 // ============================================================================
 
+// Senselab 2.0 Ecosystem Welcome Endpoint
+Route::get('/', function () {
+    return response()->json([
+        'name' => 'Senselab Core API 2.0',
+        'status' => 'operational',
+        'version' => '2.0.0',
+        'model' => 'Senselab 2.0 — Plataforma Abierta y Gratuita',
+        'documentation' => url('/api/documentation'),
+        'ecosystem' => [
+            'landing' => 'https://scisenselab.com',
+            'erp' => 'https://app.scisenselab.com',
+            'portal' => 'https://portal.scisenselab.com',
+            'blog' => 'https://blog.scisenselab.com',
+            'eon_ai' => 'https://eon.scisenselab.com',
+            'core_api' => 'https://api.scisenselab.com',
+        ],
+        'support' => 'contacto@scisenselab.com',
+        'github' => 'https://github.com/jeremy-sud/Senselab_Core_API',
+    ]);
+});
+
 // Observabilidad (Health checks - sin auth)
 require __DIR__ . '/api/observabilidad.php';
 

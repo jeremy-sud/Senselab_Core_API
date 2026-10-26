@@ -1,22 +1,23 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Senselab Core API - ERP System",
-        "description": "API completa de ERP para empresas costarricenses. Sistema integral de gestión empresarial con soporte para contabilidad, facturación electrónica, inventario, compras, ventas, recursos humanos y más.",
+        "title": "Senselab Core API 2.0 - Open Source ERP System",
+        "description": "API completa de ERP para empresas costarricenses y globales. Sistema integral de gestión empresarial con soporte para contabilidad, facturación electrónica DGT v4.4, inventario, compras, ventas, nómina y Eón AI. Senselab 2.0: plataforma abierta, gratuita y orientada a código abierto en GitHub.",
         "contact": {
-            "name": "Senselab",
-            "email": "deadmooncr@gmail.com"
+            "name": "Senselab Engineering Team",
+            "url": "https://github.com/jeremy-sud/Senselab_Core_API",
+            "email": "contacto@scisenselab.com"
         },
-        "version": "1.0.0"
+        "version": "2.0.0"
     },
     "servers": [
         {
-            "url": "http://localhost:8000",
-            "description": "Servidor de Desarrollo Local"
+            "url": "https://api.scisenselab.com",
+            "description": "Servidor de Producción (api.scisenselab.com)"
         },
         {
-            "url": "https://api.senselab.com",
-            "description": "Servidor de Producción"
+            "url": "http://localhost:8000",
+            "description": "Servidor de Desarrollo Local"
         }
     ],
     "paths": {
@@ -1929,6 +1930,26 @@
                                                 }
                                             },
                                             "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Servicio de base de datos no disponible",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "El servicio de base de datos no está disponible. Asegúrese de que el servicio o contenedor de base de datos MySQL esté iniciado."
                                         }
                                     },
                                     "type": "object"

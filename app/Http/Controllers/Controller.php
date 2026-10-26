@@ -10,21 +10,22 @@ use OpenApi\Attributes as OA;
 /**
  * @OA\OpenApi(
  *     @OA\Info(
- *         version="1.0.0",
- *         title="Senselab Core API - ERP System",
- *         description="API completa de ERP para empresas costarricenses. Sistema integral de gestión empresarial con soporte para contabilidad, facturación electrónica, inventario, compras, ventas, recursos humanos y más.",
+ *         version="2.0.0",
+ *         title="Senselab Core API 2.0 - Open Source ERP System",
+ *         description="API completa de ERP para empresas costarricenses y globales. Sistema integral de gestión empresarial con soporte para contabilidad, facturación electrónica DGT v4.4, inventario, compras, ventas, nómina y Eón AI. Senselab 2.0: plataforma abierta, gratuita y orientada a código abierto en GitHub.",
  *         @OA\Contact(
- *             name="Senselab",
- *             email="deadmooncr@gmail.com"
+ *             name="Senselab Engineering Team",
+ *             email="contacto@scisenselab.com",
+ *             url="https://github.com/jeremy-sud/Senselab_Core_API"
  *         )
+ *     ),
+ *     @OA\Server(
+ *         url="https://api.scisenselab.com",
+ *         description="Servidor de Producción (api.scisenselab.com)"
  *     ),
  *     @OA\Server(
  *         url="http://localhost:8000",
  *         description="Servidor de Desarrollo Local"
- *     ),
- *     @OA\Server(
- *         url="https://api.senselab.com",
- *         description="Servidor de Producción"
  *     )
  * )
  * 

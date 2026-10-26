@@ -8,6 +8,7 @@ use App\Http\Requests\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use OpenApi\Attributes as OA;
 use App\Http\Resources\UsuarioResource;
@@ -75,16 +76,33 @@ class AuthController extends Controller
                         )
                     ]
                 )
+            ),
+            new OA\Response(
+                response: 503,
+                description: 'Servicio de base de datos no disponible',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'El servicio de base de datos no está disponible. Asegúrese de que el servicio o contenedor de base de datos MySQL esté iniciado.')
+                    ]
+                )
             )
         ]
     )]
     public function login(LoginRequest $request): JsonResponse
     {
-
-        $usuario = Usuario::where('email', $request->email)
-            ->where('activo', true)
-            ->where('eliminado', false)
-            ->first();
+        try {
+            $usuario = Usuario::where('email', $request->email)
+                ->where('activo', true)
+                ->where('eliminado', false)
+                ->first();
+        } catch (\Illuminate\Database\QueryException|\PDOException $e) {
+            Log::error('Fallo de conexión a base de datos en login: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'El servicio de base de datos no está disponible. Asegúrese de que el servicio o contenedor de base de datos MySQL esté iniciado.',
+            ], 503);
+        }
 
         if (!$usuario || !Hash::check($request->password, $usuario->password_hash)) {
             throw ValidationException::withMessages([
