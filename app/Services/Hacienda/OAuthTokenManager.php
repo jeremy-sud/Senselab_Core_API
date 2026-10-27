@@ -72,7 +72,7 @@ class OAuthTokenManager
             $this->credentials = config('hacienda.oauth');
         }
 
-        $this->validateCredentials();
+        // $this->validateCredentials() is deferred to obtenerNuevoToken()
     }
 
     /**
@@ -115,6 +115,7 @@ class OAuthTokenManager
      */
     public function obtenerNuevoToken(): string
     {
+        $this->validateCredentials();
         Log::info('Solicitando nuevo token OAuth a Hacienda', [
             'ambiente' => $this->ambiente,
             'token_url' => $this->tokenUrl,
