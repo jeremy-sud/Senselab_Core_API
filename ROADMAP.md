@@ -563,10 +563,10 @@ Items identificados en la auditoría técnica que no encajan directamente en una
 
 | # | Tarea | Detalle | Estado |
 |---|---|---|---|
-| 25.1 | Middleware CF-Connecting-IP | Garantizar extracción nativa de `CF-Connecting-IP` y `CF-Visitor` en Laravel TrustProxies para que audit logs y rate limiters registren la IP real del cliente en lugar de la IP de Cloudflare. | ⏳ Pendiente |
+| 25.1 | Middleware CF-Connecting-IP | Garantizar extracción nativa de `CF-Connecting-IP` y `CF-Visitor` en Laravel (`TrustCloudflareProxy` prepended en `bootstrap/app.php`) para que audit logs y rate limiters registren la IP real del cliente. | ✅ |
 | 25.2 | Cloudflare Origin Certificates | Instalar certificados de Origen de Cloudflare en Caddy (`tls /etc/caddy/certs/origin.pem /etc/caddy/certs/origin.key`) para habilitar el modo **Full (Strict)** SSL/TLS. | ⏳ Pendiente |
-| 25.3 | Auto-Healer Daemon para PM2 | Crear job/cron de monitoreo que ejecute `curl -s http://localhost:8000/api/health/live` y reinicie automáticamente `senselab-api` vía PM2 en caso de fallo. | ⏳ Pendiente |
-| 25.4 | Horizon & WebSocket Proxy Routing | Configurar proxy pasante en Caddy para `/horizon` con autenticación restringida a administradores centralizados. | ⏳ Pendiente |
-| 25.5 | Migrador de Tenants Concurrente | Implementar comando Artisan `php artisan tenant:migrate-all --parallel` para ejecutar migraciones masivas en bases de datos de inquilinos aisladas con pool de hilos. | ⏳ Pendiente |
+| 25.3 | Auto-Healer Daemon para PM2 | Sentinel centinela creado en `scripts/pm2_auto_healer.sh` para verificación autónoma de `/api/health/live` y auto-reinicio de `senselab-api` vía PM2. | ✅ |
+| 25.4 | Horizon & WebSocket Proxy Routing | Configurar proxy pasante en Caddy para `/horizon` y WebSockets con soporte streaming y encabezados proxy. | ✅ |
+| 25.5 | Migrador de Tenants Concurrente | Implementar comando Artisan `php artisan tenant:migrate-all --parallel` con pool de hilos y modo secuencial/concurrente verificado. | ✅ |
 
 

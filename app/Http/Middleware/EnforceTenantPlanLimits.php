@@ -37,19 +37,22 @@ class EnforceTenantPlanLimits
         $tenantHeader = $request->header('X-Senselab-Tenant-Id');
         $tenantId = $tenantHeader ?: 'sl_tenant_' . str_pad((string)$user->empresa_id, 6, '0', STR_PAD_LEFT);
 
-        // Buscar o crear suscripción (Senselab 2.0: Plan Business Gratuito e Ilimitado por defecto)
+        // Buscar o inicializar suscripción si aún no existe
         $subscription = Subscription::where('tenant_id', $tenantId)->first();
         if (!$subscription) {
+            $isGlobalAdmin = ($user->email === 'admin@scisenselab.com' || $user->empresa_id == 1);
+            $plan = $isGlobalAdmin ? 'business' : 'starter';
+
             $subscription = Subscription::create([
                 'tenant_id' => $tenantId,
                 'empresa_id' => $user->empresa_id,
                 'usuario_id' => $user->id,
-                'plan' => 'business',
+                'plan' => $plan,
                 'status' => 'active',
-                'max_users' => 999999,
-                'max_invoices_month' => 999999,
-                'max_ai_queries_month' => 999999,
-                'current_period_end' => now()->addYears(10),
+                'max_users' => $plan === 'business' ? 999999 : 1,
+                'max_invoices_month' => $plan === 'business' ? 999999 : 50,
+                'max_ai_queries_month' => $plan === 'business' ? 999999 : 10,
+                'current_period_end' => now()->addYear(),
             ]);
         }
 

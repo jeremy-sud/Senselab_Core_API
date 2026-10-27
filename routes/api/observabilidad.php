@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('health')->group(function () {
+    // Health check base endpoint
+    Route::get('/', [HealthCheckController::class, 'readiness'])
+        ->name('health.index');
     // Liveness probe - ¿Está el servicio vivo?
     Route::get('/live', [HealthCheckController::class, 'liveness'])
         ->name('health.liveness');

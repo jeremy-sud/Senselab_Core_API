@@ -5,6 +5,20 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [v5.3.0] — 2026-10-27 — FASE 25: Observabilidad Cloudflare, Centinela PM2, Migrador Concurrente y Límites SaaS
+
+### Infraestructura, Multi-Tenancy y Operaciones
+- **Middleware `TrustCloudflareProxy` (FASE 25.1):** Extracción nativa de `CF-Connecting-IP` y esquema seguro `CF-Visitor` prepended en `bootstrap/app.php`. Garantiza que rate limiters, audit logs y sesiones almacenen la IP real del cliente.
+- **Centinela Auto-Healer para PM2 (FASE 25.3):** Creado `scripts/pm2_auto_healer.sh` para monitoreo periódico (15s) de salud y reinicio automático de `senselab-api` vía PM2.
+- **Migrador Concurrente de Tenants (FASE 25.5):** Implementado comando Artisan `php artisan tenant:migrate-all --parallel` (`TenantMigrateAllCommand.php`) con pool de hilos para ejecución masiva concurrente o secuencial, flags `--threads`, `--fresh`, `--seed`, `--tenant` y `--force`. Testeado en `TenantMigrateAllCommandTest.php` (5 tests passing).
+- **Ruta de Salud Base (`GET /api/health`):** Agregada en `routes/api/observabilidad.php` retornando verificación de readiness de base de datos, cache y storage.
+- **Corrección de Límites de Suscripción SaaS:** Corregido `EnforceTenantPlanLimits.php` para inicializar el plan `starter` por defecto con cuota estricta (1 usuario, 50 facturas, 10 IA) cuando no existe registro previo, solventando falso positivo de bypass ilimitado en inquilinos nuevos.
+- **Resolución Multi-Tenancy:**
+  - Inclusión de cabecera `X-Senselab-Tenant-Id` en fallback de `HeaderSubdomainTenantFinder.php`.
+  - Expansión de `ignore_subdomains` a `['www', 'api', 'app', 'portal', 'mobile', 'blog', 'admin', 'mail']` en `config/multitenancy.php` y resolvedor.
+
+---
+
 ## [v5.1.2] — 2026-05-30 — IA Gemini operativa en producción AWS (gemini-2.5-flash)
 
 ### Configuración

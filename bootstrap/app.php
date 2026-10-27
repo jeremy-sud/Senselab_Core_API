@@ -52,6 +52,9 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+    ->withCommands([
+        __DIR__.'/../app/Console/Commands',
+    ])
     ->withMiddleware(function (Middleware $middleware): void {
         // Confiar en todos los proxies (Cloudflare, AWS ALB) para leer cabeceras HTTPS X-Forwarded-Proto correctamente
         $middleware->trustProxies(at: '*');
@@ -70,6 +73,9 @@ return Application::configure(basePath: dirname(__DIR__))
             // Suscripciones y Límites SaaS (Hito 3)
             'enforce.limits' => \App\Http\Middleware\EnforceTenantPlanLimits::class,
         ]);
+
+        // FASE 25.1: Extracción nativa de IP real y esquema HTTPS desde Cloudflare
+        $middleware->prepend(\App\Http\Middleware\TrustCloudflareProxy::class);
 
         // CORS - Cross-Origin Resource Sharing (FASE 1.2)
         // Middleware nativo de Laravel que respeta config/cors.php

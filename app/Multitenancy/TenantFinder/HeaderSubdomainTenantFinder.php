@@ -41,6 +41,7 @@ class HeaderSubdomainTenantFinder extends TenantFinder
             'X-Empresa-Id',
             'X-Tenant-Id',
             'X-Tenant',
+            'X-Senselab-Tenant-Id',
         ]);
     }
 
@@ -68,7 +69,7 @@ class HeaderSubdomainTenantFinder extends TenantFinder
 
         $subdomain = strtolower($subdomain);
 
-        if (in_array($subdomain, config('multitenancy.identification.ignore_subdomains', ['www', 'api']), true)) {
+        if (in_array($subdomain, config('multitenancy.identification.ignore_subdomains', ['www', 'api', 'app', 'portal', 'mobile', 'blog', 'admin', 'mail']), true)) {
             return null;
         }
 
