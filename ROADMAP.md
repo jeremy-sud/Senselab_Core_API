@@ -569,4 +569,18 @@ Items identificados en la auditoría técnica que no encajan directamente en una
 | 25.4 | Horizon & WebSocket Proxy Routing | Configurar proxy pasante en Caddy para `/horizon` y WebSockets con soporte streaming y encabezados proxy. | ✅ |
 | 25.5 | Migrador de Tenants Concurrente | Implementar comando Artisan `php artisan tenant:migrate-all --parallel` con pool de hilos y modo secuencial/concurrente verificado. | ✅ |
 
+---
+
+## FASE 26 — Sincronización de Módulos Extendidos del ERP (v5.4.0 - Q4 2026 / Q1 2027) 🚀 EN PROGRESO
+
+**Objetivo:** Consolidar el soporte de endpoints, eventos y auto-contabilizaciones en partida doble para los nuevos subsistemas del ERP Frontend (`app.scisenselab.com`): Nómina CCSS, Compras B2B y Declaraciones Tributarias D-104/D-151.
+
+| # | Tarea | Detalle | Estado |
+|---|---|---|---|
+| 26.1 | Nómina & RRHH CCSS (`/api/nomina/*`, `/api/empleados`) | Endpoints de colaboradores, cálculo de cargas sociales (10.67% obrero, 26.67% patronal, 37.34% total) y exportación SICERE integrados con el frontend ERP v2.17.0. | ✅ |
+| 26.2 | Compras B2B & Kardex (`/api/ordenes-compra`, `/api/compras`) | Flujo completo de Órdenes de Compra con recepción física en almacenes (`entradas_inventario`), actualización de costo promedio y pasivos en `cuentas_por_pagar`. | 🚀 En progreso |
+| 26.3 | Motor de Reportes Fiscales D-104 / D-151 (`/api/reporting/tributario/*`) | Consolidación de IVA crédito vs débito (D-104) y operaciones anuales superiores a ₡2,500,000 (D-151) para la Dirección General de Tributación. | 📅 Planificado |
+| 26.4 | Conciliación Bancaria SINPE / ACH (`/api/conciliaciones/*`) | Importación de extractos bancarios de BNCR, BCR y BAC con algoritmo de coincidencia 1:1 por comprobante y monto. | 📅 Planificado |
+
+
 
