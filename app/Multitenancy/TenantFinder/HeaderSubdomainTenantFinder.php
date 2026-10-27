@@ -77,17 +77,22 @@ class HeaderSubdomainTenantFinder extends TenantFinder
 
     protected function locateTenant(string $identifier): ?Empresa
     {
-        if (str_starts_with($identifier, 'sl_tenant_')) {
-            $id = (int) substr($identifier, 10);
-            return Empresa::query()->find($id);
-        }
+        try {
+            if (str_starts_with($identifier, 'sl_tenant_')) {
+                $id = (int) substr($identifier, 10);
+                return Empresa::query()->find($id);
+            }
 
-        if (is_numeric($identifier)) {
-            return Empresa::query()->find((int) $identifier);
-        }
+            if (is_numeric($identifier)) {
+                return Empresa::query()->find((int) $identifier);
+            }
 
-        return Empresa::query()
-            ->where('subdominio', $identifier)
-            ->first();
+            return Empresa::query()
+                ->where('subdominio', $identifier)
+                ->first();
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('[Multitenancy] Fallo de conexión de base de datos en locateTenant: ' . $e->getMessage());
+            return null;
+        }
     }
 }
