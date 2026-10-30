@@ -125,6 +125,16 @@ class BusUnidad extends Model
     /**
      * Relación: horarios/viajes programados asociados a la unidad.
      */
+    public function plantilla(): BelongsTo
+    {
+        return $this->belongsTo(BusPlantillaAsiento::class, 'plantilla_id');
+    }
+
+    public function asientos(): HasMany
+    {
+        return $this->hasMany(BusAsiento::class, 'bus_id');
+    }
+
     public function horariosRuta(): HasMany
     {
         return $this->hasMany(HorarioRuta::class, 'bus_id');

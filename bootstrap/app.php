@@ -56,6 +56,9 @@ return Application::configure(basePath: dirname(__DIR__))
         __DIR__.'/../app/Console/Commands',
     ])
     ->withMiddleware(function (Middleware $middleware): void {
+        // En APIs RESTful, no redirigir a 'login' en requests no autenticados; responder 401 Unauthorized
+        $middleware->redirectGuestsTo(fn () => null);
+
         // Confiar en todos los proxies (Cloudflare, AWS ALB) para leer cabeceras HTTPS X-Forwarded-Proto correctamente
         $middleware->trustProxies(at: '*');
 

@@ -93,6 +93,11 @@ class HorarioRuta extends Model
      * Relación con los detalles de tiquetes vendidos para este horario.
      * Alias para ventas o relación directa con TiqueteDetalle si existe.
      */
+    public function bloqueosTemporales(): HasMany
+    {
+        return $this->hasMany(AsientoBloqueoTemporal::class, 'horario_ruta_id');
+    }
+
     public function tiquetesDetalle(): HasMany
     {
         // Asumiendo que TiqueteDetalle es el modelo correcto para los tiquetes individuales

@@ -164,9 +164,17 @@ class GoogleAuthController extends Controller
 
             return redirect()->away($redirectUrl);
 
+        } catch (\Illuminate\Database\QueryException|\PDOException $e) {
+            Log::error('Error de base de datos en proceso de autenticación de Google: ' . $e->getMessage());
+            $origin = (isset($redirectOrigin) && !empty($redirectOrigin)) ? $redirectOrigin : 'https://scisenselab.com';
+            $sep = str_contains($origin, '?') ? '&' : '?';
+            return redirect()->away($origin . $sep . 'error=database_unavailable');
         } catch (\Exception $e) {
             Log::error('Error en el proceso de autenticación de Google: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
-            return redirect()->away('https://scisenselab.com?error=oauth_exception');
+            $origin = (isset($redirectOrigin) && !empty($redirectOrigin)) ? $redirectOrigin : 'https://scisenselab.com';
+            $sep = str_contains($origin, '?') ? '&' : '?';
+            return redirect()->away($origin . $sep . 'error=oauth_exception');
         }
     }
 }
+

@@ -12,6 +12,8 @@ use App\Http\Controllers\API\ModeloBusController;
 use App\Http\Controllers\API\RutaController;
 use App\Http\Controllers\API\HorarioRutaController;
 use App\Http\Controllers\API\TiqueteDetalleController;
+use App\Http\Controllers\API\TransportSelfServiceTicketController;
+use App\Http\Controllers\API\TransportTripSeatController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -82,4 +84,28 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
         ->middleware('permission:ver-rutas');
     Route::get('/tiquetes-detalle/mapa-asientos/{horarioRutaId}', [TiqueteDetalleController::class, 'mapaAsientos'])
         ->middleware('permission:ver-rutas');
+});
+
+// ------------------------------------------------------------------------
+// MÓDULO: EXPERIENCIA DE RESERVA Y SEATMAP ESTILO TIG (tiguanacaste.com)
+// Endpoints públicos y de taquilla para holding time y visualización en tiempo real
+// ------------------------------------------------------------------------
+Route::prefix("v1/transport")->middleware(["throttle:120,1"])->group(function () {
+    Route::get("/trips/{trip}/seatmap", [TransportTripSeatController::class, "seatmap"]);
+    Route::post("/trips/{trip}/hold-seat", [TransportTripSeatController::class, "holdSeat"]);
+    Route::post("/trips/{trip}/release-seat", [TransportTripSeatController::class, "releaseSeat"]);
+
+    // Autoservicio TIG: Cambia tu viaje y Reserva fallida
+    Route::post("/tickets/change-trip", [TransportSelfServiceTicketController::class, "changeTrip"]);
+    Route::post("/tickets/verify-failed-booking", [TransportSelfServiceTicketController::class, "verifyFailedBooking"]);
+});
+
+// Compatibilidad con rutas autenticadas ERP
+Route::middleware(["auth:sanctum", "throttle:120,1"])->group(function () {
+    Route::get("/horarios-ruta/{trip}/seatmap", [TransportTripSeatController::class, "seatmap"]);
+    Route::post("/horarios-ruta/{trip}/hold-seat", [TransportTripSeatController::class, "holdSeat"]);
+    Route::post("/horarios-ruta/{trip}/release-seat", [TransportTripSeatController::class, "releaseSeat"]);
+
+    Route::post("/tiquetes/cambiar-viaje", [TransportSelfServiceTicketController::class, "changeTrip"]);
+    Route::post("/tiquetes/verificar-reserva-fallida", [TransportSelfServiceTicketController::class, "verifyFailedBooking"]);
 });
