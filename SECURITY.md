@@ -255,6 +255,25 @@ composer update --with-all-dependencies
 pnpm update --latest
 ```
 
+#### Remediación Dependabot — 2026-11-02
+
+| Alerta | Paquete | Severidad | Antes | Después | Mecanismo |
+|---|---|---|---|---|---|
+| #144 TokenGuard bypass (credenciales no-string) | laravel/framework | Critical | 12.67.0 | 12.70.2 | composer.lock |
+| #145, #146 XmlScanner bypass (XXE/DoS) | phpoffice/phpspreadsheet | High | 5.9.0 | 5.10.0 | composer.lock |
+| #148 ODS `number-rows-repeated` DoS | phpoffice/phpspreadsheet | High | 5.9.0 | 5.10.0 | composer.lock |
+| #122 GFM Table DoS cuadrático | league/commonmark | High | 2.10.0 | 2.10.7 | composer.lock |
+| #124, #126, #127, #131 Axios SSRF / prototype pollution | axios | High | 1.18.1 | 1.21.0 | devDependency + override |
+| #134 `quote()` command injection | shell-quote | Critical | 1.10.0 | ≥1.12.0 | pnpm override |
+| #136, #137 fuga de credenciales en redirects | follow-redirects | High | 1.16.0 | ≥1.16.2 | pnpm override |
+| #135 DoS por offsets de source-map | source-map-js | High | 1.2.1 | ≥1.2.2 | pnpm override |
+| #139 bypass `fs.existsSync()` (Windows) | vite / launch-editor | High | 7.3.6 | 7.3.7 / ≥2.14.2 | devDependency + override |
+
+Adicionalmente, `composer audit` reportó y se corrigieron: `symfony/yaml` 7.4.15 → 7.4.22 (CVE-2026-109413) y `phpseclib/phpseclib` 3.0.56 → 3.0.58.
+
+Verificación: `composer audit --locked` → *No security vulnerability advisories found*; `pnpm audit` → *No known vulnerabilities found*.
+
+> Las dependencias npm afectadas son exclusivamente de desarrollo (build de Vite); no se despliegan en runtime de la API.
 ---
 
 ### A07:2021 - Identification and Authentication Failures ✅

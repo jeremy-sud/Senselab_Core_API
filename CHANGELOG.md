@@ -5,6 +5,15 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [v5.3.1] — 2026-11-02 — Parche de Seguridad: Remediación de 14 alertas Dependabot
+
+### Seguridad
+- **Composer:** `laravel/framework` 12.67.0 → 12.70.2 (#144, critical — bypass de TokenGuard con credenciales no-string); `phpoffice/phpspreadsheet` 5.9.0 → 5.10.0 (#145, #146, #148 — XXE/DoS en XmlScanner y lector ODS); `league/commonmark` 2.10.0 → 2.10.7 (#122 — DoS en tablas GFM). Extras detectados por `composer audit`: `symfony/yaml` 7.4.22, `phpseclib/phpseclib` 3.0.58.
+- **pnpm (solo desarrollo):** `axios` ^1.21.0 (#124, #126, #127, #131); `vite` ^7.3.7 (#139). Nuevos/actualizados `pnpm.overrides`: `shell-quote` ^1.12.0 (#134, critical), `follow-redirects` ^1.16.2 (#136, #137), `source-map-js` ^1.2.2 (#135), `launch-editor` ^2.14.2 (#139).
+- **Verificación:** `composer audit --locked` y `pnpm audit` sin vulnerabilidades. Detalle en `SECURITY.md` (A06).
+
+---
+
 ## [v5.3.0] — 2026-10-27 — FASE 25: Observabilidad Cloudflare, Centinela PM2, Migrador Concurrente y Límites SaaS
 
 ### Infraestructura, Multi-Tenancy y Operaciones
